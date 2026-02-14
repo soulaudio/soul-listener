@@ -177,7 +177,7 @@ mod tests {
         assert!(!color.is_color());
 
         let rgba = color.to_rgba();
-        assert_eq!(rgba, 0x000000FF); // Black with alpha
+        assert_eq!(rgba, 0xFF000000); // ARGB: A=255, R=0, G=0, B=0 (black)
     }
 
     #[test]
@@ -190,8 +190,8 @@ mod tests {
         assert!(!color.is_grayscale());
 
         let rgba = color.to_rgba();
-        // Red channel should be 255
-        let r = (rgba >> 24) & 0xFF;
+        // Red channel should be 255 (ARGB format: bits 16-23)
+        let r = (rgba >> 16) & 0xFF;
         assert_eq!(r, 255);
     }
 
@@ -201,9 +201,10 @@ mod tests {
         assert!(color.is_color());
 
         let rgba = color.to_rgba();
-        let r = (rgba >> 24) & 0xFF;
-        let g = (rgba >> 16) & 0xFF;
-        let b = (rgba >> 8) & 0xFF;
+        // ARGB format: A=24-31, R=16-23, G=8-15, B=0-7
+        let r = (rgba >> 16) & 0xFF;
+        let g = (rgba >> 8) & 0xFF;
+        let b = (rgba >> 0) & 0xFF;
 
         assert_eq!(r, 255); // 15 * 17 = 255
         assert_eq!(g, 136); // 8 * 17 = 136
@@ -229,29 +230,30 @@ mod tests {
             let rgba = color.to_rgba();
 
             // Check that color channels are in expected ranges
+            // ARGB format: A=24-31, R=16-23, G=8-15, B=0-7
             match spectra_color {
                 SpectraColor::Red => {
-                    let r = (rgba >> 24) & 0xFF;
+                    let r = (rgba >> 16) & 0xFF;
                     assert_eq!(r, 255, "Red channel should be 255 for Red pigment");
                 }
                 SpectraColor::Blue => {
-                    let b = (rgba >> 8) & 0xFF;
+                    let b = (rgba >> 0) & 0xFF;
                     assert_eq!(b, 255, "Blue channel should be 255 for Blue pigment");
                 }
                 SpectraColor::Yellow => {
-                    let r = (rgba >> 24) & 0xFF;
-                    let g = (rgba >> 16) & 0xFF;
+                    let r = (rgba >> 16) & 0xFF;
+                    let g = (rgba >> 8) & 0xFF;
                     assert_eq!(r, 255, "Red should be 255 for Yellow");
                     assert_eq!(g, 255, "Green should be 255 for Yellow");
                 }
                 SpectraColor::Green => {
-                    let g = (rgba >> 16) & 0xFF;
+                    let g = (rgba >> 8) & 0xFF;
                     assert_eq!(g, 255, "Green channel should be 255 for Green pigment");
                 }
                 SpectraColor::None => {
-                    let r = (rgba >> 24) & 0xFF;
-                    let g = (rgba >> 16) & 0xFF;
-                    let b = (rgba >> 8) & 0xFF;
+                    let r = (rgba >> 16) & 0xFF;
+                    let g = (rgba >> 8) & 0xFF;
+                    let b = (rgba >> 0) & 0xFF;
                     assert_eq!(r, g, "R and G should match for grayscale");
                     assert_eq!(g, b, "G and B should match for grayscale");
                 }
@@ -261,22 +263,22 @@ mod tests {
 
     #[test]
     fn test_kaleido3_rgba_output() {
-        // Test pure colors
+        // Test pure colors (ARGB format: 0xAARRGGBB)
         let red = EinkColor::Kaleido3 { r: 15, g: 0, b: 0 };
-        assert_eq!(red.to_rgba(), 0xFF0000FF);
+        assert_eq!(red.to_rgba(), 0xFFFF0000); // A=255, R=255, G=0, B=0
 
         let green = EinkColor::Kaleido3 { r: 0, g: 15, b: 0 };
-        assert_eq!(green.to_rgba(), 0x00FF00FF);
+        assert_eq!(green.to_rgba(), 0xFF00FF00); // A=255, R=0, G=255, B=0
 
         let blue = EinkColor::Kaleido3 { r: 0, g: 0, b: 15 };
-        assert_eq!(blue.to_rgba(), 0x0000FFFF);
+        assert_eq!(blue.to_rgba(), 0xFF0000FF); // A=255, R=0, G=0, B=255
 
         let white = EinkColor::Kaleido3 {
             r: 15,
             g: 15,
             b: 15,
         };
-        assert_eq!(white.to_rgba(), 0xFFFFFFFF);
+        assert_eq!(white.to_rgba(), 0xFFFFFFFF); // A=255, R=255, G=255, B=255
     }
 
     #[test]

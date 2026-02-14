@@ -13,7 +13,7 @@ fn test_eink_color_gray4_conversion() {
     assert!(!color.is_color());
 
     let rgba = color.to_rgba();
-    assert_eq!(rgba, 0x000000FF); // Black with alpha
+    assert_eq!(rgba, 0xFF000000); // ARGB: A=255, R=0, G=0, B=0 (black)
 }
 
 #[test]
@@ -26,8 +26,8 @@ fn test_eink_color_spectra6_conversion() {
     assert!(!color.is_grayscale());
 
     let rgba = color.to_rgba();
-    // Red channel should be 255
-    let r = (rgba >> 24) & 0xFF;
+    // Red channel should be 255 (ARGB format: bits 16-23)
+    let r = (rgba >> 16) & 0xFF;
     assert_eq!(r, 255);
 }
 
@@ -37,9 +37,10 @@ fn test_eink_color_kaleido3_conversion() {
     assert!(color.is_color());
 
     let rgba = color.to_rgba();
-    let r = (rgba >> 24) & 0xFF;
-    let g = (rgba >> 16) & 0xFF;
-    let b = (rgba >> 8) & 0xFF;
+    // ARGB format: A=24-31, R=16-23, G=8-15, B=0-7
+    let r = (rgba >> 16) & 0xFF;
+    let g = (rgba >> 8) & 0xFF;
+    let b = (rgba >> 0) & 0xFF;
 
     assert_eq!(r, 255); // 15 * 17 = 255
     assert_eq!(g, 136); // 8 * 17 = 136
@@ -65,9 +66,10 @@ fn test_spectra6_rgba_output() {
         let rgba = color.to_rgba();
 
         // Check that color channels are in expected ranges
-        let r = (rgba >> 24) & 0xFF;
-        let g = (rgba >> 16) & 0xFF;
-        let b = (rgba >> 8) & 0xFF;
+        // ARGB format: A=24-31, R=16-23, G=8-15, B=0-7
+        let r = (rgba >> 16) & 0xFF;
+        let g = (rgba >> 8) & 0xFF;
+        let b = (rgba >> 0) & 0xFF;
 
         match spectra_color {
             SpectraColor::Red => {
@@ -93,25 +95,25 @@ fn test_spectra6_rgba_output() {
 
 #[test]
 fn test_kaleido3_rgba_output() {
-    // Test pure colors
+    // Test pure colors (ARGB format: 0xAARRGGBB)
     let red = EinkColor::Kaleido3 { r: 15, g: 0, b: 0 };
-    assert_eq!(red.to_rgba(), 0xFF0000FF);
+    assert_eq!(red.to_rgba(), 0xFFFF0000); // A=255, R=255, G=0, B=0
 
     let green = EinkColor::Kaleido3 { r: 0, g: 15, b: 0 };
-    assert_eq!(green.to_rgba(), 0x00FF00FF);
+    assert_eq!(green.to_rgba(), 0xFF00FF00); // A=255, R=0, G=255, B=0
 
     let blue = EinkColor::Kaleido3 { r: 0, g: 0, b: 15 };
-    assert_eq!(blue.to_rgba(), 0x0000FFFF);
+    assert_eq!(blue.to_rgba(), 0xFF0000FF); // A=255, R=0, G=0, B=255
 
     let white = EinkColor::Kaleido3 {
         r: 15,
         g: 15,
         b: 15,
     };
-    assert_eq!(white.to_rgba(), 0xFFFFFFFF);
+    assert_eq!(white.to_rgba(), 0xFFFFFFFF); // A=255, R=255, G=255, B=255
 
     let black = EinkColor::Kaleido3 { r: 0, g: 0, b: 0 };
-    assert_eq!(black.to_rgba(), 0x000000FF);
+    assert_eq!(black.to_rgba(), 0xFF000000); // A=255, R=0, G=0, B=0
 }
 
 #[test]
@@ -152,8 +154,8 @@ fn test_framebuffer_rgba_conversion_grayscale() {
 
     let rgba = fb.to_rgba();
     assert_eq!(rgba.len(), 4);
-    assert_eq!(rgba[0], 0x000000FF); // Black
-    assert_eq!(rgba[3], 0xFFFFFFFF); // White (3 * 85 = 255)
+    assert_eq!(rgba[0], 0xFF000000); // ARGB: Black (A=255, R=0, G=0, B=0)
+    assert_eq!(rgba[3], 0xFFFFFFFF); // ARGB: White (A=255, R=255, G=255, B=255)
 }
 
 #[test]
@@ -170,7 +172,8 @@ fn test_framebuffer_rgba_conversion_spectra6() {
     );
 
     let rgba = fb.to_rgba();
-    let r = (rgba[0] >> 24) & 0xFF;
+    // ARGB format: Red is at bits 16-23
+    let r = (rgba[0] >> 16) & 0xFF;
     assert_eq!(r, 255, "Red channel should be 255 for Red pigment");
 }
 
@@ -181,7 +184,7 @@ fn test_framebuffer_rgba_conversion_kaleido3() {
     fb.set_pixel(0, 0, EinkColor::Kaleido3 { r: 15, g: 0, b: 0 });
 
     let rgba = fb.to_rgba();
-    assert_eq!(rgba[0], 0xFF0000FF); // Pure red
+    assert_eq!(rgba[0], 0xFFFF0000); // Pure red (ARGB: A=255, R=255, G=0, B=0)
 }
 
 #[test]
@@ -405,14 +408,14 @@ fn test_spectra6_color_mixing() {
         let eink_color = EinkColor::Spectra6 { bw, color };
         let rgba = eink_color.to_rgba();
 
-        // Verify RGBA has alpha=255
-        let a = rgba & 0xFF;
+        // Verify ARGB has alpha=255 (ARGB format: A=24-31)
+        let a = (rgba >> 24) & 0xFF;
         assert_eq!(a, 255, "{} should have full alpha", name);
 
-        // Verify color channels are reasonable
-        let r = (rgba >> 24) & 0xFF;
-        let g = (rgba >> 16) & 0xFF;
-        let b = (rgba >> 8) & 0xFF;
+        // Verify color channels are reasonable (ARGB: R=16-23, G=8-15, B=0-7)
+        let r = (rgba >> 16) & 0xFF;
+        let g = (rgba >> 8) & 0xFF;
+        let b = (rgba >> 0) & 0xFF;
 
         // Each color should have at least one channel at a reasonable level
         match color {
@@ -449,10 +452,10 @@ fn test_kaleido3_4bit_precision() {
         let color = EinkColor::Kaleido3 { r, g, b };
         let rgba = color.to_rgba();
 
-        // Extract channels
-        let r8 = (rgba >> 24) & 0xFF;
-        let g8 = (rgba >> 16) & 0xFF;
-        let b8 = (rgba >> 8) & 0xFF;
+        // Extract channels (ARGB format: A=24-31, R=16-23, G=8-15, B=0-7)
+        let r8 = (rgba >> 16) & 0xFF;
+        let g8 = (rgba >> 8) & 0xFF;
+        let b8 = (rgba >> 0) & 0xFF;
 
         // Verify 4-bit to 8-bit conversion (multiply by 17)
         assert_eq!(r8, (r * 17) as u32, "{} red conversion failed", name);
