@@ -116,3 +116,8 @@ required-features = ["emulator"]
 name = "now_playing_scene"
 path = "examples/now_playing_scene.rs"
 required-features = ["emulator"]
+
+[[example]]
+name = "menu_scene"
+path = "examples/menu_scene.rs"
+required-features = ["emulator"]
