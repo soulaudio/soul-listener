@@ -31,10 +31,9 @@
 //! ```
 
 use crate::layout::{Constraints, Layout, LayoutResult};
-use crate::style::{Align, Edges, FlexDirection, Justify};
+use crate::style::{Align, Edges, Justify};
 use embedded_graphics::prelude::*;
 use embedded_graphics::pixelcolor::Gray4;
-use embedded_graphics::primitives::Rectangle;
 use heapless::Vec;
 
 #[cfg(feature = "std")]

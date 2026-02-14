@@ -40,6 +40,8 @@
 //! ```
 
 use crate::layout::Constraints;
+// False positive: Dimension and Edges are used in tests (9 and 6 occurrences respectively)
+#[allow(unused_imports)]
 use crate::style::{Align, Dimension, Edges, FlexDirection, Justify, Style};
 use embedded_graphics::prelude::*;
 use heapless::Vec as HeaplessVec;
@@ -84,6 +86,7 @@ pub struct FlexLayout {
 
 /// Internal representation of a flex item during layout computation
 #[derive(Debug, Clone, Copy)]
+#[allow(dead_code)] // intrinsic_size is used in layout calculation (lines 207-208)
 struct FlexItem {
     /// Target size on main axis (after flex grow/shrink)
     main_size: u32,

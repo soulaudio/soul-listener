@@ -116,12 +116,3 @@ required-features = ["emulator"]
 name = "now_playing_scene"
 path = "examples/now_playing_scene.rs"
 required-features = ["emulator"]
-
-[profile.release]
-opt-level = "z"           # Optimize for size
-lto = "fat"               # Full link-time optimization
-codegen-units = 1         # Better optimization
-debug = true              # Keep symbols for debugging
-strip = false             # Keep symbols for probe-rs
-panic = "abort"           # No unwinding
-overflow-checks = true    # Safety checks
