@@ -186,10 +186,10 @@ mod tests {
         let rgba = fb.to_rgba();
         assert_eq!(rgba.len(), 4);
 
-        // Black should be 0x000000FF
-        assert_eq!(rgba[0], 0x000000FF);
+        // Black should be 0xFF000000 (ARGB: A=255, R=0, G=0, B=0)
+        assert_eq!(rgba[0], 0xFF000000);
 
-        // White should be 0xFFFFFFFF (3 * 85 = 255)
+        // White should be 0xFFFFFFFF (ARGB: A=255, R=255, G=255, B=255)
         assert_eq!(rgba[3], 0xFFFFFFFF);
     }
 
@@ -207,7 +207,8 @@ mod tests {
         );
 
         let rgba = fb.to_rgba();
-        let r = (rgba[0] >> 24) & 0xFF;
+        // ARGB format: Red is at bits 16-23
+        let r = (rgba[0] >> 16) & 0xFF;
         assert_eq!(r, 255, "Red channel should be 255 for Red pigment");
     }
 
@@ -218,7 +219,7 @@ mod tests {
         fb.set_pixel(0, 0, EinkColor::Kaleido3 { r: 15, g: 0, b: 0 });
 
         let rgba = fb.to_rgba();
-        assert_eq!(rgba[0], 0xFF0000FF); // Pure red
+        assert_eq!(rgba[0], 0xFFFF0000); // Pure red (ARGB: A=255, R=255, G=0, B=0)
     }
 
     #[test]
