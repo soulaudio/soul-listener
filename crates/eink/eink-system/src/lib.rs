@@ -30,9 +30,18 @@ pub mod containers;
 pub mod render;
 
 pub mod prelude {
-    pub use crate::layout::*;
+    // Style system (public API)
     pub use crate::style::*;
-    pub use crate::flex::*;
+
+    // Flex layout (public API - includes ChildLayout)
+    pub use crate::flex::{FlexLayout, ChildLayout};
+
+    // Containers (public API)
     pub use crate::containers::*;
+
+    // Render utilities (public API)
     pub use crate::render::*;
+
+    // Layout traits (public API)
+    pub use crate::layout::{Constraints, Layout, LayoutResult};
 }
