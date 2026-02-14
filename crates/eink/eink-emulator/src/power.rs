@@ -37,36 +37,36 @@ impl PowerProfile {
     /// - Full refresh: 7.5mJ/cm² × 6.5cm² = 48.75mJ
     /// - At 3.3V, 980ms duration → ~54mA average during refresh
     pub const WAVESHARE_2_13_V4: Self = Self {
-        idle_current_ua: 250_000,          // 250µA idle (controller + SRAM)
-        sleep_current_ua: 2_000,           // 2µA deep sleep
-        refresh_current_ua: 40_000_000,    // 40mA base refresh current
-        refresh_boost_ua: 14_000_000,      // +14mA per flash (3 flashes → 54mA avg)
-        sram_transfer_current_ua: 5_000_000, // 5mA during SPI transfer
-        init_current_ua: 25_000_000,       // 25mA during initialization
+        idle_current_ua: 150,           // 150µA idle (typical e-ink idle)
+        sleep_current_ua: 2,            // 2µA deep sleep (static image)
+        refresh_current_ua: 54_000,     // 54mA calculated from energy (base + flashes)
+        refresh_boost_ua: 15_000,       // +15mA per additional flash
+        sram_transfer_current_ua: 8_000, // 8mA SPI transfer overhead
+        init_current_ua: 70_000,        // 70mA init (multiple refreshes)
     };
 
     /// Waveshare 2.9" V2 power profile
     ///
     /// Based on IL0373 controller + 296×128 panel (~9.5cm²)
     pub const WAVESHARE_2_9_V2: Self = Self {
-        idle_current_ua: 300_000,
-        sleep_current_ua: 2_500,
-        refresh_current_ua: 45_000_000,
-        refresh_boost_ua: 15_000_000,
-        sram_transfer_current_ua: 6_000_000,
-        init_current_ua: 28_000_000,
+        idle_current_ua: 200,
+        sleep_current_ua: 2,
+        refresh_current_ua: 60_000,
+        refresh_boost_ua: 18_000,
+        sram_transfer_current_ua: 9_000,
+        init_current_ua: 75_000,
     };
 
     /// Waveshare 4.2" V2 power profile
     ///
     /// Based on SSD1619 controller + 400×300 panel (~30cm²)
     pub const WAVESHARE_4_2_V2: Self = Self {
-        idle_current_ua: 350_000,
-        sleep_current_ua: 3_000,
-        refresh_current_ua: 80_000_000,
-        refresh_boost_ua: 40_000_000,
-        sram_transfer_current_ua: 8_000_000,
-        init_current_ua: 45_000_000,
+        idle_current_ua: 300,
+        sleep_current_ua: 3,
+        refresh_current_ua: 100_000,
+        refresh_boost_ua: 35_000,
+        sram_transfer_current_ua: 15_000,
+        init_current_ua: 120_000,
     };
 
     /// Waveshare 7.5" V2 power profile
@@ -75,12 +75,12 @@ impl PowerProfile {
     /// - Full refresh: 7.5mJ/cm² × 75cm² = 562.5mJ
     /// - At 3.3V, 1400ms duration → ~173mA average during refresh
     pub const WAVESHARE_7_5_V2: Self = Self {
-        idle_current_ua: 400_000,
-        sleep_current_ua: 3_000,
-        refresh_current_ua: 120_000_000,   // 120mA base
-        refresh_boost_ua: 53_000_000,      // +53mA per flash (4 flashes → 173mA avg)
-        sram_transfer_current_ua: 12_000_000,
-        init_current_ua: 80_000_000,
+        idle_current_ua: 400,
+        sleep_current_ua: 3,
+        refresh_current_ua: 173_000,   // 173mA calculated from energy
+        refresh_boost_ua: 40_000,      // +40mA per flash
+        sram_transfer_current_ua: 30_000,
+        init_current_ua: 200_000,
     };
 
     /// Good Display GDEM0397T81P power profile (3.97" 800×480)
@@ -93,12 +93,12 @@ impl PowerProfile {
     /// - Full refresh: 7.5mJ/cm² × 45cm² = 337.5mJ
     /// - At 3.3V, 3000ms duration → 337.5mJ/3s/3.3V = 34mA average
     pub const GDEM0397T81P: Self = Self {
-        idle_current_ua: 350_000,          // 350µA idle (SSD1677 + large SRAM)
-        sleep_current_ua: 1_000,           // 1µA deep sleep (datasheet: 0.003mW)
-        refresh_current_ua: 25_000_000,    // 25mA base refresh current
-        refresh_boost_ua: 9_000_000,       // +9mA per flash (3 flashes → 34mA avg)
-        sram_transfer_current_ua: 10_000_000, // 10mA SPI transfer (large 384KB framebuffer)
-        init_current_ua: 35_000_000,       // 35mA initialization
+        idle_current_ua: 350,          // 350µA idle (SSD1677 + large SRAM)
+        sleep_current_ua: 1,           // 1µA deep sleep (datasheet: 0.003mW)
+        refresh_current_ua: 25_000,    // 25mA base refresh current
+        refresh_boost_ua: 9_000,       // +9mA per flash (3 flashes → 34mA avg)
+        sram_transfer_current_ua: 10_000, // 10mA SPI transfer (large 384KB framebuffer)
+        init_current_ua: 35_000,       // 35mA initialization
     };
 }
 
@@ -350,12 +350,14 @@ mod tests {
     fn test_power_tracker_idle() {
         let mut tracker = PowerTracker::new(&PowerProfile::WAVESHARE_2_13_V4);
 
-        std::thread::sleep(std::time::Duration::from_millis(10));
+        // Need ~8s for 150µA idle current to accumulate 1µWh with integer math
+        // Formula: 150µA × 8000ms × 33 / 36_000_000 = 1.1µWh
+        std::thread::sleep(std::time::Duration::from_millis(8000));
         tracker.transition_to(PowerState::Idle);
 
         let stats = tracker.stats();
-        assert!(stats.total_energy_uwh > 0);
-        assert!(stats.idle_time_ms >= 10);
+        assert!(stats.total_energy_uwh > 0, "Idle should consume energy after 8s");
+        assert!(stats.idle_time_ms >= 8000);
     }
 
     #[test]
@@ -363,12 +365,12 @@ mod tests {
         let mut tracker = PowerTracker::new(&PowerProfile::WAVESHARE_2_13_V4);
 
         tracker.transition_to(PowerState::Refreshing { flash_count: 3 });
-        std::thread::sleep(std::time::Duration::from_millis(10));
+        std::thread::sleep(std::time::Duration::from_millis(100));
         tracker.transition_to(PowerState::Idle);
 
         let stats = tracker.stats();
-        assert!(stats.total_energy_uwh > 0);
-        assert!(stats.active_time_ms >= 10);
+        assert!(stats.total_energy_uwh > 0, "Refresh should consume energy");
+        assert!(stats.active_time_ms >= 100);
     }
 
     #[test]
