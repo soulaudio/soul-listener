@@ -1,0 +1,21 @@
+[package]
+name = "eink-components"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+# Core layout system
+eink-system = { path = "../eink-system" }
+
+# Graphics primitives
+embedded-graphics = "0.8.1"
+heapless = "0.8"
+
+[dev-dependencies]
+eink-emulator = { path = "../eink-emulator" }
+tokio = { version = "1.49", features = ["macros", "rt"] }
+
+[features]
+default = []
+std = ["eink-system/std"]
