@@ -1,0 +1,40 @@
+[package]
+name = "platform"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+# Embassy
+embassy-time.workspace = true
+embassy-sync.workspace = true
+
+# Embedded HAL traits
+embedded-hal.workspace = true
+embedded-hal-async.workspace = true
+embedded-io.workspace = true
+embedded-io-async.workspace = true
+embedded-storage.workspace = true
+embedded-storage-async.workspace = true
+
+# Graphics
+embedded-graphics.workspace = true
+
+# Collections
+heapless.workspace = true
+
+# Error handling
+thiserror-no-std.workspace = true
+
+# Utilities
+defmt.workspace = true
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["macros", "rt", "time"] }
+
+[features]
+default = []
+std = []
+simulator = []
+hardware = []

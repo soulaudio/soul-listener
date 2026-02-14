@@ -1,0 +1,120 @@
+[package]
+name = "firmware"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+# Local crates
+platform = { path = "../platform" }
+eink-specs = { path = "../eink/eink-specs" }
+
+# Embassy framework (hardware only)
+embassy-executor = { workspace = true, optional = true }
+embassy-time = { workspace = true, optional = true }
+embassy-sync = { workspace = true, optional = true }
+embassy-futures = { workspace = true, optional = true }
+embassy-stm32 = { workspace = true, optional = true, features = ["stm32h743zi", "time-driver-any", "unstable-pac"] }
+embassy-embedded-hal = { workspace = true, optional = true }
+
+# Embedded HAL traits
+embedded-hal = { workspace = true }
+embedded-hal-async = { workspace = true }
+embedded-hal-bus = { workspace = true, optional = true }
+
+# Graphics
+embedded-graphics = { workspace = true }
+
+# Collections (no_std)
+heapless = { workspace = true }
+
+# Error handling
+thiserror-no-std = { workspace = true }
+
+# Logging
+defmt = { workspace = true, optional = true }
+defmt-rtt = { workspace = true, optional = true }
+
+# Utilities (hardware only)
+static_cell = { workspace = true, optional = true }
+cortex-m = { workspace = true, optional = true }
+cortex-m-rt = { workspace = true, optional = true }
+critical-section = { workspace = true, optional = true }
+
+# Panic handler (hardware only)
+panic-probe = { workspace = true, optional = true }
+
+# Emulator (desktop only)
+eink-emulator = { path = "../eink/eink-emulator", optional = true }
+tokio = { workspace = true, features = ["macros", "rt-multi-thread", "time"], optional = true }
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["full"] }
+
+[features]
+default = []
+
+# Hardware target (STM32H7)
+hardware = [
+    "embassy-executor",
+    "embassy-time",
+    "embassy-sync",
+    "embassy-futures",
+    "embassy-stm32",
+    "embassy-embedded-hal",
+    "embedded-hal-bus",
+    "defmt",
+    "defmt-rtt",
+    "static_cell",
+    "cortex-m",
+    "cortex-m-rt",
+    "critical-section",
+    "panic-probe",
+]
+
+# Desktop emulator target
+emulator = [
+    "eink-emulator",
+    "tokio",
+    "std",
+]
+
+# Standard library support
+std = []
+
+# Logging features
+defmt-logging = ["defmt", "defmt-rtt"]
+
+[lib]
+name = "firmware"
+test = true
+
+[[bin]]
+name = "firmware"
+path = "src/main.rs"
+required-features = ["hardware"]
+
+[[example]]
+name = "display_hardware_test"
+path = "examples/display_hardware_test.rs"
+required-features = ["hardware"]
+
+[[example]]
+name = "display_emulator"
+path = "examples/display_emulator.rs"
+required-features = ["emulator"]
+
+[[example]]
+name = "display_emulator_test"
+path = "examples/display_emulator_test.rs"
+required-features = ["emulator"]
+
+[profile.release]
+opt-level = "z"           # Optimize for size
+lto = "fat"               # Full link-time optimization
+codegen-units = 1         # Better optimization
+debug = true              # Keep symbols for debugging
+strip = false             # Keep symbols for probe-rs
+panic = "abort"           # No unwinding
+overflow-checks = true    # Safety checks

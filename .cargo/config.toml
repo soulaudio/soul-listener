@@ -1,0 +1,34 @@
+[target.thumbv7em-none-eabihf]
+runner = "probe-rs run --chip STM32H743ZITx"
+rustflags = [
+  "-C", "link-arg=-Tlink.x",
+  "-C", "link-arg=-Tdefmt.x",
+]
+
+# [build]
+# Note: Commented out to allow emulator builds
+# Specify --target thumbv7em-none-eabihf explicitly for hardware builds
+# target = "thumbv7em-none-eabihf"
+
+[env]
+DEFMT_LOG = "info"
+
+[alias]
+# xtask commands (primary development workflow)
+flash = "run -p xtask -- flash"
+dev = "run -p xtask -- dev"
+
+# Quick commands
+rb = "build --release"
+rr = "run --release"
+size = "size --release --bin firmware -- -A"
+
+# Testing
+test-unit = "test --lib"
+test-integration = "test --test integration"
+test-all = "test --workspace --all-features"
+
+# Analysis
+bloat = "bloat --release --bin firmware"
+expand = "expand --lib"
+check-embedded = "check --target thumbv7em-none-eabihf --no-default-features"

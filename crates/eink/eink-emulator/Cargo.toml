@@ -1,0 +1,47 @@
+[package]
+name = "eink-emulator"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# Display specifications
+eink-specs = { path = "../eink-specs" }
+
+# Platform configuration
+platform = { path = "../../platform" }
+
+# Window & rendering (no GPU - more portable per research)
+winit = "0.30.12"
+softbuffer = "0.4.8"
+
+# Graphics primitives
+embedded-graphics = "0.8.1"
+
+# Image export
+image = "0.25.9"
+
+# Async runtime
+tokio = { version = "1.49", features = ["time"] }
+
+# LUT serialization support
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.149"
+
+[dev-dependencies]
+tokio = { version = "1.49", features = ["full", "test-util"] }
+
+[features]
+default = []
+headless = []  # For CI/CD (per embedded-graphics-simulator pattern)
+
+[[example]]
+name = "hello_window"
+path = "examples/hello_window.rs"
+
+[[example]]
+name = "custom_lut_demo"
+path = "examples/custom_lut_demo.rs"
+
+[[example]]
+name = "rotation_demo"
+path = "examples/rotation_demo.rs"
