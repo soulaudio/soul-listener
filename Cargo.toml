@@ -4,6 +4,7 @@ members = [
     "crates/eink/eink-specs",
     "crates/eink/eink-emulator",
     "crates/eink/eink-system",
+    "crates/eink/eink-components",
     "crates/platform",
     "crates/firmware",
     "xtask",
