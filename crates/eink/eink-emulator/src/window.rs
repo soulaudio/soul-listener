@@ -140,6 +140,9 @@ pub struct Window {
 /// Internal handler for the event loop
 struct EventHandler {
     should_exit: bool,
+    /// Fixed physical window dimensions (should not change with DPI)
+    fixed_width: u32,
+    fixed_height: u32,
 }
 
 impl ApplicationHandler for EventHandler {
@@ -160,6 +163,18 @@ impl ApplicationHandler for EventHandler {
             }
             WindowEvent::RedrawRequested => {
                 // Redraw happens via present() calls
+            }
+            WindowEvent::ScaleFactorChanged {
+                scale_factor: _,
+                mut inner_size_writer,
+            } => {
+                // Maintain fixed physical size when moving between monitors with different DPI
+                // This prevents the window from changing size when moved between displays
+                // or between Windows virtual desktops with different scaling settings
+                let _ = inner_size_writer.request_inner_size(winit::dpi::PhysicalSize::new(
+                    self.fixed_width,
+                    self.fixed_height,
+                ));
             }
             _ => {}
         }
@@ -394,7 +409,16 @@ impl Window {
     /// Run event loop (blocks until window closed)
     pub fn run(mut self) {
         if let Some(event_loop) = self.event_loop.take() {
-            let mut handler = EventHandler { should_exit: false };
+            // Calculate fixed physical dimensions to maintain when moving between displays
+            let (window_w, window_h) = self.config.rotation.apply_to_dimensions(self.width, self.height);
+            let fixed_width = window_w * self.config.scale;
+            let fixed_height = window_h * self.config.scale;
+
+            let mut handler = EventHandler {
+                should_exit: false,
+                fixed_width,
+                fixed_height,
+            };
             let _ = event_loop.run_app(&mut handler);
         }
     }
