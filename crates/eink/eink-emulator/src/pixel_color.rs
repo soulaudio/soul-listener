@@ -60,18 +60,19 @@ impl EinkColor {
         EinkColor::Gray(gray)
     }
 
-    /// Convert to RGBA for display rendering (RGBA8888 format)
+    /// Convert to ARGB for display rendering (0xAARRGGBB format for softbuffer)
     pub fn to_rgba(&self) -> u32 {
         match self {
             EinkColor::Gray(gray) => {
-                // Convert grayscale to RGBA
+                // Convert grayscale to ARGB
                 // Gray4 luma() returns 0-3, scale to 0-255
                 let value = (gray.luma() as u32) * 85; // 0,1,2,3 → 0,85,170,255
                 let r = value;
                 let g = value;
                 let b = value;
                 let a = 255;
-                (r << 24) | (g << 16) | (b << 8) | a
+                // ARGB format: 0xAARRGGBB
+                (a << 24) | (r << 16) | (g << 8) | b
             }
             EinkColor::Spectra6 { bw, color } => {
                 // Combine B&W base with color pigment
@@ -79,36 +80,36 @@ impl EinkColor {
 
                 match color {
                     SpectraColor::None => {
-                        // Pure black/white
-                        (base_value << 24) | (base_value << 16) | (base_value << 8) | 255
+                        // Pure black/white - ARGB format
+                        0xFF000000 | (base_value << 16) | (base_value << 8) | base_value
                     }
                     SpectraColor::Red => {
                         // Red pigment: bright red with gray modulation
                         let r = 255;
                         let g = base_value.min(128); // Muted green/blue
                         let b = base_value.min(128);
-                        (r << 24) | (g << 16) | (b << 8) | 255
+                        0xFF000000 | (r << 16) | (g << 8) | b
                     }
                     SpectraColor::Yellow => {
                         // Yellow pigment: bright yellow
                         let r = 255;
                         let g = 255;
                         let b = base_value.min(128);
-                        (r << 24) | (g << 16) | (b << 8) | 255
+                        0xFF000000 | (r << 16) | (g << 8) | b
                     }
                     SpectraColor::Blue => {
                         // Blue pigment: bright blue
                         let r = base_value.min(128);
                         let g = base_value.min(128);
                         let b = 255;
-                        (r << 24) | (g << 16) | (b << 8) | 255
+                        0xFF000000 | (r << 16) | (g << 8) | b
                     }
                     SpectraColor::Green => {
                         // Green pigment (yellow + blue)
                         let r = base_value.min(128);
                         let g = 255;
                         let b = base_value.min(180); // Slightly less blue
-                        (r << 24) | (g << 16) | (b << 8) | 255
+                        0xFF000000 | (r << 16) | (g << 8) | b
                     }
                 }
             }
@@ -117,7 +118,8 @@ impl EinkColor {
                 let r8 = ((*r).min(15) as u32) * 17; // 15 * 17 = 255
                 let g8 = ((*g).min(15) as u32) * 17;
                 let b8 = ((*b).min(15) as u32) * 17;
-                (r8 << 24) | (g8 << 16) | (b8 << 8) | 255
+                // ARGB format: 0xAARRGGBB
+                0xFF000000 | (r8 << 16) | (g8 << 8) | b8
             }
         }
     }
