@@ -150,14 +150,23 @@ impl Emulator {
     ) -> Self {
         let buffer_size = (spec.width * spec.height) as usize;
 
+        // Apply rotation to get logical dimensions for drawing
+        let (logical_width, logical_height) = config.rotation.apply_to_dimensions(spec.width, spec.height);
+
         // Select power profile based on display spec
         let power_profile = Self::select_power_profile(spec);
 
+        // Create window config with no rotation (framebuffer is pre-rotated)
+        let window_config = config::EmulatorConfig {
+            rotation: config::Rotation::Degrees0,
+            scale: config.scale,
+        };
+
         Self {
-            framebuffer: Framebuffer::new(spec.width, spec.height),
+            framebuffer: Framebuffer::new(logical_width, logical_height),
             staged_buffer: vec![EinkColor::default(); buffer_size],
             spec,
-            pixel_states: PixelStateBuffer::new(spec.width, spec.height),
+            pixel_states: PixelStateBuffer::new(logical_width, logical_height),
             waveform_mode: WaveformMode::default(),
             current_temp: 25, // Default to room temperature
             refresh_mode: RefreshMode::default(),
@@ -172,7 +181,7 @@ impl Emulator {
             config: config.clone(),
 
             #[cfg(not(feature = "headless"))]
-            window: Some(window::Window::new(spec.width, spec.height, &config)),
+            window: Some(window::Window::new(logical_width, logical_height, &window_config)),
         }
     }
 
@@ -561,6 +570,7 @@ impl DrawTarget for Emulator {
 
 impl OriginDimensions for Emulator {
     fn size(&self) -> Size {
+        // Framebuffer is already in the correct orientation
         Size::new(self.framebuffer.width, self.framebuffer.height)
     }
 }
