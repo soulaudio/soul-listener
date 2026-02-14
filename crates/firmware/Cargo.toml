@@ -121,3 +121,13 @@ required-features = ["emulator"]
 name = "menu_scene"
 path = "examples/menu_scene.rs"
 required-features = ["emulator"]
+
+[[example]]
+name = "screenshot_test"
+path = "examples/screenshot_test.rs"
+required-features = ["emulator"]
+
+[[example]]
+name = "menu_screenshot"
+path = "examples/menu_screenshot.rs"
+required-features = ["emulator"]
