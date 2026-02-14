@@ -244,6 +244,11 @@ impl PixelState {
         // Accumulate both signed voltage and magnitude-based aging
         // Higher magnitude weight to simulate cumulative stress even with balanced voltages
         self.dc_balance += voltage_delta * 1.0 + transition_magnitude * 1.5;
+
+        // Update color ghosting if this is a color pixel (2× accumulation rate)
+        if let Some(ref mut color) = self.color_state {
+            color.partial_refresh(content_ghosting);
+        }
     }
 
     /// Update pixel with fast refresh (DU/A2)
@@ -298,6 +303,11 @@ impl PixelState {
 
         // Even higher DC imbalance for fast modes
         self.dc_balance += voltage_delta * 2.0 + transition_magnitude * 1.0;
+
+        // Update color ghosting if this is a color pixel (2× accumulation rate)
+        if let Some(ref mut color) = self.color_state {
+            color.partial_refresh(content_ghosting);
+        }
     }
 
     /// Get effective gray level with ghosting applied
