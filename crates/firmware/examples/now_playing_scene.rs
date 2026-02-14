@@ -1,7 +1,7 @@
 //! Now Playing Scene - Simple DAP UI demonstration
 
 use eink_components::prelude::*;
-use eink_emulator::{Emulator, EmulatorConfig, Rotation};
+use eink_emulator::{Emulator, EmulatorConfig, Rotation, WaveformMode};
 use embedded_graphics::prelude::*;
 use embedded_graphics::pixelcolor::Gray4;
 use embedded_graphics::primitives::{PrimitiveStyle, Rectangle};
@@ -20,6 +20,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Render the now playing scene
     render_now_playing(&mut emulator).await?;
+
+    // Present the framebuffer to the window
+    emulator.refresh_with_waveform(WaveformMode::GC16).await?;
 
     println!("✓ Now Playing scene rendered\n");
     println!("Window shows:");
