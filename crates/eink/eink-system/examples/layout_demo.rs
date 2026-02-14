@@ -54,15 +54,15 @@ fn demo_vstack(emulator: &mut Emulator) -> Result<(), Box<dyn std::error::Error>
         .draw(emulator)?;
 
     // Content area: 3 items with gaps
-    let content_y = 60;
-    let item_height = 100;
-    let gap = 16;
+    let content_y: i32 = 60;
+    let item_height: i32 = 100;
+    let gap: i32 = 16;
 
     // Item 1: Artist
     draw_box(
         emulator,
         Point::new(16, content_y + gap),
-        Size::new(448, item_height),
+        Size::new(448, item_height as u32),
         Gray4::new(0xC),
     )?;
     Text::new("Artist Name", Point::new(32, content_y + gap + 40), MonoTextStyle::new(&FONT_10X20, Gray4::BLACK))
@@ -72,7 +72,7 @@ fn demo_vstack(emulator: &mut Emulator) -> Result<(), Box<dyn std::error::Error>
     draw_box(
         emulator,
         Point::new(16, content_y + gap + item_height + gap),
-        Size::new(448, item_height),
+        Size::new(448, item_height as u32),
         Gray4::new(0xA),
     )?;
     Text::new("Album Title", Point::new(32, content_y + gap + item_height + gap + 40), MonoTextStyle::new(&FONT_10X20, Gray4::BLACK))
@@ -82,7 +82,7 @@ fn demo_vstack(emulator: &mut Emulator) -> Result<(), Box<dyn std::error::Error>
     draw_box(
         emulator,
         Point::new(16, content_y + gap + (item_height + gap) * 2),
-        Size::new(448, item_height),
+        Size::new(448, item_height as u32),
         Gray4::new(0x8),
     )?;
     Text::new("3:45 / 5:23", Point::new(32, content_y + gap + (item_height + gap) * 2 + 40), MonoTextStyle::new(&FONT_10X20, Gray4::BLACK))
