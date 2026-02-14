@@ -1,0 +1,26 @@
+# Note: No default target set to allow both emulator and hardware builds
+# Use --target thumbv7em-none-eabihf explicitly for hardware builds
+
+[target.thumbv7em-none-eabihf]
+# Use probe-rs for flashing and debugging
+runner = "probe-rs run --chip STM32H743ZITx"
+
+rustflags = [
+  # Enable link-time optimization across all codegen units
+  "-C", "link-arg=-Tlink.x",
+
+  # Enable defmt feature
+  "-C", "link-arg=-Tdefmt.x",
+]
+
+[target.'cfg(all(target_arch = "arm", target_os = "none"))']
+# Pick ONE of these default features:
+# - `cortex-m-rt`: Minimal startup code
+# - `defmt-rtt`: defmt logging via RTT
+# - `panic-probe`: panic handler with probe-rs
+
+[alias]
+# Convenient aliases for common operations
+embed = "run --release --features hardware"
+test-hw = "run --release --example display_hardware_test --features hardware"
+test-emu = "run --example display_emulator_test --features emulator"

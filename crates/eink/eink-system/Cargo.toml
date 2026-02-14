@@ -1,0 +1,24 @@
+[package]
+name = "eink-system"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+# Graphics primitives
+embedded-graphics = "0.8.1"
+heapless = "0.8"
+
+# For screenshot testing
+eink-emulator = { path = "../eink-emulator", optional = true }
+image = { version = "0.25.9", optional = true }
+
+[dev-dependencies]
+eink-emulator = { path = "../eink-emulator" }
+tokio = { version = "1.49", features = ["macros", "rt"] }
+image = "0.25.9"
+
+[features]
+default = []
+std = []
+screenshot-tests = ["eink-emulator", "image"]

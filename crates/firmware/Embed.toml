@@ -1,0 +1,38 @@
+# probe-rs configuration for DAP firmware
+
+[default.general]
+chip = "STM32H743ZITx"
+
+[default.reset]
+# Enable the target after reset
+enabled = true
+# Reset before flashing
+halt_afterwards = false
+
+[default.rtt]
+# Enable Real-Time Transfer (RTT) for defmt logging
+enabled = true
+# Show timestamps in RTT output
+show_timestamps = true
+# RTT channels to listen on
+channels = [
+    { up = 0, name = "defmt", format = "Defmt" },
+]
+
+[default.gdb]
+# GDB server configuration
+enabled = false
+
+[default.flashing]
+# Enable flashing
+enabled = true
+# Halt the target after flashing
+halt_afterwards = false
+# Restore unwritten flash bytes between flashing
+restore_unwritten_bytes = false
+
+[default.probe]
+# Probe protocol (SWD or JTAG)
+protocol = "Swd"
+# Probe speed in kHz
+speed = 4000

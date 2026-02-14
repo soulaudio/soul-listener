@@ -1,0 +1,15 @@
+[default.general]
+chip = "STM32H743ZITx"
+
+[default.reset]
+halt_afterwards = false
+
+[default.rtt]
+enabled = true
+up_mode = "NoBlockSkip"
+channels = [
+    { up = 0, down = 0, name = "defmt", format = "Defmt" },
+]
+
+[default.gdb]
+enabled = false
