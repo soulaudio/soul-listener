@@ -2,6 +2,7 @@
 
 use eink_components::prelude::*;
 use eink_emulator::{Emulator, EmulatorConfig, Rotation, WaveformMode};
+use eink_specs::displays::WAVESHARE_7_5_V2;
 use embedded_graphics::prelude::*;
 use embedded_graphics::pixelcolor::Gray4;
 use embedded_graphics::primitives::{PrimitiveStyle, Rectangle};
@@ -10,13 +11,15 @@ use embedded_graphics::primitives::{PrimitiveStyle, Rectangle};
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("DAP - Now Playing Scene");
     println!("========================\n");
+    println!("Display: 7.5\" E-Ink (800×480 → 480×800 portrait)\n");
 
-    // Create emulator in portrait mode (DAP style)
+    // Create emulator with DAP-sized display (7.5" = 800×480)
+    // Rotated 90° for portrait mode = 480×800
     let config = EmulatorConfig {
         rotation: Rotation::Degrees90,
-        scale: 2,
+        scale: 1,  // Native resolution (larger display)
     };
-    let mut emulator = Emulator::with_config(config);
+    let mut emulator = Emulator::with_spec_and_config(&WAVESHARE_7_5_V2, config);
 
     // Render the now playing scene
     render_now_playing(&mut emulator).await?;

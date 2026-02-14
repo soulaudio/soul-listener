@@ -12,19 +12,21 @@ use platform::config;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("{} - Display Emulator", config::APP_NAME);
-    println!("Display: GDEM0397T81P (800×480)\n");
+    println!("Display: 7.5\" E-Ink (800×480 → 480×800 portrait)\n");
 
     // Create runtime for async operations
     let rt = tokio::runtime::Runtime::new()?;
 
-    // Configure emulator for portrait mode, no upscaling (as preferred for DAP)
+    // Configure emulator for portrait mode, native resolution
+    // Using 7.5" display (800×480) rotated 90° = 480×800 portrait
     let emulator_config = eink_emulator::EmulatorConfig {
         rotation: eink_emulator::Rotation::Degrees90,  // Portrait orientation
-        scale: 1,                                       // Native resolution (no upscaling)
+        scale: 1,                                       // Native resolution
     };
 
-    // Create emulator display (opens window in portrait mode)
-    let mut display = EmulatorDisplay::with_config(emulator_config);
+    // Create emulator display with 7.5" spec (opens window in portrait mode)
+    let spec = &eink_specs::displays::WAVESHARE_7_5_V2;
+    let mut display = EmulatorDisplay::with_spec_and_config(spec, emulator_config);
     println!("Window opened - Portrait mode (480×800), native resolution\n");
 
     // Initialize with blank white screen
