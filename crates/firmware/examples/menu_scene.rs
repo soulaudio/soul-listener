@@ -7,7 +7,7 @@
 //! - List-style navigation interface
 
 use eink_components::prelude::*;
-use eink_emulator::{Emulator, EmulatorConfig, Rotation};
+use eink_emulator::{Emulator, EmulatorConfig, Rotation, WaveformMode};
 use embedded_graphics::prelude::*;
 use embedded_graphics::pixelcolor::Gray4;
 use embedded_graphics::primitives::{PrimitiveStyle, Rectangle};
@@ -26,6 +26,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Render the menu scene
     render_menu(&mut emulator)?;
+
+    // Present the framebuffer to the window
+    emulator.refresh_with_waveform(eink_emulator::WaveformMode::GC16).await?;
 
     println!("✓ Menu scene rendered\n");
     println!("Window shows:");
