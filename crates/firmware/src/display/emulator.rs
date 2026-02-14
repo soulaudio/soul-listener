@@ -44,6 +44,16 @@ impl EmulatorDisplay {
         Self { emulator }
     }
 
+    /// Create emulator with custom display specification and configuration
+    pub fn with_spec_and_config(
+        spec: &'static eink_specs::DisplaySpec,
+        config: eink_emulator::EmulatorConfig,
+    ) -> Self {
+        let emulator = eink_emulator::Emulator::with_spec_and_config(spec, config);
+
+        Self { emulator }
+    }
+
     /// Create a headless emulator (no window, for testing)
     pub fn headless() -> Self {
         let emulator = eink_emulator::Emulator::headless_with_spec(&GDEM0397T81P_SPEC);
