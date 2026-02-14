@@ -13,7 +13,7 @@ pub fn run(headless: bool) -> Result<()> {
     print_banner();
 
     println!("{}", "Starting hot-reload development mode".bold());
-    println!("{}", "Watching: crates/firmware, crates/platform".dimmed());
+    println!("{}", "Watching: firmware, platform, eink-components, eink-system".dimmed());
     println!();
 
     // Initial build and run
@@ -47,11 +47,14 @@ pub fn run(headless: bool) -> Result<()> {
         notify::Config::default(),
     )?;
 
-    // Watch firmware source directory and Cargo.toml
+    // Watch firmware source directory, examples, and Cargo.toml
     let watch_paths = vec![
         Path::new("crates/firmware/src"),
+        Path::new("crates/firmware/examples"),  // Watch examples for hot-reload
         Path::new("crates/firmware/Cargo.toml"),
         Path::new("crates/platform"),
+        Path::new("crates/eink/eink-components/src"),  // Watch UI components
+        Path::new("crates/eink/eink-system/src"),      // Watch layout system
     ];
 
     for path in &watch_paths {
