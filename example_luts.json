@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "temperature": 25,
+  "waveforms": {
+    "GC16": {
+      "phases": [
+        {"voltage": -15, "duration_us": 10000},
+        {"voltage": 15, "duration_us": 10000},
+        {"voltage": -10, "duration_us": 8000},
+        {"voltage": 10, "duration_us": 8000},
+        {"voltage": -5, "duration_us": 5000},
+        {"voltage": 5, "duration_us": 5000}
+      ]
+    },
+    "DU4": {
+      "phases": [
+        {"voltage": -10, "duration_us": 5000},
+        {"voltage": 10, "duration_us": 5000}
+      ]
+    }
+  }
+}
