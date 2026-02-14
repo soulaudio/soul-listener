@@ -1,0 +1,52 @@
+# Rust
+target/
+Cargo.lock
+**/*.rs.bk
+*.pdb
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+*.bin
+*.elf
+*.hex
+*.map
+*.o
+*.d
+
+# Simulator output
+simulator_output/
+
+# Hardware tools
+*.kicad_prl
+*.kicad_pcb-bak
+_autosave-*
+fp-info-cache
+*.bak
+*.net
+
+# Manufacturing
+/hardware/manufacturing/gerber/*.zip
+
+# 3D CAD
+*.step.lock
+*.FCStd1
+
+# Logs
+*.log
+
+# Temporary files
+tmp/
+temp/
+
+# Git worktrees
+.worktrees/
