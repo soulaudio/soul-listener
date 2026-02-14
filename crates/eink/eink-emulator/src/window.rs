@@ -237,7 +237,7 @@ impl Window {
         let window = creator.window.expect("Failed to create window");
         let surface = creator.surface.expect("Failed to create surface");
 
-        let window_obj = Self {
+        let mut window_obj = Self {
             event_loop: Some(event_loop),
             window,
             surface,
@@ -248,6 +248,18 @@ impl Window {
             power_stats: None,
             quirk_warning: None,
         };
+
+        // Resize surface once during initialization (never resize again)
+        let (window_w, window_h) = config.rotation.apply_to_dimensions(width, height);
+        let final_width = window_w * config.scale;
+        let final_height = window_h * config.scale;
+        window_obj.surface
+            .resize(
+                std::num::NonZeroU32::new(final_width).unwrap(),
+                std::num::NonZeroU32::new(final_height).unwrap(),
+            )
+            .unwrap();
+
         window_obj.update_title();
         window_obj
     }
@@ -336,14 +348,7 @@ impl Window {
         let window_width = rotated_width * scale;
         let window_height = rotated_height * scale;
 
-        // Resize surface to match window dimensions
-        self.surface
-            .resize(
-                std::num::NonZeroU32::new(window_width).unwrap(),
-                std::num::NonZeroU32::new(window_height).unwrap(),
-            )
-            .unwrap();
-
+        // Surface was resized once during initialization, no need to resize every frame
         let mut buffer = self.surface.buffer_mut().unwrap();
 
         // Step 4: Apply upscaling with pixel grid effect
