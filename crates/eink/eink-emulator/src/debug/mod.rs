@@ -18,6 +18,9 @@ pub mod power_graph;
 pub mod manager;
 
 #[cfg(feature = "debug")]
+pub mod inspector;
+
+#[cfg(feature = "debug")]
 pub use state::*;
 
 #[cfg(feature = "debug")]
