@@ -9,6 +9,9 @@ pub mod state;
 pub mod overlay;
 
 #[cfg(feature = "debug")]
+pub mod panel;
+
+#[cfg(feature = "debug")]
 pub mod manager;
 
 #[cfg(feature = "debug")]
