@@ -119,6 +119,10 @@ pub struct Emulator {
     // Power tracking
     power_tracker: PowerTracker,
 
+    // Debug system
+    #[cfg(feature = "debug")]
+    debug_manager: Option<debug::DebugManager>,
+
     // Hardware quirks simulation
     pub quirks_enabled: bool,
     pub active_quirk: Option<String>,
@@ -165,6 +169,9 @@ impl Emulator {
             scale: config.scale,
         };
 
+        #[cfg(feature = "debug")]
+        let debug_manager = Some(debug::DebugManager::new());
+
         Self {
             framebuffer: Framebuffer::new(logical_width, logical_height),
             staged_buffer: vec![EinkColor::default(); buffer_size],
@@ -179,6 +186,8 @@ impl Emulator {
             init_sequence: InitSequence::new(),
             requires_init: false, // Disabled by default for backward compatibility
             power_tracker: PowerTracker::new(power_profile),
+            #[cfg(feature = "debug")]
+            debug_manager,
             quirks_enabled: true, // Enabled by default for realistic simulation
             active_quirk: None,
             config: config.clone(),
@@ -236,6 +245,8 @@ impl Emulator {
             init_sequence: InitSequence::new(),
             requires_init: false, // Disabled by default for backward compatibility
             power_tracker: PowerTracker::new(power_profile),
+            #[cfg(feature = "debug")]
+            debug_manager: None, // Debug not supported in headless mode
             quirks_enabled: true, // Enabled by default for realistic simulation
             active_quirk: None,
             config: config::EmulatorConfig::default(), // Config not used in headless mode
@@ -901,6 +912,42 @@ impl Emulator {
     /// Check if quirks are enabled
     pub fn quirks_enabled(&self) -> bool {
         self.quirks_enabled
+    }
+
+    /// Get debug manager reference
+    ///
+    /// Returns `None` in headless mode or when debug feature is disabled.
+    ///
+    /// # Example
+    /// ```no_run
+    /// # use eink_emulator::Emulator;
+    /// let mut emulator = Emulator::new(250, 122);
+    /// #[cfg(feature = "debug")]
+    /// if let Some(debug_manager) = emulator.debug_manager() {
+    ///     println!("Panel visible: {}", debug_manager.state().panel_visible);
+    /// }
+    /// ```
+    #[cfg(feature = "debug")]
+    pub fn debug_manager(&self) -> Option<&debug::DebugManager> {
+        self.debug_manager.as_ref()
+    }
+
+    /// Get mutable debug manager reference
+    ///
+    /// Returns `None` in headless mode or when debug feature is disabled.
+    ///
+    /// # Example
+    /// ```no_run
+    /// # use eink_emulator::Emulator;
+    /// let mut emulator = Emulator::new(250, 122);
+    /// #[cfg(feature = "debug")]
+    /// if let Some(debug_manager) = emulator.debug_manager_mut() {
+    ///     debug_manager.state_mut().toggle_panel();
+    /// }
+    /// ```
+    #[cfg(feature = "debug")]
+    pub fn debug_manager_mut(&mut self) -> Option<&mut debug::DebugManager> {
+        self.debug_manager.as_mut()
     }
 }
 
