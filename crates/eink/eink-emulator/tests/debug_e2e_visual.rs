@@ -21,7 +21,6 @@ fn setup_screenshot_dir() -> std::path::PathBuf {
 }
 
 /// Helper to save framebuffer as PNG
-#[allow(dead_code)]
 fn save_screenshot(buffer: &[u32], width: u32, height: u32, name: &str) {
     let dir = setup_screenshot_dir();
     let path = dir.join(format!("{}.png", name));
@@ -119,7 +118,7 @@ fn test_e2e_overlay_borders_render() {
     assert_eq!(button_corner, 0xFF00FF80, "Button corner should be green");
 
     // Save screenshot for manual inspection
-    // save_screenshot(&buffer, 800, 600, "e2e_overlay_borders");
+    save_screenshot(&buffer, 800, 600, "e2e_overlay_borders");
 
     println!("  ✅ Overlay borders E2E test passed");
 }
@@ -163,7 +162,7 @@ fn test_e2e_debug_panel_render() {
     assert_eq!(right_side_pixel, PANEL_BG, "Right side should be panel color");
 
     // Save screenshot for manual inspection
-    // save_screenshot(&buffer, 800, 600, "e2e_debug_panel");
+    save_screenshot(&buffer, 800, 600, "e2e_debug_panel");
 
     println!("  ✅ Debug panel E2E test passed");
 }
@@ -193,7 +192,7 @@ fn test_e2e_power_graph_render() {
     assert!(green_pixels >= 40, "Graph should have multiple points");
 
     // Save screenshot for manual inspection
-    // save_screenshot(&buffer, 800, 600, "e2e_power_graph");
+    save_screenshot(&buffer, 800, 600, "e2e_power_graph");
 
     println!("  ✅ Power graph E2E test passed");
 }
@@ -266,7 +265,7 @@ fn test_e2e_complete_debug_scene() {
     assert!(panel_pixels > 0, "Panel should be visible");
 
     // Save complete screenshot
-    // save_screenshot(&buffer, 800, 600, "e2e_complete_scene");
+    save_screenshot(&buffer, 800, 600, "e2e_complete_scene");
 
     println!("  ✅ Complete debug scene E2E test passed");
 }
