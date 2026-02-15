@@ -16,6 +16,16 @@ Foundation for e-ink emulation built on research-backed best practices.
 - ✅ **Screenshot Capture** - Visual regression testing
 - ✅ **2x Scaling** - Better desktop visibility
 
+## Debug Features
+
+Enable comprehensive debug tooling:
+
+```bash
+cargo run --features debug
+```
+
+See [docs/DEBUG.md](docs/DEBUG.md) for full documentation.
+
 ### Installation
 
 Add to `Cargo.toml`:
