@@ -17,12 +17,12 @@ cargo run --example debug_demo --features debug
 
 ## Hotkeys
 
-| Key | Action |
-|-----|--------|
-| F12 | Toggle debug panel |
-| F1  | Toggle layout borders |
-| F2  | Toggle inspector mode |
-| F3  | Toggle power graph |
+| Key    | Action |
+|--------|--------|
+| Ctrl+1 | Toggle debug panel |
+| Ctrl+2 | Toggle layout borders |
+| Ctrl+3 | Toggle inspector mode |
+| Ctrl+4 | Toggle power graph |
 
 ## Border Colors
 

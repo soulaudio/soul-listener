@@ -138,6 +138,8 @@ pub struct Window {
     power_stats: Option<PowerStats>,
     quirk_warning: Option<String>,
     current_scale_factor: f64, // Track current DPI scale factor
+    #[cfg(feature = "debug")]
+    debug_manager: Option<crate::debug::DebugManager>,
 }
 
 /// Internal handler for the event loop
@@ -149,6 +151,8 @@ struct EventHandler {
     aspect_ratio: f64,
     /// Last requested size to detect user resize vs DPI change
     last_logical_size: (u32, u32),
+    #[cfg(feature = "debug")]
+    debug_manager: Option<crate::debug::DebugManager>,
 }
 
 impl ApplicationHandler for EventHandler {
@@ -162,10 +166,15 @@ impl ApplicationHandler for EventHandler {
         _window_id: WindowId,
         event: WindowEvent,
     ) {
-        // Debug event handling (feature-gated)
-        // Note: This is a placeholder - actual integration happens in Emulator::run()
-        // Window doesn't directly handle debug events; they're processed by DebugManager
-        // in the emulator's event loop before being passed to the window.
+        // Handle debug events first (feature-gated)
+        #[cfg(feature = "debug")]
+        if let Some(ref mut debug_manager) = self.debug_manager {
+            use crate::debug::manager::EventResult;
+            if debug_manager.handle_event(&event) == EventResult::Consumed {
+                // Debug system consumed the event, don't process further
+                return;
+            }
+        }
 
         match event {
             WindowEvent::CloseRequested => {
@@ -316,6 +325,8 @@ impl Window {
             power_stats: None,
             quirk_warning: None,
             current_scale_factor: initial_scale_factor,
+            #[cfg(feature = "debug")]
+            debug_manager: None,
         };
 
         // Resize surface based on current scale factor
@@ -342,6 +353,12 @@ impl Window {
     pub fn set_quirk_warning(&mut self, warning: Option<&str>) {
         self.quirk_warning = warning.map(|s| s.to_string());
         self.update_title();
+    }
+
+    /// Set debug manager for keyboard event handling
+    #[cfg(feature = "debug")]
+    pub fn set_debug_manager(&mut self, debug_manager: crate::debug::DebugManager) {
+        self.debug_manager = Some(debug_manager);
     }
 
     /// Resize softbuffer surface based on scale factor
@@ -501,6 +518,8 @@ impl Window {
                 surface: Rc::clone(&self.surface),
                 aspect_ratio,
                 last_logical_size: (logical_w, logical_h),
+                #[cfg(feature = "debug")]
+                debug_manager: self.debug_manager.take(),
             };
             let _ = event_loop.run_app(&mut handler);
         }

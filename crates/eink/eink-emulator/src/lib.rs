@@ -520,8 +520,14 @@ impl Emulator {
 
     /// Run window event loop (blocks until window closed)
     #[cfg(not(feature = "headless"))]
-    pub fn run(self) {
-        if let Some(window) = self.window {
+    pub fn run(mut self) {
+        if let Some(mut window) = self.window {
+            // Transfer debug_manager to window for keyboard event handling
+            #[cfg(feature = "debug")]
+            if let Some(debug_manager) = self.debug_manager.take() {
+                window.set_debug_manager(debug_manager);
+            }
+
             window.run();
         }
     }
