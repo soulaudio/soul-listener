@@ -5,11 +5,13 @@
 //! physical hardware.
 
 use embedded_graphics::pixelcolor::Gray4;
-use embedded_graphics::prelude::{DrawTarget, OriginDimensions, Point, Pixel, Size, GrayColor, Dimensions, Primitive, Drawable};
+use embedded_graphics::prelude::{
+    Dimensions, DrawTarget, Drawable, GrayColor, OriginDimensions, Pixel, Point, Primitive, Size,
+};
 use tokio::time::Duration;
 
+use super::{DISPLAY_HEIGHT, DISPLAY_WIDTH, FRAMEBUFFER_SIZE, GDEM0397T81P_SPEC};
 use crate::hal::DapDisplay;
-use super::{GDEM0397T81P_SPEC, DISPLAY_WIDTH, DISPLAY_HEIGHT, FRAMEBUFFER_SIZE};
 
 /// Emulator display wrapper
 pub struct EmulatorDisplay {
@@ -87,7 +89,10 @@ impl Default for EmulatorDisplay {
 
 impl DapDisplay for EmulatorDisplay {
     async fn init(&mut self) -> Result<(), Self::DriverError> {
-        println!("Initializing emulator display ({}×{})", DISPLAY_WIDTH, DISPLAY_HEIGHT);
+        println!(
+            "Initializing emulator display ({}×{})",
+            DISPLAY_WIDTH, DISPLAY_HEIGHT
+        );
 
         // Emulator doesn't need initialization, but we simulate the delay
         tokio::time::sleep(Duration::from_millis(100)).await;
@@ -115,7 +120,7 @@ impl DapDisplay for EmulatorDisplay {
 
     async fn clear(&mut self, color: crate::hal::Color) -> Result<(), Self::DriverError> {
         // Clear the entire display
-        use embedded_graphics::primitives::{Rectangle, PrimitiveStyle};
+        use embedded_graphics::primitives::{PrimitiveStyle, Rectangle};
 
         let fill_color = match color {
             crate::hal::Color::White => Gray4::WHITE,
@@ -142,7 +147,9 @@ impl platform::DisplayDriver for EmulatorDisplay {
         // Use the eink-emulator's DisplayDriver trait
         use eink_emulator::DisplayDriver;
 
-        self.emulator.refresh_full().await
+        self.emulator
+            .refresh_full()
+            .await
             .map_err(|_| EmulatorError::RefreshFailed)?;
 
         Ok(())
@@ -154,7 +161,9 @@ impl platform::DisplayDriver for EmulatorDisplay {
         // Use the eink-emulator's DisplayDriver trait
         use eink_emulator::DisplayDriver;
 
-        self.emulator.refresh_partial().await
+        self.emulator
+            .refresh_partial()
+            .await
             .map_err(|_| EmulatorError::RefreshFailed)?;
 
         Ok(())
@@ -166,7 +175,9 @@ impl platform::DisplayDriver for EmulatorDisplay {
         // Use the eink-emulator's DisplayDriver trait
         use eink_emulator::DisplayDriver;
 
-        self.emulator.sleep().await
+        self.emulator
+            .sleep()
+            .await
             .map_err(|_| EmulatorError::RefreshFailed)?;
 
         Ok(())
@@ -178,7 +189,9 @@ impl platform::DisplayDriver for EmulatorDisplay {
         // Use the eink-emulator's DisplayDriver trait
         use eink_emulator::DisplayDriver;
 
-        self.emulator.wake().await
+        self.emulator
+            .wake()
+            .await
             .map_err(|_| EmulatorError::RefreshFailed)?;
 
         Ok(())
@@ -194,7 +207,8 @@ impl DrawTarget for EmulatorDisplay {
         I: IntoIterator<Item = Pixel<Self::Color>>,
     {
         // Forward to emulator's DrawTarget implementation
-        self.emulator.draw_iter(pixels)
+        self.emulator
+            .draw_iter(pixels)
             .map_err(|_| EmulatorError::DrawFailed)
     }
 }

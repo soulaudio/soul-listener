@@ -140,10 +140,10 @@ pub const WAVESHARE_5_65_SPECTRA6: DisplaySpec = DisplaySpec {
     height: 448,
     controller: Controller::ACeP,
     panel_type: PanelType::Spectra6,
-    grayscale_levels: 6, // 6 distinct colors
-    full_refresh_ms: 15000, // 15 seconds for color
-    partial_refresh_ms: 15000, // Same as full (not recommended)
-    fast_refresh_ms: 15000, // No fast mode for color
+    grayscale_levels: 6,         // 6 distinct colors
+    full_refresh_ms: 15000,      // 15 seconds for color
+    partial_refresh_ms: 15000,   // Same as full (not recommended)
+    fast_refresh_ms: 15000,      // No fast mode for color
     ghosting_rate_partial: 0.12, // Higher ghosting for color
     ghosting_rate_fast: 0.12,
     flash_count_full: 30, // Many flashes for color particles

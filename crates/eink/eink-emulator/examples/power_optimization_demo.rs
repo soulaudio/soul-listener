@@ -68,7 +68,10 @@ async fn demo_idle_power(emulator: &mut Emulator) {
 
     println!("   ✓ Idle time: {}ms", elapsed.as_millis());
     println!("   ✓ Average current: {:.3}mA", idle_ma);
-    println!("   ✓ Energy consumed: {:.3}mWh", stats.total_energy_uwh as f32 / 1000.0);
+    println!(
+        "   ✓ Energy consumed: {:.3}mWh",
+        stats.total_energy_uwh as f32 / 1000.0
+    );
     println!();
 }
 
@@ -93,25 +96,46 @@ async fn demo_refresh_comparison(emulator: &mut Emulator) {
     let fast_stats = emulator.power_stats().clone();
 
     println!("   Full Refresh (GC16):");
-    println!("     - Peak current: {:.1}mA", full_stats.peak_current_ua as f32 / 1000.0);
-    println!("     - Energy: {:.3}mWh", full_stats.total_energy_uwh as f32 / 1000.0);
+    println!(
+        "     - Peak current: {:.1}mA",
+        full_stats.peak_current_ua as f32 / 1000.0
+    );
+    println!(
+        "     - Energy: {:.3}mWh",
+        full_stats.total_energy_uwh as f32 / 1000.0
+    );
     println!("     - Duration: {}ms", full_stats.active_time_ms);
 
     println!("\n   Partial Refresh (DU4):");
-    println!("     - Peak current: {:.1}mA", partial_stats.peak_current_ua as f32 / 1000.0);
-    println!("     - Energy: {:.3}mWh", partial_stats.total_energy_uwh as f32 / 1000.0);
+    println!(
+        "     - Peak current: {:.1}mA",
+        partial_stats.peak_current_ua as f32 / 1000.0
+    );
+    println!(
+        "     - Energy: {:.3}mWh",
+        partial_stats.total_energy_uwh as f32 / 1000.0
+    );
     println!("     - Duration: {}ms", partial_stats.active_time_ms);
 
     println!("\n   Fast Refresh (DU):");
-    println!("     - Peak current: {:.1}mA", fast_stats.peak_current_ua as f32 / 1000.0);
-    println!("     - Energy: {:.3}mWh", fast_stats.total_energy_uwh as f32 / 1000.0);
+    println!(
+        "     - Peak current: {:.1}mA",
+        fast_stats.peak_current_ua as f32 / 1000.0
+    );
+    println!(
+        "     - Energy: {:.3}mWh",
+        fast_stats.total_energy_uwh as f32 / 1000.0
+    );
     println!("     - Duration: {}ms", fast_stats.active_time_ms);
 
     let full_energy = full_stats.total_energy_uwh as f32;
     let partial_energy = partial_stats.total_energy_uwh as f32;
     let savings = ((full_energy - partial_energy) / full_energy) * 100.0;
 
-    println!("\n   💡 Energy savings: Partial uses {:.1}% less energy than Full", savings);
+    println!(
+        "\n   💡 Energy savings: Partial uses {:.1}% less energy than Full",
+        savings
+    );
     println!();
 }
 
@@ -144,9 +168,18 @@ async fn demo_realistic_usage(emulator: &mut Emulator) {
     let percentages = stats.state_percentages();
 
     println!("   Total runtime: {}ms", stats.total_runtime_ms());
-    println!("   Average current: {:.2}mA", stats.average_current_ua as f32 / 1000.0);
-    println!("   Peak current: {:.1}mA", stats.peak_current_ua as f32 / 1000.0);
-    println!("   Total energy: {:.3}mWh", stats.total_energy_uwh as f32 / 1000.0);
+    println!(
+        "   Average current: {:.2}mA",
+        stats.average_current_ua as f32 / 1000.0
+    );
+    println!(
+        "   Peak current: {:.1}mA",
+        stats.peak_current_ua as f32 / 1000.0
+    );
+    println!(
+        "   Total energy: {:.3}mWh",
+        stats.total_energy_uwh as f32 / 1000.0
+    );
     println!("\n   Time breakdown:");
     println!("     - Idle (reading): {:.1}%", percentages.idle);
     println!("     - Active (refresh): {:.1}%", percentages.active);
@@ -223,9 +256,18 @@ async fn demo_power_breakdown(emulator: &mut Emulator) {
     println!("     - Sleep (100ms): {:.3}µWh", sleep_energy);
 
     println!("\n   Relative costs:");
-    println!("     - Full refresh = {:.1}x Partial refresh", full_energy as f32 / partial_energy as f32);
-    println!("     - Partial refresh = {:.1}x Idle (100ms)", partial_energy as f32 / idle_energy as f32);
-    println!("     - Idle (100ms) = {:.1}x Sleep (100ms)", idle_energy as f32 / sleep_energy as f32);
+    println!(
+        "     - Full refresh = {:.1}x Partial refresh",
+        full_energy as f32 / partial_energy as f32
+    );
+    println!(
+        "     - Partial refresh = {:.1}x Idle (100ms)",
+        partial_energy as f32 / idle_energy as f32
+    );
+    println!(
+        "     - Idle (100ms) = {:.1}x Sleep (100ms)",
+        idle_energy as f32 / sleep_energy as f32
+    );
 
     println!("\n   💡 Optimization strategies:");
     println!("      1. Minimize full refreshes (use partial when possible)");
@@ -254,12 +296,9 @@ fn draw_page(emulator: &mut Emulator, page_num: u32) {
 
     // Draw some content to simulate text
     for i in 0..5 {
-        Rectangle::new(
-            Point::new(10, 35 + i * 15),
-            Size::new(200, 2),
-        )
-        .into_styled(PrimitiveStyle::with_fill(Gray4::new(1)))
-        .draw(emulator)
-        .unwrap();
+        Rectangle::new(Point::new(10, 35 + i * 15), Size::new(200, 2))
+            .into_styled(PrimitiveStyle::with_fill(Gray4::new(1)))
+            .draw(emulator)
+            .unwrap();
     }
 }

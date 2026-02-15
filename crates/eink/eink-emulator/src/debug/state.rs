@@ -34,7 +34,7 @@ pub struct DebugState {
     pub power_graph_enabled: bool,
     pub hovered_component: Option<ComponentInfo>,
     pub selected_component: Option<ComponentInfo>,
-    pub power_history: Vec<PowerSample>,  // Will be ring buffer later
+    pub power_history: Vec<PowerSample>, // Will be ring buffer later
 }
 
 impl Default for DebugState {

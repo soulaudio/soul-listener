@@ -9,8 +9,8 @@
 use eink_components::prelude::*;
 use eink_emulator::{Emulator, EmulatorConfig, Rotation, WaveformMode};
 use eink_specs::displays::WAVESHARE_7_5_V2;
-use embedded_graphics::prelude::*;
 use embedded_graphics::pixelcolor::Gray4;
+use embedded_graphics::prelude::*;
 use embedded_graphics::primitives::{PrimitiveStyle, Rectangle};
 
 #[tokio::main]
@@ -23,7 +23,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Rotated 90° for portrait mode = 480×800
     let config = EmulatorConfig {
         rotation: Rotation::Degrees90,
-        scale: 1,  // Native resolution (larger display)
+        scale: 1, // Native resolution (larger display)
     };
     let mut emulator = Emulator::with_spec_and_config(&WAVESHARE_7_5_V2, config);
 
@@ -31,7 +31,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     render_menu(&mut emulator)?;
 
     // Present the framebuffer to the window
-    emulator.refresh_with_waveform(eink_emulator::WaveformMode::GC16).await?;
+    emulator
+        .refresh_with_waveform(eink_emulator::WaveformMode::GC16)
+        .await?;
 
     println!("✓ Menu scene rendered\n");
     println!("Window shows:");
@@ -78,7 +80,7 @@ where
         ("Library", IconType::Settings), // Using Settings icon as placeholder
         ("Playlists", IconType::Stop),   // Using Stop icon as placeholder
         ("Settings", IconType::Settings),
-        ("About", IconType::Pause),      // Using Pause icon as placeholder
+        ("About", IconType::Pause), // Using Pause icon as placeholder
         ("Power Off", IconType::Stop),
     ];
 
@@ -97,10 +99,7 @@ where
         }
 
         // Draw icon
-        Icon::new(*icon_type, 24).render(
-            display,
-            Point::new(30, y_pos + 10),
-        )?;
+        Icon::new(*icon_type, 24).render(display, Point::new(30, y_pos + 10))?;
 
         // Draw label
         let label = Label::new(label_text)
@@ -128,18 +127,12 @@ where
     let footer_y = (size.height - 40) as i32;
 
     // Footer background (light gray bar)
-    Rectangle::new(
-        Point::new(0, footer_y),
-        Size::new(size.width, 40),
-    )
-    .into_styled(PrimitiveStyle::with_fill(Gray4::new(0xE)))
-    .draw(display)?;
+    Rectangle::new(Point::new(0, footer_y), Size::new(size.width, 40))
+        .into_styled(PrimitiveStyle::with_fill(Gray4::new(0xE)))
+        .draw(display)?;
 
     // Navigation hint: Up/Down
-    Icon::new(IconType::VolumeUp, 16).render(
-        display,
-        Point::new(40, footer_y + 12),
-    )?;
+    Icon::new(IconType::VolumeUp, 16).render(display, Point::new(40, footer_y + 12))?;
     let nav_label = Label::new("Navigate")
         .color(Gray4::new(0x4))
         .size(TextSize::Small);

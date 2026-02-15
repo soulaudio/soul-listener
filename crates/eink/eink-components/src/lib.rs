@@ -22,13 +22,13 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
 pub mod button;
+pub mod icon;
 pub mod label;
 pub mod progress_bar;
-pub mod icon;
 
 pub mod prelude {
     pub use crate::button::*;
+    pub use crate::icon::*;
     pub use crate::label::*;
     pub use crate::progress_bar::*;
-    pub use crate::icon::*;
 }

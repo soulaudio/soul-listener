@@ -32,8 +32,8 @@
 
 use crate::layout::{Constraints, Layout, LayoutResult};
 use crate::style::{Align, Edges, Justify};
-use embedded_graphics::prelude::*;
 use embedded_graphics::pixelcolor::Gray4;
+use embedded_graphics::prelude::*;
 use heapless::Vec;
 
 #[cfg(feature = "std")]
@@ -43,7 +43,6 @@ use std::boxed::Box;
 extern crate alloc;
 #[cfg(not(feature = "std"))]
 use alloc::boxed::Box;
-
 
 /// Vertical stack container (column layout)
 ///
@@ -184,10 +183,8 @@ impl<const N: usize> Layout for VStack<N> {
             0
         };
 
-        let child_constraints = Constraints::new(
-            Size::new(0, 0),
-            Size::new(available_width, child_height),
-        );
+        let child_constraints =
+            Constraints::new(Size::new(0, 0), Size::new(available_width, child_height));
 
         // Layout all children and calculate actual sizes
         let mut child_layouts: Vec<LayoutResult, N> = Vec::new();
@@ -352,10 +349,8 @@ impl<const N: usize> Layout for HStack<N> {
             0
         };
 
-        let child_constraints = Constraints::new(
-            Size::new(0, 0),
-            Size::new(child_width, available_height),
-        );
+        let child_constraints =
+            Constraints::new(Size::new(0, 0), Size::new(child_width, available_height));
 
         // Layout all children and calculate actual sizes
         let mut child_layouts: Vec<LayoutResult, N> = Vec::new();
@@ -720,9 +715,15 @@ mod tests {
     #[test]
     fn test_children_method() {
         let children: [Box<dyn Layout>; 3] = [
-            Box::new(FixedSize { size: Size::new(10, 10) }),
-            Box::new(FixedSize { size: Size::new(20, 20) }),
-            Box::new(FixedSize { size: Size::new(30, 30) }),
+            Box::new(FixedSize {
+                size: Size::new(10, 10),
+            }),
+            Box::new(FixedSize {
+                size: Size::new(20, 20),
+            }),
+            Box::new(FixedSize {
+                size: Size::new(30, 30),
+            }),
         ];
 
         let vstack: VStack<4> = VStack::new().children(children);
@@ -734,20 +735,36 @@ mod tests {
         let mut vstack: VStack<2> = VStack::new();
 
         // Should accept up to 2 children
-        assert!(vstack.add_child(Box::new(FixedSize { size: Size::new(10, 10) })).is_ok());
-        assert!(vstack.add_child(Box::new(FixedSize { size: Size::new(20, 20) })).is_ok());
+        assert!(vstack
+            .add_child(Box::new(FixedSize {
+                size: Size::new(10, 10)
+            }))
+            .is_ok());
+        assert!(vstack
+            .add_child(Box::new(FixedSize {
+                size: Size::new(20, 20)
+            }))
+            .is_ok());
 
         // Third child should fail
-        let result = vstack.add_child(Box::new(FixedSize { size: Size::new(30, 30) }));
+        let result = vstack.add_child(Box::new(FixedSize {
+            size: Size::new(30, 30),
+        }));
         assert!(result.is_err());
     }
 
     #[test]
     fn test_vstack_different_widths() {
         let mut vstack: VStack<3> = VStack::new();
-        let _ = vstack.add_child(Box::new(FixedSize { size: Size::new(50, 10) }));
-        let _ = vstack.add_child(Box::new(FixedSize { size: Size::new(80, 10) }));
-        let _ = vstack.add_child(Box::new(FixedSize { size: Size::new(30, 10) }));
+        let _ = vstack.add_child(Box::new(FixedSize {
+            size: Size::new(50, 10),
+        }));
+        let _ = vstack.add_child(Box::new(FixedSize {
+            size: Size::new(80, 10),
+        }));
+        let _ = vstack.add_child(Box::new(FixedSize {
+            size: Size::new(30, 10),
+        }));
 
         let constraints = Constraints::loose(Size::new(200, 100));
         let node = vstack.layout(constraints);
@@ -759,9 +776,15 @@ mod tests {
     #[test]
     fn test_hstack_different_heights() {
         let mut hstack: HStack<3> = HStack::new();
-        let _ = hstack.add_child(Box::new(FixedSize { size: Size::new(10, 20) }));
-        let _ = hstack.add_child(Box::new(FixedSize { size: Size::new(10, 50) }));
-        let _ = hstack.add_child(Box::new(FixedSize { size: Size::new(10, 30) }));
+        let _ = hstack.add_child(Box::new(FixedSize {
+            size: Size::new(10, 20),
+        }));
+        let _ = hstack.add_child(Box::new(FixedSize {
+            size: Size::new(10, 50),
+        }));
+        let _ = hstack.add_child(Box::new(FixedSize {
+            size: Size::new(10, 30),
+        }));
 
         let constraints = Constraints::loose(Size::new(200, 100));
         let node = hstack.layout(constraints);

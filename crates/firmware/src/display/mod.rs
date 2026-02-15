@@ -24,7 +24,7 @@ pub const GDEM0397T81P_SPEC: eink_specs::DisplaySpec = eink_specs::DisplaySpec {
     height: 480,
     controller: eink_specs::Controller::SSD1677,
     panel_type: eink_specs::PanelType::Carta1300,
-    color_mode: None, // Monochrome
+    color_mode: None,    // Monochrome
     grayscale_levels: 4, // 2-bit per pixel
     full_refresh_ms: 2000,
     partial_refresh_ms: 300,

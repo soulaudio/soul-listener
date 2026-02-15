@@ -2,12 +2,12 @@
 //!
 //! Shows how to configure the emulator for different orientations and scales.
 
-use eink_emulator::{Emulator, EmulatorConfig, Rotation, DisplayDriver};
-use embedded_graphics::prelude::*;
-use embedded_graphics::primitives::{Rectangle, PrimitiveStyle, Circle};
-use embedded_graphics::pixelcolor::Gray4;
-use embedded_graphics::text::{Text, Alignment};
+use eink_emulator::{DisplayDriver, Emulator, EmulatorConfig, Rotation};
 use embedded_graphics::mono_font::{ascii::FONT_10X20, MonoTextStyle};
+use embedded_graphics::pixelcolor::Gray4;
+use embedded_graphics::prelude::*;
+use embedded_graphics::primitives::{Circle, PrimitiveStyle, Rectangle};
+use embedded_graphics::text::{Alignment, Text};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -59,21 +59,16 @@ fn draw_demo_content(emulator: &mut Emulator) -> Result<(), Box<dyn std::error::
 
     // Draw title (top-left corner in logical space)
     let text_style = MonoTextStyle::new(&FONT_10X20, Gray4::BLACK);
-    Text::new("Rotation Demo", Point::new(10, 20), text_style)
-        .draw(emulator)?;
+    Text::new("Rotation Demo", Point::new(10, 20), text_style).draw(emulator)?;
 
     // Draw orientation markers
-    Text::new("TOP", Point::new(350, 30), text_style)
-        .draw(emulator)?;
+    Text::new("TOP", Point::new(350, 30), text_style).draw(emulator)?;
 
-    Text::new("LEFT", Point::new(10, 240), text_style)
-        .draw(emulator)?;
+    Text::new("LEFT", Point::new(10, 240), text_style).draw(emulator)?;
 
-    Text::new("RIGHT", Point::new(720, 240), text_style)
-        .draw(emulator)?;
+    Text::new("RIGHT", Point::new(720, 240), text_style).draw(emulator)?;
 
-    Text::new("BOTTOM", Point::new(340, 470), text_style)
-        .draw(emulator)?;
+    Text::new("BOTTOM", Point::new(340, 470), text_style).draw(emulator)?;
 
     // Draw a circle in the center
     Circle::new(Point::new(350, 190), 100)
@@ -88,19 +83,28 @@ fn draw_demo_content(emulator: &mut Emulator) -> Result<(), Box<dyn std::error::
         .draw(emulator)?;
 
     // Top-right
-    Rectangle::new(Point::new(800 - corner_size as i32, 0), Size::new(corner_size, corner_size))
-        .into_styled(PrimitiveStyle::with_fill(Gray4::new(0x8)))
-        .draw(emulator)?;
+    Rectangle::new(
+        Point::new(800 - corner_size as i32, 0),
+        Size::new(corner_size, corner_size),
+    )
+    .into_styled(PrimitiveStyle::with_fill(Gray4::new(0x8)))
+    .draw(emulator)?;
 
     // Bottom-left
-    Rectangle::new(Point::new(0, 480 - corner_size as i32), Size::new(corner_size, corner_size))
-        .into_styled(PrimitiveStyle::with_fill(Gray4::new(0xC)))
-        .draw(emulator)?;
+    Rectangle::new(
+        Point::new(0, 480 - corner_size as i32),
+        Size::new(corner_size, corner_size),
+    )
+    .into_styled(PrimitiveStyle::with_fill(Gray4::new(0xC)))
+    .draw(emulator)?;
 
     // Bottom-right
-    Rectangle::new(Point::new(800 - corner_size as i32, 480 - corner_size as i32), Size::new(corner_size, corner_size))
-        .into_styled(PrimitiveStyle::with_fill(Gray4::WHITE))
-        .draw(emulator)?;
+    Rectangle::new(
+        Point::new(800 - corner_size as i32, 480 - corner_size as i32),
+        Size::new(corner_size, corner_size),
+    )
+    .into_styled(PrimitiveStyle::with_fill(Gray4::WHITE))
+    .draw(emulator)?;
 
     Ok(())
 }

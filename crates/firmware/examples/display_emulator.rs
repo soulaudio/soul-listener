@@ -3,8 +3,8 @@
 //! Blank canvas for developing the DAP UI.
 //! Run with: cargo run --example display_emulator --features emulator
 
-use embedded_graphics::prelude::*;
 use embedded_graphics::pixelcolor::Gray4;
+use embedded_graphics::prelude::*;
 use embedded_graphics::primitives::{PrimitiveStyle, Rectangle};
 
 use firmware::EmulatorDisplay;
@@ -20,8 +20,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Configure emulator for portrait mode, native resolution
     // Using 7.5" display (800×480) rotated 90° = 480×800 portrait
     let emulator_config = eink_emulator::EmulatorConfig {
-        rotation: eink_emulator::Rotation::Degrees90,  // Portrait orientation
-        scale: 1,                                       // Native resolution
+        rotation: eink_emulator::Rotation::Degrees90, // Portrait orientation
+        scale: 1,                                     // Native resolution
     };
 
     // Create emulator display with 7.5" spec (opens window in portrait mode)
@@ -39,9 +39,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .draw(&mut display)?;
 
     use platform::DisplayDriver;
-    rt.block_on(async {
-        display.refresh_full().await
-    })?;
+    rt.block_on(async { display.refresh_full().await })?;
 
     println!("✓ Display ready\n");
 
@@ -49,9 +47,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Rendering demo menu...");
     render_demo_menu(&mut display)?;
 
-    rt.block_on(async {
-        display.refresh_full().await
-    })?;
+    rt.block_on(async { display.refresh_full().await })?;
 
     println!("✓ Demo menu rendered\n");
     println!("Close the window to exit.\n");
@@ -93,8 +89,7 @@ where
 
     // Header text
     let header_style = MonoTextStyle::new(&FONT_10X20, Gray4::WHITE);
-    Text::new("Main Menu", Point::new(20, 35), header_style)
-        .draw(display)?;
+    Text::new("Main Menu", Point::new(20, 35), header_style).draw(display)?;
 
     // Menu items
     let menu_style = MonoTextStyle::new(&FONT_10X20, Gray4::BLACK);
@@ -111,16 +106,12 @@ where
 
         // Item background (alternate shading)
         if idx % 2 == 0 {
-            Rectangle::new(
-                Point::new(10, y - 5),
-                Size::new(size.width - 20, 45),
-            )
-            .into_styled(PrimitiveStyle::with_fill(Gray4::new(0xE)))
-            .draw(display)?;
+            Rectangle::new(Point::new(10, y - 5), Size::new(size.width - 20, 45))
+                .into_styled(PrimitiveStyle::with_fill(Gray4::new(0xE)))
+                .draw(display)?;
         }
 
-        Text::new(item, Point::new(30, y + 20), menu_style)
-            .draw(display)?;
+        Text::new(item, Point::new(30, y + 20), menu_style).draw(display)?;
     }
 
     // Footer text

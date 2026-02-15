@@ -2,7 +2,7 @@
 //!
 //! Tests for Spectra 6 and Kaleido 3 color e-ink displays
 
-use eink_emulator::{ColorMode, EinkColor, Framebuffer, SpectraColor, PixelState, WaveformMode};
+use eink_emulator::{ColorMode, EinkColor, Framebuffer, PixelState, SpectraColor, WaveformMode};
 use embedded_graphics::pixelcolor::Gray4;
 use embedded_graphics::prelude::GrayColor;
 

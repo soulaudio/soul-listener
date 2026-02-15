@@ -41,9 +41,7 @@ pub struct DebugPanel {
 impl DebugPanel {
     /// Create a new debug panel renderer
     pub fn new() -> Self {
-        Self {
-            width: PANEL_WIDTH,
-        }
+        Self { width: PANEL_WIDTH }
     }
 
     /// Get the width of the debug panel in pixels

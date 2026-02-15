@@ -98,7 +98,7 @@ impl WaveformMode {
             WaveformMode::DU4 => 4,
             WaveformMode::DU | WaveformMode::A2 => 2,
             WaveformMode::GCC16 => 6, // 6 distinct colors
-            WaveformMode::GCU => 16,  // 4-bit per channel = 4096 colors, but report 16 for compatibility
+            WaveformMode::GCU => 16, // 4-bit per channel = 4096 colors, but report 16 for compatibility
         }
     }
 

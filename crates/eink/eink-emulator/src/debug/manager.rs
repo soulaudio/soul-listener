@@ -213,11 +213,15 @@ mod tests {
         assert_eq!(manager.power_graph().current_power(), 10.0);
 
         // Test mutable accessor
-        manager.power_graph_mut().add_sample(50.0, Some(RefreshType::Partial));
+        manager
+            .power_graph_mut()
+            .add_sample(50.0, Some(RefreshType::Partial));
         assert_eq!(manager.power_graph().current_power(), 50.0);
 
         // Test average power
-        manager.power_graph_mut().add_sample(60.0, Some(RefreshType::Partial));
+        manager
+            .power_graph_mut()
+            .add_sample(60.0, Some(RefreshType::Partial));
         assert_eq!(manager.power_graph().average_power(), 55.0);
     }
 }

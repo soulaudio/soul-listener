@@ -3,8 +3,8 @@
 use eink_components::prelude::*;
 use eink_emulator::{Emulator, EmulatorConfig, Rotation, WaveformMode};
 use eink_specs::displays::WAVESHARE_7_5_V2;
-use embedded_graphics::prelude::*;
 use embedded_graphics::pixelcolor::Gray4;
+use embedded_graphics::prelude::*;
 use embedded_graphics::primitives::{PrimitiveStyle, Rectangle};
 
 #[tokio::main]
@@ -17,7 +17,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Rotated 90° for portrait mode = 480×800
     let config = EmulatorConfig {
         rotation: Rotation::Degrees90,
-        scale: 1,  // Native resolution (larger display)
+        scale: 1, // Native resolution (larger display)
     };
     let mut emulator = Emulator::with_spec_and_config(&WAVESHARE_7_5_V2, config);
 
@@ -121,10 +121,8 @@ where
     let start_x = (size.width / 2) as i32 - (icon_spacing * 2);
 
     // Previous
-    Icon::new(IconType::Previous, icon_size).render(
-        display,
-        Point::new(start_x, controls_y as i32),
-    )?;
+    Icon::new(IconType::Previous, icon_size)
+        .render(display, Point::new(start_x, controls_y as i32))?;
 
     // Play (larger)
     Icon::new(IconType::Play, icon_size + 8).render(
@@ -154,13 +152,8 @@ where
     settings_btn.render(display, Point::new(30, footer_y))?;
 
     // Menu button
-    let menu_btn = Button::new("Menu")
-        .style(ButtonStyle::text())
-        .min_width(80);
-    menu_btn.render(
-        display,
-        Point::new((size.width - 110) as i32, footer_y),
-    )?;
+    let menu_btn = Button::new("Menu").style(ButtonStyle::text()).min_width(80);
+    menu_btn.render(display, Point::new((size.width - 110) as i32, footer_y))?;
 
     Ok(())
 }

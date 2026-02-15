@@ -131,8 +131,8 @@ pub struct Window {
     event_loop: Option<EventLoop<()>>,
     window: std::sync::Arc<WinitWindow>,
     surface: Rc<RefCell<Surface<std::sync::Arc<WinitWindow>, std::sync::Arc<WinitWindow>>>>,
-    width: u32,      // Logical display width
-    height: u32,     // Logical display height
+    width: u32,  // Logical display width
+    height: u32, // Logical display height
     config: crate::config::EmulatorConfig,
     temperature: i8,
     power_stats: Option<PowerStats>,
@@ -185,9 +185,8 @@ impl ApplicationHandler for EventHandler {
                 let physical_w = (logical_w as f64 * scale_factor).round() as u32;
                 let physical_h = (logical_h as f64 * scale_factor).round() as u32;
 
-                let _ = inner_size_writer.request_inner_size(
-                    winit::dpi::PhysicalSize::new(physical_w, physical_h)
-                );
+                let _ = inner_size_writer
+                    .request_inner_size(winit::dpi::PhysicalSize::new(physical_w, physical_h));
             }
             WindowEvent::Resized(physical_size) => {
                 // Resize surface to match window
@@ -198,8 +197,10 @@ impl ApplicationHandler for EventHandler {
                     let (final_w, final_h) = if (current_aspect - self.aspect_ratio).abs() > 0.01 {
                         // Aspect ratio wrong - calculate correct dimensions
                         // Use smaller dimension to fit content
-                        let height_from_width = (physical_size.width as f64 / self.aspect_ratio).round() as u32;
-                        let width_from_height = (physical_size.height as f64 * self.aspect_ratio).round() as u32;
+                        let height_from_width =
+                            (physical_size.width as f64 / self.aspect_ratio).round() as u32;
+                        let width_from_height =
+                            (physical_size.height as f64 * self.aspect_ratio).round() as u32;
 
                         if height_from_width <= physical_size.height {
                             (physical_size.width, height_from_width)
@@ -266,15 +267,13 @@ impl Window {
                                 let window = std::sync::Arc::new(window);
 
                                 match Context::new(window.clone()) {
-                                    Ok(context) => {
-                                        match Surface::new(&context, window.clone()) {
-                                            Ok(surface) => {
-                                                self.window = Some(window);
-                                                self.surface = Some(surface);
-                                            }
-                                            Err(e) => eprintln!("Failed to create surface: {}", e),
+                                    Ok(context) => match Surface::new(&context, window.clone()) {
+                                        Ok(surface) => {
+                                            self.window = Some(window);
+                                            self.surface = Some(surface);
                                         }
-                                    }
+                                        Err(e) => eprintln!("Failed to create surface: {}", e),
+                                    },
                                     Err(e) => eprintln!("Failed to create context: {}", e),
                                 }
                             }
@@ -349,7 +348,10 @@ impl Window {
     ///
     /// Surface size (in physical pixels) = logical size × scale factor
     fn resize_surface_for_scale(&mut self, scale_factor: f64) {
-        let (window_w, window_h) = self.config.rotation.apply_to_dimensions(self.width, self.height);
+        let (window_w, window_h) = self
+            .config
+            .rotation
+            .apply_to_dimensions(self.width, self.height);
         let logical_w = window_w * self.config.scale;
         let logical_h = window_h * self.config.scale;
 
@@ -394,7 +396,10 @@ impl Window {
                 self.temperature, temp_warning, avg_ma, peak_ma, total_mwh, quirk_str
             )
         } else {
-            format!("E-Ink Emulator ({}°C){}{}",self.temperature, temp_warning, quirk_str)
+            format!(
+                "E-Ink Emulator ({}°C){}{}",
+                self.temperature, temp_warning, quirk_str
+            )
         };
 
         self.window.set_title(&title);
@@ -483,7 +488,10 @@ impl Window {
     pub fn run(mut self) {
         if let Some(event_loop) = self.event_loop.take() {
             // Calculate aspect ratio and initial logical size
-            let (window_w, window_h) = self.config.rotation.apply_to_dimensions(self.width, self.height);
+            let (window_w, window_h) = self
+                .config
+                .rotation
+                .apply_to_dimensions(self.width, self.height);
             let aspect_ratio = window_w as f64 / window_h as f64;
             let logical_w = window_w * self.config.scale;
             let logical_h = window_h * self.config.scale;

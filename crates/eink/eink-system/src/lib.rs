@@ -23,20 +23,20 @@
 
 #![cfg_attr(not(feature = "std"), no_std)]
 
-pub mod layout;
-pub mod style;
-pub mod flex;
 pub mod containers;
-pub mod render;
 #[cfg(feature = "debug")]
 pub mod debug;
+pub mod flex;
+pub mod layout;
+pub mod render;
+pub mod style;
 
 pub mod prelude {
     // Style system (public API)
     pub use crate::style::*;
 
     // Flex layout (public API - includes ChildLayout)
-    pub use crate::flex::{FlexLayout, ChildLayout};
+    pub use crate::flex::{ChildLayout, FlexLayout};
 
     // Containers (public API)
     pub use crate::containers::*;

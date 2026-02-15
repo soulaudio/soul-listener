@@ -60,9 +60,9 @@
 //! );
 //! ```
 
-use embedded_graphics::prelude::{Point, Size};
 #[cfg(feature = "debug")]
 use crate::debug::DebugInfo;
+use embedded_graphics::prelude::{Point, Size};
 use heapless::Vec;
 
 /// Maximum number of children in a layout result.
@@ -146,7 +146,10 @@ impl Constraints {
     /// assert_eq!(constraints.min, constraints.max);
     /// ```
     pub fn tight(size: Size) -> Self {
-        Self { min: size, max: size }
+        Self {
+            min: size,
+            max: size,
+        }
     }
 
     /// Create loose constraints (zero to max).

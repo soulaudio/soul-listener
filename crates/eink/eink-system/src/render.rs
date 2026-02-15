@@ -32,9 +32,9 @@
 //! ```
 
 use embedded_graphics::{
-    prelude::*,
-    primitives::{Rectangle, PrimitiveStyle},
     pixelcolor::Gray4,
+    prelude::*,
+    primitives::{PrimitiveStyle, Rectangle},
 };
 use heapless::Vec;
 
@@ -74,7 +74,11 @@ impl LayoutResult {
     }
 
     /// Create a layout result with children
-    pub fn with_children(position: Point, size: Size, children: Vec<Box<LayoutResult>, MAX_CHILDREN>) -> Self {
+    pub fn with_children(
+        position: Point,
+        size: Size,
+        children: Vec<Box<LayoutResult>, MAX_CHILDREN>,
+    ) -> Self {
         Self {
             position,
             size,
@@ -352,11 +356,7 @@ mod tests {
         children.push(Box::new(child1)).unwrap();
         children.push(Box::new(child2)).unwrap();
 
-        let layout = LayoutResult::with_children(
-            Point::new(10, 20),
-            Size::new(100, 50),
-            children,
-        );
+        let layout = LayoutResult::with_children(Point::new(10, 20), Size::new(100, 50), children);
 
         assert_eq!(layout.children.len(), 2);
         assert_eq!(layout.children[0].size, Size::new(50, 25));
@@ -472,12 +472,8 @@ mod tests {
         let mut display = MockDisplay::new();
         let layout = LayoutResult::new(Point::new(10, 10), Size::new(50, 50));
 
-        render_layout_with_background(
-            &layout,
-            Point::zero(),
-            Some(Gray4::WHITE),
-            &mut display,
-        ).unwrap();
+        render_layout_with_background(&layout, Point::zero(), Some(Gray4::WHITE), &mut display)
+            .unwrap();
 
         // Background should be drawn
         let expected_rect = Rectangle::new(Point::new(10, 10), Size::new(50, 50));
@@ -489,15 +485,13 @@ mod tests {
         let mut display = MockDisplay::new();
         let layout = LayoutResult::new(Point::new(10, 10), Size::new(50, 50));
 
-        render_layout_with_background(
-            &layout,
-            Point::zero(),
-            None,
-            &mut display,
-        ).unwrap();
+        render_layout_with_background(&layout, Point::zero(), None, &mut display).unwrap();
 
         // No background means no pixels should be drawn
-        assert_eq!(display.affected_area(), Rectangle::new(Point::zero(), Size::zero()));
+        assert_eq!(
+            display.affected_area(),
+            Rectangle::new(Point::zero(), Size::zero())
+        );
     }
 
     #[test]
@@ -508,12 +502,8 @@ mod tests {
         let child = LayoutResult::new(Point::new(20, 20), Size::new(30, 30));
         layout.add_child(child).unwrap();
 
-        render_layout_with_background(
-            &layout,
-            Point::zero(),
-            Some(Gray4::new(2)),
-            &mut display,
-        ).unwrap();
+        render_layout_with_background(&layout, Point::zero(), Some(Gray4::new(2)), &mut display)
+            .unwrap();
     }
 
     #[test]

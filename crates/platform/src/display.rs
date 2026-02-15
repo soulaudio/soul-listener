@@ -8,10 +8,13 @@ pub trait DisplayDriver: DrawTarget {
     type DriverError: core::fmt::Debug;
 
     /// Perform full display refresh (clears ghosting, slow)
-    fn refresh_full(&mut self) -> impl core::future::Future<Output = Result<(), Self::DriverError>>;
+    fn refresh_full(&mut self)
+        -> impl core::future::Future<Output = Result<(), Self::DriverError>>;
 
     /// Perform partial refresh (fast, may have ghosting)
-    fn refresh_partial(&mut self) -> impl core::future::Future<Output = Result<(), Self::DriverError>>;
+    fn refresh_partial(
+        &mut self,
+    ) -> impl core::future::Future<Output = Result<(), Self::DriverError>>;
 
     /// Enter deep sleep mode
     fn sleep(&mut self) -> impl core::future::Future<Output = Result<(), Self::DriverError>>;

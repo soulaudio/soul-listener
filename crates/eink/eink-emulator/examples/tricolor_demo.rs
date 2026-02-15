@@ -14,7 +14,9 @@
 //! cargo run --package eink-emulator --example tricolor_demo
 //! ```
 
-use eink_emulator::{ColorMode, DisplayDriver, EinkColor, Emulator, Framebuffer, SpectraColor, WaveformMode};
+use eink_emulator::{
+    ColorMode, DisplayDriver, EinkColor, Emulator, Framebuffer, SpectraColor, WaveformMode,
+};
 use embedded_graphics::{
     mono_font::{ascii::FONT_6X10, MonoTextStyle},
     pixelcolor::Gray4,

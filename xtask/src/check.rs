@@ -49,13 +49,7 @@ pub fn run() -> Result<()> {
     let emu_start = Instant::now();
 
     let emu_output = Command::new("cargo")
-        .args([
-            "check",
-            "-p",
-            "firmware",
-            "--features",
-            "emulator",
-        ])
+        .args(["check", "-p", "firmware", "--features", "emulator"])
         .output()
         .context("Failed to check emulator build")?;
 
@@ -114,7 +108,14 @@ pub fn run() -> Result<()> {
     let clippy_start = Instant::now();
 
     let clippy_output = Command::new("cargo")
-        .args(["clippy", "--workspace", "--all-targets", "--", "-D", "warnings"])
+        .args([
+            "clippy",
+            "--workspace",
+            "--all-targets",
+            "--",
+            "-D",
+            "warnings",
+        ])
         .output()
         .context("Failed to run clippy")?;
 

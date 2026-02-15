@@ -20,9 +20,7 @@ pub fn run(open: bool) -> Result<()> {
         cmd.arg("--open");
     }
 
-    let output = cmd
-        .output()
-        .context("Failed to build documentation")?;
+    let output = cmd.output().context("Failed to build documentation")?;
 
     if !output.status.success() {
         eprintln!("{}", "✗ Documentation build failed".red().bold());

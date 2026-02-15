@@ -3,10 +3,10 @@
 use eink_components::prelude::*;
 use eink_emulator::{Emulator, EmulatorConfig, Rotation, WaveformMode};
 use eink_specs::displays::WAVESHARE_7_5_V2;
-use embedded_graphics::prelude::*;
-use embedded_graphics::pixelcolor::Gray4;
-use embedded_graphics::primitives::{PrimitiveStyle, Rectangle};
 use embedded_graphics::mono_font::{ascii::FONT_10X20, MonoTextStyle};
+use embedded_graphics::pixelcolor::Gray4;
+use embedded_graphics::prelude::*;
+use embedded_graphics::primitives::{PrimitiveStyle, Rectangle};
 use embedded_graphics::text::Text;
 
 #[tokio::main]
@@ -14,10 +14,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Generating menu screenshot...\n");
 
     let rotation = Rotation::Degrees90;
-    let config = EmulatorConfig {
-        rotation,
-        scale: 1,
-    };
+    let config = EmulatorConfig { rotation, scale: 1 };
     let mut emulator = Emulator::with_spec_and_config(&WAVESHARE_7_5_V2, config);
 
     // Render menu

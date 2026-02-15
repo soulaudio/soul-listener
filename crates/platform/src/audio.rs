@@ -6,7 +6,10 @@ pub trait AudioCodec {
     type Error: core::fmt::Debug;
 
     /// Initialize codec with configuration
-    fn init(&mut self, config: AudioConfig) -> impl core::future::Future<Output = Result<(), Self::Error>>;
+    fn init(
+        &mut self,
+        config: AudioConfig,
+    ) -> impl core::future::Future<Output = Result<(), Self::Error>>;
 
     /// Start playback
     fn start(&mut self) -> impl core::future::Future<Output = Result<(), Self::Error>>;
@@ -15,10 +18,16 @@ pub trait AudioCodec {
     fn stop(&mut self) -> impl core::future::Future<Output = Result<(), Self::Error>>;
 
     /// Set volume (0-100)
-    fn set_volume(&mut self, volume: u8) -> impl core::future::Future<Output = Result<(), Self::Error>>;
+    fn set_volume(
+        &mut self,
+        volume: u8,
+    ) -> impl core::future::Future<Output = Result<(), Self::Error>>;
 
     /// Write audio samples
-    fn write_samples(&mut self, samples: &[i16]) -> impl core::future::Future<Output = Result<(), Self::Error>>;
+    fn write_samples(
+        &mut self,
+        samples: &[i16],
+    ) -> impl core::future::Future<Output = Result<(), Self::Error>>;
 }
 
 /// Audio configuration

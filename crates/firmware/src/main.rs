@@ -6,15 +6,15 @@
 #![no_main]
 
 use embassy_executor::Spawner;
-use embassy_stm32::gpio::{Level, Output, Speed, Input, Pull};
-use embassy_stm32::spi::{Spi, Config as SpiConfig};
+use embassy_stm32::gpio::{Input, Level, Output, Pull, Speed};
+use embassy_stm32::spi::{Config as SpiConfig, Spi};
 use embassy_stm32::time::Hertz;
 use embassy_time::{Duration, Timer};
 use embedded_graphics::prelude::*;
 use static_cell::StaticCell;
 
-use firmware::{Ssd1677Display, DapDisplay, FRAMEBUFFER_SIZE};
 use firmware::ui::{SplashScreen, TestPattern};
+use firmware::{DapDisplay, Ssd1677Display, FRAMEBUFFER_SIZE};
 
 // Panic handler
 use panic_probe as _;
@@ -37,20 +37,19 @@ async fn main(_spawner: Spawner) {
     spi_config.frequency = Hertz(4_000_000); // 4 MHz
 
     let spi = Spi::new(
-        p.SPI1,
-        p.PA5,  // SCK
-        p.PA7,  // MOSI
-        p.PA6,  // MISO (not used but required by HAL)
+        p.SPI1, p.PA5,      // SCK
+        p.PA7,      // MOSI
+        p.PA6,      // MISO (not used but required by HAL)
         p.DMA1_CH0, // TX DMA
         p.DMA1_CH1, // RX DMA
         spi_config,
     );
 
     // Configure GPIO pins
-    let dc = Output::new(p.PB0, Level::Low, Speed::VeryHigh);   // Data/Command
-    let cs = Output::new(p.PB1, Level::High, Speed::VeryHigh);  // Chip Select (active low)
+    let dc = Output::new(p.PB0, Level::Low, Speed::VeryHigh); // Data/Command
+    let cs = Output::new(p.PB1, Level::High, Speed::VeryHigh); // Chip Select (active low)
     let rst = Output::new(p.PB2, Level::High, Speed::VeryHigh); // Reset (active low)
-    let busy = Input::new(p.PB3, Pull::None);                   // Busy status
+    let busy = Input::new(p.PB3, Pull::None); // Busy status
 
     // Create display driver
     defmt::info!("Creating SSD1677 display driver");

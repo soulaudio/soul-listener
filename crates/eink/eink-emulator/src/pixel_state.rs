@@ -152,12 +152,7 @@ impl PixelState {
     /// Update pixel with partial refresh using custom LUT
     ///
     /// Uses LUT-derived ghosting and DC balance characteristics.
-    pub fn partial_refresh_with_lut(
-        &mut self,
-        target: u8,
-        lut: &WaveformLut,
-        temperature: i8,
-    ) {
+    pub fn partial_refresh_with_lut(&mut self, target: u8, lut: &WaveformLut, temperature: i8) {
         let target = target.min(15);
 
         // Use LUT data to calculate ghosting and DC balance
@@ -168,13 +163,12 @@ impl PixelState {
         let transition = (target as i16 - self.current as i16) as f32 / 15.0;
 
         // Temperature factor based on LUT's temperature range
-        let temp_factor = if temperature < lut.temperature_range.0
-            || temperature > lut.temperature_range.1
-        {
-            0.85 // Reduced effectiveness outside temp range
-        } else {
-            1.0
-        };
+        let temp_factor =
+            if temperature < lut.temperature_range.0 || temperature > lut.temperature_range.1 {
+                0.85 // Reduced effectiveness outside temp range
+            } else {
+                1.0
+            };
 
         // Content-dependent ghosting from transition magnitude
         let content_ghosting = ghosting_from_lut * transition.abs() * temp_factor;

@@ -96,11 +96,11 @@ pub const fn quirks_for_controller(controller: Controller) -> &'static [Quirk] {
         Controller::UC8151 => UC8151_QUIRKS,
         Controller::IL0373 => IL0373_QUIRKS,
         Controller::ACeP => ACEP_QUIRKS,
-        Controller::SSD1619 => &[], // No known quirks
-        Controller::SSD1677 => &[], // No known quirks (reliable controller)
+        Controller::SSD1619 => &[],  // No known quirks
+        Controller::SSD1677 => &[],  // No known quirks (reliable controller)
         Controller::ED075TC1 => &[], // No known quirks
-        Controller::GDEW => &[], // No known quirks
-        Controller::Generic => &[], // Generic controller
+        Controller::GDEW => &[],     // No known quirks
+        Controller::Generic => &[],  // Generic controller
     }
 }
 
@@ -198,10 +198,7 @@ mod tests {
     fn test_ssd1680_quirks() {
         let quirks = quirks_for_controller(Controller::SSD1680);
         assert_eq!(quirks.len(), 1);
-        assert!(matches!(
-            quirks[0],
-            Quirk::UncontrollableRefreshRate { .. }
-        ));
+        assert!(matches!(quirks[0], Quirk::UncontrollableRefreshRate { .. }));
     }
 
     #[test]
@@ -211,7 +208,9 @@ mod tests {
         assert!(quirks
             .iter()
             .any(|q| matches!(q, Quirk::RotationGlitch { .. })));
-        assert!(quirks.iter().any(|q| matches!(q, Quirk::SpiWriteHang { .. })));
+        assert!(quirks
+            .iter()
+            .any(|q| matches!(q, Quirk::SpiWriteHang { .. })));
     }
 
     #[test]

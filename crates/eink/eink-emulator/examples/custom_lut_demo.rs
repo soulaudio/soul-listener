@@ -123,11 +123,19 @@ fn demo_2_json_format() {
             println!("  ✓ Successfully loaded LUTs");
 
             if let Some(gc16) = lut_set.get_lut(WaveformMode::GC16) {
-                println!("    GC16: {} phases, {}ms", gc16.phases.len(), gc16.total_duration_ms);
+                println!(
+                    "    GC16: {} phases, {}ms",
+                    gc16.phases.len(),
+                    gc16.total_duration_ms
+                );
             }
 
             if let Some(du4) = lut_set.get_lut(WaveformMode::DU4) {
-                println!("    DU4: {} phases, {}ms", du4.phases.len(), du4.total_duration_ms);
+                println!(
+                    "    DU4: {} phases, {}ms",
+                    du4.phases.len(),
+                    du4.total_duration_ms
+                );
             }
 
             // Save to file
@@ -303,7 +311,11 @@ fn demo_5_temperature_effects() {
         pixel.partial_refresh_with_lut(15, &lut, temp);
 
         let in_range = temp >= lut.temperature_range.0 && temp <= lut.temperature_range.1;
-        let status = if in_range { "✓ in range" } else { "✗ out of range" };
+        let status = if in_range {
+            "✓ in range"
+        } else {
+            "✗ out of range"
+        };
 
         println!(
             "  {}°C {}: current={}, ghosting={:.3}",

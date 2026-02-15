@@ -1,5 +1,6 @@
 //! Button component
 
+use eink_system::prelude::*;
 use embedded_graphics::{
     mono_font::{ascii::FONT_10X20, MonoTextStyle},
     pixelcolor::Gray4,
@@ -7,7 +8,6 @@ use embedded_graphics::{
     primitives::{PrimitiveStyle, Rectangle, RoundedRectangle},
     text::{Alignment, Text},
 };
-use eink_system::prelude::*;
 
 /// Button style presets
 #[derive(Debug, Copy, Clone, PartialEq)]
