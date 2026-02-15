@@ -46,3 +46,8 @@ path = "examples/custom_lut_demo.rs"
 [[example]]
 name = "rotation_demo"
 path = "examples/rotation_demo.rs"
+
+[[example]]
+name = "debug_demo"
+path = "examples/debug_demo.rs"
+required-features = ["debug"]
