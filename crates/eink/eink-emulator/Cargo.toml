@@ -33,6 +33,7 @@ tokio = { version = "1.49", features = ["full", "test-util"] }
 [features]
 default = []
 headless = []  # For CI/CD (per embedded-graphics-simulator pattern)
+debug = []
 
 [[example]]
 name = "hello_window"

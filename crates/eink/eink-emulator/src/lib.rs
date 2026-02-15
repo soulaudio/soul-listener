@@ -46,6 +46,9 @@ mod waveform_mode;
 #[cfg(not(feature = "headless"))]
 mod window;
 
+#[cfg(feature = "debug")]
+pub mod debug;
+
 pub use config::{EmulatorConfig, Rotation};
 pub use display_driver::{DisplayDriver, EinkDisplay};
 pub use framebuffer::{ColorMode, Framebuffer};
@@ -1646,5 +1649,82 @@ mod tests {
         // Should have triggered full refresh
         assert_eq!(emulator.stats().full_refresh_count, 1);
         assert_eq!(emulator.ghosting_level(), 0.0);
+    }
+
+    // ============================================================================
+    // DEBUG MODULE TESTS
+    // ============================================================================
+
+    #[cfg(feature = "debug")]
+    #[test]
+    fn test_debug_state_creation() {
+        use crate::debug::DebugState;
+
+        let state = DebugState::new();
+        assert!(!state.panel_visible);
+        assert!(!state.borders_enabled);
+        assert!(!state.inspector_mode);
+        assert!(!state.power_graph_enabled);
+        assert!(state.hovered_component.is_none());
+        assert!(state.selected_component.is_none());
+        assert_eq!(state.power_history.len(), 0);
+    }
+
+    #[cfg(feature = "debug")]
+    #[test]
+    fn test_debug_state_toggles() {
+        use crate::debug::DebugState;
+
+        let mut state = DebugState::new();
+
+        // Test panel toggle
+        assert!(!state.panel_visible);
+        state.toggle_panel();
+        assert!(state.panel_visible);
+        state.toggle_panel();
+        assert!(!state.panel_visible);
+
+        // Test borders toggle
+        assert!(!state.borders_enabled);
+        state.toggle_borders();
+        assert!(state.borders_enabled);
+
+        // Test inspector toggle
+        assert!(!state.inspector_mode);
+        state.toggle_inspector();
+        assert!(state.inspector_mode);
+
+        // Test power graph toggle
+        assert!(!state.power_graph_enabled);
+        state.toggle_power_graph();
+        assert!(state.power_graph_enabled);
+    }
+
+    #[cfg(feature = "debug")]
+    #[test]
+    fn test_component_info_creation() {
+        use crate::debug::ComponentInfo;
+
+        let info = ComponentInfo {
+            component_type: "Button".to_string(),
+            position: (10, 20),
+            size: (100, 40),
+            test_id: Some("play-button".to_string()),
+        };
+
+        assert_eq!(info.component_type, "Button");
+        assert_eq!(info.position, (10, 20));
+        assert_eq!(info.size, (100, 40));
+        assert_eq!(info.test_id, Some("play-button".to_string()));
+    }
+
+    #[cfg(feature = "debug")]
+    #[test]
+    fn test_refresh_type() {
+        use crate::debug::RefreshType;
+
+        assert_ne!(RefreshType::Full, RefreshType::Partial);
+        assert_ne!(RefreshType::Full, RefreshType::Fast);
+        assert_eq!(RefreshType::Full, RefreshType::Full);
     }
 }
