@@ -82,6 +82,12 @@ emulator = [
     "std",
 ]
 
+# Debug features (emulator only)
+debug = [
+    "emulator",
+    "eink-emulator/debug",
+]
+
 # Standard library support
 std = []
 
