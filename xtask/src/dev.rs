@@ -191,7 +191,7 @@ fn start_emulator(headless: bool) -> Result<Option<Child>> {
         .arg("-p")
         .arg("firmware")
         .arg("--features")
-        .arg("emulator")
+        .arg("emulator,debug")  // Enable debug features
         .env("HOT_RELOAD_MODE", "1") // Signal to example that we're in hot-reload mode
         .stdout(std::process::Stdio::inherit()) // Show live output
         .stderr(std::process::Stdio::inherit()); // Show errors in real-time
