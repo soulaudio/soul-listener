@@ -50,10 +50,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         println!("🔧 DEBUG MODE ENABLED");
         println!("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
         println!("Hotkeys:");
-        println!("  F12 - Toggle debug panel");
-        println!("  F1  - Toggle layout borders");
-        println!("  F2  - Toggle inspector mode");
-        println!("  F3  - Toggle power graph");
+        println!("  Ctrl+1 - Toggle debug panel");
+        println!("  Ctrl+2 - Toggle layout borders");
+        println!("  Ctrl+3 - Toggle inspector mode");
+        println!("  Ctrl+4 - Toggle power graph");
         println!("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
         println!();
     }

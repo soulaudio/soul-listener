@@ -3,7 +3,7 @@
 use super::power_graph::PowerGraph;
 use super::state::DebugState;
 use winit::event::{ElementState, WindowEvent};
-use winit::keyboard::{KeyCode, PhysicalKey};
+use winit::keyboard::{KeyCode, ModifiersState, PhysicalKey};
 
 /// Result of event handling
 ///
@@ -24,6 +24,7 @@ pub enum EventResult {
 pub struct DebugManager {
     state: DebugState,
     power_graph: PowerGraph,
+    modifiers: ModifiersState,
 }
 
 impl DebugManager {
@@ -34,6 +35,7 @@ impl DebugManager {
         Self {
             state: DebugState::new(),
             power_graph: PowerGraph::new(),
+            modifiers: ModifiersState::empty(),
         }
     }
 
@@ -64,10 +66,10 @@ impl DebugManager {
     /// Handles window events for debug system
     ///
     /// Processes keyboard input to toggle debug features:
-    /// - F12: Toggle debug panel visibility
-    /// - F1: Toggle component border rendering
-    /// - F2: Toggle inspector mode
-    /// - F3: Toggle power consumption graph
+    /// - Ctrl+1: Toggle debug panel visibility
+    /// - Ctrl+2: Toggle component border rendering
+    /// - Ctrl+3: Toggle inspector mode
+    /// - Ctrl+4: Toggle power consumption graph
     ///
     /// # Arguments
     ///
@@ -92,26 +94,32 @@ impl DebugManager {
     /// ```
     pub fn handle_event(&mut self, event: &WindowEvent) -> EventResult {
         match event {
+            WindowEvent::ModifiersChanged(new_modifiers) => {
+                self.modifiers = new_modifiers.state();
+            }
             WindowEvent::KeyboardInput { event, .. } if event.state == ElementState::Pressed => {
                 if let PhysicalKey::Code(key_code) = event.physical_key {
-                    match key_code {
-                        KeyCode::F12 => {
-                            self.state.toggle_panel();
-                            return EventResult::Consumed;
+                    // Check if Ctrl is pressed
+                    if self.modifiers.control_key() {
+                        match key_code {
+                            KeyCode::Digit1 => {
+                                self.state.toggle_panel();
+                                return EventResult::Consumed;
+                            }
+                            KeyCode::Digit2 => {
+                                self.state.toggle_borders();
+                                return EventResult::Consumed;
+                            }
+                            KeyCode::Digit3 => {
+                                self.state.toggle_inspector();
+                                return EventResult::Consumed;
+                            }
+                            KeyCode::Digit4 => {
+                                self.state.toggle_power_graph();
+                                return EventResult::Consumed;
+                            }
+                            _ => {}
                         }
-                        KeyCode::F1 => {
-                            self.state.toggle_borders();
-                            return EventResult::Consumed;
-                        }
-                        KeyCode::F2 => {
-                            self.state.toggle_inspector();
-                            return EventResult::Consumed;
-                        }
-                        KeyCode::F3 => {
-                            self.state.toggle_power_graph();
-                            return EventResult::Consumed;
-                        }
-                        _ => {}
                     }
                 }
             }
