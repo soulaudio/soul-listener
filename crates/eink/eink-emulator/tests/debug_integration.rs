@@ -175,7 +175,10 @@ fn test_debug_panel_rendering() {
 
     // Check pixel outside panel area
     let outside_pixel = buffer[(0 * 800 + 400) as usize];
-    assert_eq!(outside_pixel, 0xFFFFFFFF, "Outside panel should be unchanged");
+    assert_eq!(
+        outside_pixel, 0xFFFFFFFF,
+        "Outside panel should be unchanged"
+    );
 }
 
 #[test]
@@ -189,10 +192,16 @@ fn test_debug_panel_boundary() {
 
     // Panel should start at x = 800 - 200 = 600
     let before_panel = buffer[(100 * 800 + 599) as usize];
-    assert_eq!(before_panel, 0xFFFFFFFF, "Just before panel should be unchanged");
+    assert_eq!(
+        before_panel, 0xFFFFFFFF,
+        "Just before panel should be unchanged"
+    );
 
     let at_panel_start = buffer[(100 * 800 + 600) as usize];
-    assert_eq!(at_panel_start, 0xDC282828, "Panel start should have background");
+    assert_eq!(
+        at_panel_start, 0xDC282828,
+        "Panel start should have background"
+    );
 
     let at_panel_end = buffer[(100 * 800 + 799) as usize];
     assert_eq!(at_panel_end, 0xDC282828, "Panel end should have background");
@@ -244,7 +253,9 @@ fn test_debug_manager_integration() {
     assert_eq!(manager.power_graph().current_power(), 10.0);
 
     // Add power sample
-    manager.power_graph_mut().add_sample(50.0, Some(RefreshType::Partial));
+    manager
+        .power_graph_mut()
+        .add_sample(50.0, Some(RefreshType::Partial));
     assert_eq!(manager.power_graph().current_power(), 50.0);
 }
 
@@ -285,7 +296,12 @@ fn test_power_graph_ring_buffer() {
     let avg = graph.average_power();
     // Average of 50..350 (300 samples)
     let expected_avg = (50.0 + 349.0) / 2.0; // Arithmetic mean of range
-    assert!((avg - expected_avg).abs() < 1.0, "Average should be ~{}, got {}", expected_avg, avg);
+    assert!(
+        (avg - expected_avg).abs() < 1.0,
+        "Average should be ~{}, got {}",
+        expected_avg,
+        avg
+    );
 }
 
 #[test]
@@ -335,7 +351,9 @@ fn test_full_debug_workflow() {
 
     // 2. Add some power samples
     manager.power_graph_mut().add_sample(10.0, None);
-    manager.power_graph_mut().add_sample(210.0, Some(RefreshType::Full));
+    manager
+        .power_graph_mut()
+        .add_sample(210.0, Some(RefreshType::Full));
     manager.power_graph_mut().add_sample(15.0, None);
 
     // 3. Create component layout

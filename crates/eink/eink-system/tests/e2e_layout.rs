@@ -93,10 +93,7 @@ fn render_and_screenshot(
 /// Compare two screenshots pixel-by-pixel
 ///
 /// Returns the percentage difference (0.0 = identical, 1.0 = completely different)
-fn compare_screenshots(
-    actual: &Path,
-    expected: &Path,
-) -> Result<f32, Box<dyn std::error::Error>> {
+fn compare_screenshots(actual: &Path, expected: &Path) -> Result<f32, Box<dyn std::error::Error>> {
     let actual_img = image::open(actual)?.to_luma8();
     let expected_img = image::open(expected)?.to_luma8();
 
@@ -154,7 +151,11 @@ fn assert_screenshot_matches(filename: &str) -> Result<(), Box<dyn std::error::E
         .into());
     }
 
-    println!("✓ Screenshot matches (diff: {:.2}%): {}.png", diff * 100.0, filename);
+    println!(
+        "✓ Screenshot matches (diff: {:.2}%): {}.png",
+        diff * 100.0,
+        filename
+    );
     Ok(())
 }
 
@@ -231,7 +232,6 @@ fn test_nested_vstack_in_hstack() {
     setup();
 
     fn render_nested(emulator: &mut Emulator) -> Result<(), Box<dyn std::error::Error>> {
-
         // HStack container with two VStacks inside
 
         // Left VStack
@@ -312,9 +312,13 @@ async fn test_complex_dap_layout() {
         .into_styled(PrimitiveStyle::with_fill(Gray4::BLACK))
         .draw(&mut emulator)
         .unwrap();
-    Text::new("Now Playing", Point::new(5, 8), MonoTextStyle::new(&FONT_6X10, Gray4::WHITE))
-        .draw(&mut emulator)
-        .unwrap();
+    Text::new(
+        "Now Playing",
+        Point::new(5, 8),
+        MonoTextStyle::new(&FONT_6X10, Gray4::WHITE),
+    )
+    .draw(&mut emulator)
+    .unwrap();
 
     // Content area
     Rectangle::new(Point::new(5, 25), Size::new(240, 70))
@@ -329,15 +333,27 @@ async fn test_complex_dap_layout() {
         .unwrap();
 
     // Track info
-    Text::new("Track Title", Point::new(70, 35), MonoTextStyle::new(&FONT_6X10, Gray4::BLACK))
-        .draw(&mut emulator)
-        .unwrap();
-    Text::new("Artist Name", Point::new(70, 50), MonoTextStyle::new(&FONT_6X10, Gray4::new(2)))
-        .draw(&mut emulator)
-        .unwrap();
-    Text::new("Album Name", Point::new(70, 65), MonoTextStyle::new(&FONT_6X10, Gray4::new(2)))
-        .draw(&mut emulator)
-        .unwrap();
+    Text::new(
+        "Track Title",
+        Point::new(70, 35),
+        MonoTextStyle::new(&FONT_6X10, Gray4::BLACK),
+    )
+    .draw(&mut emulator)
+    .unwrap();
+    Text::new(
+        "Artist Name",
+        Point::new(70, 50),
+        MonoTextStyle::new(&FONT_6X10, Gray4::new(2)),
+    )
+    .draw(&mut emulator)
+    .unwrap();
+    Text::new(
+        "Album Name",
+        Point::new(70, 65),
+        MonoTextStyle::new(&FONT_6X10, Gray4::new(2)),
+    )
+    .draw(&mut emulator)
+    .unwrap();
 
     // Progress bar
     Rectangle::new(Point::new(70, 75), Size::new(170, 8))
@@ -359,9 +375,13 @@ async fn test_complex_dap_layout() {
     let buttons = ["<<", "||", ">>"];
     let button_x = [50, 115, 180];
     for (text, x) in buttons.iter().zip(button_x.iter()) {
-        Text::new(text, Point::new(*x as i32, 111), MonoTextStyle::new(&FONT_6X10, Gray4::BLACK))
-            .draw(&mut emulator)
-            .unwrap();
+        Text::new(
+            text,
+            Point::new(*x as i32, 111),
+            MonoTextStyle::new(&FONT_6X10, Gray4::BLACK),
+        )
+        .draw(&mut emulator)
+        .unwrap();
     }
 
     let path = if should_update_screenshots() {
@@ -381,14 +401,22 @@ async fn test_justify_content_modes() {
     let mut emulator = Emulator::headless(250, 122);
 
     // Title
-    Text::new("JustifyContent Modes", Point::new(5, 8), MonoTextStyle::new(&FONT_6X10, Gray4::BLACK))
-        .draw(&mut emulator)
-        .unwrap();
+    Text::new(
+        "JustifyContent Modes",
+        Point::new(5, 8),
+        MonoTextStyle::new(&FONT_6X10, Gray4::BLACK),
+    )
+    .draw(&mut emulator)
+    .unwrap();
 
     // Start
-    Text::new("Start:", Point::new(5, 25), MonoTextStyle::new(&FONT_6X10, Gray4::new(2)))
-        .draw(&mut emulator)
-        .unwrap();
+    Text::new(
+        "Start:",
+        Point::new(5, 25),
+        MonoTextStyle::new(&FONT_6X10, Gray4::new(2)),
+    )
+    .draw(&mut emulator)
+    .unwrap();
     for i in 0..3 {
         Rectangle::new(Point::new(50 + i * 25, 20), Size::new(20, 8))
             .into_styled(PrimitiveStyle::with_fill(Gray4::BLACK))
@@ -397,9 +425,13 @@ async fn test_justify_content_modes() {
     }
 
     // Center
-    Text::new("Center:", Point::new(5, 40), MonoTextStyle::new(&FONT_6X10, Gray4::new(2)))
-        .draw(&mut emulator)
-        .unwrap();
+    Text::new(
+        "Center:",
+        Point::new(5, 40),
+        MonoTextStyle::new(&FONT_6X10, Gray4::new(2)),
+    )
+    .draw(&mut emulator)
+    .unwrap();
     for i in 0..3 {
         Rectangle::new(Point::new(82 + i * 25, 35), Size::new(20, 8))
             .into_styled(PrimitiveStyle::with_fill(Gray4::BLACK))
@@ -408,9 +440,13 @@ async fn test_justify_content_modes() {
     }
 
     // End
-    Text::new("End:", Point::new(5, 55), MonoTextStyle::new(&FONT_6X10, Gray4::new(2)))
-        .draw(&mut emulator)
-        .unwrap();
+    Text::new(
+        "End:",
+        Point::new(5, 55),
+        MonoTextStyle::new(&FONT_6X10, Gray4::new(2)),
+    )
+    .draw(&mut emulator)
+    .unwrap();
     for i in 0..3 {
         Rectangle::new(Point::new(165 + i * 25, 50), Size::new(20, 8))
             .into_styled(PrimitiveStyle::with_fill(Gray4::BLACK))
@@ -419,9 +455,13 @@ async fn test_justify_content_modes() {
     }
 
     // SpaceBetween
-    Text::new("Between:", Point::new(5, 70), MonoTextStyle::new(&FONT_6X10, Gray4::new(2)))
-        .draw(&mut emulator)
-        .unwrap();
+    Text::new(
+        "Between:",
+        Point::new(5, 70),
+        MonoTextStyle::new(&FONT_6X10, Gray4::new(2)),
+    )
+    .draw(&mut emulator)
+    .unwrap();
     let positions = [50, 115, 180];
     for pos in positions {
         Rectangle::new(Point::new(pos, 65), Size::new(20, 8))
@@ -431,9 +471,13 @@ async fn test_justify_content_modes() {
     }
 
     // SpaceAround
-    Text::new("Around:", Point::new(5, 85), MonoTextStyle::new(&FONT_6X10, Gray4::new(2)))
-        .draw(&mut emulator)
-        .unwrap();
+    Text::new(
+        "Around:",
+        Point::new(5, 85),
+        MonoTextStyle::new(&FONT_6X10, Gray4::new(2)),
+    )
+    .draw(&mut emulator)
+    .unwrap();
     let positions = [62, 115, 168];
     for pos in positions {
         Rectangle::new(Point::new(pos, 80), Size::new(20, 8))
@@ -443,9 +487,13 @@ async fn test_justify_content_modes() {
     }
 
     // SpaceEvenly
-    Text::new("Evenly:", Point::new(5, 100), MonoTextStyle::new(&FONT_6X10, Gray4::new(2)))
-        .draw(&mut emulator)
-        .unwrap();
+    Text::new(
+        "Evenly:",
+        Point::new(5, 100),
+        MonoTextStyle::new(&FONT_6X10, Gray4::new(2)),
+    )
+    .draw(&mut emulator)
+    .unwrap();
     let positions = [68, 115, 162];
     for pos in positions {
         Rectangle::new(Point::new(pos, 95), Size::new(20, 8))
@@ -471,9 +519,13 @@ async fn test_align_items_modes() {
     let mut emulator = Emulator::headless(250, 122);
 
     // Title
-    Text::new("AlignItems Modes", Point::new(5, 8), MonoTextStyle::new(&FONT_6X10, Gray4::BLACK))
-        .draw(&mut emulator)
-        .unwrap();
+    Text::new(
+        "AlignItems Modes",
+        Point::new(5, 8),
+        MonoTextStyle::new(&FONT_6X10, Gray4::BLACK),
+    )
+    .draw(&mut emulator)
+    .unwrap();
 
     // Container boxes for each mode (50x80)
     let modes = ["Start", "Center", "End", "Stretch"];
@@ -487,9 +539,13 @@ async fn test_align_items_modes() {
             .unwrap();
 
         // Label
-        Text::new(mode, Point::new(*x as i32 + 2, 30), MonoTextStyle::new(&FONT_6X10, Gray4::BLACK))
-            .draw(&mut emulator)
-            .unwrap();
+        Text::new(
+            mode,
+            Point::new(*x as i32 + 2, 30),
+            MonoTextStyle::new(&FONT_6X10, Gray4::BLACK),
+        )
+        .draw(&mut emulator)
+        .unwrap();
 
         // Child elements positioned according to alignment
         let child_y = match *mode {
@@ -528,14 +584,22 @@ async fn test_gap_spacing() {
     let mut emulator = Emulator::headless(250, 122);
 
     // Title
-    Text::new("Gap Spacing", Point::new(5, 8), MonoTextStyle::new(&FONT_6X10, Gray4::BLACK))
-        .draw(&mut emulator)
-        .unwrap();
+    Text::new(
+        "Gap Spacing",
+        Point::new(5, 8),
+        MonoTextStyle::new(&FONT_6X10, Gray4::BLACK),
+    )
+    .draw(&mut emulator)
+    .unwrap();
 
     // Gap: 0
-    Text::new("gap=0:", Point::new(5, 25), MonoTextStyle::new(&FONT_6X10, Gray4::new(2)))
-        .draw(&mut emulator)
-        .unwrap();
+    Text::new(
+        "gap=0:",
+        Point::new(5, 25),
+        MonoTextStyle::new(&FONT_6X10, Gray4::new(2)),
+    )
+    .draw(&mut emulator)
+    .unwrap();
     for i in 0..4 {
         Rectangle::new(Point::new(50 + i * 20, 20), Size::new(20, 8))
             .into_styled(PrimitiveStyle::with_fill(Gray4::BLACK))
@@ -544,9 +608,13 @@ async fn test_gap_spacing() {
     }
 
     // Gap: 4
-    Text::new("gap=4:", Point::new(5, 45), MonoTextStyle::new(&FONT_6X10, Gray4::new(2)))
-        .draw(&mut emulator)
-        .unwrap();
+    Text::new(
+        "gap=4:",
+        Point::new(5, 45),
+        MonoTextStyle::new(&FONT_6X10, Gray4::new(2)),
+    )
+    .draw(&mut emulator)
+    .unwrap();
     for i in 0..4 {
         Rectangle::new(Point::new(50 + i * 24, 40), Size::new(20, 8))
             .into_styled(PrimitiveStyle::with_fill(Gray4::BLACK))
@@ -555,9 +623,13 @@ async fn test_gap_spacing() {
     }
 
     // Gap: 8
-    Text::new("gap=8:", Point::new(5, 65), MonoTextStyle::new(&FONT_6X10, Gray4::new(2)))
-        .draw(&mut emulator)
-        .unwrap();
+    Text::new(
+        "gap=8:",
+        Point::new(5, 65),
+        MonoTextStyle::new(&FONT_6X10, Gray4::new(2)),
+    )
+    .draw(&mut emulator)
+    .unwrap();
     for i in 0..4 {
         Rectangle::new(Point::new(50 + i * 28, 60), Size::new(20, 8))
             .into_styled(PrimitiveStyle::with_fill(Gray4::BLACK))
@@ -566,9 +638,13 @@ async fn test_gap_spacing() {
     }
 
     // Gap: 16
-    Text::new("gap=16:", Point::new(5, 85), MonoTextStyle::new(&FONT_6X10, Gray4::new(2)))
-        .draw(&mut emulator)
-        .unwrap();
+    Text::new(
+        "gap=16:",
+        Point::new(5, 85),
+        MonoTextStyle::new(&FONT_6X10, Gray4::new(2)),
+    )
+    .draw(&mut emulator)
+    .unwrap();
     for i in 0..4 {
         Rectangle::new(Point::new(50 + i * 36, 80), Size::new(20, 8))
             .into_styled(PrimitiveStyle::with_fill(Gray4::BLACK))
@@ -593,9 +669,13 @@ async fn test_margin_and_padding() {
     let mut emulator = Emulator::headless(250, 122);
 
     // Title
-    Text::new("Margin & Padding", Point::new(5, 8), MonoTextStyle::new(&FONT_6X10, Gray4::BLACK))
-        .draw(&mut emulator)
-        .unwrap();
+    Text::new(
+        "Margin & Padding",
+        Point::new(5, 8),
+        MonoTextStyle::new(&FONT_6X10, Gray4::BLACK),
+    )
+    .draw(&mut emulator)
+    .unwrap();
 
     // Example 1: No margin/padding
     Rectangle::new(Point::new(10, 20), Size::new(70, 40))
@@ -606,9 +686,13 @@ async fn test_margin_and_padding() {
         .into_styled(PrimitiveStyle::with_fill(Gray4::new(1)))
         .draw(&mut emulator)
         .unwrap();
-    Text::new("None", Point::new(25, 35), MonoTextStyle::new(&FONT_6X10, Gray4::BLACK))
-        .draw(&mut emulator)
-        .unwrap();
+    Text::new(
+        "None",
+        Point::new(25, 35),
+        MonoTextStyle::new(&FONT_6X10, Gray4::BLACK),
+    )
+    .draw(&mut emulator)
+    .unwrap();
 
     // Example 2: Margin only (outer box larger)
     Rectangle::new(Point::new(90, 15), Size::new(80, 50))
@@ -619,9 +703,13 @@ async fn test_margin_and_padding() {
         .into_styled(PrimitiveStyle::with_fill(Gray4::new(1)))
         .draw(&mut emulator)
         .unwrap();
-    Text::new("Margin", Point::new(105, 35), MonoTextStyle::new(&FONT_6X10, Gray4::BLACK))
-        .draw(&mut emulator)
-        .unwrap();
+    Text::new(
+        "Margin",
+        Point::new(105, 35),
+        MonoTextStyle::new(&FONT_6X10, Gray4::BLACK),
+    )
+    .draw(&mut emulator)
+    .unwrap();
 
     // Example 3: Padding only (inner content smaller)
     Rectangle::new(Point::new(180, 20), Size::new(60, 40))
@@ -632,9 +720,13 @@ async fn test_margin_and_padding() {
         .into_styled(PrimitiveStyle::with_fill(Gray4::BLACK))
         .draw(&mut emulator)
         .unwrap();
-    Text::new("Pad", Point::new(192, 38), MonoTextStyle::new(&FONT_6X10, Gray4::WHITE))
-        .draw(&mut emulator)
-        .unwrap();
+    Text::new(
+        "Pad",
+        Point::new(192, 38),
+        MonoTextStyle::new(&FONT_6X10, Gray4::WHITE),
+    )
+    .draw(&mut emulator)
+    .unwrap();
 
     // Example 4: Both (full spacing demonstration)
     Rectangle::new(Point::new(10, 70), Size::new(100, 45))
@@ -649,9 +741,13 @@ async fn test_margin_and_padding() {
         .into_styled(PrimitiveStyle::with_fill(Gray4::BLACK))
         .draw(&mut emulator)
         .unwrap();
-    Text::new("Both", Point::new(40, 90), MonoTextStyle::new(&FONT_6X10, Gray4::WHITE))
-        .draw(&mut emulator)
-        .unwrap();
+    Text::new(
+        "Both",
+        Point::new(40, 90),
+        MonoTextStyle::new(&FONT_6X10, Gray4::WHITE),
+    )
+    .draw(&mut emulator)
+    .unwrap();
 
     let path = if should_update_screenshots() {
         reference_dir().join("margin_padding.png")
@@ -675,9 +771,13 @@ async fn test_responsive_layout() {
         .into_styled(PrimitiveStyle::with_fill(Gray4::BLACK))
         .draw(&mut emulator)
         .unwrap();
-    Text::new("Responsive Layout", Point::new(5, 7), MonoTextStyle::new(&FONT_6X10, Gray4::WHITE))
-        .draw(&mut emulator)
-        .unwrap();
+    Text::new(
+        "Responsive Layout",
+        Point::new(5, 7),
+        MonoTextStyle::new(&FONT_6X10, Gray4::WHITE),
+    )
+    .draw(&mut emulator)
+    .unwrap();
 
     // Two-column layout (60% / 40% split)
     // Left column (60% = 150px)
@@ -685,24 +785,40 @@ async fn test_responsive_layout() {
         .into_styled(PrimitiveStyle::with_stroke(Gray4::new(2), 1))
         .draw(&mut emulator)
         .unwrap();
-    Text::new("Main Content", Point::new(10, 30), MonoTextStyle::new(&FONT_6X10, Gray4::BLACK))
-        .draw(&mut emulator)
-        .unwrap();
-    Text::new("(60% width)", Point::new(10, 45), MonoTextStyle::new(&FONT_6X10, Gray4::new(2)))
-        .draw(&mut emulator)
-        .unwrap();
+    Text::new(
+        "Main Content",
+        Point::new(10, 30),
+        MonoTextStyle::new(&FONT_6X10, Gray4::BLACK),
+    )
+    .draw(&mut emulator)
+    .unwrap();
+    Text::new(
+        "(60% width)",
+        Point::new(10, 45),
+        MonoTextStyle::new(&FONT_6X10, Gray4::new(2)),
+    )
+    .draw(&mut emulator)
+    .unwrap();
 
     // Right column (40% = 100px)
     Rectangle::new(Point::new(155, 20), Size::new(90, 95))
         .into_styled(PrimitiveStyle::with_stroke(Gray4::new(2), 1))
         .draw(&mut emulator)
         .unwrap();
-    Text::new("Sidebar", Point::new(160, 30), MonoTextStyle::new(&FONT_6X10, Gray4::BLACK))
-        .draw(&mut emulator)
-        .unwrap();
-    Text::new("(40%)", Point::new(160, 45), MonoTextStyle::new(&FONT_6X10, Gray4::new(2)))
-        .draw(&mut emulator)
-        .unwrap();
+    Text::new(
+        "Sidebar",
+        Point::new(160, 30),
+        MonoTextStyle::new(&FONT_6X10, Gray4::BLACK),
+    )
+    .draw(&mut emulator)
+    .unwrap();
+    Text::new(
+        "(40%)",
+        Point::new(160, 45),
+        MonoTextStyle::new(&FONT_6X10, Gray4::new(2)),
+    )
+    .draw(&mut emulator)
+    .unwrap();
 
     let path = if should_update_screenshots() {
         reference_dir().join("responsive_layout.png")
@@ -758,7 +874,10 @@ fn test_pixel_comparison_different() {
     img2.save(&path2).unwrap();
 
     let diff = compare_screenshots(&path1, &path2).unwrap();
-    assert_eq!(diff, 1.0, "Completely different images should have 100% difference");
+    assert_eq!(
+        diff, 1.0,
+        "Completely different images should have 100% difference"
+    );
 
     // Cleanup
     fs::remove_file(path1).ok();
@@ -786,7 +905,11 @@ fn test_pixel_comparison_partial_difference() {
     img2.save(&path2).unwrap();
 
     let diff = compare_screenshots(&path1, &path2).unwrap();
-    assert!((diff - 0.25).abs() < 0.01, "Should have ~25% difference, got {}", diff);
+    assert!(
+        (diff - 0.25).abs() < 0.01,
+        "Should have ~25% difference, got {}",
+        diff
+    );
 
     // Cleanup
     fs::remove_file(path1).ok();

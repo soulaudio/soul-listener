@@ -3,15 +3,15 @@
 //! Desktop test of the display driver using the eink-emulator.
 //! Run with: cargo run --example display_emulator_test --features emulator
 
-use tokio::time::{sleep, Duration};
-use embedded_graphics::prelude::*;
-use embedded_graphics::pixelcolor::Gray4;
-use embedded_graphics::primitives::{Rectangle, Circle, PrimitiveStyle};
 use embedded_graphics::mono_font::{ascii::FONT_9X18, MonoTextStyle};
+use embedded_graphics::pixelcolor::Gray4;
+use embedded_graphics::prelude::*;
+use embedded_graphics::primitives::{Circle, PrimitiveStyle, Rectangle};
 use embedded_graphics::text::Text;
+use tokio::time::{sleep, Duration};
 
-use firmware::{EmulatorDisplay, DapDisplay};
 use firmware::ui::{SplashScreen, TestPattern};
+use firmware::{DapDisplay, EmulatorDisplay};
 use platform::DisplayDriver;
 
 #[tokio::main]
@@ -84,17 +84,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let text_style = MonoTextStyle::new(&FONT_9X18, Gray4::BLACK);
 
-    Text::new("SoulAudio DAP", Point::new(50, 100), text_style)
-        .draw(&mut display)?;
+    Text::new("SoulAudio DAP", Point::new(50, 100), text_style).draw(&mut display)?;
 
-    Text::new("Emulator Test", Point::new(50, 130), text_style)
-        .draw(&mut display)?;
+    Text::new("Emulator Test", Point::new(50, 130), text_style).draw(&mut display)?;
 
-    Text::new("800x480 E-Ink Display", Point::new(50, 160), text_style)
-        .draw(&mut display)?;
+    Text::new("800x480 E-Ink Display", Point::new(50, 160), text_style).draw(&mut display)?;
 
-    Text::new("Firmware v0.1.0", Point::new(50, 190), text_style)
-        .draw(&mut display)?;
+    Text::new("Firmware v0.1.0", Point::new(50, 190), text_style).draw(&mut display)?;
 
     display.refresh_full().await?;
     println!("✓ Text rendering successful\n");
@@ -113,8 +109,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             .draw(&mut display)?;
 
         let text = format!("Frame {}", i + 1);
-        Text::new(&text, Point::new(x + 15, 245), text_style)
-            .draw(&mut display)?;
+        Text::new(&text, Point::new(x + 15, 245), text_style).draw(&mut display)?;
 
         display.refresh_partial().await?;
         println!("  Frame {} rendered", i + 1);
@@ -138,11 +133,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Final screen
     DapDisplay::clear(&mut display, firmware::Color::White).await?;
 
-    Text::new("All Tests Complete!", Point::new(250, 220), text_style)
-        .draw(&mut display)?;
+    Text::new("All Tests Complete!", Point::new(250, 220), text_style).draw(&mut display)?;
 
-    Text::new("Press Ctrl+C to exit", Point::new(220, 260), text_style)
-        .draw(&mut display)?;
+    Text::new("Press Ctrl+C to exit", Point::new(220, 260), text_style).draw(&mut display)?;
 
     display.refresh_full().await?;
 

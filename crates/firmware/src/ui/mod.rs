@@ -3,10 +3,10 @@
 //! This module contains UI screens and components for the SoulAudio DAP.
 //! Currently a placeholder for future UI implementation.
 
-use embedded_graphics::prelude::*;
-use embedded_graphics::pixelcolor::Gray2;
-use embedded_graphics::primitives::{Rectangle, Line, PrimitiveStyle};
 use embedded_graphics::mono_font::{ascii::FONT_9X18, MonoTextStyle};
+use embedded_graphics::pixelcolor::Gray2;
+use embedded_graphics::prelude::*;
+use embedded_graphics::primitives::{Line, PrimitiveStyle, Rectangle};
 use embedded_graphics::text::Text;
 
 /// Splash screen - shown on boot

@@ -318,7 +318,10 @@ fn test_json_parsing_invalid_version() {
 
     let result = WaveformLutSet::from_json(json);
     assert!(result.is_err());
-    assert!(matches!(result.unwrap_err(), LutError::UnsupportedVersion(2)));
+    assert!(matches!(
+        result.unwrap_err(),
+        LutError::UnsupportedVersion(2)
+    ));
 }
 
 #[test]
@@ -418,7 +421,10 @@ fn test_binary_format_unsupported_version() {
 
     let result = WaveformLutSet::from_bytes(&data);
     assert!(result.is_err());
-    assert!(matches!(result.unwrap_err(), LutError::UnsupportedVersion(2)));
+    assert!(matches!(
+        result.unwrap_err(),
+        LutError::UnsupportedVersion(2)
+    ));
 }
 
 #[test]

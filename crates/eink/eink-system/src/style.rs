@@ -195,7 +195,12 @@ impl Edges {
     /// * `bottom` - Bottom edge value
     /// * `left` - Left edge value
     pub const fn new(top: u32, right: u32, bottom: u32, left: u32) -> Self {
-        Self { top, right, bottom, left }
+        Self {
+            top,
+            right,
+            bottom,
+            left,
+        }
     }
 
     /// Creates edges with separate horizontal and vertical values.
@@ -289,7 +294,10 @@ impl FlexDirection {
 
     /// Returns `true` if this direction is reversed.
     pub fn is_reverse(self) -> bool {
-        matches!(self, FlexDirection::RowReverse | FlexDirection::ColumnReverse)
+        matches!(
+            self,
+            FlexDirection::RowReverse | FlexDirection::ColumnReverse
+        )
     }
 }
 
@@ -903,9 +911,7 @@ mod tests {
 
     #[test]
     fn test_style_clone() {
-        let style1 = Style::new()
-            .width(Dimension::Px(100))
-            .gap(16);
+        let style1 = Style::new().width(Dimension::Px(100)).gap(16);
 
         let style2 = style1;
         assert_eq!(style1, style2);

@@ -7,8 +7,8 @@
 //! - Handle quirk errors
 //! - View quirk warnings in the UI
 
-use eink_emulator::{Emulator, DisplayDriver};
-use eink_specs::{ColorMode, Controller, DisplaySpec, PanelType, quirks_for_controller};
+use eink_emulator::{DisplayDriver, Emulator};
+use eink_specs::{quirks_for_controller, ColorMode, Controller, DisplaySpec, PanelType};
 use embedded_graphics::mono_font::{ascii::FONT_6X10, MonoTextStyle};
 use embedded_graphics::pixelcolor::Gray4;
 use embedded_graphics::prelude::*;
@@ -95,7 +95,10 @@ async fn main() {
         Err(e) => println!("   ✗ Refresh failed: {}", e),
     }
     if let Some(quirk) = emulator.active_quirk() {
-        println!("   Active quirk: {}", quirk.chars().take(60).collect::<String>());
+        println!(
+            "   Active quirk: {}",
+            quirk.chars().take(60).collect::<String>()
+        );
     }
     println!();
 

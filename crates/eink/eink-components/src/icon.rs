@@ -182,12 +182,9 @@ impl Icon {
         // Sound waves (circles)
         let offset_x = (bar_width + 4) as i32;
         let offset_y = (self.size / 4) as i32;
-        Circle::new(
-            position + Point::new(offset_x, offset_y),
-            self.size / 8,
-        )
-        .into_styled(PrimitiveStyle::with_stroke(self.color, 1))
-        .draw(display)?;
+        Circle::new(position + Point::new(offset_x, offset_y), self.size / 8)
+            .into_styled(PrimitiveStyle::with_stroke(self.color, 1))
+            .draw(display)?;
 
         Ok(())
     }

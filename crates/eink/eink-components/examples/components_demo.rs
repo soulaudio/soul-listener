@@ -1,9 +1,9 @@
 //! Component demonstration
 
 use eink_components::prelude::*;
-use eink_emulator::{Emulator, EmulatorConfig, Rotation};
-use embedded_graphics::prelude::*;
+use eink_emulator::{DisplayDriver, Emulator, EmulatorConfig, Rotation};
 use embedded_graphics::pixelcolor::Gray4;
+use embedded_graphics::prelude::*;
 use embedded_graphics::primitives::{PrimitiveStyle, Rectangle};
 
 #[tokio::main]
@@ -52,10 +52,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let progress1 = ProgressBar::new(200, 10).progress(0.25);
     progress1.render(&mut emulator, Point::new(200, 100))?;
 
-    let progress2 = ProgressBar::new(200, 10).progress(0.75).colors(
-        Gray4::new(0xE),
-        Gray4::new(0x2),
-    );
+    let progress2 = ProgressBar::new(200, 10)
+        .progress(0.75)
+        .colors(Gray4::new(0xE), Gray4::new(0x2));
     progress2.render(&mut emulator, Point::new(200, 120))?;
 
     // Draw icons

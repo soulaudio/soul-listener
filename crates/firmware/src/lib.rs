@@ -46,8 +46,8 @@ pub mod hal;
 pub mod ui;
 
 // Re-export key types
-pub use display::{DISPLAY_WIDTH, DISPLAY_HEIGHT, FRAMEBUFFER_SIZE, GDEM0397T81P_SPEC};
-pub use hal::{DapDisplay, DisplayConfig, Color};
+pub use display::{DISPLAY_HEIGHT, DISPLAY_WIDTH, FRAMEBUFFER_SIZE, GDEM0397T81P_SPEC};
+pub use hal::{Color, DapDisplay, DisplayConfig};
 
 #[cfg(feature = "hardware")]
 pub use display::Ssd1677Display;

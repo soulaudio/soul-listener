@@ -2,8 +2,8 @@
 //!
 //! Tests for controller-specific hardware quirks and limitations.
 
-use eink_emulator::{Emulator, DisplayDriver};
-use eink_specs::{ColorMode, Controller, DisplaySpec, PanelType, quirks_for_controller};
+use eink_emulator::{DisplayDriver, Emulator};
+use eink_specs::{quirks_for_controller, ColorMode, Controller, DisplaySpec, PanelType};
 
 /// Create test display spec with specific controller
 fn test_spec_with_controller(controller: Controller) -> DisplaySpec {
@@ -221,20 +221,30 @@ fn test_it8951_has_expected_quirks() {
 
     // Should have panel-specific and limited library support quirks
     use eink_specs::Quirk;
-    assert!(quirks.iter().any(|q| matches!(q, Quirk::PanelSpecific { .. })));
-    assert!(quirks.iter().any(|q| matches!(q, Quirk::LimitedLibrarySupport { .. })));
+    assert!(quirks
+        .iter()
+        .any(|q| matches!(q, Quirk::PanelSpecific { .. })));
+    assert!(quirks
+        .iter()
+        .any(|q| matches!(q, Quirk::LimitedLibrarySupport { .. })));
 }
 
 #[test]
 fn test_all_quirks_have_type_names() {
     use eink_specs::Quirk;
 
-    let quirk1 = Quirk::RotationGlitch { description: "test" };
+    let quirk1 = Quirk::RotationGlitch {
+        description: "test",
+    };
     assert_eq!(quirk1.quirk_type(), "RotationGlitch");
 
-    let quirk2 = Quirk::SpiWriteHang { description: "test" };
+    let quirk2 = Quirk::SpiWriteHang {
+        description: "test",
+    };
     assert_eq!(quirk2.quirk_type(), "SpiWriteHang");
 
-    let quirk3 = Quirk::PanelSpecific { description: "test" };
+    let quirk3 = Quirk::PanelSpecific {
+        description: "test",
+    };
     assert_eq!(quirk3.quirk_type(), "PanelSpecific");
 }

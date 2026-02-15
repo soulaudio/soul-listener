@@ -8,7 +8,10 @@ pub trait PowerManager {
     type Error: core::fmt::Debug;
 
     /// Enter sleep mode
-    fn enter_sleep(&mut self, mode: SleepMode) -> impl core::future::Future<Output = Result<(), Self::Error>>;
+    fn enter_sleep(
+        &mut self,
+        mode: SleepMode,
+    ) -> impl core::future::Future<Output = Result<(), Self::Error>>;
 
     /// Wake from sleep
     fn wake(&mut self) -> Result<(), Self::Error>;

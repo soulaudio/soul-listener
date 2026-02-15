@@ -17,14 +17,17 @@ async fn test_idle_power_consumption() {
 
     let stats = emulator.power_stats();
 
-    println!("Stats: energy={}µWh, idle={}ms, active={}ms",
-             stats.total_energy_uwh, stats.idle_time_ms, stats.active_time_ms);
+    println!(
+        "Stats: energy={}µWh, idle={}ms, active={}ms",
+        stats.total_energy_uwh, stats.idle_time_ms, stats.active_time_ms
+    );
 
     // Should have consumed some energy in idle
     assert!(
         stats.total_energy_uwh > 0,
         "Idle state should consume energy (got {}µWh after {}ms idle)",
-        stats.total_energy_uwh, stats.idle_time_ms
+        stats.total_energy_uwh,
+        stats.idle_time_ms
     );
     assert!(
         stats.idle_time_ms >= 10000,
@@ -163,13 +166,13 @@ async fn test_battery_life_estimation() {
     let battery_life = stats.estimated_battery_life_hours(3000);
 
     // Should get a reasonable estimate (> 0 hours)
-    assert!(
-        battery_life > 0.0,
-        "Should estimate positive battery life"
-    );
+    assert!(battery_life > 0.0, "Should estimate positive battery life");
 
     // With refreshes, average current should be significant
-    assert!(stats.average_current_ua > 0, "Average current should be > 0");
+    assert!(
+        stats.average_current_ua > 0,
+        "Average current should be > 0"
+    );
 }
 
 #[tokio::test]

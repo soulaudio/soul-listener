@@ -84,11 +84,11 @@ impl OverlayRenderer {
     /// default to yellow.
     fn get_border_color(&self, component_type: &str) -> u32 {
         match component_type {
-            "Container" => 0xFF0080FF,  // Blue
-            "Button" => 0xFF00FF80,     // Green
-            "Label" => 0xFFFF4040,      // Red
+            "Container" => 0xFF0080FF,   // Blue
+            "Button" => 0xFF00FF80,      // Green
+            "Label" => 0xFFFF4040,       // Red
             "ProgressBar" => 0xFFC040FF, // Purple
-            _ => 0xFFFFCC00,            // Yellow (unknown/default)
+            _ => 0xFFFFCC00,             // Yellow (unknown/default)
         }
     }
 

@@ -9,13 +9,21 @@ pub trait SpiPeripheral {
     type Error: core::fmt::Debug;
 
     /// Transfer data (full duplex)
-    fn transfer(&mut self, read: &mut [u8], write: &[u8]) -> impl core::future::Future<Output = Result<(), Self::Error>>;
+    fn transfer(
+        &mut self,
+        read: &mut [u8],
+        write: &[u8],
+    ) -> impl core::future::Future<Output = Result<(), Self::Error>>;
 
     /// Write data (half duplex)
-    fn write(&mut self, data: &[u8]) -> impl core::future::Future<Output = Result<(), Self::Error>>;
+    fn write(&mut self, data: &[u8])
+        -> impl core::future::Future<Output = Result<(), Self::Error>>;
 
     /// Read data (half duplex)
-    fn read(&mut self, buffer: &mut [u8]) -> impl core::future::Future<Output = Result<(), Self::Error>>;
+    fn read(
+        &mut self,
+        buffer: &mut [u8],
+    ) -> impl core::future::Future<Output = Result<(), Self::Error>>;
 
     /// Configure SPI mode and frequency
     fn configure(&mut self, config: SpiConfig) -> Result<(), Self::Error>;
@@ -63,10 +71,18 @@ pub trait I2cPeripheral {
     type Error: core::fmt::Debug;
 
     /// Write to device
-    fn write(&mut self, address: u8, data: &[u8]) -> impl core::future::Future<Output = Result<(), Self::Error>>;
+    fn write(
+        &mut self,
+        address: u8,
+        data: &[u8],
+    ) -> impl core::future::Future<Output = Result<(), Self::Error>>;
 
     /// Read from device
-    fn read(&mut self, address: u8, buffer: &mut [u8]) -> impl core::future::Future<Output = Result<(), Self::Error>>;
+    fn read(
+        &mut self,
+        address: u8,
+        buffer: &mut [u8],
+    ) -> impl core::future::Future<Output = Result<(), Self::Error>>;
 
     /// Write then read (repeated start)
     fn write_read(
@@ -106,16 +122,21 @@ pub trait UartPeripheral {
     type Error: core::fmt::Debug;
 
     /// Write data
-    fn write(&mut self, data: &[u8]) -> impl core::future::Future<Output = Result<(), Self::Error>>;
+    fn write(&mut self, data: &[u8])
+        -> impl core::future::Future<Output = Result<(), Self::Error>>;
 
     /// Read data
-    fn read(&mut self, buffer: &mut [u8]) -> impl core::future::Future<Output = Result<(), Self::Error>>;
+    fn read(
+        &mut self,
+        buffer: &mut [u8],
+    ) -> impl core::future::Future<Output = Result<(), Self::Error>>;
 
     /// Write single byte
-    fn write_byte(&mut self, byte: u8) -> impl core::future::Future<Output = Result<(), Self::Error>> {
-        async move {
-            self.write(&[byte]).await
-        }
+    fn write_byte(
+        &mut self,
+        byte: u8,
+    ) -> impl core::future::Future<Output = Result<(), Self::Error>> {
+        async move { self.write(&[byte]).await }
     }
 
     /// Read single byte

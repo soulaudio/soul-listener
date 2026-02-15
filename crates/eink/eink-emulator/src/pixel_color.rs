@@ -215,11 +215,11 @@ mod tests {
     fn test_spectra6_rgba_output() {
         // Test all Spectra colors
         let colors = [
-            (SpectraColor::None, 0xAAAAAAFFu32),     // Gray
-            (SpectraColor::Red, 0xFF5555FFu32),      // Red with gray
-            (SpectraColor::Yellow, 0xFFFF55FFu32),   // Yellow
-            (SpectraColor::Blue, 0x5555FFFFu32),     // Blue
-            (SpectraColor::Green, 0x55FFB4FFu32),    // Green
+            (SpectraColor::None, 0xAAAAAAFFu32),   // Gray
+            (SpectraColor::Red, 0xFF5555FFu32),    // Red with gray
+            (SpectraColor::Yellow, 0xFFFF55FFu32), // Yellow
+            (SpectraColor::Blue, 0x5555FFFFu32),   // Blue
+            (SpectraColor::Green, 0x55FFB4FFu32),  // Green
         ];
 
         for (spectra_color, _expected_pattern) in colors {

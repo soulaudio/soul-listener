@@ -37,12 +37,12 @@ impl PowerProfile {
     /// - Full refresh: 7.5mJ/cm² × 6.5cm² = 48.75mJ
     /// - At 3.3V, 980ms duration → ~54mA average during refresh
     pub const WAVESHARE_2_13_V4: Self = Self {
-        idle_current_ua: 150,           // 150µA idle (typical e-ink idle)
-        sleep_current_ua: 2,            // 2µA deep sleep (static image)
-        refresh_current_ua: 54_000,     // 54mA calculated from energy (base + flashes)
-        refresh_boost_ua: 15_000,       // +15mA per additional flash
+        idle_current_ua: 150,            // 150µA idle (typical e-ink idle)
+        sleep_current_ua: 2,             // 2µA deep sleep (static image)
+        refresh_current_ua: 54_000,      // 54mA calculated from energy (base + flashes)
+        refresh_boost_ua: 15_000,        // +15mA per additional flash
         sram_transfer_current_ua: 8_000, // 8mA SPI transfer overhead
-        init_current_ua: 70_000,        // 70mA init (multiple refreshes)
+        init_current_ua: 70_000,         // 70mA init (multiple refreshes)
     };
 
     /// Waveshare 2.9" V2 power profile
@@ -77,8 +77,8 @@ impl PowerProfile {
     pub const WAVESHARE_7_5_V2: Self = Self {
         idle_current_ua: 400,
         sleep_current_ua: 3,
-        refresh_current_ua: 173_000,   // 173mA calculated from energy
-        refresh_boost_ua: 40_000,      // +40mA per flash
+        refresh_current_ua: 173_000, // 173mA calculated from energy
+        refresh_boost_ua: 40_000,    // +40mA per flash
         sram_transfer_current_ua: 30_000,
         init_current_ua: 200_000,
     };
@@ -93,12 +93,12 @@ impl PowerProfile {
     /// - Full refresh: 7.5mJ/cm² × 45cm² = 337.5mJ
     /// - At 3.3V, 3000ms duration → 337.5mJ/3s/3.3V = 34mA average
     pub const GDEM0397T81P: Self = Self {
-        idle_current_ua: 350,          // 350µA idle (SSD1677 + large SRAM)
-        sleep_current_ua: 1,           // 1µA deep sleep (datasheet: 0.003mW)
-        refresh_current_ua: 25_000,    // 25mA base refresh current
-        refresh_boost_ua: 9_000,       // +9mA per flash (3 flashes → 34mA avg)
+        idle_current_ua: 350,             // 350µA idle (SSD1677 + large SRAM)
+        sleep_current_ua: 1,              // 1µA deep sleep (datasheet: 0.003mW)
+        refresh_current_ua: 25_000,       // 25mA base refresh current
+        refresh_boost_ua: 9_000,          // +9mA per flash (3 flashes → 34mA avg)
         sram_transfer_current_ua: 10_000, // 10mA SPI transfer (large 384KB framebuffer)
-        init_current_ua: 35_000,       // 35mA initialization
+        init_current_ua: 35_000,          // 35mA initialization
     };
 }
 
@@ -319,8 +319,14 @@ mod tests {
     fn test_power_profile_constants() {
         // Verify profiles are reasonable
         assert!(PowerProfile::WAVESHARE_2_13_V4.idle_current_ua > 0);
-        assert!(PowerProfile::WAVESHARE_2_13_V4.refresh_current_ua > PowerProfile::WAVESHARE_2_13_V4.idle_current_ua);
-        assert!(PowerProfile::WAVESHARE_7_5_V2.refresh_current_ua > PowerProfile::WAVESHARE_2_13_V4.refresh_current_ua);
+        assert!(
+            PowerProfile::WAVESHARE_2_13_V4.refresh_current_ua
+                > PowerProfile::WAVESHARE_2_13_V4.idle_current_ua
+        );
+        assert!(
+            PowerProfile::WAVESHARE_7_5_V2.refresh_current_ua
+                > PowerProfile::WAVESHARE_2_13_V4.refresh_current_ua
+        );
     }
 
     #[test]
@@ -336,9 +342,9 @@ mod tests {
     #[test]
     fn test_state_percentages() {
         let mut stats = PowerStats::default();
-        stats.idle_time_ms = 70_000;  // 70 seconds
+        stats.idle_time_ms = 70_000; // 70 seconds
         stats.active_time_ms = 20_000; // 20 seconds
-        stats.sleep_time_ms = 10_000;  // 10 seconds
+        stats.sleep_time_ms = 10_000; // 10 seconds
 
         let percentages = stats.state_percentages();
         assert!((percentages.idle - 70.0).abs() < 0.1);
@@ -356,7 +362,10 @@ mod tests {
         tracker.transition_to(PowerState::Idle);
 
         let stats = tracker.stats();
-        assert!(stats.total_energy_uwh > 0, "Idle should consume energy after 8s");
+        assert!(
+            stats.total_energy_uwh > 0,
+            "Idle should consume energy after 8s"
+        );
         assert!(stats.idle_time_ms >= 8000);
     }
 

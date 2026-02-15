@@ -2,12 +2,12 @@
 //!
 //! Demonstrates the flexbox-inspired layout engine for e-ink displays.
 
-use eink_emulator::{Emulator, EmulatorConfig, Rotation, DisplayDriver};
+use eink_emulator::{DisplayDriver, Emulator, EmulatorConfig, Rotation};
 use eink_system::prelude::*;
-use embedded_graphics::prelude::*;
-use embedded_graphics::primitives::{Rectangle, PrimitiveStyle, PrimitiveStyleBuilder};
-use embedded_graphics::pixelcolor::Gray4;
 use embedded_graphics::mono_font::{ascii::FONT_10X20, MonoTextStyle};
+use embedded_graphics::pixelcolor::Gray4;
+use embedded_graphics::prelude::*;
+use embedded_graphics::primitives::{PrimitiveStyle, PrimitiveStyleBuilder, Rectangle};
 use embedded_graphics::text::Text;
 
 #[tokio::main]
@@ -50,8 +50,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 fn demo_vstack(emulator: &mut Emulator) -> Result<(), Box<dyn std::error::Error>> {
     // Header: 60px tall
     draw_box(emulator, Point::new(0, 0), Size::new(480, 60), Gray4::BLACK)?;
-    Text::new("Now Playing", Point::new(20, 40), MonoTextStyle::new(&FONT_10X20, Gray4::WHITE))
-        .draw(emulator)?;
+    Text::new(
+        "Now Playing",
+        Point::new(20, 40),
+        MonoTextStyle::new(&FONT_10X20, Gray4::WHITE),
+    )
+    .draw(emulator)?;
 
     // Content area: 3 items with gaps
     let content_y: i32 = 60;
@@ -65,8 +69,12 @@ fn demo_vstack(emulator: &mut Emulator) -> Result<(), Box<dyn std::error::Error>
         Size::new(448, item_height as u32),
         Gray4::new(0xC),
     )?;
-    Text::new("Artist Name", Point::new(32, content_y + gap + 40), MonoTextStyle::new(&FONT_10X20, Gray4::BLACK))
-        .draw(emulator)?;
+    Text::new(
+        "Artist Name",
+        Point::new(32, content_y + gap + 40),
+        MonoTextStyle::new(&FONT_10X20, Gray4::BLACK),
+    )
+    .draw(emulator)?;
 
     // Item 2: Album
     draw_box(
@@ -75,8 +83,12 @@ fn demo_vstack(emulator: &mut Emulator) -> Result<(), Box<dyn std::error::Error>
         Size::new(448, item_height as u32),
         Gray4::new(0xA),
     )?;
-    Text::new("Album Title", Point::new(32, content_y + gap + item_height + gap + 40), MonoTextStyle::new(&FONT_10X20, Gray4::BLACK))
-        .draw(emulator)?;
+    Text::new(
+        "Album Title",
+        Point::new(32, content_y + gap + item_height + gap + 40),
+        MonoTextStyle::new(&FONT_10X20, Gray4::BLACK),
+    )
+    .draw(emulator)?;
 
     // Item 3: Progress
     draw_box(
@@ -85,14 +97,27 @@ fn demo_vstack(emulator: &mut Emulator) -> Result<(), Box<dyn std::error::Error>
         Size::new(448, item_height as u32),
         Gray4::new(0x8),
     )?;
-    Text::new("3:45 / 5:23", Point::new(32, content_y + gap + (item_height + gap) * 2 + 40), MonoTextStyle::new(&FONT_10X20, Gray4::BLACK))
-        .draw(emulator)?;
+    Text::new(
+        "3:45 / 5:23",
+        Point::new(32, content_y + gap + (item_height + gap) * 2 + 40),
+        MonoTextStyle::new(&FONT_10X20, Gray4::BLACK),
+    )
+    .draw(emulator)?;
 
     // Footer: 80px tall
     let footer_y = 700;
-    draw_box(emulator, Point::new(0, footer_y), Size::new(480, 100), Gray4::new(0x4))?;
-    Text::new("Controls", Point::new(20, footer_y + 40), MonoTextStyle::new(&FONT_10X20, Gray4::WHITE))
-        .draw(emulator)?;
+    draw_box(
+        emulator,
+        Point::new(0, footer_y),
+        Size::new(480, 100),
+        Gray4::new(0x4),
+    )?;
+    Text::new(
+        "Controls",
+        Point::new(20, footer_y + 40),
+        MonoTextStyle::new(&FONT_10X20, Gray4::WHITE),
+    )
+    .draw(emulator)?;
 
     Ok(())
 }

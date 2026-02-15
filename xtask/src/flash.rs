@@ -31,9 +31,7 @@ pub fn run(release: bool) -> Result<()> {
         build_cmd.arg("--release");
     }
 
-    let build_output = build_cmd
-        .output()
-        .context("Failed to run cargo build")?;
+    let build_output = build_cmd.output().context("Failed to run cargo build")?;
 
     if !build_output.status.success() {
         eprintln!("{}", "✗ Build failed".red().bold());

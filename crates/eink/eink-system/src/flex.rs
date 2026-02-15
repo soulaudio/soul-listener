@@ -118,15 +118,23 @@ impl FlexLayout {
     /// # Returns
     ///
     /// A vector of ChildLayoutResults with final positions and sizes for each child
-    pub fn layout(&self, constraints: Constraints, children: &[ChildLayout]) -> HeaplessVec<ChildLayoutResult, MAX_CHILDREN> {
+    pub fn layout(
+        &self,
+        constraints: Constraints,
+        children: &[ChildLayout],
+    ) -> HeaplessVec<ChildLayoutResult, MAX_CHILDREN> {
         if children.is_empty() {
             return HeaplessVec::new();
         }
 
         // Determine main and cross axis sizes from constraints
         let (container_main, container_cross) = match self.style.flex_direction {
-            FlexDirection::Row | FlexDirection::RowReverse => (constraints.max.width, constraints.max.height),
-            FlexDirection::Column | FlexDirection::ColumnReverse => (constraints.max.height, constraints.max.width),
+            FlexDirection::Row | FlexDirection::RowReverse => {
+                (constraints.max.width, constraints.max.height)
+            }
+            FlexDirection::Column | FlexDirection::ColumnReverse => {
+                (constraints.max.height, constraints.max.width)
+            }
         };
 
         // Account for padding
@@ -165,7 +173,8 @@ impl FlexLayout {
         self.apply_flex_sizing(&mut flex_items, remaining_space as i32);
 
         // Step 5: Apply justification on main axis
-        let positions_main = self.calculate_main_axis_positions(&flex_items, available_main, gap_space);
+        let positions_main =
+            self.calculate_main_axis_positions(&flex_items, available_main, gap_space);
 
         // Step 6: Apply alignment on cross axis
         let positions_cross = self.calculate_cross_axis_positions(&flex_items, available_cross);
@@ -195,20 +204,31 @@ impl FlexLayout {
             let final_width = width.saturating_sub(margin.horizontal());
             let final_height = height.saturating_sub(margin.vertical());
 
-            result.push(ChildLayoutResult {
-                position: Point::new(final_x as i32, final_y as i32),
-                size: Size::new(final_width, final_height),
-            }).ok();
+            result
+                .push(ChildLayoutResult {
+                    position: Point::new(final_x as i32, final_y as i32),
+                    size: Size::new(final_width, final_height),
+                })
+                .ok();
         }
 
         result
     }
 
     /// Creates a flex item from a child layout
-    fn create_flex_item(&self, child: &ChildLayout, available_main: u32, available_cross: u32) -> FlexItem {
+    fn create_flex_item(
+        &self,
+        child: &ChildLayout,
+        available_main: u32,
+        available_cross: u32,
+    ) -> FlexItem {
         let (intrinsic_main, intrinsic_cross) = match self.style.flex_direction {
-            FlexDirection::Row | FlexDirection::RowReverse => (child.intrinsic_size.width, child.intrinsic_size.height),
-            FlexDirection::Column | FlexDirection::ColumnReverse => (child.intrinsic_size.height, child.intrinsic_size.width),
+            FlexDirection::Row | FlexDirection::RowReverse => {
+                (child.intrinsic_size.width, child.intrinsic_size.height)
+            }
+            FlexDirection::Column | FlexDirection::ColumnReverse => {
+                (child.intrinsic_size.height, child.intrinsic_size.width)
+            }
         };
 
         // Resolve main axis size
@@ -264,26 +284,24 @@ impl FlexLayout {
                     }
                 }
             }
-            _ => {
-                match self.style.flex_direction {
-                    FlexDirection::Row | FlexDirection::RowReverse => {
-                        let height_resolved = child.style.height.resolve(available_cross);
-                        if height_resolved == 0 {
-                            intrinsic_cross
-                        } else {
-                            height_resolved
-                        }
-                    }
-                    FlexDirection::Column | FlexDirection::ColumnReverse => {
-                        let width_resolved = child.style.width.resolve(available_cross);
-                        if width_resolved == 0 {
-                            intrinsic_cross
-                        } else {
-                            width_resolved
-                        }
+            _ => match self.style.flex_direction {
+                FlexDirection::Row | FlexDirection::RowReverse => {
+                    let height_resolved = child.style.height.resolve(available_cross);
+                    if height_resolved == 0 {
+                        intrinsic_cross
+                    } else {
+                        height_resolved
                     }
                 }
-            }
+                FlexDirection::Column | FlexDirection::ColumnReverse => {
+                    let width_resolved = child.style.width.resolve(available_cross);
+                    if width_resolved == 0 {
+                        intrinsic_cross
+                    } else {
+                        width_resolved
+                    }
+                }
+            },
         };
 
         FlexItem {
@@ -300,7 +318,8 @@ impl FlexLayout {
     fn apply_flex_sizing(&self, items: &mut [FlexItem], remaining_space: i32) {
         if remaining_space > 0 {
             // Flex-grow: distribute extra space
-            let total_grow: f32 = items.iter()
+            let total_grow: f32 = items
+                .iter()
                 .filter(|item| item.can_grow)
                 .map(|item| item.style.flex_grow)
                 .sum();
@@ -316,7 +335,8 @@ impl FlexLayout {
             }
         } else if remaining_space < 0 {
             // Flex-shrink: reduce size to fit
-            let total_shrink: f32 = items.iter()
+            let total_shrink: f32 = items
+                .iter()
                 .filter(|item| item.can_shrink)
                 .map(|item| item.style.flex_shrink)
                 .sum();
@@ -473,10 +493,7 @@ mod tests {
         style.justify_content = Justify::End;
 
         let layout = FlexLayout::new(style);
-        let children = vec![
-            create_child(50, 50),
-            create_child(50, 50),
-        ];
+        let children = vec![create_child(50, 50), create_child(50, 50)];
 
         let result = layout.layout(Constraints::tight(Size::new(300, 100)), &children);
 
@@ -493,10 +510,7 @@ mod tests {
         style.justify_content = Justify::Center;
 
         let layout = FlexLayout::new(style);
-        let children = vec![
-            create_child(50, 50),
-            create_child(50, 50),
-        ];
+        let children = vec![create_child(50, 50), create_child(50, 50)];
 
         let result = layout.layout(Constraints::tight(Size::new(300, 100)), &children);
 
@@ -535,10 +549,7 @@ mod tests {
         style.justify_content = Justify::SpaceAround;
 
         let layout = FlexLayout::new(style);
-        let children = vec![
-            create_child(50, 50),
-            create_child(50, 50),
-        ];
+        let children = vec![create_child(50, 50), create_child(50, 50)];
 
         let result = layout.layout(Constraints::tight(Size::new(300, 100)), &children);
 
@@ -555,10 +566,7 @@ mod tests {
         style.justify_content = Justify::SpaceEvenly;
 
         let layout = FlexLayout::new(style);
-        let children = vec![
-            create_child(50, 50),
-            create_child(50, 50),
-        ];
+        let children = vec![create_child(50, 50), create_child(50, 50)];
 
         let result = layout.layout(Constraints::tight(Size::new(300, 100)), &children);
 
@@ -662,10 +670,7 @@ mod tests {
         style.align_items = Align::Center;
 
         let layout = FlexLayout::new(style);
-        let children = vec![
-            create_child(50, 30),
-            create_child(50, 50),
-        ];
+        let children = vec![create_child(50, 30), create_child(50, 50)];
 
         let result = layout.layout(Constraints::tight(Size::new(300, 100)), &children);
 
@@ -682,10 +687,7 @@ mod tests {
         style.align_items = Align::Stretch;
 
         let layout = FlexLayout::new(style);
-        let children = vec![
-            create_child(50, 30),
-            create_child(50, 40),
-        ];
+        let children = vec![create_child(50, 30), create_child(50, 40)];
 
         let result = layout.layout(Constraints::tight(Size::new(300, 100)), &children);
 
@@ -702,10 +704,7 @@ mod tests {
         style.padding = Edges::all(10);
 
         let layout = FlexLayout::new(style);
-        let children = vec![
-            create_child(50, 50),
-            create_child(50, 50),
-        ];
+        let children = vec![create_child(50, 50), create_child(50, 50)];
 
         let result = layout.layout(Constraints::tight(Size::new(300, 100)), &children);
 
@@ -727,12 +726,10 @@ mod tests {
         child_style.width = Dimension::Px(50);
         child_style.height = Dimension::Px(50);
 
-        let children = vec![
-            ChildLayout {
-                style: child_style,
-                intrinsic_size: Size::new(50, 50),
-            },
-        ];
+        let children = vec![ChildLayout {
+            style: child_style,
+            intrinsic_size: Size::new(50, 50),
+        }];
 
         let result = layout.layout(Constraints::tight(Size::new(300, 100)), &children);
 
@@ -754,12 +751,10 @@ mod tests {
         child_style.width = Dimension::Percent(0.5); // 50% of parent
         child_style.height = Dimension::Px(50);
 
-        let children = vec![
-            ChildLayout {
-                style: child_style,
-                intrinsic_size: Size::new(100, 50),
-            },
-        ];
+        let children = vec![ChildLayout {
+            style: child_style,
+            intrinsic_size: Size::new(100, 50),
+        }];
 
         let result = layout.layout(Constraints::tight(Size::new(200, 100)), &children);
 
@@ -893,10 +888,7 @@ mod tests {
         let layout = FlexLayout::new(style);
 
         // Children want more space than available
-        let children = vec![
-            create_child(200, 50),
-            create_child(200, 50),
-        ];
+        let children = vec![create_child(200, 50), create_child(200, 50)];
 
         let result = layout.layout(Constraints::tight(Size::new(300, 100)), &children);
 
@@ -913,10 +905,7 @@ mod tests {
         style.gap = 12;
 
         let layout = FlexLayout::new(style);
-        let children = vec![
-            create_child(50, 30),
-            create_child(50, 40),
-        ];
+        let children = vec![create_child(50, 30), create_child(50, 40)];
 
         let result = layout.layout(Constraints::tight(Size::new(100, 200)), &children);
 
@@ -935,9 +924,7 @@ mod tests {
         let mut child_style = Style::default();
         child_style.flex_basis = Dimension::Px(80);
 
-        let children = vec![
-            create_child_with_style(50, 50, child_style),
-        ];
+        let children = vec![create_child_with_style(50, 50, child_style)];
 
         let result = layout.layout(Constraints::tight(Size::new(200, 100)), &children);
 
@@ -973,12 +960,10 @@ mod tests {
         child_style.width = Dimension::Px(50);
         child_style.height = Dimension::Px(50);
 
-        let children = vec![
-            ChildLayout {
-                style: child_style,
-                intrinsic_size: Size::new(50, 50),
-            },
-        ];
+        let children = vec![ChildLayout {
+            style: child_style,
+            intrinsic_size: Size::new(50, 50),
+        }];
 
         let result = layout.layout(Constraints::tight(Size::new(200, 100)), &children);
 

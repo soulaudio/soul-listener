@@ -27,7 +27,10 @@ async fn main() {
     // Show display info
     println!();
     println!("Display Specifications:");
-    println!("  Resolution: {}×{}", GDEM0397T81P.width, GDEM0397T81P.height);
+    println!(
+        "  Resolution: {}×{}",
+        GDEM0397T81P.width, GDEM0397T81P.height
+    );
     println!("  Controller: SSD1677");
     println!("  Panel: Carta 1200");
     println!("  Grayscale: {} levels", GDEM0397T81P.grayscale_levels);
@@ -52,19 +55,16 @@ async fn main() {
     // Show power stats
     let stats = emulator.power_stats();
     println!("Power Consumption:");
-    println!("  Average: {:.1}mA", stats.average_current_ua as f32 / 1000.0);
-    println!("  Peak: {:.1}mA", stats.peak_current_ua as f32 / 1000.0);
     println!(
-        "  Energy: {:.2}mWh",
-        stats.total_energy_uwh as f32 / 1000.0
+        "  Average: {:.1}mA",
+        stats.average_current_ua as f32 / 1000.0
     );
+    println!("  Peak: {:.1}mA", stats.peak_current_ua as f32 / 1000.0);
+    println!("  Energy: {:.2}mWh", stats.total_energy_uwh as f32 / 1000.0);
 
     if stats.average_current_ua > 0 {
         let battery_3000 = stats.estimated_battery_life_hours(3000);
-        println!(
-            "  Estimated battery (3000mAh): {:.1} hours",
-            battery_3000
-        );
+        println!("  Estimated battery (3000mAh): {:.1} hours", battery_3000);
     }
 
     println!();
@@ -127,16 +127,21 @@ fn draw_dap_ui(display: &mut Emulator) -> Result<(), Box<dyn std::error::Error>>
     // Track info (below album art)
     Text::new("Now Playing", Point::new(350, 260), small_style).draw(display)?;
 
+    Text::new("Midnight Groove", Point::new(400, 290), title_style).draw(display)?;
+
     Text::new(
-        "Midnight Groove",
-        Point::new(400, 290),
-        title_style,
+        "by The Ambient Collective",
+        Point::new(290, 315),
+        small_style,
     )
     .draw(display)?;
 
-    Text::new("by The Ambient Collective", Point::new(290, 315), small_style).draw(display)?;
-
-    Text::new("Album: Echoes of Tomorrow", Point::new(280, 335), light_style).draw(display)?;
+    Text::new(
+        "Album: Echoes of Tomorrow",
+        Point::new(280, 335),
+        light_style,
+    )
+    .draw(display)?;
 
     // Progress bar
     let progress_y = 360;
@@ -161,7 +166,12 @@ fn draw_dap_ui(display: &mut Emulator) -> Result<(), Box<dyn std::error::Error>>
     .draw(display)?;
 
     // Time labels
-    Text::new("2:24", Point::new(progress_x as i32 - 30, progress_y + 8), small_style).draw(display)?;
+    Text::new(
+        "2:24",
+        Point::new(progress_x as i32 - 30, progress_y + 8),
+        small_style,
+    )
+    .draw(display)?;
     Text::new(
         "4:03",
         Point::new((progress_x + progress_width) as i32 + 5, progress_y + 8),
@@ -177,7 +187,12 @@ fn draw_dap_ui(display: &mut Emulator) -> Result<(), Box<dyn std::error::Error>>
     Circle::new(Point::new(center_x - 120, controls_y), 30)
         .into_styled(PrimitiveStyle::with_stroke(Gray4::BLACK, 2))
         .draw(display)?;
-    Text::new("⏮", Point::new(center_x - 115, controls_y + 20), title_style).draw(display)?;
+    Text::new(
+        "⏮",
+        Point::new(center_x - 115, controls_y + 20),
+        title_style,
+    )
+    .draw(display)?;
 
     // Play/Pause
     Circle::new(Point::new(center_x - 20, controls_y), 40)
@@ -193,7 +208,12 @@ fn draw_dap_ui(display: &mut Emulator) -> Result<(), Box<dyn std::error::Error>>
     Text::new("⏭", Point::new(center_x + 95, controls_y + 20), title_style).draw(display)?;
 
     // Footer info
-    Text::new("Format: FLAC 24-bit/96kHz", Point::new(20, 465), small_style).draw(display)?;
+    Text::new(
+        "Format: FLAC 24-bit/96kHz",
+        Point::new(20, 465),
+        small_style,
+    )
+    .draw(display)?;
     Text::new("♫ Volume: 75%", Point::new(680, 465), small_style).draw(display)?;
 
     Ok(())

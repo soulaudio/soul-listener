@@ -69,9 +69,7 @@ impl WaveformLut {
     ///
     /// Calculates total duration from phase durations.
     pub fn new(mode: WaveformMode, phases: Vec<LutPhase>, temp_range: (i8, i8)) -> Self {
-        let total_duration_ms = phases.iter()
-            .map(|p| p.duration_us as u32)
-            .sum::<u32>() / 1000;
+        let total_duration_ms = phases.iter().map(|p| p.duration_us as u32).sum::<u32>() / 1000;
 
         Self {
             mode,
@@ -224,7 +222,9 @@ impl std::fmt::Display for LutError {
         match self {
             LutError::InvalidFormat(msg) => write!(f, "Invalid LUT format: {}", msg),
             LutError::UnsupportedVersion(v) => write!(f, "Unsupported LUT version: {}", v),
-            LutError::InvalidVoltage(v) => write!(f, "Invalid voltage: {}V (must be -20 to +20)", v),
+            LutError::InvalidVoltage(v) => {
+                write!(f, "Invalid voltage: {}V (must be -20 to +20)", v)
+            }
             LutError::InvalidDuration(d) => write!(f, "Invalid duration: {}µs", d),
             LutError::IoError(msg) => write!(f, "IO error: {}", msg),
             LutError::ParseError(msg) => write!(f, "Parse error: {}", msg),
@@ -274,8 +274,8 @@ impl WaveformLutSet {
     /// }
     /// ```
     pub fn from_json(json: &str) -> Result<Self, LutError> {
-        let parsed: JsonLutSet = serde_json::from_str(json)
-            .map_err(|e| LutError::ParseError(e.to_string()))?;
+        let parsed: JsonLutSet =
+            serde_json::from_str(json).map_err(|e| LutError::ParseError(e.to_string()))?;
 
         if parsed.version != 1 {
             return Err(LutError::UnsupportedVersion(parsed.version));
@@ -295,7 +295,9 @@ impl WaveformLutSet {
                 _ => continue, // Skip unknown modes
             };
 
-            let phases: Vec<LutPhase> = waveform.phases.into_iter()
+            let phases: Vec<LutPhase> = waveform
+                .phases
+                .into_iter()
                 .map(|p| LutPhase {
                     voltage: p.voltage,
                     duration_us: p.duration_us,
@@ -346,14 +348,15 @@ impl WaveformLutSet {
             waveforms,
         };
 
-        serde_json::to_string_pretty(&json_lut)
-            .map_err(|e| LutError::ParseError(e.to_string()))
+        serde_json::to_string_pretty(&json_lut).map_err(|e| LutError::ParseError(e.to_string()))
     }
 }
 
 fn lut_to_json(lut: &WaveformLut) -> JsonWaveform {
     JsonWaveform {
-        phases: lut.phases.iter()
+        phases: lut
+            .phases
+            .iter()
             .map(|p| JsonPhase {
                 voltage: p.voltage,
                 duration_us: p.duration_us,
@@ -464,10 +467,18 @@ impl WaveformLutSet {
         data.push(25);
 
         // Count modes
-        let mode_count = [&self.gc16, &self.gl16, &self.du4, &self.du, &self.a2, &self.gcc16, &self.gcu]
-            .iter()
-            .filter(|m| m.is_some())
-            .count() as u8;
+        let mode_count = [
+            &self.gc16,
+            &self.gl16,
+            &self.du4,
+            &self.du,
+            &self.a2,
+            &self.gcc16,
+            &self.gcu,
+        ]
+        .iter()
+        .filter(|m| m.is_some())
+        .count() as u8;
         data.push(mode_count);
 
         // Write each mode
@@ -529,8 +540,14 @@ mod tests {
     #[test]
     fn test_waveform_lut_creation() {
         let phases = vec![
-            LutPhase { voltage: -15, duration_us: 10000 },
-            LutPhase { voltage: 15, duration_us: 10000 },
+            LutPhase {
+                voltage: -15,
+                duration_us: 10000,
+            },
+            LutPhase {
+                voltage: 15,
+                duration_us: 10000,
+            },
         ];
 
         let lut = WaveformLut::new(WaveformMode::GC16, phases, (20, 30));
@@ -544,8 +561,14 @@ mod tests {
     #[test]
     fn test_ghosting_contribution() {
         let phases = vec![
-            LutPhase { voltage: -15, duration_us: 10000 },
-            LutPhase { voltage: 15, duration_us: 10000 },
+            LutPhase {
+                voltage: -15,
+                duration_us: 10000,
+            },
+            LutPhase {
+                voltage: 15,
+                duration_us: 10000,
+            },
         ];
 
         let lut = WaveformLut::new(WaveformMode::GC16, phases, (20, 30));
@@ -559,8 +582,14 @@ mod tests {
     #[test]
     fn test_dc_balance_symmetric() {
         let phases = vec![
-            LutPhase { voltage: -15, duration_us: 10000 },
-            LutPhase { voltage: 15, duration_us: 10000 },
+            LutPhase {
+                voltage: -15,
+                duration_us: 10000,
+            },
+            LutPhase {
+                voltage: 15,
+                duration_us: 10000,
+            },
         ];
 
         let lut = WaveformLut::new(WaveformMode::GC16, phases, (20, 30));
@@ -573,8 +602,14 @@ mod tests {
     #[test]
     fn test_dc_balance_asymmetric() {
         let phases = vec![
-            LutPhase { voltage: -15, duration_us: 10000 },
-            LutPhase { voltage: 15, duration_us: 5000 }, // Half duration
+            LutPhase {
+                voltage: -15,
+                duration_us: 10000,
+            },
+            LutPhase {
+                voltage: 15,
+                duration_us: 5000,
+            }, // Half duration
         ];
 
         let lut = WaveformLut::new(WaveformMode::GC16, phases, (20, 30));
@@ -587,8 +622,14 @@ mod tests {
     #[test]
     fn test_lut_validation_valid() {
         let phases = vec![
-            LutPhase { voltage: -15, duration_us: 10000 },
-            LutPhase { voltage: 15, duration_us: 10000 },
+            LutPhase {
+                voltage: -15,
+                duration_us: 10000,
+            },
+            LutPhase {
+                voltage: 15,
+                duration_us: 10000,
+            },
         ];
 
         let lut = WaveformLut::new(WaveformMode::GC16, phases, (20, 30));
@@ -598,7 +639,10 @@ mod tests {
     #[test]
     fn test_lut_validation_invalid_voltage() {
         let phases = vec![
-            LutPhase { voltage: -25, duration_us: 10000 }, // Too negative
+            LutPhase {
+                voltage: -25,
+                duration_us: 10000,
+            }, // Too negative
         ];
 
         let lut = WaveformLut::new(WaveformMode::GC16, phases, (20, 30));
@@ -608,7 +652,10 @@ mod tests {
     #[test]
     fn test_lut_validation_invalid_duration() {
         let phases = vec![
-            LutPhase { voltage: 15, duration_us: 0 }, // Zero duration
+            LutPhase {
+                voltage: 15,
+                duration_us: 0,
+            }, // Zero duration
         ];
 
         let lut = WaveformLut::new(WaveformMode::GC16, phases, (20, 30));
@@ -619,9 +666,10 @@ mod tests {
     fn test_lut_set_get_set() {
         let mut lut_set = WaveformLutSet::new();
 
-        let phases = vec![
-            LutPhase { voltage: -15, duration_us: 10000 },
-        ];
+        let phases = vec![LutPhase {
+            voltage: -15,
+            duration_us: 10000,
+        }];
         let lut = WaveformLut::new(WaveformMode::GC16, phases, (20, 30));
 
         lut_set.set_lut(lut.clone());
@@ -675,8 +723,14 @@ mod tests {
         let mut lut_set = WaveformLutSet::new();
 
         let phases = vec![
-            LutPhase { voltage: -15, duration_us: 10000 },
-            LutPhase { voltage: 15, duration_us: 10000 },
+            LutPhase {
+                voltage: -15,
+                duration_us: 10000,
+            },
+            LutPhase {
+                voltage: 15,
+                duration_us: 10000,
+            },
         ];
         lut_set.set_lut(WaveformLut::new(WaveformMode::GC16, phases, (20, 30)));
 
@@ -753,8 +807,14 @@ mod tests {
         let mut lut_set = WaveformLutSet::new();
 
         let phases = vec![
-            LutPhase { voltage: -15, duration_us: 10000 },
-            LutPhase { voltage: 15, duration_us: 10000 },
+            LutPhase {
+                voltage: -15,
+                duration_us: 10000,
+            },
+            LutPhase {
+                voltage: 15,
+                duration_us: 10000,
+            },
         ];
         lut_set.set_lut(WaveformLut::new(WaveformMode::GC16, phases, (20, 30)));
 

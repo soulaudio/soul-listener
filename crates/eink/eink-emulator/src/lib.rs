@@ -66,10 +66,7 @@ use embedded_graphics::prelude::*;
 
 /// Convert EinkColor framebuffer to RGBA buffer for rendering
 fn framebuffer_to_rgba(framebuffer: &[EinkColor]) -> Vec<u32> {
-    framebuffer
-        .iter()
-        .map(|pixel| pixel.to_rgba())
-        .collect()
+    framebuffer.iter().map(|pixel| pixel.to_rgba()).collect()
 }
 
 /// Display statistics tracking
@@ -89,9 +86,7 @@ impl DisplayStats {
                 self.full_refresh_count += 1
             }
             WaveformMode::DU4 => self.partial_refresh_count += 1,
-            WaveformMode::DU | WaveformMode::A2 | WaveformMode::GCU => {
-                self.fast_refresh_count += 1
-            }
+            WaveformMode::DU | WaveformMode::A2 | WaveformMode::GCU => self.fast_refresh_count += 1,
         }
         self.total_refresh_time_ms += duration_ms as u64;
     }
@@ -158,7 +153,8 @@ impl Emulator {
         let buffer_size = (spec.width * spec.height) as usize;
 
         // Apply rotation to get logical dimensions for drawing
-        let (logical_width, logical_height) = config.rotation.apply_to_dimensions(spec.width, spec.height);
+        let (logical_width, logical_height) =
+            config.rotation.apply_to_dimensions(spec.width, spec.height);
 
         // Select power profile based on display spec
         let power_profile = Self::select_power_profile(spec);
@@ -193,7 +189,11 @@ impl Emulator {
             config: config.clone(),
 
             #[cfg(not(feature = "headless"))]
-            window: Some(window::Window::new(logical_width, logical_height, &window_config)),
+            window: Some(window::Window::new(
+                logical_width,
+                logical_height,
+                &window_config,
+            )),
         }
     }
 
@@ -598,7 +598,8 @@ impl DisplayDriver for Emulator {
 
     async fn update_buffer(&mut self) -> Result<(), Self::DriverError> {
         // Transition to buffer transfer state
-        self.power_tracker.transition_to(PowerState::TransferringBuffer);
+        self.power_tracker
+            .transition_to(PowerState::TransferringBuffer);
 
         // Copy framebuffer to staged buffer (simulates SPI transfer to controller SRAM)
         self.staged_buffer.copy_from_slice(&self.framebuffer.pixels);
@@ -689,7 +690,8 @@ impl Emulator {
 
         // Transition to refreshing state with appropriate flash count
         let flash_count = mode.flash_count();
-        self.power_tracker.transition_to(PowerState::Refreshing { flash_count });
+        self.power_tracker
+            .transition_to(PowerState::Refreshing { flash_count });
 
         // 1. Quantize staged buffer based on waveform mode
         let quantized = self.quantize_buffer(&self.staged_buffer, mode);
@@ -731,10 +733,8 @@ impl Emulator {
         let effective_fb = self.pixel_states.effective_framebuffer();
 
         // Convert Gray4 to EinkColor for rendering
-        let effective_fb_eink: Vec<EinkColor> = effective_fb
-            .iter()
-            .map(|g| EinkColor::Gray(*g))
-            .collect();
+        let effective_fb_eink: Vec<EinkColor> =
+            effective_fb.iter().map(|g| EinkColor::Gray(*g)).collect();
 
         // 5. Render with flash animation
         let base_duration = mode.base_duration_ms();
@@ -845,7 +845,9 @@ impl Emulator {
 
                     return Err(format!("⚠️  QUIRK TRIGGERED: {}", description));
                 }
-                Quirk::SpiWriteHang { description } if operation.contains("spi_write") || operation.contains("init") => {
+                Quirk::SpiWriteHang { description }
+                    if operation.contains("spi_write") || operation.contains("init") =>
+                {
                     self.active_quirk = Some(description.to_string());
 
                     #[cfg(not(feature = "headless"))]
@@ -855,7 +857,9 @@ impl Emulator {
 
                     return Err(format!("⚠️  QUIRK TRIGGERED: {}", description));
                 }
-                Quirk::UncontrollableRefreshRate { description } if operation.contains("refresh") => {
+                Quirk::UncontrollableRefreshRate { description }
+                    if operation.contains("refresh") =>
+                {
                     // This quirk is a warning, not an error - just log it
                     eprintln!("⚠️  Hardware Quirk: {}", description);
                     self.active_quirk = Some(description.to_string());
@@ -866,7 +870,9 @@ impl Emulator {
                     }
                     // Don't return error, just warn
                 }
-                Quirk::PanelSpecific { description } if operation.contains("init") || operation.contains("vcom") => {
+                Quirk::PanelSpecific { description }
+                    if operation.contains("init") || operation.contains("vcom") =>
+                {
                     eprintln!("⚠️  Hardware Quirk: {}", description);
                     self.active_quirk = Some(description.to_string());
 
@@ -992,8 +998,14 @@ mod tests {
             .unwrap();
 
         // Check that pixels were drawn
-        assert_eq!(emulator.framebuffer.get_pixel(15, 15), Some(EinkColor::Gray(Gray4::BLACK)));
-        assert_eq!(emulator.framebuffer.get_pixel(0, 0), Some(EinkColor::Gray(Gray4::WHITE)));
+        assert_eq!(
+            emulator.framebuffer.get_pixel(15, 15),
+            Some(EinkColor::Gray(Gray4::BLACK))
+        );
+        assert_eq!(
+            emulator.framebuffer.get_pixel(0, 0),
+            Some(EinkColor::Gray(Gray4::WHITE))
+        );
     }
 
     #[tokio::test]
@@ -1411,8 +1423,14 @@ mod tests {
 
         // After initialization, framebuffer should be white (step 7 clears)
         // Check a few pixels
-        assert_eq!(emulator.framebuffer.get_pixel(0, 0), Some(EinkColor::Gray(Gray4::WHITE)));
-        assert_eq!(emulator.framebuffer.get_pixel(50, 50), Some(EinkColor::Gray(Gray4::WHITE)));
+        assert_eq!(
+            emulator.framebuffer.get_pixel(0, 0),
+            Some(EinkColor::Gray(Gray4::WHITE))
+        );
+        assert_eq!(
+            emulator.framebuffer.get_pixel(50, 50),
+            Some(EinkColor::Gray(Gray4::WHITE))
+        );
     }
 
     #[tokio::test]

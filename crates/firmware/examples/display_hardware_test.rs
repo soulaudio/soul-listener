@@ -7,18 +7,18 @@
 #![no_main]
 
 use embassy_executor::Spawner;
-use embassy_stm32::gpio::{Level, Output, Speed, Input, Pull};
-use embassy_stm32::spi::{Spi, Config as SpiConfig};
+use embassy_stm32::gpio::{Input, Level, Output, Pull, Speed};
+use embassy_stm32::spi::{Config as SpiConfig, Spi};
 use embassy_stm32::time::Hertz;
 use embassy_time::{Duration, Timer};
-use embedded_graphics::prelude::*;
-use embedded_graphics::pixelcolor::BinaryColor;
-use embedded_graphics::primitives::{Rectangle, Circle, PrimitiveStyle};
 use embedded_graphics::mono_font::{ascii::FONT_9X18, MonoTextStyle};
+use embedded_graphics::pixelcolor::BinaryColor;
+use embedded_graphics::prelude::*;
+use embedded_graphics::primitives::{Circle, PrimitiveStyle, Rectangle};
 use embedded_graphics::text::Text;
 use static_cell::StaticCell;
 
-use firmware::{Ssd1677Display, DapDisplay, DISPLAY_WIDTH, DISPLAY_HEIGHT, FRAMEBUFFER_SIZE};
+use firmware::{DapDisplay, Ssd1677Display, DISPLAY_HEIGHT, DISPLAY_WIDTH, FRAMEBUFFER_SIZE};
 
 use panic_probe as _;
 
@@ -36,10 +36,7 @@ async fn main(_spawner: Spawner) {
     spi_config.frequency = Hertz(4_000_000);
 
     let spi = Spi::new(
-        p.SPI1,
-        p.PA5, p.PA7, p.PA6,
-        p.DMA1_CH0, p.DMA1_CH1,
-        spi_config,
+        p.SPI1, p.PA5, p.PA7, p.PA6, p.DMA1_CH0, p.DMA1_CH1, spi_config,
     );
 
     let dc = Output::new(p.PB0, Level::Low, Speed::VeryHigh);
@@ -101,10 +98,13 @@ async fn main(_spawner: Spawner) {
     // Draw concentric circles
     for i in 0..5 {
         let radius = 20 + i * 15;
-        Circle::new(Point::new(400 - radius as i32, 240 - radius as i32), radius * 2)
-            .into_styled(PrimitiveStyle::with_stroke(BinaryColor::Off, 2))
-            .draw(&mut display)
-            .ok();
+        Circle::new(
+            Point::new(400 - radius as i32, 240 - radius as i32),
+            radius * 2,
+        )
+        .into_styled(PrimitiveStyle::with_stroke(BinaryColor::Off, 2))
+        .draw(&mut display)
+        .ok();
     }
 
     match display.refresh_full().await {

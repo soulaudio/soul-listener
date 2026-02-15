@@ -10,8 +10,8 @@ use embedded_graphics::{
 /// Text size variants
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum TextSize {
-    Small,   // 6x10 font
-    Normal,  // 10x20 font
+    Small,  // 6x10 font
+    Normal, // 10x20 font
 }
 
 impl TextSize {

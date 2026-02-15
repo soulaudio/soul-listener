@@ -13,7 +13,10 @@ pub fn run(headless: bool) -> Result<()> {
     print_banner();
 
     println!("{}", "Starting hot-reload development mode".bold());
-    println!("{}", "Watching: firmware, platform, eink-components, eink-system".dimmed());
+    println!(
+        "{}",
+        "Watching: firmware, platform, eink-components, eink-system".dimmed()
+    );
     println!();
 
     // Initial build and run
@@ -50,11 +53,11 @@ pub fn run(headless: bool) -> Result<()> {
     // Watch firmware source directory, examples, and Cargo.toml
     let watch_paths = vec![
         Path::new("crates/firmware/src"),
-        Path::new("crates/firmware/examples"),  // Watch examples for hot-reload
+        Path::new("crates/firmware/examples"), // Watch examples for hot-reload
         Path::new("crates/firmware/Cargo.toml"),
         Path::new("crates/platform"),
-        Path::new("crates/eink/eink-components/src"),  // Watch UI components
-        Path::new("crates/eink/eink-system/src"),      // Watch layout system
+        Path::new("crates/eink/eink-components/src"), // Watch UI components
+        Path::new("crates/eink/eink-system/src"),     // Watch layout system
     ];
 
     for path in &watch_paths {
@@ -66,7 +69,10 @@ pub fn run(headless: bool) -> Result<()> {
     }
 
     println!("{}", "Hot-reload active".green().bold());
-    println!("{}", "Save any .rs or .toml file to trigger rebuild".dimmed());
+    println!(
+        "{}",
+        "Save any .rs or .toml file to trigger rebuild".dimmed()
+    );
     println!("{}", "Press Ctrl+C to stop".dimmed());
     println!();
 
@@ -186,8 +192,8 @@ fn start_emulator(headless: bool) -> Result<Option<Child>> {
         .arg("firmware")
         .arg("--features")
         .arg("emulator")
-        .env("HOT_RELOAD_MODE", "1")  // Signal to example that we're in hot-reload mode
-        .stdout(std::process::Stdio::inherit())  // Show live output
+        .env("HOT_RELOAD_MODE", "1") // Signal to example that we're in hot-reload mode
+        .stdout(std::process::Stdio::inherit()) // Show live output
         .stderr(std::process::Stdio::inherit()); // Show errors in real-time
 
     if headless {
@@ -200,7 +206,10 @@ fn start_emulator(headless: bool) -> Result<Option<Child>> {
 
         let build_time = start.elapsed();
         println!();
-        println!("{}", format!("Completed in {:.1}s", build_time.as_secs_f64()).green());
+        println!(
+            "{}",
+            format!("Completed in {:.1}s", build_time.as_secs_f64()).green()
+        );
         return Ok(None);
     }
 
@@ -209,7 +218,10 @@ fn start_emulator(headless: bool) -> Result<Option<Child>> {
 
     let build_time = start.elapsed();
     println!();
-    println!("{}", format!("Started in {:.1}s", build_time.as_secs_f64()).green());
+    println!(
+        "{}",
+        format!("Started in {:.1}s", build_time.as_secs_f64()).green()
+    );
     println!();
 
     Ok(Some(child))

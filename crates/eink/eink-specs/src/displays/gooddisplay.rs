@@ -164,9 +164,9 @@ pub const GDEM0397T81P: DisplaySpec = DisplaySpec {
     controller: Controller::SSD1677,
     panel_type: PanelType::Carta1200,
     grayscale_levels: 4,
-    full_refresh_ms: 3000,      // 3 seconds per datasheet
-    partial_refresh_ms: 300,    // 0.3 seconds per datasheet
-    fast_refresh_ms: 1500,      // 1.5 seconds per datasheet
+    full_refresh_ms: 3000,       // 3 seconds per datasheet
+    partial_refresh_ms: 300,     // 0.3 seconds per datasheet
+    fast_refresh_ms: 1500,       // 1.5 seconds per datasheet
     ghosting_rate_partial: 0.10, // Low ghosting on Carta panel
     ghosting_rate_fast: 0.18,    // Moderate ghosting on fast refresh
     flash_count_full: 3,         // Typical for SSD1677
@@ -208,7 +208,13 @@ mod tests {
 
     #[test]
     fn test_all_displays_valid_temps() {
-        for spec in &[&GDEW0213I5F, &GDEW029T5, &GDEW042T2, &GDEW075T7, &GDEM0397T81P] {
+        for spec in &[
+            &GDEW0213I5F,
+            &GDEW029T5,
+            &GDEW042T2,
+            &GDEW075T7,
+            &GDEM0397T81P,
+        ] {
             assert!(spec.is_optimal_temp(25));
             assert!(spec.is_operating_temp(25));
             assert!(!spec.is_operating_temp(-20));
@@ -243,6 +249,9 @@ mod tests {
 
         // Verify aspect ratio
         let aspect = GDEM0397T81P.aspect_ratio();
-        assert!((aspect - 1.6667).abs() < 0.01, "Aspect ratio should be ~5:3 (1.667)");
+        assert!(
+            (aspect - 1.6667).abs() < 0.01,
+            "Aspect ratio should be ~5:3 (1.667)"
+        );
     }
 }

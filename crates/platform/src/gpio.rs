@@ -129,7 +129,8 @@ pub trait InterruptPin: InputPin {
     fn disable_interrupt(&mut self) -> Result<(), Self::Error>;
 
     /// Wait for interrupt (async)
-    fn wait_for_interrupt(&mut self) -> impl core::future::Future<Output = Result<(), Self::Error>>;
+    fn wait_for_interrupt(&mut self)
+        -> impl core::future::Future<Output = Result<(), Self::Error>>;
 
     /// Clear interrupt flag
     fn clear_interrupt(&mut self) -> Result<(), Self::Error>;

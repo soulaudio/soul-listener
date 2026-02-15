@@ -99,9 +99,9 @@ impl PowerGraph {
     /// Estimated power consumption in milliwatts
     pub fn estimate_power(&self, refresh_type: Option<RefreshType>) -> f32 {
         match refresh_type {
-            Some(RefreshType::Full) => self.baseline_power + 200.0,   // +200mW spike
+            Some(RefreshType::Full) => self.baseline_power + 200.0, // +200mW spike
             Some(RefreshType::Partial) => self.baseline_power + 50.0, // +50mW spike
-            Some(RefreshType::Fast) => self.baseline_power + 50.0,    // +50mW spike
+            Some(RefreshType::Fast) => self.baseline_power + 50.0,  // +50mW spike
             None => self.baseline_power,
         }
     }
