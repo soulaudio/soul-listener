@@ -12,6 +12,9 @@ pub mod overlay;
 pub mod panel;
 
 #[cfg(feature = "debug")]
+pub mod power_graph;
+
+#[cfg(feature = "debug")]
 pub mod manager;
 
 #[cfg(feature = "debug")]
