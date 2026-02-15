@@ -1,5 +1,6 @@
 //! Debug manager - central coordinator
 
+use super::power_graph::PowerGraph;
 use super::state::DebugState;
 use winit::event::{ElementState, WindowEvent};
 use winit::keyboard::{KeyCode, PhysicalKey};
@@ -22,6 +23,7 @@ pub enum EventResult {
 /// access to debug features like panels, borders, inspector, and power monitoring.
 pub struct DebugManager {
     state: DebugState,
+    power_graph: PowerGraph,
 }
 
 impl DebugManager {
@@ -31,6 +33,7 @@ impl DebugManager {
     pub fn new() -> Self {
         Self {
             state: DebugState::new(),
+            power_graph: PowerGraph::new(),
         }
     }
 
@@ -44,6 +47,18 @@ impl DebugManager {
     /// Use this to toggle debug features or modify debug state.
     pub fn state_mut(&mut self) -> &mut DebugState {
         &mut self.state
+    }
+
+    /// Returns an immutable reference to the power graph
+    pub fn power_graph(&self) -> &PowerGraph {
+        &self.power_graph
+    }
+
+    /// Returns a mutable reference to the power graph
+    ///
+    /// Use this to add power samples or modify graph settings.
+    pub fn power_graph_mut(&mut self) -> &mut PowerGraph {
+        &mut self.power_graph
     }
 
     /// Handles window events for debug system
@@ -186,5 +201,23 @@ mod tests {
         assert!(!manager.state().power_graph_enabled);
         manager.state_mut().toggle_power_graph();
         assert!(manager.state().power_graph_enabled);
+    }
+
+    #[test]
+    fn test_power_graph_accessors() {
+        use crate::debug::state::RefreshType;
+
+        let mut manager = DebugManager::new();
+
+        // Test immutable accessor
+        assert_eq!(manager.power_graph().current_power(), 10.0);
+
+        // Test mutable accessor
+        manager.power_graph_mut().add_sample(50.0, Some(RefreshType::Partial));
+        assert_eq!(manager.power_graph().current_power(), 50.0);
+
+        // Test average power
+        manager.power_graph_mut().add_sample(60.0, Some(RefreshType::Partial));
+        assert_eq!(manager.power_graph().average_power(), 55.0);
     }
 }
