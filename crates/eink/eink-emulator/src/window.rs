@@ -6,6 +6,8 @@
 use crate::config::Rotation;
 use crate::power::PowerStats;
 use softbuffer::{Context, Surface};
+use std::cell::RefCell;
+use std::rc::Rc;
 use std::time::Duration;
 use winit::application::ApplicationHandler;
 use winit::event::WindowEvent;
@@ -128,7 +130,7 @@ fn rotate_270_cw(src: &[u32], width: u32, height: u32) -> Vec<u32> {
 pub struct Window {
     event_loop: Option<EventLoop<()>>,
     window: std::sync::Arc<WinitWindow>,
-    surface: Surface<std::sync::Arc<WinitWindow>, std::sync::Arc<WinitWindow>>,
+    surface: Rc<RefCell<Surface<std::sync::Arc<WinitWindow>, std::sync::Arc<WinitWindow>>>>,
     width: u32,      // Logical display width
     height: u32,     // Logical display height
     config: crate::config::EmulatorConfig,
@@ -141,11 +143,12 @@ pub struct Window {
 /// Internal handler for the event loop
 struct EventHandler {
     should_exit: bool,
-    /// Logical window dimensions (consistent visual size across monitors)
-    logical_width: u32,
-    logical_height: u32,
-    /// Callback to handle surface resize on DPI change
-    on_scale_change: Option<Box<dyn FnMut(f64)>>,
+    /// Shared reference to surface for resizing
+    surface: Rc<RefCell<Surface<std::sync::Arc<WinitWindow>, std::sync::Arc<WinitWindow>>>>,
+    /// Aspect ratio to maintain (width / height)
+    aspect_ratio: f64,
+    /// Last requested size to detect user resize vs DPI change
+    last_logical_size: (u32, u32),
 }
 
 impl ApplicationHandler for EventHandler {
@@ -159,6 +162,11 @@ impl ApplicationHandler for EventHandler {
         _window_id: WindowId,
         event: WindowEvent,
     ) {
+        // Debug event handling (feature-gated)
+        // Note: This is a placeholder - actual integration happens in Emulator::run()
+        // Window doesn't directly handle debug events; they're processed by DebugManager
+        // in the emulator's event loop before being passed to the window.
+
         match event {
             WindowEvent::CloseRequested => {
                 self.should_exit = true;
@@ -171,19 +179,46 @@ impl ApplicationHandler for EventHandler {
                 scale_factor,
                 mut inner_size_writer,
             } => {
-                // Maintain consistent LOGICAL size when moving between monitors with different DPI
-                // Convert logical size to physical pixels: physical = logical × scale_factor
-                let physical_w = (self.logical_width as f64 * scale_factor).round() as u32;
-                let physical_h = (self.logical_height as f64 * scale_factor).round() as u32;
+                // KEY: Keep the same LOGICAL size when DPI changes
+                // This prevents auto-resize when moving between monitors
+                let (logical_w, logical_h) = self.last_logical_size;
+                let physical_w = (logical_w as f64 * scale_factor).round() as u32;
+                let physical_h = (logical_h as f64 * scale_factor).round() as u32;
 
-                let _ = inner_size_writer.request_inner_size(winit::dpi::PhysicalSize::new(
-                    physical_w,
-                    physical_h,
-                ));
+                let _ = inner_size_writer.request_inner_size(
+                    winit::dpi::PhysicalSize::new(physical_w, physical_h)
+                );
+            }
+            WindowEvent::Resized(physical_size) => {
+                // Resize surface to match window
+                if physical_size.width > 0 && physical_size.height > 0 {
+                    // Maintain aspect ratio by constraining the size
+                    let current_aspect = physical_size.width as f64 / physical_size.height as f64;
 
-                // Notify window to resize softbuffer surface
-                if let Some(ref mut callback) = self.on_scale_change {
-                    callback(scale_factor);
+                    let (final_w, final_h) = if (current_aspect - self.aspect_ratio).abs() > 0.01 {
+                        // Aspect ratio wrong - calculate correct dimensions
+                        // Use smaller dimension to fit content
+                        let height_from_width = (physical_size.width as f64 / self.aspect_ratio).round() as u32;
+                        let width_from_height = (physical_size.height as f64 * self.aspect_ratio).round() as u32;
+
+                        if height_from_width <= physical_size.height {
+                            (physical_size.width, height_from_width)
+                        } else {
+                            (width_from_height, physical_size.height)
+                        }
+                    } else {
+                        (physical_size.width, physical_size.height)
+                    };
+
+                    // Resize surface to constrained size
+                    if let (Some(w), Some(h)) = (
+                        std::num::NonZeroU32::new(final_w),
+                        std::num::NonZeroU32::new(final_h),
+                    ) {
+                        if let Ok(mut surface) = self.surface.try_borrow_mut() {
+                            let _ = surface.resize(w, h);
+                        }
+                    }
                 }
             }
             _ => {}
@@ -209,10 +244,11 @@ impl Window {
 
         // Create window attributes with LOGICAL size (not physical)
         // winit will automatically scale to physical pixels based on monitor DPI
+        // Resizable = true for emulator-style window (user can resize, aspect ratio maintained)
         let window_attributes = WindowAttributes::default()
             .with_title("E-Ink Emulator")
             .with_inner_size(winit::dpi::LogicalSize::new(logical_w, logical_h))
-            .with_resizable(false);
+            .with_resizable(true);
 
         // Use a single-shot approach: create window in resumed() using pump_app_events
         struct WindowCreator {
@@ -266,6 +302,9 @@ impl Window {
 
         // Get initial scale factor from the window
         let initial_scale_factor = window.scale_factor();
+
+        // Wrap surface in Rc<RefCell<>> for shared access between Window and EventHandler
+        let surface = Rc::new(RefCell::new(surface));
 
         let mut window_obj = Self {
             event_loop: Some(event_loop),
@@ -323,7 +362,9 @@ impl Window {
             std::num::NonZeroU32::new(physical_w),
             std::num::NonZeroU32::new(physical_h),
         ) {
-            let _ = self.surface.resize(w, h);
+            if let Ok(mut surface) = self.surface.try_borrow_mut() {
+                let _ = surface.resize(w, h);
+            }
         }
 
         self.current_scale_factor = scale_factor;
@@ -395,7 +436,8 @@ impl Window {
         let window_width = rotated_width * scale;
 
         // Surface was resized once during initialization, no need to resize every frame
-        let mut buffer = self.surface.buffer_mut().unwrap();
+        let mut surface = self.surface.borrow_mut();
+        let mut buffer = surface.buffer_mut().unwrap();
 
         // Step 4: Apply upscaling with pixel grid effect
         if scale == 1 {
@@ -440,16 +482,17 @@ impl Window {
     /// Run event loop (blocks until window closed)
     pub fn run(mut self) {
         if let Some(event_loop) = self.event_loop.take() {
-            // Calculate LOGICAL dimensions (consistent across monitors)
+            // Calculate aspect ratio and initial logical size
             let (window_w, window_h) = self.config.rotation.apply_to_dimensions(self.width, self.height);
-            let logical_width = window_w * self.config.scale;
-            let logical_height = window_h * self.config.scale;
+            let aspect_ratio = window_w as f64 / window_h as f64;
+            let logical_w = window_w * self.config.scale;
+            let logical_h = window_h * self.config.scale;
 
             let mut handler = EventHandler {
                 should_exit: false,
-                logical_width,
-                logical_height,
-                on_scale_change: None, // Can't resize surface from event handler
+                surface: Rc::clone(&self.surface),
+                aspect_ratio,
+                last_logical_size: (logical_w, logical_h),
             };
             let _ = event_loop.run_app(&mut handler);
         }
