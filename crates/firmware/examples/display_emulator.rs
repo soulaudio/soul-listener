@@ -43,6 +43,21 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     println!("✓ Display ready\n");
 
+    // Show debug features if enabled
+    #[cfg(feature = "debug")]
+    {
+        println!("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        println!("🔧 DEBUG MODE ENABLED");
+        println!("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        println!("Hotkeys:");
+        println!("  F12 - Toggle debug panel");
+        println!("  F1  - Toggle layout borders");
+        println!("  F2  - Toggle inspector mode");
+        println!("  F3  - Toggle power graph");
+        println!("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        println!();
+    }
+
     // Render a demo UI (menu scene)
     println!("Rendering demo menu...");
     render_demo_menu(&mut display)?;
