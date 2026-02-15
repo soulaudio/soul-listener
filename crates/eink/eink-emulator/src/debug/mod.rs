@@ -25,3 +25,12 @@ pub use state::*;
 
 #[cfg(feature = "debug")]
 pub use manager::*;
+
+#[cfg(feature = "debug")]
+pub use overlay::OverlayRenderer;
+
+#[cfg(feature = "debug")]
+pub use panel::DebugPanel;
+
+#[cfg(feature = "debug")]
+pub use power_graph::PowerGraph;
