@@ -135,14 +135,17 @@ pub struct Window {
     temperature: i8,
     power_stats: Option<PowerStats>,
     quirk_warning: Option<String>,
+    current_scale_factor: f64, // Track current DPI scale factor
 }
 
 /// Internal handler for the event loop
 struct EventHandler {
     should_exit: bool,
-    /// Fixed physical window dimensions (should not change with DPI)
-    fixed_width: u32,
-    fixed_height: u32,
+    /// Logical window dimensions (consistent visual size across monitors)
+    logical_width: u32,
+    logical_height: u32,
+    /// Callback to handle surface resize on DPI change
+    on_scale_change: Option<Box<dyn FnMut(f64)>>,
 }
 
 impl ApplicationHandler for EventHandler {
@@ -165,16 +168,23 @@ impl ApplicationHandler for EventHandler {
                 // Redraw happens via present() calls
             }
             WindowEvent::ScaleFactorChanged {
-                scale_factor: _,
+                scale_factor,
                 mut inner_size_writer,
             } => {
-                // Maintain fixed physical size when moving between monitors with different DPI
-                // This prevents the window from changing size when moved between displays
-                // or between Windows virtual desktops with different scaling settings
+                // Maintain consistent LOGICAL size when moving between monitors with different DPI
+                // Convert logical size to physical pixels: physical = logical × scale_factor
+                let physical_w = (self.logical_width as f64 * scale_factor).round() as u32;
+                let physical_h = (self.logical_height as f64 * scale_factor).round() as u32;
+
                 let _ = inner_size_writer.request_inner_size(winit::dpi::PhysicalSize::new(
-                    self.fixed_width,
-                    self.fixed_height,
+                    physical_w,
+                    physical_h,
                 ));
+
+                // Notify window to resize softbuffer surface
+                if let Some(ref mut callback) = self.on_scale_change {
+                    callback(scale_factor);
+                }
             }
             _ => {}
         }
@@ -191,15 +201,17 @@ impl Window {
     pub fn new(width: u32, height: u32, config: &crate::config::EmulatorConfig) -> Self {
         let mut event_loop = EventLoop::new().unwrap();
 
-        // Calculate window size based on rotation and scale
+        // Calculate LOGICAL window size based on rotation and scale
+        // Logical size ensures consistent visual appearance across monitors with different DPI
         let (window_w, window_h) = config.rotation.apply_to_dimensions(width, height);
-        let scaled_w = window_w * config.scale;
-        let scaled_h = window_h * config.scale;
+        let logical_w = window_w * config.scale;
+        let logical_h = window_h * config.scale;
 
-        // Create window attributes
+        // Create window attributes with LOGICAL size (not physical)
+        // winit will automatically scale to physical pixels based on monitor DPI
         let window_attributes = WindowAttributes::default()
             .with_title("E-Ink Emulator")
-            .with_inner_size(winit::dpi::PhysicalSize::new(scaled_w, scaled_h))
+            .with_inner_size(winit::dpi::LogicalSize::new(logical_w, logical_h))
             .with_resizable(false);
 
         // Use a single-shot approach: create window in resumed() using pump_app_events
@@ -252,6 +264,9 @@ impl Window {
         let window = creator.window.expect("Failed to create window");
         let surface = creator.surface.expect("Failed to create surface");
 
+        // Get initial scale factor from the window
+        let initial_scale_factor = window.scale_factor();
+
         let mut window_obj = Self {
             event_loop: Some(event_loop),
             window,
@@ -262,18 +277,12 @@ impl Window {
             temperature: 25, // Default to room temperature
             power_stats: None,
             quirk_warning: None,
+            current_scale_factor: initial_scale_factor,
         };
 
-        // Resize surface once during initialization (never resize again)
-        let (window_w, window_h) = config.rotation.apply_to_dimensions(width, height);
-        let final_width = window_w * config.scale;
-        let final_height = window_h * config.scale;
-        window_obj.surface
-            .resize(
-                std::num::NonZeroU32::new(final_width).unwrap(),
-                std::num::NonZeroU32::new(final_height).unwrap(),
-            )
-            .unwrap();
+        // Resize surface based on current scale factor
+        // Surface size = logical size × scale factor
+        window_obj.resize_surface_for_scale(initial_scale_factor);
 
         window_obj.update_title();
         window_obj
@@ -295,6 +304,29 @@ impl Window {
     pub fn set_quirk_warning(&mut self, warning: Option<&str>) {
         self.quirk_warning = warning.map(|s| s.to_string());
         self.update_title();
+    }
+
+    /// Resize softbuffer surface based on scale factor
+    ///
+    /// Surface size (in physical pixels) = logical size × scale factor
+    fn resize_surface_for_scale(&mut self, scale_factor: f64) {
+        let (window_w, window_h) = self.config.rotation.apply_to_dimensions(self.width, self.height);
+        let logical_w = window_w * self.config.scale;
+        let logical_h = window_h * self.config.scale;
+
+        // Calculate physical size: logical × scale_factor
+        let physical_w = (logical_w as f64 * scale_factor).round() as u32;
+        let physical_h = (logical_h as f64 * scale_factor).round() as u32;
+
+        // Resize softbuffer surface to match physical pixels
+        if let (Some(w), Some(h)) = (
+            std::num::NonZeroU32::new(physical_w),
+            std::num::NonZeroU32::new(physical_h),
+        ) {
+            let _ = self.surface.resize(w, h);
+        }
+
+        self.current_scale_factor = scale_factor;
     }
 
     /// Update window title with temperature, power info, and quirk warnings
@@ -361,7 +393,6 @@ impl Window {
         // Step 3: Calculate final window dimensions
         let scale = self.config.scale;
         let window_width = rotated_width * scale;
-        let window_height = rotated_height * scale;
 
         // Surface was resized once during initialization, no need to resize every frame
         let mut buffer = self.surface.buffer_mut().unwrap();
@@ -409,15 +440,16 @@ impl Window {
     /// Run event loop (blocks until window closed)
     pub fn run(mut self) {
         if let Some(event_loop) = self.event_loop.take() {
-            // Calculate fixed physical dimensions to maintain when moving between displays
+            // Calculate LOGICAL dimensions (consistent across monitors)
             let (window_w, window_h) = self.config.rotation.apply_to_dimensions(self.width, self.height);
-            let fixed_width = window_w * self.config.scale;
-            let fixed_height = window_h * self.config.scale;
+            let logical_width = window_w * self.config.scale;
+            let logical_height = window_h * self.config.scale;
 
             let mut handler = EventHandler {
                 should_exit: false,
-                fixed_width,
-                fixed_height,
+                logical_width,
+                logical_height,
+                on_scale_change: None, // Can't resize surface from event handler
             };
             let _ = event_loop.run_app(&mut handler);
         }
