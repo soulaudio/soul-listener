@@ -19,3 +19,4 @@ tokio = { version = "1.49", features = ["macros", "rt"] }
 [features]
 default = []
 std = ["eink-system/std"]
+debug = ["eink-system/debug"]

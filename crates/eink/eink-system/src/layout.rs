@@ -61,6 +61,8 @@
 //! ```
 
 use embedded_graphics::prelude::{Point, Size};
+#[cfg(feature = "debug")]
+use crate::debug::DebugInfo;
 use heapless::Vec;
 
 /// Maximum number of children in a layout result.
@@ -455,6 +457,9 @@ pub struct LayoutResult {
     /// Uses `heapless::Vec` for `no_std` compatibility.
     /// Limited to [`MAX_CHILDREN`] children.
     pub children: Vec<ChildLayout, MAX_CHILDREN>,
+    /// Debug metadata for this component
+    #[cfg(feature = "debug")]
+    pub debug_info: Option<DebugInfo>,
 }
 
 impl LayoutResult {
@@ -475,7 +480,12 @@ impl LayoutResult {
     /// assert_eq!(result.children.len(), 2);
     /// ```
     pub fn new(size: Size, children: Vec<ChildLayout, MAX_CHILDREN>) -> Self {
-        Self { size, children }
+        Self {
+            size,
+            children,
+            #[cfg(feature = "debug")]
+            debug_info: None,
+        }
     }
 
     /// Create a leaf layout result (no children).
@@ -494,6 +504,8 @@ impl LayoutResult {
         Self {
             size,
             children: Vec::new(),
+            #[cfg(feature = "debug")]
+            debug_info: None,
         }
     }
 

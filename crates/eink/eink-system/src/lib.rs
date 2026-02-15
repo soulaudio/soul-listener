@@ -28,6 +28,8 @@ pub mod style;
 pub mod flex;
 pub mod containers;
 pub mod render;
+#[cfg(feature = "debug")]
+pub mod debug;
 
 pub mod prelude {
     // Style system (public API)
