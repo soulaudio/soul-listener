@@ -21,4 +21,5 @@ image = "0.25.9"
 [features]
 default = []
 std = []
+debug = []
 screenshot-tests = ["eink-emulator", "image"]
