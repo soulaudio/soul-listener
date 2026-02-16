@@ -509,7 +509,14 @@ impl Emulator {
         }
 
         // Present final image
-        let rgba = framebuffer_to_rgba(framebuffer);
+        let mut rgba = framebuffer_to_rgba(framebuffer);
+
+        // Render debug overlays (feature-gated)
+        #[cfg(feature = "debug")]
+        if let Some(ref debug_manager) = self.debug_manager {
+            self.render_debug_overlays(&mut rgba, debug_manager);
+        }
+
         #[cfg(not(feature = "headless"))]
         self.present_frame(&rgba).await;
 
@@ -960,6 +967,34 @@ impl Emulator {
     #[cfg(feature = "debug")]
     pub fn debug_manager_mut(&mut self) -> Option<&mut debug::DebugManager> {
         self.debug_manager.as_mut()
+    }
+
+    /// Render debug overlays onto the RGBA buffer
+    ///
+    /// This renders borders, panel, and power graph based on debug state.
+    #[cfg(feature = "debug")]
+    fn render_debug_overlays(&self, rgba: &mut [u32], debug_manager: &debug::DebugManager) {
+        let width = self.framebuffer.width;
+        let height = self.framebuffer.height;
+        let state = debug_manager.state();
+
+        // Render component borders if enabled
+        if state.borders_enabled {
+            // Collect component info from debug metadata
+            // For now, we'll just render the overlay if there are any registered components
+            let components = vec![]; // TODO: Get actual component list from metadata
+            debug::OverlayRenderer::new().render_borders(rgba, width, height, &components);
+        }
+
+        // Render power graph if enabled
+        if state.power_graph_enabled {
+            debug_manager.power_graph().render(rgba, width, 10, 400);
+        }
+
+        // Render debug panel last (on top of everything)
+        if state.panel_visible {
+            debug::DebugPanel::new().render(rgba, width, height, state);
+        }
     }
 }
 
