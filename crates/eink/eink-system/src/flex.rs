@@ -86,7 +86,7 @@ pub struct FlexLayout {
 
 /// Internal representation of a flex item during layout computation
 #[derive(Debug, Clone, Copy)]
-#[allow(dead_code)] // intrinsic_size is used in layout calculation (lines 207-208)
+#[allow(dead_code)] // intrinsic_size is used in layout calculation (lines 227, 230, 310)
 struct FlexItem {
     /// Target size on main axis (after flex grow/shrink)
     main_size: u32,
@@ -433,7 +433,7 @@ impl FlexLayout {
                 Align::End => container_size.saturating_sub(item.cross_size),
                 Align::Center => (container_size.saturating_sub(item.cross_size)) / 2,
                 Align::Stretch => 0, // Position at start, size handled in cross_size
-                Align::Baseline => 0, // TODO: Implement baseline alignment
+                Align::Baseline => 0, // Same as Start — baseline requires font metrics not available at layout level
             };
             positions.push(pos).ok();
         }

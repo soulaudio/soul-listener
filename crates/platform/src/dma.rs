@@ -97,13 +97,10 @@ where
     }
 }
 
-/// DMA buffer trait
+/// DMA buffer trait (read-only access)
 pub trait DmaBuffer {
     /// Get buffer pointer
     fn as_ptr(&self) -> *const u8;
-
-    /// Get mutable buffer pointer
-    fn as_mut_ptr(&mut self) -> *mut u8;
 
     /// Get buffer length
     fn len(&self) -> usize;
@@ -114,13 +111,15 @@ pub trait DmaBuffer {
     }
 }
 
+/// DMA buffer trait (read-write access)
+pub trait DmaBufferMut: DmaBuffer {
+    /// Get mutable buffer pointer
+    fn as_mut_ptr(&mut self) -> *mut u8;
+}
+
 impl DmaBuffer for &[u8] {
     fn as_ptr(&self) -> *const u8 {
         (*self).as_ptr()
-    }
-
-    fn as_mut_ptr(&mut self) -> *mut u8 {
-        panic!("Cannot get mutable pointer from immutable slice")
     }
 
     fn len(&self) -> usize {
@@ -133,12 +132,14 @@ impl DmaBuffer for &mut [u8] {
         (**self).as_ptr()
     }
 
-    fn as_mut_ptr(&mut self) -> *mut u8 {
-        (**self).as_mut_ptr()
-    }
-
     fn len(&self) -> usize {
         (**self).len()
+    }
+}
+
+impl DmaBufferMut for &mut [u8] {
+    fn as_mut_ptr(&mut self) -> *mut u8 {
+        (**self).as_mut_ptr()
     }
 }
 

@@ -84,7 +84,7 @@ pub use peripheral::{
 };
 
 // Re-export DMA types
-pub use dma::{CircularBuffer, DmaBuffer, DmaChannel, DmaTransfer};
+pub use dma::{CircularBuffer, DmaBuffer, DmaBufferMut, DmaChannel, DmaTransfer};
 
 // Re-export power types
 pub use power::{Peripheral, PowerManager, PowerMonitor, SleepMode, VoltageScale, WakeSource};

@@ -509,7 +509,9 @@ impl Window {
     /// `width` / `height` are display content dimensions before rotation.
     /// Physical window pixels = rotated dimensions × `config.scale`.
     pub fn new(width: u32, height: u32, config: &crate::config::EmulatorConfig) -> Self {
-        let mut event_loop = EventLoop::builder().build().unwrap();
+        let mut event_loop = EventLoop::builder()
+            .build()
+            .expect("Failed to create winit event loop");
 
         let (win_w, win_h) = config.rotation.apply_to_dimensions(width, height);
         // Start at display-only size. Panel expands the window when toggled on.
@@ -544,7 +546,7 @@ impl Window {
                 if self.result.is_some() {
                     return; // already created
                 }
-                let attrs = self.attrs.take().unwrap();
+                let attrs = self.attrs.take().expect("Creator.attrs was None — resumed() called twice");
                 let window =
                     Arc::new(event_loop.create_window(attrs).expect("create_window failed"));
 
@@ -734,24 +736,28 @@ impl Window {
                         position: (0, 0),
                         size: (w, h),
                         test_id: Some("display-root".to_string()),
+                        ..Default::default()
                     },
                     debug::ComponentInfo {
                         component_type: "Label".to_string(),
                         position: (0, 0),
                         size: (w, header_h),
                         test_id: Some("header".to_string()),
+                        ..Default::default()
                     },
                     debug::ComponentInfo {
                         component_type: "Button".to_string(),
                         position: (0, content_y),
                         size: (w, content_h),
                         test_id: Some("content".to_string()),
+                        ..Default::default()
                     },
                     debug::ComponentInfo {
                         component_type: "ProgressBar".to_string(),
                         position: (0, footer_y),
                         size: (w, footer_h),
                         test_id: Some("footer".to_string()),
+                        ..Default::default()
                     },
                 ]
             };
@@ -766,7 +772,12 @@ impl Window {
                     .map(|s| s.position == hov.position && s.size == hov.size)
                     .unwrap_or(false);
                 if !is_also_selected {
-                    debug::OverlayRenderer::new().render_hovered_component(rgba, w, h, hov);
+                    let renderer = debug::OverlayRenderer::new();
+                    if hov.margin.is_zero() && hov.padding.is_zero() && hov.border.is_zero() {
+                        renderer.render_hovered_component(rgba, w, h, hov);
+                    } else {
+                        renderer.render_hovered_box_model(rgba, w, h, hov);
+                    }
                 }
             }
         }

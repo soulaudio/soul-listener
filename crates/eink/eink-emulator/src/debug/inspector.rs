@@ -5,8 +5,8 @@
 //! three tabs that can be cycled with Tab / Shift+Tab:
 //!
 //! - **Layout** (default): position, size, right/bottom bounds
-//! - **Component**: type name, test ID
-//! - **Stats**: placeholder refresh statistics
+//! - **BoxModel**: margin / border / padding / content visualisation
+//! - **Component**: type name, test ID, key-value attributes
 //!
 //! # Rendering
 //!
@@ -20,13 +20,14 @@
 //! use eink_emulator::debug::state::{ComponentInfo, DebugState};
 //!
 //! let mut inspector = Inspector::new();
-//! inspector.set_tab(InspectorTab::Component);
+//! inspector.set_tab(InspectorTab::BoxModel);
 //!
 //! let component = ComponentInfo {
 //!     component_type: "Button".to_string(),
 //!     position: (10, 20),
 //!     size: (100, 40),
 //!     test_id: Some("play-button".to_string()),
+//!     ..Default::default()
 //! };
 //!
 //! let mut buffer = vec![0u32; 800 * 600];
@@ -61,10 +62,20 @@ const COL_TAB_ON: Rgb888 = Rgb888::new(0x55, 0xCC, 0xFF);
 const COL_TAB_OFF: Rgb888 = Rgb888::new(0x44, 0x55, 0x66);
 
 // Layout constants
-const TOOLTIP_W: u32 = 120;
-const TOOLTIP_H: u32 = 80;
+pub const TOOLTIP_W: u32 = 160;
+pub const TOOLTIP_H: u32 = 120;
 const PAD: i32 = 3;
 const LH: i32 = 11; // Line height
+
+// Box-model zone colours (ARGB)
+const MARGIN_FILL:  u32 = 0x60FFA040;
+const BORDER_FILL:  u32 = 0x60FFD040;
+const PADDING_FILL: u32 = 0x6050CC50;
+const CONTENT_FILL: u32 = 0x604090E0;
+const MARGIN_LINE:  u32 = 0xFFDD7020;
+const BORDER_LINE:  u32 = 0xFFCCAA20;
+const PADDING_LINE: u32 = 0xFF30AA30;
+const CONTENT_LINE: u32 = 0xFF2070CC;
 
 // ---------------------------------------------------------------------------
 // Canvas that wraps a rectangular region of the main pixel buffer
@@ -146,6 +157,17 @@ impl<'buf> Canvas<'buf> {
             self.set_px(w - 1, y, color);
         }
     }
+
+    fn rect_outline(&mut self, x: u32, y: u32, w: u32, h: u32, color: u32) {
+        for i in 0..w {
+            self.set_px(x + i, y, color);
+            self.set_px(x + i, y + h.saturating_sub(1), color);
+        }
+        for i in 0..h {
+            self.set_px(x, y + i, color);
+            self.set_px(x + w.saturating_sub(1), y + i, color);
+        }
+    }
 }
 
 impl DrawTarget for Canvas<'_> {
@@ -198,10 +220,10 @@ fn kv(canvas: &mut Canvas, y: i32, key: &str, value: &str) {
 pub enum InspectorTab {
     /// Layout properties (position, size, bounds)
     Layout,
-    /// Component metadata (type, test ID)
+    /// Box model (margin / border / padding / content visualisation)
+    BoxModel,
+    /// Component metadata (type, test ID, attributes)
     Component,
-    /// Performance statistics
-    Stats,
 }
 
 /// Component inspector with tooltip rendering
@@ -227,6 +249,15 @@ impl Inspector {
         self.current_tab
     }
 
+    /// Cycle to the next tab: Layout → BoxModel → Component → Layout.
+    pub fn next_tab(&mut self) {
+        self.current_tab = match self.current_tab {
+            InspectorTab::Layout   => InspectorTab::BoxModel,
+            InspectorTab::BoxModel => InspectorTab::Component,
+            InspectorTab::Component => InspectorTab::Layout,
+        };
+    }
+
     /// Render a component-inspector tooltip into `buffer` at position (`x`, `y`).
     ///
     /// The tooltip is `TOOLTIP_W × TOOLTIP_H` pixels and is automatically
@@ -245,7 +276,7 @@ impl Inspector {
         x: u32,
         y: u32,
         component: &ComponentInfo,
-        state: &super::state::DebugState,
+        _state: &super::state::DebugState,
     ) {
         let w = TOOLTIP_W;
         let h = TOOLTIP_H;
@@ -261,7 +292,7 @@ impl Inspector {
         canvas.border(TOOLTIP_BORDER);
 
         // ── tab bar ──────────────────────────────────────────────────────
-        let tabs = [("LYT", InspectorTab::Layout), ("CMP", InspectorTab::Component), ("STS", InspectorTab::Stats)];
+        let tabs = [("LYT", InspectorTab::Layout), ("BOX", InspectorTab::BoxModel), ("CMP", InspectorTab::Component)];
         let tab_w = (w - 2) / 3;
         for (i, (label, tab)) in tabs.iter().enumerate() {
             let tab_x = 1 + i as u32 * tab_w;
@@ -307,6 +338,50 @@ impl Inspector {
                 );
             }
 
+            InspectorTab::BoxModel => {
+                // Nested box diagram in the upper portion (y=12..84)
+                // Layer order: margin → border → padding → content (back to front)
+                canvas.fill_rect(2,  12, 156, 72, MARGIN_FILL);
+                canvas.fill_rect(14, 24, 132, 48, BORDER_FILL);
+                canvas.fill_rect(16, 26, 128, 44, PADDING_FILL);
+                canvas.fill_rect(26, 36, 108, 24, CONTENT_FILL);
+
+                canvas.rect_outline(2,  12, 156, 72, MARGIN_LINE);
+                canvas.rect_outline(14, 24, 132, 48, BORDER_LINE);
+                canvas.rect_outline(16, 26, 128, 44, PADDING_LINE);
+                canvas.rect_outline(26, 36, 108, 24, CONTENT_LINE);
+
+                // Zone labels
+                let mar_style  = MonoTextStyle::new(&FONT_6X10, Rgb888::new(0xDD, 0x70, 0x20));
+                let pad_style  = MonoTextStyle::new(&FONT_6X10, Rgb888::new(0x30, 0xAA, 0x30));
+                let cont_style = MonoTextStyle::new(&FONT_6X10, Rgb888::new(0x40, 0x90, 0xE0));
+                Text::new("margin",  Point::new(4, 21), mar_style).draw(&mut canvas).ok();
+                Text::new("padding", Point::new(18, 35), pad_style).draw(&mut canvas).ok();
+
+                // Content size centred in content box
+                let cont_label = if component.size.0 > 0 && component.size.1 > 0 {
+                    format!("{}×{}", component.size.0, component.size.1)
+                } else {
+                    "- × -".to_string()
+                };
+                let cont_x = (26 + (108i32 - cont_label.len() as i32 * 6) / 2).max(26);
+                Text::new(&cont_label, Point::new(cont_x, 50), cont_style).draw(&mut canvas).ok();
+
+                // Compact value table (y=88..119, 3 rows)
+                let dim_style = MonoTextStyle::new(&FONT_6X10, COL_KEY);
+                let val_style = MonoTextStyle::new(&FONT_6X10, COL_VALUE);
+
+                let table_y = [88i32, 99, 110];
+                let labels  = ["mar", "brd", "pad"];
+                let spacings = [component.margin, component.border, component.padding];
+
+                for ((row_y, lbl), sp) in table_y.iter().zip(labels.iter()).zip(spacings.iter()) {
+                    Text::new(lbl, Point::new(PAD, *row_y), dim_style).draw(&mut canvas).ok();
+                    let row = format!("{:>3}{:>3}{:>3}{:>3}", sp.top, sp.right, sp.bottom, sp.left);
+                    Text::new(&row, Point::new(PAD + 18, *row_y), val_style).draw(&mut canvas).ok();
+                }
+            }
+
             InspectorTab::Component => {
                 txt(&mut canvas, cy, "COMPONENT", COL_TITLE);
                 cy += LH;
@@ -324,19 +399,19 @@ impl Inspector {
                     id_str.to_string()
                 };
                 kv(&mut canvas, cy, "id  ", &truncated);
-            }
+                cy += LH;
 
-            InspectorTab::Stats => {
-                txt(&mut canvas, cy, "STATS", COL_TITLE);
-                cy += LH;
-                kv(&mut canvas, cy, "full  ", &state.full_refresh_count.to_string());
-                cy += LH;
-                kv(&mut canvas, cy, "part  ", &state.partial_refresh_count.to_string());
-                cy += LH;
-                let area = component.size.0 as u64 * component.size.1 as u64;
-                kv(&mut canvas, cy, "area  ", &format!("{}px", area));
-                cy += LH;
-                kv(&mut canvas, cy, "pos   ", &format!("({},{})", component.position.0, component.position.1));
+                // Attributes
+                if !component.attributes.is_empty() {
+                    let badge_y = h as i32 - 12;
+                    canvas.hline(cy as u32, DIVIDER);
+                    cy += 2;
+                    let max_rows = ((badge_y - cy) / LH).max(0) as usize;
+                    for (k, v) in component.attributes.iter().take(max_rows) {
+                        kv(&mut canvas, cy, &format!("{}: ", k), v);
+                        cy += LH;
+                    }
+                }
             }
         }
 
@@ -388,6 +463,7 @@ mod tests {
             position: (10, 20),
             size: (100, 40),
             test_id: Some("test-button".to_string()),
+            ..Default::default()
         }
     }
 
@@ -409,9 +485,21 @@ mod tests {
         assert_eq!(inspector.current_tab(), InspectorTab::Layout);
         inspector.set_tab(InspectorTab::Component);
         assert_eq!(inspector.current_tab(), InspectorTab::Component);
-        inspector.set_tab(InspectorTab::Stats);
-        assert_eq!(inspector.current_tab(), InspectorTab::Stats);
+        inspector.set_tab(InspectorTab::BoxModel);
+        assert_eq!(inspector.current_tab(), InspectorTab::BoxModel);
         inspector.set_tab(InspectorTab::Layout);
+        assert_eq!(inspector.current_tab(), InspectorTab::Layout);
+    }
+
+    #[test]
+    fn test_next_tab_cycling() {
+        let mut inspector = Inspector::new();
+        assert_eq!(inspector.current_tab(), InspectorTab::Layout);
+        inspector.next_tab();
+        assert_eq!(inspector.current_tab(), InspectorTab::BoxModel);
+        inspector.next_tab();
+        assert_eq!(inspector.current_tab(), InspectorTab::Component);
+        inspector.next_tab();
         assert_eq!(inspector.current_tab(), InspectorTab::Layout);
     }
 
@@ -438,10 +526,52 @@ mod tests {
     }
 
     #[test]
-    fn test_render_stats_tab() {
+    fn test_render_box_model_tab() {
         let mut inspector = Inspector::new();
-        inspector.set_tab(InspectorTab::Stats);
+        inspector.set_tab(InspectorTab::BoxModel);
         let component = make_component();
+        let mut buffer = vec![0u32; 800 * 600];
+        inspector.render_details(&mut buffer, 800, 10, 10, &component, &crate::debug::state::DebugState::default());
+        let written = buffer.iter().any(|&px| px != 0);
+        assert!(written);
+    }
+
+    #[test]
+    fn test_render_box_model_with_spacing() {
+        use crate::debug::state::Spacing;
+        let mut inspector = Inspector::new();
+        inspector.set_tab(InspectorTab::BoxModel);
+        let component = ComponentInfo {
+            component_type: "Button".to_string(),
+            position: (10, 20),
+            size: (100, 40),
+            test_id: Some("test-btn".to_string()),
+            margin:  Spacing::all(8),
+            padding: Spacing::axes(4, 12),
+            border:  Spacing::all(1),
+            ..Default::default()
+        };
+        let mut buffer = vec![0u32; 800 * 600];
+        inspector.render_details(&mut buffer, 800, 10, 10, &component, &crate::debug::state::DebugState::default());
+        let written = buffer.iter().any(|&px| px != 0);
+        assert!(written);
+    }
+
+    #[test]
+    fn test_render_attrs_in_component_tab() {
+        let mut inspector = Inspector::new();
+        inspector.set_tab(InspectorTab::Component);
+        let component = ComponentInfo {
+            component_type: "Button".to_string(),
+            position: (10, 20),
+            size: (100, 40),
+            test_id: Some("test-btn".to_string()),
+            attributes: vec![
+                ("index".to_string(), "0".to_string()),
+                ("enabled".to_string(), "true".to_string()),
+            ],
+            ..Default::default()
+        };
         let mut buffer = vec![0u32; 800 * 600];
         inspector.render_details(&mut buffer, 800, 10, 10, &component, &crate::debug::state::DebugState::default());
         let written = buffer.iter().any(|&px| px != 0);
@@ -453,7 +583,7 @@ mod tests {
         let mut inspector = Inspector::new();
         let component = make_component();
         let mut buffer = vec![0u32; 800 * 600];
-        for tab in [InspectorTab::Layout, InspectorTab::Component, InspectorTab::Stats] {
+        for tab in [InspectorTab::Layout, InspectorTab::BoxModel, InspectorTab::Component] {
             inspector.set_tab(tab);
             inspector.render_details(&mut buffer, 800, 10, 10, &component, &crate::debug::state::DebugState::default());
         }
@@ -467,6 +597,7 @@ mod tests {
             position: (0, 0),
             size: (50, 20),
             test_id: None,
+            ..Default::default()
         };
         let mut buffer = vec![0u32; 800 * 600];
         inspector.render_details(&mut buffer, 800, 0, 0, &component, &crate::debug::state::DebugState::default());
@@ -489,7 +620,7 @@ mod tests {
     fn test_inspector_tab_equality() {
         assert_eq!(InspectorTab::Layout, InspectorTab::Layout);
         assert_ne!(InspectorTab::Layout, InspectorTab::Component);
-        assert_ne!(InspectorTab::Component, InspectorTab::Stats);
+        assert_ne!(InspectorTab::Component, InspectorTab::BoxModel);
     }
 
     #[test]
@@ -500,7 +631,7 @@ mod tests {
 
     #[test]
     fn test_inspector_tab_copy() {
-        let tab = InspectorTab::Stats;
+        let tab = InspectorTab::BoxModel;
         let copied = tab;
         assert_eq!(tab, copied);
     }

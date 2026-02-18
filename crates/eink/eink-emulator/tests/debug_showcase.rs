@@ -62,6 +62,7 @@ fn test_showcase_01_borders_only() {
             position: (0, 0),
             size: (480, 60),
             test_id: Some("header".to_string()),
+            ..Default::default()
         },
         // Now Playing title
         ComponentInfo {
@@ -69,6 +70,7 @@ fn test_showcase_01_borders_only() {
             position: (20, 20),
             size: (200, 24),
             test_id: Some("title".to_string()),
+            ..Default::default()
         },
         // Album art container
         ComponentInfo {
@@ -76,6 +78,7 @@ fn test_showcase_01_borders_only() {
             position: (90, 100),
             size: (300, 300),
             test_id: Some("album-art".to_string()),
+            ..Default::default()
         },
         // Track info container
         ComponentInfo {
@@ -83,6 +86,7 @@ fn test_showcase_01_borders_only() {
             position: (40, 420),
             size: (400, 120),
             test_id: Some("track-info".to_string()),
+            ..Default::default()
         },
         // Track name
         ComponentInfo {
@@ -90,6 +94,7 @@ fn test_showcase_01_borders_only() {
             position: (60, 440),
             size: (360, 28),
             test_id: Some("track-name".to_string()),
+            ..Default::default()
         },
         // Artist name
         ComponentInfo {
@@ -97,6 +102,7 @@ fn test_showcase_01_borders_only() {
             position: (60, 480),
             size: (360, 20),
             test_id: Some("artist-name".to_string()),
+            ..Default::default()
         },
         // Progress bar
         ComponentInfo {
@@ -104,6 +110,7 @@ fn test_showcase_01_borders_only() {
             position: (40, 560),
             size: (400, 8),
             test_id: Some("progress".to_string()),
+            ..Default::default()
         },
         // Time labels
         ComponentInfo {
@@ -111,12 +118,14 @@ fn test_showcase_01_borders_only() {
             position: (40, 580),
             size: (50, 16),
             test_id: Some("time-current".to_string()),
+            ..Default::default()
         },
         ComponentInfo {
             component_type: "Label".to_string(),
             position: (390, 580),
             size: (50, 16),
             test_id: Some("time-total".to_string()),
+            ..Default::default()
         },
         // Control buttons
         ComponentInfo {
@@ -124,18 +133,21 @@ fn test_showcase_01_borders_only() {
             position: (140, 640),
             size: (60, 60),
             test_id: Some("btn-prev".to_string()),
+            ..Default::default()
         },
         ComponentInfo {
             component_type: "Button".to_string(),
             position: (210, 640),
             size: (60, 60),
             test_id: Some("btn-play".to_string()),
+            ..Default::default()
         },
         ComponentInfo {
             component_type: "Button".to_string(),
             position: (280, 640),
             size: (60, 60),
             test_id: Some("btn-next".to_string()),
+            ..Default::default()
         },
     ];
 
@@ -166,24 +178,28 @@ fn test_showcase_02_panel_and_borders() {
             position: (10, 10),
             size: (260, 200),
             test_id: Some("main".to_string()),
+            ..Default::default()
         },
         ComponentInfo {
             component_type: "Button".to_string(),
             position: (30, 50),
             size: (220, 40),
             test_id: Some("action-btn".to_string()),
+            ..Default::default()
         },
         ComponentInfo {
             component_type: "Label".to_string(),
             position: (30, 120),
             size: (220, 24),
             test_id: Some("status".to_string()),
+            ..Default::default()
         },
         ComponentInfo {
             component_type: "ProgressBar".to_string(),
             position: (30, 160),
             size: (220, 8),
             test_id: Some("loading".to_string()),
+            ..Default::default()
         },
     ];
 
@@ -270,36 +286,42 @@ fn test_showcase_04_complete_debug_ui() {
             position: (10, 10),
             size: (260, 350),
             test_id: Some("content".to_string()),
+            ..Default::default()
         },
         ComponentInfo {
             component_type: "Label".to_string(),
             position: (30, 30),
             size: (220, 24),
             test_id: Some("header".to_string()),
+            ..Default::default()
         },
         ComponentInfo {
             component_type: "Button".to_string(),
             position: (30, 80),
             size: (220, 50),
             test_id: Some("btn1".to_string()),
+            ..Default::default()
         },
         ComponentInfo {
             component_type: "Button".to_string(),
             position: (30, 150),
             size: (220, 50),
             test_id: Some("btn2".to_string()),
+            ..Default::default()
         },
         ComponentInfo {
             component_type: "ProgressBar".to_string(),
             position: (30, 220),
             size: (220, 12),
             test_id: Some("progress".to_string()),
+            ..Default::default()
         },
         ComponentInfo {
             component_type: "Label".to_string(),
             position: (30, 250),
             size: (220, 20),
             test_id: Some("status".to_string()),
+            ..Default::default()
         },
     ];
 
@@ -332,18 +354,21 @@ fn test_showcase_05_comparison_before_after() {
             position: (40, 40),
             size: (400, 200),
             test_id: Some("card".to_string()),
+            ..Default::default()
         },
         ComponentInfo {
             component_type: "Label".to_string(),
             position: (60, 60),
             size: (360, 30),
             test_id: Some("title".to_string()),
+            ..Default::default()
         },
         ComponentInfo {
             component_type: "Button".to_string(),
             position: (140, 150),
             size: (200, 60),
             test_id: Some("action".to_string()),
+            ..Default::default()
         },
     ];
 

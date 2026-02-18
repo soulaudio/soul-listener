@@ -59,6 +59,7 @@ fn test_overlay_renderer_basic() {
         position: (100, 100),
         size: (120, 40),
         test_id: None,
+        ..Default::default()
     }];
 
     renderer.render_borders(&mut buffer, 800, 600, &components);
@@ -82,18 +83,21 @@ fn test_overlay_renderer_multiple_components() {
             position: (10, 10),
             size: (200, 150),
             test_id: None,
+            ..Default::default()
         },
         ComponentInfo {
             component_type: "Button".to_string(),
             position: (50, 50),
             size: (100, 40),
             test_id: Some("play-button".to_string()),
+            ..Default::default()
         },
         ComponentInfo {
             component_type: "Label".to_string(),
             position: (50, 100),
             size: (100, 20),
             test_id: None,
+            ..Default::default()
         },
     ];
 
@@ -208,6 +212,7 @@ fn test_component_info_creation() {
         position: (50, 100),
         size: (200, 20),
         test_id: Some("progress-1".to_string()),
+        ..Default::default()
     };
 
     assert_eq!(info.component_type, "ProgressBar");
@@ -312,6 +317,7 @@ fn test_debug_state_hovered_and_selected() {
         position: (10, 10),
         size: (100, 40),
         test_id: Some("hover-test".to_string()),
+        ..Default::default()
     });
     assert!(state.hovered_component.is_some());
 
@@ -321,6 +327,7 @@ fn test_debug_state_hovered_and_selected() {
         position: (20, 20),
         size: (80, 20),
         test_id: Some("select-test".to_string()),
+        ..Default::default()
     });
     assert!(state.selected_component.is_some());
 
@@ -357,12 +364,14 @@ fn test_full_debug_workflow() {
             position: (0, 0),
             size: (800, 600),
             test_id: None,
+            ..Default::default()
         },
         ComponentInfo {
             component_type: "Button".to_string(),
             position: (100, 100),
             size: (150, 50),
             test_id: Some("main-button".to_string()),
+            ..Default::default()
         },
     ];
 
@@ -405,6 +414,7 @@ fn test_overlay_renderer_bounds_checking() {
         position: (-10, -10),
         size: (50, 50),
         test_id: None,
+        ..Default::default()
     }];
 
     // Should not panic
