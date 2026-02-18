@@ -1235,12 +1235,14 @@ mod tests {
             position: (0, 0),
             size: (100, 40),
             test_id: Some("play-button".to_string()),
+            ..Default::default()
         });
         state.register_component(ComponentInfo {
             component_type: "Container".to_string(),
             position: (0, 0),
             size: (480, 800),
             test_id: Some("display-root".to_string()),
+            ..Default::default()
         });
 
         let mut graph = PowerGraph::new();
@@ -1304,6 +1306,7 @@ mod tests {
                 position: (0, i * 50),
                 size: (100, 40),
                 test_id: Some(format!("btn-{i}")),
+                ..Default::default()
             });
         }
 

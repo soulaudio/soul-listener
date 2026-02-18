@@ -81,18 +81,21 @@ fn test_e2e_overlay_borders_render() {
             position: (100, 100),
             size: (200, 50),
             test_id: Some("play-button".to_string()),
+            ..Default::default()
         },
         ComponentInfo {
             component_type: "Label".to_string(),
             position: (100, 200),
             size: (200, 30),
             test_id: Some("title-label".to_string()),
+            ..Default::default()
         },
         ComponentInfo {
             component_type: "Container".to_string(),
             position: (50, 50),
             size: (300, 300),
             test_id: None,
+            ..Default::default()
         },
     ];
 
@@ -219,12 +222,14 @@ fn test_e2e_complete_debug_scene() {
             position: (50, 50),
             size: (150, 40),
             test_id: Some("btn1".to_string()),
+            ..Default::default()
         },
         ComponentInfo {
             component_type: "ProgressBar".to_string(),
             position: (50, 120),
             size: (200, 20),
             test_id: Some("progress".to_string()),
+            ..Default::default()
         },
     ];
 
@@ -317,6 +322,7 @@ fn test_e2e_color_accuracy() {
             position: (100, 100),
             size: (100, 50),
             test_id: None,
+            ..Default::default()
         };
 
         renderer.render_borders(&mut local_buffer, 400, 400, &[component]);
@@ -360,6 +366,7 @@ fn test_e2e_performance_benchmark() {
             position: (50, 50 + i * 25),
             size: (100, 20),
             test_id: Some(format!("btn{}", i)),
+            ..Default::default()
         });
     }
 
@@ -412,6 +419,7 @@ fn test_e2e_edge_cases() {
         position: (0, 0),
         size: (50, 50),
         test_id: None,
+        ..Default::default()
     };
     overlay.render_borders(&mut buffer, 800, 600, &[edge_component]);
     // Should not panic
@@ -423,6 +431,7 @@ fn test_e2e_edge_cases() {
         position: (750, 550),
         size: (100, 100),  // Extends beyond 800x600
         test_id: None,
+        ..Default::default()
     };
     buffer.fill(0xFF000000);
     overlay.render_borders(&mut buffer, 800, 600, &[offscreen_component]);
@@ -435,6 +444,7 @@ fn test_e2e_edge_cases() {
         position: (400, 300),
         size: (1, 1),
         test_id: None,
+        ..Default::default()
     };
     buffer.fill(0xFF000000);
     overlay.render_borders(&mut buffer, 800, 600, &[tiny_component]);
@@ -461,6 +471,7 @@ fn test_e2e_layering_order() {
         position: (550, 100),  // x=550 is in panel area (starts at 600)
         size: (100, 50),
         test_id: None,
+        ..Default::default()
     };
 
     // Render in correct order: borders first, then panel

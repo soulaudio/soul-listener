@@ -914,6 +914,7 @@ impl Emulator {
                         position: (rec.min_x, rec.min_y),
                         size: (w, h),
                         test_id: None,
+                        ..Default::default()
                     });
                 }
             }
@@ -1157,24 +1158,28 @@ impl Emulator {
                     position: (0, 0),
                     size: (width, height),
                     test_id: Some("display-root".to_string()),
+                    ..Default::default()
                 },
                 debug::ComponentInfo {
                     component_type: "Label".to_string(),
                     position: (0, 0),
                     size: (width, header_h),
                     test_id: Some("header".to_string()),
+                    ..Default::default()
                 },
                 debug::ComponentInfo {
                     component_type: "Button".to_string(),
                     position: (0, content_y),
                     size: (width, content_h),
                     test_id: Some("content".to_string()),
+                    ..Default::default()
                 },
                 debug::ComponentInfo {
                     component_type: "ProgressBar".to_string(),
                     position: (0, footer_y),
                     size: (width, footer_h),
                     test_id: Some("footer".to_string()),
+                    ..Default::default()
                 },
             ]
         };
@@ -1229,8 +1234,8 @@ impl Emulator {
                         // Position the tooltip to the right of the cursor (or left when
                         // close to the right edge) and slightly below (or above when near
                         // the bottom).
-                        let tt_w = 120i32;
-                        let tt_h = 80i32;
+                        let tt_w = debug::inspector::TOOLTIP_W as i32;
+                        let tt_h = debug::inspector::TOOLTIP_H as i32;
                         let tt_x = if disp_x + tt_w + 5 < width as i32 {
                             (disp_x + 5) as u32
                         } else {
@@ -1242,7 +1247,7 @@ impl Emulator {
                             (disp_y - tt_h - 5).max(0) as u32
                         };
 
-                        debug::Inspector::new().render_details(
+                        debug_manager.inspector().render_details(
                             rgba, width, tt_x, tt_y, comp, state,
                         );
                     }
@@ -2071,6 +2076,7 @@ mod tests {
             position: (10, 20),
             size: (100, 40),
             test_id: Some("play-button".to_string()),
+            ..Default::default()
         };
 
         assert_eq!(info.component_type, "Button");

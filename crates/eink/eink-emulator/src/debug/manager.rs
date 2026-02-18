@@ -1,5 +1,6 @@
 //! Debug manager - central coordinator
 
+use super::inspector::Inspector;
 use super::power_graph::PowerGraph;
 use super::state::{ComponentInfo, DebugState};
 use winit::event::{ElementState, WindowEvent};
@@ -24,6 +25,8 @@ pub enum EventResult {
 pub struct DebugManager {
     state: DebugState,
     power_graph: PowerGraph,
+    /// Persistent inspector instance — retains the active tab across re-renders.
+    inspector: Inspector,
     modifiers: ModifiersState,
     /// Last known cursor position in physical window pixels (from CursorMoved events)
     cursor_pos: Option<(f64, f64)>,
@@ -47,6 +50,7 @@ impl DebugManager {
         Self {
             state: DebugState::new(),
             power_graph,
+            inspector: Inspector::new(),
             modifiers: ModifiersState::empty(),
             cursor_pos: None,
             last_idle_sample_time: std::time::Instant::now(),
@@ -116,24 +120,28 @@ impl DebugManager {
                     position: (0, 0),
                     size: (disp_w, disp_h),
                     test_id: Some("display-root".to_string()),
+                    ..Default::default()
                 },
                 ComponentInfo {
                     component_type: "Label".to_string(),
                     position: (0, 0),
                     size: (disp_w, header_h),
                     test_id: Some("header".to_string()),
+                    ..Default::default()
                 },
                 ComponentInfo {
                     component_type: "Button".to_string(),
                     position: (0, content_y),
                     size: (disp_w, content_h),
                     test_id: Some("content".to_string()),
+                    ..Default::default()
                 },
                 ComponentInfo {
                     component_type: "ProgressBar".to_string(),
                     position: (0, footer_y),
                     size: (disp_w, footer_h),
                     test_id: Some("footer".to_string()),
+                    ..Default::default()
                 },
             ]
         };
@@ -200,6 +208,16 @@ impl DebugManager {
     /// Use this to add power samples or modify graph settings.
     pub fn power_graph_mut(&mut self) -> &mut PowerGraph {
         &mut self.power_graph
+    }
+
+    /// Returns an immutable reference to the persistent inspector.
+    pub fn inspector(&self) -> &Inspector {
+        &self.inspector
+    }
+
+    /// Returns a mutable reference to the persistent inspector.
+    pub fn inspector_mut(&mut self) -> &mut Inspector {
+        &mut self.inspector
     }
 
     /// Handle a mouse click at panel-local coordinates `(px, py)`.
@@ -329,7 +347,13 @@ impl DebugManager {
                         }
                     }
 
-                    // Tab cycling (Tab key when panel is open)
+                    // Inspector tab cycling (Tab key when inspector mode is active)
+                    if self.state.inspector_mode && key_code == KeyCode::Tab {
+                        self.inspector.next_tab();
+                        return EventResult::Consumed;
+                    }
+
+                    // Panel tab cycling (Tab key when panel is open)
                     if self.state.panel_visible && key_code == KeyCode::Tab {
                         self.state.cycle_tab();
                         return EventResult::Consumed;

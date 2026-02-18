@@ -7,8 +7,7 @@
 ///
 /// These correspond to actual hardware modes used by controllers like
 /// SSD1680, UC8151, and IT8951.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Deserialize, serde::Serialize)]
 pub enum WaveformMode {
     /// GC16 - Grayscale Clearing 16-level
     ///

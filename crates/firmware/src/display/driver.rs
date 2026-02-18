@@ -472,8 +472,7 @@ where
     }
 
     fn temperature(&self) -> Option<i8> {
-        // TODO: Implement temperature reading from internal sensor
-        // For now, return None
+        // Not yet implemented: requires reading the controller's internal temperature ADC register.
         None
     }
 }

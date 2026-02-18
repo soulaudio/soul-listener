@@ -3,13 +3,61 @@
 use std::collections::HashSet;
 use std::time::Instant;
 
+/// Box-model spacing (margin / border / padding) in pixels.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub struct Spacing {
+    pub top: u16,
+    pub right: u16,
+    pub bottom: u16,
+    pub left: u16,
+}
+
+impl Spacing {
+    pub const fn all(v: u16) -> Self {
+        Self { top: v, right: v, bottom: v, left: v }
+    }
+    pub const fn axes(vert: u16, horiz: u16) -> Self {
+        Self { top: vert, right: horiz, bottom: vert, left: horiz }
+    }
+    pub fn is_zero(&self) -> bool {
+        self.top == 0 && self.right == 0 && self.bottom == 0 && self.left == 0
+    }
+}
+
 /// Component information for debugging
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct ComponentInfo {
     pub component_type: String,
     pub position: (i32, i32),
     pub size: (u32, u32),
     pub test_id: Option<String>,
+    /// Outer margin (outside the border).
+    pub margin: Spacing,
+    /// Inner padding (inside the border).
+    pub padding: Spacing,
+    /// Border width on each side.
+    pub border: Spacing,
+    /// Arbitrary key-value attributes for display in the CMP inspector tab.
+    pub attributes: Vec<(String, String)>,
+}
+
+impl ComponentInfo {
+    pub fn with_margin(mut self, s: Spacing) -> Self {
+        self.margin = s;
+        self
+    }
+    pub fn with_padding(mut self, s: Spacing) -> Self {
+        self.padding = s;
+        self
+    }
+    pub fn with_border(mut self, s: Spacing) -> Self {
+        self.border = s;
+        self
+    }
+    pub fn with_attr(mut self, k: impl Into<String>, v: impl Into<String>) -> Self {
+        self.attributes.push((k.into(), v.into()));
+        self
+    }
 }
 
 /// Power consumption sample

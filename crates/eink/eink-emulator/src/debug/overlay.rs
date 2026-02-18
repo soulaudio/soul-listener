@@ -26,6 +26,7 @@
 //!         position: (10, 10),
 //!         size: (100, 40),
 //!         test_id: Some("play-button".to_string()),
+//!         ..Default::default()
 //!     },
 //! ];
 //!
@@ -408,6 +409,52 @@ impl OverlayRenderer {
         }
     }
 
+    /// Draw Chromium-DevTools-style box-model zone fills on a hovered component.
+    ///
+    /// Shows coloured semi-transparent zones for:
+    /// - **Margin** (orange) — area outside the border
+    /// - **Border** (yellow) — the border ring itself
+    /// - **Padding** (green) — area between border and content
+    /// - **Content** (blue) — the inner content area
+    ///
+    /// Falls back to a simple amber highlight when all spacing values are zero.
+    pub fn render_hovered_box_model(
+        &self,
+        buffer: &mut [u32],
+        screen_width: u32,
+        screen_height: u32,
+        comp: &ComponentInfo,
+    ) {
+        // Margin zone (full rect including margin)
+        let mx = comp.position.0 - comp.margin.left as i32;
+        let my = comp.position.1 - comp.margin.top as i32;
+        let mw = comp.size.0 + comp.margin.left as u32 + comp.margin.right as u32;
+        let mh = comp.size.1 + comp.margin.top as u32 + comp.margin.bottom as u32;
+        fill_rect_blended(buffer, screen_width, screen_height, mx, my, mw, mh, 0xFFA040, 100);
+
+        // Border zone (component rect itself)
+        fill_rect_blended(
+            buffer, screen_width, screen_height,
+            comp.position.0, comp.position.1,
+            comp.size.0, comp.size.1,
+            0xFFD040, 100,
+        );
+
+        // Padding zone (inside border)
+        let px = comp.position.0 + comp.border.left as i32;
+        let py = comp.position.1 + comp.border.top as i32;
+        let pw = comp.size.0.saturating_sub(comp.border.left as u32 + comp.border.right as u32);
+        let ph = comp.size.1.saturating_sub(comp.border.top as u32 + comp.border.bottom as u32);
+        fill_rect_blended(buffer, screen_width, screen_height, px, py, pw, ph, 0x50CC50, 100);
+
+        // Content zone (inside padding)
+        let cx = px + comp.padding.left as i32;
+        let cy = py + comp.padding.top as i32;
+        let cw = pw.saturating_sub(comp.padding.left as u32 + comp.padding.right as u32);
+        let ch = ph.saturating_sub(comp.padding.top as u32 + comp.padding.bottom as u32);
+        fill_rect_blended(buffer, screen_width, screen_height, cx, cy, cw, ch, 0x4090E0, 100);
+    }
+
     // Keep the old name as an alias so existing callers outside window.rs still compile.
     #[inline]
     pub fn render_borders_labeled(
@@ -537,6 +584,7 @@ mod tests {
             position: (10, 10),
             size: (50, 30),
             test_id: None,
+            ..Default::default()
         }];
 
         renderer.render_borders(&mut buffer, 100, 100, &components);
@@ -573,18 +621,21 @@ mod tests {
                 position: (10, 10),
                 size: (100, 150),
                 test_id: None,
+                ..Default::default()
             },
             ComponentInfo {
                 component_type: "Label".to_string(),
                 position: (20, 20),
                 size: (80, 20),
                 test_id: Some("title".to_string()),
+                ..Default::default()
             },
             ComponentInfo {
                 component_type: "ProgressBar".to_string(),
                 position: (20, 50),
                 size: (80, 10),
                 test_id: None,
+                ..Default::default()
             },
         ];
 
@@ -610,6 +661,7 @@ mod tests {
             position: (-10, -10), // Partially off-screen
             size: (30, 30),
             test_id: None,
+            ..Default::default()
         }];
 
         // Should not panic
@@ -630,6 +682,7 @@ mod tests {
             position: (90, 90),
             size: (50, 50), // Extends beyond buffer
             test_id: None,
+            ..Default::default()
         }];
 
         // Should not panic
@@ -661,6 +714,7 @@ mod tests {
             position: (50, 50),
             size: (1, 1), // Single pixel
             test_id: None,
+            ..Default::default()
         }];
 
         renderer.render_borders(&mut buffer, 100, 100, &components);
@@ -680,6 +734,7 @@ mod tests {
             position: (50, 50),
             size: (2, 2),
             test_id: None,
+            ..Default::default()
         }];
 
         renderer.render_borders(&mut buffer, 100, 100, &components);

@@ -142,7 +142,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// the registration is transferred to the window's debug manager.
 #[cfg(all(not(feature = "hot-reload"), feature = "debug"))]
 fn register_dap_components(display: &mut EmulatorDisplay) {
-    use eink_emulator::debug::state::ComponentInfo;
+    use eink_emulator::debug::state::{ComponentInfo, Spacing};
 
     let Some(dm) = display.emulator_mut().debug_manager_mut() else {
         return;
@@ -156,6 +156,7 @@ fn register_dap_components(display: &mut EmulatorDisplay) {
         position: (0, 0),
         size: (800, 480),
         test_id: Some("dap-screen".to_string()),
+        ..Default::default()
     });
 
     // Header bar (top 60px)
@@ -164,6 +165,8 @@ fn register_dap_components(display: &mut EmulatorDisplay) {
         position: (0, 0),
         size: (800, 60),
         test_id: Some("dap-header".to_string()),
+        padding: Spacing::axes(8, 20),
+        ..Default::default()
     });
 
     // Main menu content area
@@ -172,6 +175,8 @@ fn register_dap_components(display: &mut EmulatorDisplay) {
         position: (0, 60),
         size: (800, 380),
         test_id: Some("dap-menu".to_string()),
+        padding: Spacing::all(10),
+        ..Default::default()
     });
 
     // Menu items — match render_demo_menu layout: y = 100 + idx*50, h=45
@@ -189,6 +194,13 @@ fn register_dap_components(display: &mut EmulatorDisplay) {
             position: (10, y),
             size: (780, 45),
             test_id: Some((*name).to_string()),
+            padding: Spacing::axes(8, 12),
+            border: Spacing::all(1),
+            attributes: vec![
+                ("index".to_string(), idx.to_string()),
+                ("enabled".to_string(), "true".to_string()),
+            ],
+            ..Default::default()
         });
     }
 
@@ -198,6 +210,7 @@ fn register_dap_components(display: &mut EmulatorDisplay) {
         position: (0, 440),
         size: (800, 40),
         test_id: Some("dap-footer".to_string()),
+        ..Default::default()
     });
 }
 
