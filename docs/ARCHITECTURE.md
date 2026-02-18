@@ -88,7 +88,7 @@ impl DisplayDriver for SimulatorDisplay { }
 - **Input**: GPIO buttons vs keyboard events
 - **Audio**: I2S DMA vs host audio output
 - **Storage**: SD card vs host filesystem
-- **Bluetooth**: UART HCI vs mock adapter
+- **Bluetooth**: STM32WB55 UART/HCI vs mock adapter
 
 ### 3. Dependency Injection via Generics
 
@@ -329,16 +329,16 @@ type TrackName = String<64>;
 type Path = String<128>;
 ```
 
-### Memory Map (STM32H7)
+### Memory Map (STM32H743ZI)
 
 ```
 0x0800_0000 ┌──────────────────┐
-            │   Flash (1MB)    │
+            │   Flash (2MB)    │  ← dual-bank; Bank1 + Bank2
             │                  │
             │   - Code         │
             │   - Const data   │
             │   - String table │
-0x080F_FFFF └──────────────────┘
+0x081F_FFFF └──────────────────┘
 
 0x2000_0000 ┌──────────────────┐
             │  DTCM RAM (128KB)│
