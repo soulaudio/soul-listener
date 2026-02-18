@@ -7,7 +7,7 @@ use embedded_graphics::mono_font::{ascii::FONT_10X20, MonoTextStyle};
 use embedded_graphics::pixelcolor::Gray4;
 use embedded_graphics::prelude::*;
 use embedded_graphics::primitives::{Circle, PrimitiveStyle, Rectangle};
-use embedded_graphics::text::{Alignment, Text};
+use embedded_graphics::text::Text;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {

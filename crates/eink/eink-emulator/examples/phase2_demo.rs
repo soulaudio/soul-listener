@@ -8,13 +8,11 @@
 //!
 //! Run with: cargo run --target x86_64-pc-windows-msvc --example phase2_demo
 
-use eink_emulator::{DisplayDriver, EinkDisplay, Emulator, RefreshMode};
+use eink_emulator::{DisplayDriver, Emulator};
 use eink_specs::displays;
-use embedded_graphics::mono_font::{ascii::FONT_6X10, MonoTextStyle};
 use embedded_graphics::pixelcolor::Gray4;
 use embedded_graphics::prelude::*;
 use embedded_graphics::primitives::{Circle, PrimitiveStyle, Rectangle};
-use embedded_graphics::text::Text;
 
 #[tokio::main]
 async fn main() {

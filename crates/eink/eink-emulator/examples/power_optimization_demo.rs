@@ -7,7 +7,7 @@
 //! - Comparison of full vs partial refresh energy
 //! - Power breakdown by state
 
-use eink_emulator::{DisplayDriver, Emulator, WaveformMode};
+use eink_emulator::{DisplayDriver, Emulator};
 use embedded_graphics::mono_font::{ascii::FONT_6X10, MonoTextStyle};
 use embedded_graphics::pixelcolor::Gray4;
 use embedded_graphics::prelude::*;

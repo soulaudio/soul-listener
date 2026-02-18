@@ -169,7 +169,9 @@ pub struct Emulator {
     pub quirks_enabled: bool,
     pub active_quirk: Option<String>,
 
-    // Presentation configuration (rotation, scaling)
+    // Presentation configuration (rotation, scaling).
+    // Read in debug mode for cursor→display coordinate mapping.
+    #[cfg_attr(not(feature = "debug"), allow(dead_code))]
     config: config::EmulatorConfig,
 
     #[cfg(not(feature = "headless"))]
@@ -544,6 +546,7 @@ impl Emulator {
     }
 
     /// Render with flash animations based on waveform mode
+    #[cfg_attr(not(feature = "debug"), allow(unused_mut))]
     async fn render_with_flashes(
         &mut self,
         mode: WaveformMode,
@@ -612,6 +615,7 @@ impl Emulator {
 
     /// Run window event loop (blocks until window closed)
     #[cfg(not(feature = "headless"))]
+    #[cfg_attr(not(feature = "debug"), allow(unused_mut))]
     pub fn run(mut self) {
         if let Some(mut window) = self.window {
             // Transfer debug_manager to window for keyboard event handling
@@ -1395,7 +1399,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_content_dependent_ghosting() {
-        use embedded_graphics::primitives::{PrimitiveStyle, Rectangle};
+        
 
         // Test using direct pixel state updates for clarity
         let mut pixel_small = PixelState::new();
@@ -1534,7 +1538,7 @@ mod tests {
     async fn test_realistic_ereader_usage() {
         use embedded_graphics::mono_font::{ascii::FONT_6X10, MonoTextStyle};
         use embedded_graphics::primitives::{PrimitiveStyle, Rectangle};
-        use embedded_graphics::text::{Alignment, Text};
+        use embedded_graphics::text::Text;
 
         let mut emulator = Emulator::headless(250, 122);
 

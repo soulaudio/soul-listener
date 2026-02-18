@@ -9,7 +9,7 @@ use embedded_graphics::mono_font::{ascii::FONT_6X10, MonoTextStyle};
 use embedded_graphics::pixelcolor::Gray4;
 use embedded_graphics::prelude::*;
 use embedded_graphics::primitives::{PrimitiveStyle, Rectangle};
-use embedded_graphics::text::{Alignment, Text};
+use embedded_graphics::text::Text;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -95,7 +95,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         (WaveformMode::A2, "A2: 2-level, animation"),
     ];
 
-    for (mode, desc) in modes {
+    for (mode, _desc) in modes {
         emulator.refresh_with_waveform(mode).await?;
         println!(
             "   ✓ {}: {} levels, {} flashes, {:.2} ghosting rate",

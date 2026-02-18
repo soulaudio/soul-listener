@@ -10,12 +10,7 @@
 //! - Ghosting differences
 
 use eink_emulator::lut::{LutPhase, WaveformLut, WaveformLutSet};
-use eink_emulator::{Emulator, PixelState, WaveformMode};
-use embedded_graphics::mono_font::{ascii::FONT_6X10, MonoTextStyle};
-use embedded_graphics::pixelcolor::Gray4;
-use embedded_graphics::prelude::*;
-use embedded_graphics::primitives::{PrimitiveStyle, Rectangle};
-use embedded_graphics::text::Text;
+use eink_emulator::{PixelState, WaveformMode};
 use std::fs;
 
 fn main() {
