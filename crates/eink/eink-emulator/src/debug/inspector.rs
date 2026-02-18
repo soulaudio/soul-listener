@@ -17,7 +17,7 @@
 //!
 //! ```rust
 //! use eink_emulator::debug::inspector::{Inspector, InspectorTab};
-//! use eink_emulator::debug::state::ComponentInfo;
+//! use eink_emulator::debug::state::{ComponentInfo, DebugState};
 //!
 //! let mut inspector = Inspector::new();
 //! inspector.set_tab(InspectorTab::Component);
@@ -30,7 +30,7 @@
 //! };
 //!
 //! let mut buffer = vec![0u32; 800 * 600];
-//! inspector.render_details(&mut buffer, 800, 10, 10, &component, &crate::debug::state::DebugState::default());
+//! inspector.render_details(&mut buffer, 800, 10, 10, &component, &DebugState::default());
 //! ```
 
 use std::convert::Infallible;
