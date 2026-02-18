@@ -210,7 +210,7 @@ fn test_e2e_complete_debug_scene() {
     // Enable all debug features
     state.panel_visible = true;
     state.borders_enabled = true;
-    state.power_graph_enabled = true;
+    // power_graph_enabled removed; power graph lives in the panel Power tab
 
     // Create test components
     let components = vec![
@@ -246,10 +246,8 @@ fn test_e2e_complete_debug_scene() {
         panel.render(&mut buffer, 800, 600, &state);
     }
 
-    // Layer 3: Render power graph (inside panel area)
-    if state.power_graph_enabled {
-        graph.render(&mut buffer, 800, 610, 10);
-    }
+    // Layer 3: Power graph overlay removed (it now lives exclusively in the
+    // panel Power tab). The PowerGraph::render() is kept for legacy callers.
 
     // Validate complete scene
     let green_pixels = count_pixels_of_color(&buffer, 0xFF00FF80);   // Button border
@@ -293,11 +291,6 @@ fn test_e2e_toggle_states() {
     assert!(!state.inspector_mode);
     state.toggle_inspector();
     assert!(state.inspector_mode);
-
-    println!("  Testing power graph toggle...");
-    assert!(!state.power_graph_enabled);
-    state.toggle_power_graph();
-    assert!(state.power_graph_enabled);
 
     println!("  ✅ All toggles work correctly");
 }

@@ -1,0 +1,13 @@
+[package]
+name = "eink-testing"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+eink-emulator = { path = "../eink-emulator", features = ["debug", "headless"] }
+eink-specs = { path = "../eink-specs" }
+image = { version = "0.25", features = ["png"] }
+
+[features]
+default = []
+debug = ["eink-emulator/debug"]

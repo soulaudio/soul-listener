@@ -51,6 +51,10 @@ panic-probe = { workspace = true, optional = true }
 eink-emulator = { path = "../eink/eink-emulator", optional = true }
 tokio = { workspace = true, features = ["macros", "rt-multi-thread", "time"], optional = true }
 
+# Hot-reload support (emulator only, feature-gated)
+firmware-ui = { path = "../firmware-ui", optional = true }
+hot-lib-reloader = { workspace = true, optional = true }
+
 [dev-dependencies]
 tokio = { workspace = true, features = ["full"] }
 
@@ -86,6 +90,17 @@ emulator = [
 debug = [
     "emulator",
     "eink-emulator/debug",
+]
+
+# True in-process hot-reload using hot-lib-reloader.
+# Requires firmware-ui to be compiled as a cdylib first:
+#   cargo build --package firmware-ui --features hot-reload
+# Then run the emulator:
+#   cargo run --example display_emulator --features emulator,hot-reload
+hot-reload = [
+    "emulator",
+    "firmware-ui/hot-reload",
+    "hot-lib-reloader",
 ]
 
 # Standard library support

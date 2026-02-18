@@ -1,0 +1,34 @@
+[package]
+name = "firmware-ui"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+description = "Hot-reloadable UI rendering layer for the SoulAudio DAP firmware emulator"
+
+# This crate is compiled as BOTH rlib (normal Rust linkage) and cdylib (dynamic
+# library for hot-reload).  When hot-reloading, the binary loads the compiled
+# .dll/.so at runtime via hot-lib-reloader without restarting the process.
+# The rlib target is used for normal (non-hot-reload) compilation where
+# firmware-ui code is linked statically into the binary.
+[lib]
+name = "firmware_ui"
+crate-type = ["rlib", "cdylib"]
+
+[dependencies]
+# Graphics primitives - needed for DrawTarget bounds
+embedded-graphics = { workspace = true }
+
+# Emulator display wrapper (desktop only)
+eink-emulator = { path = "../eink/eink-emulator", optional = true }
+
+[features]
+default = []
+
+# Enable emulator-side rendering (requires std + eink-emulator)
+emulator = ["eink-emulator"]
+
+# Hot-reload mode: expose C-ABI symbols via #[no_mangle] so the binary can
+# dlopen/LoadLibrary the compiled dylib and call render_ui without a restart.
+# Always implies the emulator feature since hot-reload is emulator-only.
+hot-reload = ["emulator"]
