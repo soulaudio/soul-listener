@@ -77,6 +77,8 @@ hardware = [
     "cortex-m-rt",
     "critical-section",
     "panic-probe",
+    # Propagate defmt to platform so cfg_attr(feature = "defmt", ...) derives activate.
+    "platform/defmt",
 ]
 
 # Desktop emulator target
