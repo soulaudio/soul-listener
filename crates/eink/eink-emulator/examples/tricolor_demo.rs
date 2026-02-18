@@ -15,14 +15,11 @@
 //! ```
 
 use eink_emulator::{
-    ColorMode, DisplayDriver, EinkColor, Emulator, Framebuffer, SpectraColor, WaveformMode,
+    ColorMode, EinkColor, Emulator, Framebuffer, SpectraColor,
 };
 use embedded_graphics::{
-    mono_font::{ascii::FONT_6X10, MonoTextStyle},
     pixelcolor::Gray4,
     prelude::*,
-    primitives::{Circle, PrimitiveStyle, Rectangle},
-    text::Text,
 };
 
 #[tokio::main]

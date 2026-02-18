@@ -144,6 +144,7 @@ mod windows_dpi {
     /// Call this whenever the window is resized so `WM_DPICHANGED` uses the
     /// correct dimensions.  Re-calling `install_subclass` would set `ORIG_PROC`
     /// to `subclass_proc` itself, causing infinite recursion on the next message.
+    #[cfg(feature = "debug")]
     pub fn update_size(phys_w: i32, phys_h: i32) {
         PHYS_W.with(|c| c.set(phys_w));
         PHYS_H.with(|c| c.set(phys_h));
@@ -292,6 +293,8 @@ pub struct Window {
     surface: Surface<OwnedDisplayHandle, Arc<WinitWindow>>,
 
     /// Display-only physical pixel width (without side panel).
+    /// Read in debug mode by sync_window_width() to compute panel-expanded width.
+    #[cfg_attr(not(feature = "debug"), allow(dead_code))]
     disp_phys_w: u32,
     /// Current physical window width — equals disp_phys_w normally, or
     /// disp_phys_w + PANEL_W when the debug panel is open.
@@ -667,6 +670,7 @@ impl Window {
 
     /// Re-present the last clean frame with the current debug overlay state.
     /// Called immediately after a debug hotkey toggles state.
+    #[cfg(feature = "debug")]
     fn re_present(&mut self) {
         #[cfg(feature = "debug")]
         self.sync_window_width();
@@ -792,6 +796,7 @@ impl Window {
     }
 
     /// Composite debug overlays onto `last_rgba` then run the full render pipeline.
+    #[cfg_attr(not(feature = "debug"), allow(unused_mut))]
     fn present_overlaid(&mut self) {
         // Tick the debug state: idle power sampling + cursor hover detection.
         #[cfg(feature = "debug")]

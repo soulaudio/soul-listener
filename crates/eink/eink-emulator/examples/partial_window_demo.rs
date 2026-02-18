@@ -3,7 +3,7 @@
 //! This example demonstrates how to use the partial window and dirty
 //! region tracking features of the eink-emulator.
 
-use eink_emulator::{DisplayDriver, Emulator, PartialWindow};
+use eink_emulator::{Emulator, PartialWindow};
 use embedded_graphics::pixelcolor::Gray4;
 use embedded_graphics::prelude::*;
 use embedded_graphics::primitives::{PrimitiveStyle, Rectangle};

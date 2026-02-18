@@ -53,19 +53,6 @@ fn count_pixels_of_color(buffer: &[u32], color: u32) -> usize {
     buffer.iter().filter(|&&px| px == color).count()
 }
 
-/// Helper to check if a pixel is approximately a color (allow some tolerance)
-fn pixel_matches(pixel: u32, expected: u32, tolerance: u8) -> bool {
-    let r1 = ((pixel >> 16) & 0xFF) as i32;
-    let g1 = ((pixel >> 8) & 0xFF) as i32;
-    let b1 = (pixel & 0xFF) as i32;
-
-    let r2 = ((expected >> 16) & 0xFF) as i32;
-    let g2 = ((expected >> 8) & 0xFF) as i32;
-    let b2 = (expected & 0xFF) as i32;
-
-    let diff = (r1 - r2).abs() + (g1 - g2).abs() + (b1 - b2).abs();
-    diff <= tolerance as i32 * 3
-}
 
 #[test]
 fn test_e2e_overlay_borders_render() {
