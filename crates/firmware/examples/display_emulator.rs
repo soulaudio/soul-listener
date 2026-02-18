@@ -66,7 +66,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     #[cfg(feature = "debug")]
     {
         println!("DEBUG MODE ENABLED");
-        println!("Hotkeys: Ctrl+1 panel | Ctrl+2 borders | Ctrl+3 inspector | Ctrl+4 power");
+        println!("Hotkeys: Ctrl+1 panel | Ctrl+2 borders | Ctrl+3 inspector");
         println!();
     }
 
@@ -118,12 +118,87 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         println!("Rendering demo menu...");
         render_demo_menu(&mut display)?;
         rt.block_on(async { display.refresh_full().await })?;
+
+        // Register named DAP scene components so the debug inspector tree
+        // shows meaningful names instead of raw coordinates.
+        #[cfg(feature = "debug")]
+        register_dap_components(&mut display);
+
         println!("Demo menu rendered\n");
         println!("Close the window to exit.\n");
         display.into_inner().run();
     }
 
     Ok(())
+}
+
+/// Register named DAP scene components with the debug inspector.
+///
+/// Positions are in the display's native coordinate space (landscape 800×480
+/// before the 90° portrait rotation applied at render time). The debug panel's
+/// scene tree will show these names instead of raw coordinates.
+///
+/// Must be called AFTER the initial `refresh_full()` and BEFORE `run()` so
+/// the registration is transferred to the window's debug manager.
+#[cfg(all(not(feature = "hot-reload"), feature = "debug"))]
+fn register_dap_components(display: &mut EmulatorDisplay) {
+    use eink_emulator::debug::state::ComponentInfo;
+
+    let Some(dm) = display.emulator_mut().debug_manager_mut() else {
+        return;
+    };
+    let state = dm.state_mut();
+    state.clear_registered_components();
+
+    // Root screen container (full display bounds)
+    state.register_component(ComponentInfo {
+        component_type: "Container".to_string(),
+        position: (0, 0),
+        size: (800, 480),
+        test_id: Some("dap-screen".to_string()),
+    });
+
+    // Header bar (top 60px)
+    state.register_component(ComponentInfo {
+        component_type: "Container".to_string(),
+        position: (0, 0),
+        size: (800, 60),
+        test_id: Some("dap-header".to_string()),
+    });
+
+    // Main menu content area
+    state.register_component(ComponentInfo {
+        component_type: "Container".to_string(),
+        position: (0, 60),
+        size: (800, 380),
+        test_id: Some("dap-menu".to_string()),
+    });
+
+    // Menu items — match render_demo_menu layout: y = 100 + idx*50, h=45
+    let menu_items = [
+        "menu-now-playing",
+        "menu-library",
+        "menu-playlists",
+        "menu-settings",
+        "menu-about",
+    ];
+    for (idx, name) in menu_items.iter().enumerate() {
+        let y = 95 + (idx as i32 * 50);
+        state.register_component(ComponentInfo {
+            component_type: "Button".to_string(),
+            position: (10, y),
+            size: (780, 45),
+            test_id: Some((*name).to_string()),
+        });
+    }
+
+    // Footer label
+    state.register_component(ComponentInfo {
+        component_type: "Label".to_string(),
+        position: (0, 440),
+        size: (800, 40),
+        test_id: Some("dap-footer".to_string()),
+    });
 }
 
 /// Render a simple demo menu (non-hot-reload path only).

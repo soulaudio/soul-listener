@@ -410,11 +410,6 @@ impl Emulator {
             }
             // Clear to white immediately (no animation)
             self.framebuffer.clear();
-            // Auto-show debug panel in hot-reload mode
-            #[cfg(feature = "debug")]
-            if let Some(ref mut dm) = self.debug_manager {
-                dm.state_mut().panel_visible = true;
-            }
             self.power_tracker.transition_to(PowerState::Idle);
             return Ok(());
         }
@@ -845,13 +840,13 @@ impl Emulator {
         let max_dc = self.pixel_states.max_dc_balance();
         if max_dc > 50.0 {
             eprintln!(
-                "âš ï¸  DC balance critical ({:.1})! Full refresh required.",
+                "⚠️  DC balance critical ({:.1})! Full refresh required.",
                 max_dc
             );
             self.stats.dc_warnings += 1;
         } else if max_dc > 30.0 {
             eprintln!(
-                "âš ï¸  DC balance warning ({:.1}). Consider full refresh soon.",
+                "⚠️  DC balance warning ({:.1}). Consider full refresh soon.",
                 max_dc
             );
             self.stats.dc_warnings += 1;
@@ -1024,7 +1019,7 @@ impl Emulator {
                         window.set_quirk_warning(Some(description));
                     }
 
-                    return Err(format!("âš ï¸  QUIRK TRIGGERED: {}", description));
+                    return Err(format!("⚠️  QUIRK TRIGGERED: {}", description));
                 }
                 Quirk::SpiWriteHang { description }
                     if operation.contains("spi_write") || operation.contains("init") =>
@@ -1036,13 +1031,13 @@ impl Emulator {
                         window.set_quirk_warning(Some(description));
                     }
 
-                    return Err(format!("âš ï¸  QUIRK TRIGGERED: {}", description));
+                    return Err(format!("⚠️  QUIRK TRIGGERED: {}", description));
                 }
                 Quirk::UncontrollableRefreshRate { description }
                     if operation.contains("refresh") =>
                 {
                     // This quirk is a warning, not an error - just log it
-                    eprintln!("âš ï¸  Hardware Quirk: {}", description);
+                    eprintln!("⚠️  Hardware Quirk: {}", description);
                     self.active_quirk = Some(description.to_string());
 
                     #[cfg(not(feature = "headless"))]
@@ -1054,7 +1049,7 @@ impl Emulator {
                 Quirk::PanelSpecific { description }
                     if operation.contains("init") || operation.contains("vcom") =>
                 {
-                    eprintln!("âš ï¸  Hardware Quirk: {}", description);
+                    eprintln!("⚠️  Hardware Quirk: {}", description);
                     self.active_quirk = Some(description.to_string());
 
                     #[cfg(not(feature = "headless"))]
