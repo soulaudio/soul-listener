@@ -15,16 +15,32 @@ This is a professional-grade Digital Audio Player firmware written in Rust using
 
 ## Target Hardware
 
-**Primary Platform:** STM32H7 (high-performance Cortex-M7)
-- 480 MHz CPU with FPU and DSP instructions
-- DMA2D graphics accelerator (Chrom-ART)
-- SAI/I2S audio interfaces
-- SD/MMC controller
-- Bluetooth via external module
+**MCU:** STM32H743ZI (Cortex-M7, 480 MHz, FPU/DSP)
+- 2 MB dual-bank Flash, 1 MB SRAM (DTCM + AXI + SRAM1/2)
+- SAI1/2 for I²S audio (DMA)
+- SDMMC1 for microSD (4-bit, UHS-I)
+- USB OTG HS with internal PHY (UAC2 + USB-C charging)
 
-**Display:** E-ink display (Waveshare or similar)
-**Codec:** WM8960/WM8731 audio codec via I2S
-**Storage:** SD card via SDMMC peripheral
+**Display:** 4.2" e-ink 400×300 via SPI + DMA (Waveshare v2 or equivalent)
+
+**Audio:**
+- DAC: PCM5242 (TI) — 32-bit/384 kHz I²S, integrated PLL
+- Headphone amp: TPA6120A2 (TI) — class-AB, 250 mA
+
+**Bluetooth:** STM32WB55RGV6 co-processor
+- Arm Cortex-M4 (64 MHz) + M0+ (32 MHz), integrated 2.4 GHz radio
+- BLE 5.0 / BLE Audio (LE Audio, LC3 codec)
+- Connected to STM32H743 via UART (HCI protocol)
+- ST provides and maintains the certified BT stack firmware
+- Same ARM toolchain, debuggable with probe-rs — no second vendor
+
+> **Classic BT (A2DP) is out of scope for v1.** It requires a dedicated chip
+> from another vendor ecosystem (CSR/Qualcomm). The STM32WB55 handles BLE
+> control (v1) and BLE Audio streaming to LE Audio headphones (v2).
+
+**PMIC:** BQ25895 (TI) — USB-C PD, LiPo charge, I²C control
+**Storage:** microSD via SDMMC1 (FAT32)
+**Battery:** Flat LiPo, 2000–4000 mAh
 
 ## Architecture Principles
 

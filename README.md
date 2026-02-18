@@ -7,15 +7,28 @@ A Digital Audio Player (DAP) firmware written in Rust, targeting STM32H7 with an
 
 ## Hardware
 
-| Component | Part |
-|-----------|------|
-| MCU | STM32H743ZI — 480 MHz Cortex-M7 |
-| Display | Waveshare 4.2" E-ink (400×300) |
-| Audio codec | WM8960 — 24-bit / 192 kHz |
-| Storage | MicroSD (FAT32) |
-| Bluetooth | ESP32-C3 |
-| Battery | 18650 Li-ion |
-| Connectors | USB-C (charge + data), 3.5 mm |
+| Component | Part | Interface | Notes |
+|-----------|------|-----------|-------|
+| MCU | STM32H743ZI | — | 480 MHz Cortex-M7, FPU/DSP, 2 MB flash, 1 MB SRAM |
+| Display | 4.2" e-ink (400×300) | SPI + DMA | Waveshare v2 or equivalent; draws no power between refreshes |
+| Audio DAC | PCM5242 (TI) | I²S via SAI1 | 32-bit / 384 kHz, integrated PLL, charge-pump headphone driver |
+| Headphone amp | TPA6120A2 (TI) | Analog | 250 mA, class-AB, low-THD headphone output stage |
+| BLE co-processor | STM32WB55RGV6 | UART (HCI) | Arm M4+M0+, BLE 5.0; ST provides certified BT firmware |
+| USB | STM32H7 internal HS PHY | USB-C | UAC2 (USB audio class 2) + USB-C charging; no extra IC |
+| PMIC / charger | BQ25895 (TI) | I²C | USB-C PD negotiation, LiPo charge, power-path management |
+| Storage | microSD | SDMMC1 (4-bit) | FAT32, UHS-I |
+| Battery | Flat LiPo | — | 2000–4000 mAh depending on enclosure |
+| Input | Rotary encoder + 4 buttons | GPIO / EXTI | Alps EC11 or equivalent |
+
+### Bluetooth architecture
+
+The STM32WB55 is the correct choice for BLE on this hardware — it runs on the same ARM toolchain, is debuggable with the same probe-rs/STM32CubeIDE tooling, and ST ships a certified, OTA-updatable BT stack firmware so you never write or certify a BT stack yourself.
+
+**v1 — BLE control only**: companion app control (track skip, volume, now-playing metadata) over a custom GATT profile. The WB55 connects to the H743 via UART using the HCI protocol; Embassy handles the host-side stack.
+
+**v2 — BLE Audio**: stream audio to LE Audio headphones using LC3 codec over BLE ISO channels. Requires BLE 5.2 (WB55 supports this). Requires compatible headphones.
+
+**Classic BT A2DP (pairing with existing Bluetooth headphones) is explicitly out of scope.** It requires a chip from a separate vendor ecosystem (CSR/Qualcomm) and a separate BT stack — that complexity belongs in a different hardware revision, not in v1.
 
 ## Crates
 
@@ -48,7 +61,7 @@ cargo run --example display_emulator --features emulator,debug -p firmware
 ### Firmware
 
 ```bash
-# Build for STM32H7
+# Build for STM32H743
 cargo build --release --target thumbv7em-none-eabihf -p firmware
 
 # Flash with probe-rs
