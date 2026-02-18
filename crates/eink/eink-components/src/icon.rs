@@ -24,6 +24,8 @@ pub struct Icon {
     icon_type: IconType,
     size: u32,
     color: Gray4,
+    #[cfg(feature = "std")]
+    pub test_id: Option<String>,
 }
 
 impl Icon {
@@ -33,6 +35,8 @@ impl Icon {
             icon_type,
             size,
             color: Gray4::BLACK,
+            #[cfg(feature = "std")]
+            test_id: None,
         }
     }
 
@@ -40,6 +44,19 @@ impl Icon {
     pub fn color(mut self, color: Gray4) -> Self {
         self.color = color;
         self
+    }
+
+    /// Set the test ID for this component (used by eink-testing query_by_test_id).
+    #[cfg(feature = "std")]
+    pub fn test_id(mut self, id: impl Into<String>) -> Self {
+        self.test_id = Some(id.into());
+        self
+    }
+
+    /// Get the test ID for this component.
+    #[cfg(feature = "std")]
+    pub fn get_test_id(&self) -> Option<&str> {
+        self.test_id.as_deref()
     }
 
     /// Get icon dimensions

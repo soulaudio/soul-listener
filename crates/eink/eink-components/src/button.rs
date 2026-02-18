@@ -59,6 +59,8 @@ pub struct Button {
     label: &'static str,
     style: ButtonStyle,
     min_width: Option<u32>,
+    #[cfg(feature = "std")]
+    pub test_id: Option<String>,
 }
 
 impl Button {
@@ -68,6 +70,8 @@ impl Button {
             label,
             style: ButtonStyle::primary(),
             min_width: None,
+            #[cfg(feature = "std")]
+            test_id: None,
         }
     }
 
@@ -81,6 +85,19 @@ impl Button {
     pub fn min_width(mut self, width: u32) -> Self {
         self.min_width = Some(width);
         self
+    }
+
+    /// Set the test ID for this component (used by eink-testing query_by_test_id).
+    #[cfg(feature = "std")]
+    pub fn test_id(mut self, id: impl Into<String>) -> Self {
+        self.test_id = Some(id.into());
+        self
+    }
+
+    /// Get the test ID for this component.
+    #[cfg(feature = "std")]
+    pub fn get_test_id(&self) -> Option<&str> {
+        self.test_id.as_deref()
     }
 
     /// Calculate button size including padding

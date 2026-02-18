@@ -14,6 +14,8 @@ pub struct ProgressBar {
     background: Gray4,
     foreground: Gray4,
     border: Option<Gray4>,
+    #[cfg(feature = "std")]
+    pub test_id: Option<String>,
 }
 
 impl ProgressBar {
@@ -26,6 +28,8 @@ impl ProgressBar {
             background: Gray4::WHITE,
             foreground: Gray4::BLACK,
             border: Some(Gray4::new(0x8)),
+            #[cfg(feature = "std")]
+            test_id: None,
         }
     }
 
@@ -46,6 +50,19 @@ impl ProgressBar {
     pub fn border(mut self, border: Option<Gray4>) -> Self {
         self.border = border;
         self
+    }
+
+    /// Set the test ID for this component (used by eink-testing query_by_test_id).
+    #[cfg(feature = "std")]
+    pub fn test_id(mut self, id: impl Into<String>) -> Self {
+        self.test_id = Some(id.into());
+        self
+    }
+
+    /// Get the test ID for this component.
+    #[cfg(feature = "std")]
+    pub fn get_test_id(&self) -> Option<&str> {
+        self.test_id.as_deref()
     }
 
     /// Get dimensions

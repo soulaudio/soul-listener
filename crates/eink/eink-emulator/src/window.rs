@@ -758,10 +758,6 @@ impl Window {
             debug::OverlayRenderer::new().render_layout(rgba, w, h, &components);
         }
 
-        if state.power_graph_enabled {
-            dm.power_graph().render(rgba, w, 10, 400);
-        }
-
         // Inspector mode: draw amber highlight over the hovered component.
         // Skipped when the hovered component is also the selected one (cyan wins).
         if state.inspector_mode {

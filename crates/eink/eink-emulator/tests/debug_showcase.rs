@@ -248,7 +248,7 @@ fn test_showcase_04_complete_debug_ui() {
     // Enable all debug features
     state.panel_visible = true;
     state.borders_enabled = true;
-    state.power_graph_enabled = true;
+    // power_graph_enabled removed; power graph is shown in the panel Power tab
 
     // Add power samples
     for i in 0..30 {

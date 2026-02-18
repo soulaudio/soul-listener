@@ -15,7 +15,7 @@
 //! │  Ctrl+1  Panel    [ON/OFF]  │
 //! │  Ctrl+2  Borders  [ON/OFF]  │
 //! │  Ctrl+3  Inspect  [ON/OFF]  │
-//! │  Ctrl+4  Power    [ON/OFF]  │
+
 //! ├─────────────────────────────┤
 //! │ DISPLAY                     │
 //! │  480 x 800                  │
@@ -537,14 +537,12 @@ pub fn render_into(buf: &mut [u32], panel_w: u32, height: u32, info: &PanelInfo<
     // =========================================================================
     push!(PL, cy, "E-INK DEBUG", col_white);
 
-    // Right-side compact indicators: B=borders  I=inspect  P=power
-    let b_col = if info.state.borders_enabled    { col_green } else { col_dim };
-    let i_col = if info.state.inspector_mode      { col_cyan  } else { col_dim };
-    let p_col = if info.state.power_graph_enabled { col_warn  } else { col_dim };
-    let ind_x = panel_w as i32 - PL - 3 * 8;
-    push!(ind_x,      cy, "B", b_col);
-    push!(ind_x +  8, cy, "I", i_col);
-    push!(ind_x + 16, cy, "P", p_col);
+    // Right-side compact indicators: B=borders  I=inspect
+    let b_col = if info.state.borders_enabled { col_green } else { col_dim };
+    let i_col = if info.state.inspector_mode  { col_cyan  } else { col_dim };
+    let ind_x = panel_w as i32 - PL - 2 * 8;
+    push!(ind_x,     cy, "B", b_col);
+    push!(ind_x + 8, cy, "I", i_col);
     cy += LH;
     seps.push(cy as u32);
     cy += 1;
@@ -839,7 +837,6 @@ pub fn render_into(buf: &mut [u32], panel_w: u32, height: u32, info: &PanelInfo<
                 ("Ctrl+1", "Toggle panel"),
                 ("Ctrl+2", "Layout overlay"),
                 ("Ctrl+3", "Hover inspect"),
-                ("Ctrl+4", "Power graph"),
                 ("Tab   ", "Next tab"),
                 ("Arrows", "Navigate scene"),
                 ("Enter ", "Expand/collapse"),
@@ -1230,7 +1227,6 @@ mod tests {
         state.panel_visible = true;
         state.borders_enabled = true;
         state.inspector_mode = false;
-        state.power_graph_enabled = true;
         state.record_full_refresh();
         state.record_full_refresh();
         state.record_partial_refresh();

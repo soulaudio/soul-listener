@@ -9,11 +9,12 @@ use eink_emulator::debug::*;
 use eink_emulator::Emulator;
 
 #[test]
-fn test_debug_manager_not_in_headless() {
+fn test_debug_manager_in_headless() {
     let emulator = Emulator::headless(480, 800);
 
-    // Headless mode should not have debug manager (security/performance)
-    assert!(emulator.debug_manager().is_none());
+    // Headless mode now provides a debug manager for programmatic inspection
+    // (no window, but the state/scene-tree API is fully usable in CI/tests).
+    assert!(emulator.debug_manager().is_some());
 }
 
 // Note: Cannot test windowed emulator in test suite on Windows due to winit's
@@ -28,7 +29,6 @@ fn test_debug_state_toggles() {
     assert!(!state.panel_visible);
     assert!(!state.borders_enabled);
     assert!(!state.inspector_mode);
-    assert!(!state.power_graph_enabled);
 
     // Test panel toggle
     state.toggle_panel();
@@ -47,12 +47,6 @@ fn test_debug_state_toggles() {
     assert!(state.inspector_mode);
     state.toggle_inspector();
     assert!(!state.inspector_mode);
-
-    // Test power graph toggle
-    state.toggle_power_graph();
-    assert!(state.power_graph_enabled);
-    state.toggle_power_graph();
-    assert!(!state.power_graph_enabled);
 }
 
 #[test]

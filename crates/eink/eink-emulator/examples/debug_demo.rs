@@ -83,10 +83,7 @@ async fn main() {
             println!("  Panel visible: {}", debug.state().panel_visible);
             println!("  Borders enabled: {}", debug.state().borders_enabled);
             println!("  Inspector mode: {}", debug.state().inspector_mode);
-            println!(
-                "  Power graph enabled: {}",
-                debug.state().power_graph_enabled
-            );
+            println!("  Power graph: see Power tab in debug panel (Ctrl+1 → Tab)");
         }
     }
 

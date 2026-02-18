@@ -29,6 +29,10 @@ enum Commands {
         /// Run in headless mode (no window)
         #[arg(long)]
         headless: bool,
+        /// Enable true in-process hot-reload via firmware-ui dylib.
+        /// Requires: cargo build --package firmware-ui --features hot-reload
+        #[arg(long)]
+        hot_reload: bool,
     },
     /// Check firmware builds for both hardware and emulator targets
     Check,
@@ -54,7 +58,7 @@ fn main() -> Result<()> {
 
     match cli.command {
         Commands::Flash { release } => flash::run(release),
-        Commands::Dev { headless } => dev::run(headless),
+        Commands::Dev { headless, hot_reload } => dev::run(headless, hot_reload),
         Commands::Check => check::run(),
         Commands::Test { unit, integration } => test::run(unit, integration),
         Commands::Doc { open } => doc::run(open),

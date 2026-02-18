@@ -30,7 +30,7 @@
 //! };
 //!
 //! let mut buffer = vec![0u32; 800 * 600];
-//! inspector.render_details(&mut buffer, 800, 10, 10, &component);
+//! inspector.render_details(&mut buffer, 800, 10, 10, &component, &crate::debug::state::DebugState::default());
 //! ```
 
 use std::convert::Infallible;
@@ -245,6 +245,7 @@ impl Inspector {
         x: u32,
         y: u32,
         component: &ComponentInfo,
+        state: &super::state::DebugState,
     ) {
         let w = TOOLTIP_W;
         let h = TOOLTIP_H;
@@ -328,11 +329,14 @@ impl Inspector {
             InspectorTab::Stats => {
                 txt(&mut canvas, cy, "STATS", COL_TITLE);
                 cy += LH;
-                kv(&mut canvas, cy, "full  ", "0");
+                kv(&mut canvas, cy, "full  ", &state.full_refresh_count.to_string());
                 cy += LH;
-                kv(&mut canvas, cy, "partial ", "0");
+                kv(&mut canvas, cy, "part  ", &state.partial_refresh_count.to_string());
                 cy += LH;
-                txt(&mut canvas, cy, "(live stats TBD)", COL_KEY);
+                let area = component.size.0 as u64 * component.size.1 as u64;
+                kv(&mut canvas, cy, "area  ", &format!("{}px", area));
+                cy += LH;
+                kv(&mut canvas, cy, "pos   ", &format!("({},{})", component.position.0, component.position.1));
             }
         }
 
@@ -416,7 +420,7 @@ mod tests {
         let inspector = Inspector::new();
         let component = make_component();
         let mut buffer = vec![0u32; 800 * 600];
-        inspector.render_details(&mut buffer, 800, 10, 10, &component);
+        inspector.render_details(&mut buffer, 800, 10, 10, &component, &crate::debug::state::DebugState::default());
         // Tooltip background pixels should have been written
         let written = buffer.iter().any(|&px| px != 0);
         assert!(written, "render_details should write pixels to the buffer");
@@ -428,7 +432,7 @@ mod tests {
         inspector.set_tab(InspectorTab::Component);
         let component = make_component();
         let mut buffer = vec![0u32; 800 * 600];
-        inspector.render_details(&mut buffer, 800, 10, 10, &component);
+        inspector.render_details(&mut buffer, 800, 10, 10, &component, &crate::debug::state::DebugState::default());
         let written = buffer.iter().any(|&px| px != 0);
         assert!(written);
     }
@@ -439,7 +443,7 @@ mod tests {
         inspector.set_tab(InspectorTab::Stats);
         let component = make_component();
         let mut buffer = vec![0u32; 800 * 600];
-        inspector.render_details(&mut buffer, 800, 10, 10, &component);
+        inspector.render_details(&mut buffer, 800, 10, 10, &component, &crate::debug::state::DebugState::default());
         let written = buffer.iter().any(|&px| px != 0);
         assert!(written);
     }
@@ -451,7 +455,7 @@ mod tests {
         let mut buffer = vec![0u32; 800 * 600];
         for tab in [InspectorTab::Layout, InspectorTab::Component, InspectorTab::Stats] {
             inspector.set_tab(tab);
-            inspector.render_details(&mut buffer, 800, 10, 10, &component);
+            inspector.render_details(&mut buffer, 800, 10, 10, &component, &crate::debug::state::DebugState::default());
         }
     }
 
@@ -465,7 +469,7 @@ mod tests {
             test_id: None,
         };
         let mut buffer = vec![0u32; 800 * 600];
-        inspector.render_details(&mut buffer, 800, 0, 0, &component);
+        inspector.render_details(&mut buffer, 800, 0, 0, &component, &crate::debug::state::DebugState::default());
     }
 
     #[test]
@@ -475,7 +479,7 @@ mod tests {
         let screen_w = 200u32;
         let mut buffer = vec![0u32; (screen_w * 200) as usize];
         // Request x near the right edge — tooltip should be clamped
-        inspector.render_details(&mut buffer, screen_w, screen_w - 10, 0, &component);
+        inspector.render_details(&mut buffer, screen_w, screen_w - 10, 0, &component, &crate::debug::state::DebugState::default());
         // Should not panic, pixels should be written
         let written = buffer.iter().any(|&px| px != 0);
         assert!(written);

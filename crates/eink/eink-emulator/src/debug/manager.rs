@@ -278,7 +278,6 @@ impl DebugManager {
     /// - Ctrl+1: Toggle debug panel visibility
     /// - Ctrl+2: Toggle component border rendering
     /// - Ctrl+3: Toggle inspector mode
-    /// - Ctrl+4: Toggle power consumption graph
     ///
     /// # Arguments
     ///
@@ -324,10 +323,6 @@ impl DebugManager {
                             }
                             KeyCode::Digit3 => {
                                 self.state.toggle_inspector();
-                                return EventResult::Consumed;
-                            }
-                            KeyCode::Digit4 => {
-                                self.state.toggle_power_graph();
                                 return EventResult::Consumed;
                             }
                             _ => {}
@@ -476,9 +471,6 @@ mod tests {
         manager.state_mut().toggle_inspector();
         assert!(manager.state().inspector_mode);
 
-        assert!(!manager.state().power_graph_enabled);
-        manager.state_mut().toggle_power_graph();
-        assert!(manager.state().power_graph_enabled);
     }
 
     #[test]

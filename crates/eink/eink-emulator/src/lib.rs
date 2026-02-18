@@ -1,4 +1,4 @@
-//! E-Ink Display Emulator
+﻿//! E-Ink Display Emulator
 //!
 //! Desktop emulator for e-ink displays with realistic behavior simulation.
 //!
@@ -95,7 +95,7 @@ impl DisplayStats {
 /// Bounding-box record for one `draw_iter` call (debug mode only).
 ///
 /// Each call to `DrawTarget::draw_iter` on the `Emulator` represents one
-/// embedded-graphics primitive (a filled rectangle, a text string, an icon, …).
+/// embedded-graphics primitive (a filled rectangle, a text string, an icon, â€¦).
 /// We record the tightest axis-aligned bounding box of the actually-drawn pixels
 /// so the Layout overlay can show where real UI elements are rendered, rather than
 /// relying on arbitrary auto-zones.
@@ -111,23 +111,23 @@ struct DrawRecord {
 
 /// Classify a draw-record bounding box into a broad component type.
 ///
-/// Heuristics are intentionally simple — the goal is visual grouping, not perfection.
+/// Heuristics are intentionally simple â€” the goal is visual grouping, not perfection.
 #[cfg(feature = "debug")]
 fn classify_draw_record(w: u32, h: u32, pixel_count: u64) -> &'static str {
     let area = w as u64 * h as u64;
     let fill_pct = pixel_count.saturating_mul(100) / area.max(1);
 
     if h <= 24 || fill_pct < 35 {
-        // Short height or sparse pixels → text / label
+        // Short height or sparse pixels â†’ text / label
         "Label"
     } else if w >= 120 && h <= 30 && w > h * 4 {
-        // Wide and thin → progress bar
+        // Wide and thin â†’ progress bar
         "ProgressBar"
     } else if area > 10_000 {
-        // Large filled area → container / background
+        // Large filled area â†’ container / background
         "Container"
     } else if w < 80 && h < 80 {
-        // Small, roughly square → icon or small button
+        // Small, roughly square â†’ icon or small button
         "Icon"
     } else {
         "Button"
@@ -295,7 +295,7 @@ impl Emulator {
             requires_init: false, // Disabled by default for backward compatibility
             power_tracker: PowerTracker::new(power_profile),
             #[cfg(feature = "debug")]
-            debug_manager: None, // Debug not supported in headless mode
+            debug_manager: Some(crate::debug::DebugManager::new()),
             #[cfg(feature = "debug")]
             layout_records: Vec::new(),
             quirks_enabled: true, // Enabled by default for realistic simulation
@@ -396,6 +396,29 @@ impl Emulator {
     /// # }
     /// ```
     pub async fn initialize(&mut self) -> Result<(), std::io::Error> {
+        // HOT_RELOAD_MODE: skip animation, go straight to initialized state
+        if std::env::var("HOT_RELOAD_MODE").is_ok() {
+            self.power_tracker.transition_to(PowerState::Initializing);
+            self.init_sequence
+                .start()
+                .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
+            let steps = InitStep::all_steps();
+            for _ in steps {
+                self.init_sequence
+                    .next_step()
+                    .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
+            }
+            // Clear to white immediately (no animation)
+            self.framebuffer.clear();
+            // Auto-show debug panel in hot-reload mode
+            #[cfg(feature = "debug")]
+            if let Some(ref mut dm) = self.debug_manager {
+                dm.state_mut().panel_visible = true;
+            }
+            self.power_tracker.transition_to(PowerState::Idle);
+            return Ok(());
+        }
+
         // Transition to initializing state
         self.power_tracker.transition_to(PowerState::Initializing);
 
@@ -495,7 +518,7 @@ impl Emulator {
                 };
 
                 // Gray4 luma is 0-3, convert to 0-15 range for quantization
-                let value_15 = gray4.luma() * 5; // 0,1,2,3 → 0,5,10,15
+                let value_15 = gray4.luma() * 5; // 0,1,2,3 â†’ 0,5,10,15
 
                 // Apply waveform-specific quantization in 0-15 range
                 let quantized_15 = mode.quantize_gray4(value_15);
@@ -628,12 +651,12 @@ impl Emulator {
             let y = (i as u32) / self.framebuffer.width;
             // Convert EinkColor to grayscale for screenshot
             let gray = match pixel {
-                EinkColor::Gray(g) => (g.luma() as u32) * 85, // 0-3 → 0, 85, 170, 255
+                EinkColor::Gray(g) => (g.luma() as u32) * 85, // 0-3 â†’ 0, 85, 170, 255
                 EinkColor::Spectra6 { bw, .. } => (bw.luma() as u32) * 85,
                 EinkColor::Kaleido3 { r, g, b } => {
                     // RGB to grayscale luma
                     let luma = ((*r as u32) + (*g as u32) + (*b as u32)) / 3;
-                    luma * 17 // 0-15 → 0-255
+                    luma * 17 // 0-15 â†’ 0-255
                 }
             };
             img.put_pixel(x, y, Luma([gray as u8]));
@@ -822,13 +845,13 @@ impl Emulator {
         let max_dc = self.pixel_states.max_dc_balance();
         if max_dc > 50.0 {
             eprintln!(
-                "⚠️  DC balance critical ({:.1})! Full refresh required.",
+                "âš ï¸  DC balance critical ({:.1})! Full refresh required.",
                 max_dc
             );
             self.stats.dc_warnings += 1;
         } else if max_dc > 30.0 {
             eprintln!(
-                "⚠️  DC balance warning ({:.1}). Consider full refresh soon.",
+                "âš ï¸  DC balance warning ({:.1}). Consider full refresh soon.",
                 max_dc
             );
             self.stats.dc_warnings += 1;
@@ -886,7 +909,7 @@ impl Emulator {
                     let w = (rec.max_x - rec.min_x + 1).max(1) as u32;
                     let h = (rec.max_y - rec.min_y + 1).max(1) as u32;
                     let area = w as u64 * h as u64;
-                    // Skip near-full-screen backgrounds — they obscure everything else.
+                    // Skip near-full-screen backgrounds â€” they obscure everything else.
                     if area > disp_area * 3 / 4 {
                         continue;
                     }
@@ -1001,7 +1024,7 @@ impl Emulator {
                         window.set_quirk_warning(Some(description));
                     }
 
-                    return Err(format!("⚠️  QUIRK TRIGGERED: {}", description));
+                    return Err(format!("âš ï¸  QUIRK TRIGGERED: {}", description));
                 }
                 Quirk::SpiWriteHang { description }
                     if operation.contains("spi_write") || operation.contains("init") =>
@@ -1013,13 +1036,13 @@ impl Emulator {
                         window.set_quirk_warning(Some(description));
                     }
 
-                    return Err(format!("⚠️  QUIRK TRIGGERED: {}", description));
+                    return Err(format!("âš ï¸  QUIRK TRIGGERED: {}", description));
                 }
                 Quirk::UncontrollableRefreshRate { description }
                     if operation.contains("refresh") =>
                 {
                     // This quirk is a warning, not an error - just log it
-                    eprintln!("⚠️  Hardware Quirk: {}", description);
+                    eprintln!("âš ï¸  Hardware Quirk: {}", description);
                     self.active_quirk = Some(description.to_string());
 
                     #[cfg(not(feature = "headless"))]
@@ -1031,7 +1054,7 @@ impl Emulator {
                 Quirk::PanelSpecific { description }
                     if operation.contains("init") || operation.contains("vcom") =>
                 {
-                    eprintln!("⚠️  Hardware Quirk: {}", description);
+                    eprintln!("âš ï¸  Hardware Quirk: {}", description);
                     self.active_quirk = Some(description.to_string());
 
                     #[cfg(not(feature = "headless"))]
@@ -1040,7 +1063,7 @@ impl Emulator {
                     }
                 }
                 Quirk::LimitedLibrarySupport { description } if operation.contains("init") => {
-                    eprintln!("ℹ️  Note: {}", description);
+                    eprintln!("â„¹ï¸  Note: {}", description);
                     self.active_quirk = Some(description.to_string());
                 }
                 _ => {}
@@ -1161,7 +1184,7 @@ impl Emulator {
             ]
         };
 
-        // ── Ctrl+2: component borders ────────────────────────────────────
+        // â”€â”€ Ctrl+2: component borders â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         if state.borders_enabled {
             let components = if !state.registered_components.is_empty() {
                 state.registered_components.clone()
@@ -1171,7 +1194,7 @@ impl Emulator {
             debug::OverlayRenderer::new().render_borders(rgba, width, height, &components);
         }
 
-        // ── Ctrl+3: inspector overlay ────────────────────────────────────
+        // â”€â”€ Ctrl+3: inspector overlay â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         if state.inspector_mode {
             let components = if !state.registered_components.is_empty() {
                 state.registered_components.clone()
@@ -1185,8 +1208,8 @@ impl Emulator {
                 debug::OverlayRenderer::new().render_borders(rgba, width, height, &components);
             }
 
-            // Map physical cursor position → display pixel coordinates.
-            // The display occupies [0, width*scale) × [0, height*scale) inside
+            // Map physical cursor position â†’ display pixel coordinates.
+            // The display occupies [0, width*scale) Ã— [0, height*scale) inside
             // the window; the panel (if any) lives to the right of that.
             let scale = self.config.scale.max(1) as f64;
             if let Some((cx, cy)) = debug_manager.cursor_pos() {
@@ -1225,19 +1248,14 @@ impl Emulator {
                         };
 
                         debug::Inspector::new().render_details(
-                            rgba, width, tt_x, tt_y, comp,
+                            rgba, width, tt_x, tt_y, comp, state,
                         );
                     }
                 }
             }
         }
 
-        // ── Ctrl+4: power graph overlay on the display surface ───────────
-        if state.power_graph_enabled {
-            debug_manager.power_graph().render(rgba, width, 10, 10);
-        }
-
-        // ── Ctrl+1: debug side-panel (rendered last / on top) ────────────
+        // â”€â”€ Ctrl+1: debug side-panel (rendered last / on top) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         if state.panel_visible {
             debug::DebugPanel::new().render(rgba, width, height, state);
         }
@@ -1345,10 +1363,10 @@ mod tests {
         assert_eq!(emulator.temperature(), Some(-5));
 
         // Temperature affects timing (tested through spec)
-        // -5°C: factor = 1.5 + (0 - (-5)) * 0.05 = 1.5 + 0.25 = 1.75
+        // -5Â°C: factor = 1.5 + (0 - (-5)) * 0.05 = 1.5 + 0.25 = 1.75
         assert_eq!(
             emulator.spec().adjusted_refresh_ms(2000, -5),
-            3500 // 1.75x slower at -5°C
+            3500 // 1.75x slower at -5Â°C
         );
     }
 
@@ -1383,16 +1401,16 @@ mod tests {
         let mut pixel_small = PixelState::new();
         let mut pixel_large = PixelState::new();
 
-        // Small transition: 0 → 5 (in 0-15 range)
+        // Small transition: 0 â†’ 5 (in 0-15 range)
         pixel_small.partial_refresh(5, 0.15, 25);
         let ghosting_small = pixel_small.ghosting;
 
-        // Large transition: 0 → 15 (in 0-15 range)
+        // Large transition: 0 â†’ 15 (in 0-15 range)
         pixel_large.partial_refresh(15, 0.15, 25);
         let ghosting_large = pixel_large.ghosting;
 
-        println!("Small transition (0→5) ghosting: {}", ghosting_small);
-        println!("Large transition (0→15) ghosting: {}", ghosting_large);
+        println!("Small transition (0â†’5) ghosting: {}", ghosting_small);
+        println!("Large transition (0â†’15) ghosting: {}", ghosting_large);
 
         // Larger transitions should produce more ghosting
         assert!(
@@ -1949,7 +1967,7 @@ mod tests {
 
         let mut emulator = Emulator::headless(100, 100);
 
-        // Explicit workflow: draw → update_buffer → display_with_mode
+        // Explicit workflow: draw â†’ update_buffer â†’ display_with_mode
         Rectangle::new(Point::new(10, 10), Size::new(50, 50))
             .into_styled(PrimitiveStyle::with_fill(Gray4::BLACK))
             .draw(&mut emulator)
@@ -2016,7 +2034,6 @@ mod tests {
         assert!(!state.panel_visible);
         assert!(!state.borders_enabled);
         assert!(!state.inspector_mode);
-        assert!(!state.power_graph_enabled);
         assert!(state.hovered_component.is_none());
         assert!(state.selected_component.is_none());
         assert_eq!(state.power_history.len(), 0);
@@ -2047,9 +2064,6 @@ mod tests {
         assert!(state.inspector_mode);
 
         // Test power graph toggle
-        assert!(!state.power_graph_enabled);
-        state.toggle_power_graph();
-        assert!(state.power_graph_enabled);
     }
 
     #[cfg(feature = "debug")]

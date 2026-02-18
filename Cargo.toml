@@ -5,8 +5,10 @@ members = [
     "crates/eink/eink-emulator",
     "crates/eink/eink-system",
     "crates/eink/eink-components",
+    "crates/eink/eink-testing",
     "crates/platform",
     "crates/firmware",
+    "crates/firmware-ui",
     "xtask",
     # TODO: Add when created
     # "crates/playback",
@@ -81,6 +83,9 @@ embedded-graphics-simulator = "0.6"
 # Testing
 embedded-test = "0.4"
 tokio = { version = "1.49", features = ["macros", "rt"] }
+
+# Hot-reload support (desktop emulator development only)
+hot-lib-reloader = "0.8"
 
 [profile.dev]
 opt-level = 1

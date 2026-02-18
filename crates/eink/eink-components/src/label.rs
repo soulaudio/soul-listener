@@ -35,6 +35,8 @@ pub struct Label {
     text: &'static str,
     color: Gray4,
     size: TextSize,
+    #[cfg(feature = "std")]
+    pub test_id: Option<String>,
 }
 
 impl Label {
@@ -44,6 +46,8 @@ impl Label {
             text,
             color: Gray4::BLACK,
             size: TextSize::Normal,
+            #[cfg(feature = "std")]
+            test_id: None,
         }
     }
 
@@ -57,6 +61,19 @@ impl Label {
     pub fn size(mut self, size: TextSize) -> Self {
         self.size = size;
         self
+    }
+
+    /// Set the test ID for this component (used by eink-testing query_by_test_id).
+    #[cfg(feature = "std")]
+    pub fn test_id(mut self, id: impl Into<String>) -> Self {
+        self.test_id = Some(id.into());
+        self
+    }
+
+    /// Get the test ID for this component.
+    #[cfg(feature = "std")]
+    pub fn get_test_id(&self) -> Option<&str> {
+        self.test_id.as_deref()
     }
 
     /// Get text dimensions
