@@ -40,6 +40,7 @@ pub use render::render_demo_menu;
 #[cfg(feature = "hot-reload")]
 #[no_mangle]
 pub unsafe extern "C" fn render_ui(emulator_ptr: *mut eink_emulator::Emulator) {
+    assert!(!emulator_ptr.is_null(), "render_ui: emulator_ptr must not be null");
     let emulator = unsafe { &mut *emulator_ptr };
     if let Err(e) = render::render_onto_emulator(emulator) {
         eprintln!("[firmware-ui] render_ui error: {:?}", e);

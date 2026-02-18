@@ -48,5 +48,11 @@ fp-info-cache
 tmp/
 temp/
 
+# Scratch / codegen files (double-underscore prefix convention)
+__*
+
+# Throwaway test output files
+test_*.txt
+
 # Git worktrees
 .worktrees/
