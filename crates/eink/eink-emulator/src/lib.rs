@@ -92,6 +92,48 @@ impl DisplayStats {
     }
 }
 
+/// Bounding-box record for one `draw_iter` call (debug mode only).
+///
+/// Each call to `DrawTarget::draw_iter` on the `Emulator` represents one
+/// embedded-graphics primitive (a filled rectangle, a text string, an icon, …).
+/// We record the tightest axis-aligned bounding box of the actually-drawn pixels
+/// so the Layout overlay can show where real UI elements are rendered, rather than
+/// relying on arbitrary auto-zones.
+#[cfg(feature = "debug")]
+struct DrawRecord {
+    min_x: i32,
+    min_y: i32,
+    max_x: i32,
+    max_y: i32,
+    /// Number of pixels actually written (used to detect sparse / text draws).
+    pixel_count: u64,
+}
+
+/// Classify a draw-record bounding box into a broad component type.
+///
+/// Heuristics are intentionally simple — the goal is visual grouping, not perfection.
+#[cfg(feature = "debug")]
+fn classify_draw_record(w: u32, h: u32, pixel_count: u64) -> &'static str {
+    let area = w as u64 * h as u64;
+    let fill_pct = pixel_count.saturating_mul(100) / area.max(1);
+
+    if h <= 24 || fill_pct < 35 {
+        // Short height or sparse pixels → text / label
+        "Label"
+    } else if w >= 120 && h <= 30 && w > h * 4 {
+        // Wide and thin → progress bar
+        "ProgressBar"
+    } else if area > 10_000 {
+        // Large filled area → container / background
+        "Container"
+    } else if w < 80 && h < 80 {
+        // Small, roughly square → icon or small button
+        "Icon"
+    } else {
+        "Button"
+    }
+}
+
 /// E-Ink display emulator with realistic behavior simulation
 pub struct Emulator {
     pub framebuffer: Framebuffer,
@@ -117,6 +159,11 @@ pub struct Emulator {
     // Debug system
     #[cfg(feature = "debug")]
     debug_manager: Option<debug::DebugManager>,
+
+    /// Per-frame bounding-box records, one per `draw_iter` call.  Consumed and
+    /// converted to `ComponentInfo` entries at the end of each refresh.
+    #[cfg(feature = "debug")]
+    layout_records: Vec<DrawRecord>,
 
     // Hardware quirks simulation
     pub quirks_enabled: bool,
@@ -184,6 +231,8 @@ impl Emulator {
             power_tracker: PowerTracker::new(power_profile),
             #[cfg(feature = "debug")]
             debug_manager,
+            #[cfg(feature = "debug")]
+            layout_records: Vec::new(),
             quirks_enabled: true, // Enabled by default for realistic simulation
             active_quirk: None,
             config: config.clone(),
@@ -247,6 +296,8 @@ impl Emulator {
             power_tracker: PowerTracker::new(power_profile),
             #[cfg(feature = "debug")]
             debug_manager: None, // Debug not supported in headless mode
+            #[cfg(feature = "debug")]
+            layout_records: Vec::new(),
             quirks_enabled: true, // Enabled by default for realistic simulation
             active_quirk: None,
             config: config::EmulatorConfig::default(), // Config not used in headless mode
@@ -345,8 +396,6 @@ impl Emulator {
     /// # }
     /// ```
     pub async fn initialize(&mut self) -> Result<(), std::io::Error> {
-        use tokio::time::{sleep, Duration};
-
         // Transition to initializing state
         self.power_tracker.transition_to(PowerState::Initializing);
 
@@ -358,8 +407,8 @@ impl Emulator {
         let steps = InitStep::all_steps();
 
         for step in steps {
-            // Execute step timing
-            sleep(Duration::from_millis(step.duration_ms as u64)).await;
+            // Execute step timing while keeping the window responsive
+            self.sleep_with_event_pump(step.duration_ms as u64);
 
             // Visual steps
             if step.has_visual {
@@ -482,8 +531,6 @@ impl Emulator {
         mode: WaveformMode,
         framebuffer: &[EinkColor],
     ) -> Result<(), std::io::Error> {
-        use tokio::time::{sleep, Duration};
-
         let base_duration = mode.base_duration_ms();
         let adjusted = self
             .spec
@@ -498,13 +545,14 @@ impl Emulator {
                 #[cfg(not(feature = "headless"))]
                 self.present_solid_color(0xFF000000).await;
 
-                sleep(Duration::from_millis(flash_duration as u64)).await;
+                // Sleep while keeping the window responsive via OS event pumping
+                self.sleep_with_event_pump(flash_duration as u64);
 
                 // Flash white
                 #[cfg(not(feature = "headless"))]
                 self.present_solid_color(0xFFFFFFFF).await;
 
-                sleep(Duration::from_millis(flash_duration as u64)).await;
+                self.sleep_with_event_pump(flash_duration as u64);
             }
         }
 
@@ -520,9 +568,28 @@ impl Emulator {
         #[cfg(not(feature = "headless"))]
         self.present_frame(&rgba).await;
 
-        sleep(Duration::from_millis((adjusted / 3) as u64)).await;
+        self.sleep_with_event_pump((adjusted / 3) as u64);
 
         Ok(())
+    }
+
+    /// Sleep for `duration_ms` milliseconds while keeping the window responsive.
+    ///
+    /// In windowed mode the OS event loop is pumped every ~16 ms so the window
+    /// title bar stays draggable and Windows does not mark the process as
+    /// "Not Responding" during long refresh animations.
+    ///
+    /// In headless mode (CI/tests) falls back to `std::thread::sleep`.
+    fn sleep_with_event_pump(&mut self, duration_ms: u64) {
+        let duration = std::time::Duration::from_millis(duration_ms);
+
+        #[cfg(not(feature = "headless"))]
+        if let Some(ref mut window) = self.window {
+            window.pump_events(duration);
+            return;
+        }
+
+        std::thread::sleep(duration);
     }
 
     /// Run window event loop (blocks until window closed)
@@ -585,12 +652,37 @@ impl DrawTarget for Emulator {
     where
         I: IntoIterator<Item = Pixel<Self::Color>>,
     {
+        #[cfg(feature = "debug")]
+        let (mut min_x, mut min_y, mut max_x, mut max_y, mut px_count): (i32, i32, i32, i32, u64) =
+            (i32::MAX, i32::MAX, i32::MIN, i32::MIN, 0);
+
         for Pixel(point, color) in pixels {
             if point.x >= 0 && point.y >= 0 {
                 self.framebuffer
                     .set_pixel(point.x as u32, point.y as u32, EinkColor::Gray(color));
+
+                #[cfg(feature = "debug")]
+                {
+                    if point.x < min_x { min_x = point.x; }
+                    if point.y < min_y { min_y = point.y; }
+                    if point.x > max_x { max_x = point.x; }
+                    if point.y > max_y { max_y = point.y; }
+                    px_count += 1;
+                }
             }
         }
+
+        #[cfg(feature = "debug")]
+        if px_count >= 10 {
+            self.layout_records.push(DrawRecord {
+                min_x,
+                min_y,
+                max_x,
+                max_y,
+                pixel_count: px_count,
+            });
+        }
+
         Ok(())
     }
 }
@@ -755,6 +847,59 @@ impl Emulator {
 
         // 6. Update statistics
         self.stats.record_refresh(mode, base_duration);
+
+        // 7. Record power sample in the debug power graph and update refresh counters
+        #[cfg(feature = "debug")]
+        if let Some(ref mut dm) = self.debug_manager {
+            use debug::state::RefreshType;
+            let ref_type = match mode {
+                WaveformMode::GC16 | WaveformMode::GL16 | WaveformMode::GCC16 => {
+                    Some(RefreshType::Full)
+                }
+                WaveformMode::DU4 => Some(RefreshType::Partial),
+                WaveformMode::DU | WaveformMode::A2 | WaveformMode::GCU => {
+                    Some(RefreshType::Fast)
+                }
+            };
+            let power_mw = dm.power_graph().estimate_power(ref_type);
+            dm.power_graph_mut().add_sample(power_mw, ref_type);
+            match ref_type {
+                Some(RefreshType::Full) => dm.state_mut().record_full_refresh(),
+                Some(RefreshType::Partial) | Some(RefreshType::Fast) => {
+                    dm.state_mut().record_partial_refresh()
+                }
+                None => {}
+            }
+        }
+
+        // 8. Auto-register draw-call bounding boxes as layout components for the
+        //    debug overlay.  This lets the Layout (Ctrl+2) and Inspector (Ctrl+3)
+        //    overlays show where actual embedded-graphics primitives were rendered,
+        //    instead of relying on arbitrary auto-zones.
+        #[cfg(feature = "debug")]
+        {
+            let disp_area = self.framebuffer.width as u64 * self.framebuffer.height as u64;
+            let records: Vec<DrawRecord> = self.layout_records.drain(..).collect();
+            if let Some(ref mut dm) = self.debug_manager {
+                dm.state_mut().clear_registered_components();
+                for rec in records {
+                    let w = (rec.max_x - rec.min_x + 1).max(1) as u32;
+                    let h = (rec.max_y - rec.min_y + 1).max(1) as u32;
+                    let area = w as u64 * h as u64;
+                    // Skip near-full-screen backgrounds — they obscure everything else.
+                    if area > disp_area * 3 / 4 {
+                        continue;
+                    }
+                    let comp_type = classify_draw_record(w, h, rec.pixel_count);
+                    dm.state_mut().register_component(debug::ComponentInfo {
+                        component_type: comp_type.to_string(),
+                        position: (rec.min_x, rec.min_y),
+                        size: (w, h),
+                        test_id: None,
+                    });
+                }
+            }
+        }
 
         // Return to idle after refresh
         self.power_tracker.transition_to(PowerState::Idle);
@@ -971,27 +1116,128 @@ impl Emulator {
 
     /// Render debug overlays onto the RGBA buffer
     ///
-    /// This renders borders, panel, and power graph based on debug state.
+    /// This renders borders, inspector tooltip, power graph overlay, and the
+    /// debug side-panel based on current debug state.
     #[cfg(feature = "debug")]
     fn render_debug_overlays(&self, rgba: &mut [u32], debug_manager: &debug::DebugManager) {
         let width = self.framebuffer.width;
         let height = self.framebuffer.height;
         let state = debug_manager.state();
 
-        // Render component borders if enabled
+        // Build the authoritative component list once: registered components take
+        // priority; otherwise generate representative auto-zones from display bounds
+        // so that Ctrl+2 / Ctrl+3 always produce a visible result.
+        let auto_zones = || -> Vec<debug::ComponentInfo> {
+            let header_h = (height / 7).max(1);
+            let footer_h = (height / 7).max(1);
+            let content_y = header_h as i32;
+            let content_h = height.saturating_sub(header_h + footer_h);
+            let footer_y = (header_h + content_h) as i32;
+            vec![
+                debug::ComponentInfo {
+                    component_type: "Container".to_string(),
+                    position: (0, 0),
+                    size: (width, height),
+                    test_id: Some("display-root".to_string()),
+                },
+                debug::ComponentInfo {
+                    component_type: "Label".to_string(),
+                    position: (0, 0),
+                    size: (width, header_h),
+                    test_id: Some("header".to_string()),
+                },
+                debug::ComponentInfo {
+                    component_type: "Button".to_string(),
+                    position: (0, content_y),
+                    size: (width, content_h),
+                    test_id: Some("content".to_string()),
+                },
+                debug::ComponentInfo {
+                    component_type: "ProgressBar".to_string(),
+                    position: (0, footer_y),
+                    size: (width, footer_h),
+                    test_id: Some("footer".to_string()),
+                },
+            ]
+        };
+
+        // ── Ctrl+2: component borders ────────────────────────────────────
         if state.borders_enabled {
-            // Collect component info from debug metadata
-            // For now, we'll just render the overlay if there are any registered components
-            let components = vec![]; // TODO: Get actual component list from metadata
+            let components = if !state.registered_components.is_empty() {
+                state.registered_components.clone()
+            } else {
+                auto_zones()
+            };
             debug::OverlayRenderer::new().render_borders(rgba, width, height, &components);
         }
 
-        // Render power graph if enabled
-        if state.power_graph_enabled {
-            debug_manager.power_graph().render(rgba, width, 10, 400);
+        // ── Ctrl+3: inspector overlay ────────────────────────────────────
+        if state.inspector_mode {
+            let components = if !state.registered_components.is_empty() {
+                state.registered_components.clone()
+            } else {
+                auto_zones()
+            };
+
+            // Always draw borders in inspector mode so components are visible
+            // even when Ctrl+2 is off.
+            if !state.borders_enabled {
+                debug::OverlayRenderer::new().render_borders(rgba, width, height, &components);
+            }
+
+            // Map physical cursor position → display pixel coordinates.
+            // The display occupies [0, width*scale) × [0, height*scale) inside
+            // the window; the panel (if any) lives to the right of that.
+            let scale = self.config.scale.max(1) as f64;
+            if let Some((cx, cy)) = debug_manager.cursor_pos() {
+                let disp_x = (cx / scale) as i32;
+                let disp_y = (cy / scale) as i32;
+
+                // Only act when cursor is inside the display area
+                if disp_x >= 0 && disp_y >= 0 && (disp_x as u32) < width && (disp_y as u32) < height {
+                    // Find the smallest (innermost) component containing the cursor.
+                    // Iterate in reverse so that later / smaller components win when
+                    // components are stacked.
+                    let hovered = components.iter().rev().find(|c| {
+                        let (bx, by) = c.position;
+                        let (bw, bh) = c.size;
+                        disp_x >= bx
+                            && disp_y >= by
+                            && disp_x < bx + bw as i32
+                            && disp_y < by + bh as i32
+                    });
+
+                    if let Some(comp) = hovered {
+                        // Position the tooltip to the right of the cursor (or left when
+                        // close to the right edge) and slightly below (or above when near
+                        // the bottom).
+                        let tt_w = 120i32;
+                        let tt_h = 80i32;
+                        let tt_x = if disp_x + tt_w + 5 < width as i32 {
+                            (disp_x + 5) as u32
+                        } else {
+                            (disp_x - tt_w - 5).max(0) as u32
+                        };
+                        let tt_y = if disp_y + tt_h + 5 < height as i32 {
+                            (disp_y + 5) as u32
+                        } else {
+                            (disp_y - tt_h - 5).max(0) as u32
+                        };
+
+                        debug::Inspector::new().render_details(
+                            rgba, width, tt_x, tt_y, comp,
+                        );
+                    }
+                }
+            }
         }
 
-        // Render debug panel last (on top of everything)
+        // ── Ctrl+4: power graph overlay on the display surface ───────────
+        if state.power_graph_enabled {
+            debug_manager.power_graph().render(rgba, width, 10, 10);
+        }
+
+        // ── Ctrl+1: debug side-panel (rendered last / on top) ────────────
         if state.panel_visible {
             debug::DebugPanel::new().render(rgba, width, height, state);
         }

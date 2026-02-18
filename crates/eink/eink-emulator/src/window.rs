@@ -1,234 +1,501 @@
-//! Isolated window management layer
+//! Isolated window management layer.
 //!
-//! Based on softbuffer pattern: https://github.com/rust-windowing/softbuffer
-//! Follows "isolate the madness" principle - all platform-specific code here.
+//! Based on winit 0.30 `ApplicationHandler` + softbuffer 0.4 canonical patterns.
+//!
+//! # DPI / multi-monitor behaviour
+//!
+//! The window is created with `PhysicalSize`, bypassing DPI scaling entirely.
+//! `ScaleFactorChanged` overrides the OS-suggested resize so the window keeps
+//! a fixed physical pixel count on every monitor.  This mirrors e-ink hardware
+//! which has a fixed pixel grid regardless of host display scale.
+//!
+//! On Windows we also subclass the WndProc to intercept `WM_DPICHANGED` before
+//! winit's broken handler runs (winit bug #4041 — fixed in 0.31).
+//! `WM_DPICHANGED` is sent synchronously (`SendMessage`) so `with_msg_hook`
+//! (which only intercepts `DispatchMessage`-posted messages) cannot catch it.
+//! WndProc subclassing is the correct Windows-level solution.
+//!
+//! # Drop order
+//!
+//! Rust drops struct fields in **reverse declaration order** (LIFO).  The field
+//! ordering in `Window` is chosen so:
+//!   `surface` drops before `_context` (surface needs context alive on some platforms)
+//!   `_context` drops before `window`
+//!   `window` drops before `event_loop`
 
 use crate::config::Rotation;
 use crate::power::PowerStats;
 use softbuffer::{Context, Surface};
-use std::cell::RefCell;
-use std::rc::Rc;
+use std::num::NonZeroU32;
+use std::sync::Arc;
 use std::time::Duration;
 use winit::application::ApplicationHandler;
+use winit::dpi::PhysicalSize;
 use winit::event::WindowEvent;
-use winit::event_loop::{ActiveEventLoop, EventLoop};
-use winit::platform::pump_events::EventLoopExtPumpEvents;
+use winit::event_loop::{ActiveEventLoop, ControlFlow, EventLoop, OwnedDisplayHandle};
+use winit::platform::pump_events::{EventLoopExtPumpEvents, PumpStatus};
 use winit::window::{Window as WinitWindow, WindowAttributes, WindowId};
+#[cfg(feature = "debug")]
+use winit::window::CursorIcon;
 
-/// Apply e-ink visual characteristics to a pixel
-///
-/// Adds paper-like texture and subtle noise to simulate real e-ink appearance
+// --- Windows DPI fix ---------------------------------------------------------
+//
+// winit 0.30.x bug #4041: when the user drags the window to a monitor with a
+// different DPI, winit's WM_DPICHANGED handler applies a cursor-bias formula
+// to compute a "corrected" window position.  When the app overrides the
+// OS-suggested physical size (as we do), the formula misfires → visible jump.
+//
+// Fix: subclass the WndProc to intercept WM_DPICHANGED ourselves.  We honour
+// the OS-suggested upper-left position (which IS correct) and apply our fixed
+// physical size, then return 0 (message handled) so winit never runs.
+//
+// Remove this module after upgrading to winit 0.31 which fixes the bug.
+
+#[cfg(target_os = "windows")]
+mod windows_dpi {
+    use std::cell::Cell;
+    use windows_sys::Win32::Foundation::RECT;
+    use windows_sys::Win32::UI::HiDpi::AdjustWindowRectExForDpi;
+    use windows_sys::Win32::UI::WindowsAndMessaging::{
+        CallWindowProcW, GetWindowLongW, SetWindowLongPtrW, SetWindowPos, GWL_EXSTYLE, GWL_STYLE,
+        GWLP_WNDPROC, SWP_NOACTIVATE, SWP_NOZORDER, WNDPROC,
+    };
+
+    const WM_DPICHANGED: u32 = 0x02E0;
+
+    // Per-thread state.  Single-window, single-thread emulator.
+    thread_local! {
+        static ORIG_PROC: Cell<isize> = Cell::new(0);
+        static PHYS_W: Cell<i32>      = Cell::new(0);
+        static PHYS_H: Cell<i32>      = Cell::new(0);
+    }
+
+    /// Replacement WndProc installed by [`install_subclass`].
+    ///
+    /// Intercepts `WM_DPICHANGED` to:
+    ///   1. Move the window to the OS-suggested position (correct for new monitor).
+    ///   2. Resize the window so the **client area** remains exactly
+    ///      `PHYS_W × PHYS_H` pixels at the new DPI (via `AdjustWindowRectExForDpi`).
+    ///
+    /// winit bug #4041: winit's own WM_DPICHANGED handler applies a cursor-bias
+    /// formula that computes a wrong window position when the app overrides the
+    /// OS-suggested outer size.  By returning 0 here we prevent winit from
+    /// running that handler at all.
+    pub unsafe extern "system" fn subclass_proc(
+        hwnd: isize,
+        msg: u32,
+        wparam: usize,
+        lparam: isize,
+    ) -> isize {
+        if msg == WM_DPICHANGED {
+            // lParam → RECT: OS-suggested outer window rect at the new DPI.
+            // Its position is correct (cursor-tracked); its size would scale the
+            // window visually, which we don't want — we need fixed physical pixels.
+            let suggested = &*(lparam as *const RECT);
+
+            // New DPI is in the low word of wParam.
+            let new_dpi = (wparam & 0xFFFF) as u32;
+
+            let phys_w = PHYS_W.with(|c| c.get());
+            let phys_h = PHYS_H.with(|c| c.get());
+
+            // Compute the outer window rect that gives exactly phys_w × phys_h
+            // client pixels at new_dpi.  AdjustWindowRectExForDpi accounts for
+            // the title bar and border widths that change with DPI.
+            let style = GetWindowLongW(hwnd, GWL_STYLE) as u32;
+            let ex_style = GetWindowLongW(hwnd, GWL_EXSTYLE) as u32;
+            let mut outer = RECT { left: 0, top: 0, right: phys_w, bottom: phys_h };
+            AdjustWindowRectExForDpi(&mut outer, style, 0, ex_style, new_dpi);
+            let outer_w = outer.right - outer.left;
+            let outer_h = outer.bottom - outer.top;
+
+            SetWindowPos(
+                hwnd,
+                0, // hwnd_insert_after ignored with SWP_NOZORDER
+                suggested.left,
+                suggested.top,
+                outer_w,
+                outer_h,
+                SWP_NOZORDER | SWP_NOACTIVATE,
+            );
+            return 0; // documented: return 0 if the message is processed
+        }
+
+        // Forward all other messages to winit's original WndProc.
+        let orig = ORIG_PROC.with(|c| c.get());
+        let orig_fn: WNDPROC = std::mem::transmute(orig);
+        CallWindowProcW(orig_fn, hwnd, msg, wparam, lparam)
+    }
+
+    /// Subclass the given HWND so `WM_DPICHANGED` is handled correctly.
+    ///
+    /// Must be called **once** after the HWND is created.  Calling it again would
+    /// set `ORIG_PROC` to `subclass_proc` itself, causing infinite recursion.
+    /// Use [`update_size`] to update stored dimensions after the window is resized.
+    pub unsafe fn install_subclass(hwnd: isize, phys_w: i32, phys_h: i32) {
+        PHYS_W.with(|c| c.set(phys_w));
+        PHYS_H.with(|c| c.set(phys_h));
+        let old = SetWindowLongPtrW(hwnd, GWLP_WNDPROC, subclass_proc as isize);
+        ORIG_PROC.with(|c| c.set(old));
+    }
+
+    /// Update the physical size used by the subclass proc without re-installing it.
+    ///
+    /// Call this whenever the window is resized so `WM_DPICHANGED` uses the
+    /// correct dimensions.  Re-calling `install_subclass` would set `ORIG_PROC`
+    /// to `subclass_proc` itself, causing infinite recursion on the next message.
+    pub fn update_size(phys_w: i32, phys_h: i32) {
+        PHYS_W.with(|c| c.set(phys_w));
+        PHYS_H.with(|c| c.set(phys_h));
+    }
+}
+
+/// Width of the debug side panel in physical pixels (appended to the right of the display).
+/// Only active when the `debug` feature is compiled in.
+#[cfg(feature = "debug")]
+const PANEL_W: u32 = 280;
+
+// --- Pixel helpers -----------------------------------------------------------
+
 fn apply_eink_appearance(pixel: u32, x: u32, y: u32) -> u32 {
-    // Extract RGB channels (stored as 0xAARRGGBB)
     let r = ((pixel >> 16) & 0xFF) as u8;
     let g = ((pixel >> 8) & 0xFF) as u8;
     let b = (pixel & 0xFF) as u8;
 
-    // Add subtle paper-like texture using deterministic pseudo-random noise
-    // This creates the characteristic "dotty" appearance of e-ink
+    // E-ink paper tint: display white is warm cream, not blue-white like an LCD.
+    // Pixels arrive as neutral gray (r=g=b) from the Gray4 framebuffer.
+    // Scale the warm shift proportionally to brightness so black stays neutral.
+    let luma = r as u32; // r=g=b for all Gray4 pixels
+    let g = (g as u32).saturating_sub(luma * 9 / 255) as u8;  // max −9 at white
+    let b = (b as u32).saturating_sub(luma * 22 / 255) as u8; // max −22 at white
+    // Result: white (255,255,255) → (255,246,233) warm cream; black unchanged.
+
     let noise = pseudo_random_noise(x, y);
-
-    // Apply noise (±3 levels for subtle texture)
-    let r = (r as i16 + noise).clamp(0, 255) as u8;
-    let g = (g as i16 + noise).clamp(0, 255) as u8;
-    let b = (b as i16 + noise).clamp(0, 255) as u8;
-
-    // Reduce contrast slightly to simulate matte paper (not glossy LCD)
-    // E-ink black is ~15% reflectance, white is ~50%, not pure 0-100%
-    let r = adjust_contrast(r, 0.9);
-    let g = adjust_contrast(g, 0.9);
-    let b = adjust_contrast(b, 0.9);
-
+    let r = adjust_contrast((r as i16 + noise).clamp(0, 255) as u8, 0.9);
+    let g = adjust_contrast((g as i16 + noise).clamp(0, 255) as u8, 0.9);
+    let b = adjust_contrast((b as i16 + noise).clamp(0, 255) as u8, 0.9);
     0xFF000000 | ((r as u32) << 16) | ((g as u32) << 8) | (b as u32)
 }
 
-/// Generate deterministic pseudo-random noise for paper texture
-///
-/// Uses simple hash function for consistent per-pixel noise
 fn pseudo_random_noise(x: u32, y: u32) -> i16 {
-    // Simple hash combining x and y
-    let hash = ((x.wrapping_mul(374761393))
-        .wrapping_add(y.wrapping_mul(668265263))
-        .wrapping_add(x.wrapping_mul(y))) as i16;
-
-    // Map to ±3 range for subtle texture
-    (hash & 0x7) as i16 - 3
+    // Murmur3-style finalizer: no cross-term (x*y creates hyperbolic patterns),
+    // full bit-avalanche so every input bit affects every output bit.
+    let mut h = x.wrapping_mul(0x9e3779b9).wrapping_add(y.wrapping_mul(0x517cc1b7));
+    h ^= h >> 16;
+    h = h.wrapping_mul(0x85ebca6b);
+    h ^= h >> 13;
+    h = h.wrapping_mul(0xc2b2ae35);
+    h ^= h >> 16;
+    (h & 0xF) as i16 - 7 // ±7 range, uniform distribution
 }
 
-/// Adjust contrast to simulate matte paper surface
-///
-/// factor < 1.0 reduces contrast (matte), factor > 1.0 increases (glossy)
 fn adjust_contrast(value: u8, factor: f32) -> u8 {
-    let centered = (value as f32 - 128.0) * factor + 128.0;
-    centered.clamp(0.0, 255.0) as u8
+    ((value as f32 - 128.0) * factor + 128.0).clamp(0.0, 255.0) as u8
 }
 
-/// Darken a pixel by specified amount (for pixel grid effect)
 fn darken(pixel: u32, amount: u8) -> u32 {
     let r = (((pixel >> 16) & 0xFF) as u8).saturating_sub(amount);
     let g = (((pixel >> 8) & 0xFF) as u8).saturating_sub(amount);
     let b = ((pixel & 0xFF) as u8).saturating_sub(amount);
-
     0xFF000000 | ((r as u32) << 16) | ((g as u32) << 8) | (b as u32)
 }
 
-/// Rotate pixel buffer 90 degrees clockwise
-///
-/// Transforms (x, y) → (height - 1 - y, x)
-/// Output dimensions: height × width
 fn rotate_90_cw(src: &[u32], width: u32, height: u32) -> Vec<u32> {
+    // (x, y) → (height-1-y, x);  output: height × width
     let mut dst = vec![0u32; (width * height) as usize];
     for y in 0..height {
         for x in 0..width {
-            let src_idx = (y * width + x) as usize;
-            let dst_x = height - 1 - y;
-            let dst_y = x;
-            let dst_idx = (dst_y * height + dst_x) as usize;
-            dst[dst_idx] = src[src_idx];
+            dst[(x * height + (height - 1 - y)) as usize] = src[(y * width + x) as usize];
         }
     }
     dst
 }
 
-/// Rotate pixel buffer 180 degrees
-///
-/// Transforms (x, y) → (width - 1 - x, height - 1 - y)
-/// Output dimensions: width × height
 fn rotate_180(src: &[u32], width: u32, height: u32) -> Vec<u32> {
     let mut dst = vec![0u32; (width * height) as usize];
     for y in 0..height {
         for x in 0..width {
-            let src_idx = (y * width + x) as usize;
-            let dst_x = width - 1 - x;
-            let dst_y = height - 1 - y;
-            let dst_idx = (dst_y * width + dst_x) as usize;
-            dst[dst_idx] = src[src_idx];
+            dst[((height - 1 - y) * width + (width - 1 - x)) as usize] =
+                src[(y * width + x) as usize];
         }
     }
     dst
 }
 
-/// Rotate pixel buffer 270 degrees clockwise (90 degrees counter-clockwise)
-///
-/// Transforms (x, y) → (y, width - 1 - x)
-/// Output dimensions: height × width
 fn rotate_270_cw(src: &[u32], width: u32, height: u32) -> Vec<u32> {
+    // (x, y) → (y, width-1-x);  output: height × width
     let mut dst = vec![0u32; (width * height) as usize];
     for y in 0..height {
         for x in 0..width {
-            let src_idx = (y * width + x) as usize;
-            let dst_x = y;
-            let dst_y = width - 1 - x;
-            let dst_idx = (dst_y * height + dst_x) as usize;
-            dst[dst_idx] = src[src_idx];
+            dst[((width - 1 - x) * height + y) as usize] = src[(y * width + x) as usize];
         }
     }
     dst
 }
 
-/// Window management (isolated from application logic)
+// --- Pump handler ------------------------------------------------------------
+
+/// Minimal handler for `pump_events()` during refresh animations.
+///
+/// Only handles close and DPI changes — `present()` manages the surface size
+/// itself, so we don't need surface access here.
+struct PumpEventHandler {
+    phys_w: u32,
+    phys_h: u32,
+    pub should_exit: bool,
+}
+
+impl ApplicationHandler for PumpEventHandler {
+    fn resumed(&mut self, _: &ActiveEventLoop) {}
+
+    fn window_event(
+        &mut self,
+        event_loop: &ActiveEventLoop,
+        _: WindowId,
+        event: WindowEvent,
+    ) {
+        match event {
+            WindowEvent::CloseRequested => {
+                self.should_exit = true;
+                event_loop.exit();
+            }
+            // Override the OS-suggested size to keep fixed physical pixels.
+            // A Resized event may follow; present() always re-syncs the surface.
+            WindowEvent::ScaleFactorChanged {
+                mut inner_size_writer,
+                ..
+            } => {
+                let _ = inner_size_writer
+                    .request_inner_size(PhysicalSize::new(self.phys_w, self.phys_h));
+            }
+            _ => {}
+        }
+    }
+}
+
+// --- Window ------------------------------------------------------------------
+
+/// Window management, isolated from application logic.
+///
+/// Field declaration order is load-bearing (LIFO drop):
+///   surface (pos 4) drops before _context (pos 3)
+///   _context (pos 3) drops before window (pos 2)
+///   window (pos 2) drops before event_loop (pos 1)
 pub struct Window {
+    // pos 1 — drops last
     event_loop: Option<EventLoop<()>>,
-    window: std::sync::Arc<WinitWindow>,
-    surface: Rc<RefCell<Surface<std::sync::Arc<WinitWindow>, std::sync::Arc<WinitWindow>>>>,
-    width: u32,  // Logical display width
-    height: u32, // Logical display height
+    // pos 2
+    window: Arc<WinitWindow>,
+    // pos 3 — must outlive surface; drops after surface (LIFO)
+    _context: Context<OwnedDisplayHandle>,
+    // pos 4 — drops first among these four (LIFO)
+    surface: Surface<OwnedDisplayHandle, Arc<WinitWindow>>,
+
+    /// Display-only physical pixel width (without side panel).
+    disp_phys_w: u32,
+    /// Current physical window width — equals disp_phys_w normally, or
+    /// disp_phys_w + PANEL_W when the debug panel is open.
+    phys_w: u32,
+    phys_h: u32,
+    /// Display content dimensions before rotation.
+    disp_w: u32,
+    disp_h: u32,
     config: crate::config::EmulatorConfig,
     temperature: i8,
     power_stats: Option<PowerStats>,
     quirk_warning: Option<String>,
-    current_scale_factor: f64, // Track current DPI scale factor
     #[cfg(feature = "debug")]
     debug_manager: Option<crate::debug::DebugManager>,
+    /// Last clean frame (no debug overlays) for re-presentation on hotkey press.
+    last_rgba: Vec<u32>,
 }
 
-/// Internal handler for the event loop
-struct EventHandler {
-    should_exit: bool,
-    /// Shared reference to surface for resizing
-    surface: Rc<RefCell<Surface<std::sync::Arc<WinitWindow>, std::sync::Arc<WinitWindow>>>>,
-    /// Aspect ratio to maintain (width / height)
-    aspect_ratio: f64,
-    /// Last requested size to detect user resize vs DPI change
-    last_logical_size: (u32, u32),
-    #[cfg(feature = "debug")]
-    debug_manager: Option<crate::debug::DebugManager>,
-}
+/// `Window` IS the run-phase ApplicationHandler — no separate EventHandler needed.
+impl ApplicationHandler for Window {
+    fn resumed(&mut self, _: &ActiveEventLoop) {}
 
-impl ApplicationHandler for EventHandler {
-    fn resumed(&mut self, _event_loop: &ActiveEventLoop) {
-        // Window is already created before event loop starts
+    /// Called when the event loop is about to sleep.
+    ///
+    /// When the debug panel is visible we schedule a periodic wake-up so the
+    /// power-graph and inspector stay animated even without OS events.
+    fn about_to_wait(&mut self, event_loop: &ActiveEventLoop) {
+        #[cfg(feature = "debug")]
+        {
+            let panel_open = self
+                .debug_manager
+                .as_ref()
+                .map(|dm| dm.state().panel_visible)
+                .unwrap_or(false);
+
+            if panel_open {
+                // Tick debug state (idle power sample + hover) and repaint.
+                if !self.last_rgba.is_empty() {
+                    self.present_overlaid();
+                }
+                // Wake up again in 500 ms to keep the graph animating.
+                event_loop.set_control_flow(ControlFlow::WaitUntil(
+                    std::time::Instant::now() + Duration::from_millis(500),
+                ));
+                return;
+            }
+        }
+        // Debug panel closed (or debug feature disabled) — idle until an event arrives.
+        event_loop.set_control_flow(ControlFlow::Wait);
     }
 
     fn window_event(
         &mut self,
         event_loop: &ActiveEventLoop,
-        _window_id: WindowId,
+        _: WindowId,
         event: WindowEvent,
     ) {
-        // Handle debug events first (feature-gated)
         #[cfg(feature = "debug")]
-        if let Some(ref mut debug_manager) = self.debug_manager {
-            use crate::debug::manager::EventResult;
-            if debug_manager.handle_event(&event) == EventResult::Consumed {
-                // Debug system consumed the event, don't process further
+        {
+            let consumed = if let Some(ref mut dm) = self.debug_manager {
+                use crate::debug::manager::EventResult;
+                dm.handle_event(&event) == EventResult::Consumed
+            } else {
+                false
+            };
+            if consumed {
+                self.re_present();
                 return;
             }
         }
 
         match event {
             WindowEvent::CloseRequested => {
-                self.should_exit = true;
                 event_loop.exit();
             }
-            WindowEvent::RedrawRequested => {
-                // Redraw happens via present() calls
-            }
+            // Keep fixed physical size when moved between monitors.
             WindowEvent::ScaleFactorChanged {
-                scale_factor,
                 mut inner_size_writer,
+                ..
             } => {
-                // KEY: Keep the same LOGICAL size when DPI changes
-                // This prevents auto-resize when moving between monitors
-                let (logical_w, logical_h) = self.last_logical_size;
-                let physical_w = (logical_w as f64 * scale_factor).round() as u32;
-                let physical_h = (logical_h as f64 * scale_factor).round() as u32;
-
                 let _ = inner_size_writer
-                    .request_inner_size(winit::dpi::PhysicalSize::new(physical_w, physical_h));
+                    .request_inner_size(PhysicalSize::new(self.phys_w, self.phys_h));
             }
-            WindowEvent::Resized(physical_size) => {
-                // Resize surface to match window
-                if physical_size.width > 0 && physical_size.height > 0 {
-                    // Maintain aspect ratio by constraining the size
-                    let current_aspect = physical_size.width as f64 / physical_size.height as f64;
+            // Resized fires after ScaleFactorChanged (with our overridden size)
+            // or on initial window map — keep softbuffer surface in sync.
+            WindowEvent::Resized(size) => {
+                // Prevent fullscreen: if the OS put us into fullscreen mode, exit it.
+                // A corrected Resized event will follow with the proper windowed size.
+                if self.window.fullscreen().is_some() {
+                    self.window.set_fullscreen(None);
+                    return;
+                }
+                // Guard against OS Snap / maximize sneaking past with_resizable(false).
+                // Clamp back to our target size so the surface never grows beyond it.
+                if size.width > self.phys_w || size.height > self.phys_h {
+                    let _ = self.window
+                        .request_inner_size(PhysicalSize::new(self.phys_w, self.phys_h));
+                    return;
+                }
+                if let (Some(w), Some(h)) =
+                    (NonZeroU32::new(size.width), NonZeroU32::new(size.height))
+                {
+                    self.surface.resize(w, h).ok();
+                }
+            }
+            // Block F11 (and any other fullscreen shortcut) from entering fullscreen.
+            WindowEvent::KeyboardInput {
+                event:
+                    winit::event::KeyEvent {
+                        physical_key: winit::keyboard::PhysicalKey::Code(
+                            winit::keyboard::KeyCode::F11,
+                        ),
+                        ..
+                    },
+                ..
+            } => {
+                self.window.set_fullscreen(None);
+            }
+            // Mouse click: panel rows → select component; display area → select hovered.
+            WindowEvent::MouseInput {
+                state: winit::event::ElementState::Pressed,
+                button: winit::event::MouseButton::Left,
+                ..
+            } => {
+                #[cfg(feature = "debug")]
+                {
+                    if let Some(ref mut dm) = self.debug_manager {
+                        // Compute where the debug panel starts in physical window pixels.
+                        let (rot_w, rot_h) = match self.config.rotation {
+                            crate::config::Rotation::Degrees0
+                            | crate::config::Rotation::Degrees180 => {
+                                (self.disp_w, self.disp_h)
+                            }
+                            _ => (self.disp_h, self.disp_w),
+                        };
+                        let panel_start = (rot_w * self.config.scale) as f64;
+                        let panel_h     = rot_h * self.config.scale;
 
-                    let (final_w, final_h) = if (current_aspect - self.aspect_ratio).abs() > 0.01 {
-                        // Aspect ratio wrong - calculate correct dimensions
-                        // Use smaller dimension to fit content
-                        let height_from_width =
-                            (physical_size.width as f64 / self.aspect_ratio).round() as u32;
-                        let width_from_height =
-                            (physical_size.height as f64 * self.aspect_ratio).round() as u32;
-
-                        if height_from_width <= physical_size.height {
-                            (physical_size.width, height_from_width)
-                        } else {
-                            (width_from_height, physical_size.height)
-                        }
-                    } else {
-                        (physical_size.width, physical_size.height)
-                    };
-
-                    // Resize surface to constrained size
-                    if let (Some(w), Some(h)) = (
-                        std::num::NonZeroU32::new(final_w),
-                        std::num::NonZeroU32::new(final_h),
-                    ) {
-                        if let Ok(mut surface) = self.surface.try_borrow_mut() {
-                            let _ = surface.resize(w, h);
+                        let cursor = dm.cursor_pos();
+                        if let Some((cx, cy)) = cursor {
+                            if cx >= panel_start && dm.state().panel_visible {
+                                // Click is inside the debug panel → hit-test scene rows.
+                                let panel_x = cx - panel_start;
+                                if dm.handle_panel_click(panel_x, cy, PANEL_W, panel_h) {
+                                    self.re_present();
+                                }
+                            } else {
+                                // Click is in the display area → select hovered component.
+                                let hov = dm.state().hovered_component.clone();
+                                let changed = if let Some(comp) = hov {
+                                    let already =
+                                        dm.state().selected_component.as_ref()
+                                            .map(|s| {
+                                                s.position == comp.position
+                                                    && s.size == comp.size
+                                            })
+                                            .unwrap_or(false);
+                                    dm.state_mut().selected_component = Some(comp);
+                                    !already
+                                } else if dm.state().selected_component.is_some() {
+                                    dm.state_mut().selected_component = None;
+                                    true
+                                } else {
+                                    false
+                                };
+                                if changed {
+                                    self.re_present();
+                                }
+                            }
                         }
                     }
+                }
+            }
+            // Update cursor icon: pointer when over the panel or an inspectable component.
+            // handle_event() already stored the position in dm.cursor_pos() above.
+            WindowEvent::CursorMoved { .. } => {
+                #[cfg(feature = "debug")]
+                {
+                    let icon = 'icon: {
+                        let Some(ref dm) = self.debug_manager else {
+                            break 'icon CursorIcon::Default;
+                        };
+                        let cursor_x = dm.cursor_pos().map(|(x, _)| x).unwrap_or(0.0);
+                        let (rot_w, _) = match self.config.rotation {
+                            crate::config::Rotation::Degrees0
+                            | crate::config::Rotation::Degrees180 => {
+                                (self.disp_w, self.disp_h)
+                            }
+                            _ => (self.disp_h, self.disp_w),
+                        };
+                        let panel_start = (rot_w * self.config.scale) as f64;
+                        // Over the debug side panel.
+                        if dm.state().panel_visible && cursor_x >= panel_start {
+                            break 'icon CursorIcon::Pointer;
+                        }
+                        // Inspector mode: hovering over a registered component.
+                        if dm.state().inspector_mode
+                            && dm.state().hovered_component.is_some()
+                        {
+                            break 'icon CursorIcon::Pointer;
+                        }
+                        CursorIcon::Default
+                    };
+                    self.window.set_cursor(icon);
                 }
             }
             _ => {}
@@ -237,291 +504,519 @@ impl ApplicationHandler for EventHandler {
 }
 
 impl Window {
-    /// Create window with configurable rotation and scaling
+    /// Create the emulator window.
     ///
-    /// # Arguments
-    /// * `width` - Logical display width (before rotation)
-    /// * `height` - Logical display height (before rotation)
-    /// * `config` - Emulator configuration (rotation, scale)
+    /// `width` / `height` are display content dimensions before rotation.
+    /// Physical window pixels = rotated dimensions × `config.scale`.
     pub fn new(width: u32, height: u32, config: &crate::config::EmulatorConfig) -> Self {
-        let mut event_loop = EventLoop::new().unwrap();
+        let mut event_loop = EventLoop::builder().build().unwrap();
 
-        // Calculate LOGICAL window size based on rotation and scale
-        // Logical size ensures consistent visual appearance across monitors with different DPI
-        let (window_w, window_h) = config.rotation.apply_to_dimensions(width, height);
-        let logical_w = window_w * config.scale;
-        let logical_h = window_h * config.scale;
+        let (win_w, win_h) = config.rotation.apply_to_dimensions(width, height);
+        // Start at display-only size. Panel expands the window when toggled on.
+        let phys_w = (win_w * config.scale).max(1);
+        let phys_h = (win_h * config.scale).max(1);
+        let phys_size = PhysicalSize::new(phys_w, phys_h);
 
-        // Create window attributes with LOGICAL size (not physical)
-        // winit will automatically scale to physical pixels based on monitor DPI
-        // Resizable = true for emulator-style window (user can resize, aspect ratio maintained)
-        let window_attributes = WindowAttributes::default()
+        // PhysicalSize: raw pixels, no DPI multiplication applied by the OS.
+        // min == max == inner: belt-and-suspenders against drag-resize.
+        // with_resizable(false): removes the resize border/handle.
+        let attrs = WindowAttributes::default()
             .with_title("E-Ink Emulator")
-            .with_inner_size(winit::dpi::LogicalSize::new(logical_w, logical_h))
-            .with_resizable(true);
+            .with_inner_size(phys_size)
+            .with_min_inner_size(phys_size)
+            .with_max_inner_size(phys_size)
+            .with_resizable(false);
 
-        // Use a single-shot approach: create window in resumed() using pump_app_events
-        struct WindowCreator {
-            window_attributes: Option<WindowAttributes>,
-            window: Option<std::sync::Arc<WinitWindow>>,
-            surface: Option<Surface<std::sync::Arc<WinitWindow>, std::sync::Arc<WinitWindow>>>,
+        // winit 0.30: windows must be created inside `resumed()`.
+        // We pump once to trigger that callback, extract window + surface,
+        // then continue in pre-run phase.
+        struct Creator {
+            attrs: Option<WindowAttributes>,
+            result: Option<(
+                Arc<WinitWindow>,
+                Context<OwnedDisplayHandle>,
+                Surface<OwnedDisplayHandle, Arc<WinitWindow>>,
+            )>,
         }
 
-        impl ApplicationHandler for WindowCreator {
+        impl ApplicationHandler for Creator {
             fn resumed(&mut self, event_loop: &ActiveEventLoop) {
-                if self.window.is_none() {
-                    if let Some(window_attributes) = self.window_attributes.take() {
-                        match event_loop.create_window(window_attributes) {
-                            Ok(window) => {
-                                let window = std::sync::Arc::new(window);
-
-                                match Context::new(window.clone()) {
-                                    Ok(context) => match Surface::new(&context, window.clone()) {
-                                        Ok(surface) => {
-                                            self.window = Some(window);
-                                            self.surface = Some(surface);
-                                        }
-                                        Err(e) => eprintln!("Failed to create surface: {}", e),
-                                    },
-                                    Err(e) => eprintln!("Failed to create context: {}", e),
-                                }
-                            }
-                            Err(e) => eprintln!("Failed to create window: {}", e),
-                        }
-                    }
+                if self.result.is_some() {
+                    return; // already created
                 }
+                let attrs = self.attrs.take().unwrap();
+                let window =
+                    Arc::new(event_loop.create_window(attrs).expect("create_window failed"));
+
+                // OwnedDisplayHandle is a self-contained owned display connection
+                // (HINSTANCE on Windows, Wayland display on Linux, etc.).
+                // Correct pattern per softbuffer 0.4 + winit 0.30 examples.
+                let context = Context::new(event_loop.owned_display_handle())
+                    .expect("softbuffer Context failed");
+                let surface =
+                    Surface::new(&context, window.clone()).expect("softbuffer Surface failed");
+
+                self.result = Some((window, context, surface));
             }
 
             fn window_event(&mut self, _: &ActiveEventLoop, _: WindowId, _: WindowEvent) {}
         }
 
-        let mut creator = WindowCreator {
-            window_attributes: Some(window_attributes),
-            window: None,
-            surface: None,
+        let mut creator = Creator {
+            attrs: Some(attrs),
+            result: None,
         };
 
-        // Pump the event loop once to create the window
-        // Use a short timeout to allow window creation without blocking
-        let _ = event_loop.pump_app_events(Some(Duration::from_millis(1)), &mut creator);
+        // One pump is enough — resumed() fires synchronously on all desktop platforms.
+        let _ = event_loop.pump_app_events(Some(Duration::from_millis(100)), &mut creator);
 
-        let window = creator.window.expect("Failed to create window");
-        let surface = creator.surface.expect("Failed to create surface");
+        let (window, context, mut surface) = creator
+            .result
+            .expect("Window creation failed — resumed() never fired");
 
-        // Get initial scale factor from the window
-        let initial_scale_factor = window.scale_factor();
-
-        // Wrap surface in Rc<RefCell<>> for shared access between Window and EventHandler
-        let surface = Rc::new(RefCell::new(surface));
-
-        let mut window_obj = Self {
-            event_loop: Some(event_loop),
-            window,
-            surface,
-            width,
-            height,
-            config: config.clone(),
-            temperature: 25, // Default to room temperature
-            power_stats: None,
-            quirk_warning: None,
-            current_scale_factor: initial_scale_factor,
-            #[cfg(feature = "debug")]
-            debug_manager: None,
-        };
-
-        // Resize surface based on current scale factor
-        // Surface size = logical size × scale factor
-        window_obj.resize_surface_for_scale(initial_scale_factor);
-
-        window_obj.update_title();
-        window_obj
-    }
-
-    /// Update power statistics display in window title
-    pub fn set_power_stats(&mut self, stats: &PowerStats) {
-        self.power_stats = Some(stats.clone());
-        self.update_title();
-    }
-
-    /// Update temperature display in window title
-    pub fn set_temperature(&mut self, temp: i8) {
-        self.temperature = temp;
-        self.update_title();
-    }
-
-    /// Set hardware quirk warning in window title
-    pub fn set_quirk_warning(&mut self, warning: Option<&str>) {
-        self.quirk_warning = warning.map(|s| s.to_string());
-        self.update_title();
-    }
-
-    /// Set debug manager for keyboard event handling
-    #[cfg(feature = "debug")]
-    pub fn set_debug_manager(&mut self, debug_manager: crate::debug::DebugManager) {
-        self.debug_manager = Some(debug_manager);
-    }
-
-    /// Resize softbuffer surface based on scale factor
-    ///
-    /// Surface size (in physical pixels) = logical size × scale factor
-    fn resize_surface_for_scale(&mut self, scale_factor: f64) {
-        let (window_w, window_h) = self
-            .config
-            .rotation
-            .apply_to_dimensions(self.width, self.height);
-        let logical_w = window_w * self.config.scale;
-        let logical_h = window_h * self.config.scale;
-
-        // Calculate physical size: logical × scale_factor
-        let physical_w = (logical_w as f64 * scale_factor).round() as u32;
-        let physical_h = (logical_h as f64 * scale_factor).round() as u32;
-
-        // Resize softbuffer surface to match physical pixels
-        if let (Some(w), Some(h)) = (
-            std::num::NonZeroU32::new(physical_w),
-            std::num::NonZeroU32::new(physical_h),
-        ) {
-            if let Ok(mut surface) = self.surface.try_borrow_mut() {
-                let _ = surface.resize(w, h);
-            }
-        }
-
-        self.current_scale_factor = scale_factor;
-    }
-
-    /// Update window title with temperature, power info, and quirk warnings
-    fn update_title(&self) {
-        let temp_warning = if self.temperature < 5 || self.temperature > 35 {
-            " ⚠ OUTSIDE OPTIMAL RANGE"
-        } else {
-            ""
-        };
-
-        let quirk_str = if let Some(quirk) = &self.quirk_warning {
-            format!(" | ⚠ QUIRK: {}", quirk.chars().take(40).collect::<String>())
-        } else {
-            String::new()
-        };
-
-        let title = if let Some(stats) = &self.power_stats {
-            let avg_ma = stats.average_current_ua as f32 / 1000.0;
-            let peak_ma = stats.peak_current_ua as f32 / 1000.0;
-            let total_mwh = stats.total_energy_uwh as f32 / 1000.0;
-
-            format!(
-                "E-Ink Emulator | {}°C{} | Avg: {:.1}mA | Peak: {:.1}mA | Energy: {:.2}mWh{}",
-                self.temperature, temp_warning, avg_ma, peak_ma, total_mwh, quirk_str
-            )
-        } else {
-            format!(
-                "E-Ink Emulator ({}°C){}{}",
-                self.temperature, temp_warning, quirk_str
-            )
-        };
-
-        self.window.set_title(&title);
-    }
-
-    /// Present framebuffer to window with rotation, upscaling, and e-ink visual effects
-    pub fn present(&mut self, rgba_pixels: &[u32]) {
-        let logical_width = self.width;
-        let logical_height = self.height;
-
-        // Step 1: Apply e-ink visual appearance to all pixels
-        let mut eink_pixels = Vec::with_capacity(rgba_pixels.len());
-        for y in 0..logical_height {
-            for x in 0..logical_width {
-                let pixel = rgba_pixels[(y * logical_width + x) as usize];
-                eink_pixels.push(apply_eink_appearance(pixel, x, y));
-            }
-        }
-
-        // Step 2: Apply rotation transformation
-        let (rotated_pixels, rotated_width, rotated_height) = match self.config.rotation {
-            Rotation::Degrees0 => (eink_pixels, logical_width, logical_height),
-            Rotation::Degrees90 => {
-                let rotated = rotate_90_cw(&eink_pixels, logical_width, logical_height);
-                (rotated, logical_height, logical_width) // Width and height swap
-            }
-            Rotation::Degrees180 => {
-                let rotated = rotate_180(&eink_pixels, logical_width, logical_height);
-                (rotated, logical_width, logical_height)
-            }
-            Rotation::Degrees270 => {
-                let rotated = rotate_270_cw(&eink_pixels, logical_width, logical_height);
-                (rotated, logical_height, logical_width) // Width and height swap
-            }
-        };
-
-        // Step 3: Calculate final window dimensions
-        let scale = self.config.scale;
-        let window_width = rotated_width * scale;
-
-        // Surface was resized once during initialization, no need to resize every frame
-        let mut surface = self.surface.borrow_mut();
-        let mut buffer = surface.buffer_mut().unwrap();
-
-        // Step 4: Apply upscaling with pixel grid effect
-        if scale == 1 {
-            // No upscaling: direct copy
-            buffer.copy_from_slice(&rotated_pixels);
-        } else {
-            // Upscaling with pixel grid effect
-            for y in 0..rotated_height {
-                for x in 0..rotated_width {
-                    let pixel = rotated_pixels[(y * rotated_width + x) as usize];
-
-                    // Write scale×scale block
-                    for dy in 0..scale {
-                        for dx in 0..scale {
-                            let sx = x * scale + dx;
-                            let sy = y * scale + dy;
-                            let idx = (sy * window_width + sx) as usize;
-
-                            // Apply subtle pixel grid darkening at edges
-                            let is_edge_x = dx == scale - 1 && x % 2 == 1;
-                            let is_edge_y = dy == scale - 1 && y % 2 == 1;
-
-                            buffer[idx] = if is_edge_x && is_edge_y {
-                                darken(pixel, 12)
-                            } else if is_edge_x || is_edge_y {
-                                darken(pixel, 8)
-                            } else {
-                                pixel
-                            };
-                        }
+        // Windows: install WndProc subclass to fix WM_DPICHANGED position jump.
+        // Must happen after the HWND exists (i.e. after resumed() fires above).
+        #[cfg(target_os = "windows")]
+        {
+            use winit::raw_window_handle::{HasWindowHandle, RawWindowHandle};
+            if let Ok(handle) = window.window_handle() {
+                if let RawWindowHandle::Win32(h) = handle.as_raw() {
+                    unsafe {
+                        windows_dpi::install_subclass(
+                            h.hwnd.get(),
+                            phys_w as i32,
+                            phys_h as i32,
+                        );
                     }
                 }
             }
         }
 
-        buffer.present().unwrap();
+        // Pre-size surface so the first present() skips the resize step.
+        if let (Some(w), Some(h)) = (NonZeroU32::new(phys_w), NonZeroU32::new(phys_h)) {
+            surface.resize(w, h).ok();
+        }
 
-        // Request redraw after presenting
+        let obj = Self {
+            event_loop: Some(event_loop),
+            window,
+            _context: context,
+            surface,
+            disp_phys_w: phys_w,
+            phys_w,
+            phys_h,
+            disp_w: width,
+            disp_h: height,
+            config: config.clone(),
+            temperature: 25,
+            power_stats: None,
+            quirk_warning: None,
+            #[cfg(feature = "debug")]
+            debug_manager: None,
+            last_rgba: Vec::new(),
+        };
+
+        obj.update_title();
+        obj
+    }
+
+    /// Pump OS events for `duration` in ~16 ms steps.
+    ///
+    /// Call during long refresh animations instead of `thread::sleep` so the
+    /// OS does not mark the window as "Not Responding".
+    pub fn pump_events(&mut self, duration: Duration) {
+        let step = Duration::from_millis(16);
+        let mut remaining = duration;
+
+        while remaining > Duration::ZERO {
+            std::thread::sleep(remaining.min(step));
+            remaining = remaining.saturating_sub(step);
+
+            let mut handler = PumpEventHandler {
+                phys_w: self.phys_w,
+                phys_h: self.phys_h,
+                should_exit: false,
+            };
+
+            if let Some(ref mut el) = self.event_loop {
+                match el.pump_app_events(Some(Duration::ZERO), &mut handler) {
+                    PumpStatus::Exit(_) => break,
+                    PumpStatus::Continue => {}
+                }
+            } else {
+                std::thread::sleep(remaining);
+                break;
+            }
+
+            if handler.should_exit {
+                break;
+            }
+        }
+    }
+
+    /// Present a framebuffer with rotation, emulator scale, and e-ink effects.
+    ///
+    /// Saves the clean frame so debug overlays can be re-applied instantly
+    /// when a debug hotkey fires during the blocking event loop.
+    pub fn present(&mut self, rgba_pixels: &[u32]) {
+        self.last_rgba = rgba_pixels.to_vec();
+        self.present_overlaid();
+    }
+
+    /// Re-present the last clean frame with the current debug overlay state.
+    /// Called immediately after a debug hotkey toggles state.
+    fn re_present(&mut self) {
+        #[cfg(feature = "debug")]
+        self.sync_window_width();
+        if !self.last_rgba.is_empty() {
+            self.present_overlaid();
+        }
+    }
+
+    /// Expand or shrink the OS window to accommodate the side panel.
+    ///
+    /// Called whenever the panel visibility may have changed. Uses
+    /// `winit`'s `request_inner_size` which takes effect immediately on
+    /// most platforms (an `InnerSize` event may follow).
+    #[cfg(feature = "debug")]
+    fn sync_window_width(&mut self) {
+        let panel_open = self
+            .debug_manager
+            .as_ref()
+            .map(|dm| dm.state().panel_visible)
+            .unwrap_or(false);
+
+        let target_w = if panel_open {
+            self.disp_phys_w + PANEL_W
+        } else {
+            self.disp_phys_w
+        };
+
+        if self.phys_w != target_w {
+            self.phys_w = target_w;
+            let new_size = PhysicalSize::new(self.phys_w, self.phys_h);
+            // Update min/max so the OS permits the new size.
+            self.window.set_min_inner_size(Some(new_size));
+            self.window.set_max_inner_size(Some(new_size));
+            let _ = self.window.request_inner_size(new_size);
+            // Update the stored size in the WndProc subclass so DPI changes
+            // use the new width.  We must NOT re-call install_subclass here:
+            // doing so would set ORIG_PROC to subclass_proc itself, causing
+            // infinite recursion on the next WndProc message.
+            #[cfg(target_os = "windows")]
+            windows_dpi::update_size(self.phys_w as i32, self.phys_h as i32);
+        }
+    }
+
+    /// Apply debug overlays to `rgba` (pre-rotation display coordinates).
+    #[cfg(feature = "debug")]
+    fn apply_debug_overlays(&self, rgba: &mut Vec<u32>) {
+        use crate::debug;
+        let Some(ref dm) = self.debug_manager else {
+            return;
+        };
+        let state = dm.state();
+        let w = self.disp_w;
+        let h = self.disp_h;
+
+        if state.borders_enabled {
+            let components = if !state.registered_components.is_empty() {
+                state.registered_components.clone()
+            } else {
+                let header_h = (h / 7).max(1);
+                let footer_h = (h / 7).max(1);
+                let content_y = header_h as i32;
+                let content_h = h.saturating_sub(header_h + footer_h);
+                let footer_y = (header_h + content_h) as i32;
+                vec![
+                    debug::ComponentInfo {
+                        component_type: "Container".to_string(),
+                        position: (0, 0),
+                        size: (w, h),
+                        test_id: Some("display-root".to_string()),
+                    },
+                    debug::ComponentInfo {
+                        component_type: "Label".to_string(),
+                        position: (0, 0),
+                        size: (w, header_h),
+                        test_id: Some("header".to_string()),
+                    },
+                    debug::ComponentInfo {
+                        component_type: "Button".to_string(),
+                        position: (0, content_y),
+                        size: (w, content_h),
+                        test_id: Some("content".to_string()),
+                    },
+                    debug::ComponentInfo {
+                        component_type: "ProgressBar".to_string(),
+                        position: (0, footer_y),
+                        size: (w, footer_h),
+                        test_id: Some("footer".to_string()),
+                    },
+                ]
+            };
+            debug::OverlayRenderer::new().render_layout(rgba, w, h, &components);
+        }
+
+        if state.power_graph_enabled {
+            dm.power_graph().render(rgba, w, 10, 400);
+        }
+
+        // Inspector mode: draw amber highlight over the hovered component.
+        // Skipped when the hovered component is also the selected one (cyan wins).
+        if state.inspector_mode {
+            if let Some(ref hov) = state.hovered_component {
+                let is_also_selected = state.selected_component.as_ref()
+                    .map(|s| s.position == hov.position && s.size == hov.size)
+                    .unwrap_or(false);
+                if !is_also_selected {
+                    debug::OverlayRenderer::new().render_hovered_component(rgba, w, h, hov);
+                }
+            }
+        }
+
+        // Always draw cyan highlight around the clicked/selected component.
+        if let Some(ref selected) = state.selected_component {
+            debug::OverlayRenderer::new().render_selected_component(rgba, w, h, selected);
+        }
+
+        // Note: the side panel is composited in present_internal(), not here.
+        // apply_debug_overlays only handles overlays ON the display content.
+    }
+
+    /// Composite debug overlays onto `last_rgba` then run the full render pipeline.
+    fn present_overlaid(&mut self) {
+        // Tick the debug state: idle power sampling + cursor hover detection.
+        #[cfg(feature = "debug")]
+        {
+            let disp_w = self.disp_w;
+            let disp_h = self.disp_h;
+            let scale = self.config.scale;
+            if let Some(ref mut dm) = self.debug_manager {
+                dm.maybe_add_idle_sample();
+                dm.update_hovered_component(disp_w, disp_h, scale);
+            }
+        }
+        let mut rgba = self.last_rgba.clone();
+        #[cfg(feature = "debug")]
+        self.apply_debug_overlays(&mut rgba);
+        self.present_internal(&rgba);
+    }
+
+    /// Core render pipeline: e-ink effects → rotation → scale → softbuffer.
+    fn present_internal(&mut self, rgba_pixels: &[u32]) {
+        let disp_w = self.disp_w;
+        let disp_h = self.disp_h;
+
+        // 1. E-ink appearance pass
+        let mut eink: Vec<u32> = Vec::with_capacity(rgba_pixels.len());
+        for y in 0..disp_h {
+            for x in 0..disp_w {
+                eink.push(apply_eink_appearance(
+                    rgba_pixels[(y * disp_w + x) as usize],
+                    x,
+                    y,
+                ));
+            }
+        }
+
+        // 2. Rotation
+        let (rotated, rot_w, rot_h) = match self.config.rotation {
+            Rotation::Degrees0 => (eink, disp_w, disp_h),
+            Rotation::Degrees90 => {
+                let r = rotate_90_cw(&eink, disp_w, disp_h);
+                (r, disp_h, disp_w)
+            }
+            Rotation::Degrees180 => {
+                let r = rotate_180(&eink, disp_w, disp_h);
+                (r, disp_w, disp_h)
+            }
+            Rotation::Degrees270 => {
+                let r = rotate_270_cw(&eink, disp_w, disp_h);
+                (r, disp_h, disp_w)
+            }
+        };
+
+        // 3. Emulator scale + pixel-grid effect
+        let scale = self.config.scale;
+        let src_w = rot_w * scale;
+        let src_h = rot_h * scale;
+
+        let source: Vec<u32> = if scale == 1 {
+            rotated
+        } else {
+            let mut buf = vec![0u32; (src_w * src_h) as usize];
+            for y in 0..rot_h {
+                for x in 0..rot_w {
+                    let pixel = rotated[(y * rot_w + x) as usize];
+                    for dy in 0..scale {
+                        for dx in 0..scale {
+                            let is_ex = dx == scale - 1 && x % 2 == 1;
+                            let is_ey = dy == scale - 1 && y % 2 == 1;
+                            buf[((y * scale + dy) * src_w + x * scale + dx) as usize] =
+                                match (is_ex, is_ey) {
+                                    (true, true) => darken(pixel, 12),
+                                    (true, false) | (false, true) => darken(pixel, 8),
+                                    _ => pixel,
+                                };
+                        }
+                    }
+                }
+            }
+            buf
+        };
+
+        // 4. Build the full window buffer (display + optional side panel).
+        //    phys_w = src_w + PANEL_W (debug) or src_w (release).
+        let pw = self.phys_w;
+        let ph = self.phys_h;
+
+        // Composite: copy display rows into left portion, render panel into right portion.
+        let mut full: Vec<u32> = vec![0xFF000000; (pw * ph) as usize];
+
+        // Copy display content row by row into the left pw pixels.
+        // If src dimensions match exactly we skip the nearest-neighbour path.
+        if src_w <= pw && src_h == ph {
+            for y in 0..src_h {
+                let src_row = &source[(y * src_w) as usize..((y + 1) * src_w) as usize];
+                let dst_start = (y * pw) as usize;
+                full[dst_start..dst_start + src_w as usize].copy_from_slice(src_row);
+            }
+        } else {
+            // Nearest-neighbour for any dimension mismatch.
+            for dy in 0..ph {
+                for dx in 0..src_w.min(pw) {
+                    let sx = (dx as u64 * src_w as u64 / src_w.min(pw) as u64)
+                        .min(src_w as u64 - 1) as u32;
+                    let sy = (dy as u64 * src_h as u64 / ph as u64)
+                        .min(src_h as u64 - 1) as u32;
+                    full[(dy * pw + dx) as usize] = source[(sy * src_w + sx) as usize];
+                }
+            }
+        }
+
+        // Render the debug side panel into the right PANEL_W columns.
+        #[cfg(feature = "debug")]
+        if let Some(ref dm) = self.debug_manager {
+            let state = dm.state();
+            if !state.panel_visible {
+                // Panel hidden — nothing to render here.
+            } else {
+            let panel_x = src_w; // panel starts right after the display area
+            let panel_h = ph;
+
+            // Extract the panel slice (row-major, panel_w columns wide).
+            // We build a compact panel_w × panel_h buffer, then copy it in.
+            let mut panel_buf = vec![0u32; (PANEL_W * panel_h) as usize];
+            let rotation_deg = match self.config.rotation {
+                crate::config::Rotation::Degrees0   => 0,
+                crate::config::Rotation::Degrees90  => 90,
+                crate::config::Rotation::Degrees180 => 180,
+                crate::config::Rotation::Degrees270 => 270,
+            };
+            let info = crate::debug::PanelInfo {
+                state,
+                disp_w: self.disp_w,
+                disp_h: self.disp_h,
+                rotation_deg,
+                scale: self.config.scale,
+                temperature: self.temperature,
+                power_graph: Some(dm.power_graph()),
+                power_stats: self.power_stats.as_ref(),
+            };
+            crate::debug::panel::render_into(&mut panel_buf, PANEL_W, panel_h, &info);
+
+            // Copy compact panel buffer into the right columns of `full`.
+            for y in 0..panel_h {
+                for x in 0..PANEL_W {
+                    let src_idx = (y * PANEL_W + x) as usize;
+                    let dst_idx = (y * pw + panel_x + x) as usize;
+                    if dst_idx < full.len() {
+                        full[dst_idx] = panel_buf[src_idx];
+                    }
+                }
+            }
+            } // end else (panel_visible)
+        }
+
+        // 5. Write to softbuffer.
+        if let (Some(w), Some(h)) = (NonZeroU32::new(pw), NonZeroU32::new(ph)) {
+            self.surface.resize(w, h).ok();
+        }
+        let mut buffer = match self.surface.buffer_mut() {
+            Ok(b) => b,
+            Err(_) => return,
+        };
+        if buffer.len() != (pw * ph) as usize {
+            return;
+        }
+        buffer.copy_from_slice(&full);
+
+        self.window.pre_present_notify();
+        buffer.present().ok();
         self.window.request_redraw();
     }
 
-    /// Run event loop (blocks until window closed)
+    /// Enter the blocking event loop (blocks until window is closed).
     pub fn run(mut self) {
         if let Some(event_loop) = self.event_loop.take() {
-            // Calculate aspect ratio and initial logical size
-            let (window_w, window_h) = self
-                .config
-                .rotation
-                .apply_to_dimensions(self.width, self.height);
-            let aspect_ratio = window_w as f64 / window_h as f64;
-            let logical_w = window_w * self.config.scale;
-            let logical_h = window_h * self.config.scale;
-
-            let mut handler = EventHandler {
-                should_exit: false,
-                surface: Rc::clone(&self.surface),
-                aspect_ratio,
-                last_logical_size: (logical_w, logical_h),
-                #[cfg(feature = "debug")]
-                debug_manager: self.debug_manager.take(),
-            };
-            let _ = event_loop.run_app(&mut handler);
+            // Wait: sleep when idle; wake on events.  Prevents 100% CPU spin.
+            event_loop.set_control_flow(ControlFlow::Wait);
+            // Window itself is the ApplicationHandler — no separate struct needed.
+            let _ = event_loop.run_app(&mut self);
         }
+    }
+
+    // --- Metadata setters ----------------------------------------------------
+
+    pub fn set_power_stats(&mut self, stats: &PowerStats) {
+        self.power_stats = Some(stats.clone());
+        self.update_title();
+    }
+
+    pub fn set_temperature(&mut self, temp: i8) {
+        self.temperature = temp;
+        self.update_title();
+    }
+
+    pub fn set_quirk_warning(&mut self, warning: Option<&str>) {
+        self.quirk_warning = warning.map(str::to_string);
+        self.update_title();
+    }
+
+    #[cfg(feature = "debug")]
+    pub fn set_debug_manager(&mut self, dm: crate::debug::DebugManager) {
+        self.debug_manager = Some(dm);
+    }
+
+    fn update_title(&self) {
+        let temp_warn = if self.temperature < 5 || self.temperature > 35 {
+            " ⚠ OUTSIDE OPTIMAL RANGE"
+        } else {
+            ""
+        };
+
+        let quirk = match &self.quirk_warning {
+            Some(q) => format!(" | ⚠ QUIRK: {}", q.chars().take(40).collect::<String>()),
+            None => String::new(),
+        };
+
+        let title = match &self.power_stats {
+            Some(s) => format!(
+                "E-Ink Emulator | {}°C{} | Avg: {:.1}mA | Peak: {:.1}mA | Energy: {:.2}mWh{}",
+                self.temperature,
+                temp_warn,
+                s.average_current_ua as f32 / 1000.0,
+                s.peak_current_ua as f32 / 1000.0,
+                s.total_energy_uwh as f32 / 1000.0,
+                quirk,
+            ),
+            None => format!(
+                "E-Ink Emulator ({}°C){}{}",
+                self.temperature, temp_warn, quirk
+            ),
+        };
+
+        self.window.set_title(&title);
     }
 }

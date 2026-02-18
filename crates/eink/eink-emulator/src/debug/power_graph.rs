@@ -106,6 +106,19 @@ impl PowerGraph {
         }
     }
 
+    /// Returns a reference to the internal ring-buffer of power samples.
+    ///
+    /// Samples are ordered oldest-first; the newest is at the back.
+    /// Useful for custom rendering that needs raw sample data.
+    pub fn samples(&self) -> &std::collections::VecDeque<PowerSample> {
+        &self.samples
+    }
+
+    /// Returns the configured idle baseline power in milliwatts.
+    pub fn baseline_power(&self) -> f32 {
+        self.baseline_power
+    }
+
     /// Returns the most recent power consumption value
     ///
     /// If no samples exist, returns the baseline power.

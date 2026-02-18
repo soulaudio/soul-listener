@@ -58,6 +58,7 @@ pub fn run(headless: bool) -> Result<()> {
         Path::new("crates/platform"),
         Path::new("crates/eink/eink-components/src"), // Watch UI components
         Path::new("crates/eink/eink-system/src"),     // Watch layout system
+        Path::new("crates/eink/eink-emulator/src"),   // Watch emulator rendering
     ];
 
     for path in &watch_paths {

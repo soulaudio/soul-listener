@@ -390,8 +390,14 @@ fn test_full_debug_workflow() {
 
     // 6. Verify power graph state
     assert_eq!(manager.power_graph().current_power(), 15.0);
+    // The manager pre-seeds 20 idle samples (10.0 mW each) so the average
+    // includes those plus our 3 explicitly added samples.
     let avg = manager.power_graph().average_power();
-    assert_eq!(avg, (10.0 + 210.0 + 15.0) / 3.0);
+    let expected_avg = (20.0_f32 * 10.0 + 10.0 + 210.0 + 15.0) / 23.0;
+    assert!(
+        (avg - expected_avg).abs() < 0.01,
+        "avg={avg} expected={expected_avg}"
+    );
 }
 
 #[test]

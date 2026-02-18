@@ -7,6 +7,15 @@ edition = "2021"
 # Display specifications
 eink-specs = { path = "../eink-specs" }
 
+[target.'cfg(windows)'.dependencies]
+# Windows API for WndProc subclassing (WM_DPICHANGED fix).
+# windows-sys is already a transitive dep of winit — this pins the same slot.
+windows-sys = { version = "0.52", features = [
+    "Win32_Foundation",
+    "Win32_UI_WindowsAndMessaging",
+    "Win32_UI_HiDpi",       # AdjustWindowRectExForDpi
+] }
+
 # Platform configuration
 platform = { path = "../../platform" }
 

@@ -12,34 +12,30 @@ use platform::config;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("{} - Display Emulator", config::APP_NAME);
-    println!("Display: 7.5\" E-Ink (800×480 → 480×800 portrait)\n");
+    println!("Display: GDEM0397T81P 3.97\" E-Ink (800×480 → 480×800 portrait)\n");
 
     // Create runtime for async operations
     let rt = tokio::runtime::Runtime::new()?;
 
     // Configure emulator for portrait mode, native resolution
-    // Using 7.5" display (800×480) rotated 90° = 480×800 portrait
+    // GDEM0397T81P: 800×480 landscape → rotated 90° = 480×800 portrait
     let emulator_config = eink_emulator::EmulatorConfig {
         rotation: eink_emulator::Rotation::Degrees90, // Portrait orientation
         scale: 1,                                     // Native resolution
     };
 
-    // Create emulator display with 7.5" spec (opens window in portrait mode)
-    let spec = &eink_specs::displays::WAVESHARE_7_5_V2;
-    let mut display = EmulatorDisplay::with_spec_and_config(spec, emulator_config);
+    // Create emulator display with project display spec
+    let mut display = EmulatorDisplay::with_spec_and_config(&firmware::GDEM0397T81P_SPEC, emulator_config);
     println!("Window opened - Portrait mode (480×800), native resolution\n");
 
     // Initialize with blank white screen
     println!("Initializing display...");
 
-    // Clear to white
-    let size = display.size();
-    Rectangle::new(Point::zero(), size)
-        .into_styled(PrimitiveStyle::with_fill(Gray4::WHITE))
-        .draw(&mut display)?;
+    // Run 7-step e-ink initialization sequence (checkerboard → clear to white, ~2s)
+    rt.block_on(async { display.emulator_mut().initialize().await })
+        .map_err(|e| Box::<dyn std::error::Error>::from(e.to_string()))?;
 
     use platform::DisplayDriver;
-    rt.block_on(async { display.refresh_full().await })?;
 
     println!("✓ Display ready\n");
 

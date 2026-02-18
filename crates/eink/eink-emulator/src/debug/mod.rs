@@ -21,6 +21,9 @@ pub mod manager;
 pub mod inspector;
 
 #[cfg(feature = "debug")]
+pub use inspector::{Inspector, InspectorTab};
+
+#[cfg(feature = "debug")]
 pub use state::*;
 
 #[cfg(feature = "debug")]
@@ -31,6 +34,9 @@ pub use overlay::OverlayRenderer;
 
 #[cfg(feature = "debug")]
 pub use panel::DebugPanel;
+
+#[cfg(feature = "debug")]
+pub use panel::PanelInfo;
 
 #[cfg(feature = "debug")]
 pub use power_graph::PowerGraph;
