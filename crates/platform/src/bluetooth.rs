@@ -1,6 +1,7 @@
 //! Bluetooth adapter abstraction
 
 /// Bluetooth adapter trait
+#[allow(async_fn_in_trait)] // Embedded target: single-threaded, Send bounds not required
 pub trait BluetoothAdapter {
     /// Error type
     type Error: core::fmt::Debug;
