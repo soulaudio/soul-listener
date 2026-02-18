@@ -21,7 +21,10 @@ This is a professional-grade Digital Audio Player firmware written in Rust using
 - SDMMC1 for microSD (4-bit, UHS-I)
 - USB OTG HS with internal PHY (UAC2 + USB-C charging)
 
-**Display:** 4.2" e-ink 400×300 via SPI + DMA (Waveshare v2 or equivalent)
+**Display:** Good Display GDEM0397T81P via SPI + DMA
+- 3.97", 800×480, 235 PPI, Carta 1200 panel, SSD1677 controller
+- Full refresh 3 s · Fast refresh 1.5 s · Partial refresh 300 ms
+- Deep sleep: ~1 µA; active refresh: ~34 mA average
 
 **Audio:**
 - DAC: PCM5242 (TI) — 32-bit/384 kHz I²S, integrated PLL

@@ -10,7 +10,7 @@ A Digital Audio Player (DAP) firmware written in Rust, targeting STM32H7 with an
 | Component | Part | Interface | Notes |
 |-----------|------|-----------|-------|
 | MCU | STM32H743ZI | — | 480 MHz Cortex-M7, FPU/DSP, 2 MB flash, 1 MB SRAM |
-| Display | 4.2" e-ink (400×300) | SPI + DMA | Waveshare v2 or equivalent; draws no power between refreshes |
+| Display | Good Display GDEM0397T81P | SPI + DMA | 3.97", 800×480, 235 PPI, SSD1677 controller, Carta 1200 panel |
 | Audio DAC | PCM5242 (TI) | I²S via SAI1 | 32-bit / 384 kHz, integrated PLL, charge-pump headphone driver |
 | Headphone amp | TPA6120A2 (TI) | Analog | 250 mA, class-AB, low-THD headphone output stage |
 | BLE co-processor | STM32WB55RGV6 | UART (HCI) | Arm M4+M0+, BLE 5.0; ST provides certified BT firmware |
