@@ -165,7 +165,7 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
       - name: Set up Atopile
-        uses: atopile/setup-atopile@a44779655197de0f408861581669f09b2145bc33  # v1.8
+        uses: atopile/setup-atopile@344ab4c65666e16bee2a400a4d6c8e07f0f8fd78  # v2.0.0
         with:
           version: "0.12.5"
 
@@ -206,7 +206,7 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
-      - uses: atopile/setup-atopile@a44779655197de0f408861581669f09b2145bc33  # v1.8
+      - uses: atopile/setup-atopile@344ab4c65666e16bee2a400a4d6c8e07f0f8fd78  # v2.0.0
         with:
           version: "0.12.5"
 
@@ -237,7 +237,7 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
       - name: Set up Atopile
-        uses: atopile/setup-atopile@a44779655197de0f408861581669f09b2145bc33  # v1.8
+        uses: atopile/setup-atopile@344ab4c65666e16bee2a400a4d6c8e07f0f8fd78  # v2.0.0
         with:
           version: "0.12.5"
 
