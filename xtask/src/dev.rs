@@ -276,6 +276,12 @@ fn start_emulator(headless: bool, hot_reload: bool) -> Result<Option<Child>> {
         .stdout(std::process::Stdio::inherit()) // Show live output
         .stderr(std::process::Stdio::inherit()); // Show errors in real-time
 
+    // Forward RUST_LOG to the child process, defaulting to "info" so that
+    // log::info!() calls inside the emulator binary are always visible.
+    if std::env::var("RUST_LOG").is_err() {
+        cmd.env("RUST_LOG", "info");
+    }
+
     if headless {
         println!("{}", "Running in headless mode (no window)".dimmed());
         let status = cmd.status().context("Failed to run cargo")?;

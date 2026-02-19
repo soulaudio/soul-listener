@@ -42,6 +42,13 @@ mod hot_ui {
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    // Initialize logger. Controlled by RUST_LOG env var (default: info).
+    // cargo dev sets RUST_LOG=info automatically; override with e.g. RUST_LOG=debug cargo dev.
+    env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info"))
+        .format_timestamp_secs()
+        .init();
+
+    log::info!("{} - Display Emulator starting", config::APP_NAME);
     println!("{} - Display Emulator", config::APP_NAME);
     println!("Display: GDEM0397T81P 3.97\" E-Ink (800x480 -> 480x800 portrait)\n");
 
@@ -170,7 +177,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             use platform::InputDevice as _;
             loop {
                 let ev = input.wait_for_event().await;
-                println!("[input] {:?}", ev);
+                log::info!("[input] {:?}", ev);
             }
         });
 
