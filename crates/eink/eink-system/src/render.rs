@@ -12,7 +12,7 @@
 //! # Example
 //!
 //! ```no_run
-//! use eink_system::prelude::*;
+//! use eink_system::render::*;
 //! use embedded_graphics::prelude::*;
 //! use embedded_graphics::pixelcolor::Gray4;
 //!
@@ -23,8 +23,11 @@
 //! #     fn draw_iter<I>(&mut self, pixels: I) -> Result<(), Self::Error>
 //! #     where I: IntoIterator<Item = Pixel<Self::Color>> { Ok(()) }
 //! # }
+//! # impl OriginDimensions for MyDisplay {
+//! #     fn size(&self) -> Size { Size::new(64, 64) }
+//! # }
 //! # let mut display = MyDisplay;
-//! # let layout_result = LayoutResult { position: Point::zero(), size: Size::zero(), children: heapless::Vec::new() };
+//! # let layout_result = LayoutResult::new(Point::zero(), Size::zero());
 //!
 //! // Render a computed layout to display
 //! render_layout_tree(&layout_result, Point::zero(), &mut display)?;
@@ -130,6 +133,9 @@ pub trait Renderable {
     /// #     fn draw_iter<I>(&mut self, pixels: I) -> Result<(), Self::Error>
     /// #     where I: IntoIterator<Item = Pixel<Self::Color>> { Ok(()) }
     /// # }
+    /// # impl OriginDimensions for MyDisplay {
+    /// #     fn size(&self) -> Size { Size::new(64, 64) }
+    /// # }
     /// # struct MyRenderable;
     /// # impl Renderable for MyRenderable {
     /// #     fn render<D: DrawTarget<Color = Gray4>>(&self, display: &mut D, offset: Point) -> Result<(), D::Error> {
@@ -166,6 +172,7 @@ pub trait Renderable {
 /// use embedded_graphics::prelude::*;
 /// use embedded_graphics::primitives::Rectangle;
 /// use embedded_graphics::pixelcolor::Gray4;
+/// use embedded_graphics::pixelcolor::GrayColor;
 ///
 /// # struct MyDisplay;
 /// # impl DrawTarget for MyDisplay {
@@ -173,6 +180,9 @@ pub trait Renderable {
 /// #     type Error = core::convert::Infallible;
 /// #     fn draw_iter<I>(&mut self, pixels: I) -> Result<(), Self::Error>
 /// #     where I: IntoIterator<Item = Pixel<Self::Color>> { Ok(()) }
+/// # }
+/// # impl OriginDimensions for MyDisplay {
+/// #     fn size(&self) -> Size { Size::new(64, 64) }
 /// # }
 /// # let mut display = MyDisplay;
 ///
@@ -215,6 +225,9 @@ pub fn render_background<D: DrawTarget<Color = Gray4>>(
 /// #     type Error = core::convert::Infallible;
 /// #     fn draw_iter<I>(&mut self, pixels: I) -> Result<(), Self::Error>
 /// #     where I: IntoIterator<Item = Pixel<Self::Color>> { Ok(()) }
+/// # }
+/// # impl OriginDimensions for MyDisplay {
+/// #     fn size(&self) -> Size { Size::new(64, 64) }
 /// # }
 /// # let mut display = MyDisplay;
 /// # let layout = LayoutResult::new(Point::zero(), Size::zero());
@@ -264,6 +277,9 @@ pub fn render_layout_tree<D: DrawTarget<Color = Gray4>>(
 /// #     type Error = core::convert::Infallible;
 /// #     fn draw_iter<I>(&mut self, pixels: I) -> Result<(), Self::Error>
 /// #     where I: IntoIterator<Item = Pixel<Self::Color>> { Ok(()) }
+/// # }
+/// # impl OriginDimensions for MyDisplay {
+/// #     fn size(&self) -> Size { Size::new(64, 64) }
 /// # }
 /// # let mut display = MyDisplay;
 /// # let layout = LayoutResult::new(Point::zero(), Size::zero());

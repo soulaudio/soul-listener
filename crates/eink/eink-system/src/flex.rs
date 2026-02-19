@@ -27,7 +27,7 @@
 //! // Create a horizontal layout with space-between justification
 //! let mut style = Style::default();
 //! style.flex_direction = FlexDirection::Row;
-//! style.justify_content = JustifyContent::SpaceBetween;
+//! style.justify_content = Justify::SpaceBetween;
 //! style.gap = 8;
 //!
 //! let children = vec![

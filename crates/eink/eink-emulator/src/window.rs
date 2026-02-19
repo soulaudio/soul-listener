@@ -65,9 +65,9 @@ mod windows_dpi {
 
     // Per-thread state.  Single-window, single-thread emulator.
     thread_local! {
-        static ORIG_PROC: Cell<isize> = Cell::new(0);
-        static PHYS_W: Cell<i32>      = Cell::new(0);
-        static PHYS_H: Cell<i32>      = Cell::new(0);
+        static ORIG_PROC: Cell<isize> = const { Cell::new(0) };
+        static PHYS_W: Cell<i32>      = const { Cell::new(0) };
+        static PHYS_H: Cell<i32>      = const { Cell::new(0) };
     }
 
     /// Replacement WndProc installed by [`install_subclass`].
@@ -140,6 +140,7 @@ mod windows_dpi {
     pub unsafe fn install_subclass(hwnd: isize, phys_w: i32, phys_h: i32) {
         PHYS_W.with(|c| c.set(phys_w));
         PHYS_H.with(|c| c.set(phys_h));
+        #[allow(clippy::fn_to_numeric_cast)]
         let old = SetWindowLongPtrW(hwnd, GWLP_WNDPROC, subclass_proc as isize);
         ORIG_PROC.with(|c| c.set(old));
     }
@@ -568,6 +569,7 @@ impl Window {
         // winit 0.30: windows must be created inside `resumed()`.
         // We pump once to trigger that callback, extract window + surface,
         // then continue in pre-run phase.
+        #[allow(clippy::type_complexity)]
         struct Creator {
             attrs: Option<WindowAttributes>,
             result: Option<(
@@ -755,7 +757,7 @@ impl Window {
 
     /// Apply debug overlays to `rgba` (pre-rotation display coordinates).
     #[cfg(feature = "debug")]
-    fn apply_debug_overlays(&self, rgba: &mut Vec<u32>) {
+    fn apply_debug_overlays(&self, rgba: &mut [u32]) {
         use crate::debug;
         let Some(ref dm) = self.debug_manager else {
             return;

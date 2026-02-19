@@ -23,6 +23,7 @@ use panic_probe as _;
 
 // Framebuffer stored in AXI SRAM (large buffer region)
 #[link_section = ".axisram"]
+#[allow(dead_code)] // Reserved memory region; passed to display driver at runtime via raw pointer
 static mut FRAMEBUFFER: [u8; FRAMEBUFFER_SIZE] = [0xFF; FRAMEBUFFER_SIZE];
 
 #[embassy_executor::main]
