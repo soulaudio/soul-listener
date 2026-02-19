@@ -1,0 +1,49 @@
+# AP2112K-3.3TRG1 — Diodes Inc. 3.3 V LDO Regulator
+#
+# Package:      SOT-25, 5-pin
+# Manufacturer: Diodes Incorporated
+# Datasheet:    https://www.diodes.com/assets/Datasheets/AP2112.pdf
+# Key specs:    2.5 V–6.0 V input, 3.3 V / 600 mA output (min.)
+#               Dropout: 250 mV (typ.) @ 600 mA
+#               PSRR: 65 dB @ 100 Hz, 65 dB @ 1 kHz
+#               EN pin (active high) — tie to VIN for always-on
+#               Auto-discharge on disable (60 Ω internal)
+# Purpose:      Converts BQ25895 SYS rail (3.0–4.2 V) to regulated 3.3 V
+#               for all digital ICs. Max load: 600 mA.
+#
+# ⚠ PIN NUMBERS: SOT-25 pinout — verified against official Diodes Inc.
+#   datasheet AP2112 DS39724 Rev. 2-2 (June 2017), page 1 Pin Assignments.
+#
+#   SOT-25 (Top View):
+#     Pin 1: VIN   (supply input, 2.5 V–6.0 V)
+#     Pin 2: GND   (ground)
+#     Pin 3: EN    (enable, active high; tie to VIN for always-on)
+#     Pin 4: NC    (no connect — do NOT confuse with SENSE; AP2112K has no SENSE)
+#     Pin 5: VOUT  (regulated 3.3 V output, 600 mA max)
+#
+#   NOTE: The AP2112K does NOT have a SENSE pin. Pin 4 is NC.
+#   Some third-party sources incorrectly list pin 4 as SENSE — this is wrong.
+#
+# KiCad footprint: Package_TO_SOT_SMD:SOT-23-5
+#   (SOT-25 and SOT-23-5 are the same package; KiCad uses SOT-23-5 naming)
+# KiCad symbol:    Regulator_Linear:AP2112K-3.3
+#   (available in official kicad-symbols Regulator_Linear library)
+#
+# Distributor availability:
+#   TME:      AP2112K-3.3TRG1   (Diodes Inc., check cz.tme.eu)
+#   Digi-Key: AP2112K-3.3TRG1DICT-ND
+#   Mouser:   621-AP2112K-3.3TRG1
+
+component AP2112K33TRG1:
+    trait is_atomic_part<
+        manufacturer = "Diodes Incorporated",
+        partnumber   = "AP2112K-3.3TRG1",
+        footprint    = "Package_TO_SOT_SMD:SOT-23-5",
+        symbol       = "Regulator_Linear:AP2112K-3.3">
+    trait has_designator_prefix<prefix = "U">
+
+    signal VIN  ~ pin 1   # Input supply (2.5 V–6.0 V — from BQ25895 SYS rail)
+    signal GND  ~ pin 2   # Ground
+    signal EN   ~ pin 3   # Enable (active high; tie to VIN for always-on)
+    signal NC   ~ pin 4   # No connect (leave floating or tie to GND)
+    signal VOUT ~ pin 5   # Regulated 3.3 V output (600 mA max)

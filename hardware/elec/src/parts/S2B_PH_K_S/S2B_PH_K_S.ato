@@ -1,0 +1,35 @@
+# S2B-PH-K-S — JST PH 2-pin Through-Hole Battery Connector
+#
+# Package:      JST PH series, 2.0 mm pitch, right-angle through-hole
+# Manufacturer: JST
+# Part number:  S2B-PH-K-S (right-angle, through-hole)
+#               Alternative SMD: S2B-PH-SM4-TB(LF)(SN) (SMD, top entry)
+# Datasheet:    https://www.jst.com/products/crimp-style-connectors-wire-to-board-type/ph-connector/
+# Purpose:      LiPo battery connector — connects BAT+/BAT- from battery
+#               to BQ25895 PMIC BAT pin via polyfuse for overcurrent protection.
+#
+# ⚠ PIN NUMBERS: JST PH 2-pin, standard polarity (matches JST-PH convention
+#   used universally in LiPo battery packs):
+#   Pin 1: BAT+ (positive terminal — red wire by convention)
+#   Pin 2: BAT- (negative terminal / GND — black wire by convention)
+#
+# KiCad footprint options:
+#   Through-hole: Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal
+#   SMD vertical: Connector_JST:JST_PH_S2B-PH-SM4-TB_1x02-1MP_P2.00mm_Vertical
+# KiCad symbol:  Connector:Conn_01x02_Pin  (generic 2-pin connector)
+#
+# Distributor availability:
+#   TME:      S2B-PH-K-S   (JST; check cz.tme.eu)
+#   Digi-Key: 455-1719-ND  (S2B-PH-K-S)
+#   Mouser:   474-S2B-PH-K-S
+
+component S2B_PH_K_S:
+    trait is_atomic_part<
+        manufacturer = "JST",
+        partnumber   = "S2B-PH-K-S",
+        footprint    = "Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal",
+        symbol       = "Connector:Conn_01x02_Pin">
+    trait has_designator_prefix<prefix = "J">
+
+    signal BAT_POS ~ pin 1   # BAT+ (positive terminal → BQ25895 BAT pin via polyfuse)
+    signal BAT_NEG ~ pin 2   # BAT- / GND (negative terminal → system ground)

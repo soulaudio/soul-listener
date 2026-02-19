@@ -119,12 +119,23 @@ interface QSPIBus:
     io2 = new Electrical  # WP#  in single mode / DQ2 in quad mode
     io3 = new Electrical  # HOLD# in single mode / DQ3 in quad mode
 
-# ── Rotary encoder ────────────────────────────────────────────────────────────
+# ── Rotary encoder + navigation buttons ──────────────────────────────────────
 interface EncoderBus:
-    """Incremental rotary encoder (quadrature A/B + push-button SW)."""
-    a  = new Electrical
-    b  = new Electrical
-    sw = new Electrical  # Push-button (active low, internal pull-up on MCU)
+    """Incremental rotary encoder (quadrature A/B + push-button SW) and navigation buttons.
+    All signals are active-low with external pull-ups to 3.3 V in the Input module.
+    Mirrors: crates/firmware/src/input/ (encoder task + button task)
+    """
+    # Encoder quadrature outputs
+    a  = new Electrical  # Phase A (CLK)  → MCU PE9 EXTI
+    b  = new Electrical  # Phase B (DT)   → MCU PE11 GPIO
+    sw = new Electrical  # Push-button SW → MCU GPIO (active low)
+
+    # Navigation buttons (active low; each button pulls line to GND when pressed)
+    btn_play  = new Electrical  # Play/Pause    → MCU PD0 EXTI0
+    btn_next  = new Electrical  # Next track    → MCU PD1 EXTI1
+    btn_prev  = new Electrical  # Previous track→ MCU PD2 EXTI2
+    btn_menu  = new Electrical  # Menu/Back     → MCU PD3 EXTI3
+    btn_power = new Electrical  # Power/Wake    → MCU PC13 WKUP (active low)
 
 # ── Analog audio output ───────────────────────────────────────────────────────
 interface AnalogAudioOut:

@@ -7,11 +7,11 @@
 //!
 //! | Signal          | MCU pin | Notes                          |
 //! |-----------------|---------|--------------------------------|
-//! | Encoder CLK (A) | PE9     | EXTI9 rising-edge interrupt    |
-//! | Encoder DT  (B) | PE11    | GPIO input only (no EXTI)      |
-//! | Play/Pause      | PD0     | Active-low, internal pull-up   |
-//! | Next            | PD1     | Active-low, internal pull-up   |
-//! | Previous        | PD2     | Active-low, internal pull-up   |
+//! | Encoder CLK (A) | PA8     | EXTI8 rising-edge interrupt    |
+//! | Encoder DT  (B) | PA3     | GPIO input only (no EXTI)      |
+//! | Play/Pause      | PA0     | Active-low, internal pull-up   |
+//! | Next            | PA1     | Active-low, internal pull-up   |
+//! | Previous        | PA2     | Active-low, internal pull-up   |
 //! | Menu            | PD3     | Active-low, internal pull-up   |
 //! | Back            | PD4     | Active-low, internal pull-up   |
 //! | Select          | PD5     | Active-low, internal pull-up   |
@@ -108,9 +108,9 @@ impl InputDevice for HardwareInput {
 ///
 /// # Parameters
 /// - `spawner` — Embassy task spawner.
-/// - `enc_clk` — Encoder CLK (A) pin with EXTI capability (PE9).
-/// - `enc_dt` — Encoder DT (B) pin (PE11, input only).
-/// - `btn_play` through `btn_select` — Button pins with EXTI capability (PD0–PD5).
+/// - `enc_clk` — Encoder CLK (A) pin with EXTI capability (PA8).
+/// - `enc_dt` — Encoder DT (B) pin (PA3, input only).
+/// - `btn_play` through `btn_select` — Button pins with EXTI capability (PA0–PA2, PD3–PD5).
 pub fn spawn_input_task(
     spawner: &Spawner,
     enc_clk: ExtiInput<'static, AnyPin>,

@@ -28,6 +28,9 @@ simulator_output/
 
 # Hardware tools
 *.kicad_prl
+
+# Temporary datasheet/reference screenshots
+*.png
 *.kicad_pcb-bak
 _autosave-*
 fp-info-cache

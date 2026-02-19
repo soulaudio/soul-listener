@@ -52,7 +52,7 @@ async fn main(spawner: Spawner) {
     let dc = Output::new(p.PB0, Level::Low, Speed::VeryHigh); // Data/Command
     let cs = Output::new(p.PB1, Level::High, Speed::VeryHigh); // Chip Select (active low)
     let rst = Output::new(p.PB2, Level::High, Speed::VeryHigh); // Reset (active low)
-    let busy = Input::new(p.PB3, Pull::None); // Busy status
+    let busy = Input::new(p.PE3, Pull::None); // Busy status
 
     // Create display driver
     defmt::info!("Creating SSD1677 display driver");
@@ -87,14 +87,14 @@ async fn main(spawner: Spawner) {
     // Wire input task
     //
     // Pin assignments:
-    //   PE9  = Encoder CLK (A) — EXTI9 rising-edge interrupt
-    //   PE11 = Encoder DT  (B) — GPIO input only
-    //   PD0  = Play/Pause  — active-low, internal pull-up
-    //   PD1  = Next        — active-low, internal pull-up
-    //   PD2  = Previous    — active-low, internal pull-up
-    //   PD3  = Menu        — active-low, internal pull-up
-    //   PD4  = Back        — active-low, internal pull-up
-    //   PD5  = Select      — active-low, internal pull-up
+    //   PA8  = Encoder CLK (A) — EXTI8 rising-edge interrupt
+    //   PA3  = Encoder DT  (B) — GPIO input only
+    //   PA0  = Play/Pause  — active-low, internal pull-up (EXTI0)
+    //   PA1  = Next        — active-low, internal pull-up (EXTI1)
+    //   PA2  = Previous    — active-low, internal pull-up (EXTI2)
+    //   PD3  = Menu        — active-low, internal pull-up (EXTI3)
+    //   PD4  = Back        — active-low, internal pull-up (EXTI4)
+    //   PD5  = Select      — active-low, internal pull-up (EXTI5)
     // -----------------------------------------------------------------------
     defmt::info!("Spawning input task...");
 
@@ -110,15 +110,15 @@ async fn main(spawner: Spawner) {
     // Build ExtiInput pins: Input::new().degrade() + EXTI channel.degrade()
     // gives ExtiInput<'static, AnyPin> compatible with the task signature.
     let enc_clk: ExtiInput<'static, AnyPin> =
-        ExtiInput::new(Input::new(p.PE9, Pull::None).degrade(), p.EXTI9.degrade());
-    let enc_dt: Input<'static, AnyPin> = Input::new(p.PE11, Pull::None).degrade();
+        ExtiInput::new(Input::new(p.PA8, Pull::None).degrade(), p.EXTI8.degrade());
+    let enc_dt: Input<'static, AnyPin> = Input::new(p.PA3, Pull::None).degrade();
 
     let btn_play: ExtiInput<'static, AnyPin> =
-        ExtiInput::new(Input::new(p.PD0, Pull::Up).degrade(), p.EXTI0.degrade());
+        ExtiInput::new(Input::new(p.PA0, Pull::Up).degrade(), p.EXTI0.degrade());
     let btn_next: ExtiInput<'static, AnyPin> =
-        ExtiInput::new(Input::new(p.PD1, Pull::Up).degrade(), p.EXTI1.degrade());
+        ExtiInput::new(Input::new(p.PA1, Pull::Up).degrade(), p.EXTI1.degrade());
     let btn_prev: ExtiInput<'static, AnyPin> =
-        ExtiInput::new(Input::new(p.PD2, Pull::Up).degrade(), p.EXTI2.degrade());
+        ExtiInput::new(Input::new(p.PA2, Pull::Up).degrade(), p.EXTI2.degrade());
     let btn_menu: ExtiInput<'static, AnyPin> =
         ExtiInput::new(Input::new(p.PD3, Pull::Up).degrade(), p.EXTI3.degrade());
     let btn_back: ExtiInput<'static, AnyPin> =

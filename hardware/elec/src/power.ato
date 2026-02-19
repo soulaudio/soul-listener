@@ -21,6 +21,8 @@
 
 from "interfaces.ato" import I2CBus, USBDiffPair
 from "parts/BQ25895RTWT/BQ25895RTWT.ato" import BQ25895RTWT
+from "parts/AP2112K33TRG1/AP2112K33TRG1.ato" import AP2112K33TRG1
+from "parts/S2B_PH_K_S/S2B_PH_K_S.ato" import S2B_PH_K_S
 
 module Power:
     """
@@ -73,9 +75,10 @@ module Power:
     c_pmid = new Capacitor; c_pmid.capacitance = 10uF +/- 20%; c_pmid.package = "0805"
     pmic.PMID_1 ~ c_pmid.p1; c_pmid.p2 ~ power_sys.lv
 
-    # Battery: 2-pin JST-PH connector placeholder
-    # BAT pins connect to the LiPo battery JST connector through a protection fuse
-    # TODO: add battery connector footprint
+    # Battery: JST-PH 2-pin connector (LiPo battery)
+    batt_conn = new S2B_PH_K_S
+    batt_conn.BAT_POS ~ pmic.BAT_1  # Battery+ → PMIC BAT terminal (via boost inductor)
+    batt_conn.BAT_NEG ~ power_sys.lv # Battery- → system GND
 
     # TS: NTC thermistor divider (10 kΩ NTC + 10 kΩ series from 3.3 V)
     # Tie to GND via 5.1 kΩ to disable thermal monitoring if no NTC is fitted
@@ -102,20 +105,15 @@ module Power:
     # r_stat.p2 → LED cathode → GND (LED added separately in connectors)
 
     # ── AP2112K-3.3 LDO: SYS → 3.3 V regulated ───────────────────────────────
-    # The BQ25895 SYS rail tracks the battery (3.0–4.2 V).
-    # The AP2112K-3.3 provides a stable 3.3 V with good PSRR for digital use.
-    # Input range: 2.5–6.0 V. Output: 3.3 V / 600 mA. SOT-25 package.
-    # Note: With all peripherals active (MCU 280 mA + peripherals ≈ 450 mA total),
-    # a higher-current LDO or direct SYS connection with caps may be preferred.
-    # TODO: Evaluate if AP2112K-3.3 current budget is sufficient.
-    ldo_3v3 = new Regulator  # Replace with AP2112K-3.3 component stub
-    ldo_3v3.v_in  = power_sys.voltage
-    ldo_3v3.v_out = 3.3V +/- 2%
-
-    power_sys.hv ~ ldo_3v3.input.hv
-    power_sys.lv ~ ldo_3v3.input.lv
-    ldo_3v3.output.hv ~ power_3v3.hv
-    ldo_3v3.output.lv ~ power_3v3.lv
+    # Input: BQ25895 SYS rail (3.0–4.2 V). Output: 3.3 V / 600 mA. SOT-25.
+    # EN tied to VIN for always-on; auto-discharge on disable (60 Ω internal).
+    # Note: 600 mA may be marginal with MCU ≈ 280 mA + peripherals; evaluate in v2.
+    ldo_3v3 = new AP2112K33TRG1
+    power_sys.hv ~ ldo_3v3.VIN
+    power_sys.lv ~ ldo_3v3.GND
+    ldo_3v3.EN   ~ ldo_3v3.VIN  # Tie EN to VIN — always-on operation
+    ldo_3v3.VOUT ~ power_3v3.hv
+    power_3v3.lv ~ power_sys.lv  # Common ground reference
 
     # 3.3 V output decoupling
     c_3v3_bulk = new Capacitor; c_3v3_bulk.capacitance = 22uF +/- 20%; c_3v3_bulk.package = "0805"
@@ -126,3 +124,11 @@ module Power:
     # ── Validation ────────────────────────────────────────────────────────────
     assert power_3v3.voltage within 3.2V to 3.4V
     assert power_sys.voltage within 3.0V to 4.35V  # LiPo operating range
+    # ILIM resistor: 100 Ω → default ~3 A input current limit (BQ25895 datasheet Table 1)
+    assert r_ilim.resistance within 90ohm to 110ohm
+    # BTST bootstrap cap: 100 nF nominal (allow ±50% for 0402 ceramic tolerance)
+    assert c_btst.capacitance within 50nF to 150nF
+    # SYS bulk decoupling: 22 µF minimum for stable SYS rail under load transients
+    assert c_sys_bulk.capacitance within 15uF to 30uF
+    # Switching inductor: 4.7 µH ±20% for BQ25895 boost converter
+    assert l_sw.value within 3.5uH to 6uH

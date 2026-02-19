@@ -84,6 +84,12 @@ module Audio:
     avdd.hv ~ c_avdd_hf.p1;   c_avdd_hf.p2   ~ avdd.lv
 
     assert avdd.voltage within 3.2V to 3.4V  # LT3042 output tolerance
+    # SET resistor: 33 kΩ ±1% → VOUT = 100µA × 33kΩ = 3.3 V (LT3042 ISET = 100 µA)
+    assert r_set.resistance within 32kohm to 34kohm
+    # ILIM resistor: 100 kΩ to IN → current limit ~100 mA (conservative; max = 200 mA)
+    assert r_ilim.resistance within 90kohm to 110kohm
+    # BYP capacitor: 10 µF minimum per LT3042 datasheet for optimal noise performance
+    assert c_byp.capacitance within 8uF to 12uF
 
     # ── ES9038Q2M DAC ─────────────────────────────────────────────────────────
     dac = new ES9038Q2M
@@ -165,3 +171,7 @@ module Audio:
     # ── Validation ────────────────────────────────────────────────────────────
     assert power_3v3.voltage within 3.0V to 3.6V
     assert avdd.voltage within 3.2V to 3.4V
+    # MUTE pull-up: 10 kΩ ensures DAC is unmuted at startup (MUTE is active low)
+    assert r_mute.resistance within 8kohm to 12kohm
+    # IREF resistor: 1.21 kΩ ±1% sets ES9038Q2M full-scale output current
+    assert r_iref.resistance within 1.19kohm to 1.23kohm

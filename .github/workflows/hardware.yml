@@ -32,7 +32,118 @@ on:
 
 jobs:
   # ---------------------------------------------------------------------------
-  # Atopile ERC check
+  # Hardware Architecture Check
+  #
+  # Enforces vertical slice boundaries in the Atopile design:
+  #   - Module files (mcu, audio, power, display, bluetooth, memory, input)
+  #     MUST only import from interfaces.ato or parts/
+  #   - main.ato is the only file allowed to import module files
+  #
+  # If someone accidentally adds a cross-module import (e.g. audio.ato
+  # importing from power.ato directly), this check catches it immediately.
+  # ---------------------------------------------------------------------------
+  hw-arch:
+    name: Hardware Architecture
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      - name: Verify module import boundaries
+        run: |
+          # Each module file must only import from interfaces.ato or parts/.
+          # main.ato is the top-level wiring file and is exempt.
+          VIOLATIONS=$(grep -rn '^from "' \
+            hardware/elec/src/mcu.ato \
+            hardware/elec/src/audio.ato \
+            hardware/elec/src/power.ato \
+            hardware/elec/src/display.ato \
+            hardware/elec/src/bluetooth.ato \
+            hardware/elec/src/memory.ato \
+            hardware/elec/src/input.ato \
+            | grep -v '"interfaces\.ato"' \
+            | grep -v '"parts/' \
+            || true)
+          if [ -n "$VIOLATIONS" ]; then
+            echo "Architecture violation: module imports sibling module."
+            echo "Module files must only import from interfaces.ato or parts/."
+            echo ""
+            echo "$VIOLATIONS"
+            exit 1
+          fi
+          echo "OK: all module files only import from interfaces.ato or parts/"
+
+      - name: Verify all module files declare expected ports
+        run: |
+          # Each module should expose a power_3v3 port (uniform power interface).
+          MISSING=""
+          for f in \
+            hardware/elec/src/mcu.ato \
+            hardware/elec/src/audio.ato \
+            hardware/elec/src/power.ato \
+            hardware/elec/src/display.ato \
+            hardware/elec/src/bluetooth.ato \
+            hardware/elec/src/memory.ato \
+            hardware/elec/src/input.ato; do
+            if ! grep -q 'power_3v3' "$f"; then
+              MISSING="$MISSING\n  $f (missing power_3v3 port)"
+            fi
+          done
+          if [ -n "$MISSING" ]; then
+            echo "Architecture violation: module missing power_3v3 port (uniform power interface):"
+            echo -e "$MISSING"
+            exit 1
+          fi
+          echo "OK: all modules declare power_3v3 port"
+
+      - name: Verify interfaces.ato is complete
+        run: |
+          # Verify that every interface used in module files is declared in interfaces.ato.
+          # Extract all `import X` names from module files:
+          USED=$(grep -rh '^from "interfaces\.ato" import' \
+            hardware/elec/src/mcu.ato \
+            hardware/elec/src/audio.ato \
+            hardware/elec/src/power.ato \
+            hardware/elec/src/display.ato \
+            hardware/elec/src/bluetooth.ato \
+            hardware/elec/src/memory.ato \
+            hardware/elec/src/input.ato \
+            hardware/elec/src/main.ato \
+            | sed 's/.*import //' | tr ',' '\n' | tr -d ' ' | sort -u)
+          # Verify each used interface is declared in interfaces.ato
+          VIOLATIONS=""
+          while IFS= read -r iface; do
+            if [ -n "$iface" ] && ! grep -q "^interface $iface:" hardware/elec/src/interfaces.ato; then
+              VIOLATIONS="$VIOLATIONS\n  $iface (used but not declared in interfaces.ato)"
+            fi
+          done <<< "$USED"
+          if [ -n "$VIOLATIONS" ]; then
+            echo "Architecture violation: interface used but not declared:"
+            echo -e "$VIOLATIONS"
+            exit 1
+          fi
+          echo "OK: all used interfaces are declared in interfaces.ato"
+
+      - name: Check for duplicate pin assignments in component stubs
+        run: |
+          # Each physical pin can only be assigned once in a component stub.
+          # Duplicate `~ pin N` entries mean two signals share a pad — a PCB short.
+          # This check catches mistakes like assigning both FMC_D6 and ENC_A to PE9.
+          VIOLATIONS=""
+          for f in hardware/elec/src/parts/*/*.ato; do
+            DUPS=$(grep -o '~ pin [0-9]*' "$f" | grep -o '[0-9]*' | sort | uniq -d)
+            if [ -n "$DUPS" ]; then
+              VIOLATIONS="$VIOLATIONS\n  $f: duplicate pin(s) $DUPS"
+            fi
+          done
+          if [ -n "$VIOLATIONS" ]; then
+            echo "ERROR: Duplicate pin assignments found (each duplicate will cause a PCB short):"
+            printf '%b\n' "$VIOLATIONS"
+            exit 1
+          fi
+          echo "OK: no duplicate pin assignments in any component stub"
+
+  # ---------------------------------------------------------------------------
+  # Atopile ERC check (full system)
   #
   # Validates all `assert` statements in the .ato design files.
   # These act as electrical rule checks (ERC): voltage ranges, impedance
@@ -42,8 +153,9 @@ jobs:
   # which skips the PCB layout step.
   # ---------------------------------------------------------------------------
   ato-check:
-    name: Atopile ERC Check
+    name: Atopile ERC Check (Full System)
     runs-on: ubuntu-latest
+    needs: hw-arch   # Architecture boundaries must pass before ERC runs
     defaults:
       run:
         working-directory: hardware
@@ -64,6 +176,47 @@ jobs:
         run: ato build --build check-only
 
   # ---------------------------------------------------------------------------
+  # Per-module independent validation
+  #
+  # Each vertical slice module is validated in isolation. This means:
+  #   - Imports resolve (all parts/ stubs exist)
+  #   - Component-level assert statements pass (R/C/L/crystal values)
+  #   - BOM can be generated for the module standalone
+  #
+  # Fast feedback: if only bluetooth.ato changes, only that job re-runs
+  # (GitHub caches are keyed per-job). Modules are independent — a failure
+  # in one doesn't block others.
+  #
+  # Note: cross-module voltage propagation asserts (e.g. power_3v3.voltage)
+  # are tested by the full ato-check job above. Per-module jobs validate
+  # component selections and module-internal topology.
+  # ---------------------------------------------------------------------------
+  ato-check-modules:
+    name: Module Check (${{ matrix.module }})
+    runs-on: ubuntu-latest
+    needs: hw-arch
+    strategy:
+      fail-fast: false  # Run all modules; don't cancel others if one fails
+      matrix:
+        module: [power, mcu, audio, display, bluetooth, memory, input]
+    defaults:
+      run:
+        working-directory: hardware
+
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      - uses: atopile/setup-atopile@a44779655197de0f408861581669f09b2145bc33  # v1.8
+        with:
+          version: "0.12.5"
+
+      - name: Install locked dependencies
+        run: ato sync
+
+      - name: Validate ${{ matrix.module }} module standalone
+        run: ato build --build check-${{ matrix.module }}
+
+  # ---------------------------------------------------------------------------
   # BOM generation
   #
   # Produces the bill of materials from the Atopile netlist and uploads it
@@ -73,6 +226,7 @@ jobs:
   bom-generate:
     name: Generate BOM
     runs-on: ubuntu-latest
+    needs: [ato-check, ato-check-modules]  # Only generate BOM after all checks pass
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     defaults:
       run:

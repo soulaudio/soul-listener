@@ -1,0 +1,78 @@
+# PTS526SK15SMTR2LFS — C&K (Littelfuse) SPST-NO SMD Tactile Switch
+#
+# Package:      SMD, 6.1×3.6 mm body, 1.5 mm total height (SK = 1.5 mm actuator)
+# Manufacturer: C&K (acquired by Bourns; now part of Littelfuse)
+# Datasheet:    https://www.ckswitches.com/media/2780/pts526.pdf
+# Key specs:    SPST normally open, top-actuated
+#               Max rating: 50 mA / 12 V DC
+#               Actuation force: 1.57 N (160 gf) — SK variant
+#               Operating life: 200,000 cycles minimum
+#               Active low: one terminal to GND, other terminal to MCU GPIO pull-up
+#
+# Part number breakdown:
+#   PTS526  — Product series (SMD tactile, 6×3.5 mm footprint)
+#   SK      — Actuator height code (1.5 mm above PCB surface)
+#   15      — Rated current: 50 mA at 12 V
+#   SMTR2   — SMT, gull-wing leads, 2 = standard orientation
+#   LFS     — Lead-free, RoHS-compliant, standard packaging
+#
+# Physical pad arrangement (4-pad SMD, viewed from top):
+#   Pads 1 and 2 are internally shorted (terminal A — same net)
+#   Pads 3 and 4 are internally shorted (terminal B — same net)
+#   When pressed: terminal A (pads 1+2) connects to terminal B (pads 3+4)
+#
+#   Pad layout (top view, actuator centred):
+#     [1] [2]        ← Terminal A (left side)
+#     [3] [4]        ← Terminal B (right side)
+#   (actual layout may vary; check footprint orientation)
+#
+# KiCad symbol:   Switch:SW_Push  (2-pin SPST normally-open push switch)
+#   Pin 1 → Terminal A (one side of switch)
+#   Pin 2 → Terminal B (other side of switch)
+#   The 4-pad footprint maps pads 1+2 to symbol pin 1 and pads 3+4 to symbol pin 2.
+#
+# KiCad footprint: Button_Switch_SMD:SW_Push_1P1T_NO_CK_PTS526
+#   ⚠ Note: As of KiCad 8, the official kicad-footprints library does NOT contain
+#   a dedicated "SW_SPST_CK_PTS526" footprint. The closest available footprints are:
+#     Button_Switch_SMD:SW_Push_1P1T_NO_CK_PTS125Sx43PSMTR (different series)
+#   For PTS526, use a custom footprint or import from:
+#     SnapMagic / SnapEDA: https://www.snapeda.com/parts/PTS526%20SK15%20SMTR2%20LFS/C%26K/view-part/
+#     Ultra Librarian: https://app.ultralibrarian.com/details/FFAA55C3-AD45-11E9-AB3A-0A3560A4CCCC
+#   Alternatively, use the generic Button_Switch_SMD:SW_Push_1P1T_NO_6x3.5mm if dimensions match.
+#   TODO: add PTS526 footprint to local library or ato dependency.
+#
+# Distributor availability:
+#   TME:      PTS526SK15SMTR2LFS   (C&K / Littelfuse, cz.tme.eu)
+#   Digi-Key: CKN10502CT-ND
+#   Mouser:   611-PTS526SK15SMTR2
+
+component PTS526:
+    trait is_atomic_part<
+        manufacturer = "C&K",
+        partnumber   = "PTS526SK15SMTR2LFS",
+        footprint    = "Button_Switch_SMD:SW_Push_1P1T_NO_CK_PTS526",
+        symbol       = "Switch:SW_Push">
+    trait has_designator_prefix<prefix = "SW">
+
+    # ── Switch terminals ──────────────────────────────────────────────────────
+    # The KiCad SW_Push symbol has two logical pins: 1 and 2.
+    # The 4-pad footprint has pads 1+2 (terminal A) and pads 3+4 (terminal B).
+    # Atopile maps symbol pin 1 → footprint pads 1+2 (internally shorted by the part).
+    # Atopile maps symbol pin 2 → footprint pads 3+4 (internally shorted by the part).
+    #
+    # Connect:
+    #   A1 → MCU GPIO (active-low input with 10 kΩ pull-up to 3.3 V)
+    #   B1 → GND (switch pulls GPIO low when pressed)
+    signal A1 ~ pin 1   # Terminal A — MCU GPIO side (pull-up to 3.3 V)
+    signal B1 ~ pin 2   # Terminal B — GND side (connect to power_3v3.lv)
+
+    # ── Duplicate pads (internally shorted in the physical component) ──────────
+    # The physical 4-pad SMD body has pads 1+2 connected internally (terminal A)
+    # and pads 3+4 connected internally (terminal B).
+    # In the KiCad SW_Push symbol there are only 2 logical pins (1 and 2).
+    # Both physical pad pairs must be soldered; signal routing is via pins 1 and 2 above.
+    # If the footprint assigns individual pad numbers 1/2/3/4 to symbol pins:
+    #   signal A2 ~ pin 2   # Terminal A, pad 2 (same net as A1)
+    #   signal B2 ~ pin 3   # Terminal B, pad 3 (same net as B1)
+    #   signal B3 ~ pin 4   # Terminal B, pad 4 (same net as B1)
+    # TODO: confirm footprint pad-to-symbol-pin mapping when adding PTS526 footprint.

@@ -1,0 +1,76 @@
+# 2450AT18A100E — Johanson Technology 2.4 GHz LTCC Chip Antenna
+#
+# ⚠ IMPORTANT — PART NUMBER DISCREPANCY IN PROJECT DOCUMENTATION:
+#   bluetooth.ato and hardware/CLAUDE.md reference "Johanson 0433AT62A0100E, 2.4 GHz".
+#   This is INCORRECT. The "0433" prefix in Johanson part numbers denotes the
+#   operating frequency: 0433 = 433 MHz (ISM band), NOT 2.4 GHz.
+#
+#   Confirmed: 0433AT62A0020001U (similar series) operates at 423–443 MHz.
+#   Source: https://www.johansontechnology.com/products/antennas/rf-antennas/0433at62a0020001u/
+#
+#   The correct Johanson part for 2.4 GHz BLE / Wi-Fi / Zigbee is:
+#     2450AT18A100E (legacy part number)
+#     Updated PN: 2450AT18A0100001E (current active part)
+#   The "2450" prefix = 2450 MHz = 2.4 GHz band.
+#
+#   This file uses the correct 2.4 GHz part. The directory is named after the
+#   originally specified (incorrect) part number to avoid breaking any existing
+#   references; update bluetooth.ato to import this corrected stub.
+#
+# Package:      Case 18-4 (1206 / 3.2×1.6 mm SMD chip)
+# Manufacturer: Johanson Technology Inc.
+# Datasheet:    https://www.johansontechnology.com/datasheets/2450AT18A100/2450AT18A100.pdf
+#               Updated rev: https://www.johansontechnology.com/docs/3827/Antenna-2450AT18A0100001E-Rev4.0.pdf
+# Key specs:    Frequency: 2400–2500 MHz (covers BLE 5.0, Wi-Fi 2.4 GHz, Zigbee, ANT)
+#               Peak gain: 0.5 dBi typical (free-space, depends heavily on PCB layout)
+#               Return loss: 9.5 dB typical
+#               Impedance: 50 Ω (direct connection to STM32WB55 internal balun output)
+#               Technology: LTCC (Low Temperature Co-fired Ceramic)
+#               Temperature stability: ~2 ppm/°C — very stable over –40 °C to +85 °C
+#               Package dimensions: 3.2×1.6×1.3 mm
+#               AEC-Q200 qualified variant available: 2450AT18A100E-AEC
+#
+# Design notes for STM32WB55RGV6:
+#   The STM32WB55 has an internal balun providing a 50 Ω single-ended RF output.
+#   No external matching network is required — connect RF_ANT directly to antenna pad 1.
+#   Place the antenna at the board edge with a ground plane clearout under the radiating
+#   element (see Johanson application note and ST AN5129 for PCB layout guidelines).
+#   Reference ground connects antenna pad 2 to the solid ground plane.
+#
+# PIN NUMBERS (2-pad chip antenna):
+#   Pad 1: RF signal input (50 Ω) — marked end / dot / stripe on component body
+#   Pad 2: GND (reference ground — connect to PCB ground plane)
+#   KiCad pad numbering: pad 1 = FEED, pad 2 = GND (standard 2-terminal passive)
+#
+# KiCad footprint: RF_Antenna:Johanson_2450AT18x100
+#   This is the official KiCad footprint for 2450AT18x100 series (confirmed in
+#   kicad-footprints RF_Antenna library: "SMD antenna 2400-2500Mhz, -0.5dBi")
+#   Alternative footprint: RF_Antenna:Johanson_2450AT43F0100 (higher gain variant)
+#
+# KiCad symbol: Device:Antenna
+#   Standard 2-pin antenna symbol: pin 1 = feed/signal, pin 2 = GND/reference
+#
+# Distributor availability:
+#   Digi-Key: 712-1005-2-ND  (2450AT18A100E)
+#   Mouser:   (search "2450AT18A100E" or "2450AT18A0100001E")
+#   Newark:   57J2167
+#   TME:      (may need to check availability in EU — consider Digi-Key EU NL warehouse)
+#
+# See also:
+#   ST AN5129: How to achieve good antenna performance on STM32WB boards
+#   Johanson chip antenna selection guide: https://www.johansontechnology.com/tech-notes/chip-antenna-selection-guide/
+
+component Ant2450AT18A100E:  # Directory named after originally specified (incorrect) PN
+    trait is_atomic_part<
+        manufacturer = "Johanson Technology",
+        partnumber   = "2450AT18A100E",       # Correct 2.4 GHz part; 0433AT62A0100E was 433 MHz
+        footprint    = "RF_Antenna:Johanson_2450AT18x100",
+        symbol       = "Device:Antenna">
+    trait has_designator_prefix<prefix = "ANT">
+
+    # ── RF signal ─────────────────────────────────────────────────────────────
+    signal RF  ~ pin 1   # 50 Ω RF feed → STM32WB55 RF_ANT pin (internal balun output)
+
+    # ── Reference ground ──────────────────────────────────────────────────────
+    signal GND ~ pin 2   # Ground reference → PCB ground plane
+                         # Keep short; place antenna at board edge per application note

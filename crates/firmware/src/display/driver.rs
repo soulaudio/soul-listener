@@ -10,7 +10,7 @@
 //! - PB0 (GPIO)      -> DC (Data/Command)
 //! - PB1 (GPIO)      -> CS (Chip Select)
 //! - PB2 (GPIO)      -> RST (Reset)
-//! - PB3 (GPIO)      -> BUSY
+//! - PE3 (GPIO)      -> BUSY
 //!
 //! # Memory Layout
 //!

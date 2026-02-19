@@ -225,13 +225,27 @@ jobs:
   # ---------------------------------------------------------------------------
   # Architecture Check
   #
-  # Enforces dependency boundary rules:
-  #   - eink-system and eink-components MUST NOT depend on eink-emulator
-  #     except via the `examples` feature (optional dep, never activated by
-  #     cargo test or library builds).
+  # Enforces dependency boundary rules for the vertical slice architecture:
   #
-  # If someone accidentally adds `eink-emulator` to [dev-dependencies] or as
-  # a required normal dep, this job will catch it immediately.
+  #   Layer 1 (specs/primitives):
+  #     eink-specs     — pure data, no display logic, no alloc
+  #
+  #   Layer 2 (engine):
+  #     eink-system    — layout/styling; MUST NOT depend on eink-emulator
+  #     eink-components — UI components; MUST NOT depend on eink-emulator
+  #
+  #   Layer 3 (simulation, std only):
+  #     eink-emulator  — desktop emulator; MUST NOT depend on firmware
+  #
+  #   HAL layer (platform crate):
+  #     platform       — hardware abstractions (traits); MUST NOT depend on firmware
+  #                      (platform defines traits, firmware implements them)
+  #
+  # Rules enforced:
+  #   1. eink-system + eink-components must not require eink-emulator
+  #   2. eink-specs must not depend on eink-system, eink-emulator, or eink-components
+  #   3. platform must not depend on firmware (HAL must not depend on app layer)
+  #   4. eink-emulator must not depend on firmware (simulator is independent of app)
   # ---------------------------------------------------------------------------
   arch:
     name: Architecture
@@ -243,9 +257,8 @@ jobs:
 
       - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
 
-      - name: eink-system and eink-components must not require eink-emulator
+      - name: Rule 1 — eink-system and eink-components must not require eink-emulator
         run: |
-          # Query the workspace dependency metadata.
           # Violation: eink-emulator appears as a dev dep OR as a required
           # (non-optional) normal dep of eink-system or eink-components.
           # Allowed: optional dep behind the `examples` feature.
@@ -259,11 +272,97 @@ jobs:
             "\($pkg) has forbidden dependency on eink-emulator (kind: \(.kind // "normal"), optional: \(.optional))"
           ')
           if [ -n "$VIOLATIONS" ]; then
-            echo "Architecture violations:"
+            echo "Architecture violations (Rule 1):"
             echo "$VIOLATIONS"
             exit 1
           fi
-          echo "OK: eink-system and eink-components have no required dependency on eink-emulator"
+          echo "OK (Rule 1): eink-system and eink-components have no required dependency on eink-emulator"
+
+      - name: Rule 2 — eink-specs must not depend on higher-layer eink crates
+        run: |
+          # eink-specs is a pure data crate (no_std, no display logic).
+          # It must not pull in eink-system, eink-emulator, or eink-components.
+          VIOLATIONS=$(cargo metadata --format-version 1 | jq -r '
+            .packages[] |
+            select(.name == "eink-specs") |
+            .name as $pkg |
+            .dependencies[] |
+            select(
+              .name == "eink-system" or
+              .name == "eink-emulator" or
+              .name == "eink-components" or
+              .name == "firmware"
+            ) |
+            "\($pkg) must not depend on \(.name) (layer boundary violation)"
+          ')
+          if [ -n "$VIOLATIONS" ]; then
+            echo "Architecture violations (Rule 2):"
+            echo "$VIOLATIONS"
+            exit 1
+          fi
+          echo "OK (Rule 2): eink-specs has no upward dependencies"
+
+      - name: Rule 3 — platform (HAL) must not depend on firmware (app)
+        run: |
+          # The platform crate defines hardware abstraction traits.
+          # Firmware implements those traits. Platform must never depend on firmware
+          # (that would be a circular dependency in the HAL layer).
+          VIOLATIONS=$(cargo metadata --format-version 1 | jq -r '
+            .packages[] |
+            select(.name == "platform") |
+            .name as $pkg |
+            .dependencies[] |
+            select(.name == "firmware") |
+            "\($pkg) must not depend on firmware (HAL must not depend on app layer)"
+          ')
+          if [ -n "$VIOLATIONS" ]; then
+            echo "Architecture violations (Rule 3):"
+            echo "$VIOLATIONS"
+            exit 1
+          fi
+          echo "OK (Rule 3): platform crate does not depend on firmware"
+
+      - name: Rule 4 — eink-emulator must not depend on firmware
+        run: |
+          # The desktop emulator simulates display hardware — it is independent
+          # of the DAP application firmware. If it depended on firmware, the
+          # simulator could not be used as a standalone display dev tool.
+          VIOLATIONS=$(cargo metadata --format-version 1 | jq -r '
+            .packages[] |
+            select(.name == "eink-emulator") |
+            .name as $pkg |
+            .dependencies[] |
+            select(.name == "firmware") |
+            "\($pkg) must not depend on firmware (emulator must be firmware-agnostic)"
+          ')
+          if [ -n "$VIOLATIONS" ]; then
+            echo "Architecture violations (Rule 4):"
+            echo "$VIOLATIONS"
+            exit 1
+          fi
+          echo "OK (Rule 4): eink-emulator does not depend on firmware"
+
+      - name: Verify vertical slice crate dependency graph
+        run: |
+          # Print the complete dependency summary for audit purposes.
+          # This is informational; non-zero exit if workspace metadata fails.
+          echo "=== Crate dependency summary ==="
+          cargo metadata --format-version 1 | jq -r '
+            .packages[] |
+            select(
+              .name == "eink-specs" or
+              .name == "eink-system" or
+              .name == "eink-components" or
+              .name == "eink-emulator" or
+              .name == "eink-testing" or
+              .name == "platform" or
+              .name == "firmware" or
+              .name == "firmware-ui"
+            ) |
+            .name + " depends on: [" +
+              ([.dependencies[] | select(.kind == null) | .name] | join(", ")) +
+            "]"
+          ' | sort
 
   # ---------------------------------------------------------------------------
   # Embedded Build Check (STM32H7)
