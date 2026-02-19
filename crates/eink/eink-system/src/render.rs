@@ -500,8 +500,9 @@ mod tests {
     fn test_render_layout_with_background_and_children() {
         let mut display = MockDisplay::new();
 
-        let mut layout = LayoutResult::new(Point::new(10, 10), Size::new(100, 100));
-        let child = LayoutResult::new(Point::new(20, 20), Size::new(30, 30));
+        // MockDisplay default size is 64x64; keep layout within bounds
+        let mut layout = LayoutResult::new(Point::new(0, 0), Size::new(40, 40));
+        let child = LayoutResult::new(Point::new(5, 5), Size::new(20, 20));
         layout.add_child(child).unwrap();
 
         render_layout_with_background(&layout, Point::zero(), Some(Gray4::new(2)), &mut display)
