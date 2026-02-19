@@ -37,9 +37,19 @@
 //! ```
 
 #![cfg_attr(all(not(test), not(feature = "std")), no_std)]
+// Upgrade relevant warns to deny; keep pedantic as warn (too noisy for firmware)
 #![warn(missing_docs)]
 #![warn(clippy::all)]
-#![allow(clippy::module_name_repetitions)]
+#![warn(clippy::pedantic)]
+// Critical correctness: deny these
+#![deny(clippy::await_holding_lock)] // holding a blocking Mutex across .await is a bug
+#![deny(unsafe_op_in_unsafe_fn)] // unsafe fn body is not implicitly unsafe block
+// Logging discipline (allow println in tests via clippy.toml)
+#![warn(clippy::print_stdout)] // prefer tracing/defmt over println! in lib code
+#![warn(clippy::dbg_macro)] // dbg! should not be left in committed code
+// Intentional allows for this codebase:
+#![allow(clippy::module_name_repetitions)] // common in Rust crates; not a real issue
+#![allow(clippy::missing_errors_doc)] // most errors are self-explanatory
 
 pub mod audio;
 pub mod display;

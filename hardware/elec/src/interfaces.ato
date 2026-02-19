@@ -126,16 +126,32 @@ interface EncoderBus:
     Mirrors: crates/firmware/src/input/ (encoder task + button task)
     """
     # Encoder quadrature outputs
-    a  = new Electrical  # Phase A (CLK)  → MCU PE9 EXTI
-    b  = new Electrical  # Phase B (DT)   → MCU PE11 GPIO
-    sw = new Electrical  # Push-button SW → MCU GPIO (active low)
+    a  = new Electrical  # Phase A (CLK)  → MCU PA8  EXTI8
+    b  = new Electrical  # Phase B (DT)   → MCU PA3  GPIO (no EXTI)
+    sw = new Electrical  # Push-button SW → MCU PB5  GPIO (active low)
 
     # Navigation buttons (active low; each button pulls line to GND when pressed)
-    btn_play  = new Electrical  # Play/Pause    → MCU PD0 EXTI0
-    btn_next  = new Electrical  # Next track    → MCU PD1 EXTI1
-    btn_prev  = new Electrical  # Previous track→ MCU PD2 EXTI2
-    btn_menu  = new Electrical  # Menu/Back     → MCU PD3 EXTI3
+    btn_play  = new Electrical  # Play/Pause    → MCU PA0  EXTI0
+    btn_next  = new Electrical  # Next track    → MCU PA1  EXTI1
+    btn_prev  = new Electrical  # Previous track→ MCU PA2  EXTI2
+    btn_menu  = new Electrical  # Menu/Back     → MCU PD3  EXTI3
     btn_power = new Electrical  # Power/Wake    → MCU PC13 WKUP (active low)
+
+# ── Bipolar amp supply (Power → Audio module boundary) ───────────────────────
+interface AmpSupplyBus:
+    """Raw bipolar switching rails from power module to audio module.
+
+    Power module generates ±5.5 V (TPS61023 boost + TPS63700 inverter).
+    Audio module post-regulates to clean ±5.0 V via LT3045 / LT3094 LDOs.
+    The 500 mV headroom gives each LDO margin above its dropout voltage.
+
+    pos: +5.5 V switching output (hv) referenced to GND (lv)
+    neg: −5.5 V switching output (lv) referenced to GND (hv)
+    amp_en: MCU GPIO → TPS61023 / TPS63700 enable (active-high, sequenced VS+ first)
+    """
+    pos    = new ElectricPower   # +5.5 V rail: hv = +5.5 V, lv = GND
+    neg    = new ElectricPower   # −5.5 V rail: hv = GND,   lv = −5.5 V
+    amp_en = new ElectricLogic   # Sequenced enable from MCU (TPS61023 EN → delay → TPS63700 EN)
 
 # ── Analog audio output ───────────────────────────────────────────────────────
 interface AnalogAudioOut:

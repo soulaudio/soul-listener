@@ -55,6 +55,11 @@
 //! ```
 
 #![cfg_attr(not(feature = "std"), no_std)]
+#![warn(clippy::all)]
+#![warn(clippy::pedantic)]
+#![warn(clippy::dbg_macro)]
+#![allow(clippy::module_name_repetitions)]
+#![allow(clippy::missing_errors_doc)]
 
 pub mod controller_quirks;
 mod display_spec;

@@ -21,6 +21,7 @@
 use embedded_graphics::pixelcolor::Gray4;
 use embedded_graphics::prelude::*;
 use embedded_graphics::primitives::{PrimitiveStyle, Rectangle};
+use tracing_subscriber::EnvFilter;
 
 use firmware::EmulatorDisplay;
 use platform::config;
@@ -42,15 +43,20 @@ mod hot_ui {
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // Initialize logger. Controlled by RUST_LOG env var (default: info).
+    // Initialize tracing subscriber. Controlled by RUST_LOG env var (default: info).
     // cargo dev sets RUST_LOG=info automatically; override with e.g. RUST_LOG=debug cargo dev.
-    env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info"))
-        .format_timestamp_secs()
+    tracing_subscriber::fmt()
+        .with_env_filter(
+            EnvFilter::try_from_default_env()
+                .unwrap_or_else(|_| EnvFilter::new("info"))
+        )
+        .with_target(false)
+        .with_timer(tracing_subscriber::fmt::time::uptime())
+        .compact()
         .init();
 
-    log::info!("{} - Display Emulator starting", config::APP_NAME);
-    println!("{} - Display Emulator", config::APP_NAME);
-    println!("Display: GDEM0397T81P 3.97\" E-Ink (800x480 -> 480x800 portrait)\n");
+    tracing::info!(app = config::APP_NAME, version = "0.1.0", "Display Emulator starting");
+    tracing::info!(display = "GDEM0397T81P", size = "3.97\"", resolution = "800x480", "Display Emulator");
 
     let rt = tokio::runtime::Runtime::new()?;
 
@@ -61,7 +67,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let mut display =
         EmulatorDisplay::with_spec_and_config(&firmware::GDEM0397T81P_SPEC, emulator_config);
-    println!("Window opened - Portrait mode (480x800), native resolution\n");
+    tracing::info!(mode = "portrait", resolution = "480x800", "Window opened");
 
     // Attach keyboard/scroll input before initializing so the queue is wired
     // through to the window event loop when run() is called.
@@ -69,33 +75,24 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     #[cfg(all(feature = "keyboard-input", not(feature = "hot-reload")))]
     let mut input = display.emulator_mut().input_receiver();
 
-    println!("Initializing display...");
+    tracing::info!("Initializing display");
     rt.block_on(async { display.emulator_mut().initialize().await })
         .map_err(|e| Box::<dyn std::error::Error>::from(e.to_string()))?;
 
     use platform::DisplayDriver;
-    println!("Display ready\n");
+    tracing::info!("Display ready");
 
     #[cfg(feature = "debug")]
     {
-        println!("DEBUG MODE ENABLED");
-        println!("Hotkeys: Ctrl+1 panel | Ctrl+2 borders | Ctrl+3 inspector");
-        println!();
+        tracing::debug!("Debug mode enabled — hotkeys: Ctrl+1=panel Ctrl+2=borders Ctrl+3=inspector");
     }
 
     #[cfg(all(feature = "keyboard-input", not(feature = "hot-reload")))]
     {
-        println!("KEYBOARD INPUT ENABLED");
-        println!("  Space / K      = Play/Pause");
-        println!("  ← / J / ,      = Previous");
-        println!("  → / L / .      = Next");
-        println!("  ↑ / =          = Volume up");
-        println!("  ↓ / -          = Volume down");
-        println!("  M              = Menu");
-        println!("  Backspace / Esc= Back");
-        println!("  Enter          = Select");
-        println!("  Scroll wheel   = Encoder");
-        println!();
+        tracing::info!(
+            bindings = "Space/K=Play ←/J=Prev →/L=Next ↑/==Vol+ ↓/-=Vol- M=Menu Esc/BS=Back Enter=Select Scroll=Encoder",
+            "Keyboard input enabled"
+        );
     }
 
     // True in-process hot-reload path.
@@ -105,9 +102,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     {
         use std::time::{Duration, Instant};
 
-        println!("HOT-RELOAD MODE ACTIVE");
-        println!("Rendering code: crates/firmware-ui/src/render.rs");
-        println!("Edit render.rs and save to see changes instantly!\n");
+        tracing::info!("Hot-reload mode active");
+        tracing::info!(path = "crates/firmware-ui/src/render.rs", "Edit to see changes instantly");
 
         let mut last_version = hot_ui::ui_version();
 
@@ -122,13 +118,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             firmware_ui::ABI_VERSION,
             dylib_abi,
         );
-        println!("Initial render...");
+        tracing::info!("Initial render");
         // SAFETY: display.emulator_mut() is valid, non-null, exclusively owned.
         // Unwrapping EmulatorDisplay to its inner Emulator avoids circular dep.
         // Verified: ui_abi_version() == firmware_ui::ABI_VERSION (asserted above).
         unsafe { hot_ui::render_ui(display.emulator_mut() as *mut eink_emulator::Emulator) };
         rt.block_on(async { display.refresh_full().await })?;
-        println!("Ready. Edit crates/firmware-ui/src/render.rs to hot-reload.\n");
+        tracing::info!(path = "crates/firmware-ui/src/render.rs", "Ready — edit to hot-reload");
 
         // Subscribe to reload events and block until each reload completes.
         let observer = hot_ui::subscribe();
@@ -137,7 +133,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             let new_version = hot_ui::ui_version();
             if new_version != last_version {
                 last_version = new_version;
-                println!("Hot-reloaded firmware_ui dylib");
+                tracing::info!("Hot-reloaded firmware_ui dylib");
 
                 let size = display.bounding_box().size;
                 Rectangle::new(Point::zero(), size)
@@ -148,7 +144,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     hot_ui::render_ui(display.emulator_mut() as *mut eink_emulator::Emulator)
                 };
                 rt.block_on(async { display.refresh_full().await })?;
-                println!("Reload complete at {:?}", Instant::now());
+                tracing::info!(elapsed = ?Instant::now(), "Reload complete");
             }
         }
     }
@@ -157,7 +153,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // xtask dev kill-and-restart mode uses this path.
     #[cfg(not(feature = "hot-reload"))]
     {
-        println!("Rendering demo menu...");
+        tracing::info!("Rendering demo menu");
         render_demo_menu(&mut display)?;
         rt.block_on(async { display.refresh_full().await })?;
 
@@ -166,8 +162,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         #[cfg(feature = "debug")]
         register_dap_components(&mut display);
 
-        println!("Demo menu rendered\n");
-        println!("Close the window to exit.\n");
+        tracing::info!("Demo menu rendered");
+        tracing::info!("Close window to exit");
 
         // Spawn a background task that logs every input event to stdout.
         // This runs concurrently with the blocking winit event loop via the
@@ -177,7 +173,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             use platform::InputDevice as _;
             loop {
                 let ev = input.wait_for_event().await;
-                log::info!("[input] {:?}", ev);
+                tracing::info!(event = ?ev, "Input");
             }
         });
 
