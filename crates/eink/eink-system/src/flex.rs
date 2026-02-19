@@ -169,8 +169,8 @@ impl FlexLayout {
         let total_used = total_intrinsic + gap_space;
 
         // Step 4: Distribute remaining space (flex-grow) or shrink (flex-shrink)
-        let remaining_space = available_main.saturating_sub(total_used);
-        self.apply_flex_sizing(&mut flex_items, remaining_space as i32);
+        let remaining_space = available_main as i32 - total_used as i32;
+        self.apply_flex_sizing(&mut flex_items, remaining_space);
 
         // Step 5: Apply justification on main axis
         let positions_main =
@@ -780,7 +780,7 @@ mod tests {
         let layout = FlexLayout::new(style);
 
         let child_style = Style {
-            width: Dimension::Percent(0.5), // 50% of parent
+            width: Dimension::Percent(50.0), // 50% of parent
             height: Dimension::Px(50),
             ..Default::default()
         };
@@ -984,7 +984,10 @@ mod tests {
             ..Default::default()
         };
 
-        let children = vec![create_child_with_style(50, 50, child_style)];
+        let children = vec![ChildLayout {
+            style: child_style,
+            intrinsic_size: Size::new(50, 50),
+        }];
 
         let result = layout.layout(Constraints::tight(Size::new(200, 100)), &children);
 
