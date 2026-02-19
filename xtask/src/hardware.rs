@@ -17,16 +17,11 @@ pub enum HwCommand {
 
 pub fn run(cmd: HwCommand) -> Result<()> {
     // Verify ato is installed
-    let ato_check = Command::new("ato")
-        .arg("--version")
-        .output();
+    let ato_check = Command::new("ato").arg("--version").output();
 
     if ato_check.is_err() || !ato_check.unwrap().status.success() {
         eprintln!("{}", "ato not found in PATH.".red().bold());
-        eprintln!(
-            "{}",
-            "Install with: pip install atopile==0.12.5".dimmed()
-        );
+        eprintln!("{}", "Install with: pip install atopile==0.12.5".dimmed());
         anyhow::bail!("ato CLI not installed");
     }
 
@@ -68,12 +63,9 @@ fn hw_check() -> Result<()> {
     println!();
     println!(
         "{}",
-        format!(
-            "ERC check passed in {:.2}s",
-            start.elapsed().as_secs_f64()
-        )
-        .green()
-        .bold()
+        format!("ERC check passed in {:.2}s", start.elapsed().as_secs_f64())
+            .green()
+            .bold()
     );
     println!();
     Ok(())
@@ -179,23 +171,26 @@ fn hw_bom() -> Result<()> {
     println!();
     println!(
         "{}",
-        format!(
-            "BOM generated in {:.2}s",
-            start.elapsed().as_secs_f64()
-        )
-        .green()
-        .bold()
+        format!("BOM generated in {:.2}s", start.elapsed().as_secs_f64())
+            .green()
+            .bold()
     );
     println!();
     println!("{}", "Sourcing BOM files:".cyan());
-    println!("  {}", "hardware/bom/sourcing/tme.csv       (TME — CZ/EU primary)".dimmed());
-    println!("  {}", "hardware/bom/sourcing/digikey-eu.csv (Digi-Key EU — NL)".dimmed());
-    println!("  {}", "hardware/bom/sourcing/mouser.csv     (Mouser EU — DE)".dimmed());
-    println!();
     println!(
-        "{}",
-        "Atopile BOM output: hardware/build/".dimmed()
+        "  {}",
+        "hardware/bom/sourcing/tme.csv       (TME — CZ/EU primary)".dimmed()
     );
+    println!(
+        "  {}",
+        "hardware/bom/sourcing/digikey-eu.csv (Digi-Key EU — NL)".dimmed()
+    );
+    println!(
+        "  {}",
+        "hardware/bom/sourcing/mouser.csv     (Mouser EU — DE)".dimmed()
+    );
+    println!();
+    println!("{}", "Atopile BOM output: hardware/build/".dimmed());
     println!();
     Ok(())
 }
