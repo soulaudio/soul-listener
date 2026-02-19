@@ -1,0 +1,9 @@
+# Atopile lock file — auto-managed by `ato add` / `ato sync`.
+# Commit this file. Do not edit manually.
+# Regenerate with: ato sync
+
+lock-version: 1
+dependencies:
+  atopile/generics:
+    release: 0.1.5
+    source: registry

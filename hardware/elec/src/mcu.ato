@@ -1,0 +1,182 @@
+# MCU module — STM32H743ZIT6 application processor
+#
+# Mirrors: crates/firmware/src/main.rs + crates/platform/src/ (all traits)
+#
+# Responsibilities:
+#   - STM32H743ZIT6 LQFP-144 with all required decoupling
+#   - External 25 MHz HSE crystal (for PLL → 480 MHz core clock)
+#   - 32.768 kHz LSE crystal (for RTC)
+#   - SWD debug header (TC2030-IDC or 2×5 0.05" Cortex Debug)
+#   - All bus interface signals exposed as ports to the top-level wiring
+#
+# Power note: All VDD pins must be individually decoupled.
+# Place 100 nF X7R 0402 capacitors as close as possible to each VDD pin.
+# Add 10 µF bulk capacitor near the MCU.
+# VDDA must be filtered: 1 µH ferrite bead + 1 µF + 10 nF to GND.
+
+from "interfaces.ato" import I2CBus, I2SBus, SPIBus, DisplayCtrl, SDMMCBus
+from "interfaces.ato" import UARTBus, USBDiffPair, SWDPort, FMCBus, QSPIBus
+from "interfaces.ato" import EncoderBus
+from "parts/STM32H743ZIT6/STM32H743ZIT6.ato" import STM32H743ZIT6
+
+module MCU:
+    """
+    STM32H743ZI application processor with all support circuitry.
+    Exposes typed bus ports for wiring in main.ato.
+    """
+
+    # ── Power ports ───────────────────────────────────────────────────────────
+    power_3v3 = new ElectricPower   # 3.3 V digital supply input
+    gnd       = new Electrical
+
+    # ── Bus ports (connected by main.ato) ────────────────────────────────────
+    audio_i2s   = new I2SBus       # → audio module (SAI1 master)
+    audio_i2c   = new I2CBus       # → audio module (ES9038Q2M config)
+    pmic_i2c    = new I2CBus       # → power module (BQ25895 config)
+    display_spi = new SPIBus       # → display module (SPI1)
+    display_ctrl = new DisplayCtrl  # → display module (DC/RST/BUSY)
+    sdcard      = new SDMMCBus     # → SD card slot (SDMMC1)
+    bt_uart     = new UARTBus      # → bluetooth module (UART1 HCI)
+    usb         = new USBDiffPair  # → USB-C connector
+    swd         = new SWDPort      # → SWD debug header
+    fmc         = new FMCBus       # → memory module (SDRAM)
+    quadspi     = new QSPIBus      # → memory module (NOR flash)
+    encoder     = new EncoderBus   # → input module
+
+    # ── Main IC ───────────────────────────────────────────────────────────────
+    mcu = new STM32H743ZIT6
+
+    # ── Power supply connections ──────────────────────────────────────────────
+    power_3v3.hv ~ mcu.VDD_1; power_3v3.hv ~ mcu.VDD_2
+    power_3v3.hv ~ mcu.VDD_3; power_3v3.hv ~ mcu.VDD_4
+    power_3v3.hv ~ mcu.VDD_5; power_3v3.hv ~ mcu.VDD_6
+    power_3v3.hv ~ mcu.VDD_7; power_3v3.hv ~ mcu.VDD_8
+    power_3v3.hv ~ mcu.VDDA
+    power_3v3.hv ~ mcu.VREF_PLUS
+    power_3v3.hv ~ mcu.VBAT  # Tie VBAT to VDD (no coin cell on v1)
+
+    power_3v3.lv ~ mcu.VSS_1; power_3v3.lv ~ mcu.VSS_2
+    power_3v3.lv ~ mcu.VSS_3; power_3v3.lv ~ mcu.VSS_4
+    power_3v3.lv ~ mcu.VSS_5; power_3v3.lv ~ mcu.VSS_6
+    power_3v3.lv ~ mcu.VSS_7; power_3v3.lv ~ mcu.VSS_8
+
+    # ── VDD decoupling (one 100 nF per VDD pin + 10 µF bulk) ─────────────────
+    # 8 × 100 nF decoupling caps for VDD pins
+    c_vdd_1 = new Capacitor; c_vdd_1.capacitance = 100nF +/- 20%; c_vdd_1.package = "0402"
+    c_vdd_2 = new Capacitor; c_vdd_2.capacitance = 100nF +/- 20%; c_vdd_2.package = "0402"
+    c_vdd_3 = new Capacitor; c_vdd_3.capacitance = 100nF +/- 20%; c_vdd_3.package = "0402"
+    c_vdd_4 = new Capacitor; c_vdd_4.capacitance = 100nF +/- 20%; c_vdd_4.package = "0402"
+    c_vdd_5 = new Capacitor; c_vdd_5.capacitance = 100nF +/- 20%; c_vdd_5.package = "0402"
+    c_vdd_6 = new Capacitor; c_vdd_6.capacitance = 100nF +/- 20%; c_vdd_6.package = "0402"
+    c_vdd_7 = new Capacitor; c_vdd_7.capacitance = 100nF +/- 20%; c_vdd_7.package = "0402"
+    c_vdd_8 = new Capacitor; c_vdd_8.capacitance = 100nF +/- 20%; c_vdd_8.package = "0402"
+    power_3v3.hv ~ c_vdd_1.p1; c_vdd_1.p2 ~ power_3v3.lv
+    power_3v3.hv ~ c_vdd_2.p1; c_vdd_2.p2 ~ power_3v3.lv
+    power_3v3.hv ~ c_vdd_3.p1; c_vdd_3.p2 ~ power_3v3.lv
+    power_3v3.hv ~ c_vdd_4.p1; c_vdd_4.p2 ~ power_3v3.lv
+    power_3v3.hv ~ c_vdd_5.p1; c_vdd_5.p2 ~ power_3v3.lv
+    power_3v3.hv ~ c_vdd_6.p1; c_vdd_6.p2 ~ power_3v3.lv
+    power_3v3.hv ~ c_vdd_7.p1; c_vdd_7.p2 ~ power_3v3.lv
+    power_3v3.hv ~ c_vdd_8.p1; c_vdd_8.p2 ~ power_3v3.lv
+
+    # 10 µF bulk capacitor for VDD
+    c_vdd_bulk = new Capacitor
+    c_vdd_bulk.capacitance = 10uF +/- 20%
+    c_vdd_bulk.package = "0805"
+    power_3v3.hv ~ c_vdd_bulk.p1; c_vdd_bulk.p2 ~ power_3v3.lv
+
+    # VDDA filter: ferrite bead + 1 µF + 10 nF (LC filter for analog supply)
+    c_vdda_1  = new Capacitor; c_vdda_1.capacitance  = 1uF  +/- 20%; c_vdda_1.package  = "0402"
+    c_vdda_2  = new Capacitor; c_vdda_2.capacitance  = 10nF +/- 20%; c_vdda_2.package  = "0402"
+    power_3v3.hv ~ c_vdda_1.p1; c_vdda_1.p2 ~ power_3v3.lv
+    power_3v3.hv ~ c_vdda_2.p1; c_vdda_2.p2 ~ power_3v3.lv
+
+    # ── HSE Crystal (25 MHz for PLLs) ─────────────────────────────────────────
+    hse_xtal = new Crystal
+    hse_xtal.frequency = 25MHz +/- 30ppm
+    hse_xtal.package   = "3225"
+    # Load capacitors (12 pF, verify from crystal datasheet)
+    c_hse_1 = new Capacitor; c_hse_1.capacitance = 12pF +/- 5%; c_hse_1.package = "0402"
+    c_hse_2 = new Capacitor; c_hse_2.capacitance = 12pF +/- 5%; c_hse_2.package = "0402"
+    # TODO: wire OSC_IN/OSC_OUT after verifying MCU pin numbers in symbol
+
+    # ── LSE Crystal (32.768 kHz for RTC) ─────────────────────────────────────
+    lse_xtal = new Crystal
+    lse_xtal.frequency = 32768Hz +/- 20ppm
+    lse_xtal.package   = "3215"
+    c_lse_1 = new Capacitor; c_lse_1.capacitance = 6pF +/- 5%; c_lse_1.package = "0402"
+    c_lse_2 = new Capacitor; c_lse_2.capacitance = 6pF +/- 5%; c_lse_2.package = "0402"
+
+    # ── I²S port → audio module ───────────────────────────────────────────────
+    audio_i2s.mclk  ~ mcu.SAI1_MCLK_A
+    audio_i2s.bclk  ~ mcu.SAI1_BCLK_A
+    audio_i2s.lrclk ~ mcu.SAI1_LRCLK_A
+    audio_i2s.sdata ~ mcu.SAI1_SD_A
+
+    # ── I²C port → audio module (shared with PMIC) ────────────────────────────
+    audio_i2c.scl ~ mcu.I2C1_SCL
+    audio_i2c.sda ~ mcu.I2C1_SDA
+    pmic_i2c.scl  ~ mcu.I2C1_SCL  # I2C1 is shared between ES9038Q2M and BQ25895
+    pmic_i2c.sda  ~ mcu.I2C1_SDA
+
+    # ── SPI port → display module ─────────────────────────────────────────────
+    display_spi.mosi ~ mcu.SPI1_MOSI
+    display_spi.miso ~ mcu.SPI1_MISO
+    display_spi.sclk ~ mcu.SPI1_SCK
+    display_ctrl.dc   ~ mcu.LCD_DC
+    display_ctrl.rst  ~ mcu.LCD_RST
+    display_ctrl.busy ~ mcu.LCD_BUSY
+
+    # ── SDMMC → SD card ───────────────────────────────────────────────────────
+    sdcard.clk ~ mcu.SDMMC1_CLK
+    sdcard.cmd ~ mcu.SDMMC1_CMD
+    sdcard.d0  ~ mcu.SDMMC1_D0;  sdcard.d1 ~ mcu.SDMMC1_D1
+    sdcard.d2  ~ mcu.SDMMC1_D2;  sdcard.d3 ~ mcu.SDMMC1_D3
+
+    # ── UART → BT co-processor ───────────────────────────────────────────────
+    bt_uart.tx ~ mcu.UART1_TX
+    bt_uart.rx ~ mcu.UART1_RX
+
+    # ── USB ──────────────────────────────────────────────────────────────────
+    usb.dp ~ mcu.USB_OTG_HS_DP
+    usb.dm ~ mcu.USB_OTG_HS_DM
+
+    # ── SWD debug ────────────────────────────────────────────────────────────
+    swd.swdio  ~ mcu.SWDIO
+    swd.swdclk ~ mcu.SWDCLK
+    swd.nrst   ~ mcu.NRST
+    swd.swo    ~ mcu.SWO
+
+    # ── FMC → SDRAM ──────────────────────────────────────────────────────────
+    fmc.a0  ~ mcu.FMC_A0;  fmc.a1  ~ mcu.FMC_A1;  fmc.a2  ~ mcu.FMC_A2
+    fmc.a3  ~ mcu.FMC_A3;  fmc.a4  ~ mcu.FMC_A4;  fmc.a5  ~ mcu.FMC_A5
+    fmc.a6  ~ mcu.FMC_A6;  fmc.a7  ~ mcu.FMC_A7;  fmc.a8  ~ mcu.FMC_A8
+    fmc.a9  ~ mcu.FMC_A9;  fmc.a10 ~ mcu.FMC_A10; fmc.a11 ~ mcu.FMC_A11
+    fmc.a12 ~ mcu.FMC_A12
+    fmc.ba0 ~ mcu.FMC_BA0; fmc.ba1 ~ mcu.FMC_BA1
+    fmc.d0  ~ mcu.FMC_D0;  fmc.d1  ~ mcu.FMC_D1;  fmc.d2  ~ mcu.FMC_D2
+    fmc.d3  ~ mcu.FMC_D3;  fmc.d4  ~ mcu.FMC_D4;  fmc.d5  ~ mcu.FMC_D5
+    fmc.d6  ~ mcu.FMC_D6;  fmc.d7  ~ mcu.FMC_D7;  fmc.d8  ~ mcu.FMC_D8
+    fmc.d9  ~ mcu.FMC_D9;  fmc.d10 ~ mcu.FMC_D10; fmc.d11 ~ mcu.FMC_D11
+    fmc.d12 ~ mcu.FMC_D12; fmc.d13 ~ mcu.FMC_D13; fmc.d14 ~ mcu.FMC_D14
+    fmc.d15 ~ mcu.FMC_D15
+    fmc.ras  ~ mcu.FMC_SDRAS; fmc.cas  ~ mcu.FMC_SDCAS
+    fmc.we   ~ mcu.FMC_SDWE;  fmc.cs   ~ mcu.FMC_SDNE0
+    fmc.clk  ~ mcu.FMC_SDCLK; fmc.cke  ~ mcu.FMC_SDCKE0
+    fmc.dqml ~ mcu.FMC_NBL0;  fmc.dqmh ~ mcu.FMC_NBL1
+
+    # ── QUADSPI → NOR flash ───────────────────────────────────────────────────
+    quadspi.clk ~ mcu.QUADSPI_CLK
+    quadspi.cs  ~ mcu.QUADSPI_BK1_NCS
+    quadspi.io0 ~ mcu.QUADSPI_BK1_IO0
+    quadspi.io1 ~ mcu.QUADSPI_BK1_IO1
+    quadspi.io2 ~ mcu.QUADSPI_BK1_IO2
+    quadspi.io3 ~ mcu.QUADSPI_BK1_IO3
+
+    # ── Input GPIOs → input module ────────────────────────────────────────────
+    encoder.a  ~ mcu.ENC_A
+    encoder.b  ~ mcu.ENC_B
+    encoder.sw ~ mcu.ENC_SW
+
+    # ── Validation ───────────────────────────────────────────────────────────
+    assert power_3v3.voltage within 3.0V to 3.6V

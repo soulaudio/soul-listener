@@ -1,0 +1,50 @@
+# LT3042EMSE — Analog Devices Ultra-Low-Noise LDO Regulator
+#
+# Package:      MSOP-8E (MSE suffix = exposed pad, 3×3 mm)
+# Manufacturer: Analog Devices (formerly Linear Technology)
+# Datasheet:    https://www.analog.com/media/en/technical-documentation/data-sheets/lt3042.pdf
+# Key specs:    0.8 V to 9.6 V output (set by resistor on SET pin)
+#               0.4 µV RMS output noise (10 Hz–100 kHz)
+#               200 mA output, PSRR 75 dB @ 1 MHz
+# Purpose:      Generates ultra-low-noise 3.3 V AVDD for ES9038Q2M analog supply.
+#               Isolates the analog supply from digital switching noise.
+#
+# Configuration: VOUT = ISET × RSET
+#   ISET = 100 µA (internal), RSET from SET to GND
+#   For VOUT = 3.3 V: RSET = 3.3 V / 100 µA = 33 kΩ
+#
+# ⚠ PIN NUMBERS: MSOP-8E pinout:
+#   Pin 1: IN  (input voltage, 3.3 V from main digital rail)
+#   Pin 2: EN  (enable, active high — tie to IN or MCU GPIO)
+#   Pin 3: SET (output voltage set — connect resistor RSET to GND)
+#   Pin 4: ILIM (current limit set — connect resistor to IN; 0 = max current)
+#   Pin 5: BYP (bypass — 10 µF capacitor to GND for noise filtering)
+#   Pin 6: PG  (power good — open drain, active high when output in regulation)
+#   Pin 7: GND
+#   Pin 8: OUT (regulated output — 3.3 V AVDD)
+#   EP:    Exposed pad — GND (must solder to ground plane for thermal)
+#
+# KiCad symbol: Regulator_Linear:LT3042  (in official kicad-symbols)
+#
+# Distributor availability:
+#   TME:     LT3042EMSE#PBF   (check cz.tme.eu — Analog Devices stocked)
+#   Digi-Key: LT3042EMSE#PBFCT-ND
+#   Mouser:   584-LT3042EMSE#PBF
+
+component LT3042EMSE:
+    trait is_atomic_part<
+        manufacturer = "Analog Devices",
+        partnumber   = "LT3042EMSE#PBF",
+        footprint    = "Package_SO:MSOP-8-1EP_3x3mm_P0.65mm_EP1.68x1.88mm_ThermalVias",
+        symbol       = "Regulator_Linear:LT3042">
+    trait has_designator_prefix<prefix = "U">
+
+    signal IN   ~ pin 1   # Input (3.3 V digital rail)
+    signal EN   ~ pin 2   # Enable (high = on; tie to IN for always-on)
+    signal SET  ~ pin 3   # Output set resistor (RSET = 33 kΩ → VOUT = 3.3 V)
+    signal ILIM ~ pin 4   # Current limit (connect 100 kΩ to IN for max current)
+    signal BYP  ~ pin 5   # Bypass (10 µF capacitor to GND)
+    signal PG   ~ pin 6   # Power good (open drain, pull up to OUT via 100 kΩ)
+    signal GND  ~ pin 7
+    signal OUT  ~ pin 8   # Regulated 3.3 V AVDD output
+    signal EP   ~ pin 9   # Exposed pad = GND

@@ -1,0 +1,67 @@
+# Display module — Good Display GDEM0397T81P (SSD1677 e-ink controller)
+#
+# Mirrors: crates/platform/src/display.rs (DisplayDriver trait)
+#          crates/eink/ (eink-specs, eink-emulator, eink-system)
+#
+# Interface: SPI (Mode 0, up to 10 MHz) + 3 control GPIOs (DC, RST, BUSY)
+# The GDEM0397T81P is a complete display module with flex cable and connector.
+# The PCB only needs: FPC/FFC connector + SPI routing + power + control lines.
+#
+# Power: 3.3 V VCI supply (digital + internal gate driver boost)
+# The module generates its own gate voltage internally (no external VCOM/VGH).
+#
+# FPC connector: 24-pin, 0.5 mm pitch (verify from GDEM0397T81P module spec)
+# Common connector: Molex 52271-2490 or equivalent 24-pin FPC ZIF
+
+from "interfaces.ato" import SPIBus, DisplayCtrl
+
+module Display:
+    """
+    E-ink display interface: FPC connector + decoupling.
+    The GDEM0397T81P module is a complete assembly with FPC cable.
+    """
+
+    # ── Ports ─────────────────────────────────────────────────────────────────
+    power_3v3   = new ElectricPower   # 3.3 V VCI input
+    spi         = new SPIBus          # SPI bus from MCU (MOSI + MISO + SCLK)
+    ctrl        = new DisplayCtrl     # DC, RST, BUSY from/to MCU
+    spi_cs      = new Electrical      # Chip select (driven by MCU SPI1_NSS or GPIO)
+
+    # ── FPC connector placeholder ─────────────────────────────────────────────
+    # TODO: Replace Connector_Generic with the actual 24-pin 0.5 mm FPC footprint.
+    # Verify the GDEM0397T81P module's FPC pin assignment against its spec sheet
+    # (not publicly available — request from Good Display: buy@e-ink-display.com).
+    # Common signal assignment on similar SSD1677 modules:
+    #   Pins 1-2:  VCI  (3.3 V)
+    #   Pins 3-4:  GND
+    #   Pin 5:     MISO (SDO — rarely used for status read, usually left unconnected)
+    #   Pin 6:     SCK
+    #   Pin 7:     MOSI (SDA)
+    #   Pin 8:     CS   (active low)
+    #   Pin 9:     DC   (Data/Command)
+    #   Pin 10:    RST  (Reset, active low)
+    #   Pin 11:    BUSY (busy status output)
+    #   Pins 12-24: reserved / NC
+
+    # ── ESD protection ────────────────────────────────────────────────────────
+    # TVS diode array on SPI lines and control lines (PRTR5V0U2X or similar)
+    # TODO: Add TVS array footprint
+
+    # ── Supply decoupling ─────────────────────────────────────────────────────
+    c_vci_bulk = new Capacitor; c_vci_bulk.capacitance = 10uF  +/- 20%; c_vci_bulk.package = "0805"
+    c_vci_hf   = new Capacitor; c_vci_hf.capacitance   = 100nF +/- 20%; c_vci_hf.package   = "0402"
+    power_3v3.hv ~ c_vci_bulk.p1; c_vci_bulk.p2 ~ power_3v3.lv
+    power_3v3.hv ~ c_vci_hf.p1;   c_vci_hf.p2   ~ power_3v3.lv
+
+    # ── Pull-up on BUSY (active high = busy, open drain on some variants) ─────
+    r_busy = new Resistor
+    r_busy.resistance = 10kohm +/- 5%
+    r_busy.package = "0402"
+    power_3v3.hv ~ r_busy.p1; r_busy.p2 ~ ctrl.busy
+
+    # ── RST line: 100 nF filter cap ───────────────────────────────────────────
+    c_rst = new Capacitor; c_rst.capacitance = 100nF +/- 20%; c_rst.package = "0402"
+    ctrl.rst ~ c_rst.p1; c_rst.p2 ~ power_3v3.lv
+
+    # ── Validation ────────────────────────────────────────────────────────────
+    assert power_3v3.voltage within 2.7V to 3.6V

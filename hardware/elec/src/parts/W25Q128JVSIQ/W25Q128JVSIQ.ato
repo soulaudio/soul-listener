@@ -1,0 +1,48 @@
+# W25Q128JVSIQ — Winbond 16 MB QSPI NOR Flash
+#
+# Package:      SOIC-8, 5.3×6.0 mm (VSIQ suffix = SOIC-8, IQ = industrial, tape)
+#               Alternative: W25Q128JVSIM (WSON-8, 6×5 mm, smaller)
+# Manufacturer: Winbond Electronics
+# Datasheet:    https://www.winbond.com/hq/product/code-storage-flash-memory/
+#               serial-nor-flash/?__locale=en&partNo=W25Q128JV
+# Key specs:    128 Mbit (16 MB), SPI/QSPI, 133 MHz, 100k erase cycles
+#               XiP (eXecute in Place) via QUADSPI memory-mapped mode
+#               Mapped at 0x9000_0000 on STM32H7 QUADSPI bus
+#               Holds: fonts, icons, waveform LUTs, OTA staging partition
+#
+# ⚠ PIN NUMBERS: SOIC-8 standard pinout:
+#   Pin 1: /CS  (chip select, active low)
+#   Pin 2: DO   (data out / IO1 in quad mode)
+#   Pin 3: /WP  (write protect / IO2 in quad mode)
+#   Pin 4: GND
+#   Pin 5: DI   (data in  / IO0 in quad mode)
+#   Pin 6: CLK  (serial clock)
+#   Pin 7: /HOLD or /RESET (IO3 in quad mode)
+#   Pin 8: VCC  (2.7–3.6 V)
+#
+# KiCad symbol: Memory_Flash:W25Q128JVxxQ  (or similar in kicad-symbols)
+#
+# Option B (smaller): W25Q64JVSIQ — 8 MB, same pinout, ~$1 less per unit
+#   partnumber = "W25Q64JVSIQ"
+#
+# Distributor availability:
+#   TME:     W25Q128JVSIQ    (Winbond well-stocked at TME)
+#   Digi-Key: 557-W25Q128JVSIQTR-ND
+#   Mouser:   841-W25Q128JVSIQ
+
+component W25Q128JVSIQ:
+    trait is_atomic_part<
+        manufacturer = "Winbond Electronics",
+        partnumber   = "W25Q128JVSIQ",
+        footprint    = "Package_SO:SOIC-8_5.23x5.23mm_P1.27mm",
+        symbol       = "Memory_Flash:W25Q128JVxxQ">
+    trait has_designator_prefix<prefix = "U">
+
+    signal CS_NEG  ~ pin 1   # Chip select (active low → QUADSPI BK1_NCS)
+    signal IO1     ~ pin 2   # DO / MISO / DQ1
+    signal IO2     ~ pin 3   # /WP  / DQ2 (write protect in SPI mode)
+    signal GND     ~ pin 4
+    signal IO0     ~ pin 5   # DI / MOSI / DQ0
+    signal CLK     ~ pin 6
+    signal IO3     ~ pin 7   # /HOLD or /RESET / DQ3
+    signal VCC     ~ pin 8   # 3.3 V supply

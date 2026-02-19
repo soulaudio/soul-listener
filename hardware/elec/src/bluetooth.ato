@@ -1,0 +1,94 @@
+# Bluetooth module — STM32WB55RGV6 BLE 5.0 / LE Audio co-processor
+#
+# Mirrors: crates/platform/src/bluetooth.rs (BluetoothAdapter trait)
+#          crates/bluetooth/
+#
+# Architecture:
+#   STM32WB55RGV6 runs ST-certified BLE firmware (stm32wb-copro binary).
+#   Communicates with STM32H743 via UART1 using HCI protocol.
+#   Internal balun provides 50 Ω RF output — connect directly to chip antenna.
+#
+# Crystals required by WB55:
+#   HSE: 32 MHz crystal — required for BLE RF calibration and accurate clocking
+#   LSE: 32.768 kHz crystal — for low-power RTC and BLE timing
+#
+# Antenna: Chip antenna (e.g., Johanson 0433AT62A0100E, 2.4 GHz, 0402)
+#   or PCB trace antenna (λ/4 at 2.45 GHz ≈ 30.6 mm; requires ground plane cutout)
+#   Place antenna at board edge; keep ground plane away from radiating element.
+#
+# SWD: The WB55 has its own SWD port for debugging the BLE stack.
+# Connect via secondary debug header (separate from STM32H743 debug).
+
+from "interfaces.ato" import UARTBus, SWDPort
+from "parts/STM32WB55RGV6/STM32WB55RGV6.ato" import STM32WB55RGV6
+
+module Bluetooth:
+    """
+    STM32WB55 BLE co-processor with crystals, decoupling, and antenna.
+    """
+
+    # ── Ports ─────────────────────────────────────────────────────────────────
+    power_3v3 = new ElectricPower  # 3.3 V digital supply
+    uart      = new UARTBus        # HCI UART to STM32H743 (TX/RX crossed)
+    swd_wb    = new SWDPort        # Secondary SWD debug port for WB55
+
+    # ── STM32WB55 ─────────────────────────────────────────────────────────────
+    wb55 = new STM32WB55RGV6
+
+    # Power connections
+    power_3v3.hv ~ wb55.VDD
+    power_3v3.hv ~ wb55.VDDIO2
+    power_3v3.hv ~ wb55.VBAT   # Tie VBAT to VDD (no coin cell on v1)
+    power_3v3.lv ~ wb55.VSS
+    power_3v3.lv ~ wb55.EP
+
+    # HCI UART (TX from WB55 perspective → RX on H743; RX from WB55 ← TX from H743)
+    uart.tx ~ wb55.UART1_TX
+    uart.rx ~ wb55.UART1_RX
+
+    # SWD debug
+    swd_wb.swdio  ~ wb55.SWDIO_WB
+    swd_wb.swdclk ~ wb55.SWDCLK_WB
+    swd_wb.nrst   ~ wb55.NRST_WB
+
+    # ── Decoupling ────────────────────────────────────────────────────────────
+    # VDD decoupling: 4 × 100 nF + 10 µF bulk
+    c_vdd_1 = new Capacitor; c_vdd_1.capacitance = 100nF +/- 20%; c_vdd_1.package = "0402"
+    c_vdd_2 = new Capacitor; c_vdd_2.capacitance = 100nF +/- 20%; c_vdd_2.package = "0402"
+    c_vdd_3 = new Capacitor; c_vdd_3.capacitance = 100nF +/- 20%; c_vdd_3.package = "0402"
+    c_vdd_4 = new Capacitor; c_vdd_4.capacitance = 100nF +/- 20%; c_vdd_4.package = "0402"
+    c_vdd_bulk = new Capacitor; c_vdd_bulk.capacitance = 10uF +/- 20%; c_vdd_bulk.package = "0805"
+    power_3v3.hv ~ c_vdd_1.p1; c_vdd_1.p2 ~ power_3v3.lv
+    power_3v3.hv ~ c_vdd_2.p1; c_vdd_2.p2 ~ power_3v3.lv
+    power_3v3.hv ~ c_vdd_3.p1; c_vdd_3.p2 ~ power_3v3.lv
+    power_3v3.hv ~ c_vdd_4.p1; c_vdd_4.p2 ~ power_3v3.lv
+    power_3v3.hv ~ c_vdd_bulk.p1; c_vdd_bulk.p2 ~ power_3v3.lv
+
+    # ── 32 MHz HSE Crystal ────────────────────────────────────────────────────
+    # Required for BLE RF calibration and precise clocking
+    hse = new Crystal
+    hse.frequency = 32MHz +/- 10ppm
+    hse.package   = "2016"  # 2.0×1.6 mm SMD — e.g., Abracon ABM8G-32.000MHz
+    c_hse_1 = new Capacitor; c_hse_1.capacitance = 8pF +/- 5%; c_hse_1.package = "0402"
+    c_hse_2 = new Capacitor; c_hse_2.capacitance = 8pF +/- 5%; c_hse_2.package = "0402"
+    # HSE connections: hse.p1 ~ wb55.PH0_OSC_IN, hse.p2 ~ wb55.PH1_OSC_OUT
+    # Load caps: hse.p1 ~ c_hse_1.p1; c_hse_1.p2 ~ power_3v3.lv
+    #            hse.p2 ~ c_hse_2.p1; c_hse_2.p2 ~ power_3v3.lv
+    # TODO: confirm OSC_IN/OSC_OUT pin numbers after symbol verification
+
+    # ── 32.768 kHz LSE Crystal ────────────────────────────────────────────────
+    lse = new Crystal
+    lse.frequency = 32768Hz +/- 20ppm
+    lse.package   = "3215"
+    c_lse_1 = new Capacitor; c_lse_1.capacitance = 6pF +/- 5%; c_lse_1.package = "0402"
+    c_lse_2 = new Capacitor; c_lse_2.capacitance = 6pF +/- 5%; c_lse_2.package = "0402"
+    # TODO: confirm PC14/PC15 pin numbers after symbol verification
+
+    # ── 2.4 GHz Chip Antenna ─────────────────────────────────────────────────
+    # RF_ANT (50 Ω) → chip antenna (Johanson 0433AT62A0100E or similar)
+    # No matching network needed due to internal balun
+    # TODO: Add chip antenna component stub
+    # ant.p1 ~ wb55.RF_ANT; ant.p2 ~ power_3v3.lv  (antenna reference ground)
+
+    # ── Validation ────────────────────────────────────────────────────────────
+    assert power_3v3.voltage within 1.7V to 3.6V  # WB55 supply range

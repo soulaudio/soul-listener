@@ -1,0 +1,97 @@
+# BQ25895RTWT — Texas Instruments USB Fast-Charge PMIC
+#
+# Package:      WQFN-24, 4×4 mm, 0.5 mm pitch (RTWT = RoHS, Tape & Reel, WQFN)
+# Manufacturer: Texas Instruments
+# Datasheet:    https://www.ti.com/lit/ds/symlink/bq25895.pdf
+# Key specs:    USB-C PD input up to 14 V / 3 A (via external D+/D− detection)
+#               Integrated synchronous boost + LiPo charger
+#               I²C programmable (charge current, voltage, OTG mode)
+#               PMID output (input voltage pass-through for USB OTG)
+#               Operates with or without battery (power path management)
+#
+# ⚠ PIN NUMBERS: WQFN-24 pinout — verify against KiCad symbol.
+#   Pin 1:  PGND (power ground)
+#   Pin 2:  VBUS (USB input, up to 14 V)
+#   Pin 3:  VBUS
+#   Pin 4:  D-   (USB D minus — for BC1.2 detection)
+#   Pin 5:  D+   (USB D plus  — for BC1.2 detection)
+#   Pin 6:  STAT (charge status LED indicator, open drain)
+#   Pin 7:  INT  (interrupt, active low open drain → MCU GPIO)
+#   Pin 8:  SCL  (I²C clock)
+#   Pin 9:  SDA  (I²C data)
+#   Pin 10: OTG  (boost mode enable, active high → MCU GPIO)
+#   Pin 11: CE   (charge enable, active low — tie to GND to always enable)
+#   Pin 12: ILIM (input current limit setting — resistor to GND)
+#   Pin 13: TS   (temperature sense input — NTC thermistor on battery)
+#   Pin 14: BTST (bootstrap for high-side gate driver — 100 nF to SW)
+#   Pin 15: SW   (switch node — inductor here)
+#   Pin 16: SW
+#   Pin 17: REGN (internal 5 V LDO output for gate drive — 1 µF to GND)
+#   Pin 18: SYS  (system output, regulated to VSYSMIN, feeds MCU/peripherals)
+#   Pin 19: SYS
+#   Pin 20: BAT  (battery terminal)
+#   Pin 21: BAT
+#   Pin 22: PMID (input voltage / VBUS pass-through for OTG)
+#   Pin 23: PMID
+#   Pin 24: PGND
+#   EP:     Exposed pad = PGND (must connect to ground plane)
+#
+# KiCad symbol: Battery_Management:BQ25895  (check kicad-symbols; may need manual)
+#
+# Distributor availability:
+#   TME:     BQ25895RTWT     (check cz.tme.eu — TI well-stocked)
+#   Digi-Key: 296-BQ25895RTWR-ND (note: RTWR = reel; RTWT = tape)
+#   Mouser:   595-BQ25895RTWT
+
+component BQ25895RTWT:
+    trait is_atomic_part<
+        manufacturer = "Texas Instruments",
+        partnumber   = "BQ25895RTWT",
+        footprint    = "Package_DFN_QFN:WQFN-24-1EP_4x4mm_P0.5mm_EP2.7x2.7mm",
+        symbol       = "BQ25895RTWT.kicad_sym">
+    trait has_designator_prefix<prefix = "U">
+
+    # ── Power input ───────────────────────────────────────────────────────────
+    signal VBUS_1 ~ pin 2
+    signal VBUS_2 ~ pin 3   # Both VBUS pins must be connected
+
+    # ── USB BC1.2 / PD detection ──────────────────────────────────────────────
+    signal DM ~ pin 4       # D− (USB downstream port detection)
+    signal DP ~ pin 5       # D+ (USB downstream port detection)
+
+    # ── Status / control (MCU GPIO) ───────────────────────────────────────────
+    signal STAT ~ pin 6     # Charge status (open drain → LED + MCU input)
+    signal INT  ~ pin 7     # Interrupt (active low, open drain → MCU GPIO)
+    signal OTG  ~ pin 10    # OTG boost enable (MCU GPIO, high = boost on)
+    signal CE   ~ pin 11    # Charge enable (active low; tie to GND to always charge)
+
+    # ── I²C ───────────────────────────────────────────────────────────────────
+    signal SCL ~ pin 8
+    signal SDA ~ pin 9
+
+    # ── Input current limit ───────────────────────────────────────────────────
+    signal ILIM ~ pin 12    # Resistor from ILIM to GND sets default IINMAX
+
+    # ── Battery ───────────────────────────────────────────────────────────────
+    signal TS    ~ pin 13   # NTC thermistor on battery pack
+    signal BAT_1 ~ pin 20
+    signal BAT_2 ~ pin 21   # Both BAT pins must be connected
+
+    # ── Switching regulator ───────────────────────────────────────────────────
+    signal BTST  ~ pin 14   # Bootstrap: 100 nF to SW
+    signal SW_1  ~ pin 15
+    signal SW_2  ~ pin 16   # Both SW pins to inductor
+    signal REGN  ~ pin 17   # Internal gate drive LDO: 1 µF to PGND
+
+    # ── System output ─────────────────────────────────────────────────────────
+    signal SYS_1 ~ pin 18
+    signal SYS_2 ~ pin 19   # System output → 3.3 V LDO input or main rail
+
+    # ── PMID (USB pass-through / OTG) ────────────────────────────────────────
+    signal PMID_1 ~ pin 22
+    signal PMID_2 ~ pin 23
+
+    # ── Ground ────────────────────────────────────────────────────────────────
+    signal PGND_1 ~ pin 1
+    signal PGND_2 ~ pin 24
+    signal EP     ~ pin 25   # Exposed pad = PGND

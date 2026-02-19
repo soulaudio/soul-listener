@@ -1,0 +1,101 @@
+# Hardware CI — SoulAudio DAP (Atopile ERC validation)
+#
+# Validates the Atopile hardware design on every push/PR to main.
+# Runs `ato check` against the check-only build target, which executes all
+# `assert` statements (voltage range checks, ERC rules) without requiring
+# KiCad to be installed in CI.
+#
+# All GitHub Actions are pinned to exact commit SHAs for supply-chain security.
+# To update a pinned action:
+#   1. Find the new release tag at github.com/<owner>/<repo>/releases
+#   2. Get the commit SHA: git ls-remote https://github.com/<owner>/<repo> refs/tags/<tag>
+#   3. Update the SHA below and the version comment
+#
+# Current pins (as of 2026-02-19):
+#   actions/checkout          v4.2.2   11bd71901bbe5b1630ceea73d27597364c9af683
+#   atopile/setup-atopile     v1.8     a44779655197de0f408861581669f09b2145bc33
+
+name: Hardware
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'hardware/**'
+      - '.github/workflows/hardware.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'hardware/**'
+      - '.github/workflows/hardware.yml'
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Atopile ERC check
+  #
+  # Validates all `assert` statements in the .ato design files.
+  # These act as electrical rule checks (ERC): voltage ranges, impedance
+  # matching, and interface compliance are verified at compile time.
+  #
+  # Does NOT require KiCad — uses the `check-only` build target from ato.yaml
+  # which skips the PCB layout step.
+  # ---------------------------------------------------------------------------
+  ato-check:
+    name: Atopile ERC Check
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: hardware
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      - name: Set up Atopile
+        uses: atopile/setup-atopile@a44779655197de0f408861581669f09b2145bc33  # v1.8
+        with:
+          version: "0.12.5"
+
+      - name: Install locked dependencies
+        run: ato sync
+
+      - name: Run Atopile ERC (ato check)
+        run: ato build --build check-only
+
+  # ---------------------------------------------------------------------------
+  # BOM generation
+  #
+  # Produces the bill of materials from the Atopile netlist and uploads it
+  # as a CI artifact. Only runs on pushes to main (not on PRs) to avoid
+  # artifact clutter.
+  # ---------------------------------------------------------------------------
+  bom-generate:
+    name: Generate BOM
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    defaults:
+      run:
+        working-directory: hardware
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      - name: Set up Atopile
+        uses: atopile/setup-atopile@a44779655197de0f408861581669f09b2145bc33  # v1.8
+        with:
+          version: "0.12.5"
+
+      - name: Install locked dependencies
+        run: ato sync
+
+      - name: Generate BOM
+        run: ato build --build bom-only
+
+      - name: Upload BOM artifact
+        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce5449  # v4.6.0
+        with:
+          name: bom-${{ github.sha }}
+          path: hardware/build/
+          retention-days: 30
+          if-no-files-found: warn

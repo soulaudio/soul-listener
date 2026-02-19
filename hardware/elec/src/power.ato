@@ -1,0 +1,128 @@
+# Power module — BQ25895 PMIC + USB-C connector + LiPo battery
+#
+# Mirrors: crates/platform/src/power.rs (PowerManager, PowerMonitor traits)
+#
+# Power architecture:
+#   USB-C (5–12 V in) → BQ25895 → SYS rail (≈4.2–3.0 V, tracks battery)
+#   SYS rail → AP2112K-3.3 LDO → 3.3 V regulated rail for all digital ICs
+#   3.3 V rail → LT3042 (inside audio.ato) → 3.3 V AVDD (ultra-low-noise)
+#   TODO: 3.7 V LiPo → charge pump → ±5 V for TPA6120A2
+#
+# BQ25895 features used:
+#   - USB-C PD input detection (via D+/D- BC1.2; PD via software)
+#   - LiPo charging (4.2 V / programmable current via I²C)
+#   - Power path management (SYS stays alive when USB removed)
+#   - I²C status/config (charge current, input limit, voltage, OTG)
+#   - INT pin → MCU for charge state interrupts
+#
+# Note: For USB-C PD negotiation above 5 V, a dedicated TCPC/PD controller
+# (e.g., FUSB302) is required. BQ25895 handles BC1.2 but not USB-PD.
+# This can be added as a future revision. For v1: 5 V operation only.
+
+from "interfaces.ato" import I2CBus, USBDiffPair
+from "parts/BQ25895RTWT/BQ25895RTWT.ato" import BQ25895RTWT
+
+module Power:
+    """
+    USB-C input, LiPo charging, and system power rail generation.
+    Provides regulated 3.3 V to all digital modules.
+    """
+
+    # ── Ports ─────────────────────────────────────────────────────────────────
+    usb_in     = new USBDiffPair    # USB data lines (to MCU OTG HS)
+    pmic_i2c   = new I2CBus        # I²C to MCU (BQ25895 status/config, addr 0x6A)
+    power_3v3  = new ElectricPower  # Regulated 3.3 V output → all modules
+    power_sys  = new ElectricPower  # Raw SYS output (battery-tracking) — internal use
+    gnd        = new Electrical
+
+    # ── BQ25895 PMIC ─────────────────────────────────────────────────────────
+    pmic = new BQ25895RTWT
+
+    # USB-C VBUS (5 V input, protected by the IC's OVP)
+    # VBUS is connected to the USB-C VBUS pin via a footprint
+    # The CC pins on USB-C require 5.1 kΩ pull-downs (UFP mode; 56 kΩ pull-ups for DFP)
+    power_sys.hv ~ pmic.SYS_1; power_sys.hv ~ pmic.SYS_2
+    power_sys.lv ~ pmic.PGND_1; power_sys.lv ~ pmic.PGND_2; power_sys.lv ~ pmic.EP
+
+    # I²C
+    pmic_i2c.scl ~ pmic.SCL
+    pmic_i2c.sda ~ pmic.SDA
+
+    # USB data passthrough to MCU
+    usb_in.dp ~ pmic.DP
+    usb_in.dm ~ pmic.DM
+
+    # CE: charge enable (active low) — tie to GND to always allow charging
+    power_sys.lv ~ pmic.CE
+
+    # ILIM resistor: 100 Ω → IINMAX = 3 A default; override via I²C
+    r_ilim = new Resistor
+    r_ilim.resistance = 100ohm +/- 5%
+    r_ilim.package = "0402"
+    pmic.ILIM ~ r_ilim.p1; r_ilim.p2 ~ power_sys.lv
+
+    # BTST: 100 nF bootstrap capacitor to SW
+    c_btst = new Capacitor; c_btst.capacitance = 100nF +/- 20%; c_btst.package = "0402"
+    pmic.BTST ~ c_btst.p1; c_btst.p2 ~ pmic.SW_1
+
+    # REGN: 1 µF to PGND (internal gate drive LDO output)
+    c_regn = new Capacitor; c_regn.capacitance = 1uF +/- 20%; c_regn.package = "0402"
+    pmic.REGN ~ c_regn.p1; c_regn.p2 ~ power_sys.lv
+
+    # PMID: 10 µF input decoupling
+    c_pmid = new Capacitor; c_pmid.capacitance = 10uF +/- 20%; c_pmid.package = "0805"
+    pmic.PMID_1 ~ c_pmid.p1; c_pmid.p2 ~ power_sys.lv
+
+    # Battery: 2-pin JST-PH connector placeholder
+    # BAT pins connect to the LiPo battery JST connector through a protection fuse
+    # TODO: add battery connector footprint
+
+    # TS: NTC thermistor divider (10 kΩ NTC + 10 kΩ series from 3.3 V)
+    # Tie to GND via 5.1 kΩ to disable thermal monitoring if no NTC is fitted
+    r_ts = new Resistor
+    r_ts.resistance = 5.1kohm +/- 5%
+    r_ts.package = "0402"
+    pmic.TS ~ r_ts.p1; r_ts.p2 ~ power_sys.lv
+
+    # Inductor (4.7 µH, 4 A, DCR < 50 mΩ) — e.g., Bourns SRR0402-4R7Y
+    l_sw = new Inductor
+    l_sw.value = 4.7uH +/- 20%
+    l_sw.package = "0402"
+    pmic.SW_1 ~ l_sw.p1; l_sw.p2 ~ pmic.BAT_1
+
+    # SYS output decoupling: 22 µF + 100 nF
+    c_sys_bulk = new Capacitor; c_sys_bulk.capacitance = 22uF +/- 20%; c_sys_bulk.package = "0805"
+    c_sys_hf   = new Capacitor; c_sys_hf.capacitance   = 100nF +/- 20%; c_sys_hf.package   = "0402"
+    power_sys.hv ~ c_sys_bulk.p1; c_sys_bulk.p2 ~ power_sys.lv
+    power_sys.hv ~ c_sys_hf.p1;   c_sys_hf.p2   ~ power_sys.lv
+
+    # STAT indicator LED (red): 1 kΩ series resistor
+    r_stat = new Resistor; r_stat.resistance = 1kohm +/- 5%; r_stat.package = "0402"
+    pmic.STAT ~ r_stat.p1
+    # r_stat.p2 → LED cathode → GND (LED added separately in connectors)
+
+    # ── AP2112K-3.3 LDO: SYS → 3.3 V regulated ───────────────────────────────
+    # The BQ25895 SYS rail tracks the battery (3.0–4.2 V).
+    # The AP2112K-3.3 provides a stable 3.3 V with good PSRR for digital use.
+    # Input range: 2.5–6.0 V. Output: 3.3 V / 600 mA. SOT-25 package.
+    # Note: With all peripherals active (MCU 280 mA + peripherals ≈ 450 mA total),
+    # a higher-current LDO or direct SYS connection with caps may be preferred.
+    # TODO: Evaluate if AP2112K-3.3 current budget is sufficient.
+    ldo_3v3 = new Regulator  # Replace with AP2112K-3.3 component stub
+    ldo_3v3.v_in  = power_sys.voltage
+    ldo_3v3.v_out = 3.3V +/- 2%
+
+    power_sys.hv ~ ldo_3v3.input.hv
+    power_sys.lv ~ ldo_3v3.input.lv
+    ldo_3v3.output.hv ~ power_3v3.hv
+    ldo_3v3.output.lv ~ power_3v3.lv
+
+    # 3.3 V output decoupling
+    c_3v3_bulk = new Capacitor; c_3v3_bulk.capacitance = 22uF +/- 20%; c_3v3_bulk.package = "0805"
+    c_3v3_hf   = new Capacitor; c_3v3_hf.capacitance   = 100nF +/- 20%; c_3v3_hf.package   = "0402"
+    power_3v3.hv ~ c_3v3_bulk.p1; c_3v3_bulk.p2 ~ power_3v3.lv
+    power_3v3.hv ~ c_3v3_hf.p1;   c_3v3_hf.p2   ~ power_3v3.lv
+
+    # ── Validation ────────────────────────────────────────────────────────────
+    assert power_3v3.voltage within 3.2V to 3.4V
+    assert power_sys.voltage within 3.0V to 4.35V  # LiPo operating range

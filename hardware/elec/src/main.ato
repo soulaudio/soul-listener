@@ -1,0 +1,107 @@
+# Top-level SoulAudio DAP board
+#
+# Wires all sub-modules together and enforces cross-module electrical rules.
+# This is the entry point referenced by ato.yaml: "entry: main.ato:SoulAudioDAP"
+#
+# Architecture:
+#   Power  → 3.3 V rail → MCU, Audio, Bluetooth, Display, Memory, Input
+#   MCU    → SPI → Display
+#   MCU    → I²S + I²C → Audio
+#   MCU    → UART → Bluetooth
+#   MCU    → FMC → Memory (SDRAM)
+#   MCU    → QUADSPI → Memory (NOR flash)
+#   MCU    → GPIOs → Input (encoder + buttons)
+#   Power  → I²C → MCU (PMIC status)
+#   Power  → USB data lines → MCU (OTG HS)
+#
+# Ground plane: single shared ground (digital + analog star point on PCB)
+# The split between AGND and DGND for the ES9038Q2M is handled in audio.ato
+# via the star-connected agnd node; both connect to the board GND plane at
+# the single star junction near the DAC.
+
+from "interfaces.ato" import (
+    I2CBus, SPIBus, I2SBus, UARTBus, SWDPort,
+    DisplayCtrl, FMCBus, QSPIBus, EncoderBus, USBDiffPair
+)
+from "mcu.ato"       import MCU
+from "audio.ato"     import Audio
+from "power.ato"     import Power
+from "display.ato"   import Display
+from "bluetooth.ato" import Bluetooth
+from "memory.ato"    import Memory
+from "input.ato"     import Input
+
+module SoulAudioDAP:
+    """
+    SoulAudio DAP — complete board netlist.
+    Connects MCU, audio chain, power management, display, BLE, memory, and input.
+    """
+
+    # ── Sub-module instances ──────────────────────────────────────────────────
+    mcu       = new MCU
+    audio     = new Audio
+    power     = new Power
+    display   = new Display
+    bluetooth = new Bluetooth
+    memory    = new Memory
+    input     = new Input
+
+    # ── Power distribution (3.3 V rail → all modules) ─────────────────────────
+    # The Power module generates the 3.3 V rail from USB-C / LiPo via BQ25895 + AP2112K-3.3.
+    power.power_3v3 ~ mcu.power_3v3
+    power.power_3v3 ~ audio.power_3v3
+    power.power_3v3 ~ display.power_3v3
+    power.power_3v3 ~ bluetooth.power_3v3
+    power.power_3v3 ~ memory.power_3v3
+    power.power_3v3 ~ input.power_3v3
+
+    # ── MCU ↔ Power (PMIC I²C + USB data) ─────────────────────────────────────
+    # PMIC I²C: MCU configures / monitors BQ25895 charge state (addr 0x6A)
+    mcu.pmic_i2c ~ power.pmic_i2c
+    # USB OTG HS data lines pass through PMIC to MCU
+    mcu.usb ~ power.usb_in
+
+    # ── MCU ↔ Audio ───────────────────────────────────────────────────────────
+    # SAI1 I²S: 32-bit/768 kHz PCM stream to ES9038Q2M
+    mcu.audio_i2s ~ audio.i2s
+    # I²C: volume, filter, oversampling config (ES9038Q2M addr 0x48)
+    mcu.audio_i2c ~ audio.i2c
+
+    # ── MCU ↔ Display ─────────────────────────────────────────────────────────
+    # SPI1: MOSI + SCLK (MISO rarely used for SSD1677; wired but typically NC)
+    mcu.display_spi ~ display.spi
+    # DC, RST, BUSY control lines
+    mcu.display_ctrl ~ display.ctrl
+
+    # ── MCU ↔ Bluetooth ───────────────────────────────────────────────────────
+    # USART1: HCI protocol to STM32WB55 (TX/RX crossed at module boundary)
+    mcu.bt_uart ~ bluetooth.uart
+
+    # ── MCU ↔ Memory ──────────────────────────────────────────────────────────
+    # FMC: 16-bit SDRAM bus to W9825G6KH-6 (32 MB, mapped at 0xC000_0000)
+    mcu.fmc ~ memory.fmc
+    # QUADSPI: quad SPI bus to W25Q128JVSIQ (16 MB, XiP at 0x9000_0000)
+    mcu.quadspi ~ memory.quadspi
+
+    # ── MCU ↔ Input ───────────────────────────────────────────────────────────
+    # Encoder quadrature A/B + push-switch, 5 buttons (play/prev/next/menu/power)
+    mcu.encoder ~ input.encoder
+
+    # ── Debug / programming headers ───────────────────────────────────────────
+    # STM32H743 SWD: primary debug header (J1 — 10-pin Cortex Debug Connector)
+    swd_main = new SWDPort
+    mcu.swd ~ swd_main
+
+    # STM32WB55 SWD: secondary debug header (J2 — 10-pin)
+    swd_wb = new SWDPort
+    bluetooth.swd_wb ~ swd_wb
+
+    # ── Board-level validation ─────────────────────────────────────────────────
+    # Confirm the shared 3.3 V rail voltage is within spec for all consumers:
+    #   STM32H743: 3.0–3.6 V
+    #   ES9038Q2M DVDD: 3.0–3.6 V
+    #   W9825G6KH-6 VDD: 2.7–3.6 V
+    #   W25Q128JVSIQ VCC: 2.7–3.6 V
+    #   STM32WB55 VDD: 1.71–3.6 V
+    # → intersection: 3.0–3.6 V (power.ato asserts 3.2–3.4 V ✓)
+    assert power.power_3v3.voltage within 3.0V to 3.6V

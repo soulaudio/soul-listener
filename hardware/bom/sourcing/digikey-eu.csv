@@ -1,0 +1,11 @@
+# BOM sourcing — Digi-Key EU (digikey.de — NL warehouse)
+# Updated: 2026-02-19
+# Format: Ref,QtyTotal,MfrPartNo,DKPartNo,Description,Package,UnitPriceEUR,Notes
+#
+# Digi-Key EU stocks items not available at TME — particularly ESS Technology parts.
+# TODO: populate DK part numbers and prices
+
+Ref,QtyTotal,MfrPartNo,DKPartNo,Description,Package,UnitPriceEUR,Notes
+U2,1,ES9038Q2M,,Hi-Fi DAC 32-bit/768kHz,TSSOP-28,,Primary source for ES9038Q2M in EU
+U4,1,LT3042EMSE#PBF,,Ultra-LN LDO 3.3V 200mA,MSOP-8E,,Good Digi-Key stock
+U8,1,W9825G6KH-6,,SDRAM 256Mbit 16-bit FMC,TSOP-II-54,,If TME is out of stock

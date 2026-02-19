@@ -1,0 +1,18 @@
+# BOM sourcing — TME (tme.eu) — Primary EU distributor (Czech Republic)
+# REST API: https://api.tme.eu
+# Updated: 2026-02-19
+# Format: Ref,QtyTotal,MfrPartNo,TMESymbol,Description,Package,Category,UnitPriceEUR,Notes
+#
+# TODO: populate stock/price from TME REST API (GET /Products/Search)
+
+Ref,QtyTotal,MfrPartNo,TMESymbol,Description,Package,UnitPriceEUR,Notes
+U1,1,STM32H743ZIT6,STM32H743ZIT6TR,MCU Cortex-M7 480MHz 2MB Flash,LQFP-144,,Check TME stock
+U2,1,ES9038Q2M,ES9038Q2M,Hi-Fi DAC 32-bit/768kHz,TSSOP-28,,Source Digi-Key if TME unavailable
+U3,1,TPA6120A2DGN,TPA6120A2DGN,Headphone Amp ±5V class-AB,MSOP-8 PowerPAD,,Check TI/TME stock
+U4,1,LT3042EMSE#PBF,LT3042EMSE,Ultra-LN LDO 3.3V 200mA,MSOP-8E,,Source Digi-Key if TME unavailable
+U5,1,BQ25895RTWT,BQ25895RTWT,USB-C PMIC LiPo charger,WQFN-24,,Check TI/TME stock
+U6,1,STM32WB55RGV6TR,STM32WB55RGV6TR,BLE 5.0 co-processor Cortex-M4+M0,VFQFPN-68,,Check TME stock
+U7,1,W25Q128JVSIQ,W25Q128JVSIQ,QSPI NOR Flash 128Mbit,SOIC-8,,Check TME stock
+U8,1,W9825G6KH-6,W9825G6KH-6,SDRAM 256Mbit 16-bit FMC,TSOP-II-54,,May need Digi-Key/Mouser
+U9,1,AP2112K-3.3TRG1,AP2112K-3.3TRG1,LDO 3.3V 600mA SYS→3V3,SOT-25,,Common; check TME
+J1,1,GDEM0397T81P,GDEM0397T81P,3.97in 800x480 e-ink module,Module,,Direct: Good Display (buy@e-ink-display.com)

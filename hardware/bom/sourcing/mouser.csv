@@ -1,0 +1,11 @@
+# BOM sourcing — Mouser EU (mouser.de — DE warehouse)
+# Updated: 2026-02-19
+# Format: Ref,QtyTotal,MfrPartNo,MouserPartNo,Description,Package,UnitPriceEUR,Notes
+#
+# Mouser EU as secondary source for TI and ADI parts.
+# TODO: populate Mouser part numbers and prices
+
+Ref,QtyTotal,MfrPartNo,MouserPartNo,Description,Package,UnitPriceEUR,Notes
+U3,1,TPA6120A2DGN,,Headphone Amp ±5V class-AB,MSOP-8 PowerPAD,,Good TI stock at Mouser
+U4,1,LT3042EMSE#PBF,,Ultra-LN LDO 3.3V 200mA,MSOP-8E,,ADI/LTC part — Mouser stocks well
+U5,1,BQ25895RTWT,,USB-C PMIC LiPo charger I2C,WQFN-24,,TI PMIC — good Mouser stock

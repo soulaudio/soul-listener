@@ -1,0 +1,59 @@
+# SoulAudio DAP — Atopile Project Manifest
+# https://docs.atopile.io/atopile/reference/config
+#
+# Stable toolchain pin. The v0.14.x pre-release requires Python 3.14 and has
+# breaking changes from the core rewrite (January 2026). Pin to stable v0.12.x
+# until v0.14 is declared stable.
+requires-atopile: "^0.12.5"
+
+identifier: "soulaudio/soulaudio-dap"
+
+paths:
+  src: elec/src
+  layout: elec/layouts
+
+builds:
+  # ── default ──────────────────────────────────────────────────────────────
+  # Full build: BOM + manufacturing data + PCB layout update.
+  # Run locally with KiCad installed: `ato build`
+  default:
+    entry: main.ato:SoulAudioDAP
+    targets:
+      - __default__
+    exclude_checks:
+      # PCB layout is in progress — DRC will fail until routing is complete.
+      # Remove this exclusion once the board is fully routed.
+      - PCB.requires_drc_check
+
+  # ── check-only ────────────────────────────────────────────────────────────
+  # Schematic + ERC validation only, no KiCad PCB output.
+  # Used in CI (`ato build --target check-only`).
+  check-only:
+    entry: main.ato:SoulAudioDAP
+    targets:
+      - bom
+    exclude_checks:
+      - PCB.requires_drc_check
+
+  # ── bom-only ──────────────────────────────────────────────────────────────
+  # Generates BOM without touching the PCB file.
+  # Useful for sourcing checks in CI.
+  bom-only:
+    entry: main.ato:SoulAudioDAP
+    targets:
+      - bom
+    exclude_checks:
+      - PCB.requires_drc_check
+
+dependencies:
+  - type: registry
+    identifier: atopile/generics
+    release: 0.1.5
+
+# ── Publishing metadata ───────────────────────────────────────────────────
+repository: "https://github.com/soulaudio/soulaudio-dap"
+authors:
+  - name: "SoulAudio"
+summary: "SoulAudio DAP hardware — STM32H743ZI hi-fi digital audio player"
+license: "CERN-OHL-P-2.0"
+version: "0.1.0"
