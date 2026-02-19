@@ -1,0 +1,9 @@
+version: 2
+updates:
+  # Keep GitHub Actions up to date (actions/checkout, dtolnay/rust-toolchain, etc.)
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    labels:
+      - dependencies

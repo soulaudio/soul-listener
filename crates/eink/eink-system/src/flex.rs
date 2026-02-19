@@ -467,9 +467,11 @@ mod tests {
 
     #[test]
     fn test_flex_row_start() {
-        let mut style = Style::default();
-        style.flex_direction = FlexDirection::Row;
-        style.justify_content = Justify::Start;
+        let style = Style {
+            flex_direction: FlexDirection::Row,
+            justify_content: Justify::Start,
+            ..Default::default()
+        };
 
         let layout = FlexLayout::new(style);
         let children = vec![
@@ -488,9 +490,11 @@ mod tests {
 
     #[test]
     fn test_flex_row_end() {
-        let mut style = Style::default();
-        style.flex_direction = FlexDirection::Row;
-        style.justify_content = Justify::End;
+        let style = Style {
+            flex_direction: FlexDirection::Row,
+            justify_content: Justify::End,
+            ..Default::default()
+        };
 
         let layout = FlexLayout::new(style);
         let children = vec![create_child(50, 50), create_child(50, 50)];
@@ -505,9 +509,11 @@ mod tests {
 
     #[test]
     fn test_flex_row_center() {
-        let mut style = Style::default();
-        style.flex_direction = FlexDirection::Row;
-        style.justify_content = Justify::Center;
+        let style = Style {
+            flex_direction: FlexDirection::Row,
+            justify_content: Justify::Center,
+            ..Default::default()
+        };
 
         let layout = FlexLayout::new(style);
         let children = vec![create_child(50, 50), create_child(50, 50)];
@@ -522,9 +528,11 @@ mod tests {
 
     #[test]
     fn test_flex_row_space_between() {
-        let mut style = Style::default();
-        style.flex_direction = FlexDirection::Row;
-        style.justify_content = Justify::SpaceBetween;
+        let style = Style {
+            flex_direction: FlexDirection::Row,
+            justify_content: Justify::SpaceBetween,
+            ..Default::default()
+        };
 
         let layout = FlexLayout::new(style);
         let children = vec![
@@ -544,9 +552,11 @@ mod tests {
 
     #[test]
     fn test_flex_row_space_around() {
-        let mut style = Style::default();
-        style.flex_direction = FlexDirection::Row;
-        style.justify_content = Justify::SpaceAround;
+        let style = Style {
+            flex_direction: FlexDirection::Row,
+            justify_content: Justify::SpaceAround,
+            ..Default::default()
+        };
 
         let layout = FlexLayout::new(style);
         let children = vec![create_child(50, 50), create_child(50, 50)];
@@ -561,9 +571,11 @@ mod tests {
 
     #[test]
     fn test_flex_row_space_evenly() {
-        let mut style = Style::default();
-        style.flex_direction = FlexDirection::Row;
-        style.justify_content = Justify::SpaceEvenly;
+        let style = Style {
+            flex_direction: FlexDirection::Row,
+            justify_content: Justify::SpaceEvenly,
+            ..Default::default()
+        };
 
         let layout = FlexLayout::new(style);
         let children = vec![create_child(50, 50), create_child(50, 50)];
@@ -578,9 +590,11 @@ mod tests {
 
     #[test]
     fn test_flex_column_start() {
-        let mut style = Style::default();
-        style.flex_direction = FlexDirection::Column;
-        style.justify_content = Justify::Start;
+        let style = Style {
+            flex_direction: FlexDirection::Column,
+            justify_content: Justify::Start,
+            ..Default::default()
+        };
 
         let layout = FlexLayout::new(style);
         let children = vec![
@@ -599,10 +613,12 @@ mod tests {
 
     #[test]
     fn test_flex_with_gap() {
-        let mut style = Style::default();
-        style.flex_direction = FlexDirection::Row;
-        style.justify_content = Justify::Start;
-        style.gap = 10;
+        let style = Style {
+            flex_direction: FlexDirection::Row,
+            justify_content: Justify::Start,
+            gap: 10,
+            ..Default::default()
+        };
 
         let layout = FlexLayout::new(style);
         let children = vec![
@@ -621,9 +637,11 @@ mod tests {
 
     #[test]
     fn test_align_items_start() {
-        let mut style = Style::default();
-        style.flex_direction = FlexDirection::Row;
-        style.align_items = Align::Start;
+        let style = Style {
+            flex_direction: FlexDirection::Row,
+            align_items: Align::Start,
+            ..Default::default()
+        };
 
         let layout = FlexLayout::new(style);
         let children = vec![
@@ -643,9 +661,11 @@ mod tests {
 
     #[test]
     fn test_align_items_end() {
-        let mut style = Style::default();
-        style.flex_direction = FlexDirection::Row;
-        style.align_items = Align::End;
+        let style = Style {
+            flex_direction: FlexDirection::Row,
+            align_items: Align::End,
+            ..Default::default()
+        };
 
         let layout = FlexLayout::new(style);
         let children = vec![
@@ -665,9 +685,11 @@ mod tests {
 
     #[test]
     fn test_align_items_center() {
-        let mut style = Style::default();
-        style.flex_direction = FlexDirection::Row;
-        style.align_items = Align::Center;
+        let style = Style {
+            flex_direction: FlexDirection::Row,
+            align_items: Align::Center,
+            ..Default::default()
+        };
 
         let layout = FlexLayout::new(style);
         let children = vec![create_child(50, 30), create_child(50, 50)];
@@ -682,9 +704,11 @@ mod tests {
 
     #[test]
     fn test_align_items_stretch() {
-        let mut style = Style::default();
-        style.flex_direction = FlexDirection::Row;
-        style.align_items = Align::Stretch;
+        let style = Style {
+            flex_direction: FlexDirection::Row,
+            align_items: Align::Stretch,
+            ..Default::default()
+        };
 
         let layout = FlexLayout::new(style);
         let children = vec![create_child(50, 30), create_child(50, 40)];
@@ -699,9 +723,11 @@ mod tests {
 
     #[test]
     fn test_padding() {
-        let mut style = Style::default();
-        style.flex_direction = FlexDirection::Row;
-        style.padding = Edges::all(10);
+        let style = Style {
+            flex_direction: FlexDirection::Row,
+            padding: Edges::all(10),
+            ..Default::default()
+        };
 
         let layout = FlexLayout::new(style);
         let children = vec![create_child(50, 50), create_child(50, 50)];
@@ -716,15 +742,19 @@ mod tests {
 
     #[test]
     fn test_child_margin() {
-        let mut style = Style::default();
-        style.flex_direction = FlexDirection::Row;
+        let style = Style {
+            flex_direction: FlexDirection::Row,
+            ..Default::default()
+        };
 
         let layout = FlexLayout::new(style);
 
-        let mut child_style = Style::default();
-        child_style.margin = Edges::all(5);
-        child_style.width = Dimension::Px(50);
-        child_style.height = Dimension::Px(50);
+        let child_style = Style {
+            margin: Edges::all(5),
+            width: Dimension::Px(50),
+            height: Dimension::Px(50),
+            ..Default::default()
+        };
 
         let children = vec![ChildLayout {
             style: child_style,
@@ -742,14 +772,18 @@ mod tests {
 
     #[test]
     fn test_percentage_dimensions() {
-        let mut style = Style::default();
-        style.flex_direction = FlexDirection::Row;
+        let style = Style {
+            flex_direction: FlexDirection::Row,
+            ..Default::default()
+        };
 
         let layout = FlexLayout::new(style);
 
-        let mut child_style = Style::default();
-        child_style.width = Dimension::Percent(0.5); // 50% of parent
-        child_style.height = Dimension::Px(50);
+        let child_style = Style {
+            width: Dimension::Percent(0.5), // 50% of parent
+            height: Dimension::Px(50),
+            ..Default::default()
+        };
 
         let children = vec![ChildLayout {
             style: child_style,
@@ -764,16 +798,22 @@ mod tests {
 
     #[test]
     fn test_flex_grow() {
-        let mut style = Style::default();
-        style.flex_direction = FlexDirection::Row;
+        let style = Style {
+            flex_direction: FlexDirection::Row,
+            ..Default::default()
+        };
 
         let layout = FlexLayout::new(style);
 
-        let mut child1_style = Style::default();
-        child1_style.flex_grow = 1.0;
+        let child1_style = Style {
+            flex_grow: 1.0,
+            ..Default::default()
+        };
 
-        let mut child2_style = Style::default();
-        child2_style.flex_grow = 2.0;
+        let child2_style = Style {
+            flex_grow: 2.0,
+            ..Default::default()
+        };
 
         let children = vec![
             create_child_with_style(50, 50, child1_style),
@@ -792,16 +832,22 @@ mod tests {
 
     #[test]
     fn test_flex_shrink() {
-        let mut style = Style::default();
-        style.flex_direction = FlexDirection::Row;
+        let style = Style {
+            flex_direction: FlexDirection::Row,
+            ..Default::default()
+        };
 
         let layout = FlexLayout::new(style);
 
-        let mut child1_style = Style::default();
-        child1_style.flex_shrink = 1.0;
+        let child1_style = Style {
+            flex_shrink: 1.0,
+            ..Default::default()
+        };
 
-        let mut child2_style = Style::default();
-        child2_style.flex_shrink = 2.0;
+        let child2_style = Style {
+            flex_shrink: 2.0,
+            ..Default::default()
+        };
 
         // Children want 100 each, but container is only 150
         let children = vec![
@@ -832,8 +878,10 @@ mod tests {
 
     #[test]
     fn test_single_child_space_between() {
-        let mut style = Style::default();
-        style.justify_content = Justify::SpaceBetween;
+        let style = Style {
+            justify_content: Justify::SpaceBetween,
+            ..Default::default()
+        };
 
         let layout = FlexLayout::new(style);
         let children = vec![create_child(50, 50)];
@@ -847,17 +895,21 @@ mod tests {
 
     #[test]
     fn test_complex_layout() {
-        let mut style = Style::default();
-        style.flex_direction = FlexDirection::Column;
-        style.justify_content = Justify::SpaceBetween;
-        style.align_items = Align::Center;
-        style.padding = Edges::all(16);
-        style.gap = 8;
+        let style = Style {
+            flex_direction: FlexDirection::Column,
+            justify_content: Justify::SpaceBetween,
+            align_items: Align::Center,
+            padding: Edges::all(16),
+            gap: 8,
+            ..Default::default()
+        };
 
         let layout = FlexLayout::new(style);
 
-        let mut child_style = Style::default();
-        child_style.margin = Edges::horizontal_vertical(4, 8);
+        let child_style = Style {
+            margin: Edges::horizontal_vertical(4, 8),
+            ..Default::default()
+        };
 
         let children = vec![
             create_child_with_style(100, 40, child_style),
@@ -882,8 +934,10 @@ mod tests {
 
     #[test]
     fn test_overflow_handling() {
-        let mut style = Style::default();
-        style.flex_direction = FlexDirection::Row;
+        let style = Style {
+            flex_direction: FlexDirection::Row,
+            ..Default::default()
+        };
 
         let layout = FlexLayout::new(style);
 
@@ -900,9 +954,11 @@ mod tests {
 
     #[test]
     fn test_column_with_gap() {
-        let mut style = Style::default();
-        style.flex_direction = FlexDirection::Column;
-        style.gap = 12;
+        let style = Style {
+            flex_direction: FlexDirection::Column,
+            gap: 12,
+            ..Default::default()
+        };
 
         let layout = FlexLayout::new(style);
         let children = vec![create_child(50, 30), create_child(50, 40)];
@@ -916,13 +972,17 @@ mod tests {
 
     #[test]
     fn test_flex_basis() {
-        let mut style = Style::default();
-        style.flex_direction = FlexDirection::Row;
+        let style = Style {
+            flex_direction: FlexDirection::Row,
+            ..Default::default()
+        };
 
         let layout = FlexLayout::new(style);
 
-        let mut child_style = Style::default();
-        child_style.flex_basis = Dimension::Px(80);
+        let child_style = Style {
+            flex_basis: Dimension::Px(80),
+            ..Default::default()
+        };
 
         let children = vec![create_child_with_style(50, 50, child_style)];
 
@@ -935,9 +995,11 @@ mod tests {
 
     #[test]
     fn test_asymmetric_padding() {
-        let mut style = Style::default();
-        style.flex_direction = FlexDirection::Row;
-        style.padding = Edges::new(5, 10, 15, 20);
+        let style = Style {
+            flex_direction: FlexDirection::Row,
+            padding: Edges::new(5, 10, 15, 20),
+            ..Default::default()
+        };
 
         let layout = FlexLayout::new(style);
         let children = vec![create_child(50, 50)];
@@ -950,15 +1012,19 @@ mod tests {
 
     #[test]
     fn test_asymmetric_margin() {
-        let mut style = Style::default();
-        style.flex_direction = FlexDirection::Row;
+        let style = Style {
+            flex_direction: FlexDirection::Row,
+            ..Default::default()
+        };
 
         let layout = FlexLayout::new(style);
 
-        let mut child_style = Style::default();
-        child_style.margin = Edges::new(2, 4, 6, 8);
-        child_style.width = Dimension::Px(50);
-        child_style.height = Dimension::Px(50);
+        let child_style = Style {
+            margin: Edges::new(2, 4, 6, 8),
+            width: Dimension::Px(50),
+            height: Dimension::Px(50),
+            ..Default::default()
+        };
 
         let children = vec![ChildLayout {
             style: child_style,

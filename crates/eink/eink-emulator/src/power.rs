@@ -169,9 +169,10 @@ pub struct StatePercentages {
 }
 
 /// Current power state of the display
-#[derive(Debug, Copy, Clone, PartialEq)]
+#[derive(Debug, Copy, Clone, Default, PartialEq)]
 pub enum PowerState {
     /// Display is idle (showing static image, no refresh)
+    #[default]
     Idle,
 
     /// Display is refreshing with specified number of flashes
@@ -185,12 +186,6 @@ pub enum PowerState {
 
     /// Transferring buffer to display SRAM
     TransferringBuffer,
-}
-
-impl Default for PowerState {
-    fn default() -> Self {
-        Self::Idle
-    }
 }
 
 /// Power consumption tracker
@@ -316,6 +311,7 @@ mod tests {
     use super::*;
 
     #[test]
+    #[allow(clippy::assertions_on_constants)]
     fn test_power_profile_constants() {
         // Verify profiles are reasonable
         assert!(PowerProfile::WAVESHARE_2_13_V4.idle_current_ua > 0);
@@ -331,8 +327,10 @@ mod tests {
 
     #[test]
     fn test_battery_life_calculation() {
-        let mut stats = PowerStats::default();
-        stats.average_current_ua = 10_000; // 10mA average (10,000 µA)
+        let stats = PowerStats {
+            average_current_ua: 10_000, // 10mA average (10,000 µA)
+            ..Default::default()
+        };
 
         // 3000mAh battery / 10mA = 300 hours
         let life = stats.estimated_battery_life_hours(3000);
@@ -341,10 +339,12 @@ mod tests {
 
     #[test]
     fn test_state_percentages() {
-        let mut stats = PowerStats::default();
-        stats.idle_time_ms = 70_000; // 70 seconds
-        stats.active_time_ms = 20_000; // 20 seconds
-        stats.sleep_time_ms = 10_000; // 10 seconds
+        let stats = PowerStats {
+            idle_time_ms: 70_000,   // 70 seconds
+            active_time_ms: 20_000, // 20 seconds
+            sleep_time_ms: 10_000,  // 10 seconds
+            ..Default::default()
+        };
 
         let percentages = stats.state_percentages();
         assert!((percentages.idle - 70.0).abs() < 0.1);

@@ -276,7 +276,7 @@ mod tests {
 
         // Test 2.5°C: 1.5 - (2.5 / 5.0) * 0.3 = 1.5 - 0.15 = 1.35x
         let result = spec.adjusted_refresh_ms(2000, 2);
-        assert!(result >= 2640 && result <= 2760); // ~2700 ± 60ms tolerance
+        assert!((2640..=2760).contains(&result)); // ~2700 ± 60ms tolerance
 
         // Test 25°C: optimal (1.0x)
         assert_eq!(spec.adjusted_refresh_ms(2000, 25), 2000);
@@ -303,7 +303,7 @@ mod tests {
 
             // Ensure monotonic decrease as we warm up (except at boundaries)
             // Allow for rounding and transition zones
-            if temp >= 0 && temp <= 35 {
+            if (0..=35).contains(&temp) {
                 // Should be decreasing or stable until optimal range
                 if previous_time > 0 {
                     assert!(

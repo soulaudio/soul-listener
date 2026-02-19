@@ -40,7 +40,7 @@ fn test_eink_color_kaleido3_conversion() {
     // ARGB format: A=24-31, R=16-23, G=8-15, B=0-7
     let r = (rgba >> 16) & 0xFF;
     let g = (rgba >> 8) & 0xFF;
-    let b = (rgba >> 0) & 0xFF;
+    let b = rgba & 0xFF;
 
     assert_eq!(r, 255); // 15 * 17 = 255
     assert_eq!(g, 136); // 8 * 17 = 136
@@ -69,7 +69,7 @@ fn test_spectra6_rgba_output() {
         // ARGB format: A=24-31, R=16-23, G=8-15, B=0-7
         let r = (rgba >> 16) & 0xFF;
         let g = (rgba >> 8) & 0xFF;
-        let b = (rgba >> 0) & 0xFF;
+        let b = rgba & 0xFF;
 
         match spectra_color {
             SpectraColor::Red => {
@@ -415,7 +415,7 @@ fn test_spectra6_color_mixing() {
         // Verify color channels are reasonable (ARGB: R=16-23, G=8-15, B=0-7)
         let r = (rgba >> 16) & 0xFF;
         let g = (rgba >> 8) & 0xFF;
-        let b = (rgba >> 0) & 0xFF;
+        let b = rgba & 0xFF;
 
         // Each color should have at least one channel at a reasonable level
         match color {
@@ -455,7 +455,7 @@ fn test_kaleido3_4bit_precision() {
         // Extract channels (ARGB format: A=24-31, R=16-23, G=8-15, B=0-7)
         let r8 = (rgba >> 16) & 0xFF;
         let g8 = (rgba >> 8) & 0xFF;
-        let b8 = (rgba >> 0) & 0xFF;
+        let b8 = rgba & 0xFF;
 
         // Verify 4-bit to 8-bit conversion (multiply by 17)
         assert_eq!(r8, (r * 17) as u32, "{} red conversion failed", name);

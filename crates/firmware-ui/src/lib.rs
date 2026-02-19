@@ -1,4 +1,11 @@
 //! firmware-ui - Hot-Reloadable UI Rendering Layer
+// `no_std` only when explicitly requested via the `no-std` feature.
+// The default build (no features) stays `std` so the cdylib crate-type
+// compiles cleanly on the host in `cargo clippy --all-targets`.
+// The xtask embedded check passes `--features no-std` to verify
+// embedded-compatibility of this crate.
+#![cfg_attr(feature = "no-std", no_std)]
+
 //!
 //! UI rendering logic for the SoulAudio DAP emulator.
 //! Compiled as rlib (static) and cdylib (for hot-reload).
@@ -40,17 +47,45 @@ pub use render::render_demo_menu;
 #[cfg(feature = "hot-reload")]
 #[no_mangle]
 pub unsafe extern "C" fn render_ui(emulator_ptr: *mut eink_emulator::Emulator) {
-    assert!(!emulator_ptr.is_null(), "render_ui: emulator_ptr must not be null");
+    assert!(
+        !emulator_ptr.is_null(),
+        "render_ui: emulator_ptr must not be null"
+    );
     let emulator = unsafe { &mut *emulator_ptr };
     if let Err(e) = render::render_onto_emulator(emulator) {
         eprintln!("[firmware-ui] render_ui error: {:?}", e);
     }
 }
 
-/// Build version of this dylib for hot-reload change detection.
+/// Manual ABI version -- bump this whenever the C-ABI signature of `render_ui`
+/// (or any other `#[no_mangle]` exported function) changes.
+/// The binary checks this at startup to ensure the loaded dylib matches.
+#[cfg(feature = "hot-reload")]
+pub const ABI_VERSION: u32 = 1;
+
+/// ABI version check -- exported so the binary can verify the loaded dylib
+/// was compiled with the same ABI contract.
+#[cfg(feature = "hot-reload")]
+#[no_mangle]
+pub extern "C" fn ui_abi_version() -> u32 {
+    ABI_VERSION
+}
+
+/// Load-time version of this dylib for hot-reload change detection.
+///
+/// Uses a [`std::sync::OnceLock`] initialised with the current nanosecond
+/// timestamp at first call.  Because `OnceLock` is a fresh static each time
+/// the dylib is loaded into memory, the value changes between hot-reloads even
+/// though the package version string stays constant.
 #[cfg(feature = "hot-reload")]
 #[no_mangle]
 pub extern "C" fn ui_version() -> u64 {
-    let s = env!("CARGO_PKG_VERSION");
-    s.bytes().fold(0u64, |acc, b| acc.wrapping_mul(31).wrapping_add(b as u64))
+    use std::sync::OnceLock;
+    static VERSION: OnceLock<u64> = OnceLock::new();
+    *VERSION.get_or_init(|| {
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map(|d| d.as_nanos() as u64)
+            .unwrap_or(42)
+    })
 }

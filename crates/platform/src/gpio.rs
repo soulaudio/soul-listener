@@ -139,6 +139,7 @@ pub trait InterruptPin: InputPin {
 /// Typestate transitions
 impl<MODE> Pin<MODE> {
     /// Convert to input mode
+    #[must_use]
     pub fn into_input<PULL>(self) -> Pin<Input<PULL>> {
         Pin {
             pin_number: self.pin_number,
@@ -147,6 +148,7 @@ impl<MODE> Pin<MODE> {
     }
 
     /// Convert to output mode
+    #[must_use]
     pub fn into_output<MODE2>(self) -> Pin<Output<MODE2>> {
         Pin {
             pin_number: self.pin_number,
@@ -155,6 +157,7 @@ impl<MODE> Pin<MODE> {
     }
 
     /// Convert to analog mode
+    #[must_use]
     pub fn into_analog(self) -> Pin<Analog> {
         Pin {
             pin_number: self.pin_number,

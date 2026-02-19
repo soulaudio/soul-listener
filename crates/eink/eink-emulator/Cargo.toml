@@ -29,8 +29,14 @@ embedded-graphics = "0.8.1"
 # Image export
 image = "0.25.9"
 
-# Async runtime
+# Async runtime (tokio — winit crate, desktop-native)
 tokio = { version = "1.49", features = ["time"] }
+
+# platform is an Embassy crate; its embassy-time usage requires a time-driver and
+# timer queue in the link graph.
+# `std`              → time driver (_embassy_time_now via std::thread)
+# `generic-queue-8`  → software timer queue (_embassy_time_schedule_wake)
+embassy-time = { workspace = true, features = ["std", "generic-queue-8"] }
 
 # LUT serialization support
 serde = { workspace = true }
@@ -41,8 +47,9 @@ tokio = { version = "1.49", features = ["full", "test-util"] }
 
 [features]
 default = []
-headless = []  # For CI/CD (per embedded-graphics-simulator pattern)
+headless = []       # For CI/CD (per embedded-graphics-simulator pattern)
 debug = []
+keyboard-input = [] # Keyboard + scroll wheel → InputDevice events
 
 [[example]]
 name = "hello_window"

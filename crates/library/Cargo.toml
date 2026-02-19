@@ -1,0 +1,13 @@
+[package]
+name = "library"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+platform = { path = "../platform" }
+
+[features]
+default = []
+std = []

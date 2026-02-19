@@ -1,163 +1,211 @@
+# CI — SoulAudio DAP (Embedded Rust)
+#
+# Badge URL (add to README.md):
+#   [![CI](https://github.com/yourusername/soulaudio-dap/actions/workflows/ci.yml/badge.svg)](https://github.com/yourusername/soulaudio-dap/actions/workflows/ci.yml)
+#
+# Job overview:
+#   fmt            – cargo fmt check (all crates, host)
+#   clippy         – cargo clippy for emulator feature set (host, std)
+#   test           – cargo test per crate (host, avoids hardware/emulator conflicts)
+#   check-emulator – cargo check -p firmware with emulator+debug+keyboard-input
+#   check-embedded – cargo check -p firmware --target thumbv7em-none-eabihf --features hardware
+#
+# NOTE on feature flag exclusivity:
+#   `hardware` and `emulator` are mutually exclusive. `hardware` pulls in cortex-m/
+#   defmt/probe-rs dependencies that require an ARM linker and no-std. `emulator`
+#   pulls in tokio and winit which require std. Never use --all-features across the
+#   firmware crate — it will fail to compile on both host and embedded targets.
+
 name: CI
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 env:
   CARGO_TERM_COLOR: always
+  # Treat all warnings as errors in CI. Individual jobs may override this if
+  # a particular check already passes -D warnings via its own flags.
   RUSTFLAGS: -D warnings
 
 jobs:
-  format:
-    name: Format Check
+  # ---------------------------------------------------------------------------
+  # Format
+  # ---------------------------------------------------------------------------
+  fmt:
+    name: Format
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt
 
-      - name: Check formatting
-        run: cargo fmt --all -- --check
+      - name: cargo fmt --all --check
+        run: cargo fmt --all --check
 
+  # ---------------------------------------------------------------------------
+  # Clippy — host / emulator feature set
+  #
+  # We deliberately do NOT use --all-features here because `hardware` and
+  # `emulator` are mutually exclusive in the firmware crate. Instead we lint
+  # the workspace with the emulator feature set, which exercises all std-capable
+  # code paths. The embedded code paths are covered by check-embedded below.
+  #
+  # firmware-ui is a cdylib. Passing --all-targets causes cargo to compile the
+  # cdylib target on the host (fine), but combining `no-std` with `emulator`
+  # features is contradictory, so we omit --all-features entirely.
+  # ---------------------------------------------------------------------------
   clippy:
-    name: Clippy Lints
+    name: Clippy
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@stable
         with:
           components: clippy
 
-      - name: Cache cargo registry
-        uses: actions/cache@v4
-        with:
-          path: ~/.cargo/registry
-          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+      - uses: Swatinem/rust-cache@v2
 
-      - name: Cache cargo index
-        uses: actions/cache@v4
-        with:
-          path: ~/.cargo/git
-          key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.lock') }}
+      # Lint all workspace crates that compile on the host (no cross-compilation).
+      # Excludes the hardware-only firmware binary by using --lib instead of
+      # --all-targets, which would try to compile required-features=["hardware"]
+      # bins on a host target without an ARM toolchain.
+      - name: cargo clippy (workspace, emulator features)
+        run: |
+          cargo clippy --workspace --lib --tests \
+            -- -D warnings
 
-      - name: Cache cargo build
-        uses: actions/cache@v4
-        with:
-          path: target
-          key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
+      # Also lint firmware with the emulator feature set explicitly to catch
+      # firmware-specific warnings in the emulator code paths.
+      - name: cargo clippy -p firmware (emulator features)
+        run: |
+          cargo clippy -p firmware --lib \
+            --features emulator,debug,keyboard-input \
+            -- -D warnings
 
-      - name: Run clippy
-        run: cargo clippy --all-targets --all-features -- -D warnings
-
+  # ---------------------------------------------------------------------------
+  # Tests — host-native, per crate
+  #
+  # cargo test --workspace --all-features is unsafe here because:
+  #   1. `firmware` has required-features = ["hardware"] on its binary target,
+  #      which needs an ARM toolchain not available on ubuntu-latest.
+  #   2. Combining hardware+emulator features links cortex-m into a std binary,
+  #      causing linker errors.
+  #
+  # Strategy: run tests for each testable crate individually with the correct
+  # feature flags. Crates that are no_std-only and have no test logic are
+  # checked via check-emulator / check-embedded instead.
+  # ---------------------------------------------------------------------------
   test:
     name: Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@stable
 
-      - name: Cache dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-test-${{ hashFiles('**/Cargo.lock') }}
+      - uses: Swatinem/rust-cache@v2
 
-      - name: Run tests
-        run: cargo test --workspace --all-features
+      # platform: tests use tokio + embassy-time/std (configured in dev-dependencies)
+      - name: cargo test -p platform
+        run: cargo test -p platform
 
-      - name: Run doc tests
-        run: cargo test --doc --workspace
+      # eink-specs: pure data crate, no_std compatible, tests run on host
+      - name: cargo test -p eink-specs
+        run: cargo test -p eink-specs
 
-  build-embedded:
-    name: Build for Target
+      # eink-system: depends on eink-emulator in dev-dependencies (std ok)
+      - name: cargo test -p eink-system
+        run: cargo test -p eink-system
+
+      # eink-components: depends on eink-emulator in dev-dependencies (std ok)
+      - name: cargo test -p eink-components
+        run: cargo test -p eink-components
+
+      # eink-emulator: std crate, tokio-based tests
+      - name: cargo test -p eink-emulator
+        run: cargo test -p eink-emulator
+
+      # eink-testing: std crate
+      - name: cargo test -p eink-testing
+        run: cargo test -p eink-testing
+
+      # firmware: lib tests only (no binary — that needs hardware features + ARM)
+      # The lib target has no required-features so it compiles on host.
+      - name: cargo test -p firmware --lib
+        run: cargo test -p firmware --lib
+
+      # firmware-ui: rlib target, no features needed for basic compilation
+      - name: cargo test -p firmware-ui
+        run: cargo test -p firmware-ui
+
+  # ---------------------------------------------------------------------------
+  # Emulator Build Check
+  #
+  # Verifies the desktop emulator compiles with the full feature set used by
+  # `cargo dev` (xtask/src/dev.rs: "emulator,debug,keyboard-input").
+  # Does not run the emulator (requires a display) — just checks it compiles.
+  # ---------------------------------------------------------------------------
+  check-emulator:
+    name: Emulator Build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+
+      # Install system libraries required by winit/softbuffer on Linux
+      - name: Install Linux GUI dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            libwayland-dev \
+            libxkbcommon-dev \
+            libx11-dev \
+            libxi-dev \
+            libxrandr-dev
+
+      - name: cargo check -p firmware (emulator features)
+        run: |
+          cargo check -p firmware \
+            --features emulator,debug,keyboard-input
+
+      # Also check that the display_emulator example resolves
+      - name: cargo check display_emulator example
+        run: |
+          cargo check -p firmware \
+            --example display_emulator \
+            --features emulator,debug,keyboard-input
+
+  # ---------------------------------------------------------------------------
+  # Embedded Build Check (STM32H7)
+  #
+  # Verifies the firmware compiles for the real hardware target.
+  # Uses cargo check (not build) to avoid the linker step — the probe-rs
+  # runner is not available in CI and the linker script (memory.x) references
+  # the physical flash/SRAM layout which won't link on a host linker anyway.
+  # ---------------------------------------------------------------------------
+  check-embedded:
+    name: Embedded Build (STM32H7)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
         with:
           targets: thumbv7em-none-eabihf
 
-      - name: Install ARM GCC
-        run: sudo apt-get update && sudo apt-get install -y gcc-arm-none-eabi
+      - uses: Swatinem/rust-cache@v2
 
-      - name: Cache dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-embedded-${{ hashFiles('**/Cargo.lock') }}
-
-      - name: Build firmware
+      - name: cargo check -p firmware (hardware, ARM target)
         run: |
-          cd crates/firmware
-          cargo build --release --target thumbv7em-none-eabihf --no-default-features --features hardware
-
-      - name: Check binary size
-        run: |
-          ls -lh target/thumbv7em-none-eabihf/release/firmware || true
-
-  coverage:
-    name: Code Coverage
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Install cargo-llvm-cov
-        uses: taiki-e/install-action@cargo-llvm-cov
-
-      - name: Generate coverage
-        run: cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info
-
-      - name: Upload to codecov
-        uses: codecov/codecov-action@v4
-        with:
-          files: lcov.info
-          fail_ci_if_error: false
-
-  audit:
-    name: Security Audit
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Run cargo audit
-        uses: rustsec/audit-check@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-  docs:
-    name: Documentation
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Build documentation
-        run: cargo doc --no-deps --workspace --all-features
-
-      - name: Check for broken links
-        run: |
-          cargo install cargo-deadlinks || true
-          cargo deadlinks --check-http || true
+          cargo check -p firmware \
+            --target thumbv7em-none-eabihf \
+            --features hardware

@@ -231,8 +231,8 @@ impl DebugManager {
     /// re-render; `false` when the click was outside any interactive area.
     pub fn handle_panel_click(&mut self, px: f64, py: f64, panel_w: u32, panel_h: u32) -> bool {
         use crate::debug::panel::{
-            compute_scene_hits, FONT_ASCENT, INSPECT_HIT_Y_END, INSPECT_HIT_Y_START,
-            TAB_HIT_Y_END, TAB_HIT_Y_START, TREE_BASELINE_CY,
+            compute_scene_hits, FONT_ASCENT, INSPECT_HIT_Y_END, INSPECT_HIT_Y_START, TAB_HIT_Y_END,
+            TAB_HIT_Y_START, TREE_BASELINE_CY,
         };
         use crate::debug::state::DebugTab;
 
@@ -266,20 +266,20 @@ impl DebugManager {
             }
 
             // ── Priority 2: inspect-mode toggle ───────────────────────────
-            if y >= INSPECT_HIT_Y_START && y < INSPECT_HIT_Y_END {
+            if (INSPECT_HIT_Y_START..INSPECT_HIT_Y_END).contains(&y) {
                 self.state.toggle_inspector();
                 return true;
             }
         }
 
         // ── Priority 3: tab bar ───────────────────────────────────────────
-        if y >= TAB_HIT_Y_START && y < TAB_HIT_Y_END {
+        if (TAB_HIT_Y_START..TAB_HIT_Y_END).contains(&y) {
             let tab_w = (panel_w.saturating_sub(1)) / 3;
             if tab_w > 0 {
-                let tab_x  = x.saturating_sub(1);
+                let tab_x = x.saturating_sub(1);
                 let tab_idx = (tab_x / tab_w).min(2) as usize;
-                self.state.active_tab = [DebugTab::Scene, DebugTab::Display, DebugTab::Power]
-                    [tab_idx];
+                self.state.active_tab =
+                    [DebugTab::Scene, DebugTab::Display, DebugTab::Power][tab_idx];
             }
             return true;
         }
@@ -367,8 +367,7 @@ impl DebugManager {
                                 let rows = self.state.build_scene_rows();
                                 if !rows.is_empty() {
                                     let n = rows.len();
-                                    let cur =
-                                        self.state.scene_selected.unwrap_or(0);
+                                    let cur = self.state.scene_selected.unwrap_or(0);
                                     let next = if key_code == KeyCode::ArrowDown {
                                         (cur + 1).min(n.saturating_sub(1))
                                     } else {
@@ -378,30 +377,22 @@ impl DebugManager {
                                     // Auto-scroll to keep selection visible.
                                     if next < self.state.scene_scroll {
                                         self.state.scene_scroll = next;
-                                    } else if next
-                                        >= self.state.scene_scroll + VISIBLE
-                                    {
-                                        self.state.scene_scroll =
-                                            next + 1 - VISIBLE;
+                                    } else if next >= self.state.scene_scroll + VISIBLE {
+                                        self.state.scene_scroll = next + 1 - VISIBLE;
                                     }
                                     return EventResult::Consumed;
                                 }
                             }
-                            KeyCode::ArrowLeft
-                            | KeyCode::ArrowRight
-                            | KeyCode::Enter => {
+                            KeyCode::ArrowLeft | KeyCode::ArrowRight | KeyCode::Enter => {
                                 let rows = self.state.build_scene_rows();
                                 if let Some(sel) = self.state.scene_selected {
                                     if sel < rows.len() {
                                         let row = &rows[sel];
-                                        if row.has_children || row.is_label_group
-                                        {
-                                            let comp = self.state
-                                                .registered_components
+                                        if row.has_children || row.is_label_group {
+                                            let comp = self.state.registered_components
                                                 [row.comp_idx]
                                                 .clone();
-                                            self.state
-                                                .toggle_node_collapsed(&comp);
+                                            self.state.toggle_node_collapsed(&comp);
                                         }
                                     }
                                 }
@@ -494,7 +485,6 @@ mod tests {
         assert!(!manager.state().inspector_mode);
         manager.state_mut().toggle_inspector();
         assert!(manager.state().inspector_mode);
-
     }
 
     #[test]

@@ -14,10 +14,20 @@ pub struct Spacing {
 
 impl Spacing {
     pub const fn all(v: u16) -> Self {
-        Self { top: v, right: v, bottom: v, left: v }
+        Self {
+            top: v,
+            right: v,
+            bottom: v,
+            left: v,
+        }
     }
     pub const fn axes(vert: u16, horiz: u16) -> Self {
-        Self { top: vert, right: horiz, bottom: vert, left: horiz }
+        Self {
+            top: vert,
+            right: horiz,
+            bottom: vert,
+            left: horiz,
+        }
     }
     pub fn is_zero(&self) -> bool {
         self.top == 0 && self.right == 0 && self.bottom == 0 && self.left == 0
@@ -164,9 +174,9 @@ impl DebugState {
     /// Advance to the next tab (Scene → Display → Power → Scene).
     pub fn cycle_tab(&mut self) {
         self.active_tab = match self.active_tab {
-            DebugTab::Scene   => DebugTab::Display,
+            DebugTab::Scene => DebugTab::Display,
             DebugTab::Display => DebugTab::Power,
-            DebugTab::Power   => DebugTab::Scene,
+            DebugTab::Power => DebugTab::Scene,
         };
     }
 
@@ -255,8 +265,7 @@ impl DebugState {
         roots.sort_by_key(|&i| (comps[i].position.1, comps[i].position.0));
 
         // Stack holds (comp_idx, depth); push in reverse so we pop in order.
-        let mut stack: Vec<(usize, usize)> =
-            roots.into_iter().rev().map(|i| (i, 0usize)).collect();
+        let mut stack: Vec<(usize, usize)> = roots.into_iter().rev().map(|i| (i, 0usize)).collect();
 
         let mut raw: Vec<SceneRow> = Vec::new();
 
@@ -279,13 +288,12 @@ impl DebugState {
                 let mut child_idxs: Vec<usize> = children
                     .iter()
                     .filter_map(|c| {
-                        comps.iter().position(|cc| {
-                            cc.position == c.position && cc.size == c.size
-                        })
+                        comps
+                            .iter()
+                            .position(|cc| cc.position == c.position && cc.size == c.size)
                     })
                     .collect();
-                child_idxs
-                    .sort_by_key(|&i| (comps[i].position.1, comps[i].position.0));
+                child_idxs.sort_by_key(|&i| (comps[i].position.1, comps[i].position.0));
                 for ci in child_idxs.into_iter().rev() {
                     stack.push((ci, depth + 1));
                 }
@@ -314,10 +322,7 @@ impl DebugState {
                     let r = &raw[j];
                     let tl = !r.has_children
                         && !r.is_label_group
-                        && matches!(
-                            comps[r.comp_idx].component_type.as_str(),
-                            "Label" | "Text"
-                        );
+                        && matches!(comps[r.comp_idx].component_type.as_str(), "Label" | "Text");
                     if r.depth == depth && tl {
                         j += 1;
                     } else {
@@ -328,8 +333,7 @@ impl DebugState {
                 let count = j - i;
                 if count >= MIN_GROUP {
                     let first = &raw[i];
-                    let group_collapsed =
-                        self.is_node_collapsed(&comps[first.comp_idx]);
+                    let group_collapsed = self.is_node_collapsed(&comps[first.comp_idx]);
                     result.push(SceneRow {
                         comp_idx: first.comp_idx,
                         depth,
@@ -339,9 +343,7 @@ impl DebugState {
                         label_group_count: count,
                     });
                     if !group_collapsed {
-                        for k in i..j {
-                            result.push(raw[k].clone());
-                        }
+                        result.extend(raw[i..j].iter().cloned());
                     }
                     i = j;
                     continue;
@@ -360,8 +362,8 @@ impl DebugState {
     /// The parent is the smallest registered component whose bounding box fully
     /// encloses `target`.  Returns `None` for root (unconstrained) components.
     pub fn find_parent<'a>(&'a self, target: &ComponentInfo) -> Option<&'a ComponentInfo> {
-        let tx  = target.position.0;
-        let ty  = target.position.1;
+        let tx = target.position.0;
+        let ty = target.position.1;
         let tx2 = tx + target.size.0 as i32;
         let ty2 = ty + target.size.1 as i32;
         let target_area = target.size.0 as u64 * target.size.1 as u64;
@@ -372,17 +374,21 @@ impl DebugState {
             if comp.position == target.position && comp.size == target.size {
                 continue; // skip self
             }
-            let cx  = comp.position.0;
-            let cy  = comp.position.1;
+            let cx = comp.position.0;
+            let cy = comp.position.1;
             let cx2 = cx + comp.size.0 as i32;
             let cy2 = cy + comp.size.1 as i32;
             let area = comp.size.0 as u64 * comp.size.1 as u64;
             // Parent must be strictly larger and fully contain the target.
-            if area > target_area && cx <= tx && cy <= ty && cx2 >= tx2 && cy2 >= ty2 {
-                if area < best_area {
-                    best_area = area;
-                    best = Some(comp);
-                }
+            if area > target_area
+                && cx <= tx
+                && cy <= ty
+                && cx2 >= tx2
+                && cy2 >= ty2
+                && area < best_area
+            {
+                best_area = area;
+                best = Some(comp);
             }
         }
         best
@@ -393,8 +399,8 @@ impl DebugState {
     /// A direct child is a registered component fully contained within `parent`
     /// that has no intermediate ancestor between itself and `parent`.
     pub fn find_children<'a>(&'a self, parent: &ComponentInfo) -> Vec<&'a ComponentInfo> {
-        let px  = parent.position.0;
-        let py  = parent.position.1;
+        let px = parent.position.0;
+        let py = parent.position.1;
         let px2 = px + parent.size.0 as i32;
         let py2 = py + parent.size.1 as i32;
         let parent_area = parent.size.0 as u64 * parent.size.1 as u64;
@@ -406,14 +412,14 @@ impl DebugState {
                 if comp.position == parent.position && comp.size == parent.size {
                     return false;
                 }
-                let cx  = comp.position.0;
-                let cy  = comp.position.1;
+                let cx = comp.position.0;
+                let cy = comp.position.1;
                 let cx2 = cx + comp.size.0 as i32;
                 let cy2 = cy + comp.size.1 as i32;
                 let area = comp.size.0 as u64 * comp.size.1 as u64;
                 area < parent_area && cx >= px && cy >= py && cx2 <= px2 && cy2 <= py2
             })
-            .filter(|child| match self.find_parent(*child) {
+            .filter(|child| match self.find_parent(child) {
                 // Direct child: its immediate parent IS `parent`.
                 Some(p) => p.position == parent.position && p.size == parent.size,
                 None => false,

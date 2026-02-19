@@ -36,14 +36,8 @@ fn save_screenshot(buffer: &[u32], width: u32, height: u32, name: &str) {
         rgb_buffer.push(b);
     }
 
-    image::save_buffer(
-        &path,
-        &rgb_buffer,
-        width,
-        height,
-        image::ColorType::Rgb8,
-    )
-    .unwrap_or_else(|e| eprintln!("Failed to save screenshot {}: {}", name, e));
+    image::save_buffer(&path, &rgb_buffer, width, height, image::ColorType::Rgb8)
+        .unwrap_or_else(|e| eprintln!("Failed to save screenshot {}: {}", name, e));
 
     println!("📸 Screenshot saved: {}", path.display());
 }
@@ -53,14 +47,13 @@ fn count_pixels_of_color(buffer: &[u32], color: u32) -> usize {
     buffer.iter().filter(|&&px| px == color).count()
 }
 
-
 #[test]
 fn test_e2e_overlay_borders_render() {
     println!("\n🧪 E2E Test: Overlay Borders Rendering");
 
     // Setup
     let renderer = OverlayRenderer::new();
-    let mut buffer = vec![0xFF000000; 800 * 600];  // Black background
+    let mut buffer = vec![0xFF000000; 800 * 600]; // Black background
 
     let components = vec![
         ComponentInfo {
@@ -91,8 +84,8 @@ fn test_e2e_overlay_borders_render() {
 
     // Validate: Check that borders were drawn
     let green_pixels = count_pixels_of_color(&buffer, 0xFF00FF80); // Button green
-    let red_pixels = count_pixels_of_color(&buffer, 0xFFFF4040);   // Label red
-    let blue_pixels = count_pixels_of_color(&buffer, 0xFF0080FF);  // Container blue
+    let red_pixels = count_pixels_of_color(&buffer, 0xFFFF4040); // Label red
+    let blue_pixels = count_pixels_of_color(&buffer, 0xFF0080FF); // Container blue
 
     println!("  ✅ Green pixels (Button): {}", green_pixels);
     println!("  ✅ Red pixels (Label): {}", red_pixels);
@@ -119,7 +112,7 @@ fn test_e2e_debug_panel_render() {
 
     // Setup
     let panel = DebugPanel::new();
-    let mut buffer = vec![0xFFFFFFFF; 800 * 600];  // White background
+    let mut buffer = vec![0xFFFFFFFF; 800 * 600]; // White background
     let mut state = DebugState::new();
 
     // Test 1: Panel hidden
@@ -137,7 +130,7 @@ fn test_e2e_debug_panel_render() {
     state.panel_visible = true;
     panel.render(&mut buffer, 800, 600, &state);
 
-    const PANEL_BG: u32 = 0xDC282828;  // Semi-transparent dark gray
+    const PANEL_BG: u32 = 0xDC282828; // Semi-transparent dark gray
     let panel_pixels = count_pixels_of_color(&buffer, PANEL_BG);
 
     println!("  ✅ Panel visible - panel pixels: {}", panel_pixels);
@@ -145,11 +138,14 @@ fn test_e2e_debug_panel_render() {
 
     // Validate: Panel should be 200px wide on right side
     // Check that left side is still white, right side is panel color
-    let left_side_pixel = buffer[(300 * 800 + 100) as usize];  // x=100 (left)
+    let left_side_pixel = buffer[(300 * 800 + 100) as usize]; // x=100 (left)
     let right_side_pixel = buffer[(300 * 800 + 700) as usize]; // x=700 (right, in panel)
 
     assert_eq!(left_side_pixel, 0xFFFFFFFF, "Left side should be white");
-    assert_eq!(right_side_pixel, PANEL_BG, "Right side should be panel color");
+    assert_eq!(
+        right_side_pixel, PANEL_BG,
+        "Right side should be panel color"
+    );
 
     // Save screenshot for manual inspection
     save_screenshot(&buffer, 800, 600, "e2e_debug_panel");
@@ -163,11 +159,11 @@ fn test_e2e_power_graph_render() {
 
     // Setup
     let mut graph = PowerGraph::new();
-    let mut buffer = vec![0xFF000000; 800 * 600];  // Black background
+    let mut buffer = vec![0xFF000000; 800 * 600]; // Black background
 
     // Add sample data
     for i in 0..50 {
-        let power = 10.0 + (i as f32 * 2.0);  // Increasing power
+        let power = 10.0 + (i as f32 * 2.0); // Increasing power
         graph.add_sample(power, None);
     }
 
@@ -226,7 +222,7 @@ fn test_e2e_complete_debug_scene() {
     }
 
     // Create framebuffer
-    let mut buffer = vec![0xFF202020; 800 * 600];  // Dark gray background
+    let mut buffer = vec![0xFF202020; 800 * 600]; // Dark gray background
 
     // Layer 1: Render component borders
     if state.borders_enabled {
@@ -242,9 +238,9 @@ fn test_e2e_complete_debug_scene() {
     // panel Power tab). The PowerGraph::render() is kept for legacy callers.
 
     // Validate complete scene
-    let green_pixels = count_pixels_of_color(&buffer, 0xFF00FF80);   // Button border
-    let purple_pixels = count_pixels_of_color(&buffer, 0xFFC040FF);  // ProgressBar border
-    let panel_pixels = count_pixels_of_color(&buffer, 0xDC282828);   // Panel background
+    let green_pixels = count_pixels_of_color(&buffer, 0xFF00FF80); // Button border
+    let purple_pixels = count_pixels_of_color(&buffer, 0xFFC040FF); // ProgressBar border
+    let panel_pixels = count_pixels_of_color(&buffer, 0xDC282828); // Panel background
 
     println!("  ✅ Green pixels (Button): {}", green_pixels);
     println!("  ✅ Purple pixels (ProgressBar): {}", purple_pixels);
@@ -374,7 +370,10 @@ fn test_e2e_performance_benchmark() {
     let duration = start.elapsed();
 
     println!("  ⏱️  Render time: {:?}", duration);
-    println!("  ⏱️  Render time (ms): {:.2}", duration.as_secs_f64() * 1000.0);
+    println!(
+        "  ⏱️  Render time (ms): {:.2}",
+        duration.as_secs_f64() * 1000.0
+    );
 
     // Assert performance target: <5ms
     assert!(
@@ -397,7 +396,11 @@ fn test_e2e_edge_cases() {
     println!("  Testing empty components...");
     overlay.render_borders(&mut buffer, 800, 600, &[]);
     let black_pixels = count_pixels_of_color(&buffer, 0xFF000000);
-    assert_eq!(black_pixels, 800 * 600, "Empty components should not render");
+    assert_eq!(
+        black_pixels,
+        800 * 600,
+        "Empty components should not render"
+    );
 
     // Edge case 2: Component at screen edge
     println!("  Testing component at screen edge...");
@@ -416,7 +419,7 @@ fn test_e2e_edge_cases() {
     let offscreen_component = ComponentInfo {
         component_type: "Button".to_string(),
         position: (750, 550),
-        size: (100, 100),  // Extends beyond 800x600
+        size: (100, 100), // Extends beyond 800x600
         test_id: None,
         ..Default::default()
     };
@@ -436,7 +439,10 @@ fn test_e2e_edge_cases() {
     buffer.fill(0xFF000000);
     overlay.render_borders(&mut buffer, 800, 600, &[tiny_component]);
     let pixel_400_300 = buffer[(300 * 800 + 400) as usize];
-    assert_eq!(pixel_400_300, 0xFF00FF80, "1x1 component should render single pixel");
+    assert_eq!(
+        pixel_400_300, 0xFF00FF80,
+        "1x1 component should render single pixel"
+    );
 
     println!("  ✅ All edge cases handled correctly");
 }
@@ -450,12 +456,12 @@ fn test_e2e_layering_order() {
     let mut state = DebugState::new();
     state.panel_visible = true;
 
-    let mut buffer = vec![0xFFFFFFFF; 800 * 600];  // White background
+    let mut buffer = vec![0xFFFFFFFF; 800 * 600]; // White background
 
     // Create component that overlaps with panel area
     let component = ComponentInfo {
         component_type: "Button".to_string(),
-        position: (550, 100),  // x=550 is in panel area (starts at 600)
+        position: (550, 100), // x=550 is in panel area (starts at 600)
         size: (100, 50),
         test_id: None,
         ..Default::default()

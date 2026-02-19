@@ -559,7 +559,7 @@ mod tests {
 
         // Should be blend of 0 and 15 with 50% ghosting
         // effective = 0 * (1 - 0.5) + 15 * 0.5 = 7.5 ≈ 8
-        assert!(effective >= 7 && effective <= 8);
+        assert!((7..=8).contains(&effective));
     }
 
     #[test]

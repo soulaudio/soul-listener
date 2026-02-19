@@ -3,10 +3,11 @@
 ## Overview
 
 The SoulAudio DAP hardware consists of:
-- Main processing board (STM32H7 + peripherals)
-- Audio codec board (WM8960)
-- Power management board (battery, charging)
-- Display module (E-ink 4.2")
+- Main processing board (STM32H743ZIT6 + peripherals)
+- Audio DAC board (ES9038Q2M + TPA6120A2 headphone amp)
+- Power management (BQ25895 PMIC, LiPo battery)
+- Display module (Good Display GDEM0397T81P, 3.97" E-ink)
+- BT co-processor module (STM32WB55RGV6)
 - Interconnects and connectors
 
 ## Design Files
@@ -19,10 +20,10 @@ schematics/
 ├── soulaudio-dap.kicad_pro      # Main project
 ├── soulaudio-dap.kicad_sch      # Top-level schematic
 ├── mcu.kicad_sch                # MCU and power
-├── audio.kicad_sch              # Audio codec
+├── audio.kicad_sch              # ES9038Q2M DAC + TPA6120A2 amp
 ├── display.kicad_sch            # E-ink display interface
-├── power.kicad_sch              # Battery and charging
-├── bluetooth.kicad_sch          # ESP32-C3 module
+├── power.kicad_sch              # Battery and BQ25895 charging
+├── bluetooth.kicad_sch          # STM32WB55RGV6 co-processor
 └── connectors.kicad_sch         # External connectors
 ```
 
@@ -45,7 +46,7 @@ pcb/
 - **Dimensions**: 100mm × 60mm × 1.6mm
 - **Material**: FR-4
 - **Finish**: ENIG (gold)
-- **Impedance**: Controlled 50Ω traces for I2S
+- **Impedance**: Controlled 50Ω traces for I²S
 
 ### Bill of Materials (`bom/`)
 
@@ -119,12 +120,13 @@ stencil/
 | Component | Part Number | Function | Cost (qty 100) |
 |-----------|-------------|----------|----------------|
 | MCU | STM32H743ZIT6 | Main processor | $12.50 |
-| Audio Codec | WM8960 | 24-bit DAC/ADC | $3.20 |
-| Display | Waveshare 4.2" | E-ink display | $18.50 |
-| BT Module | ESP32-C3-MINI-1 | Bluetooth | $2.10 |
-| Power IC | TPS63070 | Buck-boost | $2.45 |
-| Battery Charger | BQ24072 | Li-ion charger | $1.80 |
-| SD Card Slot | DM3AT-SF-PEJM5 | MicroSD connector | $0.65 |
+| DAC | ES9038Q2M | 32-bit hi-fi DAC | $7.00 |
+| Headphone Amp | TPA6120A2 | Class-AB amp | $3.50 |
+| Display | GDEM0397T81P | 3.97" E-ink | $22.00 |
+| BT Co-proc | STM32WB55RGV6 | BLE 5.0 / LE Audio | $6.50 |
+| PMIC | BQ25895RTWT | USB-C PD + charge | $2.80 |
+| AVDD LDO | LT3042 | Ultra-low-noise 3.3 V for ES9038Q2M | $4.20 |
+| SD Slot | DM3AT-SF-PEJM5 | microSD | $0.65 |
 | USB-C | TYPE-C-31-M-12 | USB connector | $0.45 |
 
 ### Datasheets (`datasheets/`)
@@ -133,16 +135,17 @@ All component datasheets organized by category:
 ```
 datasheets/
 ├── mcu/
-│   └── STM32H743ZI.pdf
+│   └── STM32H743ZIT6.pdf
 ├── audio/
-│   ├── WM8960.pdf
+│   ├── ES9038Q2M.pdf
+│   ├── TPA6120A2.pdf
 │   └── audio-jack-spec.pdf
 ├── display/
-│   └── waveshare-4.2inch-e-paper.pdf
+│   └── GDEM0397T81P.pdf
 ├── power/
-│   ├── TPS63070.pdf
-│   ├── BQ24072.pdf
-│   └── 18650-battery-spec.pdf
+│   ├── BQ25895.pdf
+│   ├── LT3042.pdf
+│   └── lipo-battery-spec.pdf
 └── connectors/
     ├── usb-c-spec.pdf
     └── microsd-spec.pdf
@@ -154,54 +157,56 @@ datasheets/
 
 | Component | Current (mA) | Notes |
 |-----------|--------------|-------|
-| STM32H7 @ 480MHz | 280 | Active processing |
-| STM32H7 sleep | 2 | WFI mode |
-| E-ink display | 40 | During refresh only |
-| E-ink sleep | 0.01 | Ultra low power |
-| Audio codec | 35 | Playback |
-| SD card | 100 | Read operations |
-| Bluetooth | 50 | Active connection |
-| **Total (active)** | **505 mA** | |
-| **Total (playback)** | **330 mA** | Display sleep |
+| STM32H743 @ 480 MHz | 280 | Active |
+| STM32H743 sleep | 2 | WFI |
+| ES9038Q2M DAC | 10 | Playback |
+| TPA6120A2 amp | 35 | Driving 32Ω headphones |
+| GDEM0397T81P display | 34 | During refresh only |
+| Display sleep | 0.001 | ~1 µA |
+| STM32WB55 BLE | 15 | Active BLE |
+| microSD read | 100 | Peak |
+| **Total active** | **~476 mA** | All active |
+| **Total playback** | **~342 mA** | Display asleep |
 
-**Battery Life** (3000mAh):
-- Active use: ~9 hours
-- Audio playback: ~21 hours
+**Battery Life** (3000 mAh):
+- Active use: ~6.3 hours
+- Audio playback: ~8.8 hours
 - Standby: ~60 days
 
 ### Audio Path
 
 ```
-SD Card → STM32 (decode) → I2S → WM8960 DAC → Line Out/Headphone
-                                                      ↓
-                                                  3.5mm Jack
+SD Card → STM32H743 (decode: FLAC/MP3/WAV) → SAI1 I²S → ES9038Q2M → TPA6120A2 → 3.5mm
 ```
 
 **Audio Specs:**
-- **Sample Rates**: 8kHz - 192kHz
-- **Bit Depth**: 16/24-bit
-- **SNR**: >100dB
-- **THD+N**: <0.01%
-- **Output Power**: 40mW @ 32Ω
+- **Sample Rates**: 44.1 / 48 / 88.2 / 96 / 176.4 / 192 / 352.8 / 384 / 768 kHz PCM
+- **DSD**: DSD64 / DSD128 / DSD256 / DSD512 (native + DoP)
+- **Bit Depth**: 16 / 24 / 32-bit
+- **DNR**: 128 dB
+- **THD+N**: −120 dB
 
-### I2S Configuration
+### I²S Configuration
 
 ```
-STM32 SAI1 → WM8960
-- BCLK: 3.072 MHz (48kHz × 64)
-- LRCLK: 48 kHz
-- DATA: 24-bit samples
-- MCLK: 12.288 MHz (256 × fs)
+STM32 SAI1 → ES9038Q2M (slave mode)
+- MCLK: 49.152 MHz (512 × fs at 96 kHz) or 45.1584 MHz (512 × fs at 88.2 kHz)
+- BCLK: 6.144 MHz (64 × 96 kHz)
+- LRCLK: 96 kHz
+- DATA: 32-bit I²S
+- I²C: control bus (volume, filter, mute, DSD mode)
 ```
 
 ### Display Interface
 
 ```
-STM32 SPI1 → E-ink Display
+STM32 SPI1 → GDEM0397T81P (SSD1677 controller)
 - Clock: 10 MHz
 - Mode: SPI Mode 0
 - Data: 8-bit
 - Control: DC, RST, BUSY pins
+- Resolution: 800×480, 235 PPI
+- Full refresh: 3 s | Fast refresh: 1.5 s | Partial refresh: 300 ms
 ```
 
 ## Assembly Instructions
@@ -236,17 +241,18 @@ STM32 SPI1 → E-ink Display
 For prototypes or small runs:
 - Solder FPC connectors last (heat sensitive)
 - Use low-temp solder paste for display connector
-- Hot air rework station for QFN packages
+- Hot air rework station for QFN packages (ES9038Q2M TSSOP-24, BQ25895RTWT)
 - Microscope for 0402 components
+- Note: LT3042 AVDD LDO must be populated for ES9038Q2M analog supply
 
 ## Testing and Validation
 
 ### Electrical Tests
 
 1. **Power-On Test**
-   - Check 3.3V rail
+   - Check 3.3V rail and LT3042 AVDD output for ES9038Q2M
    - Verify current consumption
-   - Test USB-C power delivery
+   - Test USB-C power delivery via BQ25895
 
 2. **MCU Test**
    - SWD connection
@@ -254,24 +260,30 @@ For prototypes or small runs:
    - GPIO toggle test
 
 3. **Audio Test**
-   - I2S communication
-   - DAC output measurement
-   - Frequency response test
+   - I²S communication (SAI1 → ES9038Q2M)
+   - I²C register access (volume, filter selection)
+   - DAC output measurement via TPA6120A2
+   - Frequency response and THD+N measurement
 
 4. **Display Test**
-   - SPI communication
-   - Refresh cycle test
+   - SPI communication to SSD1677 controller
+   - Full/fast/partial refresh cycle test
    - Ghosting assessment
+
+5. **Bluetooth Test**
+   - UART HCI link to STM32WB55RGV6
+   - BLE 5.0 advertising and connection
+   - LE Audio streaming
 
 ### Simulations (`simulations/`)
 
 LTspice simulations for:
 ```
 simulations/
-├── power-supply.asc             # Buck-boost converter
-├── audio-filter.asc             # Anti-aliasing filter
+├── power-supply.asc             # BQ25895 charging circuit
+├── audio-filter.asc             # ES9038Q2M output filter
 ├── battery-charger.asc          # Charging circuit
-└── output-amplifier.asc         # Headphone amp
+└── output-amplifier.asc         # TPA6120A2 headphone amp
 ```
 
 ## Manufacturing Partners
@@ -293,7 +305,7 @@ simulations/
 ### Certifications Required
 
 - **FCC Part 15B**: Unintentional radiator (display, clocks)
-- **FCC Part 15C**: Intentional radiator (Bluetooth)
+- **FCC Part 15C**: Intentional radiator (Bluetooth — STM32WB55RGV6)
 - **CE**: European compliance
 - **RoHS**: Restriction of hazardous substances
 - **WEEE**: Waste electrical equipment directive
@@ -302,8 +314,10 @@ simulations/
 
 - Ground plane on layer 2
 - Ferrite beads on power rails
-- Shielding for Bluetooth module
-- Controlled impedance traces for I2S
+- Shielding for STM32WB55 BLE co-processor
+- Controlled impedance traces for I²S
+- Separate analog ground pour for ES9038Q2M AGND / AVDD domain
+- LT3042 ultra-low-noise LDO isolates DAC analog supply from digital noise
 
 ## Revision History
 
@@ -312,6 +326,7 @@ simulations/
 | A | 2026-01-15 | Initial design |
 | B | 2026-02-01 | Added ESP32-C3 for BT |
 | C | 2026-02-10 | Improved power supply |
+| D | 2026-02-19 | Replace PCM5242 with ES9038Q2M + TPA6120A2; update BT to STM32WB55; correct all component references |
 
 ## Tools Required
 
@@ -322,7 +337,7 @@ simulations/
 
 ### Hardware
 - Oscilloscope (>100MHz)
-- Logic analyzer (I2S, SPI debugging)
+- Logic analyzer (I²S, SPI, I²C debugging)
 - Multimeter
 - Hot air rework station
 - Soldering iron with fine tip

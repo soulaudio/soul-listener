@@ -25,9 +25,10 @@
 use std::time::Instant;
 
 /// Initialization state of the display
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, Default, PartialEq)]
 pub enum InitializationState {
     /// Display has not been initialized
+    #[default]
     Uninitialized,
 
     /// Display is currently initializing
@@ -46,12 +47,6 @@ pub enum InitializationState {
         /// Error message describing the failure
         error: String,
     },
-}
-
-impl Default for InitializationState {
-    fn default() -> Self {
-        Self::Uninitialized
-    }
 }
 
 impl InitializationState {

@@ -67,20 +67,11 @@ impl<B, C> DmaTransferActive<B, C>
 where
     C: DmaChannel,
 {
-    /// Wait for transfer to complete (blocking)
-    pub fn wait(mut self) -> Result<(B, C), C::Error> {
+    /// Wait for transfer to complete, yielding to the Embassy executor on each
+    /// poll so that other tasks can run while the DMA transfer is in flight.
+    pub async fn wait(mut self) -> Result<(B, C), C::Error> {
         while !self.channel.is_complete() {
-            // Yield or sleep
-        }
-        self.channel.stop()?;
-        Ok((self.buffer, self.channel))
-    }
-
-    /// Wait for transfer to complete (async)
-    pub async fn wait_async(mut self) -> Result<(B, C), C::Error> {
-        while !self.channel.is_complete() {
-            // Await interrupt or timer
-            embassy_time::Timer::after_millis(1).await;
+            embassy_futures::yield_now().await;
         }
         self.channel.stop()?;
         Ok((self.buffer, self.channel))
@@ -150,8 +141,15 @@ pub struct CircularBuffer<const N: usize> {
     read_pos: usize,
 }
 
+impl<const N: usize> Default for CircularBuffer<N> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<const N: usize> CircularBuffer<N> {
     /// Create new circular buffer
+    #[must_use]
     pub const fn new() -> Self {
         Self {
             buffer: [0; N],
@@ -161,6 +159,7 @@ impl<const N: usize> CircularBuffer<N> {
     }
 
     /// Get available data length
+    #[must_use]
     pub fn available(&self) -> usize {
         if self.write_pos >= self.read_pos {
             self.write_pos - self.read_pos
@@ -170,6 +169,7 @@ impl<const N: usize> CircularBuffer<N> {
     }
 
     /// Get free space
+    #[must_use]
     pub fn free_space(&self) -> usize {
         N - self.available() - 1
     }
@@ -192,8 +192,8 @@ impl<const N: usize> CircularBuffer<N> {
         let available = self.available();
         let to_read = buffer.len().min(available);
 
-        for i in 0..to_read {
-            buffer[i] = self.buffer[self.read_pos];
+        for slot in &mut buffer[..to_read] {
+            *slot = self.buffer[self.read_pos];
             self.read_pos = (self.read_pos + 1) % N;
         }
 

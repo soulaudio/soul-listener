@@ -12,7 +12,9 @@ use embedded_graphics::primitives::{PrimitiveStyle, Rectangle};
 ///
 /// Replace this function with your own UI rendering code.
 #[cfg(feature = "emulator")]
-pub fn render_demo_menu(display: &mut eink_emulator::Emulator) -> Result<(), core::convert::Infallible> {
+pub fn render_demo_menu(
+    display: &mut eink_emulator::Emulator,
+) -> Result<(), core::convert::Infallible> {
     use embedded_graphics::mono_font::{ascii::FONT_10X20, MonoTextStyle};
     use embedded_graphics::text::Text;
 

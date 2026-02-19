@@ -32,14 +32,8 @@ fn save_screenshot(buffer: &[u32], width: u32, height: u32, name: &str) {
         rgb_buffer.push(b);
     }
 
-    image::save_buffer(
-        &path,
-        &rgb_buffer,
-        width,
-        height,
-        image::ColorType::Rgb8,
-    )
-    .unwrap_or_else(|e| eprintln!("Failed to save screenshot {}: {}", name, e));
+    image::save_buffer(&path, &rgb_buffer, width, height, image::ColorType::Rgb8)
+        .unwrap_or_else(|e| eprintln!("Failed to save screenshot {}: {}", name, e));
 
     println!("📸 Screenshot saved: {}", path.display());
 }
@@ -155,7 +149,10 @@ fn test_showcase_01_borders_only() {
     renderer.render_borders(&mut buffer, WIDTH, HEIGHT, &components);
 
     save_screenshot(&buffer, WIDTH, HEIGHT, "01_borders_only");
-    println!("  ✅ Rendered {} components with colored borders", components.len());
+    println!(
+        "  ✅ Rendered {} components with colored borders",
+        components.len()
+    );
 }
 
 #[test]
@@ -208,7 +205,10 @@ fn test_showcase_02_panel_and_borders() {
     panel.render(&mut buffer, WIDTH, HEIGHT, &state);
 
     save_screenshot(&buffer, WIDTH, HEIGHT, "02_panel_and_borders");
-    println!("  ✅ Debug panel visible with {} bordered components", components.len());
+    println!(
+        "  ✅ Debug panel visible with {} bordered components",
+        components.len()
+    );
 }
 
 #[test]
@@ -224,13 +224,13 @@ fn test_showcase_03_power_graph() {
     // Simulate realistic power consumption pattern
     // Idle -> partial refresh -> idle -> full refresh -> idle
     let power_pattern = [
-        (10.0, None, 20),                             // Idle state
-        (60.0, Some(RefreshType::Partial), 5),       // Partial refreshes
-        (10.0, None, 10),                             // Back to idle
-        (210.0, Some(RefreshType::Full), 3),         // Full refresh spike
-        (10.0, None, 15),                             // Idle again
-        (60.0, Some(RefreshType::Partial), 8),       // More partial refreshes
-        (10.0, None, 10),                             // Settle to idle
+        (10.0, None, 20),                      // Idle state
+        (60.0, Some(RefreshType::Partial), 5), // Partial refreshes
+        (10.0, None, 10),                      // Back to idle
+        (210.0, Some(RefreshType::Full), 3),   // Full refresh spike
+        (10.0, None, 15),                      // Idle again
+        (60.0, Some(RefreshType::Partial), 8), // More partial refreshes
+        (10.0, None, 10),                      // Settle to idle
     ];
 
     for (power, refresh_type, count) in power_pattern {

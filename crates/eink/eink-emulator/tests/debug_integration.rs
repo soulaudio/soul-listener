@@ -160,19 +160,19 @@ fn test_debug_panel_rendering() {
     // Panel hidden - buffer unchanged
     panel.render(&mut buffer, 800, 600, &state);
     assert_eq!(buffer[0], 0xFFFFFFFF);
-    assert_eq!(buffer[(0 * 800 + 700) as usize], 0xFFFFFFFF);
+    assert_eq!(buffer[700_usize], 0xFFFFFFFF);
 
     // Panel visible - background rendered
     state.panel_visible = true;
     panel.render(&mut buffer, 800, 600, &state);
 
     // Check pixel in panel area (right 200px, starting at x=600)
-    let panel_pixel = buffer[(0 * 800 + 700) as usize];
+    let panel_pixel = buffer[700_usize];
     assert_ne!(panel_pixel, 0xFFFFFFFF, "Panel should render background");
     assert_eq!(panel_pixel, 0xDC282828); // Panel background color
 
     // Check pixel outside panel area
-    let outside_pixel = buffer[(0 * 800 + 400) as usize];
+    let outside_pixel = buffer[400_usize];
     assert_eq!(
         outside_pixel, 0xFFFFFFFF,
         "Outside panel should be unchanged"
@@ -381,11 +381,11 @@ fn test_full_debug_workflow() {
 
     // 5. Verify rendering
     // Panel should be visible
-    let panel_pixel = buffer[(0 * 800 + 700) as usize];
+    let panel_pixel = buffer[700_usize];
     assert_eq!(panel_pixel, 0xDC282828);
 
     // Component borders should be visible
-    let container_border = buffer[(0 * 800 + 0) as usize];
+    let container_border = buffer[0_usize];
     assert_eq!(container_border, 0xFF0080FF); // Container is blue
 
     let button_border = buffer[(100 * 800 + 100) as usize];
@@ -455,9 +455,9 @@ fn test_debug_panel_different_screen_sizes() {
     panel.render(&mut buffer, 1024, 768, &state);
 
     // Panel starts at x = 1024 - 200 = 824
-    let panel_pixel = buffer[(0 * 1024 + 900) as usize];
+    let panel_pixel = buffer[900_usize];
     assert_eq!(panel_pixel, 0xDC282828);
 
-    let before_panel = buffer[(0 * 1024 + 700) as usize];
+    let before_panel = buffer[700_usize];
     assert_eq!(before_panel, 0xFFFFFFFF);
 }

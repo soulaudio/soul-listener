@@ -103,23 +103,17 @@ fn draw_dap_ui(display: &mut Emulator) -> Result<(), Box<dyn std::error::Error>>
 
     // Album art placeholder (150x150, centered horizontally)
     let album_x = (800 - 150) / 2;
-    Rectangle::new(Point::new(album_x as i32, 80), Size::new(150, 150))
+    Rectangle::new(Point::new(album_x, 80), Size::new(150, 150))
         .into_styled(PrimitiveStyle::with_stroke(Gray4::BLACK, 2))
         .draw(display)?;
 
     // Diagonal cross for album placeholder
-    Line::new(
-        Point::new(album_x as i32, 80),
-        Point::new(album_x as i32 + 150, 230),
-    )
-    .into_styled(PrimitiveStyle::with_stroke(Gray4::new(12), 1))
-    .draw(display)?;
-    Line::new(
-        Point::new(album_x as i32 + 150, 80),
-        Point::new(album_x as i32, 230),
-    )
-    .into_styled(PrimitiveStyle::with_stroke(Gray4::new(12), 1))
-    .draw(display)?;
+    Line::new(Point::new(album_x, 80), Point::new(album_x + 150, 230))
+        .into_styled(PrimitiveStyle::with_stroke(Gray4::new(12), 1))
+        .draw(display)?;
+    Line::new(Point::new(album_x + 150, 80), Point::new(album_x, 230))
+        .into_styled(PrimitiveStyle::with_stroke(Gray4::new(12), 1))
+        .draw(display)?;
 
     // Album art label
     Text::new("Album Art", Point::new(350, 155), light_style).draw(display)?;

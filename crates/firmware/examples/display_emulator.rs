@@ -56,6 +56,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         EmulatorDisplay::with_spec_and_config(&firmware::GDEM0397T81P_SPEC, emulator_config);
     println!("Window opened - Portrait mode (480x800), native resolution\n");
 
+    // Attach keyboard/scroll input before initializing so the queue is wired
+    // through to the window event loop when run() is called.
+    // Not used in hot-reload mode (which has its own render loop).
+    #[cfg(all(feature = "keyboard-input", not(feature = "hot-reload")))]
+    let mut input = display.emulator_mut().input_receiver();
+
     println!("Initializing display...");
     rt.block_on(async { display.emulator_mut().initialize().await })
         .map_err(|e| Box::<dyn std::error::Error>::from(e.to_string()))?;
@@ -67,6 +73,21 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     {
         println!("DEBUG MODE ENABLED");
         println!("Hotkeys: Ctrl+1 panel | Ctrl+2 borders | Ctrl+3 inspector");
+        println!();
+    }
+
+    #[cfg(all(feature = "keyboard-input", not(feature = "hot-reload")))]
+    {
+        println!("KEYBOARD INPUT ENABLED");
+        println!("  Space / K      = Play/Pause");
+        println!("  ← / J / ,      = Previous");
+        println!("  → / L / .      = Next");
+        println!("  ↑ / =          = Volume up");
+        println!("  ↓ / -          = Volume down");
+        println!("  M              = Menu");
+        println!("  Backspace / Esc= Back");
+        println!("  Enter          = Select");
+        println!("  Scroll wheel   = Encoder");
         println!();
     }
 
@@ -83,9 +104,21 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         let mut last_version = hot_ui::ui_version();
 
+        // ABI version guard: panic early if the loaded dylib was compiled with a
+        // different ABI than what this binary expects.
+        let dylib_abi = hot_ui::ui_abi_version();
+        assert_eq!(
+            dylib_abi,
+            firmware_ui::ABI_VERSION,
+            "hot-reload ABI mismatch: binary expects ABI v{}, dylib reports v{}. \
+             Rebuild firmware-ui with: cargo build -p firmware-ui --features hot-reload",
+            firmware_ui::ABI_VERSION,
+            dylib_abi,
+        );
         println!("Initial render...");
         // SAFETY: display.emulator_mut() is valid, non-null, exclusively owned.
         // Unwrapping EmulatorDisplay to its inner Emulator avoids circular dep.
+        // Verified: ui_abi_version() == firmware_ui::ABI_VERSION (asserted above).
         unsafe { hot_ui::render_ui(display.emulator_mut() as *mut eink_emulator::Emulator) };
         rt.block_on(async { display.refresh_full().await })?;
         println!("Ready. Edit crates/firmware-ui/src/render.rs to hot-reload.\n");
@@ -104,7 +137,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     .into_styled(PrimitiveStyle::with_fill(Gray4::WHITE))
                     .draw(&mut display)?;
                 // SAFETY: display.emulator_mut() is valid, non-null, exclusively owned.
-                unsafe { hot_ui::render_ui(display.emulator_mut() as *mut eink_emulator::Emulator) };
+                unsafe {
+                    hot_ui::render_ui(display.emulator_mut() as *mut eink_emulator::Emulator)
+                };
                 rt.block_on(async { display.refresh_full().await })?;
                 println!("Reload complete at {:?}", Instant::now());
             }
@@ -126,6 +161,19 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         println!("Demo menu rendered\n");
         println!("Close the window to exit.\n");
+
+        // Spawn a background task that logs every input event to stdout.
+        // This runs concurrently with the blocking winit event loop via the
+        // multi-thread tokio runtime.
+        #[cfg(all(feature = "keyboard-input", not(feature = "hot-reload")))]
+        rt.spawn(async move {
+            use platform::InputDevice as _;
+            loop {
+                let ev = input.wait_for_event().await;
+                println!("[input] {:?}", ev);
+            }
+        });
+
         display.into_inner().run();
     }
 

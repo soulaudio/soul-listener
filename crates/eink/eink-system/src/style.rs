@@ -49,9 +49,10 @@ use embedded_graphics::pixelcolor::Gray4;
 /// assert_eq!(fixed.resolve(200), 100);
 /// assert_eq!(responsive.resolve(200), 100);
 /// ```
-#[derive(Debug, Copy, Clone, PartialEq)]
+#[derive(Debug, Copy, Clone, Default, PartialEq)]
 pub enum Dimension {
     /// Automatic sizing based on content.
+    #[default]
     Auto,
 
     /// Fixed pixel size.
@@ -105,12 +106,6 @@ impl Dimension {
     /// Returns `true` if this dimension is a percentage.
     pub fn is_percent(self) -> bool {
         matches!(self, Dimension::Percent(_))
-    }
-}
-
-impl Default for Dimension {
-    fn default() -> Self {
-        Dimension::Auto
     }
 }
 
@@ -266,9 +261,10 @@ impl Default for Edges {
 /// let row_rev = FlexDirection::RowReverse;
 /// let col_rev = FlexDirection::ColumnReverse;
 /// ```
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, Default, PartialEq, Eq)]
 pub enum FlexDirection {
     /// Horizontal layout, left to right.
+    #[default]
     Row,
 
     /// Vertical layout, top to bottom.
@@ -301,12 +297,6 @@ impl FlexDirection {
     }
 }
 
-impl Default for FlexDirection {
-    fn default() -> Self {
-        FlexDirection::Row
-    }
-}
-
 /// Main axis alignment (justify-content in CSS).
 ///
 /// Controls how children are distributed along the main axis.
@@ -325,9 +315,10 @@ impl Default for FlexDirection {
 /// // Center all children
 /// let center = Justify::Center;
 /// ```
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, Default, PartialEq, Eq)]
 pub enum Justify {
     /// Pack children at the start of the main axis.
+    #[default]
     Start,
 
     /// Pack children at the end of the main axis.
@@ -352,12 +343,6 @@ pub enum Justify {
     SpaceEvenly,
 }
 
-impl Default for Justify {
-    fn default() -> Self {
-        Justify::Start
-    }
-}
-
 /// Cross axis alignment (align-items in CSS).
 ///
 /// Controls how children are aligned along the cross axis.
@@ -376,9 +361,10 @@ impl Default for Justify {
 /// // Center on cross axis
 /// let center = Align::Center;
 /// ```
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, Default, PartialEq, Eq)]
 pub enum Align {
     /// Align children at the start of the cross axis.
+    #[default]
     Start,
 
     /// Align children at the end of the cross axis.
@@ -392,12 +378,6 @@ pub enum Align {
 
     /// Align children along their baseline.
     Baseline,
-}
-
-impl Default for Align {
-    fn default() -> Self {
-        Align::Start
-    }
 }
 
 /// Complete style specification for a layout node.

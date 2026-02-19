@@ -3,11 +3,10 @@
 //! Demonstrates the flexbox-inspired layout engine for e-ink displays.
 
 use eink_emulator::{DisplayDriver, Emulator, EmulatorConfig, Rotation};
-use eink_system::prelude::*;
 use embedded_graphics::mono_font::{ascii::FONT_10X20, MonoTextStyle};
 use embedded_graphics::pixelcolor::Gray4;
 use embedded_graphics::prelude::*;
-use embedded_graphics::primitives::{PrimitiveStyle, PrimitiveStyleBuilder, Rectangle};
+use embedded_graphics::primitives::{PrimitiveStyle, Rectangle};
 use embedded_graphics::text::Text;
 
 #[tokio::main]

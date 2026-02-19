@@ -4,7 +4,7 @@
 //! display interface for the GDEM0397T81P (Good Display 3.97" 800×480) panel
 //! with SSD1677 controller.
 
-#[cfg(feature = "hardware")]
+#[cfg(any(feature = "hardware", test))]
 pub mod driver;
 
 #[cfg(feature = "emulator")]
@@ -23,7 +23,7 @@ pub const GDEM0397T81P_SPEC: eink_specs::DisplaySpec = eink_specs::DisplaySpec {
     width: 800,
     height: 480,
     controller: eink_specs::Controller::SSD1677,
-    panel_type: eink_specs::PanelType::Carta1300,
+    panel_type: eink_specs::PanelType::Carta1200,
     color_mode: None,    // Monochrome
     grayscale_levels: 4, // 2-bit per pixel
     full_refresh_ms: 2000,

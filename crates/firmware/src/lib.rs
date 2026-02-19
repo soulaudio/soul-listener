@@ -41,13 +41,26 @@
 #![warn(clippy::all)]
 #![allow(clippy::module_name_repetitions)]
 
+pub mod audio;
 pub mod display;
 pub mod hal;
 pub mod ui;
 
+#[cfg(any(feature = "keyboard-input", feature = "hardware"))]
+pub mod input;
+
 // Re-export key types
 pub use display::{DISPLAY_HEIGHT, DISPLAY_WIDTH, FRAMEBUFFER_SIZE, GDEM0397T81P_SPEC};
 pub use hal::{Color, DapDisplay, DisplayConfig};
+
+pub use audio::MockAmp;
+pub use audio::MockDac;
+
+#[cfg(feature = "hardware")]
+pub use audio::Es9038q2mDriver;
+
+#[cfg(feature = "hardware")]
+pub use audio::Tpa6120a2;
 
 #[cfg(feature = "hardware")]
 pub use display::Ssd1677Display;

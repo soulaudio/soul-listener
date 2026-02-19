@@ -7,13 +7,8 @@
 //! - Handle quirk errors
 //! - View quirk warnings in the UI
 
-use eink_emulator::{DisplayDriver, Emulator};
+use eink_emulator::Emulator;
 use eink_specs::{quirks_for_controller, ColorMode, Controller, DisplaySpec, PanelType};
-use embedded_graphics::mono_font::{ascii::FONT_6X10, MonoTextStyle};
-use embedded_graphics::pixelcolor::Gray4;
-use embedded_graphics::prelude::*;
-use embedded_graphics::primitives::{PrimitiveStyle, Rectangle};
-use embedded_graphics::text::Text;
 
 /// Create display spec with specific controller for testing
 fn create_spec_with_controller(controller: Controller) -> &'static DisplaySpec {

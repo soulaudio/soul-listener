@@ -16,10 +16,13 @@ This is a professional-grade Digital Audio Player firmware written in Rust using
 ## Target Hardware
 
 **MCU:** STM32H743ZI (Cortex-M7, 480 MHz, FPU/DSP)
-- 2 MB dual-bank Flash, 1 MB SRAM (DTCM + AXI + SRAM1/2)
-- SAI1/2 for I²S audio (DMA)
+- 2 MB dual-bank Flash (firmware only; assets offloaded to QSPI NOR)
+- ~992 KB SRAM: 128 KB DTCM (CPU-only, no DMA) + 512 KB AXI SRAM (D1, DMA-accessible) + 256 KB SRAM1/2 (D2) + 96 KB SRAM3/4
+- SAI1/2 for I²S/TDM audio (DMA)
 - SDMMC1 for microSD (4-bit, UHS-I)
-- USB OTG HS with internal PHY (UAC2 + USB-C charging)
+- USB OTG HS with internal PHY (UAC2 + USB-C data)
+- FMC for external SDRAM
+- QUADSPI for external NOR flash (XiP capable)
 
 **Display:** Good Display GDEM0397T81P via SPI + DMA
 - 3.97", 800×480, 235 PPI, Carta 1200 panel, SSD1677 controller
@@ -27,7 +30,7 @@ This is a professional-grade Digital Audio Player firmware written in Rust using
 - Deep sleep: ~1 µA; active refresh: ~34 mA average
 
 **Audio:**
-- DAC: PCM5242 (TI) — 32-bit/384 kHz I²S, integrated PLL
+- DAC: ES9038Q2M (ESS Technology) — 32-bit/768 kHz PCM, DSD512 (native + DoP), 128 dB DNR, −120 dB THD+N, I²C programmable (volume, filter, oversampling)
 - Headphone amp: TPA6120A2 (TI) — class-AB, 250 mA
 
 **Bluetooth:** STM32WB55RGV6 co-processor
@@ -44,6 +47,18 @@ This is a professional-grade Digital Audio Player firmware written in Rust using
 **PMIC:** BQ25895 (TI) — USB-C PD, LiPo charge, I²C control
 **Storage:** microSD via SDMMC1 (FAT32)
 **Battery:** Flat LiPo, 2000–4000 mAh
+
+**External SDRAM:** via FMC (Flexible Memory Controller) — holds music library index cache, album art thumbnail cache, large audio decode scratch, UI overflow buffers
+- **Option A — 64 MB:** IS42S16320G-7TL (ISSI) — 32M × 16-bit, 143 MHz, TSOP-54, ~$3
+- **Option B — 32 MB:** W9825G6KH-6 (Winbond) — 16M × 16-bit, 166 MHz, TSOP-54, ~$2
+- DMA buffers for real-time audio stay in internal AXI SRAM to avoid FMC latency
+- Mapped at 0xC0000000 via FMC bank 5/6; SDRAM controller built into STM32H7
+
+**External QSPI NOR Flash:** via QUADSPI — holds read-only assets offloaded from internal 2 MB flash (fonts, icons, waveform LUTs, OTA staging partition)
+- **Option A — 16 MB:** W25Q128JV (Winbond) — SPI/QSPI, 133 MHz, SOIC-8/WSON-8, ~$1.50
+- **Option B — 8 MB:** W25Q64JV (Winbond) — SPI/QSPI, 133 MHz, SOIC-8/WSON-8, ~$1.00
+- Supports XiP (eXecute in Place) if code needs to overflow internal flash
+- Internal 2 MB flash reserved for compiled firmware only; QSPI holds fonts + icons + LUTs
 
 ## Architecture Principles
 
@@ -242,25 +257,44 @@ pub enum InputEvent {
 // Simulator: keyboard events
 ```
 
-## Memory Management
+## Memory Architecture
 
-### No Heap Allocation
-- All allocations static or stack-based
+### Memory Map
+
+| Region | Size | Location | Usage |
+|---|---|---|---|
+| Internal Flash | 2 MB | 0x08000000 | Compiled firmware only |
+| DTCM | 128 KB | 0x20000000 | Hot paths, ISR scratch (no DMA) |
+| AXI SRAM | 512 KB | 0x24000000 | DMA buffers: audio SAI, display SPI, SDMMC |
+| SRAM1/2 | 256 KB | 0x30000000 | Embassy task stacks, heapless collections |
+| SRAM3/4 | 96 KB | 0x30040000 | USB buffers, small working sets |
+| External SDRAM | 32–64 MB | 0xC0000000 | Library index cache, album art, decode scratch |
+| External QSPI NOR | 8–16 MB | 0x90000000 | Fonts, icons, waveform LUTs, OTA staging |
+
+### Allocation Rules
+- All allocations static or stack-based — no heap
 - Use `heapless::Vec` and `heapless::String` for collections
-- Audio buffers allocated at compile time
-- Display framebuffer in static memory
+- **DMA buffers must live in AXI SRAM or SRAM1/2** — DTCM is not DMA-accessible
+- Audio SAI DMA ping-pong buffers: AXI SRAM (low latency, D1 domain)
+- Display framebuffer (2× 96 KB for 800×480 @ 2bpp): AXI SRAM
+- Library browse cache (current page ~50 entries): SRAM1/2
+- Full library index (5k+ tracks), album art cache: external SDRAM
+- Fonts, icons, LUTs: external QSPI NOR (read via QUADSPI DMA or XiP)
 
 ### Stack Size Configuration
 ```rust
-// memory.x
-_stack_size = 32K;  /* Sufficient for Embassy + audio buffers */
+// memory.x — per-task stacks via Embassy
+_stack_size = 16K;  /* Per task; adjust per task complexity */
 ```
 
 ### Buffer Sizing
 ```rust
-// Audio buffer: 2048 samples * 2 channels * 2 bytes = 8KB
-const AUDIO_BUFFER_SIZE: usize = 8192;
+// Audio DMA ping-pong in AXI SRAM — must be DMA-accessible
+const AUDIO_BUFFER_SIZE: usize = 8192;  // 2048 samples × 2ch × 2B
 static AUDIO_BUFFER: StaticCell<[u8; AUDIO_BUFFER_SIZE]> = StaticCell::new();
+
+// Large decode scratch in external SDRAM
+const FLAC_SCRATCH_SIZE: usize = 131_072;  // 128 KB
 ```
 
 ## Testing Philosophy

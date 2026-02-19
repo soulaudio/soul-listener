@@ -68,12 +68,12 @@ const PAD: i32 = 3;
 const LH: i32 = 11; // Line height
 
 // Box-model zone colours (ARGB)
-const MARGIN_FILL:  u32 = 0x60FFA040;
-const BORDER_FILL:  u32 = 0x60FFD040;
+const MARGIN_FILL: u32 = 0x60FFA040;
+const BORDER_FILL: u32 = 0x60FFD040;
 const PADDING_FILL: u32 = 0x6050CC50;
 const CONTENT_FILL: u32 = 0x604090E0;
-const MARGIN_LINE:  u32 = 0xFFDD7020;
-const BORDER_LINE:  u32 = 0xFFCCAA20;
+const MARGIN_LINE: u32 = 0xFFDD7020;
+const BORDER_LINE: u32 = 0xFFCCAA20;
 const PADDING_LINE: u32 = 0xFF30AA30;
 const CONTENT_LINE: u32 = 0xFF2070CC;
 
@@ -91,14 +91,7 @@ struct Canvas<'buf> {
 }
 
 impl<'buf> Canvas<'buf> {
-    fn new(
-        buf: &'buf mut [u32],
-        screen_w: u32,
-        x: u32,
-        y: u32,
-        w: u32,
-        h: u32,
-    ) -> Self {
+    fn new(buf: &'buf mut [u32], screen_w: u32, x: u32, y: u32, w: u32, h: u32) -> Self {
         Self {
             buf,
             screen_w,
@@ -181,7 +174,11 @@ impl DrawTarget for Canvas<'_> {
         for Pixel(p, c) in pixels {
             if p.x >= 0 && p.y >= 0 {
                 let (r, g, b) = (c.r() as u32, c.g() as u32, c.b() as u32);
-                self.set_px(p.x as u32, p.y as u32, 0xFF000000 | (r << 16) | (g << 8) | b);
+                self.set_px(
+                    p.x as u32,
+                    p.y as u32,
+                    0xFF000000 | (r << 16) | (g << 8) | b,
+                );
             }
         }
         Ok(())
@@ -205,7 +202,9 @@ fn kv(canvas: &mut Canvas, y: i32, key: &str, value: &str) {
     let key_style = MonoTextStyle::new(&FONT_6X10, COL_KEY);
     let val_style = MonoTextStyle::new(&FONT_6X10, COL_VALUE);
     let key_px = (key.len() as i32) * 6; // 6px per char in FONT_6X10
-    Text::new(key, Point::new(PAD, y), key_style).draw(canvas).ok();
+    Text::new(key, Point::new(PAD, y), key_style)
+        .draw(canvas)
+        .ok();
     Text::new(value, Point::new(PAD + key_px, y), val_style)
         .draw(canvas)
         .ok();
@@ -252,7 +251,7 @@ impl Inspector {
     /// Cycle to the next tab: Layout → BoxModel → Component → Layout.
     pub fn next_tab(&mut self) {
         self.current_tab = match self.current_tab {
-            InspectorTab::Layout   => InspectorTab::BoxModel,
+            InspectorTab::Layout => InspectorTab::BoxModel,
             InspectorTab::BoxModel => InspectorTab::Component,
             InspectorTab::Component => InspectorTab::Layout,
         };
@@ -292,7 +291,11 @@ impl Inspector {
         canvas.border(TOOLTIP_BORDER);
 
         // ── tab bar ──────────────────────────────────────────────────────
-        let tabs = [("LYT", InspectorTab::Layout), ("BOX", InspectorTab::BoxModel), ("CMP", InspectorTab::Component)];
+        let tabs = [
+            ("LYT", InspectorTab::Layout),
+            ("BOX", InspectorTab::BoxModel),
+            ("CMP", InspectorTab::Component),
+        ];
         let tab_w = (w - 2) / 3;
         for (i, (label, tab)) in tabs.iter().enumerate() {
             let tab_x = 1 + i as u32 * tab_w;
@@ -330,33 +333,32 @@ impl Inspector {
                 cy += LH;
                 let right = component.position.0 + component.size.0 as i32;
                 let bottom = component.position.1 + component.size.1 as i32;
-                kv(
-                    &mut canvas,
-                    cy,
-                    "br  ",
-                    &format!("({}, {})", right, bottom),
-                );
+                kv(&mut canvas, cy, "br  ", &format!("({}, {})", right, bottom));
             }
 
             InspectorTab::BoxModel => {
                 // Nested box diagram in the upper portion (y=12..84)
                 // Layer order: margin → border → padding → content (back to front)
-                canvas.fill_rect(2,  12, 156, 72, MARGIN_FILL);
+                canvas.fill_rect(2, 12, 156, 72, MARGIN_FILL);
                 canvas.fill_rect(14, 24, 132, 48, BORDER_FILL);
                 canvas.fill_rect(16, 26, 128, 44, PADDING_FILL);
                 canvas.fill_rect(26, 36, 108, 24, CONTENT_FILL);
 
-                canvas.rect_outline(2,  12, 156, 72, MARGIN_LINE);
+                canvas.rect_outline(2, 12, 156, 72, MARGIN_LINE);
                 canvas.rect_outline(14, 24, 132, 48, BORDER_LINE);
                 canvas.rect_outline(16, 26, 128, 44, PADDING_LINE);
                 canvas.rect_outline(26, 36, 108, 24, CONTENT_LINE);
 
                 // Zone labels
-                let mar_style  = MonoTextStyle::new(&FONT_6X10, Rgb888::new(0xDD, 0x70, 0x20));
-                let pad_style  = MonoTextStyle::new(&FONT_6X10, Rgb888::new(0x30, 0xAA, 0x30));
+                let mar_style = MonoTextStyle::new(&FONT_6X10, Rgb888::new(0xDD, 0x70, 0x20));
+                let pad_style = MonoTextStyle::new(&FONT_6X10, Rgb888::new(0x30, 0xAA, 0x30));
                 let cont_style = MonoTextStyle::new(&FONT_6X10, Rgb888::new(0x40, 0x90, 0xE0));
-                Text::new("margin",  Point::new(4, 21), mar_style).draw(&mut canvas).ok();
-                Text::new("padding", Point::new(18, 35), pad_style).draw(&mut canvas).ok();
+                Text::new("margin", Point::new(4, 21), mar_style)
+                    .draw(&mut canvas)
+                    .ok();
+                Text::new("padding", Point::new(18, 35), pad_style)
+                    .draw(&mut canvas)
+                    .ok();
 
                 // Content size centred in content box
                 let cont_label = if component.size.0 > 0 && component.size.1 > 0 {
@@ -365,20 +367,26 @@ impl Inspector {
                     "- × -".to_string()
                 };
                 let cont_x = (26 + (108i32 - cont_label.len() as i32 * 6) / 2).max(26);
-                Text::new(&cont_label, Point::new(cont_x, 50), cont_style).draw(&mut canvas).ok();
+                Text::new(&cont_label, Point::new(cont_x, 50), cont_style)
+                    .draw(&mut canvas)
+                    .ok();
 
                 // Compact value table (y=88..119, 3 rows)
                 let dim_style = MonoTextStyle::new(&FONT_6X10, COL_KEY);
                 let val_style = MonoTextStyle::new(&FONT_6X10, COL_VALUE);
 
                 let table_y = [88i32, 99, 110];
-                let labels  = ["mar", "brd", "pad"];
+                let labels = ["mar", "brd", "pad"];
                 let spacings = [component.margin, component.border, component.padding];
 
                 for ((row_y, lbl), sp) in table_y.iter().zip(labels.iter()).zip(spacings.iter()) {
-                    Text::new(lbl, Point::new(PAD, *row_y), dim_style).draw(&mut canvas).ok();
+                    Text::new(lbl, Point::new(PAD, *row_y), dim_style)
+                        .draw(&mut canvas)
+                        .ok();
                     let row = format!("{:>3}{:>3}{:>3}{:>3}", sp.top, sp.right, sp.bottom, sp.left);
-                    Text::new(&row, Point::new(PAD + 18, *row_y), val_style).draw(&mut canvas).ok();
+                    Text::new(&row, Point::new(PAD + 18, *row_y), val_style)
+                        .draw(&mut canvas)
+                        .ok();
                 }
             }
 
@@ -387,10 +395,7 @@ impl Inspector {
                 cy += LH;
                 txt(&mut canvas, cy, &component.component_type, COL_VALUE);
                 cy += LH;
-                let id_str = component
-                    .test_id
-                    .as_deref()
-                    .unwrap_or("(none)");
+                let id_str = component.test_id.as_deref().unwrap_or("(none)");
                 // Truncate long IDs to fit within tooltip width
                 let max_chars = ((w as i32 - PAD * 2) / 6).max(1) as usize;
                 let truncated: String = if id_str.len() > max_chars {
@@ -508,7 +513,14 @@ mod tests {
         let inspector = Inspector::new();
         let component = make_component();
         let mut buffer = vec![0u32; 800 * 600];
-        inspector.render_details(&mut buffer, 800, 10, 10, &component, &crate::debug::state::DebugState::default());
+        inspector.render_details(
+            &mut buffer,
+            800,
+            10,
+            10,
+            &component,
+            &crate::debug::state::DebugState::default(),
+        );
         // Tooltip background pixels should have been written
         let written = buffer.iter().any(|&px| px != 0);
         assert!(written, "render_details should write pixels to the buffer");
@@ -520,7 +532,14 @@ mod tests {
         inspector.set_tab(InspectorTab::Component);
         let component = make_component();
         let mut buffer = vec![0u32; 800 * 600];
-        inspector.render_details(&mut buffer, 800, 10, 10, &component, &crate::debug::state::DebugState::default());
+        inspector.render_details(
+            &mut buffer,
+            800,
+            10,
+            10,
+            &component,
+            &crate::debug::state::DebugState::default(),
+        );
         let written = buffer.iter().any(|&px| px != 0);
         assert!(written);
     }
@@ -531,7 +550,14 @@ mod tests {
         inspector.set_tab(InspectorTab::BoxModel);
         let component = make_component();
         let mut buffer = vec![0u32; 800 * 600];
-        inspector.render_details(&mut buffer, 800, 10, 10, &component, &crate::debug::state::DebugState::default());
+        inspector.render_details(
+            &mut buffer,
+            800,
+            10,
+            10,
+            &component,
+            &crate::debug::state::DebugState::default(),
+        );
         let written = buffer.iter().any(|&px| px != 0);
         assert!(written);
     }
@@ -546,13 +572,20 @@ mod tests {
             position: (10, 20),
             size: (100, 40),
             test_id: Some("test-btn".to_string()),
-            margin:  Spacing::all(8),
+            margin: Spacing::all(8),
             padding: Spacing::axes(4, 12),
-            border:  Spacing::all(1),
+            border: Spacing::all(1),
             ..Default::default()
         };
         let mut buffer = vec![0u32; 800 * 600];
-        inspector.render_details(&mut buffer, 800, 10, 10, &component, &crate::debug::state::DebugState::default());
+        inspector.render_details(
+            &mut buffer,
+            800,
+            10,
+            10,
+            &component,
+            &crate::debug::state::DebugState::default(),
+        );
         let written = buffer.iter().any(|&px| px != 0);
         assert!(written);
     }
@@ -573,7 +606,14 @@ mod tests {
             ..Default::default()
         };
         let mut buffer = vec![0u32; 800 * 600];
-        inspector.render_details(&mut buffer, 800, 10, 10, &component, &crate::debug::state::DebugState::default());
+        inspector.render_details(
+            &mut buffer,
+            800,
+            10,
+            10,
+            &component,
+            &crate::debug::state::DebugState::default(),
+        );
         let written = buffer.iter().any(|&px| px != 0);
         assert!(written);
     }
@@ -583,9 +623,20 @@ mod tests {
         let mut inspector = Inspector::new();
         let component = make_component();
         let mut buffer = vec![0u32; 800 * 600];
-        for tab in [InspectorTab::Layout, InspectorTab::BoxModel, InspectorTab::Component] {
+        for tab in [
+            InspectorTab::Layout,
+            InspectorTab::BoxModel,
+            InspectorTab::Component,
+        ] {
             inspector.set_tab(tab);
-            inspector.render_details(&mut buffer, 800, 10, 10, &component, &crate::debug::state::DebugState::default());
+            inspector.render_details(
+                &mut buffer,
+                800,
+                10,
+                10,
+                &component,
+                &crate::debug::state::DebugState::default(),
+            );
         }
     }
 
@@ -600,7 +651,14 @@ mod tests {
             ..Default::default()
         };
         let mut buffer = vec![0u32; 800 * 600];
-        inspector.render_details(&mut buffer, 800, 0, 0, &component, &crate::debug::state::DebugState::default());
+        inspector.render_details(
+            &mut buffer,
+            800,
+            0,
+            0,
+            &component,
+            &crate::debug::state::DebugState::default(),
+        );
     }
 
     #[test]
@@ -610,7 +668,14 @@ mod tests {
         let screen_w = 200u32;
         let mut buffer = vec![0u32; (screen_w * 200) as usize];
         // Request x near the right edge — tooltip should be clamped
-        inspector.render_details(&mut buffer, screen_w, screen_w - 10, 0, &component, &crate::debug::state::DebugState::default());
+        inspector.render_details(
+            &mut buffer,
+            screen_w,
+            screen_w - 10,
+            0,
+            &component,
+            &crate::debug::state::DebugState::default(),
+        );
         // Should not panic, pixels should be written
         let written = buffer.iter().any(|&px| px != 0);
         assert!(written);

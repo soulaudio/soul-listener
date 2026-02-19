@@ -81,6 +81,10 @@ pub enum Peripheral {
     Dma1,
     /// DMA2
     Dma2,
+    /// FMC (Flexible Memory Controller — external SDRAM)
+    FmcSdram,
+    /// QUADSPI (external NOR flash asset store)
+    Quadspi,
 }
 
 /// Wake-up source

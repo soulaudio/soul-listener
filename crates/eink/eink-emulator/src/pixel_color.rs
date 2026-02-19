@@ -204,7 +204,7 @@ mod tests {
         // ARGB format: A=24-31, R=16-23, G=8-15, B=0-7
         let r = (rgba >> 16) & 0xFF;
         let g = (rgba >> 8) & 0xFF;
-        let b = (rgba >> 0) & 0xFF;
+        let b = rgba & 0xFF;
 
         assert_eq!(r, 255); // 15 * 17 = 255
         assert_eq!(g, 136); // 8 * 17 = 136
@@ -237,7 +237,7 @@ mod tests {
                     assert_eq!(r, 255, "Red channel should be 255 for Red pigment");
                 }
                 SpectraColor::Blue => {
-                    let b = (rgba >> 0) & 0xFF;
+                    let b = rgba & 0xFF;
                     assert_eq!(b, 255, "Blue channel should be 255 for Blue pigment");
                 }
                 SpectraColor::Yellow => {
@@ -253,7 +253,7 @@ mod tests {
                 SpectraColor::None => {
                     let r = (rgba >> 16) & 0xFF;
                     let g = (rgba >> 8) & 0xFF;
-                    let b = (rgba >> 0) & 0xFF;
+                    let b = rgba & 0xFF;
                     assert_eq!(r, g, "R and G should match for grayscale");
                     assert_eq!(g, b, "G and B should match for grayscale");
                 }

@@ -58,7 +58,10 @@ fn main() -> Result<()> {
 
     match cli.command {
         Commands::Flash { release } => flash::run(release),
-        Commands::Dev { headless, hot_reload } => dev::run(headless, hot_reload),
+        Commands::Dev {
+            headless,
+            hot_reload,
+        } => dev::run(headless, hot_reload),
         Commands::Check => check::run(),
         Commands::Test { unit, integration } => test::run(unit, integration),
         Commands::Doc { open } => doc::run(open),

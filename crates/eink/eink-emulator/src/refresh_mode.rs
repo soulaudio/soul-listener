@@ -3,13 +3,14 @@
 //! Defines the different refresh strategies for e-ink displays.
 
 /// Refresh mode for e-ink displays
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub enum RefreshMode {
     /// Full refresh with flashing (~2000ms)
     /// - 16 grayscale levels
     /// - 3-4 flashes (black → white → final)
     /// - Clears all ghosting
     /// - Use for: Page transitions, periodic cleanup
+    #[default]
     Full,
 
     /// Partial refresh (~300ms)
@@ -45,12 +46,6 @@ impl RefreshMode {
     /// Check if this mode clears ghosting
     pub fn clears_ghosting(&self) -> bool {
         *self == RefreshMode::Full
-    }
-}
-
-impl Default for RefreshMode {
-    fn default() -> Self {
-        RefreshMode::Full
     }
 }
 

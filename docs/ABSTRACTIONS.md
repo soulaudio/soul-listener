@@ -381,23 +381,23 @@ pub struct AudioConfig {
 }
 ```
 
-### Hardware Implementation (WM8960 via I2S)
+### Hardware Implementation (ES9038Q2M via I²S)
 
 ```rust
 use embassy_stm32::sai::Sai;
 use embassy_stm32::i2c::I2c;
 
-pub struct Wm8960Codec<'d> {
+pub struct Es9038q2mCodec<'d> {
     i2c: I2c<'d>,      // Control interface
     sai: Sai<'d>,      // Audio data interface
     volume: u8,
 }
 
-impl AudioCodec for Wm8960Codec<'_> {
+impl AudioCodec for Es9038q2mCodec<'_> {
     type Error = CodecError;
 
     async fn init(&mut self, config: AudioConfig) -> Result<(), Self::Error> {
-        // Configure WM8960 registers via I2C
+        // Configure ES9038Q2M registers via I²C
         self.write_register(Register::Reset, 0x0000).await?;
         self.write_register(Register::Power1, 0x00FF).await?;
 
@@ -427,8 +427,8 @@ impl AudioCodec for Wm8960Codec<'_> {
         let volume = volume.min(100);
         self.volume = volume;
 
-        // Map 0-100 to WM8960's volume range
-        let reg_value = (volume as u16 * 127) / 100;
+        // Map 0-100 to ES9038Q2M's 8-bit ATT register (0x00 = 0 dB, 0xFF = max attenuation)
+        let reg_value = ((100 - volume) as u16 * 255) / 100;
         self.write_register(Register::LeftOut1Volume, reg_value).await?;
         self.write_register(Register::RightOut1Volume, reg_value).await?;
 
