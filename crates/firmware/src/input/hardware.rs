@@ -177,6 +177,7 @@ async fn encoder_loop(
         clk.wait_for_rising_edge().await;
         // DT low when CLK rises → clockwise (+1); DT high → counter-clockwise (−1).
         let increment = if dt.is_low() { 1_i32 } else { -1_i32 };
+        defmt::trace!("Encoder step: delta={=i32}", increment);
         tx.send(InputEvent::RotaryIncrement(increment)).await;
     }
 }
@@ -199,9 +200,11 @@ async fn button_loop(
         pin.wait_for_falling_edge().await;
         Timer::after_millis(20).await; // debounce
         if pin.is_low() {
+            defmt::debug!("Button press: {}", btn);
             tx.send(InputEvent::ButtonPress(btn)).await;
             pin.wait_for_rising_edge().await;
             Timer::after_millis(20).await; // debounce release
+            defmt::debug!("Button release: {}", btn);
             tx.send(InputEvent::ButtonRelease(btn)).await;
         }
     }

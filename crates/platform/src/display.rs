@@ -7,6 +7,7 @@ use embedded_graphics::prelude::*;
 /// Returned by [`DisplayDriver::spec`] so application code can query display
 /// dimensions without depending on the `eink-specs` crate.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub struct DisplayInfo {
     /// Panel width in pixels.
     pub width: u32,
@@ -92,6 +93,7 @@ pub trait EinkDisplay: DisplayDriver {
 
 /// E-ink refresh modes.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum RefreshMode {
     /// Full refresh — best quality, clears ghosting, slowest (~2000 ms).
     Full,

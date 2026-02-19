@@ -16,43 +16,53 @@ use platform::DisplayDriver;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    println!("=== Display Emulator Test ===\n");
+    tracing_subscriber::fmt()
+        .with_env_filter(
+            tracing_subscriber::EnvFilter::try_from_default_env()
+                .unwrap_or_else(|_| tracing_subscriber::EnvFilter::new("info"))
+        )
+        .with_target(false)
+        .with_timer(tracing_subscriber::fmt::time::uptime())
+        .compact()
+        .init();
+
+    tracing::info!("Display Emulator Test");
 
     // Create emulator display (shows window)
     let mut display = EmulatorDisplay::new();
 
     // Test 1: Initialization
-    println!("Test 1: Display Initialization");
+    tracing::info!(test = 1, "Display Initialization");
     display.init().await?;
-    println!("✓ Initialization successful\n");
+    tracing::info!(test = 1, "Initialization successful");
 
     sleep(Duration::from_secs(1)).await;
 
     // Test 2: Splash screen
-    println!("Test 2: Splash Screen");
+    tracing::info!(test = 2, "Splash Screen");
     SplashScreen::render(&mut display)?;
     display.refresh_full().await?;
-    println!("✓ Splash screen rendered\n");
+    tracing::info!(test = 2, "Splash screen rendered");
 
     sleep(Duration::from_secs(2)).await;
 
     // Test 3: Test pattern
-    println!("Test 3: Test Pattern");
+    tracing::info!(test = 3, "Test Pattern");
     TestPattern::render(&mut display)?;
     display.refresh_full().await?;
-    println!("✓ Test pattern rendered\n");
+    tracing::info!(test = 3, "Test pattern rendered");
 
     sleep(Duration::from_secs(2)).await;
 
     // Test 4: Clear to white
-    println!("Test 4: Clear to White");
+    tracing::info!(test = 4, "Clear to White");
     DapDisplay::clear(&mut display, firmware::Color::White).await?;
-    println!("✓ Clear successful\n");
+    tracing::info!(test = 4, "Clear successful");
 
     sleep(Duration::from_secs(1)).await;
 
     // Test 5: Draw shapes
-    println!("Test 5: Drawing Shapes");
+    tracing::info!(test = 5, "Drawing Shapes");
 
     // Black rectangles
     Rectangle::new(Point::new(50, 50), Size::new(200, 100))
@@ -73,12 +83,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .draw(&mut display)?;
 
     display.refresh_full().await?;
-    println!("✓ Shape drawing successful\n");
+    tracing::info!(test = 5, "Shape drawing successful");
 
     sleep(Duration::from_secs(2)).await;
 
     // Test 6: Text rendering
-    println!("Test 6: Text Rendering");
+    tracing::info!(test = 6, "Text Rendering");
 
     DapDisplay::clear(&mut display, firmware::Color::White).await?;
 
@@ -93,12 +103,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     Text::new("Firmware v0.1.0", Point::new(50, 190), text_style).draw(&mut display)?;
 
     display.refresh_full().await?;
-    println!("✓ Text rendering successful\n");
+    tracing::info!(test = 6, "Text rendering successful");
 
     sleep(Duration::from_secs(2)).await;
 
     // Test 7: Partial refresh animation
-    println!("Test 7: Partial Refresh Animation");
+    tracing::info!(test = 7, "Partial Refresh Animation");
 
     for i in 0..5 {
         DapDisplay::clear(&mut display, firmware::Color::White).await?;
@@ -112,23 +122,23 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         Text::new(&text, Point::new(x + 15, 245), text_style).draw(&mut display)?;
 
         display.refresh_partial().await?;
-        println!("  Frame {} rendered", i + 1);
+        tracing::debug!(frame = i + 1, "Frame rendered");
 
         sleep(Duration::from_millis(400)).await;
     }
-    println!("✓ Partial refresh animation successful\n");
+    tracing::info!(test = 7, "Partial refresh animation successful");
 
     sleep(Duration::from_secs(1)).await;
 
     // Test 8: Sleep/wake
-    println!("Test 8: Sleep and Wake");
+    tracing::info!(test = 8, "Sleep and Wake");
     display.sleep().await?;
-    println!("  Display sleeping...");
+    tracing::debug!("Display sleeping");
 
     sleep(Duration::from_secs(1)).await;
 
     display.wake().await?;
-    println!("✓ Wake successful\n");
+    tracing::info!(test = 8, "Wake successful");
 
     // Final screen
     DapDisplay::clear(&mut display, firmware::Color::White).await?;
@@ -139,8 +149,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     display.refresh_full().await?;
 
-    println!("=== All Tests Complete ===\n");
-    println!("Emulator window is open. Press Ctrl+C to exit.");
+    tracing::info!("All tests complete");
+    tracing::info!("Emulator window open — press Ctrl+C to exit");
 
     // Keep window open
     loop {

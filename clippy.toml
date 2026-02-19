@@ -1,0 +1,19 @@
+# clippy.toml — workspace-wide Clippy configuration
+# Applied to all crates; per-crate overrides go in source with #[allow]
+
+# Allow print macros in test code (tests legitimately use println! for output)
+allow-print-in-tests = true
+
+# Cognitive complexity threshold (default 25 is very permissive for embedded)
+cognitive-complexity-threshold = 30
+
+# Allow large enum variants — embedded code often has intentionally large variants
+# (e.g. audio buffers, display framebuffers held in enums)
+# Don't warn until variant is >512 bytes larger than next
+enum-variant-size-threshold = 512
+
+# Allow single-char binding names common in embedded (e.g. 'p' for peripherals, 'e' for error)
+single-char-binding-names-threshold = 2
+
+# Minimum length for idents to trigger the too-short-ident lint
+min-ident-chars-threshold = 2

@@ -102,10 +102,7 @@ impl Default for EmulatorDisplay {
 
 impl DapDisplay for EmulatorDisplay {
     async fn init(&mut self) -> Result<(), Self::DriverError> {
-        println!(
-            "Initializing emulator display ({}×{})",
-            DISPLAY_WIDTH, DISPLAY_HEIGHT
-        );
+        tracing::debug!(width = DISPLAY_WIDTH, height = DISPLAY_HEIGHT, "Initializing emulator display");
 
         // Emulator doesn't need initialization, but we simulate the delay
         tokio::time::sleep(Duration::from_millis(100)).await;
@@ -113,7 +110,7 @@ impl DapDisplay for EmulatorDisplay {
         // Clear to white using the DapDisplay trait method
         DapDisplay::clear(self, crate::hal::Color::White).await?;
 
-        println!("Emulator display initialized");
+        tracing::debug!("Emulator display initialized");
         Ok(())
     }
 
@@ -184,7 +181,7 @@ impl platform::DisplayDriver for EmulatorDisplay {
     }
 
     async fn refresh_full(&mut self) -> Result<(), Self::DriverError> {
-        println!("Emulator: Full refresh");
+        tracing::debug!("Emulator: full refresh");
 
         // Use the eink-emulator's DisplayDriver trait
         use eink_emulator::DisplayDriver;
@@ -198,7 +195,7 @@ impl platform::DisplayDriver for EmulatorDisplay {
     }
 
     async fn refresh_partial(&mut self) -> Result<(), Self::DriverError> {
-        println!("Emulator: Partial refresh");
+        tracing::debug!("Emulator: partial refresh");
 
         // Use the eink-emulator's DisplayDriver trait
         use eink_emulator::DisplayDriver;
@@ -212,7 +209,7 @@ impl platform::DisplayDriver for EmulatorDisplay {
     }
 
     async fn sleep(&mut self) -> Result<(), Self::DriverError> {
-        println!("Emulator: Entering sleep mode");
+        tracing::debug!("Emulator: entering sleep mode");
 
         // Use the eink-emulator's DisplayDriver trait
         use eink_emulator::DisplayDriver;
@@ -226,7 +223,7 @@ impl platform::DisplayDriver for EmulatorDisplay {
     }
 
     async fn wake(&mut self) -> Result<(), Self::DriverError> {
-        println!("Emulator: Waking from sleep");
+        tracing::debug!("Emulator: waking from sleep");
 
         // Use the eink-emulator's DisplayDriver trait
         use eink_emulator::DisplayDriver;
