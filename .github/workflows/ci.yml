@@ -53,6 +53,7 @@ jobs:
 
       - uses: dtolnay/rust-toolchain@efa25f7f19611383d5b0ccf2d1c8914531636bf9  # master (stable)
         with:
+          toolchain: stable
           components: rustfmt
 
       - name: cargo fmt --all --check
@@ -78,6 +79,7 @@ jobs:
 
       - uses: dtolnay/rust-toolchain@efa25f7f19611383d5b0ccf2d1c8914531636bf9  # master (stable)
         with:
+          toolchain: stable
           components: clippy
 
       - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
@@ -132,11 +134,13 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
       - uses: dtolnay/rust-toolchain@efa25f7f19611383d5b0ccf2d1c8914531636bf9  # master (stable)
+        with:
+          toolchain: stable
 
       - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
 
-      # eink-emulator (direct test target and dev-dep of eink-system/eink-components)
-      # depends on winit/softbuffer which need wayland/x11 headers to compile.
+      # eink-emulator is a direct test target and depends on winit/softbuffer
+      # which need wayland/x11 headers to compile.
       - name: Install Linux GUI dependencies
         run: |
           sudo apt-get update -qq
@@ -155,11 +159,11 @@ jobs:
       - name: cargo test -p eink-specs
         run: cargo test -p eink-specs
 
-      # eink-system: depends on eink-emulator in dev-dependencies (std ok)
+      # eink-system: pure layout engine, no external dev-deps beyond tokio
       - name: cargo test -p eink-system
         run: cargo test -p eink-system
 
-      # eink-components: depends on eink-emulator in dev-dependencies (std ok)
+      # eink-components: pure component library, no external dev-deps beyond tokio
       - name: cargo test -p eink-components
         run: cargo test -p eink-components
 
@@ -194,6 +198,8 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
       - uses: dtolnay/rust-toolchain@efa25f7f19611383d5b0ccf2d1c8914531636bf9  # master (stable)
+        with:
+          toolchain: stable
 
       - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
 
@@ -238,6 +244,8 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
       - uses: dtolnay/rust-toolchain@efa25f7f19611383d5b0ccf2d1c8914531636bf9  # master (stable)
+        with:
+          toolchain: stable
 
       - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
 
@@ -279,6 +287,7 @@ jobs:
 
       - uses: dtolnay/rust-toolchain@efa25f7f19611383d5b0ccf2d1c8914531636bf9  # master (stable)
         with:
+          toolchain: stable
           targets: thumbv7em-none-eabihf
 
       - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
