@@ -9,17 +9,22 @@ license = "MIT OR Apache-2.0"
 embedded-graphics = "0.8.1"
 heapless = "0.8"
 
-# For screenshot testing
+# Only needed by example binaries — never activated during `cargo test`.
+# Gated behind the `examples` feature and required-features on [[example]].
 eink-emulator = { path = "../eink-emulator", optional = true }
-image = { version = "0.25.9", optional = true }
 
 [dev-dependencies]
-eink-emulator = { path = "../eink-emulator" }
 tokio = { version = "1.49", features = ["macros", "rt"] }
-image = "0.25.9"
 
 [features]
 default = []
 std = []
 debug = []
-screenshot-tests = ["eink-emulator", "image"]
+# Pulls in eink-emulator for interactive example binaries only.
+# Never enable this in production tests; the architecture CI step enforces this.
+examples = ["dep:eink-emulator"]
+
+[[example]]
+name = "layout_demo"
+path = "examples/layout_demo.rs"
+required-features = ["examples"]

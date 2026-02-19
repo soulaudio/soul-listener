@@ -129,6 +129,9 @@ enum InputKind {
 /// - `build_hardware()`: hardware-specific wiring lives in
 ///   `input::hardware::spawn_input_task`.
 pub struct InputBuilder {
+    // `kind` is read only in `build_emulated` (keyboard-input feature).
+    // Without that feature it is set but not read — suppress the lint.
+    #[cfg_attr(not(feature = "keyboard-input"), allow(dead_code))]
     kind: InputKind,
     debounce_ms: u32,
 

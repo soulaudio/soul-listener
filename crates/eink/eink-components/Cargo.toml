@@ -12,11 +12,22 @@ eink-system = { path = "../eink-system" }
 embedded-graphics = "0.8.1"
 heapless = "0.8"
 
+# Only needed by example binaries — never activated during `cargo test`.
+# Gated behind the `examples` feature and required-features on [[example]].
+eink-emulator = { path = "../eink-emulator", optional = true }
+
 [dev-dependencies]
-eink-emulator = { path = "../eink-emulator" }
 tokio = { version = "1.49", features = ["macros", "rt"] }
 
 [features]
 default = []
 std = ["eink-system/std"]
 debug = ["eink-system/debug"]
+# Pulls in eink-emulator for interactive example binaries only.
+# Never enable this in production tests; the architecture CI step enforces this.
+examples = ["dep:eink-emulator", "eink-system/examples"]
+
+[[example]]
+name = "components_demo"
+path = "examples/components_demo.rs"
+required-features = ["examples"]
