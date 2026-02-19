@@ -58,6 +58,8 @@ use alloc::boxed::Box;
 /// ```no_run
 /// use eink_system::prelude::*;
 /// use embedded_graphics::prelude::*;
+/// use embedded_graphics::pixelcolor::Gray4;
+/// use embedded_graphics::pixelcolor::GrayColor;
 ///
 /// let vstack = VStack::<4>::new()
 ///     .gap(8)
@@ -224,6 +226,8 @@ impl<const N: usize> Layout for VStack<N> {
 /// ```no_run
 /// use eink_system::prelude::*;
 /// use embedded_graphics::prelude::*;
+/// use embedded_graphics::pixelcolor::Gray4;
+/// use embedded_graphics::pixelcolor::GrayColor;
 ///
 /// let hstack = HStack::<4>::new()
 ///     .gap(8)

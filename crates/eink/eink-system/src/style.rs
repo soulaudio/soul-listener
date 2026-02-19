@@ -17,6 +17,7 @@
 //! ```
 //! use eink_system::style::*;
 //! use embedded_graphics::pixelcolor::Gray4;
+//! use embedded_graphics::pixelcolor::GrayColor;
 //!
 //! let style = Style {
 //!     width: Dimension::Px(200),
@@ -27,6 +28,9 @@
 //!     justify_content: Justify::SpaceBetween,
 //!     align_items: Align::Stretch,
 //!     gap: 12,
+//!     flex_grow: 0.0,
+//!     flex_shrink: 1.0,
+//!     flex_basis: Dimension::Auto,
 //!     background: Some(Gray4::WHITE),
 //! };
 //! ```
@@ -389,6 +393,7 @@ pub enum Align {
 /// ```
 /// use eink_system::style::*;
 /// use embedded_graphics::pixelcolor::Gray4;
+/// use embedded_graphics::pixelcolor::GrayColor;
 ///
 /// // Create a centered container with padding
 /// let container = Style {
@@ -400,6 +405,9 @@ pub enum Align {
 ///     justify_content: Justify::Center,
 ///     align_items: Align::Center,
 ///     gap: 8,
+///     flex_grow: 0.0,
+///     flex_shrink: 1.0,
+///     flex_basis: Dimension::Auto,
 ///     background: Some(Gray4::WHITE),
 /// };
 ///
