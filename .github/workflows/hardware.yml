@@ -14,6 +14,7 @@
 # Current pins (as of 2026-02-19):
 #   actions/checkout          v4.2.2   11bd71901bbe5b1630ceea73d27597364c9af683
 #   atopile/setup-atopile     v1.8     a44779655197de0f408861581669f09b2145bc33
+#   actions/upload-artifact   v4.6.2   ea165f8d65b6e75b540449e92b4886f43607fa02
 
 name: Hardware
 
@@ -93,7 +94,7 @@ jobs:
         run: ato build --build bom-only
 
       - name: Upload BOM artifact
-        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce5449  # v4.6.0
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
         with:
           name: bom-${{ github.sha }}
           path: hardware/build/

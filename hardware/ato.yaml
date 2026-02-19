@@ -49,11 +49,3 @@ dependencies:
   - type: registry
     identifier: atopile/generics
     release: 0.1.5
-
-# ── Publishing metadata ───────────────────────────────────────────────────
-repository: "https://github.com/soulaudio/soulaudio-dap"
-authors:
-  - name: "SoulAudio"
-summary: "SoulAudio DAP hardware — STM32H743ZI hi-fi digital audio player"
-license: "CERN-OHL-P-2.0"
-version: "0.1.0"
