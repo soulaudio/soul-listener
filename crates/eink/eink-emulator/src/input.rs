@@ -26,7 +26,8 @@
 use std::collections::VecDeque;
 use std::sync::{Arc, Mutex};
 
-use platform::{Button, InputDevice, InputEvent};
+pub use platform::{Button, InputEvent};
+use platform::InputDevice;
 use winit::keyboard::KeyCode;
 
 /// Maximum number of unread events buffered in the queue.

@@ -4,10 +4,14 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-eink-emulator = { path = "../eink-emulator", features = ["debug", "headless"] }
+eink-emulator = { path = "../eink-emulator", features = ["headless"] }
 eink-specs = { path = "../eink-specs" }
+embedded-graphics = { workspace = true }
 image = { version = "0.25", features = ["png"] }
 
 [features]
 default = []
+# Enable the emulator's debug overlay (Ctrl+1/2/3 component registry).
 debug = ["eink-emulator/debug"]
+# Enable keyboard/scroll input simulation via InputEvent / Button.
+keyboard-input = ["eink-emulator/keyboard-input"]
