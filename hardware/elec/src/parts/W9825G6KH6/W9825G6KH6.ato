@@ -1,0 +1,66 @@
+# W9825G6KH6 — Winbond 32 MB SDRAM
+#
+# Package:      TSOP-II-54, 400 mil body (54-pin, 0.8 mm pitch)
+# Manufacturer: Winbond Electronics
+# Datasheet:    https://www.winbond.com/hq/product/code-storage-flash-memory/
+#               psram/?__locale=en&partNo=W9825G6KH  (see W9825G6KH-6 datasheet)
+# Key specs:    256 Mbit (32 MB), 16-bit data bus, 166 MHz (−6 suffix)
+#               SDRAM (synchronous DRAM), 4 banks × 8M × 8 bits
+#               Connected via STM32H7 FMC, mapped at 0xC000_0000
+#               Holds: library index cache, album art, audio decode scratch
+#
+# ⚠ PIN NUMBERS: TSOP-II-54 pinout — verify against KiCad symbol.
+#   The W9825G6KH-6 has a standard SDRAM pinout. A compatible KiCad symbol
+#   is available for ISSI IS42S16320G (same pinout) or Winbond W9825G6KH.
+#   Search kicad-symbols Memory_SDRAM for compatible symbols.
+#
+# Option A (64 MB alternative): IS42S16320G-7TL (ISSI)
+#   partnumber = "IS42S16320G-7TL", footprint same TSOP-II-54
+#   Available at Digi-Key and Mouser; check TME for ISSI stock.
+#
+# Distributor availability:
+#   Digi-Key: 926-W9825G6KH6TRND  (Winbond; check availability)
+#   Mouser:   841-W9825G6KH6TR
+#   TME:      W9825G6KH-6         (check cz.tme.eu for SDRAM stock)
+
+component W9825G6KH6:
+    trait is_atomic_part<
+        manufacturer = "Winbond Electronics",
+        partnumber   = "W9825G6KH-6",
+        footprint    = "Package_SO:TSOP-II-54_18.4x10.16mm_P0.8mm",
+        symbol       = "W9825G6KH6.kicad_sym">
+    trait has_designator_prefix<prefix = "U">
+
+    # ── Address bus A[12:0] ───────────────────────────────────────────────────
+    signal A0  ~ pin 4;  signal A1  ~ pin 3;  signal A2  ~ pin 2   # TODO: verify all
+    signal A3  ~ pin 1;  signal A4  ~ pin 28; signal A5  ~ pin 27
+    signal A6  ~ pin 26; signal A7  ~ pin 25; signal A8  ~ pin 23
+    signal A9  ~ pin 22; signal A10 ~ pin 21; signal A11 ~ pin 7
+    signal A12 ~ pin 8
+
+    # ── Bank address ──────────────────────────────────────────────────────────
+    signal BA0 ~ pin 5
+    signal BA1 ~ pin 6
+
+    # ── Data bus D[15:0] ─────────────────────────────────────────────────────
+    signal DQ0  ~ pin 42; signal DQ1  ~ pin 41; signal DQ2  ~ pin 40  # TODO: verify all
+    signal DQ3  ~ pin 39; signal DQ4  ~ pin 38; signal DQ5  ~ pin 37
+    signal DQ6  ~ pin 36; signal DQ7  ~ pin 35; signal DQ8  ~ pin 15
+    signal DQ9  ~ pin 16; signal DQ10 ~ pin 17; signal DQ11 ~ pin 18
+    signal DQ12 ~ pin 19; signal DQ13 ~ pin 20; signal DQ14 ~ pin 32
+    signal DQ15 ~ pin 31
+
+    # ── Control ───────────────────────────────────────────────────────────────
+    signal RAS_NEG  ~ pin 10  # Row Address Strobe (active low)
+    signal CAS_NEG  ~ pin 11  # Column Address Strobe (active low)
+    signal WE_NEG   ~ pin 12  # Write Enable (active low)
+    signal CS_NEG   ~ pin 9   # Chip Select (active low)
+    signal CLK      ~ pin 34  # Clock (up to 166 MHz)
+    signal CKE      ~ pin 33  # Clock Enable
+    signal DQML     ~ pin 43  # Low-byte data mask
+    signal DQMH     ~ pin 14  # High-byte data mask
+
+    # ── Power ─────────────────────────────────────────────────────────────────
+    signal VDD_1    ~ pin 13; signal VDD_2 ~ pin 30  # 3.3 V supply
+    signal VSS_1    ~ pin 29; signal VSS_2 ~ pin 44  # Ground
+    signal NC_1     ~ pin 24  # No connect

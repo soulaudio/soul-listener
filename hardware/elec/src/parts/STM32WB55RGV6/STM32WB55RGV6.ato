@@ -1,0 +1,66 @@
+# STM32WB55RGV6 — STMicroelectronics Dual-Core BLE 5.0 / LE Audio Co-processor
+#
+# Package:      VFQFPN-68, 8×8 mm, 0.5 mm pitch (68-pin, exposed pad)
+# Manufacturer: STMicroelectronics
+# Datasheet:    https://www.st.com/resource/en/datasheet/stm32wb55rg.pdf
+# Key specs:    Cortex-M4 (64 MHz app core) + Cortex-M0+ (32 MHz BLE stack)
+#               2.4 GHz IEEE 802.15.4 transceiver, BLE 5.0, LE Audio (LC3)
+#               Connected to STM32H743 via UART1 (HCI protocol)
+#               ST-supplied and certified BLE firmware (stm32wb-copro binary)
+#               Internal balun → direct 50 Ω antenna connection (no external matching)
+#
+# ⚠ PIN NUMBERS: Verify against KiCad symbol MCU_ST_STM32WB:STM32WB55RGVx
+#   Key pins (VFQFPN-68):
+#   Pins 1-16:  PB0-PB15 (GPIO bank B)
+#   Pins 17-32: PC0-PC15 (GPIO bank C) — PC14/PC15: LSE crystal
+#   Pins 33-36: PD0-PD3 (GPIO bank D) — usually PH0/PH1 for HSE crystal
+#   Pins 37-44: VDD, VSS, VBAT, VDDIO2 supply pins
+#   Pins 45-60: PA0-PA15 (GPIO bank A) — PA9/PA10 = UART1 for HCI
+#   Pins 61-64: RF_ANT, boot, reset
+#   Pins 65-68: Additional supply / analog
+#   EP:         VSS (exposed pad — connect to ground plane)
+#
+# KiCad symbol: MCU_ST_STM32WB:STM32WB55RGVx  (official kicad-symbols)
+#
+# Distributor availability:
+#   TME:     STM32WB55RGV6    (check cz.tme.eu)
+#   Digi-Key: 497-STM32WB55RGV6TR-ND
+#   Mouser:   511-STM32WB55RGV6
+
+component STM32WB55RGV6:
+    trait is_atomic_part<
+        manufacturer = "STMicroelectronics",
+        partnumber   = "STM32WB55RGV6",
+        footprint    = "Package_DFN_QFN:VFQFPN-68-1EP_8x8mm_P0.5mm_EP5.6x5.6mm",
+        symbol       = "MCU_ST_STM32WB:STM32WB55RGVx">
+    trait has_designator_prefix<prefix = "U">
+
+    # ── Power supply ─────────────────────────────────────────────────────────
+    signal VDD    ~ pin 37   # 3.3 V digital supply — TODO: verify
+    signal VSS    ~ pin 38   # Ground               — TODO: verify
+    signal VBAT   ~ pin 39   # Backup domain (tie to VDD if no battery backup)
+    signal VDDIO2 ~ pin 40   # IO bank 2 supply (tie to VDD)
+    signal EP     ~ pin 69   # Exposed pad = VSS
+
+    # ── HCI UART to STM32H743 ────────────────────────────────────────────────
+    # Uses UART1 (PA9=TX, PA10=RX) for HCI communication with the host MCU.
+    # TX/RX crossed: WB55 TX → H743 RX, WB55 RX ← H743 TX
+    signal UART1_TX ~ pin 45  # PA9  — TODO: verify VFQFPN-68 pin number
+    signal UART1_RX ~ pin 46  # PA10 — TODO: verify
+
+    # ── HSE Crystal (32 MHz) ─────────────────────────────────────────────────
+    # STM32WB55 requires external 32 MHz HSE crystal for BLE RF calibration
+    signal PH0_OSC_IN  ~ pin 33  # TODO: verify
+    signal PH1_OSC_OUT ~ pin 34  # TODO: verify
+
+    # ── LSE Crystal (32.768 kHz) ─────────────────────────────────────────────
+    signal PC14_OSC32_IN  ~ pin 17  # TODO: verify
+    signal PC15_OSC32_OUT ~ pin 18  # TODO: verify
+
+    # ── SWD debug (secondary debug port) ─────────────────────────────────────
+    signal SWDIO_WB  ~ pin 50  # PA13 — TODO: verify
+    signal SWDCLK_WB ~ pin 51  # PA14 — TODO: verify
+    signal NRST_WB   ~ pin 62  # Reset
+
+    # ── RF antenna ───────────────────────────────────────────────────────────
+    signal RF_ANT ~ pin 61  # 50 Ω antenna port — connect to chip antenna or U.FL

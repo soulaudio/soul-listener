@@ -1,0 +1,135 @@
+# Common bus interface types used across SoulAudio DAP modules.
+#
+# These extend the built-in Atopile interfaces (Electrical, ElectricPower,
+# ElectricSignal, ElectricLogic) with project-specific multi-signal buses.
+#
+# Import in module files:
+#   from "interfaces.ato" import I2CBus, SPIBus, I2SBus, ...
+
+# ── I²C ──────────────────────────────────────────────────────────────────────
+interface I2CBus:
+    """400 kHz Fast-mode I²C bus (SDA + SCL)."""
+    sda = new Electrical
+    scl = new Electrical
+
+# ── SPI ──────────────────────────────────────────────────────────────────────
+interface SPIBus:
+    """SPI bus without chip-select (CS managed per-device by the master)."""
+    mosi = new Electrical
+    miso = new Electrical
+    sclk = new Electrical
+
+interface SPIDevice:
+    """SPI bus with a dedicated chip-select line."""
+    mosi = new Electrical
+    miso = new Electrical
+    sclk = new Electrical
+    cs   = new Electrical
+
+# ── I²S / SAI (audio) ────────────────────────────────────────────────────────
+interface I2SBus:
+    """I²S serial audio bus: MCLK + BCLK + LRCLK + DATA."""
+    mclk  = new Electrical  # Master clock   — 22.5792 MHz or 24.576 MHz
+    bclk  = new Electrical  # Bit clock      — 64 × fs
+    lrclk = new Electrical  # Left/right clock — fs (44.1 / 48 / 96 ... kHz)
+    sdata = new Electrical  # Serial data    — 32-bit I²S, MSB first
+
+# ── UART ─────────────────────────────────────────────────────────────────────
+interface UARTBus:
+    """Async UART (TX from master perspective)."""
+    tx = new Electrical
+    rx = new Electrical
+
+# ── SWD (debug) ──────────────────────────────────────────────────────────────
+interface SWDPort:
+    """ARM Serial Wire Debug port."""
+    swdio = new Electrical
+    swdclk = new Electrical
+    nrst  = new Electrical
+    swo   = new Electrical  # Optional trace output
+
+# ── SDMMC (microSD, 4-bit) ───────────────────────────────────────────────────
+interface SDMMCBus:
+    """4-bit SDMMC bus for microSD card."""
+    clk = new Electrical
+    cmd = new Electrical
+    d0  = new Electrical
+    d1  = new Electrical
+    d2  = new Electrical
+    d3  = new Electrical
+
+# ── USB HS differential pair ─────────────────────────────────────────────────
+interface USBDiffPair:
+    """USB 2.0 High-Speed differential pair."""
+    dp = new Electrical   # D+ (positive)
+    dm = new Electrical   # D− (negative)
+
+# ── Display control (E-ink SSD1677) ──────────────────────────────────────────
+interface DisplayCtrl:
+    """Control signals for the GDEM0397T81P / SSD1677 e-ink display."""
+    dc   = new Electrical  # Data/Command select (high=data, low=command)
+    rst  = new Electrical  # Reset (active low)
+    busy = new Electrical  # Busy indicator (high=busy, input to MCU)
+
+# ── FMC SDRAM (16-bit data bus) ──────────────────────────────────────────────
+interface FMCBus:
+    """STM32H7 Flexible Memory Controller bus (16-bit SDRAM configuration).
+    Only the signals required for a 16-bit-wide SDRAM are declared here.
+    Address width: A[12:0] = 13 bits → 8192 rows (row address).
+    Bank select: BA[1:0].
+    Data: D[15:0].
+    Control: RAS, CAS, WE, CS, CLK, CKE, DQML, DQMH.
+    """
+    # Address bus
+    a0  = new Electrical; a1  = new Electrical; a2  = new Electrical
+    a3  = new Electrical; a4  = new Electrical; a5  = new Electrical
+    a6  = new Electrical; a7  = new Electrical; a8  = new Electrical
+    a9  = new Electrical; a10 = new Electrical; a11 = new Electrical
+    a12 = new Electrical
+
+    # Bank address
+    ba0 = new Electrical
+    ba1 = new Electrical
+
+    # Data bus (16-bit)
+    d0  = new Electrical; d1  = new Electrical; d2  = new Electrical
+    d3  = new Electrical; d4  = new Electrical; d5  = new Electrical
+    d6  = new Electrical; d7  = new Electrical; d8  = new Electrical
+    d9  = new Electrical; d10 = new Electrical; d11 = new Electrical
+    d12 = new Electrical; d13 = new Electrical; d14 = new Electrical
+    d15 = new Electrical
+
+    # Control
+    ras  = new Electrical  # Row Address Strobe (active low)
+    cas  = new Electrical  # Column Address Strobe (active low)
+    we   = new Electrical  # Write Enable (active low)
+    cs   = new Electrical  # Chip Select (active low)
+    clk  = new Electrical  # Clock
+    cke  = new Electrical  # Clock Enable
+    dqml = new Electrical  # Low-byte data mask
+    dqmh = new Electrical  # High-byte data mask
+
+# ── QUADSPI (NOR flash) ───────────────────────────────────────────────────────
+interface QSPIBus:
+    """QUADSPI 4-bit bus for NOR flash XiP mode."""
+    clk = new Electrical
+    cs  = new Electrical  # Chip select (active low, driven by QUADSPI BK1_NCS)
+    io0 = new Electrical  # MOSI in single mode / DQ0 in quad mode
+    io1 = new Electrical  # MISO in single mode / DQ1 in quad mode
+    io2 = new Electrical  # WP#  in single mode / DQ2 in quad mode
+    io3 = new Electrical  # HOLD# in single mode / DQ3 in quad mode
+
+# ── Rotary encoder ────────────────────────────────────────────────────────────
+interface EncoderBus:
+    """Incremental rotary encoder (quadrature A/B + push-button SW)."""
+    a  = new Electrical
+    b  = new Electrical
+    sw = new Electrical  # Push-button (active low, internal pull-up on MCU)
+
+# ── Analog audio output ───────────────────────────────────────────────────────
+interface AnalogAudioOut:
+    """Balanced differential audio output pair (left + right channels)."""
+    out_l_pos = new Electrical  # Left channel positive
+    out_l_neg = new Electrical  # Left channel negative
+    out_r_pos = new Electrical  # Right channel positive
+    out_r_neg = new Electrical  # Right channel negative

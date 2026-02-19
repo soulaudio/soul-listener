@@ -1,0 +1,137 @@
+# STM32H743ZIT6 — Main application MCU
+#
+# Package:      LQFP-144, 20×20 mm, 0.5 mm pitch
+# Manufacturer: STMicroelectronics
+# Datasheet:    https://www.st.com/resource/en/datasheet/stm32h743zi.pdf
+# KiCad symbol: MCU_ST_STM32H7:STM32H743ZITx  (kicad-symbols repo)
+#
+# ⚠ PIN NUMBERS: Signal ~ pin N assignments must be verified against the
+#   KiCad symbol MCU_ST_STM32H7:STM32H743ZITx (pad numbers 1-144).
+#   Download the symbol from:
+#   https://github.com/KiCad/kicad-symbols/blob/master/MCU_ST_STM32H7.kicad_sym
+#
+#   After downloading, place STM32H743ZIT6.kicad_sym in this directory and
+#   fill in the correct pin numbers from the symbol's pad assignments.
+#   Reference: DS12110 Rev 8 Table 12 "Pin description"
+#
+# Distributor availability:
+#   TME:      STM32H743ZIT6     (check cz.tme.eu)
+#   Digi-Key: 497-STM32H743ZIT6TR-ND (EU NL warehouse)
+#   Mouser:   511-STM32H743ZIT6
+
+component STM32H743ZIT6:
+    trait is_atomic_part<
+        manufacturer = "STMicroelectronics",
+        partnumber   = "STM32H743ZIT6",
+        footprint    = "Package_QFP:LQFP-144_20x20mm_P0.5mm",
+        symbol       = "STM32H743ZIT6.kicad_sym">
+    trait has_designator_prefix<prefix = "U">
+
+    # ── Power supply ─────────────────────────────────────────────────────────
+    # VDD: 3.3 V digital supply (multiple pins — all must be connected)
+    signal VDD_1  ~ pin 11   # TODO: verify
+    signal VDD_2  ~ pin 28   # TODO: verify
+    signal VDD_3  ~ pin 50   # TODO: verify
+    signal VDD_4  ~ pin 75   # TODO: verify
+    signal VDD_5  ~ pin 100  # TODO: verify
+    signal VDD_6  ~ pin 114  # TODO: verify
+    signal VDD_7  ~ pin 124  # TODO: verify
+    signal VDD_8  ~ pin 144  # TODO: verify
+
+    # VSS: ground (multiple pins)
+    signal VSS_1  ~ pin 10   # TODO: verify
+    signal VSS_2  ~ pin 27   # TODO: verify
+    signal VSS_3  ~ pin 49   # TODO: verify
+    signal VSS_4  ~ pin 74   # TODO: verify
+    signal VSS_5  ~ pin 99   # TODO: verify
+    signal VSS_6  ~ pin 113  # TODO: verify
+    signal VSS_7  ~ pin 123  # TODO: verify
+    signal VSS_8  ~ pin 143  # TODO: verify
+
+    signal VDDA   ~ pin 21   # Analog supply 3.3 V — must have own LC filter
+    signal VREF_PLUS ~ pin 22  # ADC/DAC reference (tie to VDDA for now)
+    signal VBAT   ~ pin 23   # Backup domain supply (3 V battery or VDD)
+
+    # ── Audio — SAI1 (I²S master to ES9038Q2M) ───────────────────────────────
+    signal SAI1_MCLK_A  ~ pin 104  # Master clock out — TODO: verify
+    signal SAI1_BCLK_A  ~ pin 103  # Bit clock        — TODO: verify
+    signal SAI1_LRCLK_A ~ pin 102  # LR clock         — TODO: verify
+    signal SAI1_SD_A    ~ pin 101  # Serial data out  — TODO: verify
+
+    # ── Display — SPI1 (to GDEM0397T81P / SSD1677) ───────────────────────────
+    signal SPI1_MOSI ~ pin 88  # TODO: verify (PA7 or PB5 on STM32H743)
+    signal SPI1_MISO ~ pin 87  # TODO: verify
+    signal SPI1_SCK  ~ pin 86  # TODO: verify
+    signal SPI1_NSS  ~ pin 85  # TODO: verify — used as display CS
+    signal LCD_DC    ~ pin 84  # Data/Command select — any GPIO
+    signal LCD_RST   ~ pin 83  # Display reset (active low) — any GPIO
+    signal LCD_BUSY  ~ pin 82  # Display busy input — any GPIO
+
+    # ── microSD — SDMMC1 ─────────────────────────────────────────────────────
+    signal SDMMC1_CLK ~ pin 63  # TODO: verify (PC12)
+    signal SDMMC1_CMD ~ pin 64  # TODO: verify (PD2)
+    signal SDMMC1_D0  ~ pin 65  # TODO: verify (PC8)
+    signal SDMMC1_D1  ~ pin 66  # TODO: verify (PC9)
+    signal SDMMC1_D2  ~ pin 67  # TODO: verify (PC10)
+    signal SDMMC1_D3  ~ pin 68  # TODO: verify (PC11)
+
+    # ── Bluetooth — UART1 (HCI to STM32WB55) ────────────────────────────────
+    signal UART1_TX ~ pin 52  # TODO: verify (PA9 or PB6)
+    signal UART1_RX ~ pin 53  # TODO: verify (PA10 or PB7)
+
+    # ── I²C1 (ES9038Q2M config + BQ25895 PMIC) ───────────────────────────────
+    signal I2C1_SCL ~ pin 95  # TODO: verify (PB6 or PB8)
+    signal I2C1_SDA ~ pin 96  # TODO: verify (PB7 or PB9)
+
+    # ── FMC (external SDRAM — 16-bit) ────────────────────────────────────────
+    # Address A[12:0]
+    signal FMC_A0  ~ pin 57; signal FMC_A1  ~ pin 58  # TODO: verify all FMC pins
+    signal FMC_A2  ~ pin 59; signal FMC_A3  ~ pin 60
+    signal FMC_A4  ~ pin 61; signal FMC_A5  ~ pin 62
+    signal FMC_A6  ~ pin 69; signal FMC_A7  ~ pin 70
+    signal FMC_A8  ~ pin 71; signal FMC_A9  ~ pin 72
+    signal FMC_A10 ~ pin 73; signal FMC_A11 ~ pin 76
+    signal FMC_A12 ~ pin 77
+    # Bank address
+    signal FMC_BA0 ~ pin 78; signal FMC_BA1 ~ pin 79  # TODO: verify
+    # Data D[15:0]
+    signal FMC_D0  ~ pin 30; signal FMC_D1  ~ pin 31  # TODO: verify all
+    signal FMC_D2  ~ pin 32; signal FMC_D3  ~ pin 33
+    signal FMC_D4  ~ pin 34; signal FMC_D5  ~ pin 35
+    signal FMC_D6  ~ pin 36; signal FMC_D7  ~ pin 37
+    signal FMC_D8  ~ pin 38; signal FMC_D9  ~ pin 39
+    signal FMC_D10 ~ pin 40; signal FMC_D11 ~ pin 41
+    signal FMC_D12 ~ pin 42; signal FMC_D13 ~ pin 43
+    signal FMC_D14 ~ pin 44; signal FMC_D15 ~ pin 45
+    # Control
+    signal FMC_SDRAS  ~ pin 80; signal FMC_SDCAS  ~ pin 81  # TODO: verify
+    signal FMC_SDWE   ~ pin 46; signal FMC_SDNE0  ~ pin 47
+    signal FMC_SDCLK  ~ pin 48; signal FMC_SDCKE0 ~ pin 16
+    signal FMC_NBL0   ~ pin 17; signal FMC_NBL1   ~ pin 18
+
+    # ── QUADSPI (external NOR flash) ─────────────────────────────────────────
+    signal QUADSPI_CLK  ~ pin 55  # TODO: verify (PB2 / PF10)
+    signal QUADSPI_BK1_NCS ~ pin 56  # Chip select (active low)
+    signal QUADSPI_BK1_IO0 ~ pin 90  # DQ0 (MOSI)
+    signal QUADSPI_BK1_IO1 ~ pin 91  # DQ1 (MISO)
+    signal QUADSPI_BK1_IO2 ~ pin 92  # DQ2 (WP#)
+    signal QUADSPI_BK1_IO3 ~ pin 93  # DQ3 (HOLD#)
+
+    # ── USB OTG HS ────────────────────────────────────────────────────────────
+    signal USB_OTG_HS_DP ~ pin 140  # TODO: verify (PA12 / USBHSULPI)
+    signal USB_OTG_HS_DM ~ pin 139  # TODO: verify (PA11)
+
+    # ── SWD Debug ─────────────────────────────────────────────────────────────
+    signal SWDIO  ~ pin 137  # TODO: verify (PA13)
+    signal SWDCLK ~ pin 138  # TODO: verify (PA14)
+    signal NRST   ~ pin 25   # TODO: verify
+    signal SWO    ~ pin 89   # TODO: verify (PB3)
+
+    # ── Input GPIOs (rotary encoder + buttons) ────────────────────────────────
+    signal ENC_A   ~ pin 106  # Encoder phase A — TODO: assign GPIO
+    signal ENC_B   ~ pin 107  # Encoder phase B — TODO: assign GPIO
+    signal ENC_SW  ~ pin 108  # Encoder push-button — TODO: assign GPIO
+    signal BTN_PLAY ~ pin 109  # Play/pause button — TODO: assign GPIO
+    signal BTN_PREV ~ pin 110  # Previous track    — TODO: assign GPIO
+    signal BTN_NEXT ~ pin 111  # Next track        — TODO: assign GPIO
+    signal BTN_MENU ~ pin 112  # Menu / back       — TODO: assign GPIO

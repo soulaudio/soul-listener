@@ -1,0 +1,60 @@
+# TPA6120A2 — Texas Instruments Class-AB Headphone Amplifier
+#
+# Package:      MSOP-8 with PowerPAD (DGN) — 3×3 mm
+# Manufacturer: Texas Instruments
+# Datasheet:    https://www.ti.com/lit/ds/symlink/tpa6120a2.pdf
+# Key specs:    ±15 V max supply (±5 V typical for 3.3 V rail with charge pump)
+#               140 dB SNR, 250 mA output current, 0.0004% THD+N
+#               Drives 16–600 Ω headphones
+#
+# Supply: The TPA6120A2 requires a split ±V supply. On this design, use a
+# charge pump or dedicated ±5 V supply derived from the 3.7 V LiPo via a
+# boost + inverting converter (e.g., TPS63700 + TPS65131 or similar).
+# The audio module must include this supply generation.
+#
+# ⚠ PIN NUMBERS: Verify against KiCad symbol.
+#   DGN package pinout (top view):
+#   Pin 1: IN1- (inverting input, amp A)
+#   Pin 2: IN1+ (non-inverting input, amp A)
+#   Pin 3: PVSSa (negative supply, amp A)
+#   Pin 4: VOCM (common mode reference — tie to mid-rail or 0 V for balanced)
+#   Pin 5: PVSSb (negative supply, amp B)
+#   Pin 6: IN2+ (non-inverting input, amp B)
+#   Pin 7: IN2- (inverting input, amp B)
+#   Pin 8: PVDD (positive supply)
+#   EP:    Exposed pad — PVSS (must be soldered to ground plane)
+#
+# KiCad symbol: Amplifier_Audio:TPA6120A2 (in official kicad-symbols)
+#
+# Distributor availability:
+#   TME:     TPA6120AIDGN   (check cz.tme.eu)
+#   Digi-Key: 296-TPA6120A2DGNR-ND
+#   Mouser:   595-TPA6120A2DGNR
+
+component TPA6120A2:
+    trait is_atomic_part<
+        manufacturer = "Texas Instruments",
+        partnumber   = "TPA6120A2DGNR",
+        footprint    = "Package_SO:MSOP-8-1EP_3x3mm_P0.65mm_EP1.68x1.88mm_ThermalVias",
+        symbol       = "Amplifier_Audio:TPA6120A2">
+    trait has_designator_prefix<prefix = "U">
+
+    # ── Amplifier A (Left channel) ────────────────────────────────────────────
+    signal IN1_NEG ~ pin 1   # Inverting input A (feedback from output)
+    signal IN1_POS ~ pin 2   # Non-inverting input A (from DAC AOUT_L+)
+
+    # ── Amplifier B (Right channel) ───────────────────────────────────────────
+    signal IN2_POS ~ pin 6   # Non-inverting input B (from DAC AOUT_R+)
+    signal IN2_NEG ~ pin 7   # Inverting input B (feedback from output)
+
+    # ── Common-mode reference ─────────────────────────────────────────────────
+    signal VOCM ~ pin 4      # Common-mode output voltage reference
+                             # Tie to 0 V (AGND) for fully differential output
+
+    # ── Power supply ─────────────────────────────────────────────────────────
+    signal PVDD  ~ pin 8     # Positive supply (+5 V from charge pump)
+    signal PVSSa ~ pin 3     # Negative supply, amp A (−5 V from charge pump)
+    signal PVSSb ~ pin 5     # Negative supply, amp B (−5 V from charge pump)
+    signal EP    ~ pin 9     # Exposed pad — PVSS (connect to ground plane)
+                             # Note: some KiCad symbols use pad "9" for EP,
+                             #       verify against your symbol

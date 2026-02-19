@@ -1,0 +1,114 @@
+# Memory module — W9825G6KH-6 SDRAM (FMC) + W25Q128JVSIQ QSPI NOR flash
+#
+# Mirrors: crates/platform/src/sdram.rs (ExternalRam trait, RamRegion constants)
+#          crates/platform/src/asset_store.rs (AssetStore trait, AssetKey enum)
+#
+# SDRAM — W9825G6KH-6 (32 MB, 16-bit, FMC)
+#   Mapped at: 0xC000_0000 (FMC bank 5/6)
+#   Speed:     166 MHz max; use 100–133 MHz for conservative timing margin
+#   Region layout (32 MB):
+#     0xC000_0000  Library index cache  4 MB
+#     0xC040_0000  Album art cache      8 MB
+#     0xC0C0_0000  Audio decode scratch 4 MB
+#     0xC100_0000  UI overflow         16 MB
+#
+# QSPI NOR flash — W25Q128JVSIQ (16 MB, SOIC-8)
+#   Mapped at: 0x9000_0000 (QUADSPI XiP window)
+#   Asset layout:
+#     0x9000_0000  Index table  4 KB
+#     0x9000_1000  Fonts       ~500 KB
+#     0x9008_0000  Icons       ~200 KB
+#     0x900B_0000  LUTs         ~50 KB
+#     0x900C_0000  OTA staging ~1.5 MB
+#
+# PCB layout notes:
+#   SDRAM: Keep FMC traces short (< 10 mm), matched length ±0.5 mm within bus groups.
+#          Use 50 Ω controlled impedance. Decouple each VDD pin with 100 nF.
+#   QSPI:  Short traces (< 25 mm). 50 Ω series termination resistors (33 Ω on each
+#          IO line) to reduce reflections. VCC decoupling: 100 nF + 10 µF.
+
+from "interfaces.ato" import FMCBus, QSPIBus
+from "parts/W9825G6KH6/W9825G6KH6.ato" import W9825G6KH6
+from "parts/W25Q128JVSIQ/W25Q128JVSIQ.ato" import W25Q128JVSIQ
+
+module Memory:
+    """
+    External SDRAM (32 MB, FMC) and QSPI NOR flash (16 MB) with all support circuitry.
+    """
+
+    # ── Ports ─────────────────────────────────────────────────────────────────
+    power_3v3 = new ElectricPower  # 3.3 V supply for both chips
+    fmc       = new FMCBus         # 16-bit SDRAM bus from MCU FMC
+    quadspi   = new QSPIBus        # QUADSPI bus from MCU
+
+    # ── W9825G6KH-6 SDRAM ─────────────────────────────────────────────────────
+    sdram = new W9825G6KH6
+
+    # Power
+    power_3v3.hv ~ sdram.VDD_1; power_3v3.hv ~ sdram.VDD_2
+    power_3v3.lv ~ sdram.VSS_1; power_3v3.lv ~ sdram.VSS_2
+
+    # Address bus
+    fmc.a0  ~ sdram.A0;  fmc.a1  ~ sdram.A1;  fmc.a2  ~ sdram.A2
+    fmc.a3  ~ sdram.A3;  fmc.a4  ~ sdram.A4;  fmc.a5  ~ sdram.A5
+    fmc.a6  ~ sdram.A6;  fmc.a7  ~ sdram.A7;  fmc.a8  ~ sdram.A8
+    fmc.a9  ~ sdram.A9;  fmc.a10 ~ sdram.A10; fmc.a11 ~ sdram.A11
+    fmc.a12 ~ sdram.A12
+
+    # Bank address
+    fmc.ba0 ~ sdram.BA0; fmc.ba1 ~ sdram.BA1
+
+    # Data bus (16-bit)
+    fmc.d0  ~ sdram.DQ0;  fmc.d1  ~ sdram.DQ1;  fmc.d2  ~ sdram.DQ2
+    fmc.d3  ~ sdram.DQ3;  fmc.d4  ~ sdram.DQ4;  fmc.d5  ~ sdram.DQ5
+    fmc.d6  ~ sdram.DQ6;  fmc.d7  ~ sdram.DQ7;  fmc.d8  ~ sdram.DQ8
+    fmc.d9  ~ sdram.DQ9;  fmc.d10 ~ sdram.DQ10; fmc.d11 ~ sdram.DQ11
+    fmc.d12 ~ sdram.DQ12; fmc.d13 ~ sdram.DQ13; fmc.d14 ~ sdram.DQ14
+    fmc.d15 ~ sdram.DQ15
+
+    # Control
+    fmc.ras  ~ sdram.RAS_NEG; fmc.cas  ~ sdram.CAS_NEG
+    fmc.we   ~ sdram.WE_NEG;  fmc.cs   ~ sdram.CS_NEG
+    fmc.clk  ~ sdram.CLK;     fmc.cke  ~ sdram.CKE
+    fmc.dqml ~ sdram.DQML;    fmc.dqmh ~ sdram.DQMH
+
+    # SDRAM decoupling: 100 nF per VDD pin pair + 10 µF bulk
+    c_sdram_1 = new Capacitor; c_sdram_1.capacitance = 100nF +/- 20%; c_sdram_1.package = "0402"
+    c_sdram_2 = new Capacitor; c_sdram_2.capacitance = 100nF +/- 20%; c_sdram_2.package = "0402"
+    c_sdram_bulk = new Capacitor; c_sdram_bulk.capacitance = 10uF +/- 20%; c_sdram_bulk.package = "0805"
+    power_3v3.hv ~ c_sdram_1.p1;    c_sdram_1.p2    ~ power_3v3.lv
+    power_3v3.hv ~ c_sdram_2.p1;    c_sdram_2.p2    ~ power_3v3.lv
+    power_3v3.hv ~ c_sdram_bulk.p1; c_sdram_bulk.p2 ~ power_3v3.lv
+
+    # ── W25Q128JVSIQ QSPI NOR Flash ───────────────────────────────────────────
+    nor = new W25Q128JVSIQ
+
+    # Power
+    power_3v3.hv ~ nor.VCC
+    power_3v3.lv ~ nor.GND
+
+    # QUADSPI bus
+    quadspi.cs  ~ nor.CS_NEG
+    quadspi.clk ~ nor.CLK
+    quadspi.io0 ~ nor.IO0
+    quadspi.io1 ~ nor.IO1
+    quadspi.io2 ~ nor.IO2
+    quadspi.io3 ~ nor.IO3
+
+    # NOR flash decoupling: 100 nF + 10 µF
+    c_nor_hf   = new Capacitor; c_nor_hf.capacitance   = 100nF +/- 20%; c_nor_hf.package   = "0402"
+    c_nor_bulk = new Capacitor; c_nor_bulk.capacitance = 10uF  +/- 20%; c_nor_bulk.package = "0805"
+    power_3v3.hv ~ c_nor_hf.p1;   c_nor_hf.p2   ~ power_3v3.lv
+    power_3v3.hv ~ c_nor_bulk.p1; c_nor_bulk.p2 ~ power_3v3.lv
+
+    # QSPI series termination resistors (33 Ω on each IO line — reduce reflections)
+    r_io0 = new Resistor; r_io0.resistance = 33ohm +/- 5%; r_io0.package = "0402"
+    r_io1 = new Resistor; r_io1.resistance = 33ohm +/- 5%; r_io1.package = "0402"
+    r_io2 = new Resistor; r_io2.resistance = 33ohm +/- 5%; r_io2.package = "0402"
+    r_io3 = new Resistor; r_io3.resistance = 33ohm +/- 5%; r_io3.package = "0402"
+    # Note: Place termination resistors at the MCU end of the trace
+    # quadspi.io0 ~ r_io0.p1; r_io0.p2 ~ nor.IO0  (etc.)
+    # TODO: reroute after adding series resistors in signal path
+
+    # ── Validation ────────────────────────────────────────────────────────────
+    assert power_3v3.voltage within 2.7V to 3.6V

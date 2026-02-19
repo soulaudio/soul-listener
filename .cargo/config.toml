@@ -16,7 +16,10 @@ DEFMT_LOG = "info"
 [alias]
 # xtask commands (primary development workflow)
 flash = "run -p xtask -- flash"
-dev = "run -p xtask -- dev"
+dev   = "run -p xtask -- dev"
+
+# Hardware design (Atopile) — cargo hw <check|build|sync|bom>
+hw = "run -p xtask -- hardware"
 
 # Quick commands
 rb = "build --release"

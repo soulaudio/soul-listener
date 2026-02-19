@@ -2,6 +2,7 @@ mod check;
 mod dev;
 mod doc;
 mod flash;
+mod hardware;
 mod test;
 
 use anyhow::Result;
@@ -51,6 +52,12 @@ enum Commands {
         #[arg(long)]
         open: bool,
     },
+    /// Hardware design tools (Atopile): check, build, sync, bom
+    /// Alias: cargo hw <command>
+    Hardware {
+        #[command(subcommand)]
+        command: hardware::HwCommand,
+    },
 }
 
 fn main() -> Result<()> {
@@ -65,5 +72,6 @@ fn main() -> Result<()> {
         Commands::Check => check::run(),
         Commands::Test { unit, integration } => test::run(unit, integration),
         Commands::Doc { open } => doc::run(open),
+        Commands::Hardware { command } => hardware::run(command),
     }
 }

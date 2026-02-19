@@ -1,0 +1,79 @@
+# ES9038Q2M — ESS Technology Hi-Fi Stereo DAC
+#
+# Package:      TSSOP-28
+# Manufacturer: ESS Technology
+# Datasheet:    ES9038Q2M datasheet (request from ESS or find via audiophile
+#               community resources — not publicly hosted by ESS)
+# Key specs:    32-bit / 768 kHz PCM, DSD512 native + DoP
+#               128 dB DNR, −120 dB THD+N, I²C programmable
+#
+# ⚠ KiCad symbol: Not in official KiCad library. Must be created manually or
+#   sourced from community libraries (search GitHub: ES9038Q2M kicad_sym).
+#   Place ES9038Q2M.kicad_sym and TSSOP-28.kicad_mod in this directory.
+#
+# ⚠ PIN NUMBERS: Verify against your KiCad symbol. The assignments below
+#   follow the ES9038Q2M datasheet pin numbering (TSSOP-28):
+#   Pin 1=DVDD, 2=DVSS, 3=SCL, 4=SDA, 5=MUTE, 6=IREF, 7=AGND, 8=AGND,
+#   9=AVDD, 10=AVDD, 11=AOUT_R-, 12=AOUT_R+, 13=AOUT_L-, 14=AOUT_L+,
+#   15=AVSS, 16=AVSS, 17=AVDD, 18=AVDD, 19=AGND, 20=AGND, 21=DVSS,
+#   22=DVDD, 23=XO, 24=XI/MCLK, 25=BCLK, 26=LRCK, 27=DATA, 28=FMT/MODE
+#
+# Distributor availability:
+#   Mouser:  633-ES9038Q2M   (check stock — can be limited)
+#   LCSC:    C2836300 (check current MPN on lcsc.com — may vary)
+#   Note: Not stocked at TME. May require direct order or LCSC.
+
+component ES9038Q2M:
+    trait is_atomic_part<
+        manufacturer = "ESS Technology",
+        partnumber   = "ES9038Q2M",
+        footprint    = "Package_SO:TSSOP-28_4.4x9.7mm_P0.65mm",
+        symbol       = "ES9038Q2M.kicad_sym">
+    trait has_designator_prefix<prefix = "U">
+
+    # ── Digital supply ───────────────────────────────────────────────────────
+    signal DVDD ~ pin 1   # 3.3 V digital supply
+    signal DVDD_2 ~ pin 22  # Second DVDD pin — tie to DVDD
+    signal DVSS ~ pin 2
+    signal DVSS_2 ~ pin 21
+
+    # ── I²C control ──────────────────────────────────────────────────────────
+    signal SCL  ~ pin 3
+    signal SDA  ~ pin 4
+
+    # ── Control signals ───────────────────────────────────────────────────────
+    signal MUTE ~ pin 5   # Mute (active low, tie via resistor or GPIO)
+
+    # ── Reference current ────────────────────────────────────────────────────
+    signal IREF ~ pin 6   # External reference resistor to AGND (1.21kΩ)
+    signal IREF_2 ~ pin 20  # Second IREF pin — tie together
+
+    # ── Analog supply ─────────────────────────────────────────────────────────
+    # AVDD: 3.3 V analog — fed from LT3042 ultra-low-noise LDO
+    signal AVDD_1 ~ pin 9;  signal AVDD_2 ~ pin 10
+    signal AVDD_3 ~ pin 17; signal AVDD_4 ~ pin 18
+
+    # AGND: analog ground (star topology from ground plane split)
+    signal AGND_1 ~ pin 7;  signal AGND_2 ~ pin 8
+    signal AGND_3 ~ pin 19
+
+    # AVSS: analog VSS
+    signal AVSS_1 ~ pin 15; signal AVSS_2 ~ pin 16
+
+    # ── Analog output (differential balanced) ────────────────────────────────
+    signal AOUT_R_NEG ~ pin 11  # Right channel −
+    signal AOUT_R_POS ~ pin 12  # Right channel +
+    signal AOUT_L_NEG ~ pin 13  # Left channel −
+    signal AOUT_L_POS ~ pin 14  # Left channel +
+
+    # ── Clock ─────────────────────────────────────────────────────────────────
+    signal XO   ~ pin 23  # Crystal / clock output (leave unconnected if MCLK input)
+    signal MCLK ~ pin 24  # Master clock input (22.5792 MHz or 24.576 MHz from MCU SAI)
+
+    # ── I²S serial audio input ────────────────────────────────────────────────
+    signal BCLK ~ pin 25  # Bit clock (from MCU SAI1_BCLK)
+    signal LRCK ~ pin 26  # Left/right clock (from MCU SAI1_LRCLK)
+    signal DATA ~ pin 27  # Serial data (from MCU SAI1_SD)
+
+    # ── Format select ─────────────────────────────────────────────────────────
+    signal FMT  ~ pin 28  # Format select (tie to DVSS for I²S; DVDD for LJ)
