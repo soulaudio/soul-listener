@@ -7,7 +7,7 @@
 ///
 /// These correspond to actual hardware modes used by controllers like
 /// SSD1680, UC8151, and IT8951.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Deserialize, serde::Serialize)]
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, serde::Deserialize, serde::Serialize)]
 pub enum WaveformMode {
     /// GC16 - Grayscale Clearing 16-level
     ///
@@ -19,6 +19,7 @@ pub enum WaveformMode {
     ///
     /// This is the highest quality mode and should be used for page transitions
     /// and periodic cleaning.
+    #[default]
     GC16,
 
     /// GL16 - Grayscale 16-level
@@ -231,12 +232,6 @@ impl WaveformMode {
             // (actual color quantization happens in color-specific code)
             WaveformMode::GCC16 | WaveformMode::GCU => value,
         }
-    }
-}
-
-impl Default for WaveformMode {
-    fn default() -> Self {
-        WaveformMode::GC16
     }
 }
 

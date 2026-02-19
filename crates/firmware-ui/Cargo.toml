@@ -32,3 +32,9 @@ emulator = ["eink-emulator"]
 # dlopen/LoadLibrary the compiled dylib and call render_ui without a restart.
 # Always implies the emulator feature since hot-reload is emulator-only.
 hot-reload = ["emulator"]
+
+# Declare no_std compatibility for embedded targets.
+# Used by `cargo xtask check` to verify the crate compiles for thumbv7em.
+# Cannot be the default because `crate-type = ["cdylib"]` requires std on
+# the host when `cargo clippy --all-targets` compiles it.
+no-std = []

@@ -14,13 +14,8 @@
 //! cargo run --package eink-emulator --example tricolor_demo
 //! ```
 
-use eink_emulator::{
-    ColorMode, EinkColor, Emulator, Framebuffer, SpectraColor,
-};
-use embedded_graphics::{
-    pixelcolor::Gray4,
-    prelude::*,
-};
+use eink_emulator::{ColorMode, EinkColor, Emulator, Framebuffer, SpectraColor};
+use embedded_graphics::{pixelcolor::Gray4, prelude::*};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {

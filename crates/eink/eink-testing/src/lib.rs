@@ -21,18 +21,25 @@ pub struct TestEmulator {
 
 impl TestEmulator {
     pub fn new(width: u32, height: u32) -> Self {
-        Self { inner: eink_emulator::Emulator::headless(width, height) }
+        Self {
+            inner: eink_emulator::Emulator::headless(width, height),
+        }
     }
 
     pub fn with_spec(spec: &'static eink_specs::DisplaySpec) -> Self {
-        Self { inner: eink_emulator::Emulator::headless_with_spec(spec) }
+        Self {
+            inner: eink_emulator::Emulator::headless_with_spec(spec),
+        }
     }
 
     pub fn query_by_test_id(&self, test_id: &str) -> Option<ComponentRef> {
         #[cfg(feature = "debug")]
         {
             let dm = self.inner.debug_manager()?;
-            let comp = dm.state().registered_components.iter()
+            let comp = dm
+                .state()
+                .registered_components
+                .iter()
                 .find(|c| c.test_id.as_deref() == Some(test_id))?;
             return Some(ComponentRef {
                 test_id: comp.test_id.clone().unwrap_or_else(|| test_id.to_string()),
@@ -42,19 +49,29 @@ impl TestEmulator {
             });
         }
         #[allow(unreachable_code)]
-        { let _ = test_id; None }
+        {
+            let _ = test_id;
+            None
+        }
     }
 
     pub fn query_all(&self) -> Vec<ComponentRef> {
         #[cfg(feature = "debug")]
         {
-            let Some(dm) = self.inner.debug_manager() else { return Vec::new(); };
-            return dm.state().registered_components.iter().map(|c| ComponentRef {
-                test_id: c.test_id.clone().unwrap_or_default(),
-                component_type: c.component_type.clone(),
-                position: c.position,
-                size: c.size,
-            }).collect();
+            let Some(dm) = self.inner.debug_manager() else {
+                return Vec::new();
+            };
+            return dm
+                .state()
+                .registered_components
+                .iter()
+                .map(|c| ComponentRef {
+                    test_id: c.test_id.clone().unwrap_or_default(),
+                    component_type: c.component_type.clone(),
+                    position: c.position,
+                    size: c.size,
+                })
+                .collect();
         }
         #[allow(unreachable_code)]
         Vec::new()
@@ -63,7 +80,9 @@ impl TestEmulator {
     pub fn component_count(&self) -> usize {
         #[cfg(feature = "debug")]
         {
-            return self.inner.debug_manager()
+            return self
+                .inner
+                .debug_manager()
                 .map(|dm| dm.state().registered_components.len())
                 .unwrap_or(0);
         }
@@ -86,10 +105,11 @@ impl TestEmulator {
             p.push(format!("eink_testing_cmp_{}.png", std::process::id()));
             p
         };
-        self.inner.screenshot(&tmp_path)
+        self.inner
+            .screenshot(&tmp_path)
             .map_err(|e| format!("Failed to capture screenshot: {e}"))?;
-        let current = image::open(&tmp_path)
-            .map_err(|e| format!("Failed to open temp screenshot: {e}"))?;
+        let current =
+            image::open(&tmp_path).map_err(|e| format!("Failed to open temp screenshot: {e}"))?;
         let _ = std::fs::remove_file(&tmp_path);
         let golden = image::open(golden_path.as_ref())
             .map_err(|e| format!("Failed to open golden screenshot: {e}"))?;
@@ -104,10 +124,13 @@ impl TestEmulator {
         let golden_rgba = golden.to_rgba8();
         let mut diff_count: u64 = 0;
         for (cp, gp) in current_rgba.pixels().zip(golden_rgba.pixels()) {
-            let differs = cp.0.iter().zip(gp.0.iter()).any(|(&a, &b)| {
-                (a as i32 - b as i32).unsigned_abs() as u8 > threshold
-            });
-            if differs { diff_count += 1; }
+            let differs =
+                cp.0.iter()
+                    .zip(gp.0.iter())
+                    .any(|(&a, &b)| (a as i32 - b as i32).unsigned_abs() as u8 > threshold);
+            if differs {
+                diff_count += 1;
+            }
         }
         if diff_count > 0 {
             Err(format!("{diff_count} pixels differ from golden"))
@@ -116,15 +139,23 @@ impl TestEmulator {
         }
     }
 
-    pub fn emulator(&self) -> &eink_emulator::Emulator { &self.inner }
-    pub fn emulator_mut(&mut self) -> &mut eink_emulator::Emulator { &mut self.inner }
+    pub fn emulator(&self) -> &eink_emulator::Emulator {
+        &self.inner
+    }
+    pub fn emulator_mut(&mut self) -> &mut eink_emulator::Emulator {
+        &mut self.inner
+    }
 }
 
 impl std::ops::Deref for TestEmulator {
     type Target = eink_emulator::Emulator;
-    fn deref(&self) -> &Self::Target { &self.inner }
+    fn deref(&self) -> &Self::Target {
+        &self.inner
+    }
 }
 
 impl std::ops::DerefMut for TestEmulator {
-    fn deref_mut(&mut self) -> &mut Self::Target { &mut self.inner }
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.inner
+    }
 }

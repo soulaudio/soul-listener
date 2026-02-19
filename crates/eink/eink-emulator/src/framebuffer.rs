@@ -259,7 +259,7 @@ mod tests {
                 assert_eq!(bw.luma(), 2);
                 assert_eq!(color, SpectraColor::None);
             }
-            _ => panic!("Should be Spectra6 color"),
+            _ => unreachable!("gray4_to_mode(Spectra6) returned unexpected variant"),
         }
 
         let fb_kaleido = Framebuffer::with_color_mode(10, 10, ColorMode::Kaleido3);
@@ -270,7 +270,7 @@ mod tests {
                 assert_eq!(g, 10);
                 assert_eq!(b, 10);
             }
-            _ => panic!("Should be Kaleido3 color"),
+            _ => unreachable!("gray4_to_mode(Kaleido3) returned unexpected variant"),
         }
     }
 }

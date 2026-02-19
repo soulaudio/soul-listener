@@ -129,7 +129,7 @@ impl WaveformLut {
     ///
     /// Checks for invalid voltage ranges and duration values.
     pub fn validate(&self) -> Result<(), LutError> {
-        for (_i, phase) in self.phases.iter().enumerate() {
+        for phase in &self.phases {
             // Check voltage range (typical e-ink range)
             if phase.voltage < -20 || phase.voltage > 20 {
                 return Err(LutError::InvalidVoltage(phase.voltage));

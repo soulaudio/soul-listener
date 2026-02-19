@@ -5,7 +5,7 @@ use std::time::Instant;
 
 pub fn run() -> Result<()> {
     println!();
-    println!("{}", "🔍 Checking firmware builds...".cyan().bold());
+    println!("{}", "🔍 Checking all crates...".cyan().bold());
     println!();
 
     let total_start = Instant::now();
@@ -103,7 +103,141 @@ pub fn run() -> Result<()> {
     );
     println!();
 
-    // Check 4: Clippy lints
+    // Check 4: eink-specs (no_std)
+    println!("{}", "  Checking eink-specs (no_std)...".cyan());
+    let specs_start = Instant::now();
+
+    let specs_output = Command::new("cargo")
+        .args([
+            "check",
+            "-p",
+            "eink-specs",
+            "--target",
+            "thumbv7em-none-eabihf",
+            "--no-default-features",
+        ])
+        .output()
+        .context("Failed to check eink-specs")?;
+
+    if !specs_output.status.success() {
+        eprintln!("{}", "  ✗ eink-specs check failed".red().bold());
+        eprintln!();
+        eprintln!("{}", String::from_utf8_lossy(&specs_output.stderr));
+        anyhow::bail!("eink-specs check failed");
+    }
+
+    println!(
+        "{}",
+        format!(
+            "  ✓ eink-specs check passed in {:.2}s",
+            specs_start.elapsed().as_secs_f64()
+        )
+        .green()
+    );
+    println!();
+
+    // Check 5: eink-system (no_std)
+    println!("{}", "  Checking eink-system (no_std)...".cyan());
+    let system_start = Instant::now();
+
+    let system_output = Command::new("cargo")
+        .args([
+            "check",
+            "-p",
+            "eink-system",
+            "--target",
+            "thumbv7em-none-eabihf",
+            "--no-default-features",
+        ])
+        .output()
+        .context("Failed to check eink-system")?;
+
+    if !system_output.status.success() {
+        eprintln!("{}", "  ✗ eink-system check failed".red().bold());
+        eprintln!();
+        eprintln!("{}", String::from_utf8_lossy(&system_output.stderr));
+        anyhow::bail!("eink-system check failed");
+    }
+
+    println!(
+        "{}",
+        format!(
+            "  ✓ eink-system check passed in {:.2}s",
+            system_start.elapsed().as_secs_f64()
+        )
+        .green()
+    );
+    println!();
+
+    // Check 6: eink-components (no_std)
+    println!("{}", "  Checking eink-components (no_std)...".cyan());
+    let components_start = Instant::now();
+
+    let components_output = Command::new("cargo")
+        .args([
+            "check",
+            "-p",
+            "eink-components",
+            "--target",
+            "thumbv7em-none-eabihf",
+            "--no-default-features",
+        ])
+        .output()
+        .context("Failed to check eink-components")?;
+
+    if !components_output.status.success() {
+        eprintln!("{}", "  ✗ eink-components check failed".red().bold());
+        eprintln!();
+        eprintln!("{}", String::from_utf8_lossy(&components_output.stderr));
+        anyhow::bail!("eink-components check failed");
+    }
+
+    println!(
+        "{}",
+        format!(
+            "  ✓ eink-components check passed in {:.2}s",
+            components_start.elapsed().as_secs_f64()
+        )
+        .green()
+    );
+    println!();
+
+    // Check 7: firmware-ui (no_std)
+    println!("{}", "  Checking firmware-ui (no_std)...".cyan());
+    let firmware_ui_start = Instant::now();
+
+    let firmware_ui_output = Command::new("cargo")
+        .args([
+            "check",
+            "-p",
+            "firmware-ui",
+            "--lib",
+            "--target",
+            "thumbv7em-none-eabihf",
+            "--features",
+            "no-std",
+        ])
+        .output()
+        .context("Failed to check firmware-ui")?;
+
+    if !firmware_ui_output.status.success() {
+        eprintln!("{}", "  ✗ firmware-ui check failed".red().bold());
+        eprintln!();
+        eprintln!("{}", String::from_utf8_lossy(&firmware_ui_output.stderr));
+        anyhow::bail!("firmware-ui check failed");
+    }
+
+    println!(
+        "{}",
+        format!(
+            "  ✓ firmware-ui check passed in {:.2}s",
+            firmware_ui_start.elapsed().as_secs_f64()
+        )
+        .green()
+    );
+    println!();
+
+    // Check 8: Clippy lints
     println!("{}", "  Running clippy lints...".cyan());
     let clippy_start = Instant::now();
 
@@ -120,10 +254,10 @@ pub fn run() -> Result<()> {
         .context("Failed to run clippy")?;
 
     if !clippy_output.status.success() {
-        eprintln!("{}", "  ⚠ Clippy warnings found".yellow().bold());
+        eprintln!("{}", "  ✗ Clippy warnings found".red().bold());
         eprintln!();
         eprintln!("{}", String::from_utf8_lossy(&clippy_output.stderr));
-        // Don't fail on clippy warnings, just show them
+        anyhow::bail!("Clippy check failed");
     } else {
         println!(
             "{}",
@@ -136,7 +270,7 @@ pub fn run() -> Result<()> {
     }
     println!();
 
-    // Check 5: Format check
+    // Check 9: Format check
     println!("{}", "  Checking code formatting...".cyan());
 
     let fmt_output = Command::new("cargo")
@@ -145,9 +279,9 @@ pub fn run() -> Result<()> {
         .context("Failed to run cargo fmt")?;
 
     if !fmt_output.status.success() {
-        eprintln!("{}", "  ⚠ Formatting issues found".yellow().bold());
+        eprintln!("{}", "  ✗ Formatting issues found".red().bold());
         eprintln!("     Run 'cargo fmt --all' to fix");
-        // Don't fail on format issues
+        anyhow::bail!("Format check failed");
     } else {
         println!("{}", "  ✓ Formatting check passed".green());
     }

@@ -6,7 +6,7 @@ use embedded_graphics::{
     pixelcolor::Gray4,
     prelude::*,
     primitives::{PrimitiveStyle, Rectangle, RoundedRectangle},
-    text::{Alignment, Text},
+    text::Text,
 };
 
 /// Button style presets

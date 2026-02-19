@@ -6,13 +6,15 @@
 #![no_main]
 
 use embassy_executor::Spawner;
-use embassy_stm32::gpio::{Input, Level, Output, Pull, Speed};
+use embassy_stm32::exti::{Channel, ExtiInput};
+use embassy_stm32::gpio::{AnyPin, Input, Level, Output, Pull, Speed};
 use embassy_stm32::spi::{Config as SpiConfig, Spi};
 use embassy_stm32::time::Hertz;
 use embassy_time::{Duration, Timer};
-use embedded_graphics::prelude::*;
-use static_cell::StaticCell;
+use platform::DisplayDriver;
 
+use firmware::input::builder::InputBuilder;
+use firmware::input::hardware::spawn_input_task;
 use firmware::ui::{SplashScreen, TestPattern};
 use firmware::{DapDisplay, Ssd1677Display, FRAMEBUFFER_SIZE};
 
@@ -24,7 +26,7 @@ use panic_probe as _;
 static mut FRAMEBUFFER: [u8; FRAMEBUFFER_SIZE] = [0xFF; FRAMEBUFFER_SIZE];
 
 #[embassy_executor::main]
-async fn main(_spawner: Spawner) {
+async fn main(spawner: Spawner) {
     // Initialize Embassy
     defmt::info!("SoulAudio DAP Firmware v0.1.0");
     defmt::info!("Initializing STM32H743ZI...");
@@ -79,6 +81,54 @@ async fn main(_spawner: Spawner) {
     }
 
     defmt::info!("Splash screen displayed");
+
+    // -----------------------------------------------------------------------
+    // Wire input task
+    //
+    // Pin assignments:
+    //   PE9  = Encoder CLK (A) — EXTI9 rising-edge interrupt
+    //   PE11 = Encoder DT  (B) — GPIO input only
+    //   PD0  = Play/Pause  — active-low, internal pull-up
+    //   PD1  = Next        — active-low, internal pull-up
+    //   PD2  = Previous    — active-low, internal pull-up
+    //   PD3  = Menu        — active-low, internal pull-up
+    //   PD4  = Back        — active-low, internal pull-up
+    //   PD5  = Select      — active-low, internal pull-up
+    // -----------------------------------------------------------------------
+    defmt::info!("Spawning input task...");
+
+    // Log builder config at startup so debounce values are visible in RTT.
+    let enc_config = InputBuilder::rotary().debounce_ms(20);
+    let btn_config = InputBuilder::button(firmware::input::Button::Play).debounce_ms(50);
+    defmt::info!(
+        "Input: encoder debounce={}ms  button debounce={}ms",
+        enc_config.debounce(),
+        btn_config.debounce()
+    );
+
+    // Build ExtiInput pins: Input::new().degrade() + EXTI channel.degrade()
+    // gives ExtiInput<'static, AnyPin> compatible with the task signature.
+    let enc_clk: ExtiInput<'static, AnyPin> =
+        ExtiInput::new(Input::new(p.PE9, Pull::None).degrade(), p.EXTI9.degrade());
+    let enc_dt: Input<'static, AnyPin> = Input::new(p.PE11, Pull::None).degrade();
+
+    let btn_play: ExtiInput<'static, AnyPin> =
+        ExtiInput::new(Input::new(p.PD0, Pull::Up).degrade(), p.EXTI0.degrade());
+    let btn_next: ExtiInput<'static, AnyPin> =
+        ExtiInput::new(Input::new(p.PD1, Pull::Up).degrade(), p.EXTI1.degrade());
+    let btn_prev: ExtiInput<'static, AnyPin> =
+        ExtiInput::new(Input::new(p.PD2, Pull::Up).degrade(), p.EXTI2.degrade());
+    let btn_menu: ExtiInput<'static, AnyPin> =
+        ExtiInput::new(Input::new(p.PD3, Pull::Up).degrade(), p.EXTI3.degrade());
+    let btn_back: ExtiInput<'static, AnyPin> =
+        ExtiInput::new(Input::new(p.PD4, Pull::Up).degrade(), p.EXTI4.degrade());
+    let btn_select: ExtiInput<'static, AnyPin> =
+        ExtiInput::new(Input::new(p.PD5, Pull::Up).degrade(), p.EXTI5.degrade());
+
+    spawn_input_task(
+        &spawner, enc_clk, enc_dt, btn_play, btn_next, btn_prev, btn_menu, btn_back, btn_select,
+    );
+    defmt::info!("Input task spawned");
 
     // Wait 3 seconds
     Timer::after(Duration::from_secs(3)).await;

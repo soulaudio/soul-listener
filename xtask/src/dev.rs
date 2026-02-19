@@ -92,14 +92,14 @@ pub fn run(headless: bool, hot_reload: bool) -> Result<()> {
         move |res: Result<Event, notify::Error>| {
             if let Ok(event) = res {
                 // Only trigger on modify and create events for Rust files
-                if matches!(event.kind, EventKind::Modify(_) | EventKind::Create(_)) {
-                    if event.paths.iter().any(|p| {
+                if matches!(event.kind, EventKind::Modify(_) | EventKind::Create(_))
+                    && event.paths.iter().any(|p| {
                         p.extension()
                             .map(|ext| ext == "rs" || ext == "toml")
                             .unwrap_or(false)
-                    }) {
-                        let _ = tx.send(());
-                    }
+                    })
+                {
+                    let _ = tx.send(());
                 }
             }
         },
@@ -241,7 +241,13 @@ fn start_emulator(headless: bool, hot_reload: bool) -> Result<Option<Child>> {
         // Build the firmware-ui dylib first (needed by the emulator for dlopen)
         println!("{}", "Building firmware-ui dylib...".bold());
         let status = Command::new("cargo")
-            .args(["build", "--package", "firmware-ui", "--features", "hot-reload"])
+            .args([
+                "build",
+                "--package",
+                "firmware-ui",
+                "--features",
+                "hot-reload",
+            ])
             .status()
             .context("Failed to build firmware-ui dylib")?;
         if !status.success() {
@@ -264,7 +270,7 @@ fn start_emulator(headless: bool, hot_reload: bool) -> Result<Option<Child>> {
         .arg(if hot_reload {
             "emulator,hot-reload"
         } else {
-            "emulator,debug"
+            "emulator,debug,keyboard-input"
         })
         .env("HOT_RELOAD_MODE", "1") // Signal to example that we're in hot-reload mode
         .stdout(std::process::Stdio::inherit()) // Show live output

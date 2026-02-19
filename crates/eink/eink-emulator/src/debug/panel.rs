@@ -416,12 +416,12 @@ struct HighlightCmd {
 /// ```
 /// Tab bar clickable zone (y in [TAB_HIT_Y_START, TAB_HIT_Y_END)).
 pub const TAB_HIT_Y_START: u32 = 18;
-pub const TAB_HIT_Y_END:   u32 = 40; // exclusive – up to the second separator
+pub const TAB_HIT_Y_END: u32 = 40; // exclusive – up to the second separator
 
 /// Inspect-mode toggle clickable zone (y in [INSPECT_HIT_Y_START, INSPECT_HIT_Y_END)).
 /// Covers the gap between sep#2 and the first tree row.
 pub const INSPECT_HIT_Y_START: u32 = 40;
-pub const INSPECT_HIT_Y_END:   u32 = 57; // exclusive – = TREE_BASELINE_CY
+pub const INSPECT_HIT_Y_END: u32 = 57; // exclusive – = TREE_BASELINE_CY
 
 /// `cy` value at the start of the first tree row in `render_into`.
 pub const TREE_BASELINE_CY: i32 = 57;
@@ -458,19 +458,19 @@ pub fn compute_scene_hits(
 
     const LH: i32 = 13;
 
-    let rows  = state.build_scene_rows();
+    let rows = state.build_scene_rows();
     let total = rows.len();
 
     let meta_h: i32 = if state.scene_selected.is_some() {
-        2 + 3 + 5 * LH   // sep + pad + 5 data lines
+        2 + 3 + 5 * LH // sep + pad + 5 data lines
     } else {
-        2 + 3 + 2 * LH   // sep + pad + 2 hint lines
+        2 + 3 + 2 * LH // sep + pad + 2 hint lines
     };
     // tree_budget uses TREE_BASELINE_CY (57) matching render_into's `cy` at row start
-    let tree_budget   = height as i32 - TREE_BASELINE_CY - meta_h - 4;
+    let tree_budget = height as i32 - TREE_BASELINE_CY - meta_h - 4;
     let scene_visible = ((tree_budget / LH).max(2) as usize).min(total);
-    let scroll        = state.scene_scroll;
-    let visible_end   = (scroll + scene_visible).min(total);
+    let scroll = state.scene_scroll;
+    let visible_end = (scroll + scene_visible).min(total);
 
     (scroll..visible_end)
         .enumerate()
@@ -506,25 +506,30 @@ pub fn compute_scene_hits(
 pub fn render_into(buf: &mut [u32], panel_w: u32, height: u32, info: &PanelInfo<'_>) {
     // Colours
     let col_normal = Rgb888::new(195, 195, 215);
-    let col_dim    = Rgb888::new(85,  85,  110);
-    let col_white  = Rgb888::new(220, 220, 255);
-    let col_green  = Rgb888::new(80,  200, 120);
-    let col_warn   = Rgb888::new(255, 160, 60);
-    let col_err    = Rgb888::new(255, 80,  80);
-    let col_cyan   = Rgb888::new(80,  210, 210);
+    let col_dim = Rgb888::new(85, 85, 110);
+    let col_white = Rgb888::new(220, 220, 255);
+    let col_green = Rgb888::new(80, 200, 120);
+    let col_warn = Rgb888::new(255, 160, 60);
+    let col_err = Rgb888::new(255, 80, 80);
+    let col_cyan = Rgb888::new(80, 210, 210);
 
-    const PL: i32 = 5;   // left text padding
-    const LH: i32 = 13;  // line height
+    const PL: i32 = 5; // left text padding
+    const LH: i32 = 13; // line height
 
-    let mut cmds: Vec<TextCmd>         = Vec::with_capacity(80);
-    let mut seps: Vec<u32>             = Vec::with_capacity(8);
+    let mut cmds: Vec<TextCmd> = Vec::with_capacity(80);
+    let mut seps: Vec<u32> = Vec::with_capacity(8);
     let mut highlights: Vec<HighlightCmd> = Vec::with_capacity(8);
     // Power graph area set by the Power tab: (x, y, w, h)
     let mut graph_area: Option<(u32, u32, u32, u32)> = None;
 
     macro_rules! push {
         ($x:expr, $y:expr, $text:expr, $color:expr) => {
-            cmds.push(TextCmd { x: $x, y: $y, text: $text.to_string(), color: $color })
+            cmds.push(TextCmd {
+                x: $x,
+                y: $y,
+                text: $text.to_string(),
+                color: $color,
+            })
         };
     }
 
@@ -538,10 +543,18 @@ pub fn render_into(buf: &mut [u32], panel_w: u32, height: u32, info: &PanelInfo<
     push!(PL, cy, "E-INK DEBUG", col_white);
 
     // Right-side compact indicators: B=borders  I=inspect
-    let b_col = if info.state.borders_enabled { col_green } else { col_dim };
-    let i_col = if info.state.inspector_mode  { col_cyan  } else { col_dim };
+    let b_col = if info.state.borders_enabled {
+        col_green
+    } else {
+        col_dim
+    };
+    let i_col = if info.state.inspector_mode {
+        col_cyan
+    } else {
+        col_dim
+    };
     let ind_x = panel_w as i32 - PL - 2 * 8;
-    push!(ind_x,     cy, "B", b_col);
+    push!(ind_x, cy, "B", b_col);
     push!(ind_x + 8, cy, "I", i_col);
     cy += LH;
     seps.push(cy as u32);
@@ -554,8 +567,8 @@ pub fn render_into(buf: &mut [u32], panel_w: u32, height: u32, info: &PanelInfo<
     let tab_w = (panel_w - 1) / 3; // distribute available width across 3 tabs
     let tab_defs: &[(&str, DebugTab)] = &[
         ("SCENE", DebugTab::Scene),
-        ("DISP",  DebugTab::Display),
-        ("PWR",   DebugTab::Power),
+        ("DISP", DebugTab::Display),
+        ("PWR", DebugTab::Power),
     ];
     for (i, &(label, tab)) in tab_defs.iter().enumerate() {
         let tx = 1 + i as u32 * tab_w;
@@ -587,7 +600,7 @@ pub fn render_into(buf: &mut [u32], panel_w: u32, height: u32, info: &PanelInfo<
         // SCENE TAB
         // -----------------------------------------------------------------
         DebugTab::Scene => {
-            let rows  = info.state.build_scene_rows();
+            let rows = info.state.build_scene_rows();
             let total = rows.len();
             let comps = &info.state.registered_components;
 
@@ -612,7 +625,7 @@ pub fn render_into(buf: &mut [u32], panel_w: u32, height: u32, info: &PanelInfo<
                     // Active: bright cyan button
                     highlights.push(HighlightCmd {
                         x: 1,
-                        y: (cy - FONT_ASCENT as i32).max(0) as u32,
+                        y: (cy - FONT_ASCENT).max(0) as u32,
                         w: panel_w - 1,
                         h: 12,
                         color: 0xFF0A2535,
@@ -630,25 +643,27 @@ pub fn render_into(buf: &mut [u32], panel_w: u32, height: u32, info: &PanelInfo<
 
                 // Compute how many tree rows fit above the metadata pane.
                 let meta_h: i32 = if info.state.scene_selected.is_some() {
-                    2 + 3 + 5 * LH   // separator + pad + 5 data lines
+                    2 + 3 + 5 * LH // separator + pad + 5 data lines
                 } else {
-                    2 + 3 + 2 * LH   // separator + pad + 2 hint lines
+                    2 + 3 + 2 * LH // separator + pad + 2 hint lines
                 };
-                let tree_budget   = height as i32 - cy - meta_h - 4;
+                let tree_budget = height as i32 - cy - meta_h - 4;
                 let scene_visible = ((tree_budget / LH).max(2) as usize).min(total);
-                let visible_end   = (scroll + scene_visible).min(total);
+                let visible_end = (scroll + scene_visible).min(total);
 
                 // ── tree rows ─────────────────────────────────────────────
                 for (off, row) in rows[scroll..visible_end].iter().enumerate() {
-                    let abs_idx   = scroll + off;
-                    let is_sel    = info.state.scene_selected == Some(abs_idx);
+                    let abs_idx = scroll + off;
+                    let is_sel = info.state.scene_selected == Some(abs_idx);
 
                     // Hover highlight (inspector mode): row whose component matches hovered.
                     let is_hov = !is_sel && info.state.inspector_mode && {
                         let comp = &comps[row.comp_idx];
-                        info.state.hovered_component.as_ref().map(|h| {
-                            h.position == comp.position && h.size == comp.size
-                        }).unwrap_or(false)
+                        info.state
+                            .hovered_component
+                            .as_ref()
+                            .map(|h| h.position == comp.position && h.size == comp.size)
+                            .unwrap_or(false)
                     };
 
                     if is_sel {
@@ -657,7 +672,7 @@ pub fn render_into(buf: &mut [u32], panel_w: u32, height: u32, info: &PanelInfo<
                             y: (cy - 9).max(0) as u32,
                             w: panel_w - 1,
                             h: 12,
-                            color: 0xFF1E3D62,  // blue – selected
+                            color: 0xFF1E3D62, // blue – selected
                         });
                     } else if is_hov {
                         highlights.push(HighlightCmd {
@@ -665,13 +680,17 @@ pub fn render_into(buf: &mut [u32], panel_w: u32, height: u32, info: &PanelInfo<
                             y: (cy - 9).max(0) as u32,
                             w: panel_w - 1,
                             h: 12,
-                            color: 0xFF3A2800,  // dark amber – hovered
+                            color: 0xFF3A2800, // dark amber – hovered
                         });
                     }
 
                     let indent = "  ".repeat(row.depth.min(4));
                     let toggle = if row.has_children || row.is_label_group {
-                        if row.is_collapsed { "+ " } else { "- " }
+                        if row.is_collapsed {
+                            "+ "
+                        } else {
+                            "- "
+                        }
                     } else {
                         "  "
                     };
@@ -684,9 +703,7 @@ pub fn render_into(buf: &mut [u32], panel_w: u32, height: u32, info: &PanelInfo<
                         if name.is_empty() {
                             format!(
                                 "{} {}x{}@{},{}",
-                                abbr,
-                                comp.size.0, comp.size.1,
-                                comp.position.0, comp.position.1
+                                abbr, comp.size.0, comp.size.1, comp.position.0, comp.position.1
                             )
                         } else {
                             let n: String = name.chars().take(18).collect();
@@ -695,14 +712,20 @@ pub fn render_into(buf: &mut [u32], panel_w: u32, height: u32, info: &PanelInfo<
                     };
 
                     let line: String = format!("{indent}{toggle}{label}")
-                        .chars().take(max_chars).collect();
+                        .chars()
+                        .take(max_chars)
+                        .collect();
 
                     let row_col = if is_sel {
                         col_white
                     } else if is_hov {
-                        col_warn  // amber text for hovered row
+                        col_warn // amber text for hovered row
                     } else {
-                        match row.depth { 0 => col_white, 1 => col_normal, _ => col_dim }
+                        match row.depth {
+                            0 => col_white,
+                            1 => col_normal,
+                            _ => col_dim,
+                        }
                     };
                     push!(PL, cy, line, row_col);
                     cy += LH;
@@ -710,7 +733,8 @@ pub fn render_into(buf: &mut [u32], panel_w: u32, height: u32, info: &PanelInfo<
 
                 if visible_end < total {
                     push!(
-                        PL, cy,
+                        PL,
+                        cy,
                         format!("  +{} more (Arrow-Down)", total - visible_end),
                         col_dim
                     );
@@ -724,7 +748,7 @@ pub fn render_into(buf: &mut [u32], panel_w: u32, height: u32, info: &PanelInfo<
 
                 if let Some(sel) = info.state.scene_selected {
                     if sel < rows.len() {
-                        let row  = &rows[sel];
+                        let row = &rows[sel];
                         let comp = &comps[row.comp_idx];
                         let abbr = if row.is_label_group {
                             "LBL"
@@ -733,20 +757,30 @@ pub fn render_into(buf: &mut [u32], panel_w: u32, height: u32, info: &PanelInfo<
                         };
                         let tid = comp.test_id.as_deref().unwrap_or("(unnamed)");
                         push!(
-                            PL, cy,
-                            format!("[{abbr}] {}", tid.chars().take(max_chars.saturating_sub(7)).collect::<String>()),
+                            PL,
+                            cy,
+                            format!(
+                                "[{abbr}] {}",
+                                tid.chars()
+                                    .take(max_chars.saturating_sub(7))
+                                    .collect::<String>()
+                            ),
                             col_white
                         );
                         cy += LH;
                         push!(
-                            PL, cy,
-                            format!("{}x{}  @{},{}", comp.size.0, comp.size.1, comp.position.0, comp.position.1),
+                            PL,
+                            cy,
+                            format!(
+                                "{}x{}  @{},{}",
+                                comp.size.0, comp.size.1, comp.position.0, comp.position.1
+                            ),
                             col_normal
                         );
                         cy += LH;
                         let parent_str = match info.state.find_parent(comp) {
                             Some(p) => {
-                                let pa  = abbrev_type(&p.component_type);
+                                let pa = abbrev_type(&p.component_type);
                                 let pid = p.test_id.as_deref().unwrap_or("?");
                                 format!("^ [{pa}] {}", pid.chars().take(14).collect::<String>())
                             }
@@ -755,9 +789,10 @@ pub fn render_into(buf: &mut [u32], panel_w: u32, height: u32, info: &PanelInfo<
                         push!(PL, cy, parent_str, col_dim);
                         cy += LH;
                         let children = info.state.find_children(comp);
-                        let area     = comp.size.0 as u64 * comp.size.1 as u64;
+                        let area = comp.size.0 as u64 * comp.size.1 as u64;
                         push!(
-                            PL, cy,
+                            PL,
+                            cy,
                             format!("v {} children  {}px\u{00B2}", children.len(), area),
                             col_dim
                         );
@@ -780,17 +815,27 @@ pub fn render_into(buf: &mut [u32], panel_w: u32, height: u32, info: &PanelInfo<
         DebugTab::Display => {
             push!(PL, cy, "DISPLAY", col_dim);
             cy += LH;
-            push!(PL, cy, format!("{} x {}", info.disp_w, info.disp_h), col_normal);
+            push!(
+                PL,
+                cy,
+                format!("{} x {}", info.disp_w, info.disp_h),
+                col_normal
+            );
             cy += LH;
 
             let rot_name = match info.rotation_deg {
-                0   => "landscape",
-                90  => "portrait",
+                0 => "landscape",
+                90 => "portrait",
                 180 => "inverted",
                 270 => "portrait-R",
-                _   => "custom",
+                _ => "custom",
             };
-            push!(PL, cy, format!("Rot: {}deg  ({})", info.rotation_deg, rot_name), col_normal);
+            push!(
+                PL,
+                cy,
+                format!("Rot: {}deg  ({})", info.rotation_deg, rot_name),
+                col_normal
+            );
             cy += LH;
 
             let (win_w, win_h) = if info.rotation_deg == 90 || info.rotation_deg == 270 {
@@ -801,18 +846,28 @@ pub fn render_into(buf: &mut [u32], panel_w: u32, height: u32, info: &PanelInfo<
             if info.scale == 1 {
                 push!(PL, cy, "Scale: 1x  (native)", col_normal);
             } else {
-                push!(PL, cy, format!("Scale: {}x  ({}x{})", info.scale, win_w, win_h), col_normal);
+                push!(
+                    PL,
+                    cy,
+                    format!("Scale: {}x  ({}x{})", info.scale, win_w, win_h),
+                    col_normal
+                );
             }
             cy += LH;
 
             let (temp_status, temp_col) = match info.temperature {
-                t if t < 0  => ("VERY COLD", col_err),
-                t if t < 5  => ("COLD",      col_warn),
-                t if t > 40 => ("VERY HOT",  col_err),
-                t if t > 35 => ("HOT",       col_warn),
-                _           => ("OK",        col_green),
+                t if t < 0 => ("VERY COLD", col_err),
+                t if t < 5 => ("COLD", col_warn),
+                t if t > 40 => ("VERY HOT", col_err),
+                t if t > 35 => ("HOT", col_warn),
+                _ => ("OK", col_green),
             };
-            push!(PL, cy, format!("Temp: {:>3}C  ", info.temperature), col_normal);
+            push!(
+                PL,
+                cy,
+                format!("Temp: {:>3}C  ", info.temperature),
+                col_normal
+            );
             push!(PL + 11 * 6, cy, temp_status, temp_col);
             cy += LH;
 
@@ -822,9 +877,19 @@ pub fn render_into(buf: &mut [u32], panel_w: u32, height: u32, info: &PanelInfo<
 
             push!(PL, cy, "REFRESH", col_dim);
             cy += LH;
-            push!(PL, cy, format!("Full:    {}", info.state.full_refresh_count), col_normal);
+            push!(
+                PL,
+                cy,
+                format!("Full:    {}", info.state.full_refresh_count),
+                col_normal
+            );
             cy += LH;
-            push!(PL, cy, format!("Partial: {}", info.state.partial_refresh_count), col_normal);
+            push!(
+                PL,
+                cy,
+                format!("Partial: {}", info.state.partial_refresh_count),
+                col_normal
+            );
             cy += LH;
 
             seps.push(cy as u32);
@@ -856,9 +921,15 @@ pub fn render_into(buf: &mut [u32], panel_w: u32, height: u32, info: &PanelInfo<
             cy += LH;
 
             if let Some(graph) = info.power_graph {
-                let cur     = graph.current_power();
-                let avg     = graph.average_power();
-                let cur_col = if cur > 150.0 { col_err } else if cur > 60.0 { col_warn } else { col_normal };
+                let cur = graph.current_power();
+                let avg = graph.average_power();
+                let cur_col = if cur > 150.0 {
+                    col_err
+                } else if cur > 60.0 {
+                    col_warn
+                } else {
+                    col_normal
+                };
                 push!(PL, cy, format!("Now: {:>6.1} mW", cur), cur_col);
                 cy += LH;
                 push!(PL, cy, format!("Avg: {:>6.1} mW", avg), col_normal);
@@ -874,8 +945,12 @@ pub fn render_into(buf: &mut [u32], panel_w: u32, height: u32, info: &PanelInfo<
                 cy += LH;
                 let pct = stats.state_percentages();
                 push!(
-                    PL, cy,
-                    format!("Idle:{:.0}% Act:{:.0}% Slp:{:.0}%", pct.idle, pct.active, pct.sleep),
+                    PL,
+                    cy,
+                    format!(
+                        "Idle:{:.0}% Act:{:.0}% Slp:{:.0}%",
+                        pct.idle, pct.active, pct.sleep
+                    ),
                     col_dim
                 );
                 cy += LH;
@@ -901,14 +976,14 @@ pub fn render_into(buf: &mut [u32], panel_w: u32, height: u32, info: &PanelInfo<
             let gy: u32 = cy as u32;
             let gw: u32 = panel_w - 1;
             let remaining = height.saturating_sub(gy + 24);
-            let gh: u32   = remaining.min(120);
+            let gh: u32 = remaining.min(120);
             graph_area = Some((gx, gy, gw, gh));
             cy += gh as i32 + 4;
 
             // Legend
-            push!(PL,          cy, "Idle", Rgb888::new(32, 88, 136));
-            push!(PL + 4 * 6,  cy, "Part", Rgb888::new(176, 112, 32));
-            push!(PL + 8 * 6,  cy, "Full", Rgb888::new(204, 48, 48));
+            push!(PL, cy, "Idle", Rgb888::new(32, 88, 136));
+            push!(PL + 4 * 6, cy, "Part", Rgb888::new(176, 112, 32));
+            push!(PL + 8 * 6, cy, "Full", Rgb888::new(204, 48, 48));
             cy += LH;
 
             // Axis annotation (peak mW + sample count)
@@ -916,10 +991,10 @@ pub fn render_into(buf: &mut [u32], panel_w: u32, height: u32, info: &PanelInfo<
                 let samples = graph.samples();
                 if !samples.is_empty() {
                     let max_p = samples.iter().map(|s| s.power_mw).fold(0f32, f32::max);
-                    let n     = samples.len();
+                    let n = samples.len();
                     push!(PL, cy, format!("{:.0}mW", max_p), col_dim);
                     let cnt = format!("{n} smpl");
-                    let sx  = panel_w as i32 - cnt.len() as i32 * 6 - PL;
+                    let sx = panel_w as i32 - cnt.len() as i32 * 6 - PL;
                     push!(sx.max(PL + 40), cy, cnt, col_dim);
                 }
             }
@@ -955,7 +1030,7 @@ pub fn render_into(buf: &mut [u32], panel_w: u32, height: u32, info: &PanelInfo<
         let x_end = (hl.x + hl.w).min(panel_w);
         for row in hl.y..y_end {
             let row_start = (row * panel_w + hl.x) as usize;
-            let row_end   = (row * panel_w + x_end) as usize;
+            let row_end = (row * panel_w + x_end) as usize;
             if row_start < buf.len() {
                 let end = row_end.min(buf.len());
                 for px in &mut buf[row_start..end] {
@@ -1064,10 +1139,10 @@ mod tests {
 
         panel.render(&mut buffer, 800, 600, &state);
 
-        let panel_pixel_idx = (0 * 800 + 700) as usize;
+        let panel_pixel_idx = 700_usize;
         assert_eq!(buffer[panel_pixel_idx], PANEL_BG_COLOR);
 
-        let outside_pixel_idx = (0 * 800 + 400) as usize;
+        let outside_pixel_idx = 400_usize;
         assert_eq!(buffer[outside_pixel_idx], 0xFFFFFFFF);
     }
 
@@ -1079,7 +1154,7 @@ mod tests {
         state.panel_visible = true;
         panel.render(&mut buffer, 800, 600, &state);
 
-        assert_eq!(buffer[(0   * 800 + 700) as usize], PANEL_BG_COLOR);
+        assert_eq!(buffer[700_usize], PANEL_BG_COLOR);
         assert_eq!(buffer[(300 * 800 + 700) as usize], PANEL_BG_COLOR);
         assert_eq!(buffer[(599 * 800 + 700) as usize], PANEL_BG_COLOR);
     }
@@ -1116,8 +1191,8 @@ mod tests {
         state.panel_visible = true;
         panel.render(&mut buffer, 1024, 768, &state);
 
-        assert_eq!(buffer[(0 * 1024 + 900) as usize], PANEL_BG_COLOR);
-        assert_eq!(buffer[(0 * 1024 + 700) as usize], 0xFFFFFFFF);
+        assert_eq!(buffer[900_usize], PANEL_BG_COLOR);
+        assert_eq!(buffer[700_usize], 0xFFFFFFFF);
     }
 
     #[test]
@@ -1128,9 +1203,9 @@ mod tests {
         state.panel_visible = true;
         panel.render(&mut buffer, 400, 300, &state);
 
-        assert_eq!(buffer[(0 * 400 + 300) as usize], PANEL_BG_COLOR);
-        assert_eq!(buffer[(0 * 400 + 100) as usize], 0xFFFFFFFF);
-        assert_eq!(buffer[(0 * 400 + 250) as usize], PANEL_BG_COLOR);
+        assert_eq!(buffer[300_usize], PANEL_BG_COLOR);
+        assert_eq!(buffer[100_usize], 0xFFFFFFFF);
+        assert_eq!(buffer[250_usize], PANEL_BG_COLOR);
     }
 
     // --- render_into / PanelCanvas tests ---
@@ -1138,21 +1213,21 @@ mod tests {
     #[test]
     fn test_panel_canvas_fills_background() {
         let panel_w = 200u32;
-        let height  = 400u32;
+        let height = 400u32;
         let mut buf = vec![0u32; (panel_w * height) as usize];
         let state = DebugState::new();
 
         render_into(&mut buf, panel_w, height, &make_info(&state));
 
         // Background is dark navy away from text/border
-        let idx = (1 * panel_w + 5) as usize;
+        let idx = (panel_w + 5) as usize;
         assert_eq!(buf[idx], 0xFF1A1A2E, "Background pixel should be dark navy");
     }
 
     #[test]
     fn test_panel_canvas_left_border() {
         let panel_w = 200u32;
-        let height  = 400u32;
+        let height = 400u32;
         let mut buf = vec![0u32; (panel_w * height) as usize];
         let state = DebugState::new();
 
@@ -1167,7 +1242,7 @@ mod tests {
     #[test]
     fn test_panel_canvas_separator_line() {
         let panel_w = 200u32;
-        let height  = 400u32;
+        let height = 400u32;
         let mut buf = vec![0u32; (panel_w * height) as usize];
         let state = DebugState::new();
 
@@ -1176,8 +1251,11 @@ mod tests {
         // Separator at y=11 (after title at cy=10, LH=13 → cy=23, sep at 23)
         // The exact y depends on our layout; just verify col 0 is always border.
         for y in 0..height {
-            assert_eq!(buf[(y * panel_w) as usize], 0xFF4A4A6A,
-                "Left border overwritten at y={y}");
+            assert_eq!(
+                buf[(y * panel_w) as usize],
+                0xFF4A4A6A,
+                "Left border overwritten at y={y}"
+            );
         }
     }
 
@@ -1196,10 +1274,10 @@ mod tests {
         {
             let mut canvas = PanelCanvas::new(&mut buf, w, h);
             let _ = canvas.draw_iter([
-                Pixel(Point::new(-1,  0), Rgb888::new(0, 255, 0)),
-                Pixel(Point::new( 0, -1), Rgb888::new(0, 255, 0)),
-                Pixel(Point::new(10,  0), Rgb888::new(0, 255, 0)),
-                Pixel(Point::new( 0, 10), Rgb888::new(0, 255, 0)),
+                Pixel(Point::new(-1, 0), Rgb888::new(0, 255, 0)),
+                Pixel(Point::new(0, -1), Rgb888::new(0, 255, 0)),
+                Pixel(Point::new(10, 0), Rgb888::new(0, 255, 0)),
+                Pixel(Point::new(0, 10), Rgb888::new(0, 255, 0)),
             ]);
         }
         assert_eq!(buf[0], 0u32); // (0,0) untouched
@@ -1216,11 +1294,11 @@ mod tests {
 
     #[test]
     fn test_render_into_does_not_panic_with_full_state() {
-        use crate::debug::state::ComponentInfo;
         use crate::debug::power_graph::PowerGraph;
+        use crate::debug::state::ComponentInfo;
 
         let panel_w = 280u32;
-        let height  = 800u32;
+        let height = 800u32;
         let mut buf = vec![0u32; (panel_w * height) as usize];
 
         let mut state = DebugState::new();
@@ -1267,15 +1345,18 @@ mod tests {
 
         // Verify left border is intact everywhere
         for y in 0..height {
-            assert_eq!(buf[(y * panel_w) as usize], 0xFF4A4A6A,
-                "Left border should be intact at y={y}");
+            assert_eq!(
+                buf[(y * panel_w) as usize],
+                0xFF4A4A6A,
+                "Left border should be intact at y={y}"
+            );
         }
     }
 
     #[test]
     fn test_render_into_temperature_warning() {
         let panel_w = 280u32;
-        let height  = 800u32;
+        let height = 800u32;
         let mut buf = vec![0u32; (panel_w * height) as usize];
 
         // Cold temperature — should not panic
@@ -1295,7 +1376,7 @@ mod tests {
         use crate::debug::state::ComponentInfo;
 
         let panel_w = 280u32;
-        let height  = 800u32;
+        let height = 800u32;
         let mut buf = vec![0u32; (panel_w * height) as usize];
 
         let mut state = DebugState::new();
@@ -1321,7 +1402,7 @@ mod tests {
     #[test]
     fn test_render_into_portrait_rotation() {
         let panel_w = 280u32;
-        let height  = 800u32;
+        let height = 800u32;
         let mut buf = vec![0u32; (panel_w * height) as usize];
         let state = DebugState::new();
 

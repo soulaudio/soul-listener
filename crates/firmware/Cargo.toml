@@ -65,6 +65,7 @@ default = []
 hardware = [
     "embassy-executor",
     "embassy-time",
+    "embassy-time/tick-hz-32_768",  # hardware tick rate (moved from workspace default)
     "embassy-sync",
     "embassy-futures",
     "embassy-stm32",
@@ -92,6 +93,12 @@ emulator = [
 debug = [
     "emulator",
     "eink-emulator/debug",
+]
+
+# Keyboard + scroll-wheel input (emulator only)
+keyboard-input = [
+    "emulator",
+    "eink-emulator/keyboard-input",
 ]
 
 # True in-process hot-reload using hot-lib-reloader.

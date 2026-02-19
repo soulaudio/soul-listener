@@ -1,0 +1,47 @@
+repos:
+  - repo: local
+    hooks:
+      # -----------------------------------------------------------------------
+      # Format check — runs on every commit, fast (~1–2 s)
+      # -----------------------------------------------------------------------
+      - id: fmt
+        name: cargo fmt
+        language: system
+        entry: cargo fmt --all --check
+        pass_filenames: false
+        types: [rust]
+
+      # -----------------------------------------------------------------------
+      # Clippy — runs on every commit
+      #
+      # Matches the CI clippy job: lint lib + test targets for the whole
+      # workspace, then firmware with the emulator feature set explicitly.
+      # We avoid --all-features because hardware and emulator features are
+      # mutually exclusive in the firmware crate.
+      # -----------------------------------------------------------------------
+      - id: clippy
+        name: cargo clippy (workspace)
+        language: system
+        entry: cargo clippy --workspace --lib --tests -- -D warnings
+        pass_filenames: false
+        types: [rust]
+
+      - id: clippy-emulator
+        name: cargo clippy -p firmware (emulator features)
+        language: system
+        entry: cargo clippy -p firmware --lib --features emulator,debug,keyboard-input -- -D warnings
+        pass_filenames: false
+        types: [rust]
+
+      # -----------------------------------------------------------------------
+      # Embedded target check — runs on pre-push only (cross-compilation is
+      # slow: ~30–60 s). Install the ARM target once with:
+      #   rustup target add thumbv7em-none-eabihf
+      # -----------------------------------------------------------------------
+      - id: check-embedded
+        name: Embedded target check (STM32H7)
+        language: system
+        entry: cargo check -p firmware --target thumbv7em-none-eabihf --features hardware
+        pass_filenames: false
+        types: [rust]
+        stages: [pre-push]

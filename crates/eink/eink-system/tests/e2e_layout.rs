@@ -179,7 +179,7 @@ fn test_simple_vstack_three_children() {
         // Simple VStack with 3 children (black rectangles)
         let y_positions = [10, 50, 90];
         for (i, y) in y_positions.iter().enumerate() {
-            Rectangle::new(Point::new(10, *y as i32), Size::new(230, 30))
+            Rectangle::new(Point::new(10, *y), Size::new(230, 30))
                 .into_styled(PrimitiveStyle::with_fill(Gray4::BLACK))
                 .draw(emulator)?;
 
@@ -187,7 +187,7 @@ fn test_simple_vstack_three_children() {
             let text = format!("Child {}", i + 1);
             Text::new(
                 &text,
-                Point::new(15, *y as i32 + 12),
+                Point::new(15, *y + 12),
                 MonoTextStyle::new(&FONT_6X10, Gray4::WHITE),
             )
             .draw(emulator)?;
@@ -207,7 +207,7 @@ fn test_hstack_space_between() {
         // HStack with SpaceBetween justification
         let x_positions = [10, 110, 210];
         for (i, x) in x_positions.iter().enumerate() {
-            Rectangle::new(Point::new(*x as i32, 40), Size::new(30, 40))
+            Rectangle::new(Point::new(*x, 40), Size::new(30, 40))
                 .into_styled(PrimitiveStyle::with_fill(Gray4::BLACK))
                 .draw(emulator)?;
 
@@ -215,7 +215,7 @@ fn test_hstack_space_between() {
             let label = format!("{}", i + 1);
             Text::new(
                 &label,
-                Point::new(*x as i32 + 12, 55),
+                Point::new(*x + 12, 55),
                 MonoTextStyle::new(&FONT_6X10, Gray4::WHITE),
             )
             .draw(emulator)?;
@@ -377,7 +377,7 @@ async fn test_complex_dap_layout() {
     for (text, x) in buttons.iter().zip(button_x.iter()) {
         Text::new(
             text,
-            Point::new(*x as i32, 111),
+            Point::new(*x, 111),
             MonoTextStyle::new(&FONT_6X10, Gray4::BLACK),
         )
         .draw(&mut emulator)
@@ -533,7 +533,7 @@ async fn test_align_items_modes() {
 
     for (mode, x) in modes.iter().zip(x_positions.iter()) {
         // Container
-        Rectangle::new(Point::new(*x as i32, 20), Size::new(50, 80))
+        Rectangle::new(Point::new(*x, 20), Size::new(50, 80))
             .into_styled(PrimitiveStyle::with_stroke(Gray4::new(2), 1))
             .draw(&mut emulator)
             .unwrap();
@@ -541,7 +541,7 @@ async fn test_align_items_modes() {
         // Label
         Text::new(
             mode,
-            Point::new(*x as i32 + 2, 30),
+            Point::new(*x + 2, 30),
             MonoTextStyle::new(&FONT_6X10, Gray4::BLACK),
         )
         .draw(&mut emulator)
@@ -558,13 +558,10 @@ async fn test_align_items_modes() {
 
         let child_height = if *mode == "Stretch" { 55 } else { 20 };
 
-        Rectangle::new(
-            Point::new(*x as i32 + 10, child_y),
-            Size::new(30, child_height),
-        )
-        .into_styled(PrimitiveStyle::with_fill(Gray4::BLACK))
-        .draw(&mut emulator)
-        .unwrap();
+        Rectangle::new(Point::new(*x + 10, child_y), Size::new(30, child_height))
+            .into_styled(PrimitiveStyle::with_fill(Gray4::BLACK))
+            .draw(&mut emulator)
+            .unwrap();
     }
 
     let path = if should_update_screenshots() {

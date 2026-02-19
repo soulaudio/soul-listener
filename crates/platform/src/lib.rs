@@ -1,4 +1,4 @@
-//! Hardware Abstraction Layer (HAL) for SoulAudio DAP
+//! Hardware Abstraction Layer (HAL) for `SoulAudio` DAP
 //!
 //! This crate provides trait-based abstractions for all hardware components,
 //! enabling development and testing without physical hardware.
@@ -52,7 +52,9 @@
 #![warn(clippy::all)]
 #![warn(clippy::pedantic)]
 #![allow(clippy::module_name_repetitions)]
+#![allow(clippy::missing_errors_doc)]
 
+pub mod asset_store;
 pub mod audio;
 pub mod bluetooth;
 pub mod config;
@@ -62,13 +64,16 @@ pub mod gpio;
 pub mod input;
 pub mod peripheral;
 pub mod power;
+pub mod sdram;
 pub mod storage;
 
 // Re-export main high-level traits
-pub use audio::{AudioCodec, AudioConfig};
+pub use asset_store::{AssetKey, AssetStore};
+pub use audio::{AudioCodec, AudioConfig, DsdMode, OversamplingFilter};
 pub use bluetooth::BluetoothAdapter;
-pub use display::{DisplayDriver, DisplayError, EinkDisplay, RefreshMode};
+pub use display::{DisplayDriver, DisplayError, DisplayInfo, EinkDisplay, RefreshMode};
 pub use input::{Button, InputDevice, InputEvent};
+pub use sdram::{ExternalRam, RamRegion};
 pub use storage::{File, Storage};
 
 // Re-export GPIO types

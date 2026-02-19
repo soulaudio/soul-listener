@@ -38,7 +38,7 @@ pub fn align_down(value: u32) -> u32 {
 /// assert_eq!(align_up(13), 16);
 /// ```
 pub fn align_up(value: u32) -> u32 {
-    ((value + ALIGNMENT - 1) / ALIGNMENT) * ALIGNMENT
+    value.div_ceil(ALIGNMENT) * ALIGNMENT
 }
 
 /// Check if a value is properly aligned
@@ -53,7 +53,7 @@ pub fn align_up(value: u32) -> u32 {
 /// assert!(!is_aligned(13));
 /// ```
 pub fn is_aligned(value: u32) -> bool {
-    value % ALIGNMENT == 0
+    value.is_multiple_of(ALIGNMENT)
 }
 
 /// Align a rectangle to meet e-ink partial update requirements

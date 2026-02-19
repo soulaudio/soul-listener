@@ -130,3 +130,73 @@ impl TestPattern {
         Ok(())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use embedded_graphics::pixelcolor::Gray2;
+
+    struct TestDisplay {
+        width: u32,
+        height: u32,
+        pixel_count: usize,
+    }
+
+    impl TestDisplay {
+        fn new(width: u32, height: u32) -> Self {
+            Self {
+                width,
+                height,
+                pixel_count: 0,
+            }
+        }
+    }
+
+    impl DrawTarget for TestDisplay {
+        type Color = Gray2;
+        type Error = core::convert::Infallible;
+
+        fn draw_iter<I>(&mut self, pixels: I) -> Result<(), Self::Error>
+        where
+            I: IntoIterator<Item = Pixel<Self::Color>>,
+        {
+            self.pixel_count += pixels.into_iter().count();
+            Ok(())
+        }
+    }
+
+    impl OriginDimensions for TestDisplay {
+        fn size(&self) -> Size {
+            Size::new(self.width, self.height)
+        }
+    }
+
+    #[test]
+    fn test_splash_screen_renders_without_error() {
+        let mut display = TestDisplay::new(200, 100);
+        let result = SplashScreen::render(&mut display);
+        assert!(result.is_ok());
+        assert!(display.pixel_count > 0, "SplashScreen should draw pixels");
+    }
+
+    #[test]
+    fn test_test_pattern_renders_without_error() {
+        let mut display = TestDisplay::new(200, 100);
+        let result = TestPattern::render(&mut display);
+        assert!(result.is_ok());
+        assert!(display.pixel_count > 0, "TestPattern should draw pixels");
+    }
+
+    #[test]
+    fn test_splash_screen_small_display() {
+        // Should not panic on a very small display
+        let mut display = TestDisplay::new(50, 50);
+        assert!(SplashScreen::render(&mut display).is_ok());
+    }
+
+    #[test]
+    fn test_test_pattern_small_display() {
+        let mut display = TestDisplay::new(50, 50);
+        assert!(TestPattern::render(&mut display).is_ok());
+    }
+}

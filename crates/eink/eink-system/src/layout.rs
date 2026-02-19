@@ -516,7 +516,7 @@ impl LayoutResult {
     ///
     /// # Errors
     ///
-    /// Returns `Err(())` if the maximum number of children ([`MAX_CHILDREN`])
+    /// Returns `Err(child)` if the maximum number of children ([`MAX_CHILDREN`])
     /// has been reached.
     ///
     /// # Example
@@ -530,8 +530,8 @@ impl LayoutResult {
     ///
     /// assert_eq!(result.children.len(), 1);
     /// ```
-    pub fn add_child(&mut self, child: ChildLayout) -> Result<(), ()> {
-        self.children.push(child).map_err(|_| ())
+    pub fn add_child(&mut self, child: ChildLayout) -> Result<(), ChildLayout> {
+        self.children.push(child)
     }
 
     /// Get the number of children in this layout.

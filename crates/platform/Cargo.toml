@@ -6,9 +6,13 @@ authors.workspace = true
 license.workspace = true
 
 [dependencies]
-# Embassy
+# Embassy — unconditional: this crate is Embassy-only.
+# Consumers on desktop must activate embassy-time's "std" feature to satisfy
+# the time-driver symbols (e.g. add `embassy-time = { workspace = true,
+# features = ["std"] }` to their own Cargo.toml).
 embassy-time.workspace = true
 embassy-sync.workspace = true
+embassy-futures.workspace = true
 
 # Embedded HAL traits
 embedded-hal.workspace = true
@@ -29,12 +33,18 @@ thiserror-no-std.workspace = true
 
 [dev-dependencies]
 tokio = { workspace = true, features = ["macros", "rt", "time"] }
+# Provides the embassy-time std time-driver + software timer queue so that
+# `cargo test -p platform` links without an embedded HAL driver.
+# `std`         → time driver (implements _embassy_time_now)
+# `generic-queue-8` → software queue (implements _embassy_time_schedule_wake)
+embassy-time = { workspace = true, features = ["std", "generic-queue-8"] }
 
 [features]
-default = []
-std = []
+default   = []
+std       = []
 simulator = []
-hardware = []
+# Physical hardware target marker (no deps: embassy-time is always present).
+hardware  = []
 # Enable defmt::Format derives on all platform types (hardware builds only).
 # Activated by firmware's `hardware` feature via "platform/defmt".
 defmt = ["dep:defmt"]

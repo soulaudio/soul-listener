@@ -87,6 +87,7 @@ impl LayoutResult {
     }
 
     /// Add a child layout
+    #[allow(clippy::result_large_err)]
     pub fn add_child(&mut self, child: LayoutResult) -> Result<(), LayoutResult> {
         self.children.push(Box::new(child)).map_err(|boxed| *boxed)
     }
@@ -221,6 +222,7 @@ pub fn render_background<D: DrawTarget<Color = Gray4>>(
 /// render_layout_tree(&layout, Point::zero(), &mut display)?;
 /// # Ok::<(), core::convert::Infallible>(())
 /// ```
+#[allow(clippy::only_used_in_recursion)]
 pub fn render_layout_tree<D: DrawTarget<Color = Gray4>>(
     layout: &LayoutResult,
     offset: Point,

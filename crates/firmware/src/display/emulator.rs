@@ -16,6 +16,7 @@ use crate::hal::DapDisplay;
 /// Emulator display wrapper
 pub struct EmulatorDisplay {
     emulator: eink_emulator::Emulator,
+    refresh_mode: platform::RefreshMode,
 }
 
 impl EmulatorDisplay {
@@ -24,7 +25,10 @@ impl EmulatorDisplay {
         // Use with_spec to create with GDEM0397T81P specification
         let emulator = eink_emulator::Emulator::with_spec(&GDEM0397T81P_SPEC);
 
-        Self { emulator }
+        Self {
+            emulator,
+            refresh_mode: platform::RefreshMode::Full,
+        }
     }
 
     /// Create an emulator display with custom configuration
@@ -43,7 +47,10 @@ impl EmulatorDisplay {
     pub fn with_config(config: eink_emulator::EmulatorConfig) -> Self {
         let emulator = eink_emulator::Emulator::with_spec_and_config(&GDEM0397T81P_SPEC, config);
 
-        Self { emulator }
+        Self {
+            emulator,
+            refresh_mode: platform::RefreshMode::Full,
+        }
     }
 
     /// Create emulator with custom display specification and configuration
@@ -53,14 +60,20 @@ impl EmulatorDisplay {
     ) -> Self {
         let emulator = eink_emulator::Emulator::with_spec_and_config(spec, config);
 
-        Self { emulator }
+        Self {
+            emulator,
+            refresh_mode: platform::RefreshMode::Full,
+        }
     }
 
     /// Create a headless emulator (no window, for testing)
     pub fn headless() -> Self {
         let emulator = eink_emulator::Emulator::headless_with_spec(&GDEM0397T81P_SPEC);
 
-        Self { emulator }
+        Self {
+            emulator,
+            refresh_mode: platform::RefreshMode::Full,
+        }
     }
 
     /// Get a reference to the underlying emulator
@@ -104,16 +117,6 @@ impl DapDisplay for EmulatorDisplay {
         Ok(())
     }
 
-    async fn update_buffer(&mut self, _framebuffer: &[u8]) -> Result<(), Self::DriverError> {
-        // The emulator works with DrawTarget directly, so we don't need
-        // to manually transfer a framebuffer. This method is a no-op
-        // for the emulator.
-
-        // In practice, applications should draw using embedded-graphics
-        // primitives directly to the display.
-        Ok(())
-    }
-
     fn framebuffer_size(&self) -> usize {
         FRAMEBUFFER_SIZE
     }
@@ -140,6 +143,45 @@ impl DapDisplay for EmulatorDisplay {
 
 impl platform::DisplayDriver for EmulatorDisplay {
     type DriverError = EmulatorError;
+
+    fn spec(&self) -> platform::display::DisplayInfo {
+        platform::display::DisplayInfo {
+            width: DISPLAY_WIDTH,
+            height: DISPLAY_HEIGHT,
+        }
+    }
+
+    /// Parse a 2bpp packed framebuffer and draw each pixel into the emulator.
+    ///
+    /// 2bpp format: each byte holds 4 pixels, MSB-first. Pixel values 0-3 map
+    /// to Gray4 levels 0-3 (0 = black, 3 = white).
+    async fn update_buffer(&mut self, framebuffer: &[u8]) -> Result<(), Self::DriverError> {
+        let expected = (DISPLAY_WIDTH as usize * DISPLAY_HEIGHT as usize) / 4;
+        if framebuffer.len() != expected {
+            return Err(EmulatorError::InvalidBuffer);
+        }
+
+        // Unpack 2bpp bytes: 4 pixels per byte, MSB-first.
+        // Gray4 values: 0 = black, 3 = white (fully lit).
+        let mut pixel_index: u32 = 0;
+        for &byte in framebuffer {
+            for shift in (0..4).rev() {
+                let val = (byte >> (shift * 2)) & 0x03;
+                let color = Gray4::new(val);
+                let x = pixel_index % DISPLAY_WIDTH;
+                let y = pixel_index / DISPLAY_WIDTH;
+                self.emulator
+                    .draw_iter(core::iter::once(Pixel(
+                        Point::new(x as i32, y as i32),
+                        color,
+                    )))
+                    .map_err(|_| EmulatorError::DrawFailed)?;
+                pixel_index += 1;
+            }
+        }
+
+        Ok(())
+    }
 
     async fn refresh_full(&mut self) -> Result<(), Self::DriverError> {
         println!("Emulator: Full refresh");
@@ -220,14 +262,21 @@ impl OriginDimensions for EmulatorDisplay {
 }
 
 impl platform::EinkDisplay for EmulatorDisplay {
-    fn set_refresh_mode(&mut self, _mode: platform::RefreshMode) {
-        // The emulator handles refresh mode automatically
-        // This is a no-op for compatibility
+    fn refresh_mode(&self) -> platform::RefreshMode {
+        self.refresh_mode
+    }
+
+    fn set_refresh_mode(&mut self, mode: platform::RefreshMode) {
+        self.refresh_mode = mode;
     }
 
     fn temperature(&self) -> Option<i8> {
         // Emulator can simulate different temperatures
-        Some(25) // 25°C default
+        Some(25) // 25 degrees C default
+    }
+
+    fn ghosting_level(&self) -> Option<f32> {
+        Some(self.emulator.ghosting_level())
     }
 }
 

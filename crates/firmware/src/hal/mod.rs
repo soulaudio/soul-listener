@@ -1,36 +1,31 @@
 //! Hardware Abstraction Layer for DAP Display
 //!
+#![allow(async_fn_in_trait)]
+
 //! This module provides a unified interface for both hardware and emulator displays.
 //! The trait-based design allows seamless switching between real hardware and desktop
 //! development without changing application code.
 
-/// DAP Display trait - unified interface for hardware and emulator
+/// DAP Display trait - unified interface for hardware and emulator.
 ///
-/// This trait extends the basic `DisplayDriver` with additional capabilities
-/// specific to the SoulAudio DAP, including buffer management and initialization.
+/// Extends [`platform::DisplayDriver`] with DAP-specific capabilities:
+/// initialization, framebuffer size query, and a convenience clear method.
+///
+/// `update_buffer` is inherited from [`platform::DisplayDriver`] and is the
+/// canonical way to push a packed 2bpp framebuffer to the display controller.
 pub trait DapDisplay: platform::DisplayDriver {
-    /// Initialize the display hardware
+    /// Initialize the display hardware.
     ///
     /// Performs all necessary setup including:
     /// - Hardware reset sequence
     /// - Controller configuration
-    /// - LUT (Look-Up Table) loading
     /// - Initial clearing
     async fn init(&mut self) -> Result<(), Self::DriverError>;
 
-    /// Update the internal framebuffer
-    ///
-    /// This copies pixel data to the display controller's RAM without triggering
-    /// a refresh. Call `refresh_full()` or `refresh_partial()` to make changes visible.
-    ///
-    /// # Arguments
-    /// * `framebuffer` - Raw pixel data (format depends on implementation)
-    async fn update_buffer(&mut self, framebuffer: &[u8]) -> Result<(), Self::DriverError>;
-
-    /// Get the size of the framebuffer in bytes
+    /// Get the size of the framebuffer in bytes.
     fn framebuffer_size(&self) -> usize;
 
-    /// Clear the display to a specific color
+    /// Clear the display to a specific color.
     ///
     /// Implementations should provide their own buffer management strategy
     /// (stack allocation, static buffers, or heap allocation depending on target).

@@ -17,11 +17,13 @@ pub const APP_TYPE: &str = "DAP"; // Digital Audio Player
 pub const APP_VERSION: &str = env!("CARGO_PKG_VERSION");
 
 /// Full application title (name + type)
+#[must_use]
 pub const fn app_title() -> &'static str {
     APP_NAME
 }
 
 /// Development mode banner
+#[must_use]
 pub const fn dev_banner() -> &'static str {
     "Soul Listener - Development Mode"
 }

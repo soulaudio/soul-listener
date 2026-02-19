@@ -34,9 +34,9 @@ use winit::dpi::PhysicalSize;
 use winit::event::WindowEvent;
 use winit::event_loop::{ActiveEventLoop, ControlFlow, EventLoop, OwnedDisplayHandle};
 use winit::platform::pump_events::{EventLoopExtPumpEvents, PumpStatus};
-use winit::window::{Window as WinitWindow, WindowAttributes, WindowId};
 #[cfg(feature = "debug")]
 use winit::window::CursorIcon;
+use winit::window::{Window as WinitWindow, WindowAttributes, WindowId};
 
 // --- Windows DPI fix ---------------------------------------------------------
 //
@@ -57,8 +57,8 @@ mod windows_dpi {
     use windows_sys::Win32::Foundation::RECT;
     use windows_sys::Win32::UI::HiDpi::AdjustWindowRectExForDpi;
     use windows_sys::Win32::UI::WindowsAndMessaging::{
-        CallWindowProcW, GetWindowLongW, SetWindowLongPtrW, SetWindowPos, GWL_EXSTYLE, GWL_STYLE,
-        GWLP_WNDPROC, SWP_NOACTIVATE, SWP_NOZORDER, WNDPROC,
+        CallWindowProcW, GetWindowLongW, SetWindowLongPtrW, SetWindowPos, GWLP_WNDPROC,
+        GWL_EXSTYLE, GWL_STYLE, SWP_NOACTIVATE, SWP_NOZORDER, WNDPROC,
     };
 
     const WM_DPICHANGED: u32 = 0x02E0;
@@ -104,7 +104,12 @@ mod windows_dpi {
             // the title bar and border widths that change with DPI.
             let style = GetWindowLongW(hwnd, GWL_STYLE) as u32;
             let ex_style = GetWindowLongW(hwnd, GWL_EXSTYLE) as u32;
-            let mut outer = RECT { left: 0, top: 0, right: phys_w, bottom: phys_h };
+            let mut outer = RECT {
+                left: 0,
+                top: 0,
+                right: phys_w,
+                bottom: phys_h,
+            };
             AdjustWindowRectExForDpi(&mut outer, style, 0, ex_style, new_dpi);
             let outer_w = outer.right - outer.left;
             let outer_h = outer.bottom - outer.top;
@@ -167,9 +172,9 @@ fn apply_eink_appearance(pixel: u32, x: u32, y: u32) -> u32 {
     // Pixels arrive as neutral gray (r=g=b) from the Gray4 framebuffer.
     // Scale the warm shift proportionally to brightness so black stays neutral.
     let luma = r as u32; // r=g=b for all Gray4 pixels
-    let g = (g as u32).saturating_sub(luma * 9 / 255) as u8;  // max −9 at white
+    let g = (g as u32).saturating_sub(luma * 9 / 255) as u8; // max −9 at white
     let b = (b as u32).saturating_sub(luma * 22 / 255) as u8; // max −22 at white
-    // Result: white (255,255,255) → (255,246,233) warm cream; black unchanged.
+                                                              // Result: white (255,255,255) → (255,246,233) warm cream; black unchanged.
 
     let noise = pseudo_random_noise(x, y);
     let r = adjust_contrast((r as i16 + noise).clamp(0, 255) as u8, 0.9);
@@ -181,7 +186,9 @@ fn apply_eink_appearance(pixel: u32, x: u32, y: u32) -> u32 {
 fn pseudo_random_noise(x: u32, y: u32) -> i16 {
     // Murmur3-style finalizer: no cross-term (x*y creates hyperbolic patterns),
     // full bit-avalanche so every input bit affects every output bit.
-    let mut h = x.wrapping_mul(0x9e3779b9).wrapping_add(y.wrapping_mul(0x517cc1b7));
+    let mut h = x
+        .wrapping_mul(0x9e3779b9)
+        .wrapping_add(y.wrapping_mul(0x517cc1b7));
     h ^= h >> 16;
     h = h.wrapping_mul(0x85ebca6b);
     h ^= h >> 13;
@@ -249,12 +256,7 @@ struct PumpEventHandler {
 impl ApplicationHandler for PumpEventHandler {
     fn resumed(&mut self, _: &ActiveEventLoop) {}
 
-    fn window_event(
-        &mut self,
-        event_loop: &ActiveEventLoop,
-        _: WindowId,
-        event: WindowEvent,
-    ) {
+    fn window_event(&mut self, event_loop: &ActiveEventLoop, _: WindowId, event: WindowEvent) {
         match event {
             WindowEvent::CloseRequested => {
                 self.should_exit = true;
@@ -309,6 +311,12 @@ pub struct Window {
     quirk_warning: Option<String>,
     #[cfg(feature = "debug")]
     debug_manager: Option<crate::debug::DebugManager>,
+    /// Keyboard/scroll input queue (producer half). Populated by winit events.
+    #[cfg(feature = "keyboard-input")]
+    input_queue: Option<crate::input::InputQueue>,
+    /// Fractional scroll accumulator — carries sub-step remainder across events.
+    #[cfg(feature = "keyboard-input")]
+    scroll_acc: f64,
     /// Last clean frame (no debug overlays) for re-presentation on hotkey press.
     last_rgba: Vec<u32>,
 }
@@ -346,12 +354,7 @@ impl ApplicationHandler for Window {
         event_loop.set_control_flow(ControlFlow::Wait);
     }
 
-    fn window_event(
-        &mut self,
-        event_loop: &ActiveEventLoop,
-        _: WindowId,
-        event: WindowEvent,
-    ) {
+    fn window_event(&mut self, event_loop: &ActiveEventLoop, _: WindowId, event: WindowEvent) {
         #[cfg(feature = "debug")]
         {
             let consumed = if let Some(ref mut dm) = self.debug_manager {
@@ -390,7 +393,8 @@ impl ApplicationHandler for Window {
                 // Guard against OS Snap / maximize sneaking past with_resizable(false).
                 // Clamp back to our target size so the surface never grows beyond it.
                 if size.width > self.phys_w || size.height > self.phys_h {
-                    let _ = self.window
+                    let _ = self
+                        .window
                         .request_inner_size(PhysicalSize::new(self.phys_w, self.phys_h));
                     return;
                 }
@@ -400,18 +404,54 @@ impl ApplicationHandler for Window {
                     self.surface.resize(w, h).ok();
                 }
             }
-            // Block F11 (and any other fullscreen shortcut) from entering fullscreen.
+            // Keyboard input: when keyboard-input feature is on, handle ALL keys
+            // in one arm (F11 first, then input mapping). When off, only block F11.
+            #[cfg(feature = "keyboard-input")]
             WindowEvent::KeyboardInput {
                 event:
                     winit::event::KeyEvent {
-                        physical_key: winit::keyboard::PhysicalKey::Code(
-                            winit::keyboard::KeyCode::F11,
-                        ),
+                        physical_key: winit::keyboard::PhysicalKey::Code(code),
+                        state,
+                        ..
+                    },
+                ..
+            } => {
+                // Always prevent F11 fullscreen regardless of input mapping.
+                if code == winit::keyboard::KeyCode::F11 {
+                    self.window.set_fullscreen(None);
+                    return;
+                }
+                let pressed = state == winit::event::ElementState::Pressed;
+                if let Some(ref iq) = self.input_queue {
+                    if let Some(ev) = crate::input::map_key(code, pressed) {
+                        iq.push(ev);
+                    }
+                }
+            }
+            #[cfg(not(feature = "keyboard-input"))]
+            WindowEvent::KeyboardInput {
+                event:
+                    winit::event::KeyEvent {
+                        physical_key:
+                            winit::keyboard::PhysicalKey::Code(winit::keyboard::KeyCode::F11),
                         ..
                     },
                 ..
             } => {
                 self.window.set_fullscreen(None);
+            }
+            // Scroll wheel → RotaryIncrement (keyboard-input feature only).
+            #[cfg(feature = "keyboard-input")]
+            WindowEvent::MouseWheel { delta, .. } => {
+                let lines = match delta {
+                    winit::event::MouseScrollDelta::LineDelta(_, y) => f64::from(y),
+                    winit::event::MouseScrollDelta::PixelDelta(p) => p.y / 40.0,
+                };
+                if let Some(ref iq) = self.input_queue {
+                    if let Some(ev) = crate::input::map_scroll(&mut self.scroll_acc, lines) {
+                        iq.push(ev);
+                    }
+                }
             }
             // Mouse click: panel rows → select component; display area → select hovered.
             WindowEvent::MouseInput {
@@ -425,13 +465,11 @@ impl ApplicationHandler for Window {
                         // Compute where the debug panel starts in physical window pixels.
                         let (rot_w, rot_h) = match self.config.rotation {
                             crate::config::Rotation::Degrees0
-                            | crate::config::Rotation::Degrees180 => {
-                                (self.disp_w, self.disp_h)
-                            }
+                            | crate::config::Rotation::Degrees180 => (self.disp_w, self.disp_h),
                             _ => (self.disp_h, self.disp_w),
                         };
                         let panel_start = (rot_w * self.config.scale) as f64;
-                        let panel_h     = rot_h * self.config.scale;
+                        let panel_h = rot_h * self.config.scale;
 
                         let cursor = dm.cursor_pos();
                         if let Some((cx, cy)) = cursor {
@@ -445,13 +483,12 @@ impl ApplicationHandler for Window {
                                 // Click is in the display area → select hovered component.
                                 let hov = dm.state().hovered_component.clone();
                                 let changed = if let Some(comp) = hov {
-                                    let already =
-                                        dm.state().selected_component.as_ref()
-                                            .map(|s| {
-                                                s.position == comp.position
-                                                    && s.size == comp.size
-                                            })
-                                            .unwrap_or(false);
+                                    let already = dm
+                                        .state()
+                                        .selected_component
+                                        .as_ref()
+                                        .map(|s| s.position == comp.position && s.size == comp.size)
+                                        .unwrap_or(false);
                                     dm.state_mut().selected_component = Some(comp);
                                     !already
                                 } else if dm.state().selected_component.is_some() {
@@ -480,9 +517,7 @@ impl ApplicationHandler for Window {
                         let cursor_x = dm.cursor_pos().map(|(x, _)| x).unwrap_or(0.0);
                         let (rot_w, _) = match self.config.rotation {
                             crate::config::Rotation::Degrees0
-                            | crate::config::Rotation::Degrees180 => {
-                                (self.disp_w, self.disp_h)
-                            }
+                            | crate::config::Rotation::Degrees180 => (self.disp_w, self.disp_h),
                             _ => (self.disp_h, self.disp_w),
                         };
                         let panel_start = (rot_w * self.config.scale) as f64;
@@ -491,9 +526,7 @@ impl ApplicationHandler for Window {
                             break 'icon CursorIcon::Pointer;
                         }
                         // Inspector mode: hovering over a registered component.
-                        if dm.state().inspector_mode
-                            && dm.state().hovered_component.is_some()
-                        {
+                        if dm.state().inspector_mode && dm.state().hovered_component.is_some() {
                             break 'icon CursorIcon::Pointer;
                         }
                         CursorIcon::Default
@@ -549,9 +582,15 @@ impl Window {
                 if self.result.is_some() {
                     return; // already created
                 }
-                let attrs = self.attrs.take().expect("Creator.attrs was None — resumed() called twice");
-                let window =
-                    Arc::new(event_loop.create_window(attrs).expect("create_window failed"));
+                let attrs = self
+                    .attrs
+                    .take()
+                    .expect("Creator.attrs was None — resumed() called twice");
+                let window = Arc::new(
+                    event_loop
+                        .create_window(attrs)
+                        .expect("create_window failed"),
+                );
 
                 // OwnedDisplayHandle is a self-contained owned display connection
                 // (HINSTANCE on Windows, Wayland display on Linux, etc.).
@@ -587,11 +626,7 @@ impl Window {
             if let Ok(handle) = window.window_handle() {
                 if let RawWindowHandle::Win32(h) = handle.as_raw() {
                     unsafe {
-                        windows_dpi::install_subclass(
-                            h.hwnd.get(),
-                            phys_w as i32,
-                            phys_h as i32,
-                        );
+                        windows_dpi::install_subclass(h.hwnd.get(), phys_w as i32, phys_h as i32);
                     }
                 }
             }
@@ -618,6 +653,10 @@ impl Window {
             quirk_warning: None,
             #[cfg(feature = "debug")]
             debug_manager: None,
+            #[cfg(feature = "keyboard-input")]
+            input_queue: None,
+            #[cfg(feature = "keyboard-input")]
+            scroll_acc: 0.0,
             last_rgba: Vec::new(),
         };
 
@@ -772,7 +811,9 @@ impl Window {
         // Skipped when the hovered component is also the selected one (cyan wins).
         if state.inspector_mode {
             if let Some(ref hov) = state.hovered_component {
-                let is_also_selected = state.selected_component.as_ref()
+                let is_also_selected = state
+                    .selected_component
+                    .as_ref()
                     .map(|s| s.position == hov.position && s.size == hov.size)
                     .unwrap_or(false);
                 if !is_also_selected {
@@ -898,10 +939,9 @@ impl Window {
             // Nearest-neighbour for any dimension mismatch.
             for dy in 0..ph {
                 for dx in 0..src_w.min(pw) {
-                    let sx = (dx as u64 * src_w as u64 / src_w.min(pw) as u64)
-                        .min(src_w as u64 - 1) as u32;
-                    let sy = (dy as u64 * src_h as u64 / ph as u64)
-                        .min(src_h as u64 - 1) as u32;
+                    let sx = (dx as u64 * src_w as u64 / src_w.min(pw) as u64).min(src_w as u64 - 1)
+                        as u32;
+                    let sy = (dy as u64 * src_h as u64 / ph as u64).min(src_h as u64 - 1) as u32;
                     full[(dy * pw + dx) as usize] = source[(sy * src_w + sx) as usize];
                 }
             }
@@ -914,40 +954,40 @@ impl Window {
             if !state.panel_visible {
                 // Panel hidden — nothing to render here.
             } else {
-            let panel_x = src_w; // panel starts right after the display area
-            let panel_h = ph;
+                let panel_x = src_w; // panel starts right after the display area
+                let panel_h = ph;
 
-            // Extract the panel slice (row-major, panel_w columns wide).
-            // We build a compact panel_w × panel_h buffer, then copy it in.
-            let mut panel_buf = vec![0u32; (PANEL_W * panel_h) as usize];
-            let rotation_deg = match self.config.rotation {
-                crate::config::Rotation::Degrees0   => 0,
-                crate::config::Rotation::Degrees90  => 90,
-                crate::config::Rotation::Degrees180 => 180,
-                crate::config::Rotation::Degrees270 => 270,
-            };
-            let info = crate::debug::PanelInfo {
-                state,
-                disp_w: self.disp_w,
-                disp_h: self.disp_h,
-                rotation_deg,
-                scale: self.config.scale,
-                temperature: self.temperature,
-                power_graph: Some(dm.power_graph()),
-                power_stats: self.power_stats.as_ref(),
-            };
-            crate::debug::panel::render_into(&mut panel_buf, PANEL_W, panel_h, &info);
+                // Extract the panel slice (row-major, panel_w columns wide).
+                // We build a compact panel_w × panel_h buffer, then copy it in.
+                let mut panel_buf = vec![0u32; (PANEL_W * panel_h) as usize];
+                let rotation_deg = match self.config.rotation {
+                    crate::config::Rotation::Degrees0 => 0,
+                    crate::config::Rotation::Degrees90 => 90,
+                    crate::config::Rotation::Degrees180 => 180,
+                    crate::config::Rotation::Degrees270 => 270,
+                };
+                let info = crate::debug::PanelInfo {
+                    state,
+                    disp_w: self.disp_w,
+                    disp_h: self.disp_h,
+                    rotation_deg,
+                    scale: self.config.scale,
+                    temperature: self.temperature,
+                    power_graph: Some(dm.power_graph()),
+                    power_stats: self.power_stats.as_ref(),
+                };
+                crate::debug::panel::render_into(&mut panel_buf, PANEL_W, panel_h, &info);
 
-            // Copy compact panel buffer into the right columns of `full`.
-            for y in 0..panel_h {
-                for x in 0..PANEL_W {
-                    let src_idx = (y * PANEL_W + x) as usize;
-                    let dst_idx = (y * pw + panel_x + x) as usize;
-                    if dst_idx < full.len() {
-                        full[dst_idx] = panel_buf[src_idx];
+                // Copy compact panel buffer into the right columns of `full`.
+                for y in 0..panel_h {
+                    for x in 0..PANEL_W {
+                        let src_idx = (y * PANEL_W + x) as usize;
+                        let dst_idx = (y * pw + panel_x + x) as usize;
+                        if dst_idx < full.len() {
+                            full[dst_idx] = panel_buf[src_idx];
+                        }
                     }
                 }
-            }
             } // end else (panel_visible)
         }
 
@@ -999,6 +1039,16 @@ impl Window {
     #[cfg(feature = "debug")]
     pub fn set_debug_manager(&mut self, dm: crate::debug::DebugManager) {
         self.debug_manager = Some(dm);
+    }
+
+    /// Attach a keyboard/scroll input queue so winit events are forwarded to
+    /// the application's [`EmulatorInput`](crate::input::EmulatorInput).
+    ///
+    /// Called by [`Emulator::run()`](crate::Emulator::run) when
+    /// [`keyboard-input`](crate) feature is active.
+    #[cfg(feature = "keyboard-input")]
+    pub fn set_input_queue(&mut self, iq: crate::input::InputQueue) {
+        self.input_queue = Some(iq);
     }
 
     fn update_title(&self) {

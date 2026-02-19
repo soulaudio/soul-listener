@@ -119,6 +119,7 @@ impl DrawTarget for OverlayCanvas<'_> {
 ///
 /// Each covered pixel is composited as:  `out = existing*(1-a) + rgb*a`
 /// This produces a semi-transparent overlay without a separate alpha channel.
+#[allow(clippy::too_many_arguments)]
 fn fill_rect_blended(
     buffer: &mut [u32],
     stride: u32,
@@ -243,10 +244,15 @@ impl OverlayRenderer {
             let fill_alpha = if is_secondary { 38u8 } else { 64u8 }; // ~15 % or ~25 %
 
             fill_rect_blended(
-                buffer, width, height,
-                component.position.0, component.position.1,
-                component.size.0, component.size.1,
-                rgb, fill_alpha,
+                buffer,
+                width,
+                height,
+                component.position.0,
+                component.position.1,
+                component.size.0,
+                component.size.1,
+                rgb,
+                fill_alpha,
             );
         }
 
@@ -256,7 +262,8 @@ impl OverlayRenderer {
             self.draw_rect_border(buffer, width, component.position, component.size, color);
             if component.size.0 > 4 && component.size.1 > 4 {
                 self.draw_rect_border(
-                    buffer, width,
+                    buffer,
+                    width,
                     (component.position.0 + 1, component.position.1 + 1),
                     (component.size.0 - 2, component.size.1 - 2),
                     color,
@@ -280,7 +287,10 @@ impl OverlayRenderer {
                 continue;
             }
 
-            let label = component.test_id.as_deref().unwrap_or(&component.component_type);
+            let label = component
+                .test_id
+                .as_deref()
+                .unwrap_or(&component.component_type);
             let max_chars = (bw.saturating_sub(8) / 6).min(32) as usize;
             let label_short: String = label.chars().take(max_chars).collect();
             if label_short.is_empty() {
@@ -346,13 +356,18 @@ impl OverlayRenderer {
         comp: &ComponentInfo,
     ) {
         const HOV_COLOR: u32 = 0xFFFF8C00; // amber / orange
-        const HOV_FILL_ALPHA: u8 = 18;     // ~7 % opacity fill
+        const HOV_FILL_ALPHA: u8 = 18; // ~7 % opacity fill
 
         fill_rect_blended(
-            buffer, width, height,
-            comp.position.0, comp.position.1,
-            comp.size.0, comp.size.1,
-            HOV_COLOR & 0x00FFFFFF, HOV_FILL_ALPHA,
+            buffer,
+            width,
+            height,
+            comp.position.0,
+            comp.position.1,
+            comp.size.0,
+            comp.size.1,
+            HOV_COLOR & 0x00FFFFFF,
+            HOV_FILL_ALPHA,
         );
 
         // Single-pixel amber border
@@ -380,20 +395,26 @@ impl OverlayRenderer {
         comp: &ComponentInfo,
     ) {
         const SEL_COLOR: u32 = 0xFFFF6200; // vivid orange – clearly visible on gray display
-        const SEL_FILL_ALPHA: u8 = 45;     // ~18% fill
+        const SEL_FILL_ALPHA: u8 = 45; // ~18% fill
 
         fill_rect_blended(
-            buffer, width, height,
-            comp.position.0, comp.position.1,
-            comp.size.0, comp.size.1,
-            SEL_COLOR & 0x00FFFFFF, SEL_FILL_ALPHA,
+            buffer,
+            width,
+            height,
+            comp.position.0,
+            comp.position.1,
+            comp.size.0,
+            comp.size.1,
+            SEL_COLOR & 0x00FFFFFF,
+            SEL_FILL_ALPHA,
         );
 
         // 3-pixel border: outer + middle + inner for strong visibility
         self.draw_rect_border(buffer, width, comp.position, comp.size, SEL_COLOR);
         if comp.size.0 > 4 && comp.size.1 > 4 {
             self.draw_rect_border(
-                buffer, width,
+                buffer,
+                width,
                 (comp.position.0 + 1, comp.position.1 + 1),
                 (comp.size.0 - 2, comp.size.1 - 2),
                 SEL_COLOR,
@@ -401,7 +422,8 @@ impl OverlayRenderer {
         }
         if comp.size.0 > 8 && comp.size.1 > 8 {
             self.draw_rect_border(
-                buffer, width,
+                buffer,
+                width,
                 (comp.position.0 + 2, comp.position.1 + 2),
                 (comp.size.0 - 4, comp.size.1 - 4),
                 0xFFFFAA00, // lighter orange inner ring
@@ -430,35 +452,80 @@ impl OverlayRenderer {
         let my = comp.position.1 - comp.margin.top as i32;
         let mw = comp.size.0 + comp.margin.left as u32 + comp.margin.right as u32;
         let mh = comp.size.1 + comp.margin.top as u32 + comp.margin.bottom as u32;
-        fill_rect_blended(buffer, screen_width, screen_height, mx, my, mw, mh, 0xFFA040, 100);
+        fill_rect_blended(
+            buffer,
+            screen_width,
+            screen_height,
+            mx,
+            my,
+            mw,
+            mh,
+            0xFFA040,
+            100,
+        );
 
         // Border zone (component rect itself)
         fill_rect_blended(
-            buffer, screen_width, screen_height,
-            comp.position.0, comp.position.1,
-            comp.size.0, comp.size.1,
-            0xFFD040, 100,
+            buffer,
+            screen_width,
+            screen_height,
+            comp.position.0,
+            comp.position.1,
+            comp.size.0,
+            comp.size.1,
+            0xFFD040,
+            100,
         );
 
         // Padding zone (inside border)
         let px = comp.position.0 + comp.border.left as i32;
         let py = comp.position.1 + comp.border.top as i32;
-        let pw = comp.size.0.saturating_sub(comp.border.left as u32 + comp.border.right as u32);
-        let ph = comp.size.1.saturating_sub(comp.border.top as u32 + comp.border.bottom as u32);
-        fill_rect_blended(buffer, screen_width, screen_height, px, py, pw, ph, 0x50CC50, 100);
+        let pw = comp
+            .size
+            .0
+            .saturating_sub(comp.border.left as u32 + comp.border.right as u32);
+        let ph = comp
+            .size
+            .1
+            .saturating_sub(comp.border.top as u32 + comp.border.bottom as u32);
+        fill_rect_blended(
+            buffer,
+            screen_width,
+            screen_height,
+            px,
+            py,
+            pw,
+            ph,
+            0x50CC50,
+            100,
+        );
 
         // Content zone (inside padding)
         let cx = px + comp.padding.left as i32;
         let cy = py + comp.padding.top as i32;
         let cw = pw.saturating_sub(comp.padding.left as u32 + comp.padding.right as u32);
         let ch = ph.saturating_sub(comp.padding.top as u32 + comp.padding.bottom as u32);
-        fill_rect_blended(buffer, screen_width, screen_height, cx, cy, cw, ch, 0x4090E0, 100);
+        fill_rect_blended(
+            buffer,
+            screen_width,
+            screen_height,
+            cx,
+            cy,
+            cw,
+            ch,
+            0x4090E0,
+            100,
+        );
     }
 
     // Keep the old name as an alias so existing callers outside window.rs still compile.
     #[inline]
     pub fn render_borders_labeled(
-        &self, buffer: &mut [u32], width: u32, height: u32, components: &[ComponentInfo],
+        &self,
+        buffer: &mut [u32],
+        width: u32,
+        height: u32,
+        components: &[ComponentInfo],
     ) {
         self.render_layout(buffer, width, height, components);
     }
@@ -558,7 +625,7 @@ mod tests {
 
     #[test]
     fn test_overlay_renderer_default() {
-        let renderer = OverlayRenderer::default();
+        let renderer = OverlayRenderer::new();
         // Verify default construction succeeds
         let _ = renderer;
     }

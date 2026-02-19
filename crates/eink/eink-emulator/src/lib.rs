@@ -1,4 +1,4 @@
-﻿//! E-Ink Display Emulator
+//! E-Ink Display Emulator
 //!
 //! Desktop emulator for e-ink displays with realistic behavior simulation.
 //!
@@ -49,6 +49,9 @@ mod window;
 #[cfg(feature = "debug")]
 pub mod debug;
 
+#[cfg(feature = "keyboard-input")]
+pub mod input;
+
 pub use config::{EmulatorConfig, Rotation};
 pub use display_driver::{DisplayDriver, EinkDisplay};
 pub use framebuffer::{ColorMode, Framebuffer};
@@ -65,6 +68,8 @@ use embedded_graphics::pixelcolor::Gray4;
 use embedded_graphics::prelude::*;
 
 /// Convert EinkColor framebuffer to RGBA buffer for rendering
+// In headless+no-debug mode nothing calls this, so silence the dead_code lint.
+#[cfg_attr(all(feature = "headless", not(feature = "debug")), allow(dead_code))]
 fn framebuffer_to_rgba(framebuffer: &[EinkColor]) -> Vec<u32> {
     framebuffer.iter().map(|pixel| pixel.to_rgba()).collect()
 }
@@ -176,6 +181,11 @@ pub struct Emulator {
 
     #[cfg(not(feature = "headless"))]
     window: Option<window::Window>,
+
+    /// Keyboard/scroll input queue (producer half).
+    /// Populated by the winit event loop; consumed via `input_receiver()`.
+    #[cfg(feature = "keyboard-input")]
+    input_queue: Option<input::InputQueue>,
 }
 
 impl Emulator {
@@ -208,7 +218,9 @@ impl Emulator {
         // Select power profile based on display spec
         let power_profile = Self::select_power_profile(spec);
 
-        // Create window config with no rotation (framebuffer is pre-rotated)
+        // Create window config with no rotation (framebuffer is pre-rotated).
+        // Only needed when building with a real window (non-headless).
+        #[cfg(not(feature = "headless"))]
         let window_config = config::EmulatorConfig {
             rotation: config::Rotation::Degrees0,
             scale: config.scale,
@@ -245,6 +257,9 @@ impl Emulator {
                 logical_height,
                 &window_config,
             )),
+
+            #[cfg(feature = "keyboard-input")]
+            input_queue: None,
         }
     }
 
@@ -306,6 +321,9 @@ impl Emulator {
 
             #[cfg(not(feature = "headless"))]
             window: None,
+
+            #[cfg(feature = "keyboard-input")]
+            input_queue: None,
         }
     }
 
@@ -401,14 +419,12 @@ impl Emulator {
         // HOT_RELOAD_MODE: skip animation, go straight to initialized state
         if std::env::var("HOT_RELOAD_MODE").is_ok() {
             self.power_tracker.transition_to(PowerState::Initializing);
-            self.init_sequence
-                .start()
-                .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
+            self.init_sequence.start().map_err(std::io::Error::other)?;
             let steps = InitStep::all_steps();
             for _ in steps {
                 self.init_sequence
                     .next_step()
-                    .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
+                    .map_err(std::io::Error::other)?;
             }
             // Clear to white immediately (no animation)
             self.framebuffer.clear();
@@ -420,9 +436,7 @@ impl Emulator {
         self.power_tracker.transition_to(PowerState::Initializing);
 
         // Start initialization sequence
-        self.init_sequence
-            .start()
-            .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
+        self.init_sequence.start().map_err(std::io::Error::other)?;
 
         let steps = InitStep::all_steps();
 
@@ -440,9 +454,11 @@ impl Emulator {
                     7 => {
                         // Clear to white
                         self.framebuffer.clear();
-                        let rgba = framebuffer_to_rgba(&self.framebuffer.pixels);
                         #[cfg(not(feature = "headless"))]
-                        self.present_frame(&rgba).await;
+                        {
+                            let rgba = framebuffer_to_rgba(&self.framebuffer.pixels);
+                            self.present_frame(&rgba).await;
+                        }
                     }
                     _ => {}
                 }
@@ -451,7 +467,7 @@ impl Emulator {
             // Advance to next step
             self.init_sequence
                 .next_step()
-                .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
+                .map_err(std::io::Error::other)?;
         }
 
         // Return to idle after initialization
@@ -474,16 +490,18 @@ impl Emulator {
             for x in 0..self.framebuffer.width {
                 let square_x = x / SQUARE_SIZE;
                 let square_y = y / SQUARE_SIZE;
-                let is_black = (square_x + square_y) % 2 == 0;
+                let is_black = (square_x + square_y).is_multiple_of(2);
                 let color = if is_black { Gray4::BLACK } else { Gray4::WHITE };
                 self.framebuffer.set_pixel(x, y, EinkColor::Gray(color));
             }
         }
 
         // Present the checkerboard
-        let rgba = framebuffer_to_rgba(&self.framebuffer.pixels);
         #[cfg(not(feature = "headless"))]
-        self.present_frame(&rgba).await;
+        {
+            let rgba = framebuffer_to_rgba(&self.framebuffer.pixels);
+            self.present_frame(&rgba).await;
+        }
     }
 
     /// Get display statistics
@@ -547,6 +565,10 @@ impl Emulator {
 
     /// Render with flash animations based on waveform mode
     #[cfg_attr(not(feature = "debug"), allow(unused_mut))]
+    #[cfg_attr(
+        all(feature = "headless", not(feature = "debug")),
+        allow(unused_variables)
+    )]
     async fn render_with_flashes(
         &mut self,
         mode: WaveformMode,
@@ -577,7 +599,8 @@ impl Emulator {
             }
         }
 
-        // Present final image
+        // Present final image (needed for windowed mode and/or debug overlays)
+        #[cfg(any(not(feature = "headless"), feature = "debug"))]
         let mut rgba = framebuffer_to_rgba(framebuffer);
 
         // Render debug overlays (feature-gated)
@@ -613,15 +636,41 @@ impl Emulator {
         std::thread::sleep(duration);
     }
 
+    /// Attach keyboard and scroll-wheel input to this emulator.
+    ///
+    /// Call this **before** [`run()`](Self::run). Returns an [`EmulatorInput`]
+    /// that implements [`platform::InputDevice`] — pass it to your application
+    /// task to receive [`InputEvent`]s driven by real keystrokes.
+    ///
+    /// Calling this method a second time silently replaces the previous queue
+    /// (the old `EmulatorInput` will stop receiving events).
+    ///
+    /// [`InputEvent`]: platform::InputEvent
+    #[cfg(feature = "keyboard-input")]
+    pub fn input_receiver(&mut self) -> input::EmulatorInput {
+        let (queue, rx) = input::InputQueue::new();
+        self.input_queue = Some(queue);
+        rx
+    }
+
     /// Run window event loop (blocks until window closed)
     #[cfg(not(feature = "headless"))]
-    #[cfg_attr(not(feature = "debug"), allow(unused_mut))]
+    #[cfg_attr(
+        not(any(feature = "debug", feature = "keyboard-input")),
+        allow(unused_mut)
+    )]
     pub fn run(mut self) {
         if let Some(mut window) = self.window {
             // Transfer debug_manager to window for keyboard event handling
             #[cfg(feature = "debug")]
             if let Some(debug_manager) = self.debug_manager.take() {
                 window.set_debug_manager(debug_manager);
+            }
+
+            // Transfer keyboard/scroll input queue to window event loop
+            #[cfg(feature = "keyboard-input")]
+            if let Some(iq) = self.input_queue.take() {
+                window.set_input_queue(iq);
             }
 
             window.run();
@@ -675,8 +724,13 @@ impl DrawTarget for Emulator {
         I: IntoIterator<Item = Pixel<Self::Color>>,
     {
         #[cfg(feature = "debug")]
-        let (mut min_x, mut min_y, mut max_x, mut max_y, mut px_count): (i32, i32, i32, i32, u64) =
-            (i32::MAX, i32::MAX, i32::MIN, i32::MIN, 0);
+        let (mut min_x, mut min_y, mut max_x, mut max_y, mut px_count): (
+            i32,
+            i32,
+            i32,
+            i32,
+            u64,
+        ) = (i32::MAX, i32::MAX, i32::MIN, i32::MIN, 0);
 
         for Pixel(point, color) in pixels {
             if point.x >= 0 && point.y >= 0 {
@@ -685,10 +739,18 @@ impl DrawTarget for Emulator {
 
                 #[cfg(feature = "debug")]
                 {
-                    if point.x < min_x { min_x = point.x; }
-                    if point.y < min_y { min_y = point.y; }
-                    if point.x > max_x { max_x = point.x; }
-                    if point.y > max_y { max_y = point.y; }
+                    if point.x < min_x {
+                        min_x = point.x;
+                    }
+                    if point.y < min_y {
+                        min_y = point.y;
+                    }
+                    if point.x > max_x {
+                        max_x = point.x;
+                    }
+                    if point.y > max_y {
+                        max_y = point.y;
+                    }
                     px_count += 1;
                 }
             }
@@ -809,8 +871,7 @@ impl Emulator {
     ) -> Result<(), std::io::Error> {
         // 0. Check initialization requirement
         if self.requires_init && !self.init_state().is_ready() {
-            return Err(std::io::Error::new(
-                std::io::ErrorKind::Other,
+            return Err(std::io::Error::other(
                 "Display not initialized. Call initialize() first.",
             ));
         }
@@ -879,9 +940,7 @@ impl Emulator {
                     Some(RefreshType::Full)
                 }
                 WaveformMode::DU4 => Some(RefreshType::Partial),
-                WaveformMode::DU | WaveformMode::A2 | WaveformMode::GCU => {
-                    Some(RefreshType::Fast)
-                }
+                WaveformMode::DU | WaveformMode::A2 | WaveformMode::GCU => Some(RefreshType::Fast),
             };
             let power_mw = dm.power_graph().estimate_power(ref_type);
             dm.power_graph_mut().add_sample(power_mw, ref_type);
@@ -1221,7 +1280,8 @@ impl Emulator {
                 let disp_y = (cy / scale) as i32;
 
                 // Only act when cursor is inside the display area
-                if disp_x >= 0 && disp_y >= 0 && (disp_x as u32) < width && (disp_y as u32) < height {
+                if disp_x >= 0 && disp_y >= 0 && (disp_x as u32) < width && (disp_y as u32) < height
+                {
                     // Find the smallest (innermost) component containing the cursor.
                     // Iterate in reverse so that later / smaller components win when
                     // components are stacked.
@@ -1251,9 +1311,9 @@ impl Emulator {
                             (disp_y - tt_h - 5).max(0) as u32
                         };
 
-                        debug_manager.inspector().render_details(
-                            rgba, width, tt_x, tt_y, comp, state,
-                        );
+                        debug_manager
+                            .inspector()
+                            .render_details(rgba, width, tt_x, tt_y, comp, state);
                     }
                 }
             }
@@ -1399,8 +1459,6 @@ mod tests {
 
     #[tokio::test]
     async fn test_content_dependent_ghosting() {
-        
-
         // Test using direct pixel state updates for clarity
         let mut pixel_small = PixelState::new();
         let mut pixel_large = PixelState::new();
