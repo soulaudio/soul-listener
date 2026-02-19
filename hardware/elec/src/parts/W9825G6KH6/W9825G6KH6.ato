@@ -2,17 +2,36 @@
 #
 # Package:      TSOP-II-54, 400 mil body (54-pin, 0.8 mm pitch)
 # Manufacturer: Winbond Electronics
-# Datasheet:    https://www.winbond.com/hq/product/code-storage-flash-memory/
-#               psram/?__locale=en&partNo=W9825G6KH  (see W9825G6KH-6 datasheet)
-# Key specs:    256 Mbit (32 MB), 16-bit data bus, 166 MHz (−6 suffix)
-#               SDRAM (synchronous DRAM), 4 banks × 8M × 8 bits
+# Datasheet:    https://www.winbond.com/resource-files/w9825g6kh_a04.pdf
+# Key specs:    256 Mbit (32 MB), 16-bit data bus, 166 MHz (-6 suffix)
+#               SDRAM (synchronous DRAM), 4 banks × 4M × 16 bits
 #               Connected via STM32H7 FMC, mapped at 0xC000_0000
 #               Holds: library index cache, album art, audio decode scratch
 #
-# ⚠ PIN NUMBERS: TSOP-II-54 pinout — verify against KiCad symbol.
-#   The W9825G6KH-6 has a standard SDRAM pinout. A compatible KiCad symbol
-#   is available for ISSI IS42S16320G (same pinout) or Winbond W9825G6KH.
-#   Search kicad-symbols Memory_SDRAM for compatible symbols.
+# ⚠ PIN NUMBERS: TSOP-II-54 pinout — verified against official Winbond
+#   datasheet W9825G6KH rev. A04 (Mar 2017), sections 4 (Pin Configuration)
+#   and 5 (Pin Description).
+#
+#   Left side (pins 1–27, top to bottom):
+#     1  VDD     2  DQ0     3  VDDQ    4  DQ1     5  DQ2
+#     6  VSSQ    7  DQ3     8  DQ4     9  VDDQ    10 DQ5
+#     11 DQ6     12 VSSQ    13 DQ7     14 VDD      15 LDQM
+#     16 WE      17 CAS     18 RAS     19 CS       20 BS0
+#     21 BS1     22 A10/AP  23 A0      24 A1       25 A2
+#     26 A3      27 VDD
+#
+#   Right side (pins 28–54, bottom to top):
+#     28 VSS     29 A4      30 A5      31 A6      32 A7
+#     33 A8      34 A9      35 A11     36 A12     37 CKE
+#     38 CLK     39 UDQM    40 NC      41 VSS     42 DQ8
+#     43 VDDQ    44 DQ9     45 DQ10    46 VSSQ    47 DQ11
+#     48 DQ12    49 VDDQ    50 DQ13    51 DQ14    52 VSSQ
+#     53 DQ15    54 VSS
+#
+# KiCad footprint: Package_SO:TSOP-II-54_18.4x10.16mm_P0.8mm
+# KiCad symbol:    W9825G6KH6.kicad_sym  (custom — no W9825 in official libs;
+#                  the W9812G6KH-6 symbol in Memory_SDRAM is a close match
+#                  but differs in address width; use custom or generate one)
 #
 # Option A (64 MB alternative): IS42S16320G-7TL (ISSI)
 #   partnumber = "IS42S16320G-7TL", footprint same TSOP-II-54
@@ -32,35 +51,42 @@ component W9825G6KH6:
     trait has_designator_prefix<prefix = "U">
 
     # ── Address bus A[12:0] ───────────────────────────────────────────────────
-    signal A0  ~ pin 4;  signal A1  ~ pin 3;  signal A2  ~ pin 2   # TODO: verify all
-    signal A3  ~ pin 1;  signal A4  ~ pin 28; signal A5  ~ pin 27
-    signal A6  ~ pin 26; signal A7  ~ pin 25; signal A8  ~ pin 23
-    signal A9  ~ pin 22; signal A10 ~ pin 21; signal A11 ~ pin 7
-    signal A12 ~ pin 8
+    # A0–A12 at pins 23–26, 29–34, 22, 35, 36 (per datasheet pin description)
+    signal A0   ~ pin 23;  signal A1   ~ pin 24;  signal A2   ~ pin 25
+    signal A3   ~ pin 26;  signal A4   ~ pin 29;  signal A5   ~ pin 30
+    signal A6   ~ pin 31;  signal A7   ~ pin 32;  signal A8   ~ pin 33
+    signal A9   ~ pin 34;  signal A10  ~ pin 22;  signal A11  ~ pin 35
+    signal A12  ~ pin 36
 
-    # ── Bank address ──────────────────────────────────────────────────────────
-    signal BA0 ~ pin 5
-    signal BA1 ~ pin 6
+    # ── Bank select ───────────────────────────────────────────────────────────
+    signal BS0  ~ pin 20   # Bank Select 0
+    signal BS1  ~ pin 21   # Bank Select 1
 
-    # ── Data bus D[15:0] ─────────────────────────────────────────────────────
-    signal DQ0  ~ pin 42; signal DQ1  ~ pin 41; signal DQ2  ~ pin 40  # TODO: verify all
-    signal DQ3  ~ pin 39; signal DQ4  ~ pin 38; signal DQ5  ~ pin 37
-    signal DQ6  ~ pin 36; signal DQ7  ~ pin 35; signal DQ8  ~ pin 15
-    signal DQ9  ~ pin 16; signal DQ10 ~ pin 17; signal DQ11 ~ pin 18
-    signal DQ12 ~ pin 19; signal DQ13 ~ pin 20; signal DQ14 ~ pin 32
-    signal DQ15 ~ pin 31
+    # ── Data bus DQ[15:0] ────────────────────────────────────────────────────
+    # Low byte DQ0–DQ7: pins 2, 4, 5, 7, 8, 10, 11, 13
+    signal DQ0  ~ pin 2;   signal DQ1  ~ pin 4;   signal DQ2  ~ pin 5
+    signal DQ3  ~ pin 7;   signal DQ4  ~ pin 8;   signal DQ5  ~ pin 10
+    signal DQ6  ~ pin 11;  signal DQ7  ~ pin 13
+    # High byte DQ8–DQ15: pins 42, 44, 45, 47, 48, 50, 51, 53
+    signal DQ8  ~ pin 42;  signal DQ9  ~ pin 44;  signal DQ10 ~ pin 45
+    signal DQ11 ~ pin 47;  signal DQ12 ~ pin 48;  signal DQ13 ~ pin 50
+    signal DQ14 ~ pin 51;  signal DQ15 ~ pin 53
 
     # ── Control ───────────────────────────────────────────────────────────────
-    signal RAS_NEG  ~ pin 10  # Row Address Strobe (active low)
-    signal CAS_NEG  ~ pin 11  # Column Address Strobe (active low)
-    signal WE_NEG   ~ pin 12  # Write Enable (active low)
-    signal CS_NEG   ~ pin 9   # Chip Select (active low)
-    signal CLK      ~ pin 34  # Clock (up to 166 MHz)
-    signal CKE      ~ pin 33  # Clock Enable
-    signal DQML     ~ pin 43  # Low-byte data mask
-    signal DQMH     ~ pin 14  # High-byte data mask
+    signal RAS_NEG  ~ pin 18  # Row Address Strobe (active low)
+    signal CAS_NEG  ~ pin 17  # Column Address Strobe (active low)
+    signal WE_NEG   ~ pin 16  # Write Enable (active low)
+    signal CS_NEG   ~ pin 19  # Chip Select (active low)
+    signal CLK      ~ pin 38  # Clock (up to 166 MHz)
+    signal CKE      ~ pin 37  # Clock Enable
+    signal LDQM     ~ pin 15  # Low-byte data mask (lower byte, DQ0–DQ7)
+    signal UDQM     ~ pin 39  # Upper-byte data mask (high byte, DQ8–DQ15)
 
     # ── Power ─────────────────────────────────────────────────────────────────
-    signal VDD_1    ~ pin 13; signal VDD_2 ~ pin 30  # 3.3 V supply
-    signal VSS_1    ~ pin 29; signal VSS_2 ~ pin 44  # Ground
-    signal NC_1     ~ pin 24  # No connect
+    signal VDD_1    ~ pin 1;   signal VDD_2  ~ pin 14;  signal VDD_3  ~ pin 27  # 3.3 V supply
+    signal VDDQ_1   ~ pin 3;   signal VDDQ_2 ~ pin 9;   signal VDDQ_3 ~ pin 43  # 3.3 V I/O supply
+    signal VDDQ_4   ~ pin 49
+    signal VSS_1    ~ pin 28;  signal VSS_2  ~ pin 41;  signal VSS_3  ~ pin 54  # Ground
+    signal VSSQ_1   ~ pin 6;   signal VSSQ_2 ~ pin 12;  signal VSSQ_3 ~ pin 46  # I/O ground
+    signal VSSQ_4   ~ pin 52
+    signal NC_1     ~ pin 40   # No connect

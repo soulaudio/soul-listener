@@ -15,6 +15,8 @@
 # Power button: connected to WKUP pin on STM32H743 for wake-from-standby
 
 from "interfaces.ato" import EncoderBus
+from "parts/EC11/EC11.ato" import EC11
+from "parts/PTS526/PTS526.ato" import PTS526
 
 module Input:
     """
@@ -27,33 +29,43 @@ module Input:
     encoder   = new EncoderBus     # Quadrature A/B + SW to MCU GPIOs
 
     # ── Rotary Encoder ────────────────────────────────────────────────────────
-    # EC11 footprint: 5-pin (A, GND, B, GND, SW) — verify with chosen part
-    enc = new Component  # Replace with EC11 component stub when sourced
+    # Alps EC11E series: 5-pin THT, 20 PPR, integrated push switch
+    enc = new EC11
+
+    # EC11 → encoder bus wiring
+    # ENC_A/ENC_B connect to the pull-up node (held high at rest, pulled low on rotation)
+    # GND_ENC (encoder common) and SW_2 (switch return) tie to GND
+    enc.ENC_A   ~ encoder.a      # Phase A → pull-up + MCU EXTI
+    enc.ENC_B   ~ encoder.b      # Phase B → pull-up + MCU EXTI
+    enc.GND_ENC ~ power_3v3.lv  # Encoder common GND
+    enc.SW_1    ~ encoder.sw     # Switch output → pull-up + MCU GPIO
+    enc.SW_2    ~ power_3v3.lv  # Switch return GND
 
     # Pull-ups for encoder A and B outputs (10 kΩ to 3.3 V)
     r_enc_a = new Resistor; r_enc_a.resistance = 10kohm +/- 5%; r_enc_a.package = "0402"
     r_enc_b = new Resistor; r_enc_b.resistance = 10kohm +/- 5%; r_enc_b.package = "0402"
     r_enc_sw = new Resistor; r_enc_sw.resistance = 10kohm +/- 5%; r_enc_sw.package = "0402"
-    power_3v3.hv ~ r_enc_a.p1;  r_enc_a.p2  ~ encoder.enc_a
-    power_3v3.hv ~ r_enc_b.p1;  r_enc_b.p2  ~ encoder.enc_b
-    power_3v3.hv ~ r_enc_sw.p1; r_enc_sw.p2 ~ encoder.enc_sw
+    power_3v3.hv ~ r_enc_a.p1;  r_enc_a.p2  ~ encoder.a
+    power_3v3.hv ~ r_enc_b.p1;  r_enc_b.p2  ~ encoder.b
+    power_3v3.hv ~ r_enc_sw.p1; r_enc_sw.p2 ~ encoder.sw
 
     # Hardware debounce caps: 100 nF to GND on each line (RC with pull-up)
     # f_cutoff = 1 / (2π × 10kΩ × 100nF) ≈ 160 Hz — eliminates contact bounce
     c_enc_a  = new Capacitor; c_enc_a.capacitance  = 100nF +/- 20%; c_enc_a.package  = "0402"
     c_enc_b  = new Capacitor; c_enc_b.capacitance  = 100nF +/- 20%; c_enc_b.package  = "0402"
     c_enc_sw = new Capacitor; c_enc_sw.capacitance = 100nF +/- 20%; c_enc_sw.package = "0402"
-    encoder.enc_a  ~ c_enc_a.p1;  c_enc_a.p2  ~ power_3v3.lv
-    encoder.enc_b  ~ c_enc_b.p1;  c_enc_b.p2  ~ power_3v3.lv
-    encoder.enc_sw ~ c_enc_sw.p1; c_enc_sw.p2 ~ power_3v3.lv
+    encoder.a  ~ c_enc_a.p1;  c_enc_a.p2  ~ power_3v3.lv
+    encoder.b  ~ c_enc_b.p1;  c_enc_b.p2  ~ power_3v3.lv
+    encoder.sw ~ c_enc_sw.p1; c_enc_sw.p2 ~ power_3v3.lv
 
     # ── Navigation Buttons ────────────────────────────────────────────────────
     # 4 tactile buttons: Play/Pause, Previous, Next, Menu
-    # Active low: button connects line to GND; pull-up holds line high at rest
-    btn_play = new Component  # Tactile switch — e.g., C&K PTS526
-    btn_prev = new Component
-    btn_next = new Component
-    btn_menu = new Component
+    # C&K PTS526SK15SMTR2LFS — SMD, 1.5 mm height, 50 mA/12 V, 200k-cycle life
+    # Active low: button A1 to pull-up node; B1 to GND; press shorts A1 to GND
+    btn_play = new PTS526
+    btn_prev = new PTS526
+    btn_next = new PTS526
+    btn_menu = new PTS526
 
     # Pull-up resistors (10 kΩ each)
     r_play = new Resistor; r_play.resistance = 10kohm +/- 5%; r_play.package = "0402"
@@ -64,6 +76,12 @@ module Input:
     power_3v3.hv ~ r_prev.p1; r_prev.p2 ~ encoder.btn_prev
     power_3v3.hv ~ r_next.p1; r_next.p2 ~ encoder.btn_next
     power_3v3.hv ~ r_menu.p1; r_menu.p2 ~ encoder.btn_menu
+
+    # Button wiring: A1 → GPIO pull-up node; B1 → GND (active low)
+    btn_play.A1 ~ encoder.btn_play; btn_play.B1 ~ power_3v3.lv
+    btn_prev.A1 ~ encoder.btn_prev; btn_prev.B1 ~ power_3v3.lv
+    btn_next.A1 ~ encoder.btn_next; btn_next.B1 ~ power_3v3.lv
+    btn_menu.A1 ~ encoder.btn_menu; btn_menu.B1 ~ power_3v3.lv
 
     # Debounce caps for buttons (100 nF each)
     c_play = new Capacitor; c_play.capacitance = 100nF +/- 20%; c_play.package = "0402"
@@ -76,14 +94,28 @@ module Input:
     encoder.btn_menu ~ c_menu.p1; c_menu.p2 ~ power_3v3.lv
 
     # ── Power Button ──────────────────────────────────────────────────────────
-    # Connected to STM32H743 PC13/WKUP pin for wake-from-standby
+    # Connected to STM32H743 PC13/WKUP2 pin for wake-from-standby
     # Long-press logic handled in firmware (PowerManager)
-    btn_pwr = new Component
+    btn_pwr = new PTS526
     r_pwr = new Resistor; r_pwr.resistance = 10kohm +/- 5%; r_pwr.package = "0402"
     c_pwr = new Capacitor; c_pwr.capacitance = 100nF +/- 20%; c_pwr.package = "0402"
     power_3v3.hv ~ r_pwr.p1; r_pwr.p2 ~ encoder.btn_power
     encoder.btn_power ~ c_pwr.p1; c_pwr.p2 ~ power_3v3.lv
-    # Note: btn_pwr switch connects btn_power line to GND when pressed
+    btn_pwr.A1 ~ encoder.btn_power; btn_pwr.B1 ~ power_3v3.lv
 
     # ── Validation ────────────────────────────────────────────────────────────
     assert power_3v3.voltage within 2.7V to 3.6V
+    # Pull-up resistors: 10 kΩ ±5% — sets encoder/button input high at rest
+    # RC debounce cutoff: f_c = 1/(2π × R × C) = 1/(2π × 10kΩ × 100nF) ≈ 160 Hz
+    assert r_enc_a.resistance within 9kohm to 11kohm
+    assert r_enc_b.resistance within 9kohm to 11kohm
+    assert r_enc_sw.resistance within 9kohm to 11kohm
+    assert r_play.resistance within 9kohm to 11kohm
+    assert r_prev.resistance within 9kohm to 11kohm
+    assert r_next.resistance within 9kohm to 11kohm
+    assert r_menu.resistance within 9kohm to 11kohm
+    assert r_pwr.resistance within 9kohm to 11kohm
+    # Debounce caps: 100 nF ±20% — works with 10 kΩ pull-up for ~160 Hz RC filter
+    assert c_enc_a.capacitance within 80nF to 120nF
+    assert c_enc_b.capacitance within 80nF to 120nF
+    assert c_enc_sw.capacitance within 80nF to 120nF

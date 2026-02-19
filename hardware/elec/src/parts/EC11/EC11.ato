@@ -1,0 +1,77 @@
+# EC11E15244G5 — Alps Alpine EC11 Series Rotary Encoder with Push Switch
+#
+# Package:      5-pin THT, vertical, 11 mm body, D-shaft (15 mm shaft length)
+# Manufacturer: Alps Alpine
+# Datasheet:    https://tech.alpsalpine.com/e/products/detail/EC11E15244G5/
+#               (reference drawings available via product page inquiry)
+# Key specs:    20 detents per revolution, integrated SPST push switch
+#               Quadrature (two-phase) incremental output — 20 pulses/revolution
+#               Max encoder rating: 5 V, 10 mA
+#               Max switch rating: 12 V DC, 10 mA
+#               Mechanical life: 30,000 cycles (encoder); 30,000 cycles (switch)
+#               Operating torque: 10–60 mN·m
+#
+# Terminal arrangement (Alps convention, viewed from pin side / bottom):
+#   Terminal A: Phase A (CLK)   — quadrature output, 90° ahead of C
+#   Terminal B: GND (common)    — common for encoder phases A and C
+#   Terminal C: Phase B (DT)    — quadrature output
+#   Terminal D: Switch pin 1    — integrated push switch (normally open)
+#   Terminal E: Switch pin 2    — integrated push switch (normally open)
+#
+# KiCad symbol:   Device:RotaryEncoder_Switch
+#   Pin mapping in the symbol (Device.lib legacy format, also in kicad_sym):
+#     pin "A"  → Phase A (CLK)     → pad "A"  in footprint
+#     pin "B"  → Phase B (DT)      → pad "B"  in footprint  [NOTE: KiCad labels B = phase B]
+#     pin "C"  → Common/GND        → pad "C"  in footprint  [NOTE: KiCad labels C = common]
+#     pin "S1" → Switch terminal 1 → pad "S1" in footprint
+#     pin "S2" → Switch terminal 2 → pad "S2" in footprint
+#
+# ⚠ KiCad pad naming vs. Alps terminal naming differs:
+#   Alps datasheet: A=phaseA, B=common, C=phaseB, D=SW1, E=SW2
+#   KiCad symbol:   A=phaseA, C=common, B=phaseB, S1=SW1, S2=SW2
+#   The KiCad Device:RotaryEncoder_Switch symbol uses LETTER pad numbers (A, B, C, S1, S2).
+#   Atopile requires integer pin numbers; map to physical THT position ordering:
+#     1 = A  (phase A / CLK)
+#     2 = B  (KiCad: phase B / DT; Alps: C terminal)
+#     3 = C  (KiCad: common/GND; Alps: B terminal)
+#     4 = S1 (switch terminal 1)
+#     5 = S2 (switch terminal 2)
+#
+# ⚠ TODO: Verify integer-to-pad mapping against the chosen footprint in KiCad.
+#   The EC11E footprint pads are labelled A/B/C/S1/S2 (not integers).
+#   Confirm that pad A = position 1, pad C = position 3, etc. in the footprint file.
+#
+# KiCad footprint: RotaryEncoder_Switch:RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm
+#   Alternative:   RotaryEncoder_Switch:RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm_CircularMountingHoles
+#
+# Distributor availability:
+#   TME:      EC11E15244G5     (Alps Alpine, cz.tme.eu — verify stock)
+#   Digi-Key: 688-EC11E15244G5-ND
+#   Mouser:   688-EC11E15244G5
+
+component EC11:
+    trait is_atomic_part<
+        manufacturer = "Alps Alpine",
+        partnumber   = "EC11E15244G5",
+        footprint    = "RotaryEncoder_Switch:RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm",
+        symbol       = "Device:RotaryEncoder_Switch">
+    trait has_designator_prefix<prefix = "SW">
+
+    # ── Encoder outputs ───────────────────────────────────────────────────────
+    # KiCad symbol pin A → Phase A (CLK) → MCU PE9 (TIM1_CH1 or EXTI)
+    # KiCad symbol pin C → Encoder common / GND
+    # KiCad symbol pin B → Phase B (DT)  → MCU PE11 (TIM1_CH2 or EXTI)
+    #
+    # Physical THT pin numbering (left→right, pin side up, shaft facing you):
+    #   1 = A (phase A / CLK)
+    #   2 = B (KiCad B = phase B / DT; Alps label = terminal C)
+    #   3 = C (KiCad C = common/GND; Alps label = terminal B)
+    #   4 = S1 (switch terminal 1)
+    #   5 = S2 (switch terminal 2)
+    signal ENC_A   ~ pin 1   # Phase A (CLK)   → MCU quadrature input A
+    signal ENC_B   ~ pin 2   # Phase B (DT)    → MCU quadrature input B
+    signal GND_ENC ~ pin 3   # Encoder common GND (tie to ground plane)
+
+    # ── Integrated push switch (SPST normally open) ───────────────────────────
+    signal SW_1    ~ pin 4   # Switch terminal 1 (pull-up side → 10 kΩ to 3.3 V)
+    signal SW_2    ~ pin 5   # Switch terminal 2 (GND side)

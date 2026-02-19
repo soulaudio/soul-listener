@@ -112,3 +112,10 @@ module Memory:
 
     # ── Validation ────────────────────────────────────────────────────────────
     assert power_3v3.voltage within 2.7V to 3.6V
+    # QSPI series termination resistors: 33 Ω ±5% to reduce reflections at 133 MHz
+    assert r_io0.resistance within 30ohm to 36ohm
+    assert r_io1.resistance within 30ohm to 36ohm
+    assert r_io2.resistance within 30ohm to 36ohm
+    assert r_io3.resistance within 30ohm to 36ohm
+    # NOR flash VCC bulk decoupling: 10 µF minimum for burst current during erase
+    assert c_nor_bulk.capacitance within 8uF to 12uF

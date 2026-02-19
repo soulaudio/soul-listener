@@ -45,6 +45,67 @@ builds:
     exclude_checks:
       - PCB.requires_drc_check
 
+  # ── per-module check targets ───────────────────────────────────────────────
+  # Each module can be validated independently. This enables:
+  #   1. Faster CI feedback (module that changed is re-checked immediately)
+  #   2. Isolation: a broken module doesn't mask failures in others
+  #   3. Component-level asserts (resistance, capacitance, frequency) validated
+  #      without requiring the full top-level wiring
+  #
+  # Voltage-level asserts on port signals (e.g. power_3v3.voltage) are
+  # additionally verified by the full check-only target which propagates
+  # voltages across module boundaries via main.ato.
+  #
+  # Run a single module: ato build --build check-power
+  check-power:
+    entry: power.ato:Power
+    targets:
+      - bom
+    exclude_checks:
+      - PCB.requires_drc_check
+
+  check-mcu:
+    entry: mcu.ato:MCU
+    targets:
+      - bom
+    exclude_checks:
+      - PCB.requires_drc_check
+
+  check-audio:
+    entry: audio.ato:Audio
+    targets:
+      - bom
+    exclude_checks:
+      - PCB.requires_drc_check
+
+  check-display:
+    entry: display.ato:Display
+    targets:
+      - bom
+    exclude_checks:
+      - PCB.requires_drc_check
+
+  check-bluetooth:
+    entry: bluetooth.ato:Bluetooth
+    targets:
+      - bom
+    exclude_checks:
+      - PCB.requires_drc_check
+
+  check-memory:
+    entry: memory.ato:Memory
+    targets:
+      - bom
+    exclude_checks:
+      - PCB.requires_drc_check
+
+  check-input:
+    entry: input.ato:Input
+    targets:
+      - bom
+    exclude_checks:
+      - PCB.requires_drc_check
+
 dependencies:
   - type: registry
     identifier: atopile/generics

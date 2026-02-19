@@ -47,10 +47,12 @@ module MCU:
     mcu = new STM32H743ZIT6
 
     # ── Power supply connections ──────────────────────────────────────────────
-    power_3v3.hv ~ mcu.VDD_1; power_3v3.hv ~ mcu.VDD_2
-    power_3v3.hv ~ mcu.VDD_3; power_3v3.hv ~ mcu.VDD_4
-    power_3v3.hv ~ mcu.VDD_5; power_3v3.hv ~ mcu.VDD_6
-    power_3v3.hv ~ mcu.VDD_7; power_3v3.hv ~ mcu.VDD_8
+    power_3v3.hv ~ mcu.VDD_1;  power_3v3.hv ~ mcu.VDD_2
+    power_3v3.hv ~ mcu.VDD_3;  power_3v3.hv ~ mcu.VDD_4
+    power_3v3.hv ~ mcu.VDD_5;  power_3v3.hv ~ mcu.VDD_6
+    power_3v3.hv ~ mcu.VDD_7;  power_3v3.hv ~ mcu.VDD_8
+    power_3v3.hv ~ mcu.VDD_9;  power_3v3.hv ~ mcu.VDD_10; power_3v3.hv ~ mcu.VDD_11
+    power_3v3.hv ~ mcu.VDD33_USB  # 3.3 V for USB OTG HS internal PHY
     power_3v3.hv ~ mcu.VDDA
     power_3v3.hv ~ mcu.VREF_PLUS
     power_3v3.hv ~ mcu.VBAT  # Tie VBAT to VDD (no coin cell on v1)
@@ -58,26 +60,44 @@ module MCU:
     power_3v3.lv ~ mcu.VSS_1; power_3v3.lv ~ mcu.VSS_2
     power_3v3.lv ~ mcu.VSS_3; power_3v3.lv ~ mcu.VSS_4
     power_3v3.lv ~ mcu.VSS_5; power_3v3.lv ~ mcu.VSS_6
-    power_3v3.lv ~ mcu.VSS_7; power_3v3.lv ~ mcu.VSS_8
+    power_3v3.lv ~ mcu.VSS_7; power_3v3.lv ~ mcu.VSS_8; power_3v3.lv ~ mcu.VSS_9
+    power_3v3.lv ~ mcu.VSSA   # Analog ground — return path for VDDA
+
+    # VCAP: internal core LDO decoupling — 1 µF each, MUST NOT connect to VDD
+    c_vcap1 = new Capacitor; c_vcap1.capacitance = 1uF +/- 20%; c_vcap1.package = "0402"
+    c_vcap2 = new Capacitor; c_vcap2.capacitance = 1uF +/- 20%; c_vcap2.package = "0402"
+    mcu.VCAP1 ~ c_vcap1.p1; c_vcap1.p2 ~ power_3v3.lv
+    mcu.VCAP2 ~ c_vcap2.p1; c_vcap2.p2 ~ power_3v3.lv
+
+    # BOOT0: pull to GND for normal flash boot (high = system memory boot)
+    power_3v3.lv ~ mcu.BOOT0
 
     # ── VDD decoupling (one 100 nF per VDD pin + 10 µF bulk) ─────────────────
-    # 8 × 100 nF decoupling caps for VDD pins
-    c_vdd_1 = new Capacitor; c_vdd_1.capacitance = 100nF +/- 20%; c_vdd_1.package = "0402"
-    c_vdd_2 = new Capacitor; c_vdd_2.capacitance = 100nF +/- 20%; c_vdd_2.package = "0402"
-    c_vdd_3 = new Capacitor; c_vdd_3.capacitance = 100nF +/- 20%; c_vdd_3.package = "0402"
-    c_vdd_4 = new Capacitor; c_vdd_4.capacitance = 100nF +/- 20%; c_vdd_4.package = "0402"
-    c_vdd_5 = new Capacitor; c_vdd_5.capacitance = 100nF +/- 20%; c_vdd_5.package = "0402"
-    c_vdd_6 = new Capacitor; c_vdd_6.capacitance = 100nF +/- 20%; c_vdd_6.package = "0402"
-    c_vdd_7 = new Capacitor; c_vdd_7.capacitance = 100nF +/- 20%; c_vdd_7.package = "0402"
-    c_vdd_8 = new Capacitor; c_vdd_8.capacitance = 100nF +/- 20%; c_vdd_8.package = "0402"
-    power_3v3.hv ~ c_vdd_1.p1; c_vdd_1.p2 ~ power_3v3.lv
-    power_3v3.hv ~ c_vdd_2.p1; c_vdd_2.p2 ~ power_3v3.lv
-    power_3v3.hv ~ c_vdd_3.p1; c_vdd_3.p2 ~ power_3v3.lv
-    power_3v3.hv ~ c_vdd_4.p1; c_vdd_4.p2 ~ power_3v3.lv
-    power_3v3.hv ~ c_vdd_5.p1; c_vdd_5.p2 ~ power_3v3.lv
-    power_3v3.hv ~ c_vdd_6.p1; c_vdd_6.p2 ~ power_3v3.lv
-    power_3v3.hv ~ c_vdd_7.p1; c_vdd_7.p2 ~ power_3v3.lv
-    power_3v3.hv ~ c_vdd_8.p1; c_vdd_8.p2 ~ power_3v3.lv
+    # 11 × 100 nF decoupling caps for VDD_1..VDD_11
+    c_vdd_1  = new Capacitor; c_vdd_1.capacitance  = 100nF +/- 20%; c_vdd_1.package  = "0402"
+    c_vdd_2  = new Capacitor; c_vdd_2.capacitance  = 100nF +/- 20%; c_vdd_2.package  = "0402"
+    c_vdd_3  = new Capacitor; c_vdd_3.capacitance  = 100nF +/- 20%; c_vdd_3.package  = "0402"
+    c_vdd_4  = new Capacitor; c_vdd_4.capacitance  = 100nF +/- 20%; c_vdd_4.package  = "0402"
+    c_vdd_5  = new Capacitor; c_vdd_5.capacitance  = 100nF +/- 20%; c_vdd_5.package  = "0402"
+    c_vdd_6  = new Capacitor; c_vdd_6.capacitance  = 100nF +/- 20%; c_vdd_6.package  = "0402"
+    c_vdd_7  = new Capacitor; c_vdd_7.capacitance  = 100nF +/- 20%; c_vdd_7.package  = "0402"
+    c_vdd_8  = new Capacitor; c_vdd_8.capacitance  = 100nF +/- 20%; c_vdd_8.package  = "0402"
+    c_vdd_9  = new Capacitor; c_vdd_9.capacitance  = 100nF +/- 20%; c_vdd_9.package  = "0402"
+    c_vdd_10 = new Capacitor; c_vdd_10.capacitance = 100nF +/- 20%; c_vdd_10.package = "0402"
+    c_vdd_11 = new Capacitor; c_vdd_11.capacitance = 100nF +/- 20%; c_vdd_11.package = "0402"
+    c_vdd_usb = new Capacitor; c_vdd_usb.capacitance = 100nF +/- 20%; c_vdd_usb.package = "0402"
+    power_3v3.hv ~ c_vdd_1.p1;   c_vdd_1.p2   ~ power_3v3.lv
+    power_3v3.hv ~ c_vdd_2.p1;   c_vdd_2.p2   ~ power_3v3.lv
+    power_3v3.hv ~ c_vdd_3.p1;   c_vdd_3.p2   ~ power_3v3.lv
+    power_3v3.hv ~ c_vdd_4.p1;   c_vdd_4.p2   ~ power_3v3.lv
+    power_3v3.hv ~ c_vdd_5.p1;   c_vdd_5.p2   ~ power_3v3.lv
+    power_3v3.hv ~ c_vdd_6.p1;   c_vdd_6.p2   ~ power_3v3.lv
+    power_3v3.hv ~ c_vdd_7.p1;   c_vdd_7.p2   ~ power_3v3.lv
+    power_3v3.hv ~ c_vdd_8.p1;   c_vdd_8.p2   ~ power_3v3.lv
+    power_3v3.hv ~ c_vdd_9.p1;   c_vdd_9.p2   ~ power_3v3.lv
+    power_3v3.hv ~ c_vdd_10.p1;  c_vdd_10.p2  ~ power_3v3.lv
+    power_3v3.hv ~ c_vdd_11.p1;  c_vdd_11.p2  ~ power_3v3.lv
+    power_3v3.hv ~ c_vdd_usb.p1; c_vdd_usb.p2 ~ power_3v3.lv  # VDD33_USB decoupling
 
     # 10 µF bulk capacitor for VDD
     c_vdd_bulk = new Capacitor
@@ -177,6 +197,15 @@ module MCU:
     encoder.a  ~ mcu.ENC_A
     encoder.b  ~ mcu.ENC_B
     encoder.sw ~ mcu.ENC_SW
+    # Navigation buttons (active low, external pull-ups in Input module)
+    encoder.btn_play  ~ mcu.BTN_PLAY
+    encoder.btn_next  ~ mcu.BTN_NEXT
+    encoder.btn_prev  ~ mcu.BTN_PREV
+    encoder.btn_menu  ~ mcu.BTN_MENU
+    encoder.btn_power ~ mcu.BTN_POWER  # PC13/WKUP2 — wake-from-standby on long press
 
     # ── Validation ───────────────────────────────────────────────────────────
     assert power_3v3.voltage within 3.0V to 3.6V
+    # Crystal frequency constraints (application-level tolerance for USB/BLE clocking)
+    assert hse_xtal.frequency within 24MHz to 26MHz       # 25 MHz HSE — PLL input
+    assert lse_xtal.frequency within 32kHz to 33768Hz     # 32.768 kHz LSE — RTC

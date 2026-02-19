@@ -1,6 +1,6 @@
 # STM32WB55RGV6 — STMicroelectronics Dual-Core BLE 5.0 / LE Audio Co-processor
 #
-# Package:      VFQFPN-68, 8×8 mm, 0.5 mm pitch (68-pin, exposed pad)
+# Package:      VFQFPN-68, 8×8 mm, 0.4 mm pitch (68-pin + exposed pad = 69 total pads)
 # Manufacturer: STMicroelectronics
 # Datasheet:    https://www.st.com/resource/en/datasheet/stm32wb55rg.pdf
 # Key specs:    Cortex-M4 (64 MHz app core) + Cortex-M0+ (32 MHz BLE stack)
@@ -9,18 +9,36 @@
 #               ST-supplied and certified BLE firmware (stm32wb-copro binary)
 #               Internal balun → direct 50 Ω antenna connection (no external matching)
 #
-# ⚠ PIN NUMBERS: Verify against KiCad symbol MCU_ST_STM32WB:STM32WB55RGVx
-#   Key pins (VFQFPN-68):
-#   Pins 1-16:  PB0-PB15 (GPIO bank B)
-#   Pins 17-32: PC0-PC15 (GPIO bank C) — PC14/PC15: LSE crystal
-#   Pins 33-36: PD0-PD3 (GPIO bank D) — usually PH0/PH1 for HSE crystal
-#   Pins 37-44: VDD, VSS, VBAT, VDDIO2 supply pins
-#   Pins 45-60: PA0-PA15 (GPIO bank A) — PA9/PA10 = UART1 for HCI
-#   Pins 61-64: RF_ANT, boot, reset
-#   Pins 65-68: Additional supply / analog
-#   EP:         VSS (exposed pad — connect to ground plane)
+# PIN NUMBERS: Verified against KiCad symbol MCU_ST_STM32WB:STM32WB55RGVx
+#   Source: gitlab.com/kicad/libraries/kicad-symbols (MCU_ST_STM32WB.kicad_symdir/STM32WB55RGVx.kicad_sym)
+#
+# Pin summary (key signals):
+#   Pin  1:  VBAT
+#   Pin  3:  PC14 (OSC32_IN  — LSE 32.768 kHz crystal)
+#   Pin  4:  PC15 (OSC32_OUT — LSE 32.768 kHz crystal)
+#   Pin  8:  NRST
+#   Pin 13:  VREF+
+#   Pin 14:  VDDA
+#   Pin 24:  PA9  (USART1_TX)
+#   Pin 30:  VDD  (first of three VDD supply pins)
+#   Pin 31:  RF1  (50 Ω antenna port, internal balun)
+#   Pin 32:  VSSRF
+#   Pin 33:  VDDRF
+#   Pin 34:  OSC_OUT (HSE 32 MHz crystal — NOT PH1; dedicated crystal pin)
+#   Pin 35:  OSC_IN  (HSE 32 MHz crystal — NOT PH0; dedicated crystal pin)
+#   Pin 45:  VDD  (second supply pin)
+#   Pin 51:  PA10 (USART1_RX)
+#   Pin 54:  PA13 (SWD: SWDIO)
+#   Pin 55:  VDDUSB
+#   Pin 56:  PA14 (SWD: SWCLK)
+#   Pin 68:  VDD  (third supply pin)
+#   Pin 69:  VSS  (exposed thermal pad — connect to ground plane)
 #
 # KiCad symbol: MCU_ST_STM32WB:STM32WB55RGVx  (official kicad-symbols)
+#
+# Note on package footprint: KiCad symbol says QFN-68-1EP_8x8mm_P0.4mm_EP6.4x6.4mm
+# (pitch is 0.4 mm, not 0.5 mm). Verify footprint in KiCad against the datasheet
+# mechanical drawing before laying out the board.
 #
 # Distributor availability:
 #   TME:     STM32WB55RGV6    (check cz.tme.eu)
@@ -31,36 +49,49 @@ component STM32WB55RGV6:
     trait is_atomic_part<
         manufacturer = "STMicroelectronics",
         partnumber   = "STM32WB55RGV6",
-        footprint    = "Package_DFN_QFN:VFQFPN-68-1EP_8x8mm_P0.5mm_EP5.6x5.6mm",
+        footprint    = "Package_DFN_QFN:QFN-68-1EP_8x8mm_P0.4mm_EP6.4x6.4mm",
         symbol       = "MCU_ST_STM32WB:STM32WB55RGVx">
     trait has_designator_prefix<prefix = "U">
 
     # ── Power supply ─────────────────────────────────────────────────────────
-    signal VDD    ~ pin 37   # 3.3 V digital supply — TODO: verify
-    signal VSS    ~ pin 38   # Ground               — TODO: verify
-    signal VBAT   ~ pin 39   # Backup domain (tie to VDD if no battery backup)
-    signal VDDIO2 ~ pin 40   # IO bank 2 supply (tie to VDD)
-    signal EP     ~ pin 69   # Exposed pad = VSS
+    # VDD appears at three separate pads; all must be connected to 3.3 V.
+    signal VDD     ~ pin 30   # 3.3 V digital supply (first pad)
+    signal VDD_2   ~ pin 45   # 3.3 V digital supply (second pad)
+    signal VDD_3   ~ pin 68   # 3.3 V digital supply (third pad)
+    signal VBAT    ~ pin 1    # Backup battery domain (tie to VDD if no coin cell)
+    signal VDDA    ~ pin 14   # Analog supply (bypass separately; tie to VDD)
+    signal VREFPLUS~ pin 13   # ADC reference (tie to VDDA)
+    signal VDDRF   ~ pin 33   # RF supply (bypass per datasheet §6.3.5)
+    signal VSSRF   ~ pin 32   # RF ground reference
+    signal VDDUSB  ~ pin 55   # USB supply (tie to VDD if USB not used)
+    signal VDDSMPS ~ pin 44   # Internal SMPS supply (see datasheet §6.3.4)
+    signal VSSSMPS ~ pin 42   # Internal SMPS ground
+    signal VLXSMPS ~ pin 43   # SMPS switching node (leave open if SMPS unused)
+    signal VFBSMPS ~ pin 41   # SMPS feedback (leave open if SMPS unused)
+    signal EP      ~ pin 69   # Exposed pad = VSS — connect to ground plane
 
     # ── HCI UART to STM32H743 ────────────────────────────────────────────────
     # Uses UART1 (PA9=TX, PA10=RX) for HCI communication with the host MCU.
     # TX/RX crossed: WB55 TX → H743 RX, WB55 RX ← H743 TX
-    signal UART1_TX ~ pin 45  # PA9  — TODO: verify VFQFPN-68 pin number
-    signal UART1_RX ~ pin 46  # PA10 — TODO: verify
+    signal UART1_TX ~ pin 24  # PA9  — USART1_TX
+    signal UART1_RX ~ pin 51  # PA10 — USART1_RX
 
     # ── HSE Crystal (32 MHz) ─────────────────────────────────────────────────
-    # STM32WB55 requires external 32 MHz HSE crystal for BLE RF calibration
-    signal PH0_OSC_IN  ~ pin 33  # TODO: verify
-    signal PH1_OSC_OUT ~ pin 34  # TODO: verify
+    # STM32WB55 uses dedicated OSC_IN/OSC_OUT pins (not PH0/PH1) for the
+    # 32 MHz HSE required for BLE RF calibration.
+    signal OSC_IN  ~ pin 35   # HSE crystal in  (RCC_OSC_IN)
+    signal OSC_OUT ~ pin 34   # HSE crystal out (RCC_OSC_OUT)
 
     # ── LSE Crystal (32.768 kHz) ─────────────────────────────────────────────
-    signal PC14_OSC32_IN  ~ pin 17  # TODO: verify
-    signal PC15_OSC32_OUT ~ pin 18  # TODO: verify
+    signal PC14_OSC32_IN  ~ pin 3  # PC14 — RCC_OSC32_IN  (LSE crystal in)
+    signal PC15_OSC32_OUT ~ pin 4  # PC15 — RCC_OSC32_OUT (LSE crystal out)
 
-    # ── SWD debug (secondary debug port) ─────────────────────────────────────
-    signal SWDIO_WB  ~ pin 50  # PA13 — TODO: verify
-    signal SWDCLK_WB ~ pin 51  # PA14 — TODO: verify
-    signal NRST_WB   ~ pin 62  # Reset
+    # ── SWD debug (secondary debug port for BLE co-processor) ────────────────
+    signal SWDIO_WB  ~ pin 54  # PA13 — SYS_JTMS-SWDIO
+    signal SWDCLK_WB ~ pin 56  # PA14 — SYS_JTCK-SWCLK
+    signal NRST_WB   ~ pin 8   # NRST — active-low reset
 
     # ── RF antenna ───────────────────────────────────────────────────────────
-    signal RF_ANT ~ pin 61  # 50 Ω antenna port — connect to chip antenna or U.FL
+    # Internal balun integrates TX/RX switching; connect directly to 50 Ω antenna
+    # (chip antenna or U.FL connector). No external matching network required.
+    signal RF_ANT ~ pin 31    # RF1 — 50 Ω antenna port

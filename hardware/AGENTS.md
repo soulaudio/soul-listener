@@ -96,12 +96,41 @@ Current assertions:
 |---------------|-----------------------------------------------------|----------------------------------------|
 | `power.ato`   | `power_3v3.voltage within 3.2V to 3.4V`            | AP2112K-3.3 output tolerance           |
 | `power.ato`   | `power_sys.voltage within 3.0V to 4.35V`           | LiPo operating range                   |
+| `power.ato`   | `r_ilim.resistance within 90ohm to 110ohm`          | BQ25895 default ~3 A input limit       |
+| `power.ato`   | `l_sw.value within 3.5uH to 6uH`                   | BQ25895 boost inductor range           |
 | `audio.ato`   | `avdd.voltage within 3.2V to 3.4V`                 | LT3042 output tolerance                |
 | `audio.ato`   | `power_3v3.voltage within 3.0V to 3.6V`            | ES9038Q2M DVDD range                   |
+| `audio.ato`   | `r_set.resistance within 32kohm to 34kohm`          | LT3042 SET for 3.3 V AVDD              |
+| `audio.ato`   | `r_iref.resistance within 1.19kohm to 1.23kohm`     | ES9038Q2M full-scale output current    |
 | `display.ato` | `power_3v3.voltage within 2.7V to 3.6V`            | GDEM0397T81P VCI range                 |
 | `memory.ato`  | `power_3v3.voltage within 2.7V to 3.6V`            | SDRAM + NOR flash supply range         |
+| `memory.ato`  | `r_io0-3.resistance within 30ohm to 36ohm`          | QSPI series termination                |
 | `bluetooth.ato` | `power_3v3.voltage within 1.7V to 3.6V`          | STM32WB55 supply range                 |
+| `bluetooth.ato` | `hse.frequency within 31MHz to 33MHz`             | 32 MHz BLE RF calibration crystal      |
+| `input.ato`   | `r_enc_a/b/sw.resistance within 9k to 11kohm`       | Encoder pull-up values                 |
+| `input.ato`   | `c_enc_a/b/sw.capacitance within 80nF to 120nF`     | Debounce cap RC filter verification    |
+| `mcu.ato`     | `hse_xtal.frequency within 24MHz to 26MHz`          | STM32H743 PLL input crystal            |
 | `main.ato`    | `power.power_3v3.voltage within 3.0V to 3.6V`      | Intersection of all consumer ranges    |
+
+## Architecture Tests (CI)
+
+Two layers of automated checks:
+
+### Hardware (`.github/workflows/hardware.yml`)
+| Job | What it checks |
+|-----|---------------|
+| `hw-arch` | Module import boundaries; all modules declare `power_3v3`; all imported interfaces exist in `interfaces.ato` |
+| `ato-check` | Full-system ERC: `assert` voltage propagation across all modules |
+| `ato-check-modules` | 7 parallel per-module checks (power/mcu/audio/display/bluetooth/memory/input) |
+| `bom-generate` | BOM generation (main branch only, after all checks pass) |
+
+### Rust Firmware (`.github/workflows/ci.yml` → `arch` job)
+| Rule | What it enforces |
+|------|-----------------|
+| Rule 1 | `eink-system` + `eink-components` must not require `eink-emulator` |
+| Rule 2 | `eink-specs` must not depend on heavier eink crates or firmware |
+| Rule 3 | `platform` (HAL) must not depend on `firmware` (app layer) |
+| Rule 4 | `eink-emulator` must not depend on `firmware` |
 
 ## Known TODOs
 
@@ -110,13 +139,10 @@ Current assertions:
 | TPA6120A2 ±5 V supply | `audio.ato`, `power.ato` | Needs charge pump (e.g., TPS63700 + ICL7660S) |
 | Display FPC pinout | `display.ato` | Request GDEM0397T81P spec from Good Display (buy@e-ink-display.com) |
 | QSPI series resistors in signal path | `memory.ato` | Currently declared but not in signal path (TODO comment) |
-| Chip antenna component stub | `bluetooth.ato` | Add Johanson 0433AT62A0100E or PCB trace antenna |
-| EC11 encoder component stub | `input.ato` | Source and add as atomic part |
-| Tactile button component stubs | `input.ato` | Source C&K PTS526 or equivalent |
-| Battery connector | `power.ato` | Add JST-PH 2-pin footprint |
-| STM32H743 pin verification | `parts/STM32H743ZIT6/` | Verify all pin numbers against KiCad symbol |
-| STM32WB55 crystal pin verification | `bluetooth.ato` | Confirm PC14/PC15 for LSE, PH0/PH1 for HSE |
 | ESD TVS array on display SPI lines | `display.ato` | PRTR5V0U2X or similar |
+| HSE crystal wiring for STM32H743 | `mcu.ato` | Wire `hse_xtal.p1/p2 ~ mcu.PH0_OSC_IN/PH1_OSC_OUT`; confirm PH0/PH1 pin numbers in KiCad symbol for LQFP-144 |
+| PTS526 KiCad footprint | `parts/PTS526/` | No official KiCad footprint exists; add from SnapEDA or create local library entry |
+| EC11 pad-to-pin mapping | `parts/EC11/` | Verify integer pin 1–5 maps correctly to KiCad `A/B/C/S1/S2` pads in chosen footprint |
 
 ## Sourcing Notes
 
@@ -147,6 +173,10 @@ Current assertions:
 | W9825G6KH-6        | W9825G6KH-6        | TSOP-II-54| Digi-Key / Mouser |
 | GDEM0397T81P       | GDEM0397T81P       | Module    | Good Display    |
 | AP2112K-3.3TRG1    | AP2112K-3.3TRG1    | SOT-25    | TME / Digi-Key  |
+| EC11E15244G5       | EC11E15244G5       | THT 5-pin | TME / Digi-Key  |
+| PTS526SK15SMTR2LFS | PTS526SK15SMTR2LFS | SMD 6×3.5 mm | TME / Digi-Key |
+| 2450AT18A100E      | 2450AT18A100E      | Case 18-4 (1206) | Digi-Key / Newark |
+| S2B-PH-K-S         | S2B-PH-K-S         | JST-PH 2mm THT | TME / Digi-Key |
 
 ## Adding New Hardware Components
 
