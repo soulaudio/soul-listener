@@ -15,6 +15,17 @@
 #   defmt/probe-rs dependencies that require an ARM linker and no-std. `emulator`
 #   pulls in tokio and winit which require std. Never use --all-features across the
 #   firmware crate — it will fail to compile on both host and embedded targets.
+#
+# All GitHub Actions are pinned to exact commit SHAs for supply-chain security.
+# To update a pinned action:
+#   1. Find the new release tag at github.com/<owner>/<repo>/releases
+#   2. Get the commit SHA: git ls-remote https://github.com/<owner>/<repo> refs/tags/<tag>
+#   3. Update the SHA below and the version comment
+#
+# Current pins (as of 2026-02-19):
+#   actions/checkout          v4.2.2   11bd71901bbe5b1630ceea73d27597364c9af683
+#   Swatinem/rust-cache       v2.8.2   779680da715d629ac1d338a641029a2f4372abb5
+#   dtolnay/rust-toolchain    master   efa25f7f19611383d5b0ccf2d1c8914531636bf9
 
 name: CI
 
@@ -38,9 +49,9 @@ jobs:
     name: Format
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@efa25f7f19611383d5b0ccf2d1c8914531636bf9  # master (stable)
         with:
           components: rustfmt
 
@@ -63,13 +74,26 @@ jobs:
     name: Clippy
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@efa25f7f19611383d5b0ccf2d1c8914531636bf9  # master (stable)
         with:
           components: clippy
 
-      - uses: Swatinem/rust-cache@v2
+      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
+
+      # eink-emulator depends on winit/softbuffer which need wayland/x11 headers
+      # at compile time (pkg-config build scripts). Install them here so clippy
+      # can type-check the full workspace without skipping those crates.
+      - name: Install Linux GUI dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            libwayland-dev \
+            libxkbcommon-dev \
+            libx11-dev \
+            libxi-dev \
+            libxrandr-dev
 
       # Lint all workspace crates that compile on the host (no cross-compilation).
       # Excludes the hardware-only firmware binary by using --lib instead of
@@ -105,11 +129,23 @@ jobs:
     name: Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@efa25f7f19611383d5b0ccf2d1c8914531636bf9  # master (stable)
 
-      - uses: Swatinem/rust-cache@v2
+      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
+
+      # eink-emulator (direct test target and dev-dep of eink-system/eink-components)
+      # depends on winit/softbuffer which need wayland/x11 headers to compile.
+      - name: Install Linux GUI dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            libwayland-dev \
+            libxkbcommon-dev \
+            libx11-dev \
+            libxi-dev \
+            libxrandr-dev
 
       # platform: tests use tokio + embassy-time/std (configured in dev-dependencies)
       - name: cargo test -p platform
@@ -155,11 +191,11 @@ jobs:
     name: Emulator Build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@efa25f7f19611383d5b0ccf2d1c8914531636bf9  # master (stable)
 
-      - uses: Swatinem/rust-cache@v2
+      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
 
       # Install system libraries required by winit/softbuffer on Linux
       - name: Install Linux GUI dependencies
@@ -185,6 +221,49 @@ jobs:
             --features emulator,debug,keyboard-input
 
   # ---------------------------------------------------------------------------
+  # Architecture Check
+  #
+  # Enforces dependency boundary rules:
+  #   - eink-system and eink-components MUST NOT depend on eink-emulator
+  #     except via the `examples` feature (optional dep, never activated by
+  #     cargo test or library builds).
+  #
+  # If someone accidentally adds `eink-emulator` to [dev-dependencies] or as
+  # a required normal dep, this job will catch it immediately.
+  # ---------------------------------------------------------------------------
+  arch:
+    name: Architecture
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      - uses: dtolnay/rust-toolchain@efa25f7f19611383d5b0ccf2d1c8914531636bf9  # master (stable)
+
+      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
+
+      - name: eink-system and eink-components must not require eink-emulator
+        run: |
+          # Query the workspace dependency metadata.
+          # Violation: eink-emulator appears as a dev dep OR as a required
+          # (non-optional) normal dep of eink-system or eink-components.
+          # Allowed: optional dep behind the `examples` feature.
+          VIOLATIONS=$(cargo metadata --format-version 1 | jq -r '
+            .packages[] |
+            select(.name == "eink-system" or .name == "eink-components") |
+            .name as $pkg |
+            .dependencies[] |
+            select(.name == "eink-emulator") |
+            select(.kind == "dev" or (.optional == false and .kind == null)) |
+            "\($pkg) has forbidden dependency on eink-emulator (kind: \(.kind // "normal"), optional: \(.optional))"
+          ')
+          if [ -n "$VIOLATIONS" ]; then
+            echo "Architecture violations:"
+            echo "$VIOLATIONS"
+            exit 1
+          fi
+          echo "OK: eink-system and eink-components have no required dependency on eink-emulator"
+
+  # ---------------------------------------------------------------------------
   # Embedded Build Check (STM32H7)
   #
   # Verifies the firmware compiles for the real hardware target.
@@ -196,13 +275,13 @@ jobs:
     name: Embedded Build (STM32H7)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@efa25f7f19611383d5b0ccf2d1c8914531636bf9  # master (stable)
         with:
           targets: thumbv7em-none-eabihf
 
-      - uses: Swatinem/rust-cache@v2
+      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
 
       - name: cargo check -p firmware (hardware, ARM target)
         run: |

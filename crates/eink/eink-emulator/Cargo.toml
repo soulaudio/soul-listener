@@ -7,15 +7,6 @@ edition = "2021"
 # Display specifications
 eink-specs = { path = "../eink-specs" }
 
-[target.'cfg(windows)'.dependencies]
-# Windows API for WndProc subclassing (WM_DPICHANGED fix).
-# windows-sys is already a transitive dep of winit — this pins the same slot.
-windows-sys = { version = "0.52", features = [
-    "Win32_Foundation",
-    "Win32_UI_WindowsAndMessaging",
-    "Win32_UI_HiDpi",       # AdjustWindowRectExForDpi
-] }
-
 # Platform configuration
 platform = { path = "../../platform" }
 
@@ -41,6 +32,15 @@ embassy-time = { workspace = true, features = ["std", "generic-queue-8"] }
 # LUT serialization support
 serde = { workspace = true }
 serde_json = { workspace = true }
+
+[target.'cfg(windows)'.dependencies]
+# Windows API for WndProc subclassing (WM_DPICHANGED fix).
+# windows-sys is already a transitive dep of winit — this pins the same slot.
+windows-sys = { version = "0.52", features = [
+    "Win32_Foundation",
+    "Win32_UI_WindowsAndMessaging",
+    "Win32_UI_HiDpi",       # AdjustWindowRectExForDpi
+] }
 
 [dev-dependencies]
 tokio = { version = "1.49", features = ["full", "test-util"] }
