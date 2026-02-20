@@ -126,6 +126,10 @@ cast_possible_truncation = "warn"
 cast_sign_loss = "warn"
 cast_possible_wrap = "warn"
 
+# Every unsafe block must explain its safety invariant.
+# Use "warn" not "deny" due to known proc-macro false positives in Embassy.
+undocumented_unsafe_blocks = "warn"
+
 [profile.dev]
 opt-level = 1
 debug = true

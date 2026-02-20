@@ -127,6 +127,11 @@ pub struct Sram4Region;
 // It also satisfies DmaAccessible for type-system consistency, but NOTE:
 // DMA1/DMA2 cannot actually access SRAM4 — use BDMA exclusively.
 unsafe impl DmaAccessible for Sram4Region {}
+// SAFETY: SRAM4 at 0x3800_0000 (D3 domain) is the only region accessible
+// by the BDMA controller per STM32H743 reference manual Table 3. Peripherals
+// in D3 (SPI6, SAI4, LPUART1, I2C4, ADC3) must use BDMA; using DMA1/DMA2
+// with SRAM4 causes a bus fault. This impl is correct because Sram4Region
+// represents exactly this physically BDMA-reachable region.
 unsafe impl BdmaAccessible for Sram4Region {}
 
 /// Zero-sized type representing DTCM (CPU-only, NOT DMA-accessible).
