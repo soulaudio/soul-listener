@@ -20,6 +20,37 @@ from "interfaces.ato" import SPIDevice, DisplayCtrl
 from "parts/PESD5V0L5UY/PESD5V0L5UY.ato" import PESD5V0L5UY
 from "parts/FH12_24S/FH12_24S.ato" import FH12_24S
 
+# ── Inline component stubs for booster circuit ────────────────────────────────
+#
+# Si1308EDL — Vishay Siliconix N-channel TrenchFET MOSFET, SOT-23 (= SC-70, 3-lead)
+#   Vds = 30 V, Id = 1.5 A, Vgs(th) ≤ 1.5 V, Rds(on) = 0.132 Ω @ Vgs=10 V
+#   SOT-23 pin assignment (Vishay convention): 1=G, 2=S, 3=D
+#   Digi-Key: SI1308EDL-T1-GE3   TME: SI1308EDL-T1-GE3
+component Si1308EDL:
+    trait is_atomic_part<
+        manufacturer = "Vishay Siliconix",
+        partnumber   = "SI1308EDL-T1-GE3",
+        footprint    = "Package_TO_SOT_SMD:SOT-23",
+        symbol       = "Device:Q_NMOS_GSD">
+    trait has_designator_prefix<prefix = "Q">
+    signal G ~ pin 1   # Gate
+    signal S ~ pin 2   # Source
+    signal D ~ pin 3   # Drain
+
+# MBR0530 — ON Semiconductor Schottky rectifier, SOD-123
+#   Vr = 30 V, If(avg) = 500 mA, Vf ≤ 430 mV @ 500 mA
+#   SOD-123 pin assignment: 1=K (cathode), 2=A (anode)
+#   Digi-Key: MBR0530T1GOSCT-ND   TME: MBR0530T1G
+component MBR0530:
+    trait is_atomic_part<
+        manufacturer = "ON Semiconductor",
+        partnumber   = "MBR0530T1G",
+        footprint    = "Diode_SMD:D_SOD-123",
+        symbol       = "Device:D_Schottky">
+    trait has_designator_prefix<prefix = "D">
+    signal K ~ pin 1   # Cathode
+    signal A ~ pin 2   # Anode
+
 module Display:
     """
     E-ink display interface: FPC connector + decoupling.
@@ -77,13 +108,98 @@ module Display:
     fpc.VCOM ~ c_vcom.p1; c_vcom.p2 ~ power_3v3.lv
 
     # ── Booster circuit (GDR pin 2 / RESE pin 3) ─────────────────────────────
-    # TODO: Required external N-MOSFET boost converter — display will not operate without it.
-    # Components (from GDEQ0426T82-FL01C application schematic, same SSD1677/SSD2677 family):
-    #   Q1: Si1308EDL NMOS (BVdss≥30 V, Vgs(th)≤1.5 V, Rds≤400 mΩ, SOT-23)
-    #   D1/D2: MBR0530 Schottky diodes (Vr≥30 V, Vf≤430 mV, SOD-123)
-    #   R_SENSE = 2.2 Ω / 0402 (current sense, MOSFET source → GND)
-    #   R_BIAS  = 1 MΩ / 0402  (VCI → RESE node pull-up)
-    # GDR (pin 2) → MOSFET gate; RESE (pin 3) → current sense junction.
+    #
+    # Topology source: Good Display application schematic for SSD1677/SSD2677 family
+    # (good-display.com/news/165.html, "IC external boost" circuit diagram).
+    # Reference schematic also visible in Waveshare ESP8266 e-paper driver board schematic.
+    #
+    # The SSD2677 on-chip oscillator generates a PWM signal on GDR to switch Q1 (NMOS).
+    # While Q1 is ON: inductor L1 charges, storing energy; SW node is pulled near GND.
+    # While Q1 is OFF: L1 releases energy; SW node flies high (inductor flyback).
+    # D1 and D2 (Schottky rectifiers) steer the flyback energy to the high-voltage
+    # supply rails (VSH/VGH pre-charge rails) used by the SSD2677 internal charge pumps.
+    # The current sense path is: Q1_SOURCE → R_SENSE(2.2 Ω) → GND; the RESE pin reads
+    # back the voltage across R_SENSE to close the boost control loop.
+    # R_BIAS (1 MΩ) from VCI to RESE provides a quiescent pull-up during idle.
+    #
+    # Schematic topology (referenced from Good Display application note):
+    #
+    #   VCI(3.3V) ─┬─ C_boost_in(4.7 µF) ─ GND    [input bulk cap]
+    #              └─ L1(47 µH) ─── SW ─── D1(A→K)──── VSH1_boost ─── C_boost_d1(4.7 µF) ─ GND
+    #                                │                   [→ VGH pre-charge; IC boosts to +20V]
+    #                                │
+    #                                └─── D2(A→K) ───── VSH2_boost ─── C_boost_d2(1 µF) ─── GND
+    #                                │                   [→ VSH pre-charge; secondary HV rail]
+    #                                │
+    #                                Q1.D (Si1308EDL)
+    #                                Q1.G ← fpc.GDR
+    #                                Q1.S ──┬── fpc.RESE
+    #                                       │
+    #                                    R_bias(1 MΩ) ←── VCI(3.3V)
+    #                                       │
+    #                                    R_sense(2.2 Ω)
+    #                                       │
+    #                                      GND
+    #
+    # Note: The Good Display reference schematic shows a third diode (D3) plus a flying
+    # capacitor (C_fly 4.7 µF) for negative rail (PREVGL) generation. For the GDEM0397T81P
+    # (SSD2677) with a 24-pin FPC, VSL and VGL are generated internally by the IC's own
+    # charge pump from the VSH pre-charge rail; no external negative-rail circuit is
+    # required on the host PCB. The VSL/VGL/VCOM bypass caps already present (c_vsl,
+    # c_vgl, c_vcom) are sufficient for these internally-driven rails.
+
+    # Input bulk decoupling for boost VCI tap (separate from main VCI bulk cap)
+    c_boost_in = new Capacitor
+    c_boost_in.capacitance = 4.7uF +/- 20%
+    c_boost_in.package = "0805"
+    power_3v3.hv ~ c_boost_in.p1; c_boost_in.p2 ~ power_3v3.lv
+
+    # L1: boost inductor — 47 µH, 500 mA DCR, shielded SMD (e.g. Würth 744031470)
+    # Value from Good Display SSD1677/SSD2677 application schematic.
+    # Alternatives: 10 µH (newer Waveshare revisions) also works with higher switching loss.
+    l1 = new Inductor
+    l1.value = 47uH +/- 20%
+    l1.package = "0805"
+    power_3v3.hv ~ l1.p1   # VCI feeds inductor
+
+    # Q1: N-channel boost switch
+    q1 = new Si1308EDL
+    l1.p2    ~ q1.D          # inductor output → MOSFET drain (SW node)
+    fpc.GDR  ~ q1.G          # SSD2677 gate drive output → MOSFET gate
+
+    # D1: primary Schottky rectifier — SW node → VGH pre-charge rail
+    # Anode at SW node; cathode drives VSH1 (pre-charge for +20 V gate rail via IC pump).
+    d1 = new MBR0530
+    l1.p2   ~ d1.A           # anode: SW node (= inductor p2 = Q1 drain)
+    d1.K    ~ fpc.VSH1       # cathode: VSH1 pin — IC uses this as +HV pre-charge input
+    # Output decoupling for D1 cathode (the existing c_vsh1 cap in this module also
+    # connects to fpc.VSH1, providing the required HV bypass — no duplicate cap needed here)
+
+    # D2: secondary Schottky rectifier — SW node → VSH2 pre-charge rail
+    # Provides the second positive pre-charge supply for the IC's source driver pump.
+    d2 = new MBR0530
+    l1.p2   ~ d2.A           # anode: SW node (shared with D1 anode)
+    d2.K    ~ fpc.VSH2       # cathode: VSH2 pin — pre-charge for +15 V source rail
+    # Output decoupling provided by existing c_vsh1/c_vsh2 caps connected to fpc.VSH1/VSH2.
+    # SW node (l1.p2 / Q1.D) must NOT have bulk capacitance — it is the switching node.
+
+    # R_BIAS: VCI → RESE pull-up (keeps RESE at known level when boost is idle)
+    r_bias = new Resistor
+    r_bias.resistance = 1Mohm +/- 5%
+    r_bias.package = "0402"
+    power_3v3.hv ~ r_bias.p1
+    r_bias.p2    ~ fpc.RESE  # RESE node = Q1 source = top of R_sense
+
+    # Q1 source and RESE node tie-together
+    q1.S ~ fpc.RESE
+
+    # R_SENSE: current sense resistor — MOSFET source → GND
+    # Voltage across R_sense = I_inductor × 2.2 Ω; read by SSD2677 via RESE pin.
+    r_sense = new Resistor
+    r_sense.resistance = 2.2ohm +/- 5%
+    r_sense.package = "0402"
+    fpc.RESE     ~ r_sense.p1
+    r_sense.p2   ~ power_3v3.lv   # GND
 
     # ── ESD protection ────────────────────────────────────────────────────────
     # 2× PESD5V0L5UY (SOT363, 5-ch, 5.0 V VRWM, ~16 pF/ch) placed close to FPC connector.

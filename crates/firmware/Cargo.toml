@@ -59,6 +59,9 @@ hot-lib-reloader = { workspace = true, optional = true }
 
 [dev-dependencies]
 tokio = { workspace = true, features = ["full"] }
+# embedded-hal-mock 0.11 supports embedded-hal 1.x via the `eh1` module.
+# The `embedded-hal-async` feature enables async mocks (needed for SpiDevice tests).
+embedded-hal-mock = { version = "0.11", default-features = false, features = ["eh1", "embedded-hal-async"] }
 
 [features]
 default = []

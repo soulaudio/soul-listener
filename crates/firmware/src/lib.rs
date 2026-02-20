@@ -82,12 +82,16 @@ pub use hal::{Color, DapDisplay, DisplayConfig};
 pub use audio::MockAmp;
 pub use audio::MockDac;
 
+// SSD1677 driver is always available (generic over HAL traits, no hardware gate).
+pub use display::{DisplayError, Ssd1677};
+
 #[cfg(feature = "hardware")]
 pub use audio::Es9038q2mDriver;
 
 #[cfg(feature = "hardware")]
 pub use audio::Tpa6120a2;
 
+// Legacy type alias (used by main.rs on the embedded target)
 #[cfg(feature = "hardware")]
 pub use display::Ssd1677Display;
 
