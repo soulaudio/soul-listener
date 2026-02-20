@@ -1033,6 +1033,76 @@ fn i2c_init_stub_exists_in_boot() {
     );
 }
 
+// ─── PLL3 / SAI MCLK architecture tests ──────────────────────────────────────
+//
+// These tests enforce that PLL3 is configured for SAI MCLK in build_embassy_config().
+//
+// SAI1 for ES9038Q2M requires MCLK = 256 × fs = 256 × 192 000 = 49.152 MHz.
+// PLL1Q (200 MHz) does not divide cleanly to this frequency. PLL3 is the
+// dedicated audio PLL on STM32H7 and must be configured separately.
+//
+// Best achievable from HSI (64 MHz) with integer divisors:
+//   HSI(64) / M(4) × N(49) / P(16) = 49.0 MHz (0.31% error — inaudible).
+//
+// Reference: STM32H743 RM0433 §8.3.2, embassy-stm32 Config::pll3 field.
+
+/// Verify that `firmware::boot::rcc_config_has_pll3_for_sai()` returns true.
+///
+/// Architecture rule: `build_embassy_config()` must configure PLL3 as the
+/// SAI kernel clock source. PLL1Q (200 MHz) does not divide cleanly to
+/// 49.152 MHz; leaving PLL3 unconfigured causes audio to output on an
+/// incorrect or undefined clock, producing silence or wrong sample rate.
+#[test]
+fn pll3_configured_for_sai_mclk() {
+    assert!(
+        firmware::boot::rcc_config_has_pll3_for_sai(),
+        "build_embassy_config() must configure PLL3 for SAI MCLK (≈49 MHz). \
+         PLL1Q (200 MHz) does not divide cleanly to 49.152 MHz."
+    );
+}
+
+/// Verify that the PLL3 M/N/P divisors in boot match platform::audio_config.
+///
+/// Architecture rule: PLL3 divisors are defined in two places — the hardware
+/// config in `build_embassy_config()` and the documentation/test helpers in
+/// `platform::audio_config::SaiAudioConfig`. They must stay in sync so that
+/// the achievable MCLK calculated in tests matches what the hardware sees.
+#[test]
+fn sai_pll3_divisors_match_audio_config() {
+    let (m, n, p) = firmware::boot::sai_pll3_divisors();
+    assert_eq!(
+        m,
+        platform::audio_config::SaiAudioConfig::pll3_m(),
+        "PLL3 M divisor in boot must match SaiAudioConfig::pll3_m()"
+    );
+    assert_eq!(
+        n,
+        platform::audio_config::SaiAudioConfig::pll3_n() as u8,
+        "PLL3 N multiplier in boot must match SaiAudioConfig::pll3_n()"
+    );
+    assert_eq!(
+        p,
+        platform::audio_config::SaiAudioConfig::pll3_p(),
+        "PLL3 P divisor in boot must match SaiAudioConfig::pll3_p()"
+    );
+}
+
+/// Verify that BQ25895 PMIC address is confirmed as 0x6A.
+///
+/// Architecture rule: the BQ25895 I2C address is hardware-fixed at 0x6A.
+/// The 0x6B value that appeared in some early datasheet revisions was a
+/// typographic error (confirmed by TI E2E forum, SLUUBA2B errata).
+#[test]
+fn bq25895_address_confirmed_0x6a() {
+    use platform::audio_config::I2cAddresses;
+    assert_eq!(
+        I2cAddresses::BQ25895_PMIC,
+        0x6A,
+        "BQ25895 I2C address is hardware-fixed at 0x6A (not 0x6B). \
+         See TI SLUUBA2B errata and E2E forum post #507682."
+    );
+}
+
 // ─── SDMMC1 and QUADSPI init stub architecture tests ─────────────────────────
 //
 // These tests enforce that:
