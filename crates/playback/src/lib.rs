@@ -133,6 +133,8 @@ mod tests {
         #[test]
         fn test_ring_buffer_write_then_read() {
             let mut rb: RingBuffer<64> = RingBuffer::new();
+            // SAFETY: i is the array index 0..15 for a 16-element array; fits in i32 on all targets.
+            #[allow(clippy::cast_possible_truncation, clippy::cast_possible_wrap)]
             let data: [i32; 16] = core::array::from_fn(|i| i as i32);
             rb.write_slice(&data).expect("write should succeed");
             let mut out = [0i32; 16];

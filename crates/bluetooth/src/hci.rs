@@ -139,6 +139,8 @@ impl HciPacket {
         out.push(0x01).ok(); // H4 packet type: command
         out.push((opcode & 0xFF) as u8).ok(); // opcode low byte
         out.push((opcode >> 8) as u8).ok(); // opcode high byte
+        // SAFETY: params is heapless::Vec<u8, 64>; capacity ≤ 64 which fits in u8.
+        #[allow(clippy::cast_possible_truncation)]
         out.push(params.len() as u8).ok(); // parameter total length
 
         for b in &params {
