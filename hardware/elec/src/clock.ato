@@ -39,13 +39,13 @@ module HseClock:
     """
 
     # ── Ports ─────────────────────────────────────────────────────────────────
-    clk = new ClockSource  # → mcu.hse_clk (wired in main.ato)
-    gnd = new Electrical   # Ground reference (connect to board GND in main.ato)
+    power_3v3 = new ElectricPower  # 3.3 V supply (lv = GND for load caps; connect in main.ato)
+    clk       = new ClockSource    # → mcu.hse_clk (wired in main.ato)
 
     # ── Crystal ───────────────────────────────────────────────────────────────
     xtal = new Crystal
     xtal.frequency = 25MHz +/- 30ppm
-    xtal.package   = "3225"
+    # xtal.package not set — crystal packages (3225) are not in atopile's passive package enum
 
     xtal.p1 ~ clk.osc_in   # OSC_IN  side of crystal (→ MCU PH0)
     xtal.p2 ~ clk.osc_out  # OSC_OUT side of crystal (← MCU PH1 amplifier feedback)
@@ -56,12 +56,12 @@ module HseClock:
     c_osc_in = new Capacitor
     c_osc_in.capacitance = 18pF +/- 5%
     c_osc_in.package     = "0402"
-    clk.osc_in ~ c_osc_in.p1; c_osc_in.p2 ~ gnd
+    clk.osc_in ~ c_osc_in.p1; c_osc_in.p2 ~ power_3v3.lv
 
     c_osc_out = new Capacitor
     c_osc_out.capacitance = 18pF +/- 5%
     c_osc_out.package     = "0402"
-    clk.osc_out ~ c_osc_out.p1; c_osc_out.p2 ~ gnd
+    clk.osc_out ~ c_osc_out.p1; c_osc_out.p2 ~ power_3v3.lv
 
     # ── Validation ────────────────────────────────────────────────────────────
     # STM32H743 HSE input range: 4–50 MHz (datasheet §6.3.8)

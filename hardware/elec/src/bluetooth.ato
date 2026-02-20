@@ -74,7 +74,7 @@ module Bluetooth:
     # Required for BLE RF calibration and precise clocking
     hse = new Crystal
     hse.frequency = 32MHz +/- 10ppm
-    hse.package   = "2016"  # 2.0×1.6 mm SMD — e.g., Abracon ABM8G-32.000MHz
+    # hse.package not set — crystal packages (2016) are not in atopile's passive package enum
     c_hse_1 = new Capacitor; c_hse_1.capacitance = 8pF +/- 5%; c_hse_1.package = "0402"
     c_hse_2 = new Capacitor; c_hse_2.capacitance = 8pF +/- 5%; c_hse_2.package = "0402"
     # HSE connections (dedicated OSC_IN/OSC_OUT pads — NOT PH0/PH1 GPIO)
@@ -85,7 +85,7 @@ module Bluetooth:
     # ── 32.768 kHz LSE Crystal ────────────────────────────────────────────────
     lse = new Crystal
     lse.frequency = 32768Hz +/- 20ppm
-    lse.package   = "3215"
+    # lse.package not set — crystal packages (3215) are not in atopile's passive package enum
     c_lse_1 = new Capacitor; c_lse_1.capacitance = 6pF +/- 5%; c_lse_1.package = "0402"
     c_lse_2 = new Capacitor; c_lse_2.capacitance = 6pF +/- 5%; c_lse_2.package = "0402"
     lse.p1 ~ wb55.PC14_OSC32_IN;  lse.p2 ~ wb55.PC15_OSC32_OUT
