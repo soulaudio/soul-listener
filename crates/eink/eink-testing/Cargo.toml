@@ -16,3 +16,6 @@ default = []
 debug = ["eink-emulator/debug"]
 # Enable keyboard/scroll input simulation via InputEvent / Button.
 keyboard-input = ["eink-emulator/keyboard-input"]
+
+[lints]
+workspace = true

@@ -68,3 +68,6 @@ path = "examples/rotation_demo.rs"
 name = "debug_demo"
 path = "examples/debug_demo.rs"
 required-features = ["debug"]
+
+[lints]
+workspace = true

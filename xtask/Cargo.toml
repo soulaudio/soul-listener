@@ -17,3 +17,6 @@ notify-rust = { version = "4.12", optional = true }
 [features]
 default = []
 notifications = ["notify-rust"]
+
+[lints]
+workspace = true
