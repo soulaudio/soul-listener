@@ -742,20 +742,63 @@ jobs:
             --no-default-features \
             --features hardware
 
-      - name: Check binary size (arm-none-eabi-size, flash section)
+      - name: Check binary size (per-section limits)
         run: |
           ELF=target/thumbv7em-none-eabihf/release/firmware
-          arm-none-eabi-size $ELF
-          # Extract text section size (flash usage)
-          TEXT=$(arm-none-eabi-size $ELF | tail -1 | awk '{print $1}')
-          echo "Flash usage (text): ${TEXT} bytes"
-          # Fail if over 1.8 MB (leaves 200 KB headroom in 2 MB flash)
-          MAX=1887436  # 1.8 * 1024 * 1024
-          if [ "$TEXT" -gt "$MAX" ]; then
-            echo "ERROR: Flash usage ${TEXT} exceeds limit ${MAX}"
+
+          # Print the standard size table for CI log readability
+          echo "=== arm-none-eabi-size ==="
+          arm-none-eabi-size "$ELF"
+
+          # Extract individual section sizes
+          read TEXT DATA BSS <<< $(arm-none-eabi-size "$ELF" | tail -1 | awk '{print $1, $2, $3}')
+          FLASH_TOTAL=$((TEXT + DATA))
+
+          echo ""
+          echo "=== Section limits ==="
+          echo "  .text  (code + read-only data, stored in flash): ${TEXT} bytes"
+          echo "  .data  (initialised RAM variables, stored in flash, copied at boot): ${DATA} bytes"
+          echo "  .bss   (zero-initialised RAM, not stored in flash): ${BSS} bytes"
+          echo "  Flash total (.text + .data): ${FLASH_TOTAL} bytes"
+
+          # ── .text limit ──────────────────────────────────────────────────────
+          # STM32H743ZI has 2 MB dual-bank flash. Leave 200 KB headroom for OTA.
+          MAX_TEXT=1887436   # 1.8 * 1024 * 1024
+          if [ "$TEXT" -gt "$MAX_TEXT" ]; then
+            echo "ERROR: .text ${TEXT} bytes exceeds 1.8 MB limit (${MAX_TEXT} bytes)"
+            echo "  Run: cargo size --release --target thumbv7em-none-eabihf -p firmware --features hardware -- -A"
             exit 1
           fi
-          echo "OK: ${TEXT} bytes of ${MAX} bytes limit used"
+
+          # ── .data limit ──────────────────────────────────────────────────────
+          # Initialised variables (non-zero statics) are stored in flash and
+          # copied to RAM at boot. Large .data typically means font/LUT tables
+          # that should instead live in QSPI NOR flash (read via DMA, not copied).
+          MAX_DATA=65536   # 64 KB — large .data = wrong; use QSPI for tables
+          if [ "$DATA" -gt "$MAX_DATA" ]; then
+            echo "ERROR: .data ${DATA} bytes exceeds 64 KB limit (${MAX_DATA} bytes)"
+            echo "  Large .data usually means static lookup tables that should live in QSPI NOR."
+            echo "  Mark them #[link_section = \".qspi\"] or load them lazily from NOR flash."
+            exit 1
+          fi
+
+          # ── .bss limit ───────────────────────────────────────────────────────
+          # Zero-initialised statics (heapless buffers, DMA regions).
+          # Internal SRAM is 992 KB total; external SDRAM is 32-64 MB.
+          # Buffers over 256 KB that aren't DMA-critical should use external SDRAM.
+          MAX_BSS=786432   # 768 KB — generous; actual target SRAM is ~992 KB total
+          if [ "$BSS" -gt "$MAX_BSS" ]; then
+            echo "ERROR: .bss ${BSS} bytes exceeds 768 KB limit (${MAX_BSS} bytes)"
+            echo "  Large .bss usually means big buffers that should use external SDRAM at 0xC0000000."
+            exit 1
+          fi
+
+          echo ""
+          echo "=== OK ==="
+          echo "  .text  ${TEXT} / ${MAX_TEXT} bytes ($(( TEXT * 100 / MAX_TEXT ))% of limit)"
+          echo "  .data  ${DATA} / ${MAX_DATA} bytes ($(( DATA * 100 / MAX_DATA ))% of limit)"
+          echo "  .bss   ${BSS} / ${MAX_BSS} bytes ($(( BSS * 100 / MAX_BSS ))% of limit)"
+          echo "  Flash  ${FLASH_TOTAL} bytes total"
 
   # ---------------------------------------------------------------------------
   # MSRV — Minimum Supported Rust Version
