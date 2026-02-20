@@ -15,7 +15,7 @@ builds:
   # Full build: BOM + manufacturing data + PCB layout update.
   # Run locally with KiCad installed: `ato build`
   default:
-    entry: main.ato:SoulAudioDAP
+    entry: elec/src/main.ato:SoulAudioDAP
     targets:
       - __default__
     exclude_checks:
@@ -27,7 +27,7 @@ builds:
   # Schematic + ERC validation only, no KiCad PCB output.
   # Used in CI (`ato build --target check-only`).
   check-only:
-    entry: main.ato:SoulAudioDAP
+    entry: elec/src/main.ato:SoulAudioDAP
     targets:
       - bom
     exclude_checks:
@@ -37,7 +37,7 @@ builds:
   # Generates BOM without touching the PCB file.
   # Useful for sourcing checks in CI.
   bom-only:
-    entry: main.ato:SoulAudioDAP
+    entry: elec/src/main.ato:SoulAudioDAP
     targets:
       - bom
     exclude_checks:
@@ -56,56 +56,56 @@ builds:
   #
   # Run a single module: ato build --build check-power
   check-power:
-    entry: power.ato:Power
+    entry: elec/src/power.ato:Power
     targets:
       - bom
     exclude_checks:
       - PCB.requires_drc_check
 
   check-mcu:
-    entry: mcu.ato:MCU
+    entry: elec/src/mcu.ato:MCU
     targets:
       - bom
     exclude_checks:
       - PCB.requires_drc_check
 
   check-audio:
-    entry: audio.ato:Audio
+    entry: elec/src/audio.ato:Audio
     targets:
       - bom
     exclude_checks:
       - PCB.requires_drc_check
 
   check-display:
-    entry: display.ato:Display
+    entry: elec/src/display.ato:Display
     targets:
       - bom
     exclude_checks:
       - PCB.requires_drc_check
 
   check-bluetooth:
-    entry: bluetooth.ato:Bluetooth
+    entry: elec/src/bluetooth.ato:Bluetooth
     targets:
       - bom
     exclude_checks:
       - PCB.requires_drc_check
 
   check-memory:
-    entry: memory.ato:Memory
+    entry: elec/src/memory.ato:Memory
     targets:
       - bom
     exclude_checks:
       - PCB.requires_drc_check
 
   check-input:
-    entry: input.ato:Input
+    entry: elec/src/input.ato:Input
     targets:
       - bom
     exclude_checks:
       - PCB.requires_drc_check
 
   check-clock:
-    entry: clock.ato:HseClock
+    entry: elec/src/clock.ato:HseClock
     targets:
       - bom
     exclude_checks:
