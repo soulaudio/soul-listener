@@ -3,6 +3,7 @@
 //! This module contains UI screens and components for the SoulAudio DAP.
 //! Currently a placeholder for future UI implementation.
 
+#![allow(clippy::doc_markdown)] // UI docs reference types that are clearer without enforced backtick formatting
 // UI rendering code casts display dimensions (u32 from embedded-graphics) to i32
 // for coordinate arithmetic.  Display sizes are at most 800×480, which fit safely
 // in i32.  Arithmetic operations on small display coordinates cannot overflow i32.
@@ -22,6 +23,10 @@ pub struct SplashScreen;
 
 impl SplashScreen {
     /// Render the splash screen to a display
+    ///
+    /// # Errors
+    ///
+    /// Returns `D::Error` if any drawing operation fails.
     pub fn render<D, C>(display: &mut D) -> Result<(), D::Error>
     where
         D: DrawTarget<Color = C>,
@@ -60,6 +65,11 @@ pub struct TestPattern;
 
 impl TestPattern {
     /// Render a test pattern
+    ///
+    /// # Errors
+    ///
+    /// Returns `D::Error` if any drawing operation fails.
+    #[allow(clippy::similar_names)] // bl_y / br_y: corner coordinates, names are intentionally symmetric
     pub fn render<D, C>(display: &mut D) -> Result<(), D::Error>
     where
         D: DrawTarget<Color = C>,

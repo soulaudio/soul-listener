@@ -32,6 +32,7 @@
 //! `INPUT_I2S_32BIT = 0b0001_0000` has bits\[3:2\] = 0b00, so this is satisfied.
 //! Bit 4 (0x10) selects 32-bit word length within the I²S format.
 
+#![allow(clippy::doc_markdown)] // ES9038Q2M register docs use chip-specific names (REG_VOLUME_LEFT etc.) that are documentation terms, not code
 // ---------------------------------------------------------------------------
 // Register addresses
 // ---------------------------------------------------------------------------

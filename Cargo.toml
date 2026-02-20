@@ -175,6 +175,12 @@ panic       = "deny"
 # Use StaticCell<[T; N]> or heapless::Vec<T, N> for large buffers.
 large_stack_arrays = "warn"
 
+# Warn when {:?} Debug format is used in non-test code.
+# Debug output is verbose, unstable, and larger than purpose-written display strings.
+# Use a match arm returning &'static str instead.
+# Desktop crates may suppress with #[allow(clippy::use_debug)].
+use_debug = "warn"
+
 [profile.dev]
 opt-level = 1
 debug = true

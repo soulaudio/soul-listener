@@ -58,6 +58,7 @@
 //! - ES9038Q2M datasheet, S6.3.1 (MCLK / fs ratio requirements)
 //! - firmware::boot::build_embassy_config() -- actual hardware wiring
 
+#![allow(clippy::doc_markdown)] // Clock math docs use hardware notation (e.g. fCK, VCO) that reads better without enforced backtick formatting
 /// HSI oscillator frequency (Hz) -- internal 64 MHz RC oscillator on STM32H743.
 ///
 /// PLL3 source is HSI, not HSE. HSI is available immediately on power-on

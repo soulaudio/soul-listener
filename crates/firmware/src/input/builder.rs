@@ -128,6 +128,7 @@ enum InputKind {
 ///   only compiled with `keyboard-input` feature.
 /// - `build_hardware()`: hardware-specific wiring lives in
 ///   `input::hardware::spawn_input_task`.
+#[allow(clippy::module_name_repetitions)] // Builder type named after its module; builder pattern convention
 pub struct InputBuilder {
     // `kind` is read only in `build_emulated` (keyboard-input feature).
     // Without that feature it is set but not read — suppress the lint.
@@ -151,6 +152,7 @@ impl InputBuilder {
     /// Start building a rotary encoder input.
     ///
     /// Default debounce: 20 ms.
+    #[must_use]
     pub fn rotary() -> Self {
         Self {
             kind: InputKind::Rotary,
@@ -167,6 +169,7 @@ impl InputBuilder {
     /// Start building a button input for `btn`.
     ///
     /// Default debounce: 50 ms.
+    #[must_use]
     pub fn button(btn: Button) -> Self {
         Self {
             kind: InputKind::Button(btn),
@@ -194,6 +197,7 @@ impl InputBuilder {
     }
 
     /// Get the configured debounce time in milliseconds.
+    #[must_use]
     pub fn debounce(&self) -> u32 {
         self.debounce_ms
     }
@@ -243,6 +247,45 @@ impl InputBuilder {
     // Build — emulator path
     // -----------------------------------------------------------------------
 
+    #[cfg(feature = "keyboard-input")]
+    fn axis_name(axis: EmulatedAxis) -> &'static str {
+        match axis {
+            EmulatedAxis::ArrowUpDown => "ArrowUpDown",
+            EmulatedAxis::ScrollWheel => "ScrollWheel",
+        }
+    }
+
+    #[cfg(feature = "keyboard-input")]
+    fn key_name(key: EmulatedKey) -> &'static str {
+        match key {
+            EmulatedKey::Space => "Space",
+            EmulatedKey::KeyK => "KeyK",
+            EmulatedKey::ArrowRight => "ArrowRight",
+            EmulatedKey::KeyL => "KeyL",
+            EmulatedKey::ArrowLeft => "ArrowLeft",
+            EmulatedKey::KeyJ => "KeyJ",
+            EmulatedKey::ArrowUp => "ArrowUp",
+            EmulatedKey::ArrowDown => "ArrowDown",
+            EmulatedKey::KeyM => "KeyM",
+            EmulatedKey::Escape => "Escape",
+            EmulatedKey::Enter => "Enter",
+        }
+    }
+
+    #[cfg(feature = "keyboard-input")]
+    fn button_name(btn: Button) -> &'static str {
+        match btn {
+            Button::Play => "Play",
+            Button::Next => "Next",
+            Button::Previous => "Previous",
+            Button::VolumeUp => "VolumeUp",
+            Button::VolumeDown => "VolumeDown",
+            Button::Menu => "Menu",
+            Button::Back => "Back",
+            Button::Select => "Select",
+        }
+    }
+
     /// Build the emulated input driver.
     ///
     /// Calls [`Emulator::input_receiver()`] to attach this builder's key/axis
@@ -272,8 +315,8 @@ impl InputBuilder {
             InputKind::Rotary => {
                 let axis_desc = self
                     .emulated_axis
-                    .map(|a| format!("{:?}", a))
-                    .unwrap_or_else(|| "ScrollWheel (default)".to_string());
+                    .map(Self::axis_name)
+                    .unwrap_or("ScrollWheel (default)");
                 eprintln!(
                     "[InputBuilder] Rotary encoder → emulated axis: {}",
                     axis_desc
@@ -282,11 +325,12 @@ impl InputBuilder {
             InputKind::Button(btn) => {
                 let key_desc = self
                     .emulated_key
-                    .map(|k| format!("{:?}", k))
-                    .unwrap_or_else(|| "global key map (default)".to_string());
+                    .map(Self::key_name)
+                    .unwrap_or("global key map (default)");
                 eprintln!(
-                    "[InputBuilder] Button::{:?} → emulated key: {}",
-                    btn, key_desc
+                    "[InputBuilder] Button::{} → emulated key: {}",
+                    Self::button_name(btn),
+                    key_desc
                 );
             }
         }

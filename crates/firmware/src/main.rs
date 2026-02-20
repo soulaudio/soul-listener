@@ -221,7 +221,18 @@ async fn main(spawner: Spawner) {
     let _dac_i2c3_addr = platform::es9038q2m::ES9038Q2M_I2C_ADDR_LOW; // 0x48
     let _pmic_i2c2_addr = platform::bq25895::BQ25895_I2C_ADDR;        // 0x6A
 
-    // Configure SPI1 for display
+    // ── Display SPI1 + DMA ───────────────────────────────────────────────────────
+    // SPI1 is on the APB2 bus (D2 domain) but its DMA channels come from DMA1/DMA2
+    // which are in the D1 domain and CAN access AXI SRAM (0x2400_0000).
+    //
+    // IMPORTANT: Do NOT use BDMA for SPI1. BDMA is in D3 domain and can only access
+    // SRAM4 (0x3800_0000). Using BDMA with an AXI SRAM framebuffer causes silent
+    // data corruption or a bus fault.
+    //
+    // DMA channel: DMA1_CH0 (SPI1_TX, request 38) — D1 domain, AXI SRAM accessible
+    // DMA channel: DMA1_CH1 (SPI1_RX, request 39) — D1 domain, AXI SRAM accessible
+    // Reference: STM32H7 RM0433 Rev 9 Table 110 (DMA1 request mapping)
+    //
     // PA5 (SPI1_SCK), PA7 (SPI1_MOSI)
     let mut spi_config = SpiConfig::default();
     spi_config.frequency = Hertz(4_000_000); // 4 MHz
@@ -430,4 +441,30 @@ async fn main(spawner: Spawner) {
             // Do not call watchdog.pet() -- let IWDG expire and reset
         }
     }
+}
+
+/// Audio power-down sequence.
+///
+/// Called before system sleep, battery disconnect, or unrecoverable error.
+/// Reverses the power-on sequence to prevent DAC output click and avoid
+/// continuous current draw from the TPA6120A2 amplifier.
+///
+/// Full hardware sequence (when I2C3 + GPIO are initialized):
+/// ```ignore
+/// let seq = seq.mute_dac_for_shutdown_with_i2c(&mut i2c3, dac_addr).unwrap();
+/// let _seq = seq.disable_amp_with_gpio(&mut amp_shutdown_pin).unwrap();
+/// ```
+///
+/// Until I2C3 is initialized, calls stub variants (typestate only).
+#[allow(dead_code)] // Used in power-off path; not yet triggered in v0 firmware
+fn audio_power_down(
+    seq: platform::audio_sequencer::AudioPowerSequencer<platform::audio_sequencer::FullyOn>,
+) {
+    // Step 1: mute_dac_for_shutdown — prevent DAC output click on amp disable.
+    // Production: seq.mute_dac_for_shutdown_with_i2c(&mut i2c3, _dac_i2c3_addr).unwrap()
+    let seq = seq.mute_dac_for_shutdown();
+    // Step 2: disable_amp — drive TPA6120A2 SHUTDOWN low, stops current draw.
+    // Production: seq.disable_amp_with_gpio(&mut amp_shutdown_pin).unwrap()
+    let _seq = seq.disable_amp();
+    defmt::info!("Audio power-down complete (stub — mute_dac_for_shutdown + disable_amp)");
 }

@@ -22,6 +22,7 @@
 //! (and `HARDFAULT_DEFINED`) compiles unconditionally so host tests can verify
 //! the module exists without needing an ARM toolchain.
 
+#![allow(clippy::doc_markdown)] // Exception handler docs use hardware terminology (HardFault, SVC) as plain text
 /// Marker constant — confirmed by arch tests to verify this module exists.
 ///
 /// When `HARDFAULT_DEFINED` is `true`, the `exception_handlers` module compiled

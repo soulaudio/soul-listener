@@ -27,6 +27,7 @@
 //!
 //! Reference: STM32H7 RM0433 Rev 9, section 52 (SAI), section 16 (DMA).
 
+#![allow(clippy::doc_markdown)] // SAI task docs use hardware signal names (e.g. SAI1_SD_A) that are clearer as plain text
 use platform::dma_safety::{AxiSramRegion, DmaBuffer, AUDIO_DMA_BUFFER_BYTES};
 #[allow(unused_imports)]
 use crate::audio::clock_math::{
