@@ -1612,3 +1612,214 @@ fn audio_sai_ping_pong_dma_pattern_documented() {
         "firmware::boot::SAI_INIT_NOTE must document the ping-pong/half-complete DMA pattern.          Add: ping-pong (double-buffer), HT interrupt, TC interrupt.          See: embassy-rs issue #2752, ST AN5051 s5.3.          Current note: {note}"
     );
 }
+
+
+// =============================================================================
+// CI Hardening Tests (TDD Round 8 Slice 5)
+// =============================================================================
+
+// -- ABI version enforcement (GAP-M5) -----------------------------------------
+
+/// firmware-ui ABI version must be non-zero and the binary must verify it at
+/// startup. CI must enforce that ABI_VERSION is bumped whenever the render_ui
+/// C-ABI signature changes.
+///
+/// The `ui_abi_version()` export is the runtime check; the build.rs hash is the
+/// static check that makes a forgotten bump visible in build output.
+#[test]
+fn firmware_ui_abi_version_is_nonzero() {
+    let lib_src = include_str!("../../firmware-ui/src/lib.rs");
+    assert!(
+        lib_src.contains("ABI_VERSION"),
+        "firmware-ui/src/lib.rs must define ABI_VERSION constant for hot-reload ABI contract"
+    );
+    assert!(
+        !lib_src.contains("ABI_VERSION: u32 = 0"),
+        "firmware-ui ABI_VERSION must not be 0 - zero means unversioned"
+    );
+}
+
+/// The render_ui signature must be tracked so changes are visible when
+/// bumping ABI_VERSION is forgotten. The build.rs hash enforces this: if
+/// the signature string changes, the hash changes and the mismatch surfaces
+/// in build output before any code runs.
+#[test]
+fn firmware_ui_has_abi_enforcement_mechanism() {
+    let build_rs = include_str!("../../firmware-ui/build.rs");
+    assert!(
+        build_rs.contains("render_ui") || build_rs.contains("RENDER_UI"),
+        "firmware-ui/build.rs must track the render_ui signature hash          to detect forgotten ABI_VERSION bumps"
+    );
+    assert!(
+        build_rs.contains("SIGNATURE_HASH") || build_rs.contains("signature"),
+        "firmware-ui/build.rs must emit a RENDER_UI_SIGNATURE_HASH env var for ABI tracking"
+    );
+}
+
+// -- CI doc tests (GAP-L4) ----------------------------------------------------
+
+/// CI must run `cargo test --doc` to prevent doc example bitrot.
+/// Doc examples in `///` comments are part of the API contract and must
+/// compile and pass on every PR.
+#[test]
+fn ci_runs_doc_tests() {
+    let ci_yml = include_str!("../../../.github/workflows/ci.yml");
+    assert!(
+        ci_yml.contains("--doc") || ci_yml.contains("test --doc") || ci_yml.contains("doctest"),
+        "CI workflow must run `cargo test --doc` to prevent documentation example bitrot.          Add a doc-tests job: cargo test --doc -p platform"
+    );
+}
+
+/// CI must have a cargo audit or cargo-auditable step for supply chain security.
+/// Without it, CVEs disclosed after deployment require manual cross-referencing.
+#[test]
+fn ci_has_supply_chain_audit() {
+    let ci_yml = include_str!("../../../.github/workflows/ci.yml");
+    assert!(
+        ci_yml.contains("cargo-audit")
+            || ci_yml.contains("cargo audit")
+            || ci_yml.contains("auditable")
+            || ci_yml.contains("rustsec"),
+        "CI must include supply chain security scanning (cargo audit or cargo-auditable).          This catches CVEs in dependencies before and after deployment."
+    );
+}
+
+// -- MPU SRAM1/2 coverage (GAP-H1) -------------------------------------------
+
+/// SRAM1+SRAM2 (D2 domain, 0x30000000, 256 KB) must be MPU-non-cacheable.
+/// Embassy task stacks live here. DMA1/2 can reach D2 SRAM (AHB bus).
+/// If cacheable, CPU and DMA see different data - silent corruption.
+/// Reference: ST AN4839, community.st.com/t5/stm32-mcus/how-to-use-the-mpu
+#[test]
+fn mpu_config_covers_sram12_as_non_cacheable() {
+    let mpu_src = include_str!("../../../crates/platform/src/mpu.rs");
+    assert!(
+        mpu_src.contains("0x3000_0000") || mpu_src.contains("0x30000000"),
+        "MPU config must cover SRAM1/2 at 0x30000000. D2 domain SRAM is DMA-accessible; MPU non-cacheable config required. See ST AN4839."
+    );
+}
+
+#[test]
+fn mpu_register_pairs_includes_sram12_region() {
+    let mpu_src = include_str!("../../../crates/platform/src/mpu.rs");
+    assert!(
+        mpu_src.contains("0x3000_0000") || mpu_src.contains("0x30000000"),
+        "soul_audio_register_pairs must include SRAM1/2 non-cacheable region at 0x30000000"
+    );
+}
+
+/// soul_audio_register_pairs must return 3 pairs: AXI SRAM, SRAM4, SRAM1/2.
+#[test]
+fn mpu_register_pairs_count_is_three() {
+    use platform::mpu::MpuApplier;
+    let pairs = MpuApplier::soul_audio_register_pairs();
+    assert_eq!(
+        pairs.len(),
+        3,
+        "MpuApplier must return exactly 3 (RBAR, RASR) pairs: AXI SRAM + SRAM4 + SRAM1/2"
+    );
+}
+
+/// firmware::boot::mpu_register_pairs must also return 3 pairs.
+#[test]
+fn boot_mpu_register_pairs_count_is_three() {
+    let pairs = firmware::boot::mpu_register_pairs();
+    assert_eq!(
+        pairs.len(),
+        3,
+        "firmware::boot::mpu_register_pairs must return 3 non-cacheable MPU regions"
+    );
+}
+
+/// The third RBAR pair must target SRAM1/2 at 0x30000000.
+#[test]
+fn mpu_rbar_covers_sram12() {
+    let pairs = firmware::boot::mpu_register_pairs();
+    let rbar_2 = pairs[2].0;
+    let base = rbar_2 & 0xFFFF_FFE0;
+    assert_eq!(
+        base, 0x3000_0000,
+        "RBAR[2] must target SRAM1/2 at 0x30000000, got 0x{base:08X}"
+    );
+}
+
+/// The SRAM1/2 RASR must encode NonCacheable attributes (TEX=001, C=0, B=0).
+#[test]
+fn mpu_sram12_rasr_is_non_cacheable() {
+    use platform::mpu::MpuApplier;
+    let pairs = MpuApplier::soul_audio_register_pairs();
+    let (_rbar, rasr) = pairs[2];
+    // TEX[0] = bit 19 must be set for TEX=001 (Normal Non-cacheable)
+    assert_ne!(rasr & (1 << 19), 0, "SRAM1/2 RASR: TEX bit 19 must be SET (TEX=001)");
+    // C bit 17 must be clear (not cacheable)
+    assert_eq!(rasr & (1 << 17), 0, "SRAM1/2 RASR: C bit 17 must be CLEAR (non-cacheable)");
+    // B bit 16 must be clear (not bufferable)
+    assert_eq!(rasr & (1 << 16), 0, "SRAM1/2 RASR: B bit 16 must be CLEAR");
+    // ENABLE bit 0 must be set
+    assert_ne!(rasr & 1, 0, "SRAM1/2 RASR: ENABLE bit 0 must be SET");
+}
+
+// -- CCR fault traps (GAP-H2) -------------------------------------------------
+
+/// CCR.DIV_0_TRP (bit 4) must be set in boot to enable divide-by-zero faults.
+/// Without this, SDIV/UDIV instructions silently return 0 instead of faulting.
+/// Reference: ARM DDI0489F B3.2.8, ARM AN209 Using Cortex-M Fault Exceptions
+#[test]
+fn boot_sets_ccr_div_0_trp() {
+    let boot_src = include_str!("../src/boot.rs");
+    assert!(
+        boot_src.contains("DIV_0_TRP") || boot_src.contains("div_0_trp"),
+        "boot.rs must set CCR.DIV_0_TRP (bit 4) to enable divide-by-zero faults."
+    );
+}
+
+#[test]
+fn boot_sets_ccr_unalign_trp() {
+    let boot_src = include_str!("../src/boot.rs");
+    assert!(
+        boot_src.contains("UNALIGN_TRP") || boot_src.contains("unalign_trp"),
+        "boot.rs must set CCR.UNALIGN_TRP (bit 3) to trap unaligned memory accesses."
+    );
+}
+
+#[test]
+fn boot_has_configure_scb_fault_traps_function() {
+    let boot_src = include_str!("../src/boot.rs");
+    assert!(
+        boot_src.contains("configure_scb_fault_traps"),
+        "boot.rs must have a configure_scb_fault_traps function that sets DIV_0_TRP and UNALIGN_TRP"
+    );
+}
+
+// -- memory.x output sections (GAP-M1 + L1 + L5) -----------------------------
+
+/// memory.x must define a .sram3 output SECTION (not just a MEMORY region).
+/// Without it, #[link_section = ".sram3"] silently fails with a linker error.
+#[test]
+fn memory_x_has_sram3_output_section() {
+    let memory_x = include_str!("../../../memory.x");
+    assert!(
+        memory_x.contains(".sram3") && memory_x.contains("> SRAM3"),
+        "memory.x must define a .sram3 output section (SECTIONS block) for #[link_section] support."
+    );
+}
+
+/// memory.x should define .sram1 output section for explicit SRAM1 placement.
+#[test]
+fn memory_x_has_sram1_output_section() {
+    let memory_x = include_str!("../../../memory.x");
+    assert!(
+        memory_x.contains(".sram1") && memory_x.contains("> SRAM1"),
+        "memory.x must define a .sram1 output section for explicit SRAM1 buffer placement"
+    );
+}
+
+/// memory.x should define .sram2 output section for explicit SRAM2 placement.
+#[test]
+fn memory_x_has_sram2_output_section() {
+    let memory_x = include_str!("../../../memory.x");
+    assert!(
+        memory_x.contains(".sram2") && memory_x.contains("> SRAM2"),
+        "memory.x must define a .sram2 output section for explicit SRAM2 buffer placement"
+    );
+}
