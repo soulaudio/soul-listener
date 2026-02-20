@@ -10,7 +10,7 @@ eink-system = { path = "../eink-system" }
 
 # Graphics primitives
 embedded-graphics = "0.8.1"
-heapless = "0.8"
+heapless.workspace = true
 
 # Only needed by example binaries — never activated during `cargo test`.
 # Gated behind the `examples` feature and required-features on [[example]].

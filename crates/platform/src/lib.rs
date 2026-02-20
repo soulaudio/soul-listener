@@ -74,6 +74,7 @@ pub mod display;
 pub mod dma;
 pub mod gpio;
 pub mod input;
+pub mod mpu;
 pub mod peripheral;
 pub mod power;
 pub mod sdram;

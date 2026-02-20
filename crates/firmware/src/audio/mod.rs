@@ -23,6 +23,7 @@
 
 pub mod amp;
 pub mod dac;
+pub mod sai_recovery;
 
 // Re-export the primary DAC type for each build target.
 #[cfg(feature = "hardware")]

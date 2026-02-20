@@ -24,7 +24,7 @@
 //!   Pin high → amplifier enabled
 //!   Pin low  → amplifier disabled (shutdown)
 
-#[cfg(feature = "hardware")]
+#[cfg(any(feature = "hardware", test))]
 mod driver;
 
 #[cfg(feature = "hardware")]
