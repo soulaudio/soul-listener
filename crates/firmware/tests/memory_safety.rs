@@ -212,3 +212,90 @@ fn sai_init_not_commented_out() {
          Replace with: firmware::audio::sai_task::audio_task(buffer)"
     );
 }
+
+/// Every #[link_section = ".axisram"] static must wrap its data in Align32 or DmaBuffer.
+///
+/// Cortex-M7 has a 32-byte cacheline.  DMA buffers not aligned to 32 bytes cause
+/// cache coherency bugs: a CPU store to a neighbouring variable in the same cacheline
+/// can corrupt the DMA buffer after cache flush (ST AN4839 §3.3).
+///
+/// This test scans main.rs for every occurrence of link_section=.axisram and
+/// verifies that Align32 or DmaBuffer appears within 5 lines (the attribute + declaration block).
+#[test]
+fn all_axisram_statics_use_align32_or_dma_buffer() {
+    let main_rs = include_str!("../src/main.rs");
+    let lines: Vec<&str> = main_rs.lines().collect();
+
+    for (i, line) in lines.iter().enumerate() {
+        // Only match real Rust attribute lines: must start with `#[` after trimming.
+        // This skips comment lines (// ...), string literals in assert messages, and doc-examples.
+        if !line.trim().starts_with("#[") {
+            continue;
+        }
+        if line.contains(r#"link_section = ".axisram""#) {
+            // Check the next 5 lines for Align32 or DmaBuffer
+            let window_end = (i + 5).min(lines.len());
+            let window = lines.get(i..window_end).unwrap_or(&[]).join("\n");
+            assert!(
+                window.contains("Align32") || window.contains("DmaBuffer"),
+                "Found #[link_section = \".axisram\"] at line {} without Align32 or DmaBuffer wrapper.\n\
+                 All AXI SRAM statics must use Align32<T> or DmaBuffer<R,T> to ensure 32-byte cache-line alignment.\n\
+                 See ST AN4839 §3.3 — misaligned DMA buffers cause cache coherency corruption.\n\
+                 Line content: {}",
+                i + 1,
+                line.trim()
+            );
+        }
+    }
+}
+
+/// Every StaticCell wrapping a large raw byte array must use Align32 or DmaBuffer.
+///
+/// StaticCell<[u8; N]> where N >= 4096 (4 KB) is almost certainly a DMA buffer.
+/// Without Align32 or DmaBuffer, the buffer may not be 32-byte aligned, risking cache corruption.
+/// Use StaticCell<Align32<[u8; N]>> or StaticCell<DmaBuffer<R, [u8; N]>> instead.
+#[test]
+fn large_static_cell_byte_arrays_use_align32_or_dma_buffer() {
+    let main_rs = include_str!("../src/main.rs");
+
+    for (i, line) in main_rs.lines().enumerate() {
+        if line.contains("StaticCell<[u8;") && !line.contains("Align32") && !line.contains("DmaBuffer") {
+            // Try to extract the array size
+            // Pattern: StaticCell<[u8; 12345]>
+            let size_hint = line
+                .split("StaticCell<[u8;")
+                .nth(1)
+                .and_then(|s| s.split(']').next())
+                .map(|s| s.trim().replace('_', ""))
+                .and_then(|s| s.parse::<usize>().ok());
+
+            if size_hint.is_none_or(|n| n >= 4096) {
+                panic!(
+                    "Found StaticCell<[u8; ...]> at line {} without Align32 or DmaBuffer wrapper.\n\
+                     Use StaticCell<Align32<[u8; N]>> for DMA-capable buffers.\n\
+                     This ensures 32-byte cache-line alignment required by Cortex-M7 DMA.\n\
+                     Line: {}",
+                    i + 1,
+                    line.trim()
+                );
+            }
+        }
+    }
+}
+
+/// dma.rs module must reference the authoritative ST application note AN4839.
+///
+/// AN4839 'Level 1 cache on STM32F7, STM32H7 and STM32MP1' is the authoritative
+/// guide for DMA/cache coherency on Cortex-M7.  The reference ensures future
+/// maintainers can find the source of the 32-byte alignment requirement.
+#[test]
+fn dma_module_references_st_an4839() {
+    let dma_rs = include_str!("../src/dma.rs");
+    assert!(
+        dma_rs.contains("AN4839"),
+        "crates/firmware/src/dma.rs must reference ST AN4839 in its documentation.\n\
+         AN4839 'Level 1 cache on STM32F7/H7/MP1' is the authoritative guide for\n\
+         DMA cache coherency on Cortex-M7.  Its presence ensures future maintainers\n\
+         can find the rationale for the 32-byte Align32 requirement."
+    );
+}
