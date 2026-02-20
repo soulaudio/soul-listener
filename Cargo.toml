@@ -18,6 +18,36 @@ members = [
     # "crates/simulator",
 ]
 
+
+# ---------------------------------------------------------------------------
+# defmt log-level configuration
+#
+# defmt uses the DEFMT_LOG environment variable at BUILD TIME (not runtime)
+# to filter log strings compiled into the .defmt ELF section.
+#
+#   DEFMT_LOG=trace  -- all log strings compiled in (development)
+#   DEFMT_LOG=debug  -- debug + info + warn + error (verbose-logging)
+#   DEFMT_LOG=info   -- info + warn + error (default, set in .cargo/config.toml)
+#   DEFMT_LOG=warn   -- warn + error only (production hardening)
+#   DEFMT_LOG=error  -- error only (minimal .defmt section)
+#   DEFMT_LOG=off    -- no log strings (smallest binary)
+#
+# IMPORTANT: DEFMT_LOG is NOT a runtime filter. It controls which format
+# strings are compiled into the ELF. The .cargo/config.toml sets DEFMT_LOG=info
+# as the default for all builds. Override for production hardening:
+#
+#   DEFMT_LOG=warn cargo build --release --target thumbv7em-none-eabihf ...
+#
+# verbose-logging: Use DEFMT_LOG=debug or DEFMT_LOG=trace for development.
+# Production builds should use DEFMT_LOG=info (set in .cargo/config.toml).
+# ---------------------------------------------------------------------------
+[workspace.metadata.defmt]
+# Log level used by .cargo/config.toml [env] section for all builds.
+# Override at the command line: DEFMT_LOG=warn cargo build --release ...
+default-log-level = "info"
+# verbose-logging mode: DEFMT_LOG=debug or DEFMT_LOG=trace
+verbose-logging = "debug"
+
 [workspace.package]
 version = "0.1.0"
 authors = ["Your Name <you@example.com>"]
