@@ -65,7 +65,11 @@ fn attenuation_register_from_volume_0_is_max_attenuation() {
     // ES9038Q2M: volume 0% → attenuation 255 (mute)
     let vol = VolumePercent::new(0);
     let att = AttenuationRegister::from_volume(vol);
-    assert_eq!(att.get(), 255, "0% volume should give 255 attenuation (mute)");
+    assert_eq!(
+        att.get(),
+        255,
+        "0% volume should give 255 attenuation (mute)"
+    );
 }
 
 #[test]

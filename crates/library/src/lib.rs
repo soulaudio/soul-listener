@@ -14,7 +14,6 @@
 // TODO: Add rustdoc to all public items (tracked as tech debt)
 #![allow(missing_docs)]
 
-
 pub mod index;
 pub mod metadata;
 pub mod scanner;

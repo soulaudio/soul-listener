@@ -60,7 +60,8 @@
 #![warn(clippy::all)]
 #![warn(clippy::pedantic)]
 #![deny(unsafe_op_in_unsafe_fn)] // unsafe fn body is not implicitly unsafe block
-#![warn(clippy::print_stdout)] // prefer tracing/defmt over println! in lib code
+#![warn(clippy::print_stdout)]
+// prefer tracing/defmt over println! in lib code
 // Pedantic lints suppressed for this hardware HAL crate:
 #![allow(clippy::doc_markdown)] // hex addresses and register names in doc comments
 #![allow(clippy::missing_panics_doc)] // statically-valid expect() with safety comments
@@ -73,8 +74,8 @@
 pub mod asset_store;
 pub mod audio;
 pub mod audio_config;
-pub mod audio_types;
 pub mod audio_sequencer;
+pub mod audio_types;
 pub mod bluetooth;
 pub mod clock_config;
 pub mod config;
