@@ -13,12 +13,6 @@
 #   Digi-Key: LT3045EMSE#PBFCT-ND    Mouser: 584-LT3045EMSE#PBF
 
 component LT3045EMSE:
-    trait is_atomic_part<
-        manufacturer = "Analog Devices",
-        partnumber   = "LT3045EMSE#PBF",
-        footprint    = "Package_SO:MSOP-12-1EP_3x4mm_P0.65mm_EP1.68x1.88mm_ThermalVias",
-        symbol       = "Regulator_Linear:LT3045">
-    trait has_designator_prefix<prefix = "U">
 
     signal IN    ~ pin 1   # Input (share pin — both IN pins connect to input)
     signal IN_2  ~ pin 2   # Input (share)

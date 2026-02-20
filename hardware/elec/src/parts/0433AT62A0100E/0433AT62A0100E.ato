@@ -61,12 +61,6 @@
 #   Johanson chip antenna selection guide: https://www.johansontechnology.com/tech-notes/chip-antenna-selection-guide/
 
 component Ant2450AT18A100E:  # Directory named after originally specified (incorrect) PN
-    trait is_atomic_part<
-        manufacturer = "Johanson Technology",
-        partnumber   = "2450AT18A100E",       # Correct 2.4 GHz part; 0433AT62A0100E was 433 MHz
-        footprint    = "RF_Antenna:Johanson_2450AT18x100",
-        symbol       = "Device:Antenna">
-    trait has_designator_prefix<prefix = "ANT">
 
     # ── RF signal ─────────────────────────────────────────────────────────────
     signal RF  ~ pin 1   # 50 Ω RF feed → STM32WB55 RF_ANT pin (internal balun output)

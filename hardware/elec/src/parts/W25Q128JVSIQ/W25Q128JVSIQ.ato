@@ -31,12 +31,6 @@
 #   Mouser:   841-W25Q128JVSIQ
 
 component W25Q128JVSIQ:
-    trait is_atomic_part<
-        manufacturer = "Winbond Electronics",
-        partnumber   = "W25Q128JVSIQ",
-        footprint    = "Package_SO:SOIC-8_5.23x5.23mm_P1.27mm",
-        symbol       = "Memory_Flash:W25Q128JVxxQ">
-    trait has_designator_prefix<prefix = "U">
 
     signal CS_NEG  ~ pin 1   # Chip select (active low → QUADSPI BK1_NCS)
     signal IO1     ~ pin 2   # DO / MISO / DQ1

@@ -60,12 +60,6 @@
 #   (Verify against TI RGY package drawing in SLOS431B before PCB sign-off)
 
 component TPA6120A2:
-    trait is_atomic_part<
-        manufacturer = "Texas Instruments",
-        partnumber   = "TPA6120A2RGYR",
-        footprint    = "Package_DFN_QFN:VQFN-14-1EP_3x3mm_P0.5mm_EP1.65x1.65mm",
-        symbol       = "TPA6120A2.kicad_sym">
-    trait has_designator_prefix<prefix = "U">
 
     # ── Left channel ─────────────────────────────────────────────────────────
     signal LIN_POS  ~ pin 1   # Non-inverting input (from DAC AOUT_L+)

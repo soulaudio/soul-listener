@@ -33,12 +33,6 @@
 #   Digi-Key: H11613CT-ND    Mouser: 798-FH12-24S-0.5SH55
 
 component FH12_24S:
-    trait is_atomic_part<
-        manufacturer = "Hirose",
-        partnumber   = "FH12-24S-0.5SH(55)",
-        footprint    = "Connector_FFC-FPC:Hirose_FH12-24S-0.5SH_1x24-1MP_P0.50mm_Horizontal",
-        symbol       = "Connector_FFC-FPC:Hirose_FH12_24S">
-    trait has_designator_prefix<prefix = "J">
 
     signal NC1   ~ pin 1    # NC
     signal GDR   ~ pin 2    # N-MOSFET gate drive output (external boost converter)

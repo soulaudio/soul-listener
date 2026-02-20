@@ -42,12 +42,6 @@
 #   Mouser:   611-PTS526SK15SMTR2
 
 component PTS526:
-    trait is_atomic_part<
-        manufacturer = "C&K",
-        partnumber   = "PTS526SK15SMTR2LFS",
-        footprint    = "Button_Switch_SMD:SW_SPST_PTS526_Sx15SMTR2",
-        symbol       = "Switch:SW_Push">
-    trait has_designator_prefix<prefix = "SW">
 
     # ── Switch terminals ──────────────────────────────────────────────────────
     # The KiCad SW_Push symbol has two logical pins: 1 and 2.

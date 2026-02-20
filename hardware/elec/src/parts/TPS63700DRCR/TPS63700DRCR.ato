@@ -18,12 +18,6 @@
 #   TME:      TPS63700DRCR      Digi-Key: 296-TPS63700DRCRT-ND
 
 component TPS63700DRCR:
-    trait is_atomic_part<
-        manufacturer = "Texas Instruments",
-        partnumber   = "TPS63700DRCR",
-        footprint    = "Package_DFN_QFN:VSON-10-1EP_3x3mm_P0.5mm_EP1.2x1.7mm",
-        symbol       = "Regulator_Switching:TPS63700">
-    trait has_designator_prefix<prefix = "U">
 
     signal COMP   ~ pin 1   # Compensation — MUST have 4.7 nF to GND
     signal GND    ~ pin 2   # Signal/analog ground

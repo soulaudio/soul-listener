@@ -12,12 +12,6 @@
 #   Digi-Key: 1727-PESD5V0L5UY,115CT-ND    Mouser: 771-PESD5V0L5UY,115
 
 component PESD5V0L5UY:
-    trait is_atomic_part<
-        manufacturer = "Nexperia",
-        partnumber   = "PESD5V0L5UY,115",
-        footprint    = "Package_TO_SOT_SMD:SOT-363_SC-70-6",
-        symbol       = "ESD_Protection:PESD5V0L5UY">
-    trait has_designator_prefix<prefix = "U">
 
     signal IO1 ~ pin 1   # Cathode 1 — I/O line 1
     signal GND ~ pin 2   # Common anode — connect to ground plane

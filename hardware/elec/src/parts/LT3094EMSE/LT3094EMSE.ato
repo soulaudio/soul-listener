@@ -15,12 +15,6 @@
 #   Digi-Key: LT3094EMSE#PBFCT-ND    Mouser: 584-LT3094EMSE#PBF
 
 component LT3094EMSE:
-    trait is_atomic_part<
-        manufacturer = "Analog Devices",
-        partnumber   = "LT3094EMSE#PBF",
-        footprint    = "Package_SO:MSOP-12-1EP_3x4mm_P0.65mm_EP1.68x1.88mm_ThermalVias",
-        symbol       = "Regulator_Linear:LT3094">
-    trait has_designator_prefix<prefix = "U">
 
     signal IN    ~ pin 1   # Negative input (−5.5 V switching rail — share)
     signal IN_2  ~ pin 2   # Negative input (share)

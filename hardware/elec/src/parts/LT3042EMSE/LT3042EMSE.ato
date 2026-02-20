@@ -32,12 +32,6 @@
 #   Mouser:   584-LT3042EMSE#PBF
 
 component LT3042EMSE:
-    trait is_atomic_part<
-        manufacturer = "Analog Devices",
-        partnumber   = "LT3042EMSE#PBF",
-        footprint    = "Package_SO:MSOP-8-1EP_3x3mm_P0.65mm_EP1.68x1.88mm_ThermalVias",
-        symbol       = "Regulator_Linear:LT3042">
-    trait has_designator_prefix<prefix = "U">
 
     signal IN   ~ pin 1   # Input (3.3 V digital rail)
     signal EN   ~ pin 2   # Enable (high = on; tie to IN for always-on)
