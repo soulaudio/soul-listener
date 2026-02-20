@@ -514,7 +514,7 @@ fn register_dap_components(display: &mut EmulatorDisplay) {
 ///
 /// When hot-reload is enabled this function is NOT used.
 /// Edit crates/firmware-ui/src/render.rs instead.
-#[cfg(not(feature = "hot-reload"))]
+#[cfg(all(not(feature = "hot-reload"), not(feature = "keyboard-input")))]
 fn render_demo_menu<D>(display: &mut D) -> Result<(), D::Error>
 where
     D: DrawTarget<Color = Gray4>,
