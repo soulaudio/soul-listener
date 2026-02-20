@@ -49,11 +49,7 @@
 //! register read is a separate `write_read` with exactly 1 address byte written
 //! and exactly 1 data byte read. See `read_reg` below.
 
-// Display math / audio DSP legitimately uses arithmetic and slice indexing.
-// All operations are bounds-checked at the algorithm level.
-// Per-site #[allow] would be unreadable in low-level driver code.
-#![allow(clippy::arithmetic_side_effects)]
-#![allow(clippy::indexing_slicing)]
+// Per-site lint suppressions are placed at each operation with safety justifications.
 
 use embedded_hal_async::i2c::I2c;
 use platform::{AudioCodec, AudioConfig, DsdMode, OversamplingFilter};
@@ -139,6 +135,8 @@ impl<I: I2c> Es9038q2mDriver<I> {
             .write_read(I2C_ADDR, &[reg], &mut buf)
             .await
             .map_err(Es9038q2mError::I2c)?;
+        // `buf` is a [u8; 1] array — index 0 always exists.
+        #[allow(clippy::indexing_slicing)]
         Ok(buf[0])
     }
 
@@ -158,7 +156,13 @@ impl<I: I2c> Es9038q2mDriver<I> {
     /// - `volume_to_att(50)`  = 127 (midpoint)
     /// - `volume_to_att(80)`  =  51 (default startup level)
     pub fn volume_to_att(volume: u8) -> u8 {
-        ((100 - volume.min(100)) as u16 * 255 / 100) as u8
+        // `volume.min(100)` clamps the input to [0, 100]. Then:
+        //   (100 - clamped) is in [0, 100] ⊆ u8, no underflow.
+        //   cast to u16: max value is 100; 100 * 255 = 25500 < u16::MAX (65535), no overflow.
+        //   / 100: integer division, result ≤ 255 ⊆ u8 range, final cast is lossless.
+        #[allow(clippy::arithmetic_side_effects)]
+        let att = ((100 - volume.min(100)) as u16 * 255 / 100) as u8;
+        att
     }
 }
 

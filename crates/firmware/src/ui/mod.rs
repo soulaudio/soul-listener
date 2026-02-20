@@ -3,11 +3,7 @@
 //! This module contains UI screens and components for the SoulAudio DAP.
 //! Currently a placeholder for future UI implementation.
 
-// Display math / audio DSP legitimately uses arithmetic and slice indexing.
-// All operations are bounds-checked at the algorithm level.
-// Per-site #[allow] would be unreadable in low-level driver code.
-#![allow(clippy::arithmetic_side_effects)]
-#![allow(clippy::indexing_slicing)]
+// Per-site lint suppressions are placed at each operation with safety justifications.
 
 use embedded_graphics::mono_font::{ascii::FONT_9X18, MonoTextStyle};
 use embedded_graphics::pixelcolor::Gray2;
