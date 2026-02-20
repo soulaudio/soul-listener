@@ -53,8 +53,8 @@ component W9825G6KH6:
     signal A12  ~ pin 36
 
     # ── Bank select ───────────────────────────────────────────────────────────
-    signal BS0  ~ pin 20   # Bank Select 0
-    signal BS1  ~ pin 21   # Bank Select 1
+    signal BA0  ~ pin 20   # Bank Address 0
+    signal BA1  ~ pin 21   # Bank Address 1
 
     # ── Data bus DQ[15:0] ────────────────────────────────────────────────────
     # Low byte DQ0–DQ7: pins 2, 4, 5, 7, 8, 10, 11, 13
@@ -73,8 +73,8 @@ component W9825G6KH6:
     signal CS_NEG   ~ pin 19  # Chip Select (active low)
     signal CLK      ~ pin 38  # Clock (up to 166 MHz)
     signal CKE      ~ pin 37  # Clock Enable
-    signal LDQM     ~ pin 15  # Low-byte data mask (lower byte, DQ0–DQ7)
-    signal UDQM     ~ pin 39  # Upper-byte data mask (high byte, DQ8–DQ15)
+    signal DQML     ~ pin 15  # Low-byte data mask / DQML (lower byte, DQ0–DQ7)
+    signal DQMH     ~ pin 39  # Upper-byte data mask / DQMH (high byte, DQ8–DQ15)
 
     # ── Power ─────────────────────────────────────────────────────────────────
     signal VDD_1    ~ pin 1;   signal VDD_2  ~ pin 14;  signal VDD_3  ~ pin 27  # 3.3 V supply
