@@ -162,7 +162,7 @@ Two layers of automated checks:
 |-----|---------------|
 | `hw-arch` | Module import boundaries; all modules declare `power_3v3`; all imported interfaces exist in `interfaces.ato`; `amp_rail` wired power↔audio; AmpSupplyBus imported where used; ClockSource wired mcu↔clock |
 | `ato-check` | Full-system ERC: `assert` voltage propagation across all modules |
-| `ato-check-modules` | 8 parallel per-module checks (power/mcu/audio/display/bluetooth/memory/input/clock) |
+| `ato-check-modules` | 7 parallel per-module checks (power/mcu/audio/display/bluetooth/memory/input) — **clock excluded** (see Known TODOs) |
 | `bom-generate` | BOM generation (main branch only, after all checks pass) |
 
 ### Rust Firmware (`.github/workflows/ci.yml` → `arch` job)
@@ -177,7 +177,7 @@ Two layers of automated checks:
 
 | Item | File | Notes |
 |------|------|-------|
-| *(none — all TODOs resolved)* | — | — |
+| `check-clock` per-module CI excluded | `hardware.yml`, `Crystal.ato` | atopile 0.12.5 parser bug: multi-line `is_atomic_part<>` fails when `Crystal.ato` is the sole atomic file in an isolated check. Neither multi-line (Syntax Error) nor single-line+pragma (Trait Not Found) works. Clock is still validated by the full `ato-check` via `main.ato`. Re-test after upgrading to atopile 0.14.x. |
 
 ## Sourcing Notes
 
