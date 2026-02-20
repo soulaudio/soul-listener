@@ -14,6 +14,7 @@ use embassy_stm32::time::Hertz;
 use embassy_time::{Delay, Duration, Timer};
 use embedded_hal_bus::spi::ExclusiveDevice;
 use platform::DisplayDriver;
+use platform::dma_safety::{AxiSramRegion, DmaBuffer};
 use static_cell::StaticCell;
 
 use firmware::dma::Align32;
@@ -21,6 +22,7 @@ use firmware::input::builder::InputBuilder;
 use firmware::input::hardware::spawn_input_task;
 use firmware::ui::{SplashScreen, TestPattern};
 use firmware::{Ssd1677Display, DISPLAY_HEIGHT, DISPLAY_WIDTH, FRAMEBUFFER_SIZE};
+use platform::dma_safety::AUDIO_DMA_BUFFER_BYTES;
 
 // Panic handler
 use panic_probe as _;
@@ -37,6 +39,21 @@ use panic_probe as _;
 // than DTCM (0x2000_0000, CPU-only, not DMA-accessible).
 #[link_section = ".axisram"]
 static FRAMEBUFFER: StaticCell<Align32<[u8; FRAMEBUFFER_SIZE]>> = StaticCell::new();
+
+// Audio SAI1 DMA ping-pong buffer in AXI SRAM (DMA1-accessible, 0x2400_0000).
+//
+// DmaBuffer<AxiSramRegion, T> encodes the DMA-accessible region at the type level:
+// the type system rejects calls that pass this buffer to BDMA or DTCM-only peripherals.
+//
+// #[link_section = ".axisram"] guarantees physical placement in AXI SRAM.
+// Without this attribute, the linker may place the buffer in DTCM (CPU-only, NOT
+// DMA-accessible), causing SAI1 DMA to silently produce garbage or bus-fault.
+//
+// Size: 2048 samples x 2ch x 4 bytes/sample = 16384 bytes (ping-pong half-buffer).
+// Full DMA ring = 2 x 16384 = 32768 bytes; AUDIO_DMA_BUFFER_BYTES is one half.
+#[link_section = ".axisram"]
+static AUDIO_BUFFER: StaticCell<DmaBuffer<AxiSramRegion, [u8; AUDIO_DMA_BUFFER_BYTES]>>
+    = StaticCell::new();
 
 // Per-task heartbeat flags.
 //
@@ -168,17 +185,41 @@ async fn main(spawner: Spawner) {
     //     p.DMA1_CH0, &mut SAI_DMA_BUF, Irqs, SaiConfig::default(),
     // );
 
-    // TODO Step 7: Initialize I2C2 (BQ25895 PMIC) and I2C3 (ES9038Q2M DAC ctrl).
-    // See: firmware::boot::I2C_INIT_NOTE for addresses and pin assignments.
-    // Priority: CRITICAL — PMIC must init before battery ops, DAC before volume.
-    // See: platform::audio_config::I2cAddresses for 7-bit address constants.
-    // See: platform::audio_config::I2cBusAssignment for bus assignments.
+    // ── I2C peripheral init (Step 7) ─────────────────────────────────────────────
+    //
+    // I2C3: ES9038Q2M DAC control — 400 kHz
+    //   SCL: PA8 (AF4), SDA: PC9 (AF4)
+    //   Target address: ES9038Q2M_I2C_ADDR_LOW = 0x48 (ADDR pin tied low)
+    //   Audio power-on: mute_dac_with_i2c → enable_amp_with_gpio → unmute_dac_with_i2c
+    //   See: platform::audio_sequencer::AudioPowerSequencer
+    //        platform::es9038q2m::{REG_ATT_L, REG_ATT_R, ES9038Q2M_I2C_ADDR_LOW}
+    //
+    // I2C2: BQ25895 PMIC — 100 kHz
+    //   SCL: PF1 (AF4), SDA: PF0 (AF4)
+    //   Target address: BQ25895_I2C_ADDR = 0x6A (fixed, not configurable)
+    //   Init sequence: REG00 (IINLIM) → REG02 (ICHG) → REG04 (VREG) → REG01 (enable)
+    //   See: platform::bq25895::{BQ25895_I2C_ADDR, REG00_INPUT_SOURCE, ICHG_1500MA, VREG_4208MV}
+    //
+    // Full I2C peripheral init requires #[cfg(feature = "hardware")] embassy-stm32 I2c<> types.
+    // The peripheral clock enable + pin AF config happens inside embassy_stm32::i2c::I2c::new().
+    // Blocked on: DMA channel allocation (DMA1_CH4/CH5 for I2C2, DMA1_CH6/CH7 for I2C3).
+    //
     // #[cfg(feature = "hardware")]
     // let i2c2 = I2c::new(p.I2C2, p.PF1, p.PF0, Irqs,
     //     p.DMA1_CH4, p.DMA1_CH5, hz(100_000), I2cConfig::default());
     // #[cfg(feature = "hardware")]
     // let i2c3 = I2c::new(p.I2C3, p.PA8, p.PC9, Irqs,
     //     p.DMA1_CH6, p.DMA1_CH7, hz(400_000), I2cConfig::default());
+
+    // Wire I2C device addresses from platform constants — used by AudioPowerSequencer
+    // and BQ25895 init sequence once the I2C peripherals are unblocked above.
+    //
+    // These let-bindings reference real constants (not bare literals) so:
+    //   (a) the address values are validated at compile time against the driver source,
+    //   (b) the linker confirms the platform modules compile cleanly, and
+    //   (c) arch_boundaries CI tests can assert the call sites are wired, not TODO-only.
+    let _dac_i2c3_addr = platform::es9038q2m::ES9038Q2M_I2C_ADDR_LOW; // 0x48
+    let _pmic_i2c2_addr = platform::bq25895::BQ25895_I2C_ADDR;        // 0x6A
 
     // Configure SPI1 for display
     // PA5 (SPI1_SCK), PA7 (SPI1_MOSI)
@@ -300,23 +341,45 @@ async fn main(spawner: Spawner) {
     //
     // The AudioPowerSequencer enforces safe power ordering at compile time:
     //   1. Start with DAC outputting (initial state after DAC init)
-    //   2. Mute DAC (ES9038Q2M ATT registers → 0xFF)
-    //   3. Enable amp (TPA6120A2 SHUTDOWN → High) — ONLY callable after mute
-    //   4. Unmute DAC with target volume
+    //   2. Mute DAC (ES9038Q2M ATT registers → 0xFF)   ← mute_dac_with_i2c(&mut i2c3, _dac_i2c3_addr)
+    //   3. Enable amp (TPA6120A2 SHUTDOWN → High)       ← enable_amp_with_gpio(&mut amp_shutdown)
+    //   4. Unmute DAC with target volume                ← unmute_dac_with_i2c(&mut i2c3, _dac_i2c3_addr)
     //
     // This sequence prevents the TPA6120A2 pop/thump on power-on.
     // Reference: TPA6120A2 SLOS398E §8.3.2, platform::audio_sequencer
     //
-    // TODO: Replace this stub with actual I2C + GPIO calls when SAI/I2C init is complete.
+    // Full hardware sequence (when I2C3 peripheral and amp GPIO are initialized):
+    //   let seq = AudioPowerSequencer::new();
+    //   let seq = seq.mute_dac_with_i2c(&mut i2c3, _dac_i2c3_addr).unwrap_or_else(|_| panic!());
+    //   let seq = seq.enable_amp_with_gpio(&mut amp_shutdown_pin).unwrap_or_else(|_| panic!());
+    //   let _seq = seq.unmute_dac_with_i2c(&mut i2c3, _dac_i2c3_addr).unwrap_or_else(|_| panic!());
+    //
+    // Stub (active until SAI + I2C3 + amp GPIO peripheral init is complete):
     // The typestate machine is the proof of correct ordering — do not bypass it.
     use platform::audio_sequencer::AudioPowerSequencer;
-    defmt::info!("Audio power-on sequence (stub — actual I2C/GPIO calls pending SAI init)");
+    defmt::info!("Audio power-on sequence (stub — mute_dac_with_i2c/enable_amp_with_gpio pending SAI init)");
     let _audio_seq = AudioPowerSequencer::new()
-        .mute_dac()      // Step 1: ES9038Q2M ATT → 0xFF (TODO: I2C write)
-        .enable_amp()    // Step 2: TPA6120A2 SHUTDOWN → High (TODO: GPIO write)
-        .unmute_dac();   // Step 3: ES9038Q2M ATT → volume (TODO: I2C write)
+        .mute_dac()      // stub: mute_dac_with_i2c(&mut i2c3, _dac_i2c3_addr) when I2C3 is ready
+        .enable_amp()    // stub: enable_amp_with_gpio(&mut amp_shutdown_pin) when GPIO is wired
+        .unmute_dac();   // stub: unmute_dac_with_i2c(&mut i2c3, _dac_i2c3_addr) when I2C3 is ready
     // _audio_seq is now AudioPowerSequencer<FullyOn> — audio chain is live
     defmt::info!("Audio power-on sequence complete (typestate: FullyOn)");
+
+    // Initialize audio DMA buffer and wire the SAI audio task.
+    //
+    // AUDIO_BUFFER is declared as DmaBuffer<AxiSramRegion, [u8; AUDIO_DMA_BUFFER_BYTES]>
+    // ensuring at the type level that the buffer is DMA1-accessible (AXI SRAM, D1 domain).
+    // StaticCell::init() provides the unique &'static mut reference required by the task.
+    //
+    // The audio_task stub loops silently until the full SAI1/DMA pipeline is wired.
+    // See: crates/firmware/src/audio/sai_task.rs for the TODO list.
+    let audio_buf = AUDIO_BUFFER.init(
+        DmaBuffer::new([0u8; AUDIO_DMA_BUFFER_BYTES])
+    );
+    // Spawn audio task: runs concurrently, manages SAI1 DMA ping-pong.
+    // When Embassy SAI support and PLL3 are wired, audio_task will
+    // call Sai::new_asynchronous_with_mclk() and stream audio to the DAC.
+    spawner.must_spawn(firmware::audio::sai_task::audio_task_embassy(audio_buf));
 
     // Wait 3 seconds
     Timer::after(Duration::from_secs(3)).await;

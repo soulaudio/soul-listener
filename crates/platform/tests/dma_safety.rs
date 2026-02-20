@@ -4,6 +4,10 @@
 // Test files legitimately use arithmetic for verification; allow at file level.
 #![allow(clippy::arithmetic_side_effects)]
 #![allow(clippy::indexing_slicing)]
+// Some imports are used only to verify trait/type accessibility at compile time.
+#![allow(unused_imports)]
+// Some assertions check documented compile-time constants for architectural correctness.
+#![allow(clippy::assertions_on_constants)]
 
 // Test 1: DmaAccessible trait is exported from platform
 #[test]

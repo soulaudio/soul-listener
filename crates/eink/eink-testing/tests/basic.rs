@@ -1,3 +1,6 @@
+// Integration test file — doc comments and lints are overly strict for test code.
+#![allow(missing_docs, clippy::unwrap_used, clippy::expect_used, clippy::panic)]
+
 use eink_testing::TestEmulator;
 
 #[test]

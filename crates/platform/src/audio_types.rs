@@ -124,14 +124,14 @@ impl SampleRateHz {
     ///
     /// Returns [`OutOfRangeError`] if `hz < 8000` or `hz > 768000`.
     pub fn new(hz: u32) -> Result<Self, OutOfRangeError> {
-        if hz < Self::MIN_HZ || hz > Self::MAX_HZ {
+        if (Self::MIN_HZ..=Self::MAX_HZ).contains(&hz) {
+            Ok(Self(hz))
+        } else {
             Err(OutOfRangeError {
                 value: hz,
                 min: Self::MIN_HZ,
                 max: Self::MAX_HZ,
             })
-        } else {
-            Ok(Self(hz))
         }
     }
 

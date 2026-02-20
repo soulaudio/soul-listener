@@ -1,5 +1,18 @@
 //! Comprehensive tests for custom LUT waveform support
 
+// Integration test file — cast/arithmetic/unwrap lints are overly strict for
+// e-ink timing/voltage math tests where panics on failure are intentional.
+#![allow(
+    clippy::cast_possible_truncation,
+    clippy::cast_possible_wrap,
+    clippy::cast_sign_loss,
+    clippy::arithmetic_side_effects,
+    clippy::unwrap_used,
+    clippy::expect_used,
+    clippy::panic,
+    clippy::indexing_slicing,
+)]
+
 use eink_emulator::lut::{LutError, LutPhase, WaveformLut, WaveformLutSet};
 use eink_emulator::{PixelState, WaveformMode};
 

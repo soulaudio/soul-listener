@@ -31,7 +31,17 @@
 //! and logical row `y = 479` maps to RAM row `0`.  Every method that sets RAM
 //! Y counters / ranges must apply `y_ram = HEIGHT - 1 - y`.
 
-// Per-site lint suppressions are placed at each operation with safety justifications.
+// Display geometry constants are u32 (matching embedded-graphics) but SSD1677
+// registers are u16/u8.  These narrowing casts are safe because DISPLAY_WIDTH=800
+// and DISPLAY_HEIGHT=480 both fit in u16, and BYTES_PER_ROW=100 fits in u8.
+// Pixel coordinates from embedded-graphics are i32; after bounds checks they
+// are always non-negative so casting to usize is safe.
+#![allow(
+    clippy::cast_possible_truncation,
+    clippy::cast_possible_wrap,
+    clippy::cast_sign_loss,
+    clippy::arithmetic_side_effects,
+)]
 
 use embedded_hal::digital::{InputPin, OutputPin};
 use embedded_hal_async::{delay::DelayNs, spi::SpiDevice};

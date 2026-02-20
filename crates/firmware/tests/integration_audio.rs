@@ -1,4 +1,14 @@
 //! Audio integration tests — verify the full audio driver stack.
+// Integration test file: expect/unwrap/panic are intentional test mechanisms.
+#![allow(
+    clippy::unwrap_used,
+    clippy::expect_used,
+    clippy::panic,
+    clippy::cast_possible_truncation,
+    clippy::cast_possible_wrap,
+    clippy::cast_sign_loss,
+    clippy::cast_lossless,
+)]
 //!
 //! Tests the interaction between platform traits (AudioCodec) and
 //! firmware driver implementations (MockDac, MockAmp).

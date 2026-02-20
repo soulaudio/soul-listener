@@ -2,6 +2,19 @@
 //!
 //! Tests for controller-specific hardware quirks and limitations.
 
+// Integration test file — cast/arithmetic/unwrap lints are overly strict for
+// display geometry tests where panics on failure are intentional.
+#![allow(
+    clippy::cast_possible_truncation,
+    clippy::cast_possible_wrap,
+    clippy::cast_sign_loss,
+    clippy::arithmetic_side_effects,
+    clippy::unwrap_used,
+    clippy::expect_used,
+    clippy::panic,
+    clippy::indexing_slicing,
+)]
+
 use eink_emulator::{DisplayDriver, Emulator};
 use eink_specs::{quirks_for_controller, ColorMode, Controller, DisplaySpec, PanelType};
 

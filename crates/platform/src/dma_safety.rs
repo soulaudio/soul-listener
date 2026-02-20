@@ -223,3 +223,81 @@ const _: () = assert!(
     TOTAL_STATIC_DMA_BYTES <= AXI_SRAM_SIZE_BYTES * 3 / 4,
     "Static DMA buffers exceed 75% of AXI SRAM — insufficient headroom for task stacks"
 );
+
+// ── Per-task stack size budget ────────────────────────────────────────────────
+
+/// Default Embassy task stack size (bytes).
+/// Each spawned Embassy task gets its own stack via `#[embassy_executor::task]`.
+/// 8 KB is sufficient for async tasks without deep call chains.
+/// Increase to 16 KB if defmt logging + FLAC decode + SDMMC overlap on one task.
+pub const TASK_STACK_BYTES: usize = 8 * 1024; // 8 KB per task
+
+/// Number of Embassy tasks that run concurrently on this firmware build.
+/// Tasks: main, display, input, audio_sai, watchdog = 5 tasks minimum.
+/// Add: bluetooth_hci, sdmmc_task when implemented.
+pub const CONCURRENT_TASK_COUNT: usize = 5;
+
+/// Total stack reservation for all Embassy tasks (bytes).
+pub const TOTAL_TASK_STACK_BYTES: usize = TASK_STACK_BYTES * CONCURRENT_TASK_COUNT;
+
+/// Minimum AXI SRAM headroom to keep free for .bss, .data, and alignment padding.
+/// 64 KB is a conservative minimum; actual usage depends on global variable count.
+pub const MIN_AXI_SRAM_HEADROOM_BYTES: usize = 64 * 1024; // 64 KB
+
+/// Total AXI SRAM consumption estimate (DMA buffers + task stacks + headroom).
+pub const TOTAL_AXI_SRAM_BUDGET_BYTES: usize =
+    TOTAL_STATIC_DMA_BYTES + TOTAL_TASK_STACK_BYTES + MIN_AXI_SRAM_HEADROOM_BYTES;
+
+/// Compile-time assertion: total AXI SRAM consumption must not exceed 512 KB.
+/// If this fails, either: reduce CONCURRENT_TASK_COUNT, reduce TASK_STACK_BYTES,
+/// move some task stacks to SRAM1/2, or move DMA buffers to SRAM1/2.
+const _: () = assert!(
+    TOTAL_AXI_SRAM_BUDGET_BYTES <= AXI_SRAM_SIZE_BYTES,
+    "AXI SRAM budget exceeded! Reduce task count, stack size, or DMA buffers."
+);
+
+// ── Tests ─────────────────────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    // All values are compile-time constants; assertion is intentional budget check.
+    #[allow(clippy::assertions_on_constants)]
+    fn task_stack_budget_fits_in_axi_sram() {
+        assert!(
+            TOTAL_AXI_SRAM_BUDGET_BYTES <= AXI_SRAM_SIZE_BYTES,
+            "Total budget {TOTAL_AXI_SRAM_BUDGET_BYTES} bytes exceeds AXI SRAM {AXI_SRAM_SIZE_BYTES} bytes"
+        );
+    }
+
+    #[test]
+    fn dma_buffers_leave_enough_room_for_tasks() {
+        let remaining = AXI_SRAM_SIZE_BYTES - TOTAL_STATIC_DMA_BYTES;
+        let task_need = TOTAL_TASK_STACK_BYTES + MIN_AXI_SRAM_HEADROOM_BYTES;
+        assert!(
+            remaining >= task_need,
+            "After DMA buffers ({TOTAL_STATIC_DMA_BYTES} bytes), only {remaining} bytes remain — need {task_need} bytes for tasks"
+        );
+    }
+
+    #[test]
+    // TASK_STACK_BYTES is a compile-time constant; assertions document acceptable range.
+    #[allow(clippy::assertions_on_constants)]
+    fn per_task_stack_is_reasonable() {
+        // Tasks should have at least 4 KB (too small = stack overflow)
+        // and at most 32 KB (too large = wastes precious SRAM)
+        assert!(TASK_STACK_BYTES >= 4 * 1024, "Per-task stack must be >= 4 KB");
+        assert!(TASK_STACK_BYTES <= 32 * 1024, "Per-task stack must be <= 32 KB");
+    }
+
+    #[test]
+    fn axi_sram_utilization_under_90_percent() {
+        let utilization = TOTAL_AXI_SRAM_BUDGET_BYTES * 100 / AXI_SRAM_SIZE_BYTES;
+        assert!(
+            utilization < 90,
+            "AXI SRAM utilization {utilization}% exceeds 90% — leave headroom for runtime allocations"
+        );
+    }
+}

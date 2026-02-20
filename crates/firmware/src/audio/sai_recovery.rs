@@ -203,6 +203,8 @@ mod tests {
     // ── Test F ────────────────────────────────────────────────────────────────
     /// overrun_count saturates at u8::MAX (255) and does not wrap.
     #[test]
+    // panic! in test is an intentional assertion failure message.
+    #[allow(clippy::panic)]
     fn test_overrun_count_saturates() {
         let mut state = SaiRecoveryState::new();
         for _ in 0..300 {
