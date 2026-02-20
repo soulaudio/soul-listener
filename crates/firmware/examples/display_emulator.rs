@@ -104,11 +104,11 @@ impl AppState {
             }
             InputEvent::RotaryIncrement(steps) => {
                 if steps > 0 {
-                    let delta = (steps.unsigned_abs() as u8).min(50) * 2;
+                    let delta = steps.unsigned_abs().min(50) as u8 * 2;
                     self.now_playing
                         .set_volume(self.now_playing.volume.saturating_add(delta));
                 } else {
-                    let delta = (steps.unsigned_abs() as u8).min(50) * 2;
+                    let delta = steps.unsigned_abs().min(50) as u8 * 2;
                     self.now_playing
                         .set_volume(self.now_playing.volume.saturating_sub(delta));
                 }
@@ -276,7 +276,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-#[cfg(all(test, feature = "keyboard-input"))]
+#[cfg(all(test, feature = "keyboard-input", not(feature = "hot-reload")))]
 mod tests {
     use super::*;
 
