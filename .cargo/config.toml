@@ -1,4 +1,9 @@
 [target.thumbv7em-none-eabihf]
+# flip-link flips the memory layout so the stack is placed BELOW .bss+.data.
+# A stack overflow therefore hits the bottom of RAM (HardFault) instead of
+# silently corrupting DMA buffers in AXI SRAM.
+# Install: cargo install flip-link
+linker = "flip-link"
 runner = "probe-rs run --chip STM32H743ZITx"
 rustflags = [
   "-C", "link-arg=-Tlink.x",

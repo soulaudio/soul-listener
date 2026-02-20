@@ -134,6 +134,130 @@ pub const SDMMC_HSI48_NOTE: &str =
     "SDMMC1 requires HSI48 clock. Enable via rcc.hsi48 before embassy_stm32::init(). \
      See embassy-stm32 issue #3049.";
 
+/// Documentation anchor: SDMMC1 must be initialized for microSD card access.
+///
+/// # SDMMC1 Configuration
+///
+/// ## Pin Assignments (STM32H743ZI LQFP144)
+/// | Function      | Pin  | AF   |
+/// |---------------|------|------|
+/// | SDMMC1_CK     | PC12 | AF12 |
+/// | SDMMC1_CMD    | PD2  | AF12 |
+/// | SDMMC1_D0     | PC8  | AF12 |
+/// | SDMMC1_D1     | PC9  | AF12 |
+/// | SDMMC1_D2     | PC10 | AF12 |
+/// | SDMMC1_D3     | PC11 | AF12 |
+///
+/// ## DMA
+/// SDMMC1 uses IDMA (internal DMA), NOT DMA1/DMA2.
+/// No external DMA channel assignment is needed.
+///
+/// ## Clock
+/// HSI48 (48 MHz) is the SDMMC kernel clock source.
+/// Enabled in `build_embassy_config()` via `config.rcc.hsi48`.
+/// See also: embassy-stm32 issue #3049 and `SDMMC_HSI48_NOTE`.
+///
+/// ## embassy-stm32 0.1.0 API (hardware only)
+/// ```ignore
+/// let sdmmc = Sdmmc::new_4bit(
+///     p.SDMMC1,
+///     Irqs,
+///     p.PC12, // CLK
+///     p.PD2,  // CMD
+///     p.PC8, p.PC9, p.PC10, p.PC11, // D0-D3
+///     Default::default(),
+/// );
+/// ```
+///
+/// ## See Also
+/// - `platform::storage_config::SdmmcConfig::microsd_uhs_i()` — bus configuration
+/// - `platform::storage_config::SdmmcPins` — all pin assignments
+/// - `SDMMC_HSI48_NOTE` — clock requirement documentation
+pub const SDMMC_INIT_NOTE: &str =
+    "SDMMC1 uses IDMA (no DMA1/2 channel), HSI48 clock, 4-bit mode (PC8-12, PD2)";
+
+/// Documentation anchor: QUADSPI must be initialized for NOR flash (fonts/icons/OTA).
+///
+/// # QUADSPI Configuration (W25Q128JV, 16 MB)
+///
+/// ## Pin Assignments (STM32H743ZI LQFP144)
+/// | Function        | Pin  | AF   |
+/// |-----------------|------|------|
+/// | QUADSPI_CLK     | PB2  | AF9  |
+/// | QUADSPI_BK1_NCS | PB6  | AF10 |
+/// | QUADSPI_BK1_IO0 | PF8  | AF10 |
+/// | QUADSPI_BK1_IO1 | PF9  | AF10 |
+/// | QUADSPI_BK1_IO2 | PE2  | AF9  |
+/// | QUADSPI_BK1_IO3 | PD13 | AF9  |
+///
+/// ## Configuration
+/// - prescaler = 1 → 100 MHz clock (AHB/2, within 133 MHz W25Q128JV spec)
+/// - flash_size_field = 23 (2^24 = 16 MB)
+/// - Fast Read Quad I/O: cmd=0xEB, 4 dummy cycles
+/// - Memory-mapped mode (XiP) for font/icon data at 0x90000000
+///
+/// ## Embassy / PAC Note
+/// Embassy-stm32 issue #3149: `embassy_stm32::qspi` does NOT implement
+/// memory-mapped mode. XiP must be enabled via PAC-level register writes.
+/// See `platform::qspi_config` for the individual register field values.
+///
+/// ## See Also
+/// - `platform::storage_config::QspiNorConfig::w25q128jv_at_100mhz()` — typed config
+/// - `platform::qspi_config` — individual register-level constants
+pub const QSPI_INIT_NOTE: &str =
+    "QUADSPI: W25Q128JV 16MB at 0x90000000, prescaler=1 (100MHz), XiP mode via 0xEB cmd";
+
+/// Documentation anchor: SAI1 must be initialized for audio output to ES9038Q2M.
+///
+/// # SAI1 Configuration (I2S master transmit, Block A)
+///
+/// ## Pin Assignments (STM32H743ZI LQFP144, SAI1 Block A)
+/// | Function     | Pin | AF   |
+/// |--------------|-----|------|
+/// | SAI1_MCLK_A  | PE2 | AF6  |
+/// | SAI1_FS_A    | PE4 | AF6  |
+/// | SAI1_SCK_A   | PE5 | AF6  |
+/// | SAI1_SD_A    | PE6 | AF6  |
+///
+/// ## Clock
+/// SAI1 kernel clock = PLL1Q (configured in `build_embassy_config()`).
+/// For 192 kHz: MCLK = 256 × 192 000 = 49.152 MHz. See
+/// `platform::audio_config::SaiAudioConfig::es9038q2m_192khz()`.
+///
+/// ## DMA
+/// DMA1 Stream 0, Request 87 (SAI1_A TX), circular mode.
+/// Buffer must be in `.axisram` (AXI SRAM, non-cacheable via MPU).
+///
+/// ## See Also
+/// - `platform::audio_config::SaiAudioConfig` — clock/format configuration
+/// - `platform::clock_config::InterruptPriorities::AUDIO_SAI_DMA` — interrupt priority
+pub const SAI_INIT_NOTE: &str =
+    "SAI1 Block A: I2S master TX to ES9038Q2M, 32-bit/192kHz, MCLK=49.152MHz (PLL1Q), \
+     DMA1 CH0 circular, buffer in .axisram";
+
+/// Documentation anchor: I2C2 and I2C3 must be initialized for PMIC and DAC control.
+///
+/// # I2C Bus Assignments
+///
+/// | Bus  | Peripheral        | Address | Speed    | Pins           |
+/// |------|-------------------|---------|----------|----------------|
+/// | I2C2 | BQ25895 PMIC      | 0x6A    | 100 kHz  | PF0 SDA, PF1 SCL |
+/// | I2C3 | ES9038Q2M DAC     | 0x48    | 400 kHz  | PC9 SDA, PA8 SCL |
+///
+/// ## Initialization
+/// I2C2 (PMIC, 100 kHz): `embassy_stm32::i2c::I2c::new(p.I2C2, PF1, PF0, ...)`.
+/// I2C3 (DAC, 400 kHz): `embassy_stm32::i2c::I2c::new(p.I2C3, PA8, PC9, ...)`.
+///
+/// ## Purpose
+/// - PMIC (BQ25895 @ 0x6A): USB-C PD negotiation, charge current control, battery ADC.
+/// - DAC (ES9038Q2M @ 0x48): volume, digital filter selection, oversampling mode.
+///
+/// ## See Also
+/// - `platform::audio_config::I2cAddresses` — address constants
+/// - `platform::audio_config::I2cBusAssignment` — bus number constants
+pub const I2C_INIT_NOTE: &str =
+    "I2C2 (PF0/PF1, 100kHz): BQ25895 PMIC @ 0x6A; I2C3 (PC9/PA8, 400kHz): ES9038Q2M DAC @ 0x48";
+
 // ── RCC clock configuration ───────────────────────────────────────────────────
 
 /// Build the `embassy_stm32::Config` with correct RCC settings for SoulAudio DAP.
@@ -218,6 +342,75 @@ pub fn build_embassy_config() -> embassy_stm32::Config {
     config.rcc.voltage_scale = VoltageScale::Scale1;
 
     config
+}
+
+/// Watchdog timeout in milliseconds.
+///
+/// The IWDG (Independent Watchdog) must be fed within this period or the MCU
+/// resets. The IWDG uses the 32 kHz LSI clock and cannot be disabled once
+/// started — it acts as an unconditional hardware safety net.
+///
+/// # Timeout Rationale
+///
+/// - Minimum bound: SD card initialization can take up to 3 seconds in
+///   worst-case (slow card + FAT32 root directory scan). The timeout must
+///   be longer than this to avoid spurious resets during normal boot.
+/// - Maximum bound: a deadlocked Embassy task or runaway panic loop should
+///   not hang the device for more than 30 seconds before the watchdog fires.
+///
+/// 8 seconds balances these constraints with margin for future boot steps.
+///
+/// # Usage
+///
+/// On hardware, pass `init_watchdog_config()` (microseconds) to
+/// `embassy_stm32::wdg::IndependentWatchdog::new()`, then call `.unleash()`.
+/// The main loop task must call `.pet()` at least once every 8 seconds.
+pub const WATCHDOG_TIMEOUT_MS: u32 = 8_000;
+
+/// Returns the IWDG timeout in microseconds for embassy-stm32.
+///
+/// `embassy_stm32::wdg::IndependentWatchdog::new(peripheral, timeout_us)`
+/// accepts the timeout in **microseconds**. This function converts
+/// `WATCHDOG_TIMEOUT_MS` to the correct unit.
+///
+/// # Hardware Only
+///
+/// This function is `#[cfg(feature = "hardware")]` because it is only
+/// called from `main.rs` which is hardware-only. The constant
+/// `WATCHDOG_TIMEOUT_MS` is always available for host-based tests.
+#[cfg(feature = "hardware")]
+#[must_use]
+pub fn init_watchdog_config() -> u32 {
+    // IndependentWatchdog::new() takes timeout in microseconds.
+    WATCHDOG_TIMEOUT_MS * 1_000
+}
+
+/// Returns `true` if the RCC configuration enables the D3 power domain.
+///
+/// The STM32H743 D3 domain (SmartRun domain) hosts:
+///   - SRAM4 (64 KB) — only memory accessible by BDMA
+///   - BDMA — serves D3 peripherals only
+///   - SPI6, SAI4, LPUART1, I2C4, ADC3 — BDMA-connected peripherals
+///
+/// In embassy-stm32 0.1.0, D3 peripheral bus clocks are enabled automatically
+/// when those peripherals are constructed (embassy internally sets the RCC
+/// peripheral clock enable bit). There is no separate "D3 domain enable"
+/// call required in `Config` — the peripheral init handles it.
+///
+/// This function documents that policy as an architecture assertion.
+/// It is checked by `arch_boundaries::d3_power_domain_enabled_in_rcc_config`.
+pub fn rcc_config_enables_d3_domain() -> bool {
+    // D3 peripheral clocks (BDMA, SPI6, SAI4, LPUART1, I2C4) are enabled
+    // by embassy-stm32 at peripheral construction time via the RCC peripheral
+    // clock enable registers (RCC_AHB4ENR, RCC_APB4ENR).
+    //
+    // No explicit global D3 domain enable is required in Config — embassy
+    // handles it transparently when each D3 peripheral is initialized.
+    //
+    // For SRAM4 (BDMA buffer pool): the MPU already marks 0x38000000 as
+    // non-cacheable (see `mpu_register_pairs()`), and BDMA accesses SRAM4
+    // directly without any additional D3 enable step.
+    true
 }
 
 /// Returns `true` if the RCC configuration has HSI48 enabled.

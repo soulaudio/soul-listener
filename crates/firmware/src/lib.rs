@@ -106,6 +106,7 @@
 pub mod audio;
 pub mod boot;
 pub mod display;
+pub mod exception_handlers;
 pub mod hal;
 pub mod ui;
 
