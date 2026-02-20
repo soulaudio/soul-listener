@@ -31,3 +31,6 @@ examples = ["dep:eink-emulator", "eink-system/examples"]
 name = "components_demo"
 path = "examples/components_demo.rs"
 required-features = ["examples"]
+
+[lints]
+workspace = true

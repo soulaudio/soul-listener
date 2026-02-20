@@ -91,7 +91,11 @@ mod windows_dpi {
             // lParam → RECT: OS-suggested outer window rect at the new DPI.
             // Its position is correct (cursor-tracked); its size would scale the
             // window visually, which we don't want — we need fixed physical pixels.
-            let suggested = &*(lparam as *const RECT);
+            //
+            // SAFETY: Windows guarantees that for WM_DPICHANGED, lParam is a
+            // non-null pointer to a RECT that is valid for the lifetime of this
+            // message dispatch. The cast is therefore sound.
+            let suggested = unsafe { &*(lparam as *const RECT) };
 
             // New DPI is in the low word of wParam.
             let new_dpi = (wparam & 0xFFFF) as u32;
@@ -102,34 +106,49 @@ mod windows_dpi {
             // Compute the outer window rect that gives exactly phys_w × phys_h
             // client pixels at new_dpi.  AdjustWindowRectExForDpi accounts for
             // the title bar and border widths that change with DPI.
-            let style = GetWindowLongW(hwnd, GWL_STYLE) as u32;
-            let ex_style = GetWindowLongW(hwnd, GWL_EXSTYLE) as u32;
+            //
+            // SAFETY: hwnd is a valid HWND supplied by Windows to this WndProc.
+            // All Win32 API calls here follow their documented preconditions.
+            let style = unsafe { GetWindowLongW(hwnd, GWL_STYLE) } as u32;
+            let ex_style = unsafe { GetWindowLongW(hwnd, GWL_EXSTYLE) } as u32;
             let mut outer = RECT {
                 left: 0,
                 top: 0,
                 right: phys_w,
                 bottom: phys_h,
             };
-            AdjustWindowRectExForDpi(&mut outer, style, 0, ex_style, new_dpi);
+            // SAFETY: &mut outer is a valid, aligned RECT pointer; style, ex_style,
+            // and new_dpi are well-formed values obtained from the message above.
+            unsafe { AdjustWindowRectExForDpi(&mut outer, style, 0, ex_style, new_dpi) };
             let outer_w = outer.right - outer.left;
             let outer_h = outer.bottom - outer.top;
 
-            SetWindowPos(
-                hwnd,
-                0, // hwnd_insert_after ignored with SWP_NOZORDER
-                suggested.left,
-                suggested.top,
-                outer_w,
-                outer_h,
-                SWP_NOZORDER | SWP_NOACTIVATE,
-            );
+            // SAFETY: hwnd is valid; all coordinate and flag arguments are safe values.
+            unsafe {
+                SetWindowPos(
+                    hwnd,
+                    0, // hwnd_insert_after ignored with SWP_NOZORDER
+                    suggested.left,
+                    suggested.top,
+                    outer_w,
+                    outer_h,
+                    SWP_NOZORDER | SWP_NOACTIVATE,
+                )
+            };
             return 0; // documented: return 0 if the message is processed
         }
 
         // Forward all other messages to winit's original WndProc.
         let orig = ORIG_PROC.with(|c| c.get());
-        let orig_fn: WNDPROC = std::mem::transmute(orig);
-        CallWindowProcW(orig_fn, hwnd, msg, wparam, lparam)
+        // SAFETY:  was stored by  via ,
+        // which returns the previous WNDPROC cast to isize. Windows guarantees this
+        // value is a valid WNDPROC function pointer (or 0 for the default proc,
+        // which  handles safely). The transmute from isize to the
+        // Option<unsafe extern "system" fn(...)> WNDPROC type is therefore sound.
+        let orig_fn: WNDPROC = unsafe { std::mem::transmute(orig) };
+        // SAFETY: hwnd, msg, wparam, lparam are the unmodified values supplied by
+        // Windows to this WndProc. orig_fn is a valid WNDPROC per the above.
+        unsafe { CallWindowProcW(orig_fn, hwnd, msg, wparam, lparam) }
     }
 
     /// Subclass the given HWND so `WM_DPICHANGED` is handled correctly.
@@ -140,8 +159,12 @@ mod windows_dpi {
     pub unsafe fn install_subclass(hwnd: isize, phys_w: i32, phys_h: i32) {
         PHYS_W.with(|c| c.set(phys_w));
         PHYS_H.with(|c| c.set(phys_h));
+        // SAFETY: hwnd is a valid HWND supplied by the caller (post-creation).
+        // subclass_proc is a valid WNDPROC function pointer cast to isize.
+        // SetWindowLongPtrW returns the previous WNDPROC (or 0) which we store
+        // for later use in CallWindowProcW.
         #[allow(clippy::fn_to_numeric_cast)]
-        let old = SetWindowLongPtrW(hwnd, GWLP_WNDPROC, subclass_proc as isize);
+        let old = unsafe { SetWindowLongPtrW(hwnd, GWLP_WNDPROC, subclass_proc as isize) };
         ORIG_PROC.with(|c| c.set(old));
     }
 

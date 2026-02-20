@@ -46,3 +46,6 @@ hot-reload = ["emulator"]
 # Cannot be the default because `crate-type = ["cdylib"]` requires std on
 # the host when `cargo clippy --all-targets` compiles it.
 no-std = []
+
+[lints]
+workspace = true
