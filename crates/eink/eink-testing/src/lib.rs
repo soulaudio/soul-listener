@@ -42,7 +42,6 @@
 //! ```
 
 #![warn(clippy::all)]
-#![warn(clippy::dbg_macro)]
 // Testing lib — println is allowed (clippy.toml has allow-print-in-tests = true)
 // but we still warn on it in lib code (not test code)
 #![warn(clippy::print_stdout)]

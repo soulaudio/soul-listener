@@ -111,6 +111,13 @@ unsafe_op_in_unsafe_fn = "deny"
 arithmetic_side_effects = "deny"
 # Safety-critical: direct slice indexing panics on OOB. Use .get() instead.
 indexing_slicing = "deny"
+# Debug macros must not appear in committed code.
+dbg_macro = "deny"
+# Placeholder code must not reach production.
+todo = "deny"
+unimplemented = "deny"
+# Holding a mutex/lock across an await point can deadlock async tasks.
+await_holding_lock = "deny"
 
 [profile.dev]
 opt-level = 1

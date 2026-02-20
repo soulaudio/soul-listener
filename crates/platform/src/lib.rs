@@ -59,11 +59,8 @@
 #![warn(missing_docs)]
 #![warn(clippy::all)]
 #![warn(clippy::pedantic)]
-#![deny(clippy::await_holding_lock)] // holding a blocking Mutex across .await is a bug
 #![deny(unsafe_op_in_unsafe_fn)] // unsafe fn body is not implicitly unsafe block
 #![warn(clippy::print_stdout)] // prefer tracing/defmt over println! in lib code
-#![warn(clippy::dbg_macro)]
-// dbg! should not be left in committed code
 // Pedantic lints suppressed for this hardware HAL crate:
 #![allow(clippy::doc_markdown)] // hex addresses and register names in doc comments
 #![allow(clippy::missing_panics_doc)] // statically-valid expect() with safety comments

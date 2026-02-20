@@ -32,9 +32,7 @@
 
 #![warn(clippy::all)]
 #![warn(clippy::pedantic)]
-#![deny(clippy::await_holding_lock)]
 #![warn(clippy::print_stdout)] // emulator should use tracing, not println
-#![warn(clippy::dbg_macro)]
 #![allow(clippy::module_name_repetitions)]
 #![allow(clippy::missing_errors_doc)]
 // Pedantic lints too noisy for a graphics/emulator crate:
