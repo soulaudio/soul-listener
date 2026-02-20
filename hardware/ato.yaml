@@ -104,7 +104,10 @@ builds:
     exclude_checks:
       - PCB.requires_drc_check
 
-dependencies:
-  - type: registry
-    identifier: atopile/generics
-    release: 0.1.5
+  check-clock:
+    entry: clock.ato:HseClock
+    targets:
+      - bom
+    exclude_checks:
+      - PCB.requires_drc_check
+
