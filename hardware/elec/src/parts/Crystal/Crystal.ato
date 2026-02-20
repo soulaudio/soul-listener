@@ -1,25 +1,31 @@
-# Crystal.ato — Generic passive crystal resonator
+# Crystal.ato — Generic two-terminal passive crystal resonator
 #
-# This is a generic (non-atomic) module representing any two-terminal
-# fundamental-mode crystal resonator. Specific part numbers are selected
-# by setting frequency and package in the instantiating module and
-# documenting the chosen part in comments there.
+# Modelled as an atomic component so that importing this file bootstraps the
+# atopile standard library (Electrical, ElectricPower, Capacitor …).  Modules
+# that only import Crystal.ato (notably clock.ato) have no other component
+# import to trigger that bootstrap.
 #
 # Usage:
 #   xtal = new Crystal
 #   xtal.frequency = 25MHz +/- 30ppm
-#   xtal.package   = "3225"
 #   xtal.p1 ~ osc_in_signal
 #   xtal.p2 ~ osc_out_signal
 #   assert xtal.frequency within 24MHz to 26MHz
+#
+# The default footprint covers the common 3225-2Pin package used for all
+# on-board crystals (HSE 25 MHz in clock.ato, LSE 32.768 kHz in mcu.ato,
+# HSE 32 MHz and LSE 32.768 kHz in bluetooth.ato).
+# Override the footprint in the KiCad layout for the chosen part.
 
-module Crystal:
-    """Generic two-terminal passive crystal resonator.
+component Crystal:
+    trait is_atomic_part<
+        manufacturer = "Generic",
+        partnumber   = "Crystal",
+        footprint    = "Crystal:Crystal_SMD_3225-2Pin_3.2x2.5mm",
+        symbol       = "Device:Crystal">
+    trait has_designator_prefix<prefix = "Y">
 
-    Set frequency and package in the instantiating module.
-    Connect p1 to the oscillator amplifier input (OSC_IN),
-    and p2 to the oscillator amplifier output (OSC_OUT).
-    """
     frequency = 0Hz  # Resonant frequency — set at instantiation
-    p1 = new Electrical  # Crystal terminal 1 (oscillator amplifier input)
-    p2 = new Electrical  # Crystal terminal 2 (oscillator amplifier output)
+
+    signal p1 ~ pin 1  # Terminal 1 — OSC_IN / OSC32_IN
+    signal p2 ~ pin 2  # Terminal 2 — OSC_OUT / OSC32_OUT
