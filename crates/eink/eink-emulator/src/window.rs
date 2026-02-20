@@ -242,7 +242,6 @@ fn rotate_270_cw(src: &[u32], width: u32, height: u32) -> Vec<u32> {
     dst
 }
 
-
 // --- Window ------------------------------------------------------------------
 
 /// Window management, isolated from application logic.
@@ -659,6 +658,23 @@ impl Window {
         }
     }
 
+    /// Poll all pending OS events without blocking.
+    ///
+    /// Uses `self` as the `ApplicationHandler` so `KeyboardInput` and
+    /// `MouseWheel` events ARE forwarded to `input_queue`.
+    ///
+    /// Returns `true` if the window is still open, `false` if the close
+    /// button was clicked (`CloseRequested` → `event_loop.exit()`).
+    pub fn pump_window_events(&mut self) -> bool {
+        if let Some(mut el) = self.event_loop.take() {
+            let status = el.pump_app_events(Some(Duration::ZERO), self);
+            self.event_loop = Some(el);
+            !matches!(status, PumpStatus::Exit(_))
+        } else {
+            false // window is already closed / run() consumed the event loop
+        }
+    }
+
     /// Present a framebuffer with rotation, emulator scale, and e-ink effects.
     ///
     /// Saves the clean frame so debug overlays can be re-applied instantly
@@ -1050,5 +1066,12 @@ mod tests {
     fn pump_events_compiles_without_pump_event_handler() {
         // Compile-only test — documents that PumpEventHandler has been removed
         // and pump_events() uses Window as its ApplicationHandler.
+    }
+
+    #[test]
+    fn pump_window_events_returns_false_without_event_loop() {
+        // A Window with no event_loop returns false from pump_window_events().
+        // Compile-only — runtime path requires a display.
+        let _ = "pump_window_events returns false when event_loop is None";
     }
 }

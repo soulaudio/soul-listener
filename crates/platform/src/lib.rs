@@ -75,6 +75,7 @@
 
 pub mod asset_store;
 pub mod audio;
+pub mod audio_config;
 pub mod bluetooth;
 pub mod clock_config;
 pub mod config;
@@ -88,6 +89,7 @@ pub mod power;
 pub mod qspi_config;
 pub mod sdram;
 pub mod storage;
+pub mod storage_config;
 
 // Re-export main high-level traits
 pub use asset_store::{AssetKey, AssetStore};

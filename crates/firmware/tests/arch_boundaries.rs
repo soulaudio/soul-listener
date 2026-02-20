@@ -656,3 +656,491 @@ fn memory_x_has_axisram_section() {
         "memory.x must define a .axisram output section for DMA buffer placement"
     );
 }
+
+// ─── Stack overflow protection tests ─────────────────────────────────────────
+//
+// These tests enforce that flip-link stack overflow protection is configured.
+//
+// flip-link flips the memory layout so the stack is placed BELOW .bss+.data.
+// This means a stack overflow hits the bottom of RAM (a hard fault) rather than
+// silently corrupting DMA buffers in AXI SRAM.
+//
+// Configuration:
+//   .cargo/config.toml — linker = "flip-link" under [target.thumbv7em-none-eabihf]
+//   memory.x           — _stack_start defined to top of AXI SRAM
+//   Cargo.toml         — flip-link listed so `cargo install` can be verified in CI
+
+/// Verify that memory.x defines `_stack_start` to explicitly control stack placement.
+///
+/// Architecture rule: `_stack_start` must be defined so the linker places the
+/// stack at a known address (top of AXI SRAM). Without this, cortex-m-rt
+/// defaults to the end of the first RAM region, which may conflict with
+/// flip-link's layout transformation.
+///
+/// flip-link requires a defined `_stack_start` to know where to anchor its
+/// inverted memory layout.
+#[test]
+fn memory_x_has_stack_start() {
+    let memory_x = include_str!("../../../memory.x");
+    assert!(
+        memory_x.contains("_stack_start"),
+        "memory.x must define _stack_start to explicitly control stack placement \
+         (required for flip-link compatibility)"
+    );
+}
+
+/// Verify that the `.cargo/config.toml` references flip-link as the linker.
+///
+/// Architecture rule: flip-link must be configured as the linker for the ARM
+/// embedded target so that stack overflow produces a defined HardFault instead
+/// of silently corrupting DMA buffers in AXI SRAM.
+///
+/// The correct configuration (Cargo 1.74+) is:
+///   [target.thumbv7em-none-eabihf]
+///   linker = "flip-link"
+///
+/// For older Cargo the rustflags form "-C linker=flip-link" is also accepted.
+#[test]
+fn cargo_config_uses_flip_link_linker() {
+    let config = include_str!("../../../.cargo/config.toml");
+    let has_flip_link = config.contains("flip-link");
+    assert!(
+        has_flip_link,
+        ".cargo/config.toml must set flip-link as the linker for \
+         [target.thumbv7em-none-eabihf] to enable stack overflow protection. \
+         Add: linker = \"flip-link\"  (requires: cargo install flip-link)"
+    );
+}
+
+/// Verify that firmware Cargo.toml does not have flip-link as a library dependency.
+///
+/// Architecture rule: flip-link is a standalone linker binary, NOT a Rust
+/// library crate. It must NOT appear in [dependencies] or [build-dependencies].
+/// It is installed via `cargo install flip-link` and invoked only by the linker.
+/// Adding it as a dep would be wrong and would cause a compile error.
+#[test]
+fn flip_link_is_not_a_cargo_dependency() {
+    let firmware_cargo = include_str!("../Cargo.toml");
+    let workspace_cargo = include_str!("../../../Cargo.toml");
+    // flip-link must NOT appear in [dependencies] or [build-dependencies]
+    // It is a tool, not a library. Checking for it in [dependencies] sections.
+    // A simple check: it should not be in either Cargo.toml as a dep entry.
+    // (It's fine if the CI workflow references it for installation.)
+    let firmware_has_dep = firmware_cargo
+        .lines()
+        .filter(|l| !l.trim_start().starts_with('#'))
+        .any(|l| l.contains("flip-link") && (l.contains('=') || l.contains('"')));
+    let workspace_has_dep = workspace_cargo
+        .lines()
+        .filter(|l| !l.trim_start().starts_with('#'))
+        .any(|l| l.contains("flip-link") && (l.contains('=') || l.contains('"')));
+    assert!(
+        !firmware_has_dep && !workspace_has_dep,
+        "flip-link must NOT be a Cargo dependency (it is a linker tool, not a library). \
+         Configure it in .cargo/config.toml and install via `cargo install flip-link`."
+    );
+}
+
+/// Verify that the HardFault exception handler module exists in the firmware crate.
+///
+/// Architecture rule: all embedded firmware must define a HardFault handler.
+/// Without one, memory access violations, unaligned accesses, and stack
+/// overflows (detected by flip-link) produce undefined behaviour instead
+/// of a diagnostic halt. The handler outputs register state via defmt/RTT
+/// so engineers can diagnose the fault source.
+///
+/// This test verifies the module exists by checking the exported marker constant.
+/// The actual `#[cortex_m_rt::exception]` handler is `#[cfg(feature = "hardware")]`
+/// because it requires ARM intrinsics, but the module must always be present.
+#[test]
+fn hardfault_handler_module_exists() {
+    // Architecture rule: firmware must define an exception_handlers module.
+    // HARDFAULT_DEFINED is a compile-time marker — its existence proves the
+    // module compiled and the handler is wired into the firmware crate.
+    assert!(
+        firmware::exception_handlers::HARDFAULT_DEFINED,
+        "firmware::exception_handlers::HARDFAULT_DEFINED must be true — \
+         the exception_handlers module with HardFault handler must exist"
+    );
+}
+
+/// Verify that the CI workflow runs `cargo build` (not just `cargo check`)
+/// for the embedded target.
+///
+/// Architecture rule: `cargo check` validates types and borrows but skips the
+/// linker step — linker errors (undefined symbols, overflow into flash, wrong
+/// section placement) are only caught by `cargo build`. The CI must run a full
+/// build to catch these categories of error before they reach flash time.
+#[test]
+fn ci_workflow_runs_embedded_build_not_just_check() {
+    let ci = include_str!("../../../.github/workflows/ci.yml");
+    // The embedded build job must use `cargo build`, not just `cargo check`.
+    // We look for a build command targeting the embedded feature set.
+    let has_build = ci
+        .lines()
+        .any(|l| l.contains("cargo build") && !l.trim_start().starts_with('#'));
+    assert!(
+        has_build,
+        ".github/workflows/ci.yml must contain a `cargo build` step for the \
+         embedded target (thumbv7em-none-eabihf + hardware feature). \
+         `cargo check` misses linker errors. Add a build-embedded job."
+    );
+}
+
+// ─── Interrupt priority hierarchy tests ──────────────────────────────────────
+//
+// These tests enforce that NVIC interrupt priorities are defined as named
+// constants in platform::clock_config::InterruptPriorities.
+//
+// STM32H743ZI implements 4 priority bits (16 levels, 0=highest, 15=lowest).
+// Embassy-stm32 uses the top 4 bits of the 8-bit NVIC priority register,
+// so all valid priority values are multiples of 16 (0, 16, 32, …, 240).
+//
+// Priority hierarchy (lower number = higher priority, preempts higher numbers):
+//   AUDIO_SAI_DMA (0)  > DISPLAY_SPI_DMA (32) > SDMMC_DMA (64) >
+//   INPUT_EXTI (96) > BLUETOOTH_UART (128)
+//
+// Without this hierarchy, audio DMA interrupts can be preempted by display
+// refresh or SD card transfers, causing audio dropouts (underrun/overrun).
+
+/// Verify that InterruptPriorities struct exists with all required constants.
+///
+/// Architecture rule: interrupt priorities must be defined as named constants
+/// in platform::clock_config so they are auditable, testable, and referenced
+/// from a single source of truth.
+#[test]
+fn interrupt_priorities_type_exists() {
+    // Architecture rule: interrupt priorities must be defined as constants
+    let _ = platform::clock_config::InterruptPriorities::AUDIO_SAI_DMA;
+    let _ = platform::clock_config::InterruptPriorities::DISPLAY_SPI_DMA;
+    let _ = platform::clock_config::InterruptPriorities::SDMMC_DMA;
+    let _ = platform::clock_config::InterruptPriorities::INPUT_EXTI;
+    let _ = platform::clock_config::InterruptPriorities::BLUETOOTH_UART;
+}
+
+/// Verify that audio SAI DMA has the highest interrupt priority.
+///
+/// Architecture rule: audio SAI DMA must never be preempted by display
+/// refresh or SD card transfers. On ARM NVIC, a numerically lower priority
+/// value means higher actual priority (preempts higher-numbered priorities).
+///
+/// If this ordering is wrong, a display SPI DMA interrupt can preempt audio
+/// SAI DMA, causing audio buffer underrun or overrun and audible dropouts.
+#[test]
+fn audio_priority_is_highest() {
+    use platform::clock_config::InterruptPriorities as P;
+    assert!(
+        P::AUDIO_SAI_DMA < P::DISPLAY_SPI_DMA,
+        "audio priority ({}) must be higher (lower number) than display ({})",
+        P::AUDIO_SAI_DMA,
+        P::DISPLAY_SPI_DMA
+    );
+    assert!(
+        P::AUDIO_SAI_DMA < P::SDMMC_DMA,
+        "audio priority must be higher than SDMMC"
+    );
+    assert!(
+        P::AUDIO_SAI_DMA < P::BLUETOOTH_UART,
+        "audio priority must be higher than bluetooth"
+    );
+}
+
+/// Verify that all priority values are multiples of 16.
+///
+/// Architecture rule: STM32H743 implements 4 priority bits. The NVIC stores
+/// priorities in the top 4 bits of the 8-bit priority register, so only
+/// values that are multiples of 16 are meaningful. Using non-aligned values
+/// (e.g. 5 instead of 0) still works but is misleading — the hardware ignores
+/// the lower 4 bits. All constants must be multiples of 16 to be explicit.
+#[test]
+fn priority_values_are_nvic_aligned() {
+    use platform::clock_config::InterruptPriorities as P;
+    for (name, val) in [
+        ("AUDIO_SAI_DMA", P::AUDIO_SAI_DMA),
+        ("DISPLAY_SPI_DMA", P::DISPLAY_SPI_DMA),
+        ("SDMMC_DMA", P::SDMMC_DMA),
+        ("INPUT_EXTI", P::INPUT_EXTI),
+        ("BLUETOOTH_UART", P::BLUETOOTH_UART),
+        ("TIME_DRIVER", P::TIME_DRIVER),
+    ] {
+        assert_eq!(
+            val % 16,
+            0,
+            "priority {name} ({val}) must be a multiple of 16 for STM32H743 4-bit NVIC"
+        );
+    }
+}
+
+// ─── Watchdog configuration tests ────────────────────────────────────────────
+//
+// These tests enforce that the IWDG (Independent Watchdog) timeout is defined
+// in firmware::boot and has a value appropriate for the SoulAudio DAP.
+//
+// The IWDG uses the 32 kHz LSI clock and resets the MCU if not fed within the
+// timeout period. This catches Embassy task deadlocks and runaway panic loops.
+// It cannot be disabled once started, making it a hard safety net.
+//
+// Timeout constraints:
+//   Minimum: 5 s — SD card init can take up to 3 s; allow margin.
+//   Maximum: 30 s — fail fast on deadlock; don't hang indefinitely.
+
+/// Verify that firmware::boot::WATCHDOG_TIMEOUT_MS exists.
+///
+/// Architecture rule: the watchdog timeout must be a named constant so it can
+/// be audited and referenced by the watchdog init code. Magic numbers in the
+/// watchdog init call would hide the timeout policy from code review.
+#[test]
+fn watchdog_config_exists() {
+    // Architecture rule: watchdog configuration must be defined
+    let _ = firmware::boot::WATCHDOG_TIMEOUT_MS;
+}
+
+/// Verify that the watchdog timeout is between 5 and 30 seconds.
+///
+/// Architecture rule: the watchdog timeout must be long enough for the
+/// worst-case SD card initialization (approximately 3 seconds) but short
+/// enough to recover from deadlocks quickly (under 30 seconds).
+///
+/// If the timeout is too short, the MCU resets during normal SD card init.
+/// If the timeout is too long, a deadlocked task hangs the device for
+/// an unacceptably long time before the watchdog fires.
+#[test]
+fn watchdog_timeout_is_reasonable() {
+    let timeout = firmware::boot::WATCHDOG_TIMEOUT_MS;
+    assert!(
+        timeout >= 5_000,
+        "watchdog timeout must be >= 5 seconds (5000 ms), got {timeout}ms"
+    );
+    assert!(
+        timeout <= 30_000,
+        "watchdog timeout must be <= 30 seconds (30000 ms), got {timeout}ms"
+    );
+}
+
+// ─── D3 power domain tests ────────────────────────────────────────────────────
+//
+// The STM32H743 D3 domain (also called SmartRun domain) hosts:
+//   SRAM4 (64 KB, BDMA-accessible), BDMA, SPI6, SAI4, LPUART1, I2C4, ADC3.
+//
+// D3 peripherals are only accessible if the D3 clock domain is running.
+// Embassy-stm32 enables peripheral bus clocks when peripherals are constructed,
+// so explicit D3 domain enable at RCC level is handled automatically.
+//
+// The rcc_config_enables_d3_domain() function documents this policy.
+
+/// Verify that firmware::boot::rcc_config_enables_d3_domain() returns true.
+///
+/// Architecture rule: the firmware RCC config must correctly enable D3 domain
+/// peripheral clocks. In embassy-stm32 0.1.0, D3 peripheral clocks (BDMA,
+/// SPI6, SAI4) are enabled automatically at peripheral construction time via
+/// the RCC peripheral clock enable registers. The `rcc_config_enables_d3_domain`
+/// function documents this policy and is checked by this test.
+#[test]
+fn d3_power_domain_enabled_in_rcc_config() {
+    assert!(
+        firmware::boot::rcc_config_enables_d3_domain(),
+        "RCC config must enable D3 power domain for SRAM4/SPI6/SAI4/LPUART1/I2C4"
+    );
+}
+
+// ─── SAI / I2C audio init stub architecture tests ────────────────────────────
+//
+// These tests enforce that:
+//   1. platform::audio_config exposes SaiAudioConfig and I2cAddresses types.
+//   2. firmware::boot exposes SAI_INIT_NOTE and I2C_INIT_NOTE anchor constants.
+//
+// They turn RED when the types or constants do not exist, then GREEN once the
+// implementation stubs are added. They guard against accidentally removing or
+// renaming these architectural anchor points in future refactors.
+
+/// Verify that `platform::audio_config::SaiAudioConfig` is callable and
+/// returns the correct 192 kHz configuration for the ES9038Q2M DAC.
+///
+/// Architecture rule: SAI1 configuration must live in the `platform` crate
+/// (HAL layer), not in `firmware`. This keeps the clock arithmetic testable
+/// on the host and reusable without pulling in embassy-stm32 types.
+#[test]
+fn audio_config_type_exists() {
+    let cfg = platform::audio_config::SaiAudioConfig::es9038q2m_192khz();
+    assert_eq!(cfg.sample_rate_hz, 192_000);
+}
+
+/// Verify that `platform::audio_config::I2cAddresses` constants are defined
+/// and have the expected values for the BQ25895 PMIC and ES9038Q2M DAC.
+///
+/// Architecture rule: I2C peripheral addresses must be named constants in
+/// the `platform` crate. Magic-number addresses in `firmware` are forbidden.
+#[test]
+fn i2c_addresses_defined() {
+    // BQ25895 PMIC: fixed 7-bit address 0x6A
+    let pmic_addr = platform::audio_config::I2cAddresses::BQ25895_PMIC;
+    assert!(
+        pmic_addr == 0x6A || pmic_addr == 0x6B,
+        "BQ25895 address must be 0x6A or 0x6B, got 0x{pmic_addr:02X}"
+    );
+
+    // ES9038Q2M DAC: hardware-fixed 7-bit address 0x48
+    let dac_addr = platform::audio_config::I2cAddresses::ES9038Q2M_DAC;
+    assert_eq!(
+        dac_addr, 0x48,
+        "ES9038Q2M I2C address is hardware-fixed at 0x48"
+    );
+}
+
+/// Verify that `firmware::boot::SAI_INIT_NOTE` exists and documents the
+/// SAI1 initialisation requirement.
+///
+/// Architecture rule: `boot.rs` must carry a named constant that serves as
+/// a documentation anchor for the SAI1 initialisation TODO. This prevents
+/// the requirement from being lost in a comment that could be silently deleted.
+/// Tests that reference `SAI_INIT_NOTE` will fail to compile if it is removed.
+#[test]
+fn sai_init_stub_exists_in_boot() {
+    // Architecture rule: boot module must document SAI init location.
+    let note = firmware::boot::SAI_INIT_NOTE;
+    assert!(
+        !note.is_empty(),
+        "firmware::boot::SAI_INIT_NOTE must be a non-empty documentation string"
+    );
+    // Must reference SAI or audio to be meaningful
+    let lower = note.to_lowercase();
+    assert!(
+        lower.contains("sai") || lower.contains("audio"),
+        "SAI_INIT_NOTE must mention SAI or audio, got: {note}"
+    );
+}
+
+/// Verify that `firmware::boot::I2C_INIT_NOTE` exists and documents the
+/// I2C bus initialisation requirement.
+///
+/// Architecture rule: `boot.rs` must carry a named constant that serves as
+/// a documentation anchor for the I2C2/I2C3 initialisation TODO. The PMIC
+/// and DAC cannot be controlled until the I2C buses are up; this constant
+/// keeps that requirement visible and test-guarded.
+#[test]
+fn i2c_init_stub_exists_in_boot() {
+    // Architecture rule: boot module must document I2C init location.
+    let note = firmware::boot::I2C_INIT_NOTE;
+    assert!(
+        !note.is_empty(),
+        "firmware::boot::I2C_INIT_NOTE must be a non-empty documentation string"
+    );
+    // Must reference I2C or PMIC/DAC to be meaningful
+    let lower = note.to_lowercase();
+    assert!(
+        lower.contains("i2c") || lower.contains("pmic") || lower.contains("dac"),
+        "I2C_INIT_NOTE must mention I2C, PMIC, or DAC, got: {note}"
+    );
+}
+
+// ─── SDMMC1 and QUADSPI init stub architecture tests ─────────────────────────
+//
+// These tests enforce that:
+//   1. platform::storage_config exposes SdmmcConfig and QspiNorConfig types.
+//   2. firmware::boot exposes SDMMC_INIT_NOTE and QSPI_INIT_NOTE anchor constants.
+//   3. All 6 SDMMC1 GPIO pins are documented in SdmmcPins.
+//
+// They turn RED when the types or constants do not exist, then GREEN once the
+// implementation stubs are added. They guard against accidentally removing or
+// renaming these architectural anchor points in future refactors.
+
+/// Verify that `platform::storage_config::SdmmcConfig` is callable and
+/// returns the 4-bit UHS-I configuration for the microSD card.
+///
+/// Architecture rule: SDMMC1 bus configuration (bus width, clock, timeout)
+/// must live in the `platform` crate (HAL layer), not in `firmware`. This
+/// keeps the configuration testable on the host without embassy-stm32 types.
+#[test]
+fn sdmmc_config_type_exists() {
+    let cfg = platform::storage_config::SdmmcConfig::microsd_uhs_i();
+    assert_eq!(cfg.bus_width, 4, "SDMMC must use 4-bit mode for UHS-I");
+}
+
+/// Verify that `platform::storage_config::QspiNorConfig` is callable and
+/// returns the W25Q128JV configuration with flash_size_field = 23.
+///
+/// Architecture rule: QUADSPI NOR flash configuration must live in the
+/// `platform` crate. The flash_size_field = 23 encodes 16 MB (2^24 bytes)
+/// as required by the QUADSPI_DCR.FSIZE register on STM32H7.
+#[test]
+fn qspi_config_type_exists() {
+    let cfg = platform::storage_config::QspiNorConfig::w25q128jv_at_100mhz();
+    assert_eq!(
+        cfg.flash_size_field, 23,
+        "W25Q128JV flash_size_field must be 23 (encodes 16 MB)"
+    );
+}
+
+/// Verify that `firmware::boot::SDMMC_INIT_NOTE` exists and documents the
+/// SDMMC1 initialisation requirement.
+///
+/// Architecture rule: `boot.rs` must carry a named constant that serves as
+/// a documentation anchor for the SDMMC1 initialisation TODO. This prevents
+/// the requirement from being lost in a comment that could be silently deleted.
+/// Tests that reference `SDMMC_INIT_NOTE` will fail to compile if it is removed.
+#[test]
+fn sdmmc_init_stub_exists_in_boot() {
+    let note = firmware::boot::SDMMC_INIT_NOTE;
+    assert!(
+        !note.is_empty(),
+        "firmware::boot::SDMMC_INIT_NOTE must be a non-empty documentation string"
+    );
+    // Must reference SDMMC and IDMA to be meaningful (key architectural facts)
+    assert!(
+        note.to_uppercase().contains("SDMMC") || note.to_uppercase().contains("SD"),
+        "SDMMC_INIT_NOTE must mention SDMMC or SD, got: {note}"
+    );
+}
+
+/// Verify that `firmware::boot::QSPI_INIT_NOTE` exists and documents the
+/// QUADSPI NOR flash initialisation requirement.
+///
+/// Architecture rule: `boot.rs` must carry a named constant that serves as
+/// a documentation anchor for the QUADSPI initialisation TODO. Without this
+/// anchor, the requirement to initialise the NOR flash (fonts, icons, OTA
+/// staging) can be silently dropped by a refactor.
+#[test]
+fn qspi_init_stub_exists_in_boot() {
+    let note = firmware::boot::QSPI_INIT_NOTE;
+    assert!(
+        !note.is_empty(),
+        "firmware::boot::QSPI_INIT_NOTE must be a non-empty documentation string"
+    );
+    // Must reference QUADSPI or QSPI or NOR to be meaningful
+    let upper = note.to_uppercase();
+    assert!(
+        upper.contains("QUADSPI") || upper.contains("QSPI") || upper.contains("NOR"),
+        "QSPI_INIT_NOTE must mention QUADSPI, QSPI, or NOR, got: {note}"
+    );
+}
+
+/// Verify that all 6 SDMMC1 GPIO pins are documented in `platform::storage_config::SdmmcPins`.
+///
+/// Architecture rule: all six SDMMC1 signals (CLK, CMD, D0–D3) must be
+/// documented as named constants in `SdmmcPins`. This ensures every engineer
+/// working on the SDMMC peripheral has a single authoritative source for the
+/// pin assignments on the STM32H743ZI LQFP144 package.
+#[test]
+fn sdmmc_pin_assignments_documented() {
+    // All 6 SDMMC pins must be documented as named constants.
+    // PC12 = CLK, PD2 = CMD, PC8-PC11 = D0-D3 (per STM32H743ZI AF table, AF12).
+    let _clk = platform::storage_config::SdmmcPins::CLK_PIN;
+    let _cmd = platform::storage_config::SdmmcPins::CMD_PIN;
+    let _d0 = platform::storage_config::SdmmcPins::D0_PIN;
+    let _d1 = platform::storage_config::SdmmcPins::D1_PIN;
+    let _d2 = platform::storage_config::SdmmcPins::D2_PIN;
+    let _d3 = platform::storage_config::SdmmcPins::D3_PIN;
+
+    // Verify CLK is PC12 (STM32H743ZI LQFP144, SDMMC1_CK alternate function)
+    assert!(
+        platform::storage_config::SdmmcPins::CLK_PIN.starts_with("PC12"),
+        "SDMMC1_CK must be PC12, got: {}",
+        platform::storage_config::SdmmcPins::CLK_PIN
+    );
+    // Verify CMD is PD2 (STM32H743ZI LQFP144, SDMMC1_CMD alternate function)
+    assert!(
+        platform::storage_config::SdmmcPins::CMD_PIN.starts_with("PD2"),
+        "SDMMC1_CMD must be PD2, got: {}",
+        platform::storage_config::SdmmcPins::CMD_PIN
+    );
+}

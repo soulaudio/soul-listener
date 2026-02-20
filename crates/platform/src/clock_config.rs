@@ -70,6 +70,73 @@ pub struct ClockRequirement {
     pub note: &'static str,
 }
 
+/// Interrupt priority levels for SoulAudio DAP.
+///
+/// STM32H743ZI implements 4 priority bits (16 levels, 0=highest, 15=lowest).
+/// Embassy-stm32 uses the top 4 bits of the 8-bit NVIC priority register.
+/// Therefore all meaningful priority values are multiples of 16 (0, 16, 32, …, 240).
+///
+/// # Priority Ordering
+///
+/// Lower numerical value = higher actual priority on ARM NVIC.
+/// A higher-priority interrupt preempts a lower-priority one.
+///
+/// | Interrupt        | Value | Rationale                                    |
+/// |------------------|-------|----------------------------------------------|
+/// | AUDIO_SAI_DMA    |   0   | Highest — audio dropout if preempted          |
+/// | DISPLAY_SPI_DMA  |  32   | High — can tolerate brief preemption by audio |
+/// | TIME_DRIVER      |  48   | Embassy TIM2 — between audio and SD           |
+/// | SDMMC_DMA        |  64   | Medium — SD card transfers                    |
+/// | INPUT_EXTI       |  96   | Interactive — latency important, not critical  |
+/// | BLUETOOTH_UART   | 128   | Background — lowest defined priority          |
+///
+/// # Setting Priorities
+///
+/// On hardware, use `embassy_stm32::interrupt::InterruptExt::set_priority()`:
+/// ```rust,ignore
+/// use embassy_stm32::interrupt::{self, InterruptExt};
+/// interrupt::SAI1.set_priority(Priority::P0); // AUDIO_SAI_DMA
+/// ```
+pub struct InterruptPriorities;
+
+impl InterruptPriorities {
+    /// Audio SAI DMA — highest priority, must never be preempted.
+    ///
+    /// Audio buffer underrun/overrun causes audible dropouts. The SAI DMA
+    /// interrupt must complete without being preempted by any other peripheral.
+    ///
+    /// Priority level 0 (highest) × 16 bits/level = NVIC register value 0.
+    pub const AUDIO_SAI_DMA: u8 = 0; // Priority level 0 (highest) × 16 = 0
+
+    /// Display SPI DMA — high priority but can be briefly preempted by audio.
+    ///
+    /// Display refresh latency is measured in milliseconds; brief preemption
+    /// by audio (microseconds) is invisible to the user.
+    pub const DISPLAY_SPI_DMA: u8 = 2 * 16; // Priority 32
+
+    /// Embassy time driver (TIM2) — must be lower than audio, higher than BT.
+    ///
+    /// TIM2 drives `embassy_time::Timer`; preemption causes timer jitter but
+    /// not data corruption. Placed between audio and SD card priority.
+    pub const TIME_DRIVER: u8 = 3 * 16; // Priority 48
+
+    /// SDMMC DMA — medium priority for SD card transfers.
+    ///
+    /// SD card transfers can tolerate millisecond-scale jitter without failure.
+    pub const SDMMC_DMA: u8 = 4 * 16; // Priority 64
+
+    /// Input (EXTI) — interactive latency important but not time-critical.
+    ///
+    /// Human input response time is measured in tens of milliseconds; brief
+    /// deferral behind audio or display DMA is imperceptible.
+    pub const INPUT_EXTI: u8 = 6 * 16; // Priority 96
+
+    /// Bluetooth UART — background communication.
+    ///
+    /// HCI UART to STM32WB55 is not latency-critical; packets are buffered.
+    pub const BLUETOOTH_UART: u8 = 8 * 16; // Priority 128 (lowest of defined)
+}
+
 /// Set to `true` when the firmware `Cargo.toml` uses an explicit `time-driver-tim*`
 /// feature rather than the catch-all `time-driver-any`.
 ///
@@ -215,5 +282,50 @@ mod tests {
             TIME_DRIVER_EXPLICIT,
             "TIME_DRIVER_EXPLICIT must be true — use time-driver-tim2, not time-driver-any"
         );
+    }
+
+    /// Audio SAI DMA must have the highest priority (lowest numerical value).
+    ///
+    /// Without this ordering, audio DMA can be preempted by display or SD DMA,
+    /// causing buffer underrun/overrun and audible dropouts.
+    #[test]
+    fn interrupt_priority_ordering_is_correct() {
+        assert!(
+            InterruptPriorities::AUDIO_SAI_DMA < InterruptPriorities::DISPLAY_SPI_DMA,
+            "AUDIO_SAI_DMA ({}) must have higher priority (lower value) than DISPLAY_SPI_DMA ({})",
+            InterruptPriorities::AUDIO_SAI_DMA,
+            InterruptPriorities::DISPLAY_SPI_DMA
+        );
+        assert!(
+            InterruptPriorities::DISPLAY_SPI_DMA < InterruptPriorities::SDMMC_DMA,
+            "DISPLAY_SPI_DMA must have higher priority than SDMMC_DMA"
+        );
+        assert!(
+            InterruptPriorities::SDMMC_DMA < InterruptPriorities::INPUT_EXTI,
+            "SDMMC_DMA must have higher priority than INPUT_EXTI"
+        );
+        assert!(
+            InterruptPriorities::INPUT_EXTI < InterruptPriorities::BLUETOOTH_UART,
+            "INPUT_EXTI must have higher priority than BLUETOOTH_UART"
+        );
+    }
+
+    /// All priority values must be multiples of 16 (STM32H743 4-bit NVIC).
+    #[test]
+    fn all_priorities_are_nvic_aligned() {
+        for (name, val) in [
+            ("AUDIO_SAI_DMA", InterruptPriorities::AUDIO_SAI_DMA),
+            ("DISPLAY_SPI_DMA", InterruptPriorities::DISPLAY_SPI_DMA),
+            ("TIME_DRIVER", InterruptPriorities::TIME_DRIVER),
+            ("SDMMC_DMA", InterruptPriorities::SDMMC_DMA),
+            ("INPUT_EXTI", InterruptPriorities::INPUT_EXTI),
+            ("BLUETOOTH_UART", InterruptPriorities::BLUETOOTH_UART),
+        ] {
+            assert_eq!(
+                val % 16,
+                0,
+                "priority {name} ({val}) must be a multiple of 16 for STM32H743 4-bit NVIC"
+            );
+        }
     }
 }

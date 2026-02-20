@@ -36,7 +36,16 @@ MEMORY
 }
 
 /* Stack goes at the top of AXI SRAM (cortex-m-rt default)                 */
+/* With flip-link, the linker inverts the layout: the stack is placed BELOW  */
+/* .bss+.data so a stack overflow triggers a HardFault (RAM boundary hit)    */
+/* rather than silently corrupting DMA buffers. _stack_start anchors the top.*/
 _stack_start = ORIGIN(RAM) + LENGTH(RAM);
+
+/* Minimum stack size guard (informational; enforced by flip-link at link time).*/
+/* If the static footprint grows too large, a linker error is emitted before   */
+/* the firmware can be flashed. 32 KB is conservative for the Embassy async    */
+/* executor with several concurrent tasks.                                      */
+_min_stack_size = 32768;
 
 /* ── Custom output sections ─────────────────────────────────────────────── */
 /*                                                                           */

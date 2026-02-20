@@ -48,12 +48,79 @@ async fn main(spawner: Spawner) {
 
     let p = embassy_stm32::init(firmware::boot::build_embassy_config());
 
+    // Step 1: Initialize IWDG (Independent Watchdog).
+    //
+    // The IWDG must be fed every WATCHDOG_TIMEOUT_MS milliseconds or the MCU
+    // resets. This catches Embassy task deadlocks and runaway panic loops.
+    //
+    // The watchdog uses the 32 kHz LSI clock and is independent of the main
+    // PLL. Once unleashed, it CANNOT be stopped — the main loop MUST call
+    // watchdog.pet() at least once per WATCHDOG_TIMEOUT_MS interval.
+    //
+    // See: firmware::boot::WATCHDOG_TIMEOUT_MS (8 seconds)
+    let mut watchdog = embassy_stm32::wdg::IndependentWatchdog::new(
+        p.IWDG,
+        firmware::boot::init_watchdog_config(),
+    );
+    watchdog.unleash(); // Start watchdog — cannot be stopped after this point
+    defmt::info!(
+        "IWDG watchdog armed: timeout={=u32}ms",
+        firmware::boot::WATCHDOG_TIMEOUT_MS
+    );
+
     // Step 3: Initialize external SDRAM via FMC
     // TODO: call firmware::boot::init_sdram_stub() when FMC API is available.
     // The SDRAM at 0xC0000000 is needed for library cache + audio decode scratch.
     // Sequence: CLK_EN → PALL → AUTO_REFRESH × 2 → LMR → SET_REFRESH_RATE (761)
     // See: crates/firmware/src/boot.rs::init_sdram_stub()
     // See: crates/platform/src/sdram.rs::SdramInitSequence::w9825g6kh6()
+
+    // TODO Step 4: Initialize SDMMC1 for microSD card access.
+    // See: firmware::boot::SDMMC_INIT_NOTE for pin assignments and DMA config.
+    // Clock source: HSI48 (already enabled in build_embassy_config()).
+    // Priority: CRITICAL — SD card needed for music library access.
+    // #[cfg(feature = "hardware")]
+    // let sdmmc = embassy_stm32::sdmmc::Sdmmc::new_4bit(
+    //     p.SDMMC1, Irqs,
+    //     p.PC12, // CLK
+    //     p.PD2,  // CMD
+    //     p.PC8, p.PC9, p.PC10, p.PC11, // D0-D3
+    //     Default::default(),
+    // );
+
+    // TODO Step 5: Initialize QUADSPI for NOR flash (fonts/icons/OTA staging).
+    // See: firmware::boot::QSPI_INIT_NOTE for pin assignments and timing config.
+    // Base address: 0x90000000 (mapped in memory.x as QSPI region).
+    // Priority: MAJOR — fonts needed for display rendering.
+    // Embassy-stm32 issue #3149: memory-mapped (XiP) mode requires PAC writes.
+    // See platform::qspi_config for individual register field values.
+    // #[cfg(feature = "hardware")]
+    // // XiP via PAC: QUADSPI.CCR FMODE=0b11, INSTRUCTION=0xEB, DCYC=4
+
+    // TODO Step 6: Initialize SAI1 for audio output (ES9038Q2M DAC).
+    // See: firmware::boot::SAI_INIT_NOTE for pin assignments and DMA config.
+    // Priority: CRITICAL — must complete before spawning audio_playback_task.
+    // Blocked on: PLL3 configuration for 49.152 MHz MCLK (192 kHz / 256 fs).
+    // PLL1Q is currently 200 MHz (SDMMC). SAI needs a dedicated PLL3 branch.
+    // DMA buffer must be declared in .axisram (non-cacheable, DMA1-accessible).
+    // See: platform::audio_config::SaiAudioConfig::es9038q2m_192khz()
+    // #[cfg(feature = "hardware")]
+    // let sai = Sai::new_asynchronous_with_mclk(
+    //     p.SAI1_A, p.PE5, p.PE6, p.PE4, p.PE2,
+    //     p.DMA1_CH0, &mut SAI_DMA_BUF, Irqs, SaiConfig::default(),
+    // );
+
+    // TODO Step 7: Initialize I2C2 (BQ25895 PMIC) and I2C3 (ES9038Q2M DAC ctrl).
+    // See: firmware::boot::I2C_INIT_NOTE for addresses and pin assignments.
+    // Priority: CRITICAL — PMIC must init before battery ops, DAC before volume.
+    // See: platform::audio_config::I2cAddresses for 7-bit address constants.
+    // See: platform::audio_config::I2cBusAssignment for bus assignments.
+    // #[cfg(feature = "hardware")]
+    // let i2c2 = I2c::new(p.I2C2, p.PF1, p.PF0, Irqs,
+    //     p.DMA1_CH4, p.DMA1_CH5, hz(100_000), I2cConfig::default());
+    // #[cfg(feature = "hardware")]
+    // let i2c3 = I2c::new(p.I2C3, p.PA8, p.PC9, Irqs,
+    //     p.DMA1_CH6, p.DMA1_CH7, hz(400_000), I2cConfig::default());
 
     // Configure SPI1 for display
     // PA5 (SPI1_SCK), PA7 (SPI1_MOSI)
@@ -190,5 +257,9 @@ async fn main(spawner: Spawner) {
         Timer::after(Duration::from_secs(1)).await;
         counter += 1;
         defmt::debug!("Heartbeat tick={=u32}", counter);
+        // Feed the IWDG watchdog. Must be called at least once every
+        // WATCHDOG_TIMEOUT_MS (8 s). This 1-second heartbeat provides
+        // comfortable margin. If this loop stalls, the MCU resets.
+        watchdog.pet();
     }
 }

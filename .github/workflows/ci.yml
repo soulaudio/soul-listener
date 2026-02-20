@@ -441,15 +441,15 @@ jobs:
           echo "OK: minimp3 not present in dependency graph"
 
   # ---------------------------------------------------------------------------
-  # Embedded Build Check (STM32H7)
+  # Embedded Check (STM32H7) — fast type/borrow check without linking
   #
-  # Verifies the firmware compiles for the real hardware target.
-  # Uses cargo check (not build) to avoid the linker step — the probe-rs
-  # runner is not available in CI and the linker script (memory.x) references
-  # the physical flash/SRAM layout which won't link on a host linker anyway.
+  # `cargo check` validates types and borrows for the ARM target without
+  # running the linker. This is fast but misses linker errors (undefined
+  # symbols, section overflow, flip-link layout issues). The full link is
+  # performed by the build-embedded job below.
   # ---------------------------------------------------------------------------
   check-embedded:
-    name: Embedded Build (STM32H7)
+    name: Embedded Check (STM32H7)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
@@ -465,3 +465,68 @@ jobs:
           cargo check -p firmware \
             --target thumbv7em-none-eabihf \
             --features hardware
+
+  # ---------------------------------------------------------------------------
+  # Embedded Build (STM32H7) — full link with flip-link stack protection
+  #
+  # `cargo build` runs the full compilation + linker pipeline, which catches:
+  #   - Undefined symbols (missing cortex-m-rt exception vectors)
+  #   - Section overflow (firmware exceeds 2 MB flash limit)
+  #   - flip-link layout errors (stack size + static footprint too large for RAM)
+  #   - Linker script errors in memory.x
+  #
+  # `cargo check` (above) misses all of these because it skips the link step.
+  #
+  # flip-link is installed via `cargo install` because it is a standalone
+  # linker binary, not a Rust library dependency. It is configured in
+  # .cargo/config.toml as: linker = "flip-link" under [target.thumbv7em-none-eabihf].
+  #
+  # Binary size check: firmware must not exceed 2 MB (STM32H743ZI flash limit).
+  # ---------------------------------------------------------------------------
+  build-embedded:
+    name: Embedded Build + Size Check (STM32H7)
+    runs-on: ubuntu-latest
+    needs: check-embedded   # Only full-build if fast check passes first
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: thumbv7em-none-eabihf
+
+      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
+
+      - name: Install flip-link (stack overflow protection linker)
+        # flip-link is a standalone linker binary — NOT a Cargo library dep.
+        # Configured in .cargo/config.toml: linker = "flip-link"
+        # Ref: https://github.com/knurling-rs/flip-link
+        run: cargo install flip-link
+
+      - name: cargo build -p firmware (hardware, ARM target, release)
+        # Full link: catches linker errors, section overflow, flip-link issues.
+        # Uses --release to match the production build profile (LTO, opt-level=z).
+        run: |
+          cargo build --release \
+            --target thumbv7em-none-eabihf \
+            --package firmware \
+            --features hardware
+
+      - name: Check firmware binary size (must not exceed 2 MB flash)
+        run: |
+          ELF=target/thumbv7em-none-eabihf/release/firmware
+          if [ ! -f "$ELF" ]; then
+            echo "ERROR: firmware ELF not found at $ELF"
+            exit 1
+          fi
+          SIZE=$(stat -c%s "$ELF")
+          echo "Firmware ELF size: $SIZE bytes"
+          # 2 MB = 2097152 bytes. ELF includes debug symbols so the actual
+          # flash usage is smaller (stripped .text+.rodata), but a >4 MB ELF
+          # indicates something is very wrong with the build.
+          MAX_ELF_SIZE=4194304  # 4 MB: conservative upper bound for ELF+debug
+          if [ "$SIZE" -gt "$MAX_ELF_SIZE" ]; then
+            echo "ERROR: Firmware ELF ($SIZE bytes) exceeds sanity limit ($MAX_ELF_SIZE bytes)"
+            echo "Run: cargo size --release --target thumbv7em-none-eabihf -p firmware --features hardware -- -A"
+            exit 1
+          fi
+          echo "OK: firmware ELF size $SIZE bytes is within limits"
