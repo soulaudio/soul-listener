@@ -29,7 +29,6 @@ use platform::config;
 #[cfg(all(feature = "keyboard-input", not(feature = "hot-reload")))]
 use firmware::input::{Button, InputEvent};
 #[cfg(all(feature = "keyboard-input", not(feature = "hot-reload")))]
-#[allow(unused_imports)]
 use firmware_ui::screens::now_playing::render_now_playing_to;
 #[cfg(all(feature = "keyboard-input", not(feature = "hot-reload")))]
 use ui::navigation::Navigator;
@@ -246,31 +245,80 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // xtask dev kill-and-restart mode uses this path.
     #[cfg(not(feature = "hot-reload"))]
     {
-        tracing::info!("Rendering demo menu");
-        render_demo_menu(&mut display)?;
-        rt.block_on(async { display.refresh_full().await })?;
+        #[cfg(not(feature = "keyboard-input"))]
+        {
+            // Without keyboard input: static demo menu, block in run()
+            tracing::info!("Rendering demo menu");
+            render_demo_menu(&mut display)?;
+            rt.block_on(async { display.refresh_full().await })?;
 
-        // Register named DAP scene components so the debug inspector tree
-        // shows meaningful names instead of raw coordinates.
-        #[cfg(feature = "debug")]
-        register_dap_components(&mut display);
+            #[cfg(feature = "debug")]
+            register_dap_components(&mut display);
 
-        tracing::info!("Demo menu rendered");
-        tracing::info!("Close window to exit");
+            tracing::info!("Demo menu rendered");
+            tracing::info!("Close window to exit");
+            display.into_inner().run();
+        }
 
-        // Spawn a background task that logs every input event to stdout.
-        // This runs concurrently with the blocking winit event loop via the
-        // multi-thread tokio runtime.
-        #[cfg(all(feature = "keyboard-input", not(feature = "hot-reload")))]
-        rt.spawn(async move {
-            use platform::InputDevice as _;
-            loop {
-                let ev = input.wait_for_event().await;
-                tracing::info!(event = ?ev, "Input");
-            }
-        });
+        #[cfg(feature = "keyboard-input")]
+        {
+            tracing::info!("Starting interactive Now Playing screen");
 
-        display.into_inner().run();
+            let mut state = AppState::default();
+
+            rt.block_on(async {
+                // Initial full render
+                render_now_playing_to(&mut display, &state.now_playing, |_, _, _, _| {})?;
+                display.refresh_full().await?;
+                state.needs_redraw = false;
+
+                tracing::info!("Now Playing screen ready");
+                tracing::info!("Keyboard input: Space/K=Play  </J=Prev  >/L=Next  Up/==Vol+  Down/-=Vol-  M=Menu  Esc/BS=Back  Scroll=Encoder");
+
+                loop {
+                    // Pump OS events — forwards keyboard/scroll to InputQueue.
+                    // Returns false when the close button is clicked.
+                    if !display.emulator_mut().pump_window_events() {
+                        tracing::info!("Window closed");
+                        break;
+                    }
+
+                    // Drain all pending input events (non-blocking).
+                    loop {
+                        use platform::InputDevice as _;
+                        match input.poll_event() {
+                            Some(ev) => {
+                                tracing::debug!(event = ?ev, "Input");
+                                state.handle_input(ev);
+                            }
+                            None => break,
+                        }
+                    }
+
+                    // Re-render only when state changed.
+                    if state.needs_redraw {
+                        render_now_playing_to(
+                            &mut display,
+                            &state.now_playing,
+                            |_, _, _, _| {},
+                        )?;
+                        // Use partial refresh for responsiveness (~300 ms).
+                        display.refresh_partial().await?;
+                        state.needs_redraw = false;
+                        tracing::debug!(
+                            playing = state.now_playing.playing,
+                            volume = state.now_playing.volume,
+                            "State updated",
+                        );
+                    }
+
+                    // Yield to tokio so timers / async work can run.
+                    tokio::time::sleep(std::time::Duration::from_millis(16)).await;
+                }
+
+                Ok::<(), Box<dyn std::error::Error>>(())
+            })?;
+        }
     }
 
     Ok(())
