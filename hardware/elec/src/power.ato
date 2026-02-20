@@ -23,72 +23,8 @@ from "interfaces.ato" import I2CBus, USBDiffPair, AmpSupplyBus
 from "parts/BQ25895RTWT/BQ25895RTWT.ato" import BQ25895RTWT
 from "parts/AP2112K33TRG1/AP2112K33TRG1.ato" import AP2112K33TRG1
 from "parts/S2B_PH_K_S/S2B_PH_K_S.ato" import S2B_PH_K_S
-
-# ── TPS61023DRLR — Boost converter: SYS → +5.5 V ─────────────────────────────
-#
-# Package:      SOT-563 (6-lead, 1.6×1.6 mm)
-# Manufacturer: Texas Instruments
-# Datasheet:    https://www.ti.com/lit/ds/symlink/tps61023.pdf
-# Key specs:    1.5 A switch, 95% efficiency, VREF = 1.204 V, up to 5.5 V in
-# VOUT formula: VOUT = VREF × (1 + R_top / R_bot)
-#   For +5.5 V: R_top = 357 kΩ (VOUT → FB), R_bot = 100 kΩ (FB → GND)
-#   VOUT = 1.204 × (1 + 357/100) = 1.204 × 4.57 = 5.50 V ✓
-# Inductor:     1.5 µH, ≥ 2 A, DCR < 100 mΩ (e.g., Würth 744031150)
-# EN:           active high; tied to amp_en MCU signal (PC4)
-# Distributor:
-#   TME:      TPS61023DRLR      Digi-Key: 296-TPS61023DRLRT-ND
-component TPS61023DRLR:
-    trait is_atomic_part<
-        manufacturer = "Texas Instruments",
-        partnumber   = "TPS61023DRLR",
-        footprint    = "Package_TO_SOT_SMD:SOT-563",
-        symbol       = "Regulator_Switching:TPS61023">
-    trait has_designator_prefix<prefix = "U">
-
-    signal FB   ~ pin 1  # Feedback — resistor divider mid-point (VREF = 1.204 V)
-    signal EN   ~ pin 2  # Enable — active high; drive from MCU AMP_EN (PC4)
-    signal VIN  ~ pin 3  # Input — LiPo SYS rail (3.0–4.2 V)
-    signal GND  ~ pin 4  # Ground
-    signal SW   ~ pin 5  # Switching node — connect to inductor
-    signal VOUT ~ pin 6  # Boost output (+5.5 V)
-
-# ── TPS63700DRCR — Inverting converter: +5.5 V → −5.5 V ──────────────────────
-#
-# Package:      VSON-10 (3×3 mm, 10 leads + EP=GND)
-# Manufacturer: Texas Instruments
-# Datasheet:    https://www.ti.com/lit/ds/symlink/tps63700.pdf
-# Key specs:    300 mA output, VREF = 1.213 V
-# VOUT formula: VOUT = −VREF × (R_top / R_bot)
-#   For −5.5 V: R_top = 453 kΩ (VREF→FB), R_bot = 100 kΩ (FB→OUT)
-#   VOUT = −1.213 × (453/100) = −1.213 × 4.53 = −5.49 V ≈ −5.5 V ✓
-# VIN (pin 3):  Internal bias input — fed from TPS61023 VOUT (+5.5 V) via
-#               10 Ω + 100 nF RC filter (required by datasheet §9.2.1).
-# IN  (pin 5):  Main switching input — LiPo SYS rail (3.0–4.2 V).
-# EN  (pin 4):  RC-delayed from TPS61023 VOUT (100 kΩ + 100 nF = 10 ms τ)
-#               so positive rail is established ≥ 10 ms before negative rail.
-# ⚠ COMP (pin 1): MANDATORY 4.7 nF to GND for loop stability.
-# ⚠ EP   (pin 11): Connect to GND plane.
-# Distributor:
-#   TME:      TPS63700DRCR      Digi-Key: 296-TPS63700DRCRT-ND
-component TPS63700DRCR:
-    trait is_atomic_part<
-        manufacturer = "Texas Instruments",
-        partnumber   = "TPS63700DRCR",
-        footprint    = "Package_DFN_QFN:VSON-10-1EP_3x3mm_P0.5mm_EP1.2x1.7mm",
-        symbol       = "Regulator_Switching:TPS63700">
-    trait has_designator_prefix<prefix = "U">
-
-    signal COMP   ~ pin 1   # Compensation — MUST have 4.7 nF to GND
-    signal GND    ~ pin 2   # Signal/analog ground
-    signal VIN    ~ pin 3   # Bias input — feed from boost VOUT via 10Ω+100nF RC
-    signal EN     ~ pin 4   # Enable — active high; RC-delayed from boost VOUT
-    signal IN     ~ pin 5   # Main switching input (LiPo SYS rail)
-    signal SW     ~ pin 6   # Switching node — connect to inductor
-    signal PS_GND ~ pin 7   # Power-stage ground
-    signal OUT    ~ pin 8   # Inverting output (−5.5 V)
-    signal FB     ~ pin 9   # Feedback — resistor divider mid-point
-    signal VREF   ~ pin 10  # Internal reference (1.213 V) — top of FB divider
-    signal EP     ~ pin 11  # Exposed pad = GND
+from "parts/TPS61023DRLR/TPS61023DRLR.ato" import TPS61023DRLR
+from "parts/TPS63700DRCR/TPS63700DRCR.ato" import TPS63700DRCR
 
 module Power:
     """

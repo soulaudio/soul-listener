@@ -1,0 +1,66 @@
+# FH12-24S-0.5SH(55) — Hirose 24-pin 0.5 mm pitch bottom-contact FPC/FFC ZIF connector
+#
+# Use FH12 (NOT FH12A): FH12 = bottom-contact; FH12A = top-contact (wrong for this cable)
+# Pinout source: GDEQ0426T82-FL01C specification (same SSD1677/SSD2677 family, same FPC).
+# Confirmed by GxEPD2 driver (ZinggJM) for GDEM0397T81P.
+#
+# Pin summary:
+#   Pin 1:  NC
+#   Pin 2:  GDR   — N-MOSFET gate drive (external boost converter)
+#   Pin 3:  RESE  — Boost converter current sense
+#   Pin 4:  NC
+#   Pin 5:  VSH2  — +15 V source rail
+#   Pin 6:  NC
+#   Pin 7:  NC
+#   Pin 8:  BS1   — SPI mode select (tie LOW for 4-wire SPI)
+#   Pin 9:  BUSY  — Busy output (HIGH = busy)
+#   Pin 10: RST   — Reset (active low)
+#   Pin 11: DC    — Data/Command (HIGH = data, LOW = command)
+#   Pin 12: CS    — SPI chip select (active low)
+#   Pin 13: SCL   — SPI clock (up to 20 MHz)
+#   Pin 14: SDA   — SPI MOSI
+#   Pin 15: VDDIO — I/O logic supply (3.3 V)
+#   Pin 16: VCI   — Main supply (3.3 V)
+#   Pin 17: VSS   — Ground
+#   Pin 18: VDD   — Internal core supply (decouple only)
+#   Pin 19: VPP   — OTP programming voltage (leave NC)
+#   Pin 20: VSH1  — +15 V source rail
+#   Pin 21: VGH   — +20 V gate rail
+#   Pin 22: VSL   — −15 V source rail
+#   Pin 23: VGL   — −20 V gate rail
+#   Pin 24: VCOM  — VCOM (typ −2 V)
+# Distributor:
+#   Digi-Key: H11613CT-ND    Mouser: 798-FH12-24S-0.5SH55
+
+component FH12_24S:
+    trait is_atomic_part<
+        manufacturer = "Hirose",
+        partnumber   = "FH12-24S-0.5SH(55)",
+        footprint    = "Connector_FFC-FPC:Hirose_FH12-24S-0.5SH_1x24-1MP_P0.50mm_Horizontal",
+        symbol       = "Connector_FFC-FPC:Hirose_FH12_24S">
+    trait has_designator_prefix<prefix = "J">
+
+    signal NC1   ~ pin 1    # NC
+    signal GDR   ~ pin 2    # N-MOSFET gate drive output (external boost converter)
+    signal RESE  ~ pin 3    # Boost converter current sense input
+    signal NC4   ~ pin 4    # NC
+    signal VSH2  ~ pin 5    # +15 V source rail (4.7 µF/25 V cap to GND)
+    signal NC6   ~ pin 6    # NC
+    signal NC7   ~ pin 7    # NC
+    signal BS1   ~ pin 8    # SPI mode: LOW = 4-wire SPI (tie to GND)
+    signal BUSY  ~ pin 9    # Busy output (HIGH = busy; poll before sending commands)
+    signal RST   ~ pin 10   # Reset (active low)
+    signal DC    ~ pin 11   # Data/Command (HIGH = data, LOW = command)
+    signal CS    ~ pin 12   # SPI chip select (active low)
+    signal SCL   ~ pin 13   # SPI clock (up to 20 MHz)
+    signal SDA   ~ pin 14   # SPI MOSI (no SDO — write-only interface from MCU)
+    signal VDDIO ~ pin 15   # I/O logic supply (3.3 V; decouple with 1 µF)
+    signal VCI   ~ pin 16   # Main supply (3.3 V; decouple with 1 µF + 100 nF)
+    signal VSS   ~ pin 17   # Ground
+    signal VDD   ~ pin 18   # Internal core (1 µF cap to GND; do NOT short to VCI)
+    signal VPP   ~ pin 19   # OTP programming voltage (leave NC in normal operation)
+    signal VSH1  ~ pin 20   # +15 V source rail (4.7 µF/25 V cap to GND)
+    signal VGH   ~ pin 21   # +20 V gate rail  (4.7 µF/25 V cap to GND)
+    signal VSL   ~ pin 22   # −15 V source rail (4.7 µF/25 V cap to GND, note polarity)
+    signal VGL   ~ pin 23   # −20 V gate rail  (4.7 µF/25 V cap to GND, note polarity)
+    signal VCOM  ~ pin 24   # VCOM (typ −2 V; 1 µF/25 V cap to GND, note polarity)

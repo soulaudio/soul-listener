@@ -17,57 +17,8 @@
 # STM32 sample code: https://v4.cecdn.yun300.cn/100001_1909185148/S-GDEM0397T81P.rar
 
 from "interfaces.ato" import SPIDevice, DisplayCtrl
-
-# PESD5V0L5UY — Nexperia 5-channel ESD protection array (SOT363 / SC-70-6)
-# VRWM = 5.0 V; suitable for 3.3 V logic; ~16 pF/ch typ; 20 kV IEC 61000-4-2.
-# SOT363 pin assignment (bottom view): pin 2 = common anode (GND); pins 1/3/4/5/6 = cathodes.
-component PESD5V0L5UY:
-    trait is_atomic_part<
-        manufacturer = "Nexperia",
-        partnumber   = "PESD5V0L5UY,115",
-        footprint    = "Package_TO_SOT_SMD:SOT-363_SC-70-6",
-        symbol       = "ESD_Protection:PESD5V0L5UY">
-    trait has_designator_prefix<prefix = "U">
-    signal IO1 ~ pin 1   # Cathode 1 — I/O line 1
-    signal GND ~ pin 2   # Common anode — connect to ground plane
-    signal IO2 ~ pin 3   # Cathode 2 — I/O line 2
-    signal IO3 ~ pin 4   # Cathode 3 — I/O line 3
-    signal IO4 ~ pin 5   # Cathode 4 — I/O line 4
-    signal IO5 ~ pin 6   # Cathode 5 — I/O line 5
-
-# Hirose FH12-24S-0.5SH(55) — 24-pin 0.5 mm pitch bottom-contact FPC/FFC ZIF connector
-# ⚠ Use FH12 (NOT FH12A): FH12 = bottom-contact; FH12A = top-contact (wrong for this cable)
-component FH12_24S:
-    trait is_atomic_part<
-        manufacturer = "Hirose",
-        partnumber   = "FH12-24S-0.5SH(55)",
-        footprint    = "Connector_FFC-FPC:Hirose_FH12-24S-0.5SH_1x24-1MP_P0.50mm_Horizontal",
-        symbol       = "Connector_FFC-FPC:Hirose_FH12_24S">
-    trait has_designator_prefix<prefix = "J">
-    signal NC1   ~ pin 1    # NC
-    signal GDR   ~ pin 2    # N-MOSFET gate drive output (external boost converter)
-    signal RESE  ~ pin 3    # Boost converter current sense input
-    signal NC4   ~ pin 4    # NC
-    signal VSH2  ~ pin 5    # +15 V source rail (4.7 µF/25 V cap to GND)
-    signal NC6   ~ pin 6    # NC
-    signal NC7   ~ pin 7    # NC
-    signal BS1   ~ pin 8    # SPI mode: LOW = 4-wire SPI (tie to GND)
-    signal BUSY  ~ pin 9    # Busy output (HIGH = busy; poll before sending commands)
-    signal RST   ~ pin 10   # Reset (active low)
-    signal DC    ~ pin 11   # Data/Command (HIGH = data, LOW = command)
-    signal CS    ~ pin 12   # SPI chip select (active low)
-    signal SCL   ~ pin 13   # SPI clock (up to 20 MHz)
-    signal SDA   ~ pin 14   # SPI MOSI (no SDO — write-only interface from MCU)
-    signal VDDIO ~ pin 15   # I/O logic supply (3.3 V; decouple with 1 µF)
-    signal VCI   ~ pin 16   # Main supply (3.3 V; decouple with 1 µF + 100 nF)
-    signal VSS   ~ pin 17   # Ground
-    signal VDD   ~ pin 18   # Internal core (1 µF cap to GND; do NOT short to VCI)
-    signal VPP   ~ pin 19   # OTP programming voltage (leave NC in normal operation)
-    signal VSH1  ~ pin 20   # +15 V source rail (4.7 µF/25 V cap to GND)
-    signal VGH   ~ pin 21   # +20 V gate rail  (4.7 µF/25 V cap to GND)
-    signal VSL   ~ pin 22   # −15 V source rail (4.7 µF/25 V cap to GND, note polarity)
-    signal VGL   ~ pin 23   # −20 V gate rail  (4.7 µF/25 V cap to GND, note polarity)
-    signal VCOM  ~ pin 24   # VCOM (typ −2 V; 1 µF/25 V cap to GND, note polarity)
+from "parts/PESD5V0L5UY/PESD5V0L5UY.ato" import PESD5V0L5UY
+from "parts/FH12_24S/FH12_24S.ato" import FH12_24S
 
 module Display:
     """

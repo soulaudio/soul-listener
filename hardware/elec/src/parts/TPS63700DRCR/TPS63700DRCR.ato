@@ -1,0 +1,38 @@
+# TPS63700DRCR — TI Inverting Converter: +5.5 V → −5.5 V
+#
+# Package:      VSON-10 (3×3 mm, 10 leads + EP=GND)
+# Manufacturer: Texas Instruments
+# Datasheet:    https://www.ti.com/lit/ds/symlink/tps63700.pdf
+# Key specs:    300 mA output, VREF = 1.213 V
+# VOUT formula: VOUT = −VREF × (R_top / R_bot)
+#   For −5.5 V: R_top = 453 kΩ (VREF→FB), R_bot = 100 kΩ (FB→OUT)
+#   VOUT = −1.213 × (453/100) = −1.213 × 4.53 = −5.49 V ≈ −5.5 V ✓
+# VIN (pin 3):  Internal bias input — fed from TPS61023 VOUT (+5.5 V) via
+#               10 Ω + 100 nF RC filter (required by datasheet §9.2.1).
+# IN  (pin 5):  Main switching input — LiPo SYS rail (3.0–4.2 V).
+# EN  (pin 4):  RC-delayed from TPS61023 VOUT (100 kΩ + 100 nF = 10 ms τ)
+#               so positive rail is established ≥ 10 ms before negative rail.
+# COMP (pin 1): MANDATORY 4.7 nF to GND for loop stability.
+# EP   (pin 11): Connect to GND plane.
+# Distributor:
+#   TME:      TPS63700DRCR      Digi-Key: 296-TPS63700DRCRT-ND
+
+component TPS63700DRCR:
+    trait is_atomic_part<
+        manufacturer = "Texas Instruments",
+        partnumber   = "TPS63700DRCR",
+        footprint    = "Package_DFN_QFN:VSON-10-1EP_3x3mm_P0.5mm_EP1.2x1.7mm",
+        symbol       = "Regulator_Switching:TPS63700">
+    trait has_designator_prefix<prefix = "U">
+
+    signal COMP   ~ pin 1   # Compensation — MUST have 4.7 nF to GND
+    signal GND    ~ pin 2   # Signal/analog ground
+    signal VIN    ~ pin 3   # Bias input — feed from boost VOUT via 10Ω+100nF RC
+    signal EN     ~ pin 4   # Enable — active high; RC-delayed from boost VOUT
+    signal IN     ~ pin 5   # Main switching input (LiPo SYS rail)
+    signal SW     ~ pin 6   # Switching node — connect to inductor
+    signal PS_GND ~ pin 7   # Power-stage ground
+    signal OUT    ~ pin 8   # Inverting output (−5.5 V)
+    signal FB     ~ pin 9   # Feedback — resistor divider mid-point
+    signal VREF   ~ pin 10  # Internal reference (1.213 V) — top of FB divider
+    signal EP     ~ pin 11  # Exposed pad = GND
