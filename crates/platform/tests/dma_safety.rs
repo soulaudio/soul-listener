@@ -12,7 +12,10 @@ fn dma_accessible_trait_is_exported() {
     // The trait itself is a zero-cost marker.
     use platform::dma_safety::DmaAccessible;
     let _ = core::mem::size_of::<platform::dma_safety::AxiSramRegion>();
-    assert_eq!(core::mem::size_of::<platform::dma_safety::AxiSramRegion>(), 0);
+    assert_eq!(
+        core::mem::size_of::<platform::dma_safety::AxiSramRegion>(),
+        0
+    );
 }
 
 // Test 2: BdmaAccessible trait is exported
@@ -54,13 +57,9 @@ fn framebuffer_size_matches_dimensions() {
     // 2bpp = 4 pixels per byte
     let expected = (DISPLAY_WIDTH as usize * DISPLAY_HEIGHT as usize) / 4;
     assert_eq!(
-        FRAMEBUFFER_SIZE_BYTES,
-        expected,
+        FRAMEBUFFER_SIZE_BYTES, expected,
         "FRAMEBUFFER_SIZE_BYTES ({}) != {}x{}/4 ({})",
-        FRAMEBUFFER_SIZE_BYTES,
-        DISPLAY_WIDTH,
-        DISPLAY_HEIGHT,
-        expected
+        FRAMEBUFFER_SIZE_BYTES, DISPLAY_WIDTH, DISPLAY_HEIGHT, expected
     );
 }
 
@@ -81,12 +80,12 @@ fn framebuffer_fits_in_axisram() {
     );
 }
 
-// Test 8: Audio DMA buffer sizing constants are defined
+// Test 8: Audio DMA buffer sizing constants are defined (32-bit PCM, GAP-A3 fixed)
 #[test]
 fn audio_dma_buffer_constants_defined() {
     use platform::dma_safety::{AUDIO_DMA_BUFFER_BYTES, AUDIO_DMA_BUFFER_SAMPLES};
-    // 2048 samples × 2 channels × 2 bytes (16-bit) = 8192 bytes
-    assert_eq!(AUDIO_DMA_BUFFER_BYTES, AUDIO_DMA_BUFFER_SAMPLES * 2 * 2);
+    // ES9038Q2M: 32-bit I2S frames -- 2048 samples x 2 channels x 4 bytes = 16384 bytes
+    assert_eq!(AUDIO_DMA_BUFFER_BYTES, AUDIO_DMA_BUFFER_SAMPLES * 2 * 4);
     assert!(
         AUDIO_DMA_BUFFER_SAMPLES >= 512,
         "Buffer too small for low-latency audio"
@@ -111,4 +110,52 @@ fn sram4_address_range_correct() {
     use platform::dma_safety::{SRAM4_BASE, SRAM4_SIZE_BYTES};
     assert_eq!(SRAM4_BASE, 0x3800_0000u32);
     assert_eq!(SRAM4_SIZE_BYTES, 64 * 1024);
+}
+
+// ── AUDIO_DMA_BUFFER_BYTES must be 32-bit PCM sized (GAP-A3) ─────────────────
+
+/// Audio DMA buffer must be sized for 32-bit I2S frames.
+/// ES9038Q2M native PCM width is 32 bits = 4 bytes per sample.
+/// AUDIO_DMA_BUFFER_BYTES = AUDIO_DMA_BUFFER_SAMPLES * 2 channels * 4 bytes = 16384.
+/// Using 8192 (16-bit sizing) causes DMA wrap at half the audio frame boundary.
+/// Reference: ES9038Q2M datasheet section 6.1, SAI frame width configuration.
+#[test]
+fn audio_dma_buffer_bytes_is_32bit_sized() {
+    use platform::dma_safety::{AUDIO_DMA_BUFFER_BYTES, AUDIO_DMA_BUFFER_SAMPLES};
+    // 32-bit stereo: samples * 2 channels * 4 bytes
+    let expected_32bit = AUDIO_DMA_BUFFER_SAMPLES * 2 * 4;
+    assert_eq!(
+        AUDIO_DMA_BUFFER_BYTES,
+        expected_32bit,
+        "AUDIO_DMA_BUFFER_BYTES ({}) must equal {} (SAMPLES x 2ch x 4 bytes/32-bit sample).          16-bit sizing (x2) causes DMA underrun at 192 kHz.",
+        AUDIO_DMA_BUFFER_BYTES,
+        expected_32bit
+    );
+}
+
+#[test]
+fn audio_dma_buffer_bytes_equals_16384() {
+    use platform::dma_safety::AUDIO_DMA_BUFFER_BYTES;
+    // 2048 samples x 2 channels x 4 bytes/sample = 16384
+    assert_eq!(
+        AUDIO_DMA_BUFFER_BYTES,
+        16384,
+        "AUDIO_DMA_BUFFER_BYTES must be 16384 (2048 x 2ch x 32-bit). Got {}.",
+        AUDIO_DMA_BUFFER_BYTES
+    );
+}
+
+#[test]
+fn audio_dma_buffer_fits_in_axisram() {
+    use platform::dma_safety::{AXI_SRAM_SIZE_BYTES, AUDIO_DMA_BUFFER_BYTES, FRAMEBUFFER_SIZE_BYTES};
+    // Two audio buffers (ping-pong) + two framebuffers + 64KB margin
+    let audio_total = AUDIO_DMA_BUFFER_BYTES * 2;
+    let display_total = FRAMEBUFFER_SIZE_BYTES * 2;
+    let margin = 64 * 1024;
+    let total = audio_total + display_total + margin;
+    assert!(
+        total <= AXI_SRAM_SIZE_BYTES,
+        "AXI SRAM budget exceeded: 2xaudio ({}) + 2xframebuffer ({}) + margin ({}) = {} > {} bytes",
+        audio_total, display_total, margin, total, AXI_SRAM_SIZE_BYTES
+    );
 }

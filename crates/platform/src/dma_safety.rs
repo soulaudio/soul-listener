@@ -60,8 +60,7 @@ pub const DISPLAY_HEIGHT: u32 = 480;
 /// 800 x 480 pixels / 4 pixels/byte = 96,000 bytes per plane.
 /// The SSD1677 has two planes (OLD_DATA + NEW_DATA) but we manage
 /// one software framebuffer and send it to both planes during init.
-pub const FRAMEBUFFER_SIZE_BYTES: usize =
-    (DISPLAY_WIDTH as usize * DISPLAY_HEIGHT as usize) / 4;
+pub const FRAMEBUFFER_SIZE_BYTES: usize = (DISPLAY_WIDTH as usize * DISPLAY_HEIGHT as usize) / 4;
 
 // ── Audio DMA constants ──────────────────────────────────────────────────────
 
@@ -71,11 +70,28 @@ pub const FRAMEBUFFER_SIZE_BYTES: usize =
 /// Total round-trip audio latency = 2x this (ping + pong) ~= 10.7 ms.
 pub const AUDIO_DMA_BUFFER_SAMPLES: usize = 2048;
 
-/// Audio DMA buffer size in bytes.
+/// Bytes per sample for 32-bit I2S (ES9038Q2M native PCM width).
+/// SAI frame: 2 slots x 32 bits/slot = 64-bit frame per stereo pair.
+const BYTES_PER_SAMPLE_32BIT: usize = 4;
+
+/// Audio DMA ping-pong buffer size in bytes for 32-bit stereo PCM.
 ///
-/// 2048 samples x 2 channels x 2 bytes/sample (16-bit) = 8192 bytes.
-/// At 192 kHz 32-bit: 2048 x 2 x 4 = 16384 bytes — update if using 32-bit.
-pub const AUDIO_DMA_BUFFER_BYTES: usize = AUDIO_DMA_BUFFER_SAMPLES * 2 * 2;
+/// 2048 samples x 2 channels x 4 bytes/sample = 16384 bytes per half-buffer.
+/// Total DMA ring: 2 x 16384 = 32768 bytes in AXI SRAM.
+///
+/// ES9038Q2M uses 32-bit I2S frames. Using 16-bit sizing (x2 instead of x4)
+/// causes the DMA to wrap at half the audio frame boundary, producing a
+/// stuttering artifact repeating at ~188 Hz (audible, hardware-reproducible).
+///
+/// Reference: ES9038Q2M datasheet section 6.1, STM32H743 SAI section 41.4.5
+pub const AUDIO_DMA_BUFFER_BYTES: usize =
+    AUDIO_DMA_BUFFER_SAMPLES * 2 * BYTES_PER_SAMPLE_32BIT;
+
+// Compile-time verification: must equal 16384 (2048 x 2ch x 4 bytes/32-bit sample)
+const _: () = assert!(
+    AUDIO_DMA_BUFFER_BYTES == 16384,
+    "AUDIO_DMA_BUFFER_BYTES must be 16384 (2048 x 2ch x 4 bytes/32-bit sample)"
+);
 
 // ── Marker traits ────────────────────────────────────────────────────────────
 
