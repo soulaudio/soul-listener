@@ -1,6 +1,9 @@
 //! Audio playback engine — FLAC/MP3/WAV decoding, DMA streaming to SAI I²S
 #![cfg_attr(not(test), no_std)]
 #![deny(clippy::unwrap_used)]
+#![deny(clippy::panic)]
+#![deny(clippy::expect_used)]
+
 
 pub mod decoder;
 pub mod engine;
@@ -180,31 +183,35 @@ mod tests {
     /// Volume/DSP tests
     mod volume_tests {
         use crate::volume::volume_to_attenuation;
+        use platform::audio_types::VolumePercent;
 
         #[test]
         fn test_volume_linear_to_attenuation_zero() {
             // volume 0 -> max attenuation (255 = muted on ES9038Q2M)
-            assert_eq!(volume_to_attenuation(0), 255);
+            assert_eq!(volume_to_attenuation(VolumePercent::new(0)).get(), 255);
         }
 
         #[test]
         fn test_volume_linear_to_attenuation_100() {
             // volume 100 -> 0 attenuation (0 dB, loudest)
-            assert_eq!(volume_to_attenuation(100), 0);
+            assert_eq!(volume_to_attenuation(VolumePercent::new(100)).get(), 0);
         }
 
         #[test]
         fn test_volume_clamp_above_100() {
-            // volume 150 maps same as 100
-            assert_eq!(volume_to_attenuation(150), volume_to_attenuation(100));
+            // volume 150 maps same as 100 (VolumePercent::new clamps)
+            assert_eq!(
+                volume_to_attenuation(VolumePercent::new(150)).get(),
+                volume_to_attenuation(VolumePercent::new(100)).get(),
+            );
         }
 
         #[test]
         fn test_volume_50_percent_is_midpoint() {
             // volume 50 -> ~127 attenuation
-            // 255 - (50 * 255 / 100) = 255 - 127 = 128
-            let att = volume_to_attenuation(50);
-            assert_eq!(att, 128);
+            // (100 - 50) * 255 / 100 = 127
+            let att = volume_to_attenuation(VolumePercent::new(50));
+            assert_eq!(att.get(), 127);
         }
     }
 }

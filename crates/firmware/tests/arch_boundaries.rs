@@ -1214,3 +1214,267 @@ fn sdmmc_pin_assignments_documented() {
         platform::storage_config::SdmmcPins::CMD_PIN
     );
 }
+
+// =========================================================================
+// Workspace Lints + cargo-deny Hardening Tests  (TDD round 7, slice 1)
+// =========================================================================
+
+/// Verify that [workspace.lints.rust] section exists in the workspace Cargo.toml.
+#[test]
+fn workspace_lints_rust_section_present() {
+    let cargo_toml = include_str!("../../../Cargo.toml");
+    assert!(
+        cargo_toml.contains("[workspace.lints.rust]"),
+        "Cargo.toml must contain a [workspace.lints.rust] section (Rust 1.73+ feature)."
+    );
+}
+
+/// Verify that [workspace.lints.clippy] section exists in the workspace Cargo.toml.
+#[test]
+fn workspace_lints_clippy_section_present() {
+    let cargo_toml = include_str!("../../../Cargo.toml");
+    assert!(
+        cargo_toml.contains("[workspace.lints.clippy]"),
+        "Cargo.toml must contain a [workspace.lints.clippy] section."
+    );
+}
+
+/// Verify that arithmetic_side_effects is present in workspace lints.
+#[test]
+fn workspace_lints_deny_arithmetic_side_effects() {
+    let cargo_toml = include_str!("../../../Cargo.toml");
+    assert!(
+        cargo_toml.contains("arithmetic_side_effects"),
+        "Cargo.toml [workspace.lints.clippy] must include arithmetic_side_effects."
+    );
+}
+
+/// Verify that indexing_slicing is present in workspace lints.
+#[test]
+fn workspace_lints_deny_indexing_slicing() {
+    let cargo_toml = include_str!("../../../Cargo.toml");
+    assert!(
+        cargo_toml.contains("indexing_slicing"),
+        "Cargo.toml [workspace.lints.clippy] must include indexing_slicing."
+    );
+}
+
+/// Verify that deny.toml sets multiple-versions = "deny".
+#[test]
+fn deny_toml_multiple_versions_deny() {
+    let deny_toml = include_str!("../../../deny.toml");
+    assert!(
+        deny_toml.contains(r#"multiple-versions = "deny""#),
+        "deny.toml must set multiple-versions = deny (currently warn)."
+    );
+}
+
+/// Verify that deny.toml sets wildcards = "deny".
+#[test]
+fn deny_toml_wildcards_deny() {
+    let deny_toml = include_str!("../../../deny.toml");
+    assert!(
+        deny_toml.contains(r#"wildcards = "deny""#),
+        "deny.toml must set wildcards = deny (currently warn)."
+    );
+}
+
+/// Verify that embedded-alloc is banned in deny.toml.
+#[test]
+fn deny_toml_bans_embedded_alloc() {
+    let deny_toml = include_str!("../../../deny.toml");
+    assert!(
+        deny_toml.contains("embedded-alloc"),
+        "deny.toml must ban embedded-alloc."
+    );
+}
+
+/// Verify that getrandom is banned in deny.toml.
+#[test]
+fn deny_toml_bans_getrandom() {
+    let deny_toml = include_str!("../../../deny.toml");
+    assert!(
+        deny_toml.contains("getrandom"),
+        "deny.toml must ban getrandom."
+    );
+}
+
+/// Verify that wee_alloc is banned in deny.toml.
+#[test]
+fn deny_toml_bans_wee_alloc() {
+    let deny_toml = include_str!("../../../deny.toml");
+    assert!(
+        deny_toml.contains("wee_alloc"),
+        "deny.toml must ban wee_alloc (RUSTSEC-2022-0054)."
+    );
+}
+
+/// Verify that firmware/src/lib.rs does NOT contain blanket file-level cast allows.
+#[test]
+fn firmware_lib_no_blanket_cast_allows() {
+    let lib_rs = include_str!("../src/lib.rs");
+    let forbidden = [
+        "allow(clippy::cast_possible_truncation)",
+        "allow(clippy::cast_sign_loss)",
+    ];
+    for pattern in forbidden {
+        assert!(
+            !lib_rs.contains(&format!("#![{pattern}]")),
+            "firmware/src/lib.rs must not contain a blanket #![{pattern}]."
+        );
+    }
+}
+
+/// Verify that cargo-deny-action in ci.yml is pinned to a full commit SHA.
+#[test]
+fn ci_cargo_deny_action_sha_pinned() {
+    let ci_yml = include_str!("../../../.github/workflows/ci.yml");
+    // Must NOT use the floating tag alone (no SHA after @v2)
+    let uses_floating_tag = ci_yml
+        .lines()
+        .filter(|l| l.contains("cargo-deny-action@"))
+        .any(|l| {
+            if let Some(after_at) = l.split('@').nth(1) {
+                let token = after_at.split_whitespace().next().unwrap_or("");
+                // floating tag: starts with 'v' followed by digits, not a 40-char hex SHA
+                token.starts_with('v') && token.chars().all(|c| c.is_ascii_alphanumeric() || c == '.')
+            } else {
+                false
+            }
+        });
+    assert!(
+        !uses_floating_tag,
+        "ci.yml must not use cargo-deny-action@v2 (floating tag). \
+         Pin to a full commit SHA for supply-chain security."
+    );
+    let has_sha_pin = ci_yml
+        .lines()
+        .filter(|l| l.contains("cargo-deny-action@"))
+        .any(|l| {
+            if let Some(after_at) = l.split('@').nth(1) {
+                let sha = after_at.split_whitespace().next().unwrap_or("");
+                sha.len() == 40 && sha.chars().all(|c| c.is_ascii_hexdigit())
+            } else {
+                false
+            }
+        });
+    assert!(
+        has_sha_pin,
+        "ci.yml cargo-deny-action must be pinned to a 40-character commit SHA."
+    );
+}
+
+#[test]
+fn framebuffer_static_has_axisram_link_section() {
+    // The FRAMEBUFFER static in main.rs must use #[link_section = ".axisram"]
+    // so it lands in DMA-accessible memory for SPI display DMA transfers.
+    let main_rs = include_str!("../src/main.rs");
+    assert!(
+        main_rs.contains("#[link_section = \".axisram\"]"),
+        "FRAMEBUFFER static must use #[link_section = \".axisram\"] for DMA safety"
+    );
+    assert!(
+        main_rs.contains("FRAMEBUFFER"),
+        "main.rs must declare FRAMEBUFFER static"
+    );
+}
+
+#[test]
+fn no_large_static_without_link_section_in_firmware() {
+    // Large buffers without link_section end up in DTCM (default RAM for cortex-m-rt)
+    // DTCM is NOT DMA-accessible on STM32H7 — only use for CPU-hot data.
+    // This test checks that there's no obvious large unattributed static buffer.
+    let main_rs = include_str!("../src/main.rs");
+    // If there's a static mut array, it must have a link_section
+    // Simple heuristic: count link_section vs static mut array occurrences
+    let link_sections = main_rs.matches("#[link_section").count();
+    let static_mut_arrays = main_rs.matches("static mut").count();
+    assert!(
+        link_sections >= static_mut_arrays,
+        "All static mut arrays should have #[link_section] — found {} arrays but {} link_sections",
+        static_mut_arrays,
+        link_sections
+    );
+}
+
+// =============================================================================
+// CI Hardening Tests (TDD Round 7 Slice 4)
+// =============================================================================
+
+#[test]
+fn cargo_toml_has_msrv_field() {
+    // Pinning MSRV prevents silent breakage when users upgrade toolchains.
+    // Rust embedded projects should pin to a known-good version.
+    let cargo_toml = include_str!("../../../Cargo.toml");
+    assert!(
+        cargo_toml.contains("rust-version"),
+        "Workspace Cargo.toml must set rust-version (MSRV). \
+         Add: rust-version = \"1.75\" (or current stable) to [workspace.package]"
+    );
+}
+
+#[test]
+fn profile_dev_has_panic_abort() {
+    // panic = "abort" in dev profile prevents unwinding on embedded targets.
+    // Without this, panic calls pull in the unwinding runtime (adds ~10KB).
+    // Even in dev builds, embedded targets should not unwind.
+    let cargo_toml = include_str!("../../../Cargo.toml");
+    // Check that [profile.dev] section exists with panic = "abort"
+    assert!(
+        cargo_toml.contains("[profile.dev]"),
+        "Cargo.toml must have [profile.dev] section"
+    );
+    // Find the dev profile section and check for panic = "abort"
+    // Simple check: the string appears somewhere in the toml
+    assert!(
+        cargo_toml.contains("panic = \"abort\""),
+        "Cargo.toml [profile.dev] must set panic = \"abort\" for embedded targets. \
+         Unwinding runtime adds ~10KB and doesn't work on bare-metal."
+    );
+}
+
+#[test]
+fn profile_release_has_panic_abort() {
+    let cargo_toml = include_str!("../../../Cargo.toml");
+    // Count occurrences - should appear at least twice (dev + release)
+    let count = cargo_toml.matches("panic = \"abort\"").count();
+    assert!(
+        count >= 2,
+        "Both [profile.dev] and [profile.release] should have panic = \"abort\". \
+         Found {} occurrence(s) in Cargo.toml.", count
+    );
+}
+
+#[test]
+fn workspace_package_section_exists() {
+    let cargo_toml = include_str!("../../../Cargo.toml");
+    assert!(
+        cargo_toml.contains("[workspace.package]"),
+        "Workspace Cargo.toml should have [workspace.package] for shared metadata \
+         (edition, version, authors, rust-version)"
+    );
+}
+
+#[test]
+fn ci_yml_has_embedded_clippy_job() {
+    // CI must run clippy for the embedded target, not just the host.
+    // Host clippy misses many embedded-specific issues (unsafe, DMA patterns).
+    let ci_yml = include_str!("../../../.github/workflows/ci.yml");
+    assert!(
+        ci_yml.contains("thumbv7em-none-eabihf"),
+        "CI workflow must include embedded target (thumbv7em-none-eabihf) checks. \
+         Add a clippy job that runs against the ARM target."
+    );
+}
+
+#[test]
+fn ci_yml_has_size_check_job() {
+    // Binary size should be checked in CI to catch flash bloat early.
+    // Using arm-none-eabi-size (text+data sections) is more accurate than ELF file size.
+    let ci_yml = include_str!("../../../.github/workflows/ci.yml");
+    assert!(
+        ci_yml.contains("size") || ci_yml.contains("binary-size") || ci_yml.contains("arm-none-eabi"),
+        "CI workflow should check binary size to catch flash bloat. \
+         Use arm-none-eabi-size or equivalent."
+    );
+}

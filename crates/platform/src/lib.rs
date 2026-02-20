@@ -76,11 +76,13 @@
 pub mod asset_store;
 pub mod audio;
 pub mod audio_config;
+pub mod audio_types;
 pub mod bluetooth;
 pub mod clock_config;
 pub mod config;
 pub mod display;
 pub mod dma;
+pub mod dma_safety;
 pub mod gpio;
 pub mod input;
 pub mod mpu;
