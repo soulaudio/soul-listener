@@ -440,6 +440,87 @@ impl TestEmulator {
     pub fn emulator_mut(&mut self) -> &mut Emulator {
         &mut self.inner
     }
+
+    // ── Dimension helpers ─────────────────────────────────────────────────────
+
+    /// Returns the display width in pixels.
+    pub fn width(&self) -> u32 {
+        self.inner.bounding_box().size.width
+    }
+
+    /// Returns the display height in pixels.
+    pub fn height(&self) -> u32 {
+        self.inner.bounding_box().size.height
+    }
+
+    /// Clears the display to all-white and removes all registered components.
+    pub fn clear_display(&mut self) {
+        let bounds = self.inner.bounding_box();
+        let _ = Rectangle::new(Point::zero(), bounds.size)
+            .into_styled(embedded_graphics::primitives::PrimitiveStyle::with_fill(
+                Gray4::WHITE,
+            ))
+            .draw(&mut self.inner);
+        self.components.clear();
+    }
+
+    // ── Comparison helpers ────────────────────────────────────────────────────
+
+    /// Count pixels that differ between this emulator and another of the same size.
+    pub fn pixel_diff_count(&self, other: &TestEmulator) -> usize {
+        let w = self.width().min(other.width());
+        let h = self.height().min(other.height());
+        (0..w)
+            .flat_map(|x| (0..h).map(move |y| (x, y)))
+            .filter(|&(x, y)| self.pixel_at(x, y) != other.pixel_at(x, y))
+            .count()
+    }
+
+    /// Assert that a region contains more than one distinct color value.
+    pub fn assert_region_non_uniform(&self, rect: Rectangle) -> Result<(), String> {
+        let mut first: Option<Gray4> = None;
+        for x in rect.top_left.x..rect.top_left.x + rect.size.width as i32 {
+            for y in rect.top_left.y..rect.top_left.y + rect.size.height as i32 {
+                if x < 0 || y < 0 {
+                    continue;
+                }
+                if let Some(c) = self.pixel_at(x as u32, y as u32) {
+                    match first {
+                        None => first = Some(c),
+                        Some(f) if f != c => return Ok(()),
+                        _ => {}
+                    }
+                }
+            }
+        }
+        match first {
+            None => Err("Region is empty or entirely out of bounds".to_string()),
+            Some(c) => Err(format!("Region is uniform — all pixels are {:?}", c)),
+        }
+    }
+
+    /// Returns the percentage of pixels in `rect` that are not pure white.
+    #[allow(clippy::cast_precision_loss)]
+    pub fn dark_pixel_percentage(&self, rect: Rectangle) -> f32 {
+        let total = rect.size.width * rect.size.height;
+        if total == 0 {
+            return 0.0;
+        }
+        let non_white = (rect.top_left.x..rect.top_left.x + rect.size.width as i32)
+            .flat_map(|x| {
+                (rect.top_left.y..rect.top_left.y + rect.size.height as i32).map(move |y| (x, y))
+            })
+            .filter_map(|(x, y)| {
+                if x >= 0 && y >= 0 {
+                    self.pixel_at(x as u32, y as u32)
+                } else {
+                    None
+                }
+            })
+            .filter(|&p| p != Gray4::WHITE)
+            .count();
+        non_white as f32 / total as f32 * 100.0
+    }
 }
 
 impl std::ops::Deref for TestEmulator {

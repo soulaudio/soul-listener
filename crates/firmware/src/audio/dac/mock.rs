@@ -146,17 +146,20 @@ mod tests {
         // Volume API promises 0-100. Values 101-255 must return Err, not silently clamp.
         let mut dac = MockDac::new();
         let result = dac.set_volume(101).await;
-        assert!(
-            result.is_err(),
-            "volume 101 must be rejected with Err"
-        );
+        assert!(result.is_err(), "volume 101 must be rejected with Err");
         assert_eq!(result.unwrap_err(), MockDacError::InvalidVolume);
 
         // Verify that volume was not mutated on error.
-        assert_eq!(dac.volume, 80, "volume must be unchanged after rejected set_volume");
+        assert_eq!(
+            dac.volume, 80,
+            "volume must be unchanged after rejected set_volume"
+        );
 
         // Boundary: 100 is still valid.
-        assert!(dac.set_volume(100).await.is_ok(), "volume 100 must be accepted");
+        assert!(
+            dac.set_volume(100).await.is_ok(),
+            "volume 100 must be accepted"
+        );
         // Boundary: 255 (u8::MAX) must be rejected.
         assert!(
             dac.set_volume(255).await.is_err(),

@@ -33,7 +33,10 @@ fn eink_specs_is_minimal() {
     // SPEC_VERSION is a simple &'static str — if it exists, the crate compiled
     // cleanly with only its declared (minimal) dependencies.
     let version: &str = eink_specs::SPEC_VERSION;
-    assert!(!version.is_empty(), "eink-specs must have a non-empty version");
+    assert!(
+        !version.is_empty(),
+        "eink-specs must have a non-empty version"
+    );
 }
 
 /// Verify that the platform HAL crate exposes its core traits without
@@ -130,7 +133,10 @@ fn library_format_detection_by_magic_bytes() {
 
     assert_eq!(detect_format(b"fLaC"), Some(AudioFormat::Flac));
     assert_eq!(detect_format(b"ID3\x03"), Some(AudioFormat::Mp3));
-    assert_eq!(detect_format(&[0xFF, 0xFB, 0x00, 0x00]), Some(AudioFormat::Mp3));
+    assert_eq!(
+        detect_format(&[0xFF, 0xFB, 0x00, 0x00]),
+        Some(AudioFormat::Mp3)
+    );
     assert_eq!(detect_format(b"RIFF"), Some(AudioFormat::Wav));
     assert_eq!(detect_format(&[]), None);
 }
@@ -228,11 +234,7 @@ fn test_rasr_values_encode_non_cacheable() {
         );
 
         // ENABLE = bit 0 -- must be 1 (region active)
-        assert_ne!(
-            rasr & 1,
-            0,
-            "Region {idx}: RASR bit 0 (ENABLE) must be SET"
-        );
+        assert_ne!(rasr & 1, 0, "Region {idx}: RASR bit 0 (ENABLE) must be SET");
     }
 }
 
@@ -250,4 +252,20 @@ fn playback_crate_has_no_std_core() {
     use playback::engine::{PlaybackEngine, PlaybackState};
     let engine = PlaybackEngine::new();
     assert_eq!(engine.state(), PlaybackState::Stopped);
+}
+
+/// Verify that `NanoMp3Decoder` is default-constructible and exposes the
+/// correct initial state.
+///
+/// The `mp3` feature is NOT required here — `NanoMp3Decoder::new()` must
+/// compile and return zero metadata regardless of whether nanomp3 is linked.
+/// This enforces that the optional `mp3` feature doesn't break the crate's
+/// unconditional public API surface.
+#[test]
+fn playback_mp3_decoder_is_default_constructible() {
+    use playback::decoder::FrameDecoder;
+    use playback::mp3_decoder::NanoMp3Decoder;
+    let d = NanoMp3Decoder::new();
+    assert_eq!(d.sample_rate(), 0);
+    assert_eq!(d.channels(), 0);
 }

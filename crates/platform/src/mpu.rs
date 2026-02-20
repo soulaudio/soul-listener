@@ -156,7 +156,7 @@ impl MpuRegion {
         if !size.is_power_of_two() {
             return Err(MpuError::SizeNotPowerOfTwo);
         }
-        if base % size != 0 {
+        if !base.is_multiple_of(size) {
             return Err(MpuError::AddressMisaligned);
         }
         Ok(Self { base, size, attrs })
@@ -178,6 +178,8 @@ impl MpuRegion {
     ///
     /// - [`MpuError::SizeZero`] if `size == 0`
     /// - [`MpuError::SizeNotPowerOfTwo`] if `size` is not a power of two
+    // trailing_zeros() returns u32; n fits in u8 for all valid MPU region sizes (≤ 2^31)
+    #[allow(clippy::cast_possible_truncation)]
     pub fn encode_size(size: u32) -> Result<u8, MpuError> {
         if size == 0 {
             return Err(MpuError::SizeZero);
@@ -480,7 +482,7 @@ impl MpuApplier {
     #[must_use]
     pub fn non_cacheable_rasr(size_field: u8) -> u32 {
         Self::NON_CACHEABLE_ATTR_MASK
-            | ((size_field as u32) << 1) // SIZE field occupies RASR bits [5:1]
+            | (u32::from(size_field) << 1) // SIZE field occupies RASR bits [5:1]
             | 1 // ENABLE bit [0]
     }
 
@@ -499,7 +501,7 @@ impl MpuApplier {
     /// RBAR u32: `base | (1 << 4) | (region_number & 0xF)`
     #[must_use]
     pub fn rbar(base: u32, region_number: u8) -> u32 {
-        base | (1 << 4) | (region_number as u32 & 0xF)
+        base | (1 << 4) | (u32::from(region_number) & 0xF)
     }
 
     /// Return `(RBAR, RASR)` pairs for the SoulAudio MPU configuration.
@@ -525,11 +527,11 @@ impl MpuApplier {
         let sram4_region = SoulAudioMpuConfig::sram4_bdma_region();
 
         #[allow(clippy::expect_used)]
-        let axi_size = MpuRegion::encode_size(axi_region.size())
-            .expect("AXI SRAM size is statically valid");
+        let axi_size =
+            MpuRegion::encode_size(axi_region.size()).expect("AXI SRAM size is statically valid");
         #[allow(clippy::expect_used)]
-        let sram4_size = MpuRegion::encode_size(sram4_region.size())
-            .expect("SRAM4 size is statically valid");
+        let sram4_size =
+            MpuRegion::encode_size(sram4_region.size()).expect("SRAM4 size is statically valid");
 
         [
             (
@@ -626,7 +628,10 @@ mod tests {
         assert_eq!(MpuRegion::encode_size(32), Ok(4u8));
         assert_eq!(MpuRegion::encode_size(64 * 1024), Ok(15u8));
         assert_eq!(MpuRegion::encode_size(512 * 1024), Ok(18u8));
-        assert_eq!(MpuRegion::encode_size(100_000), Err(MpuError::SizeNotPowerOfTwo));
+        assert_eq!(
+            MpuRegion::encode_size(100_000),
+            Err(MpuError::SizeNotPowerOfTwo)
+        );
     }
 
     // ── Additional correctness checks ─────────────────────────────────────────

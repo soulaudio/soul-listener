@@ -46,6 +46,7 @@ impl<const N: usize> RingBuffer<N> {
     ///
     /// Returns `Err(())` if the slice would not fit in the remaining capacity.
     /// The buffer is left unchanged on error (the write is all-or-nothing).
+    #[allow(clippy::result_unit_err)] // overflow is the only error; () is sufficient
     pub fn write_slice(&mut self, data: &[i32]) -> Result<(), ()> {
         if data.len() > N - self.count {
             return Err(());

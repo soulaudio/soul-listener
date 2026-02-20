@@ -69,6 +69,7 @@ pub fn render_demo_menu(
 /// This is called by render_ui() in lib.rs via the raw pointer interface.
 /// Delegates directly to render_demo_menu().
 #[cfg(feature = "emulator")]
+#[allow(dead_code)] // called via raw fn pointer by hot-lib-reloader; clippy can't see it
 pub fn render_onto_emulator(
     emulator: &mut eink_emulator::Emulator,
 ) -> Result<(), core::convert::Infallible> {

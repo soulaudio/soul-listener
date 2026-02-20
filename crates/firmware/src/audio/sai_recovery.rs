@@ -112,9 +112,7 @@ impl SaiRecoveryState {
         if let Err(SaiWriteError::Overrun) = result {
             *self = Self::NeedsRecovery {
                 overrun_count: match self {
-                    Self::NeedsRecovery { overrun_count } => {
-                        overrun_count.saturating_add(1)
-                    }
+                    Self::NeedsRecovery { overrun_count } => overrun_count.saturating_add(1),
                     Self::Healthy => 1,
                 },
             };
@@ -165,16 +163,10 @@ mod tests {
         let mut state = SaiRecoveryState::new();
 
         state.on_write_result(Err(SaiWriteError::Overrun));
-        assert_eq!(
-            state,
-            SaiRecoveryState::NeedsRecovery { overrun_count: 1 }
-        );
+        assert_eq!(state, SaiRecoveryState::NeedsRecovery { overrun_count: 1 });
 
         state.on_write_result(Err(SaiWriteError::Overrun));
-        assert_eq!(
-            state,
-            SaiRecoveryState::NeedsRecovery { overrun_count: 2 }
-        );
+        assert_eq!(state, SaiRecoveryState::NeedsRecovery { overrun_count: 2 });
     }
 
     // ── Test C ────────────────────────────────────────────────────────────────
