@@ -1823,3 +1823,45 @@ fn memory_x_has_sram2_output_section() {
         "memory.x must define a .sram2 output section for explicit SRAM2 buffer placement"
     );
 }
+
+// ─── DMA Alignment Tests ─────────────────────────────────────────────────────
+
+/// Verify that `Align32<T>` provides 32-byte (Cortex-M7 cacheline) alignment.
+///
+/// All DMA buffers on STM32H743ZI must be 32-byte aligned. The CPU's D-cache
+/// has 32-byte cachelines; unaligned DMA buffers cause cache coherency bugs
+/// where the CPU reads stale cached data after a DMA write.
+///
+/// References: ST AN4839, ARM DDI0489F §B3.5
+#[test]
+fn align32_has_32_byte_alignment() {
+    use firmware::dma::Align32;
+    assert_eq!(core::mem::align_of::<Align32<u8>>(), 32);
+    assert_eq!(core::mem::align_of::<Align32<[u8; 4]>>(), 32);
+    assert_eq!(core::mem::align_of::<Align32<[u8; 65536]>>(), 32);
+}
+
+/// Verify that Align32 does not change the size of the inner type (only alignment).
+#[test]
+fn align32_size_equals_inner_size_rounded_up_to_alignment() {
+    use firmware::dma::Align32;
+    // For [u8; 32], size should be exactly 32 (already aligned).
+    assert_eq!(core::mem::size_of::<Align32<[u8; 32]>>(), 32);
+    // For [u8; 64], size should be exactly 64.
+    assert_eq!(core::mem::size_of::<Align32<[u8; 64]>>(), 64);
+}
+
+/// Verify that FRAMEBUFFER_SIZE is divisible by 32 (cacheline size).
+///
+/// This is required so that the framebuffer occupies an exact number of
+/// cachelines, preventing partial-cacheline DMA transfers that can corrupt
+/// adjacent memory.
+#[test]
+fn framebuffer_size_is_cacheline_aligned() {
+    assert_eq!(
+        firmware::FRAMEBUFFER_SIZE % 32,
+        0,
+        "FRAMEBUFFER_SIZE ({}) must be divisible by 32 (Cortex-M7 cacheline size)",
+        firmware::FRAMEBUFFER_SIZE
+    );
+}
