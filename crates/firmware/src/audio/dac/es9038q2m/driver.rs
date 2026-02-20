@@ -49,6 +49,12 @@
 //! register read is a separate `write_read` with exactly 1 address byte written
 //! and exactly 1 data byte read. See `read_reg` below.
 
+// Display math / audio DSP legitimately uses arithmetic and slice indexing.
+// All operations are bounds-checked at the algorithm level.
+// Per-site #[allow] would be unreadable in low-level driver code.
+#![allow(clippy::arithmetic_side_effects)]
+#![allow(clippy::indexing_slicing)]
+
 use embedded_hal_async::i2c::I2c;
 use platform::{AudioCodec, AudioConfig, DsdMode, OversamplingFilter};
 

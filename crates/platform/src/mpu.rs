@@ -209,6 +209,7 @@ impl MpuRegion {
 
     /// Exclusive end address of this region (`base + size`).
     #[must_use]
+    #[allow(clippy::arithmetic_side_effects)] // Safety: base + size fits u32 for valid MPU regions
     pub fn end(&self) -> u32 {
         self.base + self.size
     }
@@ -676,6 +677,7 @@ mod tests {
 
 /// Tests for `MpuApplier` — pure register-value computation for ARMv7-M MPU.
 #[cfg(test)]
+#[allow(clippy::indexing_slicing)] // Tests index into known-length arrays
 mod apply_tests {
     use super::*;
 

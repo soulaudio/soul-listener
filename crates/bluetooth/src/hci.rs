@@ -9,6 +9,7 @@
 //! - `0x04` — HCI Event packet (controller → host)
 
 #[cfg(test)]
+#[allow(clippy::expect_used)] // Tests use expect() for readable assertions
 mod tests {
     use super::{HciCommand, HciError, HciEvent, HciEventCode, HciPacket};
 
@@ -154,6 +155,7 @@ impl HciPacket {
     /// Returns [`HciError::PacketTooShort`] when fewer than 2 bytes are
     /// available, or [`HciError::UnknownPacketType`] for unrecognised type
     /// indicators.
+    #[allow(clippy::indexing_slicing)] // Safety: len >= 2 checked above
     pub fn parse(bytes: &[u8]) -> Result<HciEvent, HciError> {
         if bytes.len() < 2 {
             return Err(HciError::PacketTooShort);
@@ -166,6 +168,7 @@ impl HciPacket {
     }
 
     /// Parse the payload of an H4 event packet (packet-type byte already consumed).
+    #[allow(clippy::indexing_slicing)] // Safety: is_empty + len < 6 guards all indexing
     fn parse_event(bytes: &[u8]) -> Result<HciEvent, HciError> {
         if bytes.is_empty() {
             return Err(HciError::PacketTooShort);

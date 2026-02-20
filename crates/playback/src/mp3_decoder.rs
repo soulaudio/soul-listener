@@ -126,6 +126,8 @@ impl FrameDecoder for NanoMp3Decoder {
 }
 
 #[cfg(test)]
+#[allow(clippy::indexing_slicing)] // Test indexing into known-length buffers is safe
+#[allow(clippy::expect_used)] // Tests use expect() for readable assertions
 mod tests {
     use super::*;
 

@@ -40,6 +40,8 @@ impl Track {
     ///
     /// All text fields are empty strings; `duration_secs` is 0;
     /// `sample_rate` is 44 100 Hz (Red Book CD Audio default).
+    #[allow(clippy::indexing_slicing)] // Safety: file_path.len() <= 256 checked above
+    #[allow(clippy::expect_used)] // Safety: push_str only fails if len > capacity, guarded above
     pub fn new(file_path: &str, format: AudioFormat) -> Self {
         let mut path_buf = String::<256>::new();
         // Truncate silently if the path exceeds the buffer capacity.

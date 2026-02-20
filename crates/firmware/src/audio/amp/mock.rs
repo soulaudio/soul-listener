@@ -35,12 +35,14 @@ impl Default for MockAmp {
 impl AmpDriver for MockAmp {
     type Error = core::convert::Infallible;
 
+    #[allow(clippy::arithmetic_side_effects)] // Mock counter; overflow not a concern in tests
     async fn enable(&mut self) -> Result<(), Self::Error> {
         self.enabled = true;
         self.enable_count += 1;
         Ok(())
     }
 
+    #[allow(clippy::arithmetic_side_effects)] // Mock counter; overflow not a concern in tests
     async fn disable(&mut self) -> Result<(), Self::Error> {
         self.enabled = false;
         self.disable_count += 1;

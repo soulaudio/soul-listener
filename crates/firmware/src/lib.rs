@@ -60,11 +60,6 @@
 #![allow(clippy::module_name_repetitions)] // common in Rust crates; not a real issue
 #![allow(clippy::missing_errors_doc)] // most errors are self-explanatory
 // Pedantic lints too noisy for firmware application code:
-#![allow(clippy::cast_possible_truncation)]
-#![allow(clippy::cast_possible_wrap)]
-#![allow(clippy::cast_sign_loss)]
-#![allow(clippy::cast_precision_loss)]
-#![allow(clippy::cast_lossless)]
 #![allow(clippy::must_use_candidate)]
 #![allow(clippy::return_self_not_must_use)]
 #![allow(clippy::doc_markdown)]

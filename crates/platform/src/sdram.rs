@@ -233,6 +233,7 @@ impl SdramTiming {
     #[must_use]
     // cycles ≤ ceil(ns*fmc_hz/1e9); for any real SDRAM timing fits in u32.
     #[allow(clippy::cast_possible_truncation)]
+    #[allow(clippy::arithmetic_side_effects)] // Safety: u64 from u32; max product 768000*4294967295 < u64::MAX
     pub fn ns_to_cycles(ns: u32, fmc_hz: u32) -> u32 {
         // period_ns = 1_000_000_000 / fmc_hz
         // cycles    = ceil(ns / period_ns)
@@ -364,6 +365,7 @@ impl SdramTiming {
 #[must_use]
 // count ≤ (fmc_hz*refresh_ms)/(rows*1000); at nominal values (~781) fits in u32.
 #[allow(clippy::cast_possible_truncation)]
+#[allow(clippy::arithmetic_side_effects)] // Safety: u64 multiply; nominal count ~781, no overflow
 pub fn sdram_refresh_count(fmc_hz: u64, rows: u64, refresh_ms: u64) -> u32 {
     // Formula from STM32H7 RM §23.7.7:
     //   COUNT = (SDRAM_CLK_FREQ * refresh_period_ms) / (rows * 1000) - 20
@@ -582,6 +584,7 @@ impl SdramConfig {
 // ─── Tests ───────────────────────────────────────────────────────────────────
 
 #[cfg(test)]
+#[allow(clippy::indexing_slicing)] // Tests index into known-length arrays after length checks
 mod tests {
     use super::*;
 

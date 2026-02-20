@@ -4,6 +4,9 @@
 
 #![cfg_attr(not(test), no_std)]
 #![deny(clippy::unwrap_used)]
+#![deny(clippy::panic)]
+#![deny(clippy::expect_used)]
+
 
 pub mod hci;
 pub mod state;

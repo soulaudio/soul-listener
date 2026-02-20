@@ -13,6 +13,7 @@ targets = [
 version = 2
 db-urls = ["https://github.com/rustsec/advisory-db"]
 yanked = "deny"
+unmaintained = "deny"
 ignore = [
     # paste v1.0.15 is unmaintained (transitive via num-derive → paste).
     # No replacement available yet; low severity.
@@ -21,8 +22,8 @@ ignore = [
 
 [bans]
 # Deny multiple versions of the same crate (except where explicitly allowed)
-multiple-versions = "warn"
-wildcards = "warn"          # warn on wildcard version specs (path deps are intentional in-workspace)
+multiple-versions = "deny"
+wildcards = "deny"          # warn on wildcard version specs (path deps are intentional in-workspace)
 
 # Crates that must NEVER appear in the dependency graph
 deny = [
@@ -33,6 +34,12 @@ deny = [
     { crate = "minimp3-sys", reason = "Deprecated and unsound — use nanomp3 instead" },
     # epd-waveshare: does not support SSD1677 — we use a custom driver
     { crate = "epd-waveshare", reason = "Does not support SSD1677/SSD2677 — custom driver in crates/firmware/src/display/driver.rs" },
+    # No heap allocation — project uses heapless collections only.
+    { crate = "embedded-alloc", reason = "No heap allocation in this project — use heapless instead" },
+    # wee_alloc has known memory corruption (RUSTSEC-2022-0054) and is unmaintained.
+    { crate = "wee_alloc", reason = "Unmaintained with known memory corruption — RUSTSEC-2022-0054" },
+    # getrandom requires OS entropy sources not available on bare-metal STM32H7.
+    { crate = "getrandom", reason = "Requires OS entropy — not available on thumbv7em-none-eabihf" },
 ]
 
 # Skip duplicate-version checks for crates with complex dep graphs

@@ -85,6 +85,7 @@ impl AttenuationRegister {
     /// - 100% volume → register 0x00 (0 dB, no attenuation)
     /// - 0% volume   → register 0xFF (maximum attenuation / mute)
     #[must_use]
+    #[allow(clippy::arithmetic_side_effects)] // Safety: 100*255=25500 < u16::MAX; vol.get() <= 100
     pub fn from_volume(vol: VolumePercent) -> Self {
         // (100 - vol) * 255 / 100
         // All values are u8/u16, no overflow possible (max: 100 * 255 = 25500 < u16::MAX)

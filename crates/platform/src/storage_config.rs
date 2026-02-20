@@ -124,6 +124,7 @@ impl QspiNorConfig {
     /// Returns actual QUADSPI clock frequency given the AHB bus frequency.
     ///
     /// Formula: `ahb_hz / (prescaler + 1)`
+    #[allow(clippy::arithmetic_side_effects)] // Safety: prescaler is u8; +1 fits u32; result is clock divisor
     pub fn clock_hz(&self, ahb_hz: u32) -> u32 {
         ahb_hz / (u32::from(self.prescaler) + 1)
     }
@@ -131,6 +132,7 @@ impl QspiNorConfig {
     /// Returns actual flash size in bytes.
     ///
     /// Formula: `2^(flash_size_field + 1)`
+    #[allow(clippy::arithmetic_side_effects)] // Safety: flash_size_field is at most 31; shift of u32 by <=32 is valid
     pub fn flash_size_bytes(&self) -> u32 {
         1u32 << (self.flash_size_field + 1)
     }

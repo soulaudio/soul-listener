@@ -18,6 +18,11 @@
 //! the layer boundaries hold for the code that actually links into the firmware
 //! integration test binary.
 
+// Test files legitimately use indexing and arithmetic in assertions.
+#![allow(clippy::indexing_slicing)]
+#![allow(clippy::arithmetic_side_effects)]
+#![allow(clippy::expect_used)]
+
 /// Verify that `eink-specs` has no dependency on embassy or firmware crates.
 ///
 /// If this compiles, the boundary is intact. The test itself is trivial —

@@ -17,6 +17,7 @@ use crate::track::AudioFormat;
 /// | WAV    | `RIFF` (0x52 0x49 0x46 0x46)        |
 ///
 /// Returns `None` when the header is empty or does not match a known format.
+#[allow(clippy::indexing_slicing)] // Safety: all accesses guarded by header.len() >= N checks
 pub fn detect_format(header: &[u8]) -> Option<AudioFormat> {
     // FLAC: 'f','L','a','C'
     if header.len() >= 4 && &header[..4] == b"fLaC" {

@@ -31,6 +31,12 @@
 //! and logical row `y = 479` maps to RAM row `0`.  Every method that sets RAM
 //! Y counters / ranges must apply `y_ram = HEIGHT - 1 - y`.
 
+// Display math / audio DSP legitimately uses arithmetic and slice indexing.
+// All operations are bounds-checked at the algorithm level.
+// Per-site #[allow] would be unreadable in low-level driver code.
+#![allow(clippy::arithmetic_side_effects)]
+#![allow(clippy::indexing_slicing)]
+
 use embedded_hal::digital::{InputPin, OutputPin};
 use embedded_hal_async::{delay::DelayNs, spi::SpiDevice};
 
