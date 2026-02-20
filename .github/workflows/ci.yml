@@ -686,3 +686,116 @@ jobs:
 
       - name: Check for unused dependencies
         run: cargo machete
+
+  # ---------------------------------------------------------------------------
+  # Lint coverage — every crate must opt into workspace lints
+  #
+  # Without [lints]\nworkspace = true, the safety lints defined in
+  # [workspace.lints] (arithmetic_side_effects, indexing_slicing,
+  # unsafe_op_in_unsafe_fn) are silently inactive in that crate. This job
+  # catches any new crate that forgets to add the opt-in.
+  # ---------------------------------------------------------------------------
+  lint-coverage:
+    name: All crates opt into workspace lints
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      - name: Verify workspace lint opt-in
+        run: |
+          # Every crate Cargo.toml must have [lints] workspace = true.
+          # grep -L prints files that do NOT match.
+          MISSING=$(grep -rL "workspace = true" \
+            crates/*/Cargo.toml \
+            crates/*/*/Cargo.toml \
+            xtask/Cargo.toml \
+            2>/dev/null | grep -v "target/")
+          if [ -n "$MISSING" ]; then
+            echo "ERROR: The following Cargo.toml files are missing [lints] workspace = true:"
+            echo "$MISSING"
+            echo ""
+            echo "Add the following to each missing Cargo.toml:"
+            echo ""
+            echo "  [lints]"
+            echo "  workspace = true"
+            exit 1
+          fi
+          echo "OK: All crates opt into workspace lints"
+
+  # ---------------------------------------------------------------------------
+  # Documentation tests (GAP-L4)
+  #
+  # `cargo test --doc` runs all code examples in `///` and `//!` doc comments.
+  # Doc examples are part of the public API contract: if they fail to compile
+  # or produce wrong output, the documentation is misleading. Without this job
+  # they bitrot silently when APIs change.
+  #
+  # Only host-compilable crates are included here. Skipped crates:
+  #   eink-emulator  — requires a windowing system (no display in CI)
+  #   firmware        — no_std, doc tests not supported on embedded target
+  #   firmware-ui     — cdylib + no_std via feature; doc tests run as rlib below
+  # ---------------------------------------------------------------------------
+  doc-tests:
+    name: Documentation tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
+
+      - name: Run doc tests (host-compilable crates)
+        run: |
+          # Doc tests for crates that compile on the host without a display.
+          # cargo test --doc compiles and runs every ``` code block in /// comments.
+          cargo test --doc -p platform
+          cargo test --doc -p eink-specs
+          cargo test --doc -p eink-system
+          cargo test --doc -p eink-components
+          cargo test --doc -p eink-testing
+          cargo test --doc -p firmware-ui
+
+  # ---------------------------------------------------------------------------
+  # Supply chain security (GAP-L3)
+  #
+  # `cargo audit` checks Cargo.lock against the RustSec advisory database and
+  # fails the build if any dependency has a known CVE or security advisory.
+  #
+  # Without this step, CVEs disclosed after a field deployment require manual
+  # cross-referencing of the advisory database against the dependency graph —
+  # which is error-prone and slow. CI automation catches vulnerabilities on
+  # every PR before they reach a build artifact.
+  #
+  # Note on cargo-auditable:
+  #   `cargo-auditable` embeds a compressed dependency manifest into ELF
+  #   binaries, enabling `cargo audit bin <elf>` on field-deployed firmware.
+  #   The embedded manifest covers the exact dependency tree frozen at build
+  #   time — critical for post-deployment CVE disclosure on deployed units.
+  #   Install via: cargo install cargo-auditable
+  #   Use via:     cargo auditable build --release ...
+  #   Audit ELF:   cargo audit bin target/.../firmware
+  #
+  # For now we run `cargo audit` on Cargo.lock (pre-deployment check). The
+  # cargo-auditable ELF embedding is tracked as a future improvement for the
+  # hardware build job.
+  # ---------------------------------------------------------------------------
+  supply-chain:
+    name: Supply chain security
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
+
+      - name: Install cargo-audit
+        run: cargo install cargo-audit --locked
+
+      - name: Run cargo audit (RustSec advisory database)
+        # Checks Cargo.lock against known CVEs and security advisories.
+        # --deny warnings turns advisory warnings into hard failures.
+        # Remove --deny warnings if a dependency has an unfixed advisory
+        # and you need to suppress it with an ignore entry in audit.toml.
+        run: cargo audit

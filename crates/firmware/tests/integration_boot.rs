@@ -28,11 +28,11 @@ fn test_mpu_applied_before_dma_use() {
     // ST AN4838/AN4839 and CLAUDE.md).
     let pairs = MpuApplier::soul_audio_register_pairs();
 
-    // Two regions: AXI SRAM (primary DMA pool) and SRAM4 (BDMA-only pool)
+    // Three regions: AXI SRAM (primary DMA pool), SRAM4 (BDMA-only pool), SRAM1/2 (D2 domain)
     assert_eq!(
         pairs.len(),
-        2,
-        "Boot must configure exactly 2 non-cacheable MPU regions"
+        3,
+        "Boot must configure exactly 3 non-cacheable MPU regions"
     );
 
     // AXI SRAM: region 0
