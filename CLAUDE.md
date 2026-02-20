@@ -371,6 +371,7 @@ static PLAYBACK_CMD: Channel<CriticalSectionRawMutex, PlaybackCommand, 4> = Chan
 - [Embedded Rust Book](https://docs.rust-embedded.org/book/)
 - [STM32H7 Reference Manual](https://www.st.com/resource/en/reference_manual/rm0433-stm32h742-stm32h743753-and-stm32h750-value-line-advanced-armbased-32bit-mcus-stmicroelectronics.pdf)
 - [embedded-hal Documentation](https://docs.rs/embedded-hal)
+- [docs/AUDIO.md](docs/AUDIO.md) — audio architecture: signal chain, ICs, SAI/I2S, PEQ, firmware tasks
 
 ## Contributing
 
