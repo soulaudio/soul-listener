@@ -1,3 +1,6 @@
+// Build scripts are exempt from rustdoc requirements.
+#![allow(missing_docs)]
+
 fn main() {
     // Rerun if linker scripts or this file change
     println!("cargo:rerun-if-changed=../../memory.x");

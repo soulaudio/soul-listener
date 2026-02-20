@@ -5,6 +5,8 @@
 // The xtask embedded check passes `--features no-std` to verify
 // embedded-compatibility of this crate.
 #![cfg_attr(feature = "no-std", no_std)]
+// TODO: Add rustdoc to all public items (tracked as tech debt)
+#![allow(missing_docs)]
 
 //!
 //! UI rendering logic for the SoulAudio DAP emulator.

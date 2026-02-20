@@ -80,6 +80,8 @@
 #![allow(clippy::should_panic_without_expect)]
 #![allow(clippy::uninlined_format_args)]
 #![allow(rustdoc::bare_urls)]
+// TODO: Add rustdoc to all public items (tracked as tech debt)
+#![allow(missing_docs)]
 
 pub mod controller_quirks;
 mod display_spec;

@@ -46,6 +46,8 @@
 // but we still warn on it in lib code (not test code)
 #![warn(clippy::print_stdout)]
 #![allow(clippy::module_name_repetitions)]
+// TODO: Add rustdoc to all public items (tracked as tech debt)
+#![allow(missing_docs)]
 
 use std::path::Path;
 
