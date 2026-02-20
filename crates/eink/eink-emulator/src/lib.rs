@@ -1199,6 +1199,22 @@ impl Emulator {
         self.quirks_enabled
     }
 
+    /// Poll all pending OS events without blocking.
+    ///
+    /// Forwards `KeyboardInput` and `MouseWheel` events to the `InputQueue`
+    /// (when `keyboard-input` feature is active) so that
+    /// `EmulatorInput::poll_event()` sees them.
+    ///
+    /// Returns `true` if the window is still open, `false` if the user clicked
+    /// the close button or there is no window (headless mode).
+    pub fn pump_window_events(&mut self) -> bool {
+        #[cfg(not(feature = "headless"))]
+        if let Some(ref mut w) = self.window {
+            return w.pump_window_events();
+        }
+        false
+    }
+
     /// Get debug manager reference
     ///
     /// Returns `None` in headless mode or when debug feature is disabled.
@@ -2194,5 +2210,12 @@ mod tests {
         assert_ne!(RefreshType::Full, RefreshType::Partial);
         assert_ne!(RefreshType::Full, RefreshType::Fast);
         assert_eq!(RefreshType::Full, RefreshType::Full);
+    }
+
+    #[test]
+    fn pump_window_events_headless_returns_false() {
+        // In headless mode (no window) pump_window_events() must return false.
+        let mut emulator = Emulator::headless(128, 64);
+        assert!(!emulator.pump_window_events());
     }
 }
