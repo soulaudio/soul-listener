@@ -1,3 +1,5 @@
+// Desktop/tooling crate — unwrap/expect/panic acceptable in non-embedded code.
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 // TODO: Add rustdoc to all public items (tracked as tech debt)
 #![allow(missing_docs)]
 

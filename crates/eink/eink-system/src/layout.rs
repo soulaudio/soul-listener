@@ -625,6 +625,7 @@ pub trait Layout {
 #[cfg(test)]
 mod tests {
     #![allow(clippy::indexing_slicing, clippy::arithmetic_side_effects)]
+    #![allow(clippy::unwrap_used, clippy::expect_used)]
     use super::*;
 
     #[test]

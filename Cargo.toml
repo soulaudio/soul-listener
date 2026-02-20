@@ -163,6 +163,13 @@ cast_possible_wrap = "warn"
 # Use "warn" not "deny" due to known proc-macro false positives in Embassy.
 undocumented_unsafe_blocks = "warn"
 
+# Panic-prevention: no silent panics in production firmware.
+# Desktop crates (eink-emulator, eink-testing, xtask) suppress with #![allow].
+# Hardware test modules suppress with #[allow] + SAFETY comment.
+unwrap_used = "deny"
+expect_used = "deny"
+panic       = "deny"
+
 [profile.dev]
 opt-level = 1
 debug = true

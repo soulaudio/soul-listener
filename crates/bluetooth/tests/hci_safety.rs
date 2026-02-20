@@ -9,8 +9,8 @@
 //! then receives a malformed — truncated — HCI command and enters a broken BLE
 //! state with no error logged.
 
-// Test files legitimately use expect() for readable assertions.
-#![allow(clippy::expect_used)]
+// Test files legitimately use expect() and unwrap_err() for readable assertions.
+#![allow(clippy::expect_used, clippy::unwrap_used)]
 
 /// Test that HciPacket::from_command returns an error when params would overflow
 /// the 64-byte heapless Vec (4 header bytes + params must fit in 64 bytes total,

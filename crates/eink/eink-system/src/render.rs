@@ -361,6 +361,8 @@ pub fn is_visible(rect: Rectangle, clip_bounds: Rectangle) -> bool {
 
 #[cfg(test)]
 mod tests {
+    #![allow(clippy::unwrap_used, clippy::expect_used)]
+
     use super::*;
     use embedded_graphics::mock_display::MockDisplay;
 

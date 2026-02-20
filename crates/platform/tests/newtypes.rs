@@ -1,6 +1,9 @@
 //! Type system enforcement tests for audio domain newtypes.
 //! These newtypes prevent common embedded audio configuration bugs at compile time.
 
+// Test file — unwrap acceptable in test assertions.
+#![allow(clippy::unwrap_used)]
+
 // ── VolumePercent ────────────────────────────────────────────────────────────
 
 #[test]

@@ -37,8 +37,7 @@
 //! ```
 
 // ── Lint policy ─────────────────────────────────────────────────────────────
-#![deny(clippy::unwrap_used)]
-#![deny(clippy::expect_used)]
+// unwrap_used, expect_used, panic enforced at workspace level (Cargo.toml)
 #![deny(unused_must_use)]
 // Note: panic! allowed in firmware main task panics (handled by panic-probe)
 // but not in library code. Use defmt::panic! with context on hardware.

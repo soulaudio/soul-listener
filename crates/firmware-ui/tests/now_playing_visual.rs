@@ -3,6 +3,9 @@
 //!
 //! Run: cargo test -p firmware-ui --test now_playing_visual
 
+// Test file — unwrap/expect/panic acceptable in test code.
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
+
 use eink_testing::TestEmulator;
 use embedded_graphics::pixelcolor::Gray4;
 use embedded_graphics::prelude::*;
