@@ -2028,3 +2028,87 @@ fn ci_uses_cargo_auditable_for_firmware_build() {
         "CI must have a step named Install cargo-auditable, not just a comment."
     );
 }
+
+// ─── Feature Flag Invariants ─────────────────────────────────────────────────
+
+/// Verify that `hardware` and `emulator` are not simultaneously active.
+///
+/// These features are mutually exclusive:
+/// - `hardware` pulls in embassy-stm32, cortex-m, defmt (no_std, ARM-only)
+/// - `emulator` pulls in tokio, winit (std, desktop-only)
+///
+/// The compile-time enforcement is in `crates/firmware/build.rs`:
+/// The `hardware` feature requires an ARM target (CARGO_CFG_TARGET_ARCH == "arm").
+/// Enabling `hardware` on a non-ARM host will panic at build time, which
+/// effectively prevents hardware+emulator from being active together on a
+/// desktop build.
+///
+/// This test verifies the runtime invariant and documents the expected behavior.
+/// The arch job in CI also never uses --all-features for exactly this reason.
+#[test]
+fn hardware_and_emulator_features_are_mutually_exclusive() {
+    let is_hardware = cfg!(feature = "hardware");
+    let is_emulator = cfg!(feature = "emulator");
+    assert!(
+        !(is_hardware && is_emulator),
+        "hardware and emulator features must not be active simultaneously. \
+         See crates/firmware/build.rs for compile-time enforcement and \
+         .github/workflows/ci.yml (NOTE on feature flag exclusivity) for CI guidance."
+    );
+}
+
+/// Verify that embassy-stm32 uses `time-driver-tim2` rather than `time-driver-any`.
+///
+/// `time-driver-any` causes a linker error when multiple crates in the same
+/// binary each try to claim the generic timer interrupt. `time-driver-tim2`
+/// pins the driver to TIM2 and gives it a specific interrupt symbol name,
+/// avoiding the conflict.
+///
+/// Enforcement: `Cargo.toml` workspace dependencies must specify
+/// `embassy-stm32 = { features = ["time-driver-tim2", ...] }` explicitly.
+/// This test documents the requirement; if the constraint is ever accidentally
+/// removed, the embedded build will fail with a linker error.
+#[test]
+fn embassy_time_driver_is_tim2_not_any() {
+    // This is a documentation test — the actual enforcement is at link time
+    // (the embedded build fails if time-driver-any is used instead of tim2).
+    // The test exists to document the constraint and provide a search anchor
+    // for engineers who encounter the linker error.
+    //
+    // Verify: grep Cargo.toml for "time-driver-tim2" should match.
+    // grep Cargo.toml for "time-driver-any" should NOT match.
+    let workspace_cargo = include_str!("../../../Cargo.toml");
+    assert!(
+        workspace_cargo.contains("time-driver-tim2"),
+        "Cargo.toml must use embassy-stm32 with time-driver-tim2 feature"
+    );
+    assert!(
+        !workspace_cargo.contains("time-driver-any"),
+        "Cargo.toml must NOT use time-driver-any (causes linker conflict)"
+    );
+}
+
+/// Verify that the firmware crate's Cargo.toml does not accidentally enable
+/// both hardware and emulator features in any single feature group.
+///
+/// A feature like `full = ["hardware", "emulator"]` would silently pass
+/// `cargo check` but fail to link on any target.
+#[test]
+fn no_single_feature_enables_both_hardware_and_emulator() {
+    let firmware_cargo = include_str!("../Cargo.toml");
+
+    // Parse [features] section lines that contain BOTH "hardware" AND "emulator"
+    // on the same line (which would mean a single feature enables both).
+    for line in firmware_cargo.lines() {
+        let trimmed: &str = line.trim();
+        if trimmed.starts_with('#') {
+            continue; // skip comments
+        }
+        if trimmed.contains("\"hardware\"") && trimmed.contains("\"emulator\"") {
+            panic!(
+                "Cargo.toml line enables both hardware and emulator features: {:?}",
+                trimmed
+            );
+        }
+    }
+}
