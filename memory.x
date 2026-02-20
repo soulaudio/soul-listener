@@ -83,4 +83,31 @@ SECTIONS
         *(.extsdram .extsdram.*);
         . = ALIGN(4);
     } > EXTSDRAM
+
+    /* SRAM3 section: USB buffers, small working sets (D2 domain, 32 KB)    */
+    /* DMA1/DMA2 accessible via AHB. For USB OTG HS buffers.                */
+    /* Usage: #[link_section = ".sram3"]                                   */
+    .sram3 (NOLOAD) : ALIGN(4)
+    {
+        *(.sram3 .sram3.*);
+        . = ALIGN(4);
+    } > SRAM3
+
+    /* SRAM1 section: DMA-accessible data in D2 domain (128 KB)             */
+    /* DMA1/DMA2 accessible. Embassy task stacks, heapless collections.     */
+    /* Usage: #[link_section = ".sram1"]                                   */
+    .sram1 (NOLOAD) : ALIGN(4)
+    {
+        *(.sram1 .sram1.*);
+        . = ALIGN(4);
+    } > SRAM1
+
+    /* SRAM2 section: DMA-accessible data in D2 domain (128 KB)             */
+    /* DMA1/DMA2 accessible. Contiguous with SRAM1 (SRAM1+SRAM2 = 256 KB). */
+    /* Usage: #[link_section = ".sram2"]                                   */
+    .sram2 (NOLOAD) : ALIGN(4)
+    {
+        *(.sram2 .sram2.*);
+        . = ALIGN(4);
+    } > SRAM2
 }
