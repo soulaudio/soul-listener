@@ -22,6 +22,7 @@ members = [
 version = "0.1.0"
 authors = ["Your Name <you@example.com>"]
 edition = "2021"
+rust-version = "1.75"  # MSRV: Embassy requires ~1.75+; pin to prevent silent toolchain breakage
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/yourusername/soulaudio-dap"
 
@@ -100,10 +101,22 @@ tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.149"
 
+
+[workspace.lints.rust]
+unsafe_op_in_unsafe_fn = "deny"
+
+[workspace.lints.clippy]
+# Safety-critical: every arithmetic op must be explicitly audited.
+# Use checked_*/saturating_*/wrapping_* or add #[allow] at the specific site.
+arithmetic_side_effects = "deny"
+# Safety-critical: direct slice indexing panics on OOB. Use .get() instead.
+indexing_slicing = "deny"
+
 [profile.dev]
 opt-level = 1
 debug = true
 lto = false
+panic = "abort"           # No unwinding on embedded targets (saves ~10KB)
 
 [profile.release]
 opt-level = "z"        # Optimize for size

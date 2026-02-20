@@ -22,7 +22,7 @@
 #   2. Get the commit SHA: git ls-remote https://github.com/<owner>/<repo> refs/tags/<tag>
 #   3. Update the SHA below and the version comment
 #
-# Current pins (as of 2026-02-19):
+# Current pins (as of 2026-02-20):
 #   actions/checkout          v4.2.2   11bd71901bbe5b1630ceea73d27597364c9af683
 #   Swatinem/rust-cache       v2.8.2   779680da715d629ac1d338a641029a2f4372abb5
 #   dtolnay/rust-toolchain    @stable  (not SHA-pinnable: action reads channel
@@ -384,7 +384,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
-      - uses: EmbarkStudios/cargo-deny-action@v2
+      - uses: EmbarkStudios/cargo-deny-action@d8395c1c8c9df74d968a3bcbba5533e396ff43cf  # v2.0.9
         with:
           command: check advisories bans licenses sources
 
@@ -530,3 +530,159 @@ jobs:
             exit 1
           fi
           echo "OK: firmware ELF size $SIZE bytes is within limits"
+
+  # ---------------------------------------------------------------------------
+  # Clippy — embedded target (thumbv7em-none-eabihf)
+  #
+  # Runs clippy for the ARM embedded target, which catches embedded-specific
+  # issues that host clippy misses (unsafe DMA patterns, no_std constraints,
+  # cortex-m peripheral access patterns).
+  #
+  # Separate from the host clippy job because:
+  #   1. Requires ARM target installation
+  #   2. Uses --no-default-features to avoid std deps
+  #   3. Requires flip-link to resolve linker configuration
+  # ---------------------------------------------------------------------------
+  clippy-embedded:
+    name: Clippy (embedded target)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: thumbv7em-none-eabihf
+          components: clippy
+
+      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
+
+      - name: Install flip-link
+        run: cargo install flip-link
+
+      - name: Clippy firmware (embedded target)
+        run: |
+          cargo clippy \
+            --package firmware \
+            --target thumbv7em-none-eabihf \
+            --no-default-features \
+            --features hardware \
+            -- -D warnings
+
+      - name: Clippy platform (embedded target, no-default-features)
+        run: |
+          cargo clippy \
+            --package platform \
+            --target thumbv7em-none-eabihf \
+            --no-default-features \
+            -- -D warnings
+
+  # ---------------------------------------------------------------------------
+  # Binary size check — arm-none-eabi-size (text+data sections)
+  #
+  # Uses arm-none-eabi-size to measure actual flash section sizes, which is
+  # more accurate than the ELF file size (which includes debug symbols).
+  #
+  # The text section = flash usage. Fail if it exceeds 1.8 MB to leave 200 KB
+  # headroom in the 2 MB flash for future growth and OTA staging.
+  #
+  # Runs independently of build-embedded (parallel CI) for faster feedback.
+  # ---------------------------------------------------------------------------
+  binary-size:
+    name: Binary size check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: thumbv7em-none-eabihf
+
+      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
+
+      - name: Install tools
+        run: |
+          cargo install flip-link
+          sudo apt-get install -y binutils-arm-none-eabi
+
+      - name: Build firmware
+        run: |
+          cargo build \
+            --package firmware \
+            --release \
+            --target thumbv7em-none-eabihf \
+            --no-default-features \
+            --features hardware
+
+      - name: Check binary size (arm-none-eabi-size, flash section)
+        run: |
+          ELF=target/thumbv7em-none-eabihf/release/firmware
+          arm-none-eabi-size $ELF
+          # Extract text section size (flash usage)
+          TEXT=$(arm-none-eabi-size $ELF | tail -1 | awk '{print $1}')
+          echo "Flash usage (text): ${TEXT} bytes"
+          # Fail if over 1.8 MB (leaves 200 KB headroom in 2 MB flash)
+          MAX=1887436  # 1.8 * 1024 * 1024
+          if [ "$TEXT" -gt "$MAX" ]; then
+            echo "ERROR: Flash usage ${TEXT} exceeds limit ${MAX}"
+            exit 1
+          fi
+          echo "OK: ${TEXT} bytes of ${MAX} bytes limit used"
+
+  # ---------------------------------------------------------------------------
+  # MSRV — Minimum Supported Rust Version
+  #
+  # Reads rust-version from Cargo.toml and compiles with that exact toolchain.
+  # Prevents silent breakage when users upgrade their toolchain; ensures the
+  # firmware compiles with the oldest supported Rust version.
+  #
+  # Embassy requires ~1.75+ for async fn in traits. Update rust-version in
+  # Cargo.toml when intentionally adopting newer language features.
+  # ---------------------------------------------------------------------------
+  msrv:
+    name: Minimum Supported Rust Version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      - name: Get MSRV from Cargo.toml
+        id: msrv
+        run: |
+          MSRV=$(grep 'rust-version' Cargo.toml | head -1 | sed 's/.*= *"\([^"]*\)".*/\1/')
+          echo "msrv=$MSRV" >> $GITHUB_OUTPUT
+          echo "MSRV: $MSRV"
+
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ steps.msrv.outputs.msrv }}
+
+      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
+
+      - name: Check workspace with MSRV toolchain
+        run: cargo check --workspace
+
+  # ---------------------------------------------------------------------------
+  # Unused dependencies — cargo machete
+  #
+  # cargo machete detects dependencies declared in Cargo.toml that are not
+  # actually used in any source file. Unused deps waste compile time and bloat
+  # the dependency graph.
+  #
+  # Some embedded-only deps (defmt, cortex-m-rt, panic-probe) appear unused
+  # to machete because they are used via link-time magic or cfg(target_arch).
+  # These are suppressed via .cargo-machete.toml at the repo root.
+  # ---------------------------------------------------------------------------
+  unused-deps:
+    name: Unused dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
+
+      - name: Install cargo-machete
+        run: cargo install cargo-machete
+
+      - name: Check for unused dependencies
+        run: cargo machete

@@ -1,0 +1,18 @@
+# .cargo-machete.toml — deps used only for embedded target or via cfg/link-time magic
+#
+# cargo machete performs a text-search based analysis. Some dependencies are
+# "used" only through:
+#   - #[panic_handler] registration (panic-probe, cortex-m-rt)
+#   - defmt global logger init (defmt-rtt, defmt)
+#   - Link-time symbol injection (cortex-m-rt provides exception vectors)
+#   - cfg(target_arch = "arm") guards that machete doesn't evaluate
+#
+# These deps are legitimately required but appear unused to static analysis.
+# Suppress them here rather than polluting source files with #[allow] comments.
+ignored = [
+    "defmt",
+    "defmt-rtt",
+    "panic-probe",
+    "cortex-m",
+    "cortex-m-rt",
+]
