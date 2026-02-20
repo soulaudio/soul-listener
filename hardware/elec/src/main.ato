@@ -97,7 +97,7 @@ module SoulAudioDAP:
     # ── Clock source → MCU ───────────────────────────────────────────────────
     # To swap the clock source: replace `new HseClock` above — mcu.ato is untouched.
     mcu.hse_clk ~ clock.clk
-    clock.gnd   ~ power.power_3v3.lv
+    power.power_3v3 ~ clock.power_3v3
 
     # ── Debug / programming headers ───────────────────────────────────────────
     # STM32H743 SWD: primary debug header (J1 — 10-pin Cortex Debug Connector)
