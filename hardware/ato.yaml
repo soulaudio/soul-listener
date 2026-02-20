@@ -6,8 +6,6 @@
 # until v0.14 is declared stable.
 requires-atopile: "^0.12.5"
 
-identifier: "soulaudio/soulaudio-dap"
-
 paths:
   src: elec/src
   layout: elec/layouts
