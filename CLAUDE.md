@@ -31,7 +31,9 @@ This is a professional-grade Digital Audio Player firmware written in Rust using
 
 **Audio:**
 - DAC: ES9038Q2M (ESS Technology) — 32-bit/768 kHz PCM, DSD512 (native + DoP), 128 dB DNR, −120 dB THD+N, I²C programmable (volume, filter, oversampling)
-- Headphone amp: TPA6120A2 (TI) — class-AB, 250 mA
+- Headphone amp: TPA6120A2 (TI) — class-AB, 250 mA; drives 3.5mm switched TRRS jack (pin 5 detect → STM32 EXTI for auto speaker mute)
+- Speaker amp: TAS5805M (TI) — stereo Class-D, I2S input (shared SAI1 bus with ES9038Q2M), I2C control (addr 0x2C), onboard DSP/PEQ for driver compensation; PVDD from BQ25895 5V VSYS
+- Speakers: 2× 32mm full-range driver, 4Ω, 1–2W — one above, one below e-ink panel; sealed cavity
 
 **Bluetooth:** STM32WB55RGV6 co-processor
 - Arm Cortex-M4 (64 MHz) + M0+ (32 MHz), integrated 2.4 GHz radio
@@ -68,6 +70,7 @@ All hardware interactions go through trait-based abstractions:
 - `InputDevice` trait for physical buttons vs keyboard
 - `BluetoothAdapter` trait for BT module vs mock
 - `Storage` trait for SD card vs filesystem
+- `SpeakerAmp` trait for TAS5805M vs mock (mute, volume, init/PEQ)
 
 ### 2. Vertical Slice Organization
 Features organized by domain, not technical layer:
@@ -319,6 +322,9 @@ Embassy tasks for concurrent operations:
 ```rust
 #[embassy_executor::task]
 async fn audio_playback_task() { /* DMA streaming */ }
+
+#[embassy_executor::task]
+async fn audio_output_task() { /* Jack detect → speaker amp mute/unmute */ }
 
 #[embassy_executor::task]
 async fn ui_update_task() { /* Display refresh */ }
