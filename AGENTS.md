@@ -62,6 +62,15 @@ This is a professional-grade Digital Audio Player firmware written in Rust using
 - Supports XiP (eXecute in Place) if code needs to overflow internal flash
 - Internal 2 MB flash reserved for compiled firmware only; QSPI holds fonts + icons + LUTs
 
+## Open Hardware Decisions
+
+These need to be resolved before schematic finalisation:
+
+- [ ] **I2S tap for TAS5805M:** Share SAI1 bus with ES9038Q2M (simpler) vs. dedicate SAI2 to speaker amp (independent control) — see `docs/plans/2026-02-20-speaker-system-design.md`
+- [ ] **Speaker driver selection:** Confirm mechanical fit of 32mm drivers above/below e-ink panel; confirm 4Ω impedance choice
+- [ ] **BQ25895 VSYS load budget:** Verify VSYS 5V rail can sustain ~1A peak under speaker load alongside other consumers
+- [ ] **TAS5805M output filter:** Verify 10µH + 0.68µF suits chosen drivers; may need adjustment after EMI testing
+
 ## Architecture Principles
 
 ### 1. Hardware Abstraction via Traits
