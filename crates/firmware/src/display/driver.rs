@@ -665,6 +665,7 @@ pub type Ssd1677Display<SPI, DC, RST, BUSY, DELAY> = Ssd1677<SPI, DC, RST, BUSY,
 // ---------------------------------------------------------------------------
 
 #[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::expect_used)]
 mod tests {
     use super::*;
 

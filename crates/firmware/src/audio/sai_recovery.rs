@@ -146,6 +146,7 @@ impl Default for SaiRecoveryState {
 // ─── Tests ───────────────────────────────────────────────────────────────────
 
 #[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::absurd_extreme_comparisons)]
 mod tests {
     use super::*;
 

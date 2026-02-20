@@ -549,6 +549,7 @@ impl MpuApplier {
 // ─── Original tests (must stay passing) ──────────────────────────────────────
 
 #[cfg(test)]
+#[allow(clippy::unwrap_used)]
 mod tests {
     use super::*;
 

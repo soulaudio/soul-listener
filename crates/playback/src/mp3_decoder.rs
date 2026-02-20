@@ -13,90 +13,6 @@
 
 use crate::decoder::{DecodeError, FrameDecoder, PcmFrame};
 
-// Tests come first — implementations below make them pass.
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_nanomp3_decoder_implements_frame_decoder() {
-        // NanoMp3Decoder must implement FrameDecoder.
-        fn assert_impl<T: crate::decoder::FrameDecoder>() {}
-        assert_impl::<NanoMp3Decoder>();
-    }
-
-    #[test]
-    fn test_nanomp3_decoder_new() {
-        let decoder = NanoMp3Decoder::new();
-        assert_eq!(decoder.sample_rate(), 0); // 0 until first frame decoded
-        assert_eq!(decoder.channels(), 0);
-    }
-
-    #[test]
-    fn test_nanomp3_decode_silence_frame() {
-        // A minimal valid MP3 silence frame.
-        // Frame sync: 0xFF 0xFB (MPEG1, Layer3, 128kbps, 44100Hz, stereo)
-        // Pad to a realistic frame size (417 bytes for 128kbps 44100Hz).
-        let mut frame_data = vec![0u8; 417];
-        frame_data[0] = 0xFF;
-        frame_data[1] = 0xFB;
-        frame_data[2] = 0x90;
-        frame_data[3] = 0x00;
-
-        let mut decoder = NanoMp3Decoder::new();
-        let mut output = PcmFrame::default();
-
-        let result = decoder.decode_frame(&frame_data, &mut output);
-
-        // When the `mp3` feature is enabled: may succeed or return EndOfStream.
-        // When the `mp3` feature is disabled: UnsupportedFormat is the correct stub response.
-        // All three outcomes are valid depending on the feature configuration.
-        assert!(
-            result.is_ok()
-                || matches!(result, Err(DecodeError::EndOfStream))
-                || matches!(result, Err(DecodeError::UnsupportedFormat)),
-            "Unexpected decode result: {:?}",
-            result
-        );
-
-        // When the `mp3` feature IS enabled, UnsupportedFormat is NOT acceptable.
-        #[cfg(feature = "mp3")]
-        assert!(
-            result.is_ok() || matches!(result, Err(DecodeError::EndOfStream)),
-            "With mp3 feature: should decode or EndOfStream, not {:?}",
-            result
-        );
-    }
-
-    #[test]
-    fn test_nanomp3_decode_empty_returns_error() {
-        let mut decoder = NanoMp3Decoder::new();
-        let mut output = PcmFrame::default();
-        let result = decoder.decode_frame(&[], &mut output);
-        assert!(result.is_err(), "Empty input must return error");
-    }
-
-    #[test]
-    fn test_nanomp3_decode_invalid_header_returns_error() {
-        let mut decoder = NanoMp3Decoder::new();
-        let mut output = PcmFrame::default();
-        // Random bytes that are not a valid MP3 frame.
-        let garbage = [0x00u8; 100];
-        let result = decoder.decode_frame(&garbage, &mut output);
-        // Should return an error (InvalidData or EndOfStream).
-        assert!(result.is_err(), "Invalid data must return error");
-    }
-
-    #[test]
-    fn test_pcm_frame_default_is_zero() {
-        let frame = PcmFrame::default();
-        assert_eq!(frame.len, 0);
-        assert_eq!(frame.sample_rate, 0);
-        assert_eq!(frame.channels, 0);
-        assert_eq!(frame.samples[0], 0);
-    }
-}
-
 // ─── Implementation ───────────────────────────────────────────────────────────
 
 /// MP3 frame decoder backed by nanomp3.
@@ -206,5 +122,88 @@ impl FrameDecoder for NanoMp3Decoder {
 
     fn channels(&self) -> u8 {
         self.channels
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_nanomp3_decoder_implements_frame_decoder() {
+        // NanoMp3Decoder must implement FrameDecoder.
+        fn assert_impl<T: crate::decoder::FrameDecoder>() {}
+        assert_impl::<NanoMp3Decoder>();
+    }
+
+    #[test]
+    fn test_nanomp3_decoder_new() {
+        let decoder = NanoMp3Decoder::new();
+        assert_eq!(decoder.sample_rate(), 0); // 0 until first frame decoded
+        assert_eq!(decoder.channels(), 0);
+    }
+
+    #[test]
+    fn test_nanomp3_decode_silence_frame() {
+        // A minimal valid MP3 silence frame.
+        // Frame sync: 0xFF 0xFB (MPEG1, Layer3, 128kbps, 44100Hz, stereo)
+        // Pad to a realistic frame size (417 bytes for 128kbps 44100Hz).
+        let mut frame_data = vec![0u8; 417];
+        frame_data[0] = 0xFF;
+        frame_data[1] = 0xFB;
+        frame_data[2] = 0x90;
+        frame_data[3] = 0x00;
+
+        let mut decoder = NanoMp3Decoder::new();
+        let mut output = PcmFrame::default();
+
+        let result = decoder.decode_frame(&frame_data, &mut output);
+
+        // When the `mp3` feature is enabled: may succeed or return EndOfStream.
+        // When the `mp3` feature is disabled: UnsupportedFormat is the correct stub response.
+        // All three outcomes are valid depending on the feature configuration.
+        assert!(
+            result.is_ok()
+                || matches!(result, Err(DecodeError::EndOfStream))
+                || matches!(result, Err(DecodeError::UnsupportedFormat)),
+            "Unexpected decode result: {:?}",
+            result
+        );
+
+        // When the `mp3` feature IS enabled, UnsupportedFormat is NOT acceptable.
+        #[cfg(feature = "mp3")]
+        assert!(
+            result.is_ok() || matches!(result, Err(DecodeError::EndOfStream)),
+            "With mp3 feature: should decode or EndOfStream, not {:?}",
+            result
+        );
+    }
+
+    #[test]
+    fn test_nanomp3_decode_empty_returns_error() {
+        let mut decoder = NanoMp3Decoder::new();
+        let mut output = PcmFrame::default();
+        let result = decoder.decode_frame(&[], &mut output);
+        assert!(result.is_err(), "Empty input must return error");
+    }
+
+    #[test]
+    fn test_nanomp3_decode_invalid_header_returns_error() {
+        let mut decoder = NanoMp3Decoder::new();
+        let mut output = PcmFrame::default();
+        // Random bytes that are not a valid MP3 frame.
+        let garbage = [0x00u8; 100];
+        let result = decoder.decode_frame(&garbage, &mut output);
+        // Should return an error (InvalidData or EndOfStream).
+        assert!(result.is_err(), "Invalid data must return error");
+    }
+
+    #[test]
+    fn test_pcm_frame_default_is_zero() {
+        let frame = PcmFrame::default();
+        assert_eq!(frame.len, 0);
+        assert_eq!(frame.sample_rate, 0);
+        assert_eq!(frame.channels, 0);
+        assert_eq!(frame.samples[0], 0);
     }
 }

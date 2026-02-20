@@ -159,6 +159,7 @@ pub fn validate_qspi_prescaler(ahb_hz: u32, prescaler: u8) -> Result<u32, &'stat
 // ─── Tests ───────────────────────────────────────────────────────────────────
 
 #[cfg(test)]
+#[allow(clippy::assertions_on_constants)]
 mod tests {
     use super::*;
 
