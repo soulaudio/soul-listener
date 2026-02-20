@@ -54,6 +54,13 @@
 //! };
 //! ```
 
+// ── Lint policy ─────────────────────────────────────────────────────────────
+#![deny(clippy::unwrap_used)]       // no .unwrap() in production code
+#![deny(clippy::expect_used)]       // no .expect() in production code
+#![deny(clippy::panic)]             // no panic!() in production code
+#![deny(clippy::unreachable)]       // no unreachable!() that isn't documented
+#![deny(unused_must_use)]           // all Results must be handled
+// ────────────────────────────────────────────────────────────────────────────
 #![cfg_attr(not(feature = "std"), no_std)]
 #![warn(clippy::all)]
 #![warn(clippy::pedantic)]
@@ -80,3 +87,9 @@ pub mod displays;
 
 pub use controller_quirks::{quirks_for_controller, ControllerQuirks, Quirk};
 pub use display_spec::{ColorMode, Controller, DisplaySpec, PanelType};
+
+/// Crate version string, injected by Cargo at compile time.
+///
+/// Used by architecture boundary tests to verify that `eink-specs` compiles
+/// without pulling in `firmware` or heavier e-ink crates as dependencies.
+pub const SPEC_VERSION: &str = env!("CARGO_PKG_VERSION");

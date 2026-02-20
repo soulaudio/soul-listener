@@ -1,0 +1,55 @@
+# cargo-deny configuration — https://embarkstudios.github.io/cargo-deny/
+# Run: cargo deny check
+
+[graph]
+targets = [
+    { triple = "thumbv7em-none-eabihf" },
+    { triple = "x86_64-unknown-linux-gnu" },
+    { triple = "x86_64-pc-windows-msvc" },
+]
+
+[advisories]
+# Deny known security advisories
+version = 2
+db-urls = ["https://github.com/rustsec/advisory-db"]
+yanked = "deny"
+
+[bans]
+# Deny multiple versions of the same crate (except where explicitly allowed)
+multiple-versions = "warn"
+wildcards = "deny"  # deny wildcard version specs
+
+# Crates that must NEVER appear in the dependency graph
+deny = [
+    # minimp3-rs: deprecated, unsound (UB on ARM shift ops)
+    { crate = "minimp3", reason = "Deprecated and unsound — use nanomp3 instead" },
+    { crate = "minimp3-sys", reason = "Deprecated and unsound — use nanomp3 instead" },
+    # epd-waveshare: does not support SSD1677 — we use a custom driver
+    { crate = "epd-waveshare", reason = "Does not support SSD1677/SSD2677 — custom driver in crates/firmware/src/display/driver.rs" },
+]
+
+# Skip duplicate-version checks for crates with complex dep graphs
+skip = [
+    # Add here if needed after running cargo deny check
+]
+
+[licenses]
+# Require OSI-approved licenses
+version = 2
+allow = [
+    "MIT",
+    "Apache-2.0",
+    "Apache-2.0 WITH LLVM-exception",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "ISC",
+    "Unicode-DFS-2016",
+    "CC0-1.0",
+    "Zlib",
+]
+private = { ignore = true }
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"
+allow-git = []

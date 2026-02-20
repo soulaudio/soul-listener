@@ -47,6 +47,13 @@
 //! }
 //! ```
 
+// ── Lint policy ─────────────────────────────────────────────────────────────
+#![deny(clippy::unwrap_used)]       // no .unwrap() in production code
+#![deny(clippy::expect_used)]       // no .expect() in production code
+#![deny(clippy::panic)]             // no panic!() in production code
+#![deny(clippy::unreachable)]       // no unreachable!() that isn't documented
+#![deny(unused_must_use)]           // all Results must be handled
+// ────────────────────────────────────────────────────────────────────────────
 #![cfg_attr(not(test), no_std)]
 #![warn(missing_docs)]
 #![warn(clippy::all)]

@@ -224,18 +224,19 @@ where
 
     /// Block until BUSY goes LOW (controller idle) or timeout expires.
     ///
-    /// BUSY is active HIGH on SSD1677 / SSD2677.  Poll every 10 ms with a
-    /// 5 000 ms hard timeout (full refresh takes up to ~3 000 ms).
+    /// BUSY is active HIGH on SSD1677 / SSD2677.  Poll every 10 ms.
+    /// After `MAX_BUSY_POLLS` attempts without BUSY going LOW the function
+    /// returns `Err(DisplayError::Timeout)`.
     async fn wait_busy(&mut self) -> Result<(), DisplayError> {
-        const POLL_US: u32 = 10_000; // 10 ms in microseconds
-        const MAX_POLLS: u32 = 500; // 500 × 10 ms = 5 000 ms total
+        const POLL_MS: u32 = 10; // poll interval in milliseconds
+        const MAX_BUSY_POLLS: u32 = 200; // 200 × 10 ms = 2 000 ms total
 
-        for _ in 0..MAX_POLLS {
+        for _ in 0..MAX_BUSY_POLLS {
             let is_busy = self.busy.is_high().map_err(|_| DisplayError::Gpio)?;
             if !is_busy {
                 return Ok(());
             }
-            self.delay.delay_us(POLL_US).await;
+            self.delay.delay_ms(POLL_MS).await;
         }
         Err(DisplayError::Timeout)
     }
@@ -266,9 +267,14 @@ where
     /// The GDEM0397T81P gates are physically reversed when `DATA_ENTRY_MODE`
     /// is `0x01` (X+, Y−).  RAM row 0 corresponds to the bottom physical
     /// gate, so `y_ram = HEIGHT - 1 - y_logical`.
+    ///
+    /// Returns `None` if `y_logical >= DISPLAY_HEIGHT` (out-of-bounds).
     #[inline]
-    pub(crate) fn y_to_ram(y_logical: u16) -> u16 {
-        (DISPLAY_HEIGHT as u16).saturating_sub(1).saturating_sub(y_logical)
+    pub(crate) fn y_to_ram(y_logical: u16) -> Option<u16> {
+        if y_logical >= DISPLAY_HEIGHT as u16 {
+            return None;
+        }
+        Some((DISPLAY_HEIGHT as u16 - 1) - y_logical)
     }
 
     // -----------------------------------------------------------------------
@@ -331,8 +337,12 @@ where
     /// - Counters: start at X=0, Y=479 (logical top-left)
     async fn set_full_window(&mut self) -> Result<(), DisplayError> {
         let x_end_byte = (BYTES_PER_ROW as u8).saturating_sub(1); // 99
-        let y_start_ram = Self::y_to_ram(0); // 479 = 0x01DF
-        let y_end_ram = Self::y_to_ram(DISPLAY_HEIGHT as u16 - 1); // 0
+        // Both inputs are compile-time constants within valid range; the
+        // `ok_or` guard satisfies the bounds-checked API without runtime cost.
+        let y_start_ram = Self::y_to_ram(0)
+            .ok_or(DisplayError::InvalidCoordinate)?; // 479 = 0x01DF
+        let y_end_ram = Self::y_to_ram(DISPLAY_HEIGHT as u16 - 1)
+            .ok_or(DisplayError::InvalidCoordinate)?; // 0
 
         self.set_ram_x_range(0x00, x_end_byte).await?;
         self.set_ram_y_range_raw(y_start_ram, y_end_ram).await?;
@@ -615,6 +625,8 @@ pub enum DisplayError {
     InvalidState,
     /// Caller supplied a framebuffer with the wrong number of bytes.
     InvalidBuffer,
+    /// A coordinate was outside the valid display area.
+    InvalidCoordinate,
     /// Operation not supported.
     Unsupported,
 }
@@ -628,6 +640,7 @@ impl core::fmt::Display for DisplayError {
             Self::Timeout => write!(f, "Operation timed out"),
             Self::InvalidState => write!(f, "Invalid display state"),
             Self::InvalidBuffer => write!(f, "Invalid buffer size"),
+            Self::InvalidCoordinate => write!(f, "Coordinate out of bounds"),
             Self::Unsupported => write!(f, "Unsupported operation"),
         }
     }
@@ -731,20 +744,23 @@ mod tests {
     fn test_y_reversal() {
         // Logical y=0 → RAM y = HEIGHT-1 = 479
         assert_eq!(
-            TestDriver::y_to_ram(0),
+            TestDriver::y_to_ram(0).unwrap(),
             479,
             "logical y=0 must map to RAM row 479 (bottom gate)"
         );
         // Logical y=479 → RAM y = 0
         assert_eq!(
-            TestDriver::y_to_ram(479),
+            TestDriver::y_to_ram(479).unwrap(),
             0,
             "logical y=479 must map to RAM row 0 (top gate)"
         );
         // Logical y=240 (mid) → RAM y = 239
-        assert_eq!(TestDriver::y_to_ram(240), 239);
+        assert_eq!(TestDriver::y_to_ram(240).unwrap(), 239);
         // Logical y=1 → RAM y = 478
-        assert_eq!(TestDriver::y_to_ram(1), 478);
+        assert_eq!(TestDriver::y_to_ram(1).unwrap(), 478);
+        // Out-of-bounds must return None
+        assert_eq!(TestDriver::y_to_ram(480), None);
+        assert_eq!(TestDriver::y_to_ram(u16::MAX), None);
     }
 
     // -----------------------------------------------------------------------
@@ -766,8 +782,8 @@ mod tests {
         // Full-screen Y range (reversed):
         //   y_start_ram = 479 = 0x01DF  → [0xDF, 0x01]
         //   y_end_ram   = 0             → [0x00, 0x00]
-        let y_start_ram = TestDriver::y_to_ram(0); // 479
-        let y_end_ram = TestDriver::y_to_ram(DISPLAY_HEIGHT as u16 - 1); // 0
+        let y_start_ram = TestDriver::y_to_ram(0).unwrap(); // 479
+        let y_end_ram = TestDriver::y_to_ram(DISPLAY_HEIGHT as u16 - 1).unwrap(); // 0
         assert_eq!(y_start_ram, 479);
         assert_eq!(y_end_ram, 0);
 
@@ -782,8 +798,8 @@ mod tests {
         // Partial region: logical y=10..=19 → RAM y=469..=460
         let py_start = 10u16;
         let py_end = 19u16;
-        let y_start_ram_partial = TestDriver::y_to_ram(py_start);
-        let y_end_ram_partial = TestDriver::y_to_ram(py_end);
+        let y_start_ram_partial = TestDriver::y_to_ram(py_start).unwrap();
+        let y_end_ram_partial = TestDriver::y_to_ram(py_end).unwrap();
         assert_eq!(y_start_ram_partial, 469);
         assert_eq!(y_end_ram_partial, 460);
 
@@ -1268,6 +1284,127 @@ mod tests {
         dc_h.done();
         rst_h.done();
         busy_h.done();
+    }
+
+    // -----------------------------------------------------------------------
+    // Test: wait_busy timeout (FAILING — see Step 3 comment below)
+    // -----------------------------------------------------------------------
+
+    /// `test_wait_busy_timeout` — `wait_busy` must return `Err(DisplayError::Timeout)`
+    /// after MAX_BUSY_POLLS polls without BUSY going LOW.
+    ///
+    /// **Expected failure mode (before fix):** The current code uses MAX_POLLS = 500.
+    /// With only 200 HIGH transactions in the mock, the 201st call to `is_high()`
+    /// panics with "no expectation for pin::is_high call" instead of returning
+    /// `Err(Timeout)`.  After fix (MAX_BUSY_POLLS = 200), the loop exhausts all 200
+    /// HIGH reads and returns `Err(DisplayError::Timeout)` cleanly.
+    #[tokio::test]
+    async fn test_wait_busy_timeout() {
+        // 200 × HIGH, no trailing LOW — pin never deasserts.
+        let busy_txns: Vec<PinTransaction> = (0..200)
+            .map(|_| PinTransaction::get(PinState::High))
+            .collect();
+
+        let mut spi_handle = SpiMock::new(&[]);
+        let mut dc_handle = idle_pin();
+        let mut rst_handle = idle_pin();
+        let mut busy_handle = PinMock::new(&busy_txns);
+
+        let mut drv = Ssd1677::new(
+            spi_handle.clone(),
+            dc_handle.clone(),
+            rst_handle.clone(),
+            busy_handle.clone(),
+            NoopDelay,
+        );
+
+        let result = drv.wait_busy().await;
+        assert_eq!(
+            result,
+            Err(DisplayError::Timeout),
+            "wait_busy must return Timeout when BUSY never deasserts"
+        );
+
+        spi_handle.done();
+        dc_handle.done();
+        rst_handle.done();
+        busy_handle.done();
+    }
+
+    // -----------------------------------------------------------------------
+    // Test: y_to_ram out-of-bounds returns None (FAILING — see Step 3 comment)
+    // -----------------------------------------------------------------------
+
+    /// `test_y_to_ram_out_of_bounds` — `y_to_ram` must return `None` for y >= DISPLAY_HEIGHT.
+    ///
+    /// **Expected failure mode (before fix):** `y_to_ram` currently returns `u16`,
+    /// not `Option<u16>`, so this test will not compile until the signature is changed.
+    #[test]
+    fn test_y_to_ram_out_of_bounds() {
+        // One past the last valid row — must return None.
+        assert_eq!(
+            TestDriver::y_to_ram(DISPLAY_HEIGHT as u16),
+            None,
+            "y = DISPLAY_HEIGHT (480) is out-of-bounds and must return None"
+        );
+        // Last valid row — must return Some(0).
+        assert_eq!(
+            TestDriver::y_to_ram(479),
+            Some(0),
+            "logical y=479 must map to RAM row 0"
+        );
+        // First valid row — must return Some(479).
+        assert_eq!(
+            TestDriver::y_to_ram(0),
+            Some(479),
+            "logical y=0 must map to RAM row 479"
+        );
+    }
+
+    // -----------------------------------------------------------------------
+    // Test: wait_busy propagates GPIO errors (test C)
+    // -----------------------------------------------------------------------
+
+    /// `test_wait_busy_error_propagated` — a GPIO read error must cause `wait_busy`
+    /// to return `Err(DisplayError::Gpio)` immediately.
+    ///
+    /// **Status:** This test PASSES with current code because `map_err(|_| DisplayError::Gpio)`
+    /// is already in place.  It is included to lock in that behaviour.
+    #[tokio::test]
+    async fn test_wait_busy_error_propagated() {
+        use embedded_hal_mock::eh1::MockError;
+        use std::io::ErrorKind;
+
+        // One failing read — simulates a GPIO bus error.
+        let busy_txns = [
+            PinTransaction::get(PinState::High)
+                .with_error(MockError::Io(ErrorKind::NotConnected)),
+        ];
+
+        let mut spi_handle = SpiMock::new(&[]);
+        let mut dc_handle = idle_pin();
+        let mut rst_handle = idle_pin();
+        let mut busy_handle = PinMock::new(&busy_txns);
+
+        let mut drv = Ssd1677::new(
+            spi_handle.clone(),
+            dc_handle.clone(),
+            rst_handle.clone(),
+            busy_handle.clone(),
+            NoopDelay,
+        );
+
+        let result = drv.wait_busy().await;
+        assert_eq!(
+            result,
+            Err(DisplayError::Gpio),
+            "a GPIO error during busy polling must propagate as DisplayError::Gpio"
+        );
+
+        spi_handle.done();
+        dc_handle.done();
+        rst_handle.done();
+        busy_handle.done();
     }
 
     // -----------------------------------------------------------------------

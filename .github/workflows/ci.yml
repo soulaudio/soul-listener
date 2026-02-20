@@ -365,6 +365,82 @@ jobs:
           ' | sort
 
   # ---------------------------------------------------------------------------
+  # cargo-deny — License, advisory, ban, and source checks
+  #
+  # Runs cargo-deny against the deny.toml at the repo root.
+  # Enforces:
+  #   advisories — deny known security vulnerabilities (RustSec advisory DB)
+  #   bans       — deny minimp3 (unsound), epd-waveshare (wrong controller)
+  #   licenses   — allow-list of OSI-approved licenses only
+  #   sources    — deny crates from unknown registries or git sources
+  #
+  # NOTE: --all-features is intentionally NOT used here because `hardware`
+  # and `emulator` are mutually exclusive in the firmware crate. Instead we
+  # check the default feature set which covers all workspace crates that can
+  # compile on the host without cross-compilation.
+  # ---------------------------------------------------------------------------
+  deny:
+    name: cargo-deny
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: EmbarkStudios/cargo-deny-action@v2
+        with:
+          command: check advisories bans licenses sources
+
+  # ---------------------------------------------------------------------------
+  # Architecture boundary enforcement via cargo tree
+  #
+  # Verifies that banned crates (minimp3, epd-waveshare) are not in the
+  # transitive dependency graph, and enforces layering rules from CLAUDE.md.
+  #
+  # These checks complement the metadata-based arch job above by catching
+  # issues that appear only in the resolved dependency tree (not just the
+  # declared [dependencies] in Cargo.toml).
+  # ---------------------------------------------------------------------------
+  arch-boundaries:
+    name: Architecture boundaries
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
+
+      - name: eink-specs must not depend on firmware
+        run: |
+          if cargo tree -p eink-specs 2>&1 | grep -q "firmware"; then
+            echo "FAIL: eink-specs depends on firmware"
+            exit 1
+          fi
+          echo "OK: eink-specs does not depend on firmware"
+
+      - name: platform must not depend on firmware
+        run: |
+          if cargo tree -p platform 2>&1 | grep -q "^firmware\b"; then
+            echo "FAIL: platform depends on firmware"
+            exit 1
+          fi
+          echo "OK: platform does not depend on firmware"
+
+      - name: epd-waveshare must not be in dependency graph
+        run: |
+          if cargo tree 2>&1 | grep -q "epd-waveshare"; then
+            echo "FAIL: epd-waveshare found in dependency graph"
+            exit 1
+          fi
+          echo "OK: epd-waveshare not present in dependency graph"
+
+      - name: minimp3 must not be in dependency graph
+        run: |
+          if cargo tree 2>&1 | grep -q "minimp3"; then
+            echo "FAIL: minimp3 found in dependency graph"
+            exit 1
+          fi
+          echo "OK: minimp3 not present in dependency graph"
+
+  # ---------------------------------------------------------------------------
   # Embedded Build Check (STM32H7)
   #
   # Verifies the firmware compiles for the real hardware target.
