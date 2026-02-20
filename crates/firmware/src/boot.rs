@@ -188,7 +188,6 @@ pub fn build_embassy_config() -> embassy_stm32::Config {
         source: PllSource::HSI,
         prediv: PllPreDiv::DIV4,
         mul: PllMul::MUL50,
-        fracn: None,
         divp: Some(PllDiv::DIV2), // 400 MHz — system clock
         divq: Some(PllDiv::DIV4), // 200 MHz — SDMMC default mux (SDMMCSEL)
         divr: None,
@@ -204,7 +203,6 @@ pub fn build_embassy_config() -> embassy_stm32::Config {
         source: PllSource::HSI,
         prediv: PllPreDiv::DIV8,
         mul: PllMul::MUL100,
-        fracn: None,
         divp: None,
         divq: None,
         divr: Some(PllDiv::DIV4), // 200 MHz — FMC + QUADSPI kernel clock

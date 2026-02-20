@@ -168,7 +168,7 @@ mod tests {
                 sample_rate: sr,
                 ..AudioConfig::default()
             };
-            assert!(cfg.validate().is_ok(), "sample rate {} must be valid", sr);
+            assert!(cfg.validate().is_ok(), "sample rate {sr} must be valid");
         }
     }
 }
