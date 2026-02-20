@@ -14,6 +14,57 @@
 use platform::mpu::MpuApplier;
 use platform::sdram::{SdramTiming, W9825G6KH6_REFRESH_COUNT};
 
+// ── MPU ordering token ────────────────────────────────────────────────────────
+
+/// Zero-cost proof token: MPU has been configured and D-cache setup is safe.
+///
+/// This token is returned by `apply_mpu_config_from_peripherals()` (in the
+/// `hardware` feature-gated submodule) and by `apply_mpu_config_stub()` (for
+/// non-hardware builds). It must be passed to `build_embassy_config()`.
+///
+/// This creates a **compile-time ordering guarantee**: `build_embassy_config()`
+/// — which produces the config that `embassy_stm32::init()` uses to enable
+/// D-cache — cannot be called before MPU configuration has run. If someone
+/// restructures `main()` and moves the Embassy init call above the MPU call,
+/// the code will not compile.
+///
+/// # Zero runtime cost
+///
+/// `MpuConfigured` is a ZST (zero-sized type). The compiler elides it
+/// completely — no stack space, no move instruction, no register use.
+/// The `_private: ()` field prevents external construction.
+///
+/// # Usage
+///
+/// ```rust,ignore
+/// // Hardware target:
+/// let mpu_token = firmware::boot::hardware::apply_mpu_config_from_peripherals();
+/// let p = embassy_stm32::init(firmware::boot::build_embassy_config(&mpu_token));
+///
+/// // Non-hardware (tests, simulator):
+/// let mpu_token = firmware::boot::apply_mpu_config_stub();
+/// let config = firmware::boot::build_embassy_config(&mpu_token);
+/// ```
+#[must_use = "Pass MpuConfigured token to build_embassy_config() to enforce MPU-before-Embassy ordering"]
+pub struct MpuConfigured {
+    /// Prevents external construction. Only `apply_mpu_config_from_peripherals()`
+    /// and `apply_mpu_config_stub()` may construct this type.
+    _private: (),
+}
+
+/// Create an `MpuConfigured` token without touching hardware registers.
+///
+/// Use this in non-hardware builds (host tests, simulator) where there is no
+/// real MPU to configure. The token satisfies the type-system requirement that
+/// `build_embassy_config()` receives proof of MPU configuration.
+///
+/// This function is available in all build configurations so that test code
+/// and simulator code can call `build_embassy_config()` without a hardware target.
+pub fn apply_mpu_config_stub() -> MpuConfigured {
+    MpuConfigured { _private: () }
+}
+
+
 /// Ordered list of boot sequence steps for documentation and testing.
 ///
 /// The ordering of these strings encodes the required hardware initialization
@@ -294,7 +345,7 @@ pub const I2C_INIT_NOTE: &str =
 ///
 /// See: embassy-stm32 issue #3049, Zephyr issue #55358, STM32H743 RM0433 §8.5.
 #[cfg(feature = "hardware")]
-pub fn build_embassy_config() -> embassy_stm32::Config {
+pub fn build_embassy_config(_mpu_configured: &MpuConfigured) -> embassy_stm32::Config {
     use embassy_stm32::rcc::*;
 
     let mut config = embassy_stm32::Config::default();
@@ -848,12 +899,13 @@ pub mod hardware {
     /// 2. No other code holds a `cortex_m::Peripherals` reference at this point.
     /// 3. The stolen peripherals are dropped before `embassy_stm32::init()` takes them.
     #[allow(unsafe_code)]
-    pub fn apply_mpu_config_from_peripherals() {
+    pub fn apply_mpu_config_from_peripherals() -> super::MpuConfigured {
         // SAFETY: called once at boot before any RTOS tasks or interrupt
         // handlers have started. No other code holds Cortex-M peripherals yet.
         let mut cp = unsafe { cortex_m::Peripherals::steal() };
         // SAFETY: boot context — D-cache not yet enabled, no DMA initialised.
         unsafe { apply_mpu_config(&mut cp.MPU) };
+        super::MpuConfigured { _private: () }
     }
 }
 
