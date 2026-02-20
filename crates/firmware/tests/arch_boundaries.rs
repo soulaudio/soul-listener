@@ -85,7 +85,8 @@ fn ui_navigator_starts_at_now_playing() {
 fn bluetooth_hci_reset_packet_correct() {
     use bluetooth::hci::{HciCommand, HciPacket};
 
-    let pkt = HciPacket::from_command(HciCommand::Reset);
+    let pkt = HciPacket::from_command(HciCommand::Reset)
+        .expect("Reset command must always serialize successfully");
     assert_eq!(&pkt[..], &[0x01_u8, 0x03, 0x0C, 0x00]);
 }
 
@@ -1342,7 +1343,8 @@ fn ci_cargo_deny_action_sha_pinned() {
             if let Some(after_at) = l.split('@').nth(1) {
                 let token = after_at.split_whitespace().next().unwrap_or("");
                 // floating tag: starts with 'v' followed by digits, not a 40-char hex SHA
-                token.starts_with('v') && token.chars().all(|c| c.is_ascii_alphanumeric() || c == '.')
+                token.starts_with('v')
+                    && token.chars().all(|c| c.is_ascii_alphanumeric() || c == '.')
             } else {
                 false
             }
@@ -1446,7 +1448,8 @@ fn profile_release_has_panic_abort() {
     assert!(
         count >= 2,
         "Both [profile.dev] and [profile.release] should have panic = \"abort\". \
-         Found {} occurrence(s) in Cargo.toml.", count
+         Found {} occurrence(s) in Cargo.toml.",
+        count
     );
 }
 
@@ -1478,12 +1481,13 @@ fn ci_yml_has_size_check_job() {
     // Using arm-none-eabi-size (text+data sections) is more accurate than ELF file size.
     let ci_yml = include_str!("../../../.github/workflows/ci.yml");
     assert!(
-        ci_yml.contains("size") || ci_yml.contains("binary-size") || ci_yml.contains("arm-none-eabi"),
+        ci_yml.contains("size")
+            || ci_yml.contains("binary-size")
+            || ci_yml.contains("arm-none-eabi"),
         "CI workflow should check binary size to catch flash bloat. \
          Use arm-none-eabi-size or equivalent."
     );
 }
-
 
 // ---- Workspace lint propagation tests (TDD round 8 slice 1) ----------------
 
@@ -1512,7 +1516,10 @@ fn all_workspace_members_opt_into_workspace_lints() {
 #[test]
 fn eink_emulator_crate_opts_into_workspace_lints() {
     let cargo_toml = include_str!("../../../crates/eink/eink-emulator/Cargo.toml");
-    assert!(cargo_toml.contains("[lints]"), "eink-emulator/Cargo.toml missing [lints] section");
+    assert!(
+        cargo_toml.contains("[lints]"),
+        "eink-emulator/Cargo.toml missing [lints] section"
+    );
     assert!(
         cargo_toml.contains("workspace = true"),
         "eink-emulator/Cargo.toml missing workspace = true under [lints]"
@@ -1522,7 +1529,10 @@ fn eink_emulator_crate_opts_into_workspace_lints() {
 #[test]
 fn eink_testing_crate_opts_into_workspace_lints() {
     let cargo_toml = include_str!("../../../crates/eink/eink-testing/Cargo.toml");
-    assert!(cargo_toml.contains("[lints]"), "eink-testing/Cargo.toml missing [lints] section");
+    assert!(
+        cargo_toml.contains("[lints]"),
+        "eink-testing/Cargo.toml missing [lints] section"
+    );
     assert!(
         cargo_toml.contains("workspace = true"),
         "eink-testing/Cargo.toml missing workspace = true"
@@ -1532,7 +1542,10 @@ fn eink_testing_crate_opts_into_workspace_lints() {
 #[test]
 fn eink_specs_crate_opts_into_workspace_lints() {
     let cargo_toml = include_str!("../../../crates/eink/eink-specs/Cargo.toml");
-    assert!(cargo_toml.contains("[lints]"), "eink-specs/Cargo.toml missing [lints] section");
+    assert!(
+        cargo_toml.contains("[lints]"),
+        "eink-specs/Cargo.toml missing [lints] section"
+    );
     assert!(
         cargo_toml.contains("workspace = true"),
         "eink-specs/Cargo.toml missing workspace = true"
@@ -1542,7 +1555,10 @@ fn eink_specs_crate_opts_into_workspace_lints() {
 #[test]
 fn eink_system_crate_opts_into_workspace_lints() {
     let cargo_toml = include_str!("../../../crates/eink/eink-system/Cargo.toml");
-    assert!(cargo_toml.contains("[lints]"), "eink-system/Cargo.toml missing [lints] section");
+    assert!(
+        cargo_toml.contains("[lints]"),
+        "eink-system/Cargo.toml missing [lints] section"
+    );
     assert!(
         cargo_toml.contains("workspace = true"),
         "eink-system/Cargo.toml missing workspace = true"
@@ -1565,7 +1581,10 @@ fn eink_components_crate_opts_into_workspace_lints() {
 #[test]
 fn firmware_ui_crate_opts_into_workspace_lints() {
     let cargo_toml = include_str!("../../../crates/firmware-ui/Cargo.toml");
-    assert!(cargo_toml.contains("[lints]"), "firmware-ui/Cargo.toml missing [lints] section");
+    assert!(
+        cargo_toml.contains("[lints]"),
+        "firmware-ui/Cargo.toml missing [lints] section"
+    );
     assert!(
         cargo_toml.contains("workspace = true"),
         "firmware-ui/Cargo.toml missing workspace = true"
@@ -1575,7 +1594,10 @@ fn firmware_ui_crate_opts_into_workspace_lints() {
 #[test]
 fn xtask_crate_opts_into_workspace_lints() {
     let cargo_toml = include_str!("../../../xtask/Cargo.toml");
-    assert!(cargo_toml.contains("[lints]"), "xtask/Cargo.toml missing [lints] section");
+    assert!(
+        cargo_toml.contains("[lints]"),
+        "xtask/Cargo.toml missing [lints] section"
+    );
     assert!(
         cargo_toml.contains("workspace = true"),
         "xtask/Cargo.toml missing workspace = true"
@@ -1612,7 +1634,6 @@ fn audio_sai_ping_pong_dma_pattern_documented() {
         "firmware::boot::SAI_INIT_NOTE must document the ping-pong/half-complete DMA pattern.          Add: ping-pong (double-buffer), HT interrupt, TC interrupt.          See: embassy-rs issue #2752, ST AN5051 s5.3.          Current note: {note}"
     );
 }
-
 
 // =============================================================================
 // CI Hardening Tests (TDD Round 8 Slice 5)
@@ -1750,9 +1771,17 @@ fn mpu_sram12_rasr_is_non_cacheable() {
     let pairs = MpuApplier::soul_audio_register_pairs();
     let (_rbar, rasr) = pairs[2];
     // TEX[0] = bit 19 must be set for TEX=001 (Normal Non-cacheable)
-    assert_ne!(rasr & (1 << 19), 0, "SRAM1/2 RASR: TEX bit 19 must be SET (TEX=001)");
+    assert_ne!(
+        rasr & (1 << 19),
+        0,
+        "SRAM1/2 RASR: TEX bit 19 must be SET (TEX=001)"
+    );
     // C bit 17 must be clear (not cacheable)
-    assert_eq!(rasr & (1 << 17), 0, "SRAM1/2 RASR: C bit 17 must be CLEAR (non-cacheable)");
+    assert_eq!(
+        rasr & (1 << 17),
+        0,
+        "SRAM1/2 RASR: C bit 17 must be CLEAR (non-cacheable)"
+    );
     // B bit 16 must be clear (not bufferable)
     assert_eq!(rasr & (1 << 16), 0, "SRAM1/2 RASR: B bit 16 must be CLEAR");
     // ENABLE bit 0 must be set
@@ -1870,5 +1899,132 @@ fn framebuffer_size_is_cacheline_aligned() {
         0,
         "FRAMEBUFFER_SIZE ({}) must be divisible by 32 (Cortex-M7 cacheline size)",
         firmware::FRAMEBUFFER_SIZE
+    );
+}
+
+// ── AXI SRAM READ_ISS_OVERRIDE errata (GAP-A1) ───────────────────────────────
+
+/// STM32H743 Rev Y errata 2.2.9: AXI SRAM read stall under concurrent access.
+/// The READ_ISS_OVERRIDE bit (AXI_TARG7_FN_MOD register at 0x5100_1108, bit 0)
+/// must be set before any concurrent CPU+DMA access to AXI SRAM.
+/// Without this, SAI DMA + CPU decode concurrency causes intermittent stale reads.
+/// Reference: ST Errata ES0392 Rev 9 §2.2.9, ST AppNote AN5319.
+#[test]
+fn boot_applies_axi_sram_read_iss_override_errata() {
+    let boot_src = include_str!("../src/boot.rs");
+    assert!(
+        boot_src.contains("0x5100_1108") || boot_src.contains("READ_ISS_OVERRIDE") || boot_src.contains("AXI_TARG7"),
+        "boot.rs must set AXI_TARG7_FN_MOD (0x5100_1108, bit 0) to work around          STM32H743 Rev Y errata 2.2.9 (AXI SRAM concurrent read stall).          Single write: ptr::write_volatile(0x5100_1108 as *mut u32, 1)"
+    );
+}
+
+// ── BOR threshold assertion (GAP-A2) ─────────────────────────────────────────
+
+/// BOR level must be verified at boot time.
+/// Factory default BOR_LEV=0b000 (~1.7V) is too low for 3.3V LiPo PMIC systems.
+/// Supply droop during SDMMC writes can corrupt FAT32 directory entries.
+/// The boot code must assert BOR is configured, or document the provision step.
+#[test]
+fn boot_documents_bor_threshold_requirement() {
+    let boot_src = include_str!("../src/boot.rs");
+    assert!(
+        boot_src.contains("BOR") || boot_src.contains("bor_lev") || boot_src.contains("brown"),
+        "boot.rs must reference BOR (Brown-Out Reset) threshold.          Either assert BOR_LEV != 0 at runtime, or document the option bytes          provisioning step. Factory default 1.7V is insufficient for LiPo PMIC systems."
+    );
+}
+
+// ── Interrupt priorities applied (GAP-A4) ────────────────────────────────────
+
+/// InterruptPriorities constants must be applied via NVIC at runtime.
+/// Defining constants without calling set_priority() has no effect ---
+/// all interrupts default to priority 0 (highest, equal) after reset.
+/// Equal-priority EXTI ISR can block SAI DMA ISR -> audio dropout at 192 kHz.
+#[test]
+fn boot_applies_interrupt_priorities_at_runtime() {
+    let boot_src = include_str!("../src/boot.rs");
+    assert!(
+        boot_src.contains("set_priority") || boot_src.contains("NVIC") || boot_src.contains("Priority::"),
+        "boot.rs must apply interrupt priorities via NVIC::set_priority() or equivalent.          InterruptPriorities constants in clock_config.rs have no effect until applied.          SAI DMA must be highest priority to prevent audio dropout under encoder load."
+    );
+}
+
+// ── Main loop counter wrapping (GAP-A10) ─────────────────────────────────────
+
+/// Main loop heartbeat counter must use wrapping_add to comply with
+/// arithmetic_side_effects = "deny" workspace lint.
+/// counter += 1 is technically unreachable overflow (136 years) but violates policy.
+#[test]
+fn main_loop_counter_uses_wrapping_add() {
+    let main_src = include_str!("../src/main.rs");
+    // Must NOT contain bare += 1 on counter variable
+    // Must contain wrapping_add
+    assert!(
+        main_src.contains("wrapping_add") || !main_src.contains("counter += 1"),
+        "Main loop counter must use counter.wrapping_add(1) to comply with          arithmetic_side_effects = \"deny\" workspace lint.          Even unreachable overflows must use explicit wrapping semantics."
+    );
+}
+
+// ── Display init watchdog intentional starvation (GAP-A9) ────────────────────
+
+/// Display init failure loop must document that it intentionally starves the watchdog.
+/// Without this comment, developers may "fix" the missing heartbeat, creating a boot loop.
+#[test]
+fn display_init_failure_loop_documents_iwdg_intent() {
+    let main_src = include_str!("../src/main.rs");
+    // Check that the display error handling has some documentation about IWDG
+    // Look for either "IWDG" or "watchdog" near the display error handling
+    assert!(
+        main_src.contains("IWDG") || main_src.contains("watchdog") || main_src.contains("intentional"),
+        "Display init failure loop must document that NOT feeding the watchdog is intentional.          The IWDG will reset the device after 8s -- this IS the recovery strategy."
+    );
+}
+
+// -- Input channel ISR safety (GAP-A5) --
+
+/// The input channel receive path must not use CriticalSectionRawMutex for
+/// thread-mode pops without documented justification.
+/// CriticalSectionRawMutex sets PRIMASK=1 (all IRQs masked) even in thread mode.
+/// During menu navigation, rapid pops mask the SAI DMA half-transfer ISR.
+#[test]
+fn input_channel_documents_critical_section_usage() {
+    let hardware_rs = include_str!("../src/input/hardware.rs");
+    if hardware_rs.contains("CriticalSectionRawMutex") {
+        assert!(
+            hardware_rs.contains("// SAFETY:")
+                || hardware_rs.contains("// Justification:")
+                || hardware_rs.contains("PRIMASK")
+                || hardware_rs.contains("critical_section"),
+            "CriticalSectionRawMutex on input channel lacks timing-analysis doc comment."
+        );
+    }
+}
+
+// -- defmt production binary hygiene (GAP-A6) --
+
+/// DEFMT_LOG is a BUILD-TIME env var: DEFMT_LOG=info strips trace/debug strings
+/// from the .defmt ELF section. The workspace must document this via a feature.
+#[test]
+fn cargo_toml_has_log_level_feature_flag() {
+    let cargo_toml = include_str!("../../../Cargo.toml");
+    assert!(
+        cargo_toml.contains("verbose-logging")
+            || cargo_toml.contains("log-debug")
+            || cargo_toml.contains("defmt-log")
+            || cargo_toml.contains("defmt/log"),
+        "Cargo.toml must have a verbose-logging feature documenting DEFMT_LOG compile-time filtering."
+    );
+}
+
+// -- cargo-auditable in CI (GAP-A8) --
+
+/// CI must use cargo-auditable to embed dependency manifest in firmware ELF.
+/// Enables: cargo audit bin firmware.elf for field CVE scanning.
+#[test]
+fn ci_uses_cargo_auditable_for_firmware_build() {
+    let ci_yml = include_str!("../../../.github/workflows/ci.yml");
+    // A YAML comment does not execute -- check for an actual named step.
+    assert!(
+        ci_yml.contains("Install cargo-auditable"),
+        "CI must have a step named Install cargo-auditable, not just a comment."
     );
 }

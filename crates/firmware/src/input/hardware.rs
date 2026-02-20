@@ -54,6 +54,29 @@ pub(crate) const CHANNEL_DEPTH: usize = 16;
 // Static channel (one sender per GPIO task, one receiver for HardwareInput)
 // ---------------------------------------------------------------------------
 
+// Justification for CriticalSectionRawMutex:
+// The channel is read from thread-mode tasks (InputDevice::wait_for_event / poll_event)
+// and written from the Embassy GPIO task via try_send_event (non-blocking, synchronous).
+//
+// CriticalSectionRawMutex sets PRIMASK=1 for the duration of each heapless queue operation.
+// Timing analysis at 480 MHz:
+//   - heapless::spsc push/pop: ~20-50 ns (3-24 instructions, no loops)
+//   - PRIMASK=1 window: ~40-100 ns worst case
+//   - SAI DMA half-transfer ISR window: 5.33 ms at 192 kHz / 2048-sample buffers
+//   - Critical section as fraction of ISR window: 40-100 ns / 5.33 ms = 0.0007-0.002%
+// Verdict: ACCEPTABLE. The 40-100 ns PRIMASK window cannot delay the SAI DMA ISR
+//          by a meaningful amount. Audio dropout requires missing the ENTIRE 5.33 ms
+//          DMA half-transfer window, not a sub-microsecond critical section.
+//
+// SAFETY: CriticalSectionRawMutex is correct here because:
+//   1. Embassy Channel requires a RawMutex that implements RawMutex::lock() correctly.
+//   2. CriticalSectionRawMutex provides ISR-safe access on single-core Cortex-M.
+//   3. The critical section duration (40-100 ns) is negligible vs. audio ISR deadlines.
+//
+// Future optimization (if audio glitches appear under heavy input load):
+//   Refactor to: ISR/task -> Signal<CriticalSectionRawMutex, ()> (minimal, 1 word)
+//                Task -> samples GPIO state, pushes to Channel<NoopRawMutex, ...>
+//   This eliminates PRIMASK from the receive() path entirely.
 /// Global event channel shared between the GPIO task and the application.
 pub static INPUT_CHANNEL: Channel<CriticalSectionRawMutex, InputEvent, CHANNEL_DEPTH> =
     Channel::new();

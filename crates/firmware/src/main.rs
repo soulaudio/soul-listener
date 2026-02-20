@@ -5,6 +5,7 @@
 #![no_std]
 #![no_main]
 
+use core::sync::atomic::{AtomicBool, Ordering};
 use embassy_executor::Spawner;
 use embassy_stm32::exti::{Channel, ExtiInput};
 use embassy_stm32::gpio::{AnyPin, Input, Level, Output, Pull, Speed};
@@ -12,7 +13,6 @@ use embassy_stm32::spi::{Config as SpiConfig, Spi};
 use embassy_stm32::time::Hertz;
 use embassy_time::{Delay, Duration, Timer};
 use embedded_hal_bus::spi::ExclusiveDevice;
-use core::sync::atomic::{AtomicBool, Ordering};
 use platform::DisplayDriver;
 use static_cell::StaticCell;
 
@@ -102,7 +102,8 @@ async fn main(spawner: Spawner) {
     // which is sound under Rust's aliasing model (uses UnsafeCell internally).
     // The #[link_section = ".axisram"] attribute ensures it lands in DMA-accessible
     // AXI SRAM (0x24000000) rather than DTCM (not DMA-accessible).
-    let _framebuffer: &'static mut [u8; FRAMEBUFFER_SIZE] = &mut FRAMEBUFFER.init(Align32([0xFF; FRAMEBUFFER_SIZE])).0;
+    let _framebuffer: &'static mut [u8; FRAMEBUFFER_SIZE] =
+        &mut FRAMEBUFFER.init(Align32([0xFF; FRAMEBUFFER_SIZE])).0;
 
     // Step 3: Initialize external SDRAM via FMC
     // TODO: call firmware::boot::init_sdram_stub() when FMC API is available.
@@ -202,6 +203,11 @@ async fn main(spawner: Spawner) {
         ),
         Err(e) => {
             defmt::error!("Display initialization failed: {}", e);
+            // Intentional: do NOT call TASK_ALIVE_MAIN.store(true) here.
+            // The IWDG watchdog will detect the missing heartbeat after
+            // WATCHDOG_TIMEOUT_MS (8 s) and reset the device --- this IS the
+            // automatic retry strategy for display hardware failures.
+            // DO NOT add watchdog feeding here without understanding this invariant.
             loop {
                 Timer::after(Duration::from_secs(1)).await;
             }
@@ -291,7 +297,7 @@ async fn main(spawner: Spawner) {
 
     loop {
         Timer::after(Duration::from_secs(1)).await;
-        counter += 1;
+        counter = counter.wrapping_add(1);
         defmt::debug!("Heartbeat tick={=u32}", counter);
 
         // Signal that the main task is alive this cycle.

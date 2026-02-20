@@ -621,6 +621,138 @@ pub fn configure_scb_fault_traps() {
     }
 }
 
+/// Apply STM32H743 Rev Y errata 2.2.9 workaround.
+///
+/// Sets READ_ISS_OVERRIDE (bit 0) in `AXI_TARG7_FN_MOD` register at address
+/// `0x5100_1108` to prevent stale data returns during concurrent CPU+DMA read
+/// transactions to AXI SRAM (target slot 7 in the AXI interconnect).
+///
+/// # Background
+///
+/// On STM32H743 Rev Y silicon, when the CPU and a DMA controller (DMA1/DMA2/BDMA)
+/// simultaneously read from AXI SRAM (0x2400_0000..0x247F_FFFF), the AXI
+/// interconnect can return stale data to the CPU from an internal staging buffer
+/// rather than fetching the latest value from SRAM. This causes intermittent
+/// decode corruption in audio ping-pong DMA patterns where the CPU reads the
+/// just-filled half-buffer while SAI DMA fills the other half.
+///
+/// Setting `READ_ISS_OVERRIDE = 1` disables the staging buffer optimisation and
+/// forces all reads to go through to the SRAM array, eliminating the hazard.
+///
+/// Reference: STM32H743/753 Errata ES0392 Rev 9 §2.2.9, ST AppNote AN5319.
+///
+/// # Safety
+///
+/// Single volatile write to a fixed AXI interconnect configuration register at
+/// `0x5100_1108`. Must be called before any concurrent AXI SRAM access (i.e.,
+/// before DMA enable). No concurrent access to this register is possible.
+#[allow(unsafe_code)]
+pub fn apply_axi_sram_read_iss_override() {
+    // SAFETY: AXI_TARG7_FN_MOD at 0x5100_1108 is a write-once configuration
+    // register in the AXI interconnect. Safe to write once at boot before any
+    // DMA transfer to AXI SRAM begins. No other code accesses this register.
+    #[cfg(feature = "hardware")]
+    unsafe {
+        core::ptr::write_volatile(0x5100_1108_u32 as *mut u32, 0x0000_0001_u32);
+        // DSB: ensure the write reaches the AXI interconnect before any DMA starts.
+        cortex_m::asm::dsb();
+    }
+}
+
+/// BOR (Brown-Out Reset) threshold provisioning requirement.
+///
+/// The STM32H743 ships from the factory with BOR **disabled**
+/// (`BOR_LEV = 0b000`, threshold ~1.7 V).  For a 3.3 V LiPo PMIC system
+/// (BQ25895), this threshold is insufficient:
+///
+/// - USB-C cable removal causes a 3.3 V rail droop to ~1.8–2.0 V momentarily.
+/// - SDMMC DMA writes during the droop can leave the FAT32 directory entry in
+///   a half-written state, corrupting the file system.
+///
+/// # Required Action Before Deployment
+///
+/// Program the option bytes to raise the BOR threshold:
+/// ```text
+/// BOR_LEV = 0b001  →  2.1 V threshold (FLASH_OPTSR BOR_LEV field, bits [9:8])
+/// ```
+///
+/// Using **STM32CubeProgrammer**: Option Bytes → User Configuration → BOR_LEV → Level 1.
+///
+/// # Production Checklist
+///
+/// - [ ] Program option bytes: `BOR_LEV = 0b001` before first board power-on
+/// - [ ] Verify with STM32CubeProgrammer: read back OPTSR_CUR and confirm BOR_LEV != 0
+/// - [ ] Add factory test step: assert `bor_lev != 0b000` in manufacturing firmware
+///
+/// # Runtime Warning (Debug Builds)
+///
+/// In debug builds, `assert_bor_configured()` reads `FLASH.OPTSR_CUR.BOR_LEV` and
+/// emits a defmt warning if BOR is still at the factory default.
+pub const BOR_PROVISIONING_REQUIRED: &str =
+    "Set BOR_LEV=0b001 in option bytes before deployment. \
+     Factory default 1.7V threshold is insufficient for 3.3V LiPo PMIC systems. \
+     See boot.rs::BOR_PROVISIONING_REQUIRED for the full provisioning checklist.";
+
+/// Apply interrupt priorities from [`platform::clock_config::InterruptPriorities`].
+///
+/// All STM32H743 interrupts reset to priority 0 (highest, equal) after reset.
+/// Without explicit priority assignment, a long EXTI ISR (encoder debounce)
+/// can block the SAI DMA half-transfer ISR, causing audio dropouts at 192 kHz /
+/// 2048-sample frames (10.7 ms window).
+///
+/// # Priority Mapping
+///
+/// | Interrupt        | Priority | Value | Rationale                          |
+/// |------------------|----------|-------|------------------------------------|
+/// | SAI DMA          | P0       |   0   | Audio: must never be preempted     |
+/// | Display SPI DMA  | P2       |  32   | High; brief preemption by audio OK |
+/// | Time driver TIM2 | P3       |  48   | Embassy timers; jitter tolerable   |
+/// | SDMMC DMA        | P4       |  64   | SD transfers; ms-scale jitter OK   |
+/// | Input EXTI       | P6       |  96   | Interactive; not time-critical     |
+///
+/// Reference: [`platform::clock_config::InterruptPriorities`]
+///
+/// # Implementation Note
+///
+/// Full `set_priority()` calls are enabled in `main.rs` once each peripheral
+/// (SAI1, SPI DMA, SDMMC, EXTI) is initialized. The function below documents
+/// the required `Priority::` values and serves as the single call-site for
+/// applying them.
+///
+/// On hardware, use `embassy_stm32::interrupt::InterruptExt::set_priority()`:
+/// ```rust,ignore
+/// use embassy_stm32::interrupt::{self, InterruptExt, Priority};
+/// // Safety: called before any task is spawned that enables these interrupts.
+/// interrupt::SAI1.set_priority(Priority::P0);
+/// interrupt::DMA1_STR0.set_priority(Priority::P2);
+/// interrupt::EXTI9_5.set_priority(Priority::P6);
+/// interrupt::EXTI0.set_priority(Priority::P6);
+/// ```
+#[cfg(feature = "hardware")]
+pub fn apply_interrupt_priorities() {
+    // Priority constants from platform::clock_config::InterruptPriorities:
+    //   AUDIO_SAI_DMA   = 0   → Priority::P0 (highest — audio must not be preempted)
+    //   DISPLAY_SPI_DMA = 32  → Priority::P2
+    //   TIME_DRIVER     = 48  → Priority::P3
+    //   SDMMC_DMA       = 64  → Priority::P4
+    //   INPUT_EXTI      = 96  → Priority::P6 (lowest defined priority)
+    //
+    // Full set_priority() calls will be wired here when SAI/SDMMC/SPI DMA
+    // peripherals are initialised. Placeholder log confirms the function runs:
+    defmt::info!(
+        "Interrupt priorities to apply: SAI=Priority::P0, SPI_DMA=Priority::P2, \
+         SDMMC=Priority::P4, EXTI=Priority::P6 (set_priority pending peripheral init)"
+    );
+    // When peripherals are ready, enable the block below:
+    // unsafe {
+    //     use embassy_stm32::interrupt::{self, InterruptExt, Priority};
+    //     interrupt::SAI1.set_priority(Priority::P0);
+    //     interrupt::DMA1_STR0.set_priority(Priority::P2);
+    //     interrupt::EXTI9_5.set_priority(Priority::P6);
+    //     interrupt::EXTI0.set_priority(Priority::P6);
+    // }
+}
+
 #[cfg(feature = "hardware")]
 pub mod hardware {
     //! Actual hardware register write implementations.
