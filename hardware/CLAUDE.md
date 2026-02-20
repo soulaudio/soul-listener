@@ -21,8 +21,36 @@ structure — each `.ato` module corresponds to a `crates/platform/src/` or
 | `elec/src/bluetooth.ato`      | `crates/platform/src/bluetooth.rs` + `crates/bluetooth/`        |
 | `elec/src/memory.ato`         | `crates/platform/src/sdram.rs` + `asset_store.rs`               |
 | `elec/src/input.ato`          | `crates/platform/src/gpio.rs` + `crates/firmware/src/input/`    |
+| `elec/src/clock.ato`          | `crates/platform/src/config.rs` (HSE/PLL startup configuration)  |
 | `elec/src/mcu.ato`            | `crates/firmware/src/` (top-level task orchestration)           |
 | `elec/src/main.ato`           | `crates/firmware/src/main.rs` (system wiring / boot sequence)   |
+
+## Vertical Slice Rules
+
+### Clock Source Modularity
+
+The HSE clock source **must** be a vertical slice (`clock.ato`) rather than
+embedded in `mcu.ato`. The `ClockSource` interface in `interfaces.ato` defines
+the port contract (`osc_in`, `osc_out`); `mcu.ato` exposes only the typed port
+and connects it to PH0/PH1 — it must not contain the crystal component.
+
+**Rule:** `mcu.ato` is clock-source-agnostic. The crystal (or TCXO) lives in
+`clock.ato`.
+
+To swap the clock source (crystal → TCXO → MEMS oscillator):
+1. Create a new module (e.g., `TcxoClock`) in `clock.ato` implementing `ClockSource`
+2. In `main.ato`, replace `clock = new HseClock` with `clock = new TcxoClock`
+3. **No changes needed** in `mcu.ato` or `STM32H743ZIT6.ato`
+
+Enforced by CI: the `hw-arch` job verifies that `mcu.ato` declares `hse_clk`
+(ClockSource port) and that `main.ato` wires `mcu.hse_clk ~ clock.clk`.
+
+### General Rule: Swappable Subsystems Use Interface Ports
+
+Every hardware subsystem that may be swapped must expose a typed interface port
+at the module boundary. The implementation detail (which crystal, which DAC chip,
+which amplifier topology) lives in its own vertical slice module. `main.ato` is
+the only file that names concrete implementations.
 
 ## Directory Structure
 
@@ -120,7 +148,9 @@ Current assertions:
 | `bluetooth.ato` | `hse.frequency within 31MHz to 33MHz`             | 32 MHz BLE RF calibration crystal      |
 | `input.ato`   | `r_enc_a/b/sw.resistance within 9k to 11kohm`       | Encoder pull-up values                 |
 | `input.ato`   | `c_enc_a/b/sw.capacitance within 80nF to 120nF`     | Debounce cap RC filter verification    |
-| `mcu.ato`     | `hse_xtal.frequency within 24MHz to 26MHz`          | STM32H743 PLL input crystal            |
+| `clock.ato`   | `xtal.frequency within 24MHz to 26MHz`               | STM32H743 HSE PLL input crystal        |
+| `clock.ato`   | `c_osc_in/c_osc_out.capacitance within 15pF to 22pF` | Crystal load caps (CL ≈ 12 pF eff.)   |
+| `mcu.ato`     | `lse_xtal.frequency within 32kHz to 33768Hz`         | 32.768 kHz LSE — RTC                   |
 | `main.ato`    | `power.power_3v3.voltage within 3.0V to 3.6V`      | Intersection of all consumer ranges    |
 
 ## Architecture Tests (CI)
@@ -130,9 +160,9 @@ Two layers of automated checks:
 ### Hardware (`.github/workflows/hardware.yml`)
 | Job | What it checks |
 |-----|---------------|
-| `hw-arch` | Module import boundaries; all modules declare `power_3v3`; all imported interfaces exist in `interfaces.ato`; `amp_rail` wired power↔audio; AmpSupplyBus imported where used |
+| `hw-arch` | Module import boundaries; all modules declare `power_3v3`; all imported interfaces exist in `interfaces.ato`; `amp_rail` wired power↔audio; AmpSupplyBus imported where used; ClockSource wired mcu↔clock |
 | `ato-check` | Full-system ERC: `assert` voltage propagation across all modules |
-| `ato-check-modules` | 7 parallel per-module checks (power/mcu/audio/display/bluetooth/memory/input) |
+| `ato-check-modules` | 8 parallel per-module checks (power/mcu/audio/display/bluetooth/memory/input/clock) |
 | `bom-generate` | BOM generation (main branch only, after all checks pass) |
 
 ### Rust Firmware (`.github/workflows/ci.yml` → `arch` job)
@@ -147,13 +177,7 @@ Two layers of automated checks:
 
 | Item | File | Notes |
 |------|------|-------|
-| TPA6120A2 output pin verification | `parts/TPA6120A2/TPA6120A2.ato` | Stub missing OUT1/OUT2 signal definitions; verify against KiCad `Amplifier_Audio:TPA6120A2` symbol before layout |
 | Display FPC pinout | `display.ato` | Request GDEM0397T81P spec from Good Display (buy@e-ink-display.com) |
-| QSPI series resistors in signal path | `memory.ato` | Currently declared but not in signal path (TODO comment) |
-| ESD TVS array on display SPI lines | `display.ato` | PRTR5V0U2X or similar |
-| HSE crystal wiring for STM32H743 | `mcu.ato` | Wire `hse_xtal.p1/p2 ~ mcu.PH0_OSC_IN/PH1_OSC_OUT`; confirm PH0/PH1 pin numbers in KiCad symbol for LQFP-144 |
-| PTS526 KiCad footprint | `parts/PTS526/` | No official KiCad footprint exists; add from SnapEDA or create local library entry |
-| EC11 pad-to-pin mapping | `parts/EC11/` | Verify integer pin 1–5 maps correctly to KiCad `A/B/C/S1/S2` pads in chosen footprint |
 
 ## Sourcing Notes
 
@@ -176,7 +200,7 @@ Two layers of automated checks:
 |--------------------|--------------------|-----------|-----------------|
 | STM32H743ZIT6      | STM32H743ZIT6      | LQFP-144  | TME / Digi-Key  |
 | ES9038Q2M          | ES9038Q2M          | TSSOP-28  | Digi-Key / Mouser |
-| TPA6120A2          | TPA6120A2DGN       | MSOP-8 PP | TME / Digi-Key  |
+| TPA6120A2          | TPA6120A2RGYR      | VQFN-14   | Digi-Key / Mouser |
 | LT3042EMSE#PBF     | LT3042EMSE#PBF     | MSOP-8E   | Digi-Key / Mouser |
 | LT3045EMSE#PBF     | LT3045EMSE#PBF     | MSOP-12E  | Digi-Key / Mouser |
 | LT3094EMSE#PBF     | LT3094EMSE#PBF     | MSOP-12E  | Digi-Key / Mouser |
@@ -187,6 +211,7 @@ Two layers of automated checks:
 | W25Q128JVSIQ       | W25Q128JVSIQ       | SOIC-8    | TME / Digi-Key  |
 | W9825G6KH-6        | W9825G6KH-6        | TSOP-II-54| Digi-Key / Mouser |
 | GDEM0397T81P       | GDEM0397T81P       | Module    | Good Display    |
+| PESD5V0L5UY        | PESD5V0L5UY,115    | SOT-363   | Digi-Key / Mouser |
 | AP2112K-3.3TRG1    | AP2112K-3.3TRG1    | SOT-25    | TME / Digi-Key  |
 | EC11E15244G5       | EC11E15244G5       | THT 5-pin | TME / Digi-Key  |
 | PTS526SK15SMTR2LFS | PTS526SK15SMTR2LFS | SMD 6×3.5 mm | TME / Digi-Key |

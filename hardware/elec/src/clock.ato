@@ -1,0 +1,70 @@
+# Clock source module — HSE 25 MHz reference for STM32H743ZI PLL
+#
+# Vertical slice: provides the external clock reference to the MCU.
+# Swapping to a TCXO or MEMS oscillator requires only changing this file
+# (or creating a sibling module) and updating main.ato — mcu.ato is untouched.
+#
+# Mirrors: hardware only (transparent to firmware; clock accuracy affects
+#          USB SOF timing and BLE RF calibration, not application logic)
+#
+# Interface contract: implements ClockSource (interfaces.ato)
+#   osc_in  → MCU PH0/OSC_IN
+#   osc_out → MCU PH1/OSC_OUT (not connected for TCXO variants)
+#
+# To substitute with a TCXO (e.g., for tighter USB SOF accuracy):
+#   1. Create: module TcxoClock: ... clk.osc_out = NC
+#   2. In main.ato: replace `hse = new HseClock` with `hse = new TcxoClock`
+#   3. No changes needed in mcu.ato or the MCU component stub.
+
+from "interfaces.ato" import ClockSource
+
+module HseClock:
+    """25 MHz passive crystal oscillator for STM32H743ZI HSE input.
+
+    The MCU's internal oscillator amplifier drives the crystal between
+    OSC_IN and OSC_OUT; this module provides the resonator and matching
+    load capacitors.
+
+    Crystal spec:   25 MHz ± 30 ppm, fundamental-mode AT-cut, 3225 SMD
+                    Load capacitance CL = 12 pF, max ESR = 60 Ω
+                    e.g., Abracon ABLS-25.000MHZ-B4-T (CL=18 pF) or
+                          TXC Corporation 8Y-25.000MAAJ-T (CL=12 pF)
+                    TME: XTAL-3225-25MHZ-12PF or equivalent
+
+    Load cap calc:  CL_eff = (C1 × C2)/(C1 + C2) + C_stray
+                    With C_stray ≈ 3 pF per pin (PCB + MCU input):
+                    18 pF caps → CL_eff = 9 pF + 3 pF stray ≈ 12 pF ✓
+                    Place caps < 500 µm from crystal pads to minimise stray.
+    """
+
+    # ── Ports ─────────────────────────────────────────────────────────────────
+    clk = new ClockSource  # → mcu.hse_clk (wired in main.ato)
+    gnd = new Electrical   # Ground reference (connect to board GND in main.ato)
+
+    # ── Crystal ───────────────────────────────────────────────────────────────
+    xtal = new Crystal
+    xtal.frequency = 25MHz +/- 30ppm
+    xtal.package   = "3225"
+
+    xtal.p1 ~ clk.osc_in   # OSC_IN  side of crystal (→ MCU PH0)
+    xtal.p2 ~ clk.osc_out  # OSC_OUT side of crystal (← MCU PH1 amplifier feedback)
+
+    # ── Load capacitors ───────────────────────────────────────────────────────
+    # 18 pF each → effective CL ≈ 12 pF (see docstring calculation above).
+    # Use C0G / NP0 dielectric for temperature stability.
+    c_osc_in = new Capacitor
+    c_osc_in.capacitance = 18pF +/- 5%
+    c_osc_in.package     = "0402"
+    clk.osc_in ~ c_osc_in.p1; c_osc_in.p2 ~ gnd
+
+    c_osc_out = new Capacitor
+    c_osc_out.capacitance = 18pF +/- 5%
+    c_osc_out.package     = "0402"
+    clk.osc_out ~ c_osc_out.p1; c_osc_out.p2 ~ gnd
+
+    # ── Validation ────────────────────────────────────────────────────────────
+    # STM32H743 HSE input range: 4–50 MHz (datasheet §6.3.8)
+    assert xtal.frequency within 24MHz to 26MHz
+    # Load caps: 15–22 pF for CL=12 pF crystal with ≈3 pF board stray
+    assert c_osc_in.capacitance  within 15pF to 22pF
+    assert c_osc_out.capacitance within 15pF to 22pF

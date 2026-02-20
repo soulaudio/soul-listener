@@ -1,60 +1,86 @@
-# TPA6120A2 — Texas Instruments Class-AB Headphone Amplifier
+# TPA6120A2 — Texas Instruments Class-AB Stereo Headphone Amplifier
 #
-# Package:      MSOP-8 with PowerPAD (DGN) — 3×3 mm
+# Package:      VQFN-14 (RGY), 3.0×3.0 mm, 0.5 mm pitch, exposed thermal pad
 # Manufacturer: Texas Instruments
-# Datasheet:    https://www.ti.com/lit/ds/symlink/tpa6120a2.pdf
-# Key specs:    ±15 V max supply (±5 V typical for 3.3 V rail with charge pump)
-#               140 dB SNR, 250 mA output current, 0.0004% THD+N
-#               Drives 16–600 Ω headphones
+# Datasheet:    https://www.ti.com/lit/ds/symlink/tpa6120a2.pdf  (SLOS431B)
+# Key specs:    ±5–15 V split supply, CFA architecture
+#               1.5 W/channel into 8 Ω, <0.0004% THD+N, 140 dB dynamic range
+#               250 mA output current — drives 16–600 Ω headphones
+#               Current-feedback architecture: RF = 1–2 kΩ sets loop stability
 #
-# Supply: The TPA6120A2 requires a split ±V supply. On this design, use a
-# charge pump or dedicated ±5 V supply derived from the 3.7 V LiPo via a
-# boost + inverting converter (e.g., TPS63700 + TPS65131 or similar).
-# The audio module must include this supply generation.
+# ⚠ PACKAGE NOTE: The DGN (MSOP-8) suffix does NOT exist for the TPA6120A2.
+#   Do NOT confuse with TPA6110A2DGN (a different, lower-power, single-supply device).
+#   Available orderable parts (SLOS431B, verified 2026-02-20):
+#     TPA6120A2RGYR  — VQFN-14 (RGY), 3.0×3.0 mm, tape & reel  ← THIS STUB
+#     TPA6120A2RGYT  — VQFN-14 (RGY), 3.0×3.0 mm, cut tape
+#     TPA6120A2DWPR  — HSOP-20  (DWP), larger, 10 of 20 pins are NC
 #
-# ⚠ PIN NUMBERS: Verify against KiCad symbol.
-#   DGN package pinout (top view):
-#   Pin 1: IN1- (inverting input, amp A)
-#   Pin 2: IN1+ (non-inverting input, amp A)
-#   Pin 3: PVSSa (negative supply, amp A)
-#   Pin 4: VOCM (common mode reference — tie to mid-rail or 0 V for balanced)
-#   Pin 5: PVSSb (negative supply, amp B)
-#   Pin 6: IN2+ (non-inverting input, amp B)
-#   Pin 7: IN2- (inverting input, amp B)
-#   Pin 8: PVDD (positive supply)
-#   EP:    Exposed pad — PVSS (must be soldered to ground plane)
+# ⚠ SYMBOL NOTE: No official KiCad `Amplifier_Audio:TPA6120A2` symbol exists.
+#   A local custom symbol must be created at:
+#     hardware/elec/src/parts/TPA6120A2/TPA6120A2.kicad_sym
+#   Steps:
+#     1. Open KiCad Symbol Editor → New Symbol
+#     2. Add 14 pins + 1 EP (thermal pad = pin 15)
+#     3. Label per pinout below; Reference = U, Value = TPA6120A2
+#     4. Save to this directory as TPA6120A2.kicad_sym
 #
-# KiCad symbol: Amplifier_Audio:TPA6120A2 (in official kicad-symbols)
+# VQFN-14 (RGY) Pinout — clockwise from pin 1, top view:
+#   Pin  1: LIN+  (left channel non-inverting input)
+#   Pin  2: LIN-  (left channel inverting input / CFA feedback node)
+#   Pin  3: NC
+#   Pin  4: NC
+#   Pin  5: NC
+#   Pin  6: RIN-  (right channel inverting input / CFA feedback node)
+#   Pin  7: RIN+  (right channel non-inverting input)
+#   Pin  8: RVCC+ (right channel positive supply, +5 V)
+#   Pin  9: ROUT  (right channel output)
+#   Pin 10: RVCC- (right channel negative supply, −5 V)
+#   Pin 11: NC
+#   Pin 12: LVCC- (left channel negative supply, −5 V)
+#   Pin 13: LOUT  (left channel output)
+#   Pin 14: LVCC+ (left channel positive supply, +5 V)
+#   EP  15: GND thermal pad — connect to ground plane, NOT to LVCC-/RVCC-
 #
-# Distributor availability:
-#   TME:     TPA6120AIDGN   (check cz.tme.eu)
-#   Digi-Key: 296-TPA6120A2DGNR-ND
-#   Mouser:   595-TPA6120A2DGNR
+# Supply notes:
+#   LVCC+ and RVCC+ must be at the same potential → connect both to +5 V rail.
+#   LVCC- and RVCC- must be at the same potential → connect both to −5 V rail.
+#   EP is PCB GND (0 V), not the negative supply rail.
+#
+# CFA gain network (typical application):
+#   Non-inverting unity gain: RF between LOUT → LIN- (and ROUT → RIN-)
+#   RF = 1.5 kΩ (1–2 kΩ stability range per datasheet §7.3.5)
+#   RG = open (headphone load referenced to GND; single-ended output)
+#
+# Distributor availability (EU):
+#   Digi-Key: 296-TPA6120A2RGYRCT-ND  (VQFN-14, Digi-Key NL warehouse)
+#   Mouser:   595-TPA6120A2RGYR        (VQFN-14, Mouser DE warehouse)
+#
+# KiCad footprint:
+#   Package_DFN_QFN:VQFN-14-1EP_3x3mm_P0.5mm_EP1.65x1.65mm
+#   (Verify against TI RGY package drawing in SLOS431B before PCB sign-off)
 
 component TPA6120A2:
     trait is_atomic_part<
         manufacturer = "Texas Instruments",
-        partnumber   = "TPA6120A2DGNR",
-        footprint    = "Package_SO:MSOP-8-1EP_3x3mm_P0.65mm_EP1.68x1.88mm_ThermalVias",
-        symbol       = "Amplifier_Audio:TPA6120A2">
+        partnumber   = "TPA6120A2RGYR",
+        footprint    = "Package_DFN_QFN:VQFN-14-1EP_3x3mm_P0.5mm_EP1.65x1.65mm",
+        symbol       = "TPA6120A2.kicad_sym">
     trait has_designator_prefix<prefix = "U">
 
-    # ── Amplifier A (Left channel) ────────────────────────────────────────────
-    signal IN1_NEG ~ pin 1   # Inverting input A (feedback from output)
-    signal IN1_POS ~ pin 2   # Non-inverting input A (from DAC AOUT_L+)
+    # ── Left channel ─────────────────────────────────────────────────────────
+    signal LIN_POS  ~ pin 1   # Non-inverting input (from DAC AOUT_L+)
+    signal LIN_NEG  ~ pin 2   # Inverting input (CFA feedback from LOUT via RF)
+    signal LOUT     ~ pin 13  # Left channel output (drives headphone load + RF)
+    signal LVCC_POS ~ pin 14  # Positive supply +5 V (tie to RVCC+)
+    signal LVCC_NEG ~ pin 12  # Negative supply −5 V (tie to RVCC-)
 
-    # ── Amplifier B (Right channel) ───────────────────────────────────────────
-    signal IN2_POS ~ pin 6   # Non-inverting input B (from DAC AOUT_R+)
-    signal IN2_NEG ~ pin 7   # Inverting input B (feedback from output)
+    # ── Right channel ─────────────────────────────────────────────────────────
+    signal RIN_NEG  ~ pin 6   # Inverting input (CFA feedback from ROUT via RF)
+    signal RIN_POS  ~ pin 7   # Non-inverting input (from DAC AOUT_R+)
+    signal RVCC_POS ~ pin 8   # Positive supply +5 V (tie to LVCC+)
+    signal RVCC_NEG ~ pin 10  # Negative supply −5 V (tie to LVCC-)
+    signal ROUT     ~ pin 9   # Right channel output (drives headphone load + RF)
 
-    # ── Common-mode reference ─────────────────────────────────────────────────
-    signal VOCM ~ pin 4      # Common-mode output voltage reference
-                             # Tie to 0 V (AGND) for fully differential output
-
-    # ── Power supply ─────────────────────────────────────────────────────────
-    signal PVDD  ~ pin 8     # Positive supply (+5 V from charge pump)
-    signal PVSSa ~ pin 3     # Negative supply, amp A (−5 V from charge pump)
-    signal PVSSb ~ pin 5     # Negative supply, amp B (−5 V from charge pump)
-    signal EP    ~ pin 9     # Exposed pad — PVSS (connect to ground plane)
-                             # Note: some KiCad symbols use pad "9" for EP,
-                             #       verify against your symbol
+    # ── Thermal pad ───────────────────────────────────────────────────────────
+    # EP = GND (0 V, PCB ground plane). Must NOT connect to LVCC-/RVCC- (−5 V).
+    signal EP       ~ pin 15  # Exposed pad — connect to ground plane (0 V)

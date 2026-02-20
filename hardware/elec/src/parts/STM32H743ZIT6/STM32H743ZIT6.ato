@@ -182,5 +182,11 @@ component STM32H743ZIT6:
     signal BTN_SEL   ~ pin 119  # PD5  — Select      (EXTI5, active-low)
     signal BTN_POWER ~ pin 7    # PC13 — WKUP2 / power button (wake-from-standby, active-low)
 
+    # ── HSE oscillator (25 MHz crystal for PLL) ──────────────────────────────
+    # Dedicated oscillator pads — no alternate function when used as OSC_IN/OUT.
+    # Pin numbers verified against DS12110 Rev 8 Table 12 (LQFP-144).
+    signal PH0_OSC_IN  ~ pin 69  # PH0 / OSC_IN  — crystal resonator input
+    signal PH1_OSC_OUT ~ pin 70  # PH1 / OSC_OUT — crystal resonator feedback
+
     # ── Headphone amp enable ──────────────────────────────────────────────────
     signal AMP_EN ~ pin 44   # PC4 — headphone amp enable (active high → TPS61023 EN)

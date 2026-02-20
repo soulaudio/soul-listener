@@ -31,15 +31,10 @@
 #   Pin 2 → Terminal B (other side of switch)
 #   The 4-pad footprint maps pads 1+2 to symbol pin 1 and pads 3+4 to symbol pin 2.
 #
-# KiCad footprint: Button_Switch_SMD:SW_Push_1P1T_NO_CK_PTS526
-#   ⚠ Note: As of KiCad 8, the official kicad-footprints library does NOT contain
-#   a dedicated "SW_SPST_CK_PTS526" footprint. The closest available footprints are:
-#     Button_Switch_SMD:SW_Push_1P1T_NO_CK_PTS125Sx43PSMTR (different series)
-#   For PTS526, use a custom footprint or import from:
-#     SnapMagic / SnapEDA: https://www.snapeda.com/parts/PTS526%20SK15%20SMTR2%20LFS/C%26K/view-part/
-#     Ultra Librarian: https://app.ultralibrarian.com/details/FFAA55C3-AD45-11E9-AB3A-0A3560A4CCCC
-#   Alternatively, use the generic Button_Switch_SMD:SW_Push_1P1T_NO_6x3.5mm if dimensions match.
-#   TODO: add PTS526 footprint to local library or ato dependency.
+# KiCad footprint: Button_Switch_SMD:SW_SPST_PTS526_Sx15SMTR2
+#   Confirmed present in official KiCad 8 kicad-footprints library (Button_Switch_SMD.pretty).
+#   The footprint covers all PTS526 Sx15 SMTR2 variants (SK = 1.5 mm height, x = knob size).
+#   4-pad SMD: pads 1+2 tied to SW symbol pin 1 (terminal A); pads 3+4 tied to symbol pin 2 (terminal B).
 #
 # Distributor availability:
 #   TME:      PTS526SK15SMTR2LFS   (C&K / Littelfuse, cz.tme.eu)
@@ -50,7 +45,7 @@ component PTS526:
     trait is_atomic_part<
         manufacturer = "C&K",
         partnumber   = "PTS526SK15SMTR2LFS",
-        footprint    = "Button_Switch_SMD:SW_Push_1P1T_NO_CK_PTS526",
+        footprint    = "Button_Switch_SMD:SW_SPST_PTS526_Sx15SMTR2",
         symbol       = "Switch:SW_Push">
     trait has_designator_prefix<prefix = "SW">
 
@@ -73,4 +68,4 @@ component PTS526:
     # Both physical pad pairs must be soldered; signal routing is via pins 1 and 2 above.
     # If the footprint assigns individual pad numbers 1/2/3/4 to symbol pins,
     # additional signal declarations would be needed (A2 at pad 2, B2 at pad 3, B3 at pad 4).
-    # TODO: confirm footprint pad-to-symbol-pin mapping when adding PTS526 footprint.
+    # Confirmed: SW_SPST_PTS526_Sx15SMTR2 maps pads 1+2 → symbol pin 1, pads 3+4 → symbol pin 2.

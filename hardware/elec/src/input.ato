@@ -66,32 +66,44 @@ module Input:
     btn_prev = new PTS526
     btn_next = new PTS526
     btn_menu = new PTS526
+    btn_back = new PTS526
+    btn_sel  = new PTS526
 
     # Pull-up resistors (10 kΩ each)
     r_play = new Resistor; r_play.resistance = 10kohm +/- 5%; r_play.package = "0402"
     r_prev = new Resistor; r_prev.resistance = 10kohm +/- 5%; r_prev.package = "0402"
     r_next = new Resistor; r_next.resistance = 10kohm +/- 5%; r_next.package = "0402"
     r_menu = new Resistor; r_menu.resistance = 10kohm +/- 5%; r_menu.package = "0402"
+    r_back = new Resistor; r_back.resistance = 10kohm +/- 5%; r_back.package = "0402"
+    r_sel  = new Resistor; r_sel.resistance  = 10kohm +/- 5%; r_sel.package  = "0402"
     power_3v3.hv ~ r_play.p1; r_play.p2 ~ encoder.btn_play
     power_3v3.hv ~ r_prev.p1; r_prev.p2 ~ encoder.btn_prev
     power_3v3.hv ~ r_next.p1; r_next.p2 ~ encoder.btn_next
     power_3v3.hv ~ r_menu.p1; r_menu.p2 ~ encoder.btn_menu
+    power_3v3.hv ~ r_back.p1; r_back.p2 ~ encoder.btn_back
+    power_3v3.hv ~ r_sel.p1;  r_sel.p2  ~ encoder.btn_sel
 
     # Button wiring: A1 → GPIO pull-up node; B1 → GND (active low)
     btn_play.A1 ~ encoder.btn_play; btn_play.B1 ~ power_3v3.lv
     btn_prev.A1 ~ encoder.btn_prev; btn_prev.B1 ~ power_3v3.lv
     btn_next.A1 ~ encoder.btn_next; btn_next.B1 ~ power_3v3.lv
     btn_menu.A1 ~ encoder.btn_menu; btn_menu.B1 ~ power_3v3.lv
+    btn_back.A1 ~ encoder.btn_back; btn_back.B1 ~ power_3v3.lv
+    btn_sel.A1  ~ encoder.btn_sel;  btn_sel.B1  ~ power_3v3.lv
 
     # Debounce caps for buttons (100 nF each)
     c_play = new Capacitor; c_play.capacitance = 100nF +/- 20%; c_play.package = "0402"
     c_prev = new Capacitor; c_prev.capacitance = 100nF +/- 20%; c_prev.package = "0402"
     c_next = new Capacitor; c_next.capacitance = 100nF +/- 20%; c_next.package = "0402"
     c_menu = new Capacitor; c_menu.capacitance = 100nF +/- 20%; c_menu.package = "0402"
+    c_back = new Capacitor; c_back.capacitance = 100nF +/- 20%; c_back.package = "0402"
+    c_sel  = new Capacitor; c_sel.capacitance  = 100nF +/- 20%; c_sel.package  = "0402"
     encoder.btn_play ~ c_play.p1; c_play.p2 ~ power_3v3.lv
     encoder.btn_prev ~ c_prev.p1; c_prev.p2 ~ power_3v3.lv
     encoder.btn_next ~ c_next.p1; c_next.p2 ~ power_3v3.lv
     encoder.btn_menu ~ c_menu.p1; c_menu.p2 ~ power_3v3.lv
+    encoder.btn_back ~ c_back.p1; c_back.p2 ~ power_3v3.lv
+    encoder.btn_sel  ~ c_sel.p1;  c_sel.p2  ~ power_3v3.lv
 
     # ── Power Button ──────────────────────────────────────────────────────────
     # Connected to STM32H743 PC13/WKUP2 pin for wake-from-standby
@@ -114,8 +126,16 @@ module Input:
     assert r_prev.resistance within 9kohm to 11kohm
     assert r_next.resistance within 9kohm to 11kohm
     assert r_menu.resistance within 9kohm to 11kohm
-    assert r_pwr.resistance within 9kohm to 11kohm
+    assert r_back.resistance within 9kohm to 11kohm
+    assert r_sel.resistance  within 9kohm to 11kohm
+    assert r_pwr.resistance  within 9kohm to 11kohm
     # Debounce caps: 100 nF ±20% — works with 10 kΩ pull-up for ~160 Hz RC filter
     assert c_enc_a.capacitance within 80nF to 120nF
     assert c_enc_b.capacitance within 80nF to 120nF
     assert c_enc_sw.capacitance within 80nF to 120nF
+    assert c_play.capacitance within 80nF to 120nF
+    assert c_prev.capacitance within 80nF to 120nF
+    assert c_next.capacitance within 80nF to 120nF
+    assert c_menu.capacitance within 80nF to 120nF
+    assert c_back.capacitance within 80nF to 120nF
+    assert c_sel.capacitance  within 80nF to 120nF
