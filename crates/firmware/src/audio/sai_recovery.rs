@@ -92,11 +92,13 @@ pub enum SaiRecoveryState {
 
 impl SaiRecoveryState {
     /// Create a new state machine in the [`Healthy`][Self::Healthy] state.
+    #[must_use]
     pub fn new() -> Self {
         Self::Healthy
     }
 
     /// Returns `true` if the SAI driver must be dropped and reconstructed.
+    #[must_use]
     pub fn needs_recovery(&self) -> bool {
         matches!(self, Self::NeedsRecovery { .. })
     }
@@ -129,6 +131,7 @@ impl SaiRecoveryState {
     }
 
     /// Returns the number of overrun events since last recovery, or 0 if healthy.
+    #[must_use]
     pub fn overrun_count(&self) -> u8 {
         match self {
             Self::NeedsRecovery { overrun_count } => *overrun_count,
@@ -158,7 +161,7 @@ mod tests {
     }
 
     // ── Test B ────────────────────────────────────────────────────────────────
-    /// Overrun errors transition to NeedsRecovery and increment overrun_count.
+    /// Overrun errors transition to `NeedsRecovery` and increment `overrun_count`.
     #[test]
     fn test_transitions_on_overrun() {
         let mut state = SaiRecoveryState::new();
@@ -171,7 +174,7 @@ mod tests {
     }
 
     // ── Test C ────────────────────────────────────────────────────────────────
-    /// on_recovered() returns state to Healthy.
+    /// `on_recovered()` returns state to Healthy.
     #[test]
     fn test_recovery_resets_to_healthy() {
         let mut state = SaiRecoveryState::new();
@@ -190,7 +193,7 @@ mod tests {
     }
 
     // ── Test E ────────────────────────────────────────────────────────────────
-    /// needs_recovery() predicate matches the enum variant.
+    /// `needs_recovery()` predicate matches the enum variant.
     #[test]
     fn test_needs_recovery_predicate() {
         let mut state = SaiRecoveryState::new();
@@ -201,7 +204,7 @@ mod tests {
     }
 
     // ── Test F ────────────────────────────────────────────────────────────────
-    /// overrun_count saturates at u8::MAX (255) and does not wrap.
+    /// `overrun_count` saturates at `u8::MAX` (255) and does not wrap.
     #[test]
     // panic! in test is an intentional assertion failure message.
     #[allow(clippy::panic)]

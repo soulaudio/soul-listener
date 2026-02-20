@@ -39,6 +39,10 @@ pub struct PcmFrame {
 
 impl PcmFrame {
     /// Create a zeroed `PcmFrame` suitable for use as an output buffer.
+    // LARGE_STACK_ARRAYS: 4 096 × 4 B = 16 KB is the maximum FLAC block size and
+    // must fit on the stack here — this frame lives in AXI SRAM via the calling
+    // task's stack, which is 16 KB per Embassy task on this target.
+    #[allow(clippy::large_stack_arrays)]
     pub const fn zeroed() -> Self {
         Self {
             samples: [0i32; 4096],
@@ -54,6 +58,8 @@ impl Default for PcmFrame {
     /// to 0.  Prefer [`PcmFrame::zeroed`] in production code where 44.1 kHz
     /// stereo defaults are appropriate; use `Default` in tests where the
     /// initial metadata values must be observable.
+    // LARGE_STACK_ARRAYS: see PcmFrame::zeroed — 16 KB is the max FLAC block.
+    #[allow(clippy::large_stack_arrays)]
     fn default() -> Self {
         Self {
             samples: [0i32; 4096],

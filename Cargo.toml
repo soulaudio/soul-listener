@@ -170,6 +170,11 @@ unwrap_used = "deny"
 expect_used = "deny"
 panic       = "deny"
 
+# Warn on arrays >512 bytes allocated on the stack.
+# Large stack allocations overflow ISR stacks on STM32H7 (default 4 KB per task).
+# Use StaticCell<[T; N]> or heapless::Vec<T, N> for large buffers.
+large_stack_arrays = "warn"
+
 [profile.dev]
 opt-level = 1
 debug = true

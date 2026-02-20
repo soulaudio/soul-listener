@@ -43,6 +43,9 @@
 #![allow(clippy::explicit_iter_loop)]
 #![allow(clippy::unreadable_literal)]
 // hex ARGB color constants in debug.rs
+// Desktop/test crate — embedded_graphics MockDisplay has a 64×64 internal
+// pixel buffer (> 512 bytes) that we cannot annotate (external crate).
+#![allow(clippy::large_stack_arrays)]
 // TODO: Add rustdoc to all public items (tracked as tech debt)
 #![allow(missing_docs)]
 

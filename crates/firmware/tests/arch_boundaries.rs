@@ -11,6 +11,9 @@
     clippy::cast_sign_loss,
     clippy::cast_lossless,
     clippy::arithmetic_side_effects,
+    // embedded_graphics::mock_display::MockDisplay has a large internal pixel buffer
+    // (> 512 bytes) that we cannot annotate (external crate).
+    clippy::large_stack_arrays,
 )]
 //!
 //! These tests enforce the layering rules defined in CLAUDE.md:
@@ -2758,4 +2761,192 @@ fn es9038q2m_init_function_exists_in_platform() {
 fn es9038q2m_init_uses_muted_constant_for_startup() {
     assert_eq!(platform::es9038q2m::ATT_MUTED, 0xFF);
     assert_eq!(platform::es9038q2m::ATT_FULL_VOLUME, 0x00);
+}
+
+/// clippy.toml must set array-size-threshold to 512 bytes.
+/// Default (512000) is far too high for embedded — even 1 KB stack frames
+/// can overflow the 4 KB ISR stack on STM32H7 under nested interrupts.
+#[test]
+fn clippy_toml_has_array_size_threshold_512() {
+    let clippy_toml = include_str!("../../../clippy.toml");
+    assert!(
+        clippy_toml.contains("array-size-threshold"),
+        "clippy.toml must set array-size-threshold (recommended: 512)"
+    );
+    let line = clippy_toml
+        .lines()
+        .find(|l| l.contains("array-size-threshold"))
+        .expect("line must exist after previous assert");
+    assert!(
+        line.contains("512"),
+        "array-size-threshold must be <= 512 for embedded safety. Found: {line}"
+    );
+}
+
+#[test]
+fn firmware_lib_has_no_module_level_allows() {
+    let lib_rs = std::fs::read_to_string(
+        concat!(env!("CARGO_MANIFEST_DIR"), "/src/lib.rs")
+    ).unwrap();
+    // Count #![allow( (module-level, not #[allow( which is per-item))
+    let module_allows: Vec<&str> = lib_rs.lines()
+        .filter(|l| l.trim_start().starts_with("#![allow("))
+        .collect();
+    assert!(
+        module_allows.is_empty(),
+        "lib.rs has {} module-level #![allow()] annotations that bypass workspace lints:\n{}",
+        module_allows.len(),
+        module_allows.join("\n")
+    );
+}
+
+#[test]
+fn boot_rs_unsafe_blocks_have_safety_comments() {
+    let boot_rs = std::fs::read_to_string(
+        concat!(env!("CARGO_MANIFEST_DIR"), "/src/boot.rs")
+    ).unwrap();
+    let lines: Vec<&str> = boot_rs.lines().collect();
+    let mut violations = Vec::new();
+    for (i, line) in lines.iter().enumerate() {
+        if line.contains("unsafe {") || line.trim() == "unsafe {" {
+            // Check the 3 lines before this unsafe block for a SAFETY comment
+            let start = i.saturating_sub(3);
+            let preceding = &lines[start..i];
+            let has_safety = preceding.iter().any(|l| l.contains("// SAFETY:") || l.contains("SAFETY:"));
+            if !has_safety {
+                violations.push(format!("  line {}: `{}` (no SAFETY comment in preceding 3 lines)", i + 1, line.trim()));
+            }
+        }
+    }
+    assert!(
+        violations.is_empty(),
+        "boot.rs has {} unsafe blocks without SAFETY comments:\n{}",
+        violations.len(),
+        violations.join("\n")
+    );
+}
+
+// ── GAP-1 + GAP-26 tests (added 2026-02-20) ─────────────────────────────────
+
+#[test]
+fn display_spi_uses_d1_domain_dma_not_bdma() {
+    // SPI2 DMA channels must be from DMA1 or DMA2 (D1-domain, AXI SRAM-accessible).
+    // BDMA is in D3 domain and can only access SRAM4 — NOT AXI SRAM.
+    // If SPI2 used BDMA with an AXI SRAM buffer, it would silently produce garbage.
+    let main_rs = std::fs::read_to_string(
+        concat!(env!("CARGO_MANIFEST_DIR"), "/src/main.rs")
+    ).unwrap();
+    // Must NOT use BDMA for display SPI
+    assert!(!main_rs.contains("p.BDMA"),
+        "Display SPI must not use BDMA (D3-domain) — BDMA cannot access AXI SRAM framebuffer");
+    // Must document that SPI uses DMA1/DMA2
+    assert!(
+        main_rs.contains("DMA1") || main_rs.contains("DMA2") ||
+        main_rs.contains("dma1") || main_rs.contains("dma2") ||
+        main_rs.contains("// D1-domain DMA") || main_rs.contains("DMA channel"),
+        "Display SPI DMA must be documented as using D1-domain DMA (DMA1 or DMA2)"
+    );
+}
+
+#[test]
+fn audio_power_down_function_exists() {
+    // A power-down sequence must exist to mute the DAC and disable the amp on shutdown.
+    // Without this, the device draws continuous current from the amp on battery.
+    let main_rs = std::fs::read_to_string(
+        concat!(env!("CARGO_MANIFEST_DIR"), "/src/main.rs")
+    ).unwrap();
+    assert!(
+        main_rs.contains("mute_dac_for_shutdown") || main_rs.contains("power_down") ||
+        main_rs.contains("audio_power_down") || main_rs.contains("disable_amp"),
+        "main.rs must reference audio power-down sequence (mute_dac_for_shutdown or disable_amp)"
+    );
+}
+
+#[test]
+fn audio_sequencer_has_power_down_path() {
+    let sequencer_src = std::fs::read_to_string(
+        concat!(env!("CARGO_MANIFEST_DIR"), "/../platform/src/audio_sequencer.rs")
+    ).unwrap();
+    assert!(
+        sequencer_src.contains("mute_dac_for_shutdown") || sequencer_src.contains("disable_amp"),
+        "audio_sequencer.rs must have a power-down path (mute_dac_for_shutdown + disable_amp)"
+    );
+}
+
+
+#[test]
+fn no_todo_macro_in_production_source_paths() {
+    // todo!() panics at runtime when hit -- should never exist in production code paths.
+    // All unimplemented functionality must use documented stubs, not todo!().
+    // Note: todo!() in test modules (#[cfg(test)]) is acceptable.
+    let src_dir = std::path::Path::new(concat!(env!("CARGO_MANIFEST_DIR"), "/src"));
+    let mut violations: Vec<String> = Vec::new();
+
+    fn scan_dir(dir: &std::path::Path, violations: &mut Vec<String>) {
+        for entry in std::fs::read_dir(dir).unwrap().flatten() {
+            let path = entry.path();
+            if path.is_dir() {
+                scan_dir(&path, violations);
+            } else if path.extension().is_some_and(|e| e == "rs") {
+                let content = std::fs::read_to_string(&path).unwrap_or_default();
+                // Skip test modules
+                if content.contains("#[cfg(test)]") {
+                    // Only check code before the first #[cfg(test)] block
+                    let before_tests = content.split("#[cfg(test)]").next().unwrap_or("");
+                    if before_tests.contains("todo!()") || before_tests.contains("todo!(\"") {
+                        violations.push(format!(
+                            "{}: contains todo!() before test module",
+                            path.display()
+                        ));
+                    }
+                } else if content.contains("todo!()") || content.contains("todo!(\"") {
+                    violations.push(format!("{}: contains todo!()", path.display()));
+                }
+            }
+        }
+    }
+
+    scan_dir(src_dir, &mut violations);
+    assert!(
+        violations.is_empty(),
+        "Production code must not use todo!() -- use documented stubs instead:\n{}",
+        violations.join("\n")
+    );
+}
+
+#[test]
+fn input_hardware_ok_discards_are_justified() {
+    // .ok() on channel operations discards errors silently.
+    // Each .ok() in input hardware code must have a justification comment on the
+    // same line or an explicit justification marker on the preceding line.
+    let input_dir = std::path::Path::new(
+        concat!(env!("CARGO_MANIFEST_DIR"), "/src/input")
+    );
+    if !input_dir.exists() {
+        return; // No input module -- skip
+    }
+    for entry in std::fs::read_dir(input_dir).unwrap().flatten() {
+        let path = entry.path();
+        if path.extension().is_some_and(|e| e == "rs") {
+            let content = std::fs::read_to_string(&path).unwrap();
+            let lines: Vec<&str> = content.lines().collect();
+            for (i, line) in lines.iter().enumerate() {
+                if line.contains(".ok()") && !line.trim_start().starts_with("//") {
+                    // Must have a justification comment on the same line or the line before
+                    let justified = line.contains("// ")
+                        || (i > 0
+                            && (lines[i - 1].contains("// ok:")
+                                || lines[i - 1].contains("// OK:")
+                                || lines[i - 1].contains("// ignore")));
+                    assert!(
+                        justified,
+                        "input file {} line {}: `.ok()` must have justification comment: `{}`",
+                        path.display(),
+                        i + 1,
+                        line.trim()
+                    );
+                }
+            }
+        }
+    }
 }

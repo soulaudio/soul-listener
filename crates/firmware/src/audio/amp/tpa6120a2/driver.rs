@@ -148,14 +148,14 @@ mod tests {
     // Test D: calling enable() twice sets the pin high twice
     // -----------------------------------------------------------------------
 
-    /// Verify that calling `enable()` twice drives set_high twice.
+    /// Verify that calling `enable()` twice drives `set_high` twice.
     ///
     /// Current behaviour: each `enable()` call unconditionally drives the pin
     /// high regardless of current state. This is acceptable for GPIO (the
     /// operation is idempotent on real hardware) and this test documents that
     /// contract.
     ///
-    /// Status: PASSES — mock expects two set_high calls.
+    /// Status: PASSES — mock expects two `set_high` calls.
     #[tokio::test]
     async fn test_double_enable_sets_pin_twice() {
         // Current impl: calling enable() twice drives set_high twice.

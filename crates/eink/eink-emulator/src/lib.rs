@@ -68,6 +68,9 @@
 #![allow(clippy::single_match_else)]
 // Desktop/emulator crate — unwrap/expect/panic acceptable in non-embedded code.
 #![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
+// Desktop/emulator crate — large stack arrays are acceptable for display
+// framebuffers and test buffers (heap is available).
+#![allow(clippy::large_stack_arrays)]
 // TODO: Add rustdoc to all public items (tracked as tech debt)
 #![allow(missing_docs)]
 

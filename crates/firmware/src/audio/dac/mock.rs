@@ -48,6 +48,7 @@ pub struct MockDac {
 
 impl MockDac {
     /// Create a new mock DAC with sensible defaults.
+    #[must_use]
     pub fn new() -> Self {
         Self {
             volume: 80,
@@ -66,16 +67,19 @@ impl Default for MockDac {
 }
 
 impl DacDriver for MockDac {
+    #[allow(clippy::unused_async)] // Required by DacDriver trait signature (hardware impl uses await)
     async fn hardware_init(&mut self, config: AudioConfig) -> Result<(), Self::Error> {
         self.dsd_mode = config.dsd_mode;
         Ok(())
     }
 
+    #[allow(clippy::unused_async)] // Required by DacDriver trait signature (hardware impl uses await)
     async fn power_down(&mut self) -> Result<(), Self::Error> {
         self.started = false;
         Ok(())
     }
 
+    #[allow(clippy::unused_async)] // Required by DacDriver trait signature (hardware impl uses await)
     async fn power_up(&mut self) -> Result<(), Self::Error> {
         self.started = true;
         Ok(())
@@ -85,21 +89,25 @@ impl DacDriver for MockDac {
 impl AudioCodec for MockDac {
     type Error = MockDacError;
 
+    #[allow(clippy::unused_async)] // Required by AudioCodec trait signature (hardware impl uses await)
     async fn init(&mut self, config: AudioConfig) -> Result<(), Self::Error> {
         self.dsd_mode = config.dsd_mode;
         Ok(())
     }
 
+    #[allow(clippy::unused_async)] // Required by AudioCodec trait signature (hardware impl uses await)
     async fn start(&mut self) -> Result<(), Self::Error> {
         self.started = true;
         Ok(())
     }
 
+    #[allow(clippy::unused_async)] // Required by AudioCodec trait signature (hardware impl uses await)
     async fn stop(&mut self) -> Result<(), Self::Error> {
         self.started = false;
         Ok(())
     }
 
+    #[allow(clippy::unused_async)] // Required by AudioCodec trait signature (hardware impl uses await)
     async fn set_volume(&mut self, volume: u8) -> Result<(), Self::Error> {
         if volume > 100 {
             return Err(MockDacError::InvalidVolume);
@@ -109,11 +117,13 @@ impl AudioCodec for MockDac {
     }
 
     #[allow(clippy::arithmetic_side_effects)] // Mock counter; overflow not a concern in tests
+    #[allow(clippy::unused_async)] // Required by AudioCodec trait signature (hardware impl uses await)
     async fn write_samples(&mut self, samples: &[i32]) -> Result<(), Self::Error> {
         self.samples_written += samples.len();
         Ok(())
     }
 
+    #[allow(clippy::unused_async)] // Required by AudioCodec trait signature (hardware impl uses await)
     async fn set_filter(&mut self, filter: OversamplingFilter) -> Result<(), Self::Error> {
         self.filter = filter;
         Ok(())
@@ -170,6 +180,9 @@ mod tests {
     }
 
     #[tokio::test]
+    // LARGE_STACK_ARRAYS: 512-element test buffer exercises the write_samples path;
+    // this is a host test with no stack limit concern.
+    #[allow(clippy::large_stack_arrays)]
     async fn test_mock_dac_samples() {
         let mut dac = MockDac::new();
         let samples = [0i32; 512];

@@ -119,6 +119,9 @@ async fn test_mock_dac_start_stop_lifecycle() {
 
 /// Verify sample write accumulation counts correctly
 #[tokio::test]
+// LARGE_STACK_ARRAYS: 256- and 512-element test buffers exercise write_samples
+// accumulation; this is a host integration test with no stack size constraint.
+#[allow(clippy::large_stack_arrays)]
 async fn test_mock_dac_samples_accumulate() {
     let mut dac = MockDac::new();
     let samples_a = [0i32; 256];
