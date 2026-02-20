@@ -63,6 +63,9 @@
 #![allow(clippy::similar_names)]
 #![allow(clippy::unused_self)]
 #![allow(clippy::unused_async)]
+#![allow(clippy::items_after_statements)]
+#![allow(clippy::map_unwrap_or)]
+#![allow(clippy::uninlined_format_args)]
 
 pub mod audio;
 pub mod display;

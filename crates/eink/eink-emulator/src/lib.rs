@@ -60,6 +60,8 @@
 #![allow(clippy::items_after_statements)]
 #![allow(clippy::needless_pass_by_value)]
 #![allow(clippy::semicolon_if_nothing_returned)]
+// Platform-specific raw pointer usage (Windows DPI code in window.rs):
+#![allow(clippy::borrow_as_ptr)]
 // Rust 1.93+ lints (not available locally, triggered on CI):
 #![allow(clippy::unnested_or_patterns)]
 #![allow(clippy::struct_field_names)]
