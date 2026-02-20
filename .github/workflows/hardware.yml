@@ -241,6 +241,7 @@ jobs:
     name: Atopile ERC Check (Full System)
     runs-on: ubuntu-latest
     needs: hw-arch   # Architecture boundaries must pass before ERC runs
+    timeout-minutes: 10  # ato build can hang; fail fast so logs are available
     defaults:
       run:
         working-directory: hardware
@@ -258,7 +259,7 @@ jobs:
         run: ato sync
 
       - name: Run Atopile ERC (ato check)
-        run: ato build --build check-only
+        run: ato check --build check-only
 
   # ---------------------------------------------------------------------------
   # Per-module independent validation
@@ -280,6 +281,7 @@ jobs:
     name: Module Check (${{ matrix.module }})
     runs-on: ubuntu-latest
     needs: hw-arch
+    timeout-minutes: 10  # ato build can hang; fail fast so logs are available
     strategy:
       fail-fast: false  # Run all modules; don't cancel others if one fails
       matrix:
@@ -303,7 +305,7 @@ jobs:
         run: ato sync
 
       - name: Validate ${{ matrix.module }} module standalone
-        run: ato build --build check-${{ matrix.module }}
+        run: ato check --build check-${{ matrix.module }}
 
   # ---------------------------------------------------------------------------
   # BOM generation
