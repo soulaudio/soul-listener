@@ -19,10 +19,7 @@
 # via the star-connected agnd node; both connect to the board GND plane at
 # the single star junction near the DAC.
 
-from "interfaces.ato" import (
-    I2CBus, SPIBus, I2SBus, UARTBus, SWDPort,
-    DisplayCtrl, FMCBus, QSPIBus, EncoderBus, USBDiffPair, AmpSupplyBus
-)
+from "interfaces.ato" import I2CBus, SPIBus, I2SBus, UARTBus, SWDPort, DisplayCtrl, FMCBus, QSPIBus, EncoderBus, USBDiffPair, AmpSupplyBus
 from "mcu.ato"       import MCU
 from "audio.ato"     import Audio
 from "power.ato"     import Power
