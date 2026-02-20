@@ -2274,6 +2274,18 @@ fn static_memory_budget_has_compile_time_assertion() {
     );
 }
 
+/// CI must verify firmware ELF has no malloc/free/sbrk symbols.
+#[test]
+fn ci_binary_size_job_has_no_malloc_check() {
+    let ci_yml = include_str!("../../../.github/workflows/ci.yml");
+    assert!(
+        ci_yml.contains("malloc") || ci_yml.contains("_sbrk"),
+        "binary-size CI job must check for malloc/free/_sbrk symbols using arm-none-eabi-nm.\n\
+         Heap allocation in firmware means a dependency accidentally uses the allocator.\n\
+         Add: arm-none-eabi-nm ... | grep -E '(malloc|free|_sbrk)' | ..."
+    );
+}
+
 // ── AudioPowerSequencer wiring enforcement ───────────────────────────────────
 
 /// AudioPowerSequencer must be used in firmware audio code, not just defined.
