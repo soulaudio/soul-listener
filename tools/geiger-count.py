@@ -17,7 +17,18 @@ def main():
                         help="Fail if count exceeds this file's value")
     args = parser.parse_args()
 
-    data = json.load(sys.stdin)
+    raw = sys.stdin.read()
+    if not raw.strip():
+        print("ERROR: cargo-geiger produced empty output.", file=sys.stderr)
+        print("  Check that cargo-geiger is installed: cargo install cargo-geiger", file=sys.stderr)
+        print("  Check that the workspace compiles: cargo check --workspace", file=sys.stderr)
+        sys.exit(1)
+    try:
+        data = json.loads(raw)
+    except json.JSONDecodeError as e:
+        print(f"ERROR: cargo-geiger produced invalid JSON: {e}", file=sys.stderr)
+        print(f"  First 200 chars of output: {raw[:200]!r}", file=sys.stderr)
+        sys.exit(1)
     total = 0
     rows = []
 
