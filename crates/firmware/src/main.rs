@@ -70,13 +70,13 @@ async fn main(spawner: Spawner) {
     //
     // References: ST AN4838/AN4839, ARM DDI0489F §B3.5.
     // See: firmware::boot::BOOT_SEQUENCE_STEPS for the full ordered sequence.
-    firmware::boot::hardware::apply_mpu_config_from_peripherals();
+    let mpu_token = firmware::boot::hardware::apply_mpu_config_from_peripherals();
 
     // Initialize Embassy
     defmt::info!("SoulAudio DAP Firmware v{=str}", "0.1.0");
     defmt::info!("Initializing STM32H743ZI — Cortex-M7 @ 480 MHz");
 
-    let p = embassy_stm32::init(firmware::boot::build_embassy_config());
+    let p = embassy_stm32::init(firmware::boot::build_embassy_config(&mpu_token));
 
     // Step 1: Initialize IWDG (Independent Watchdog).
     //
@@ -104,6 +104,27 @@ async fn main(spawner: Spawner) {
     // AXI SRAM (0x24000000) rather than DTCM (not DMA-accessible).
     let _framebuffer: &'static mut [u8; FRAMEBUFFER_SIZE] =
         &mut FRAMEBUFFER.init(Align32([0xFF; FRAMEBUFFER_SIZE])).0;
+
+    // Runtime address assertion: verify FRAMEBUFFER landed in AXI SRAM (DMA-accessible).
+    //
+    // #[link_section = ".axisram"] should guarantee this, but we verify defensively.
+    // If this assertion fires, the linker script (memory.x) is misconfigured.
+    //
+    // AXI SRAM: 0x2400_0000 to 0x247F_FFFF (512 KB, DMA1/2/MDMA accessible, D1 domain).
+    // DTCM:     0x2000_0000 to 0x2001_FFFF (128 KB, CPU-only — NO DMA).
+    //
+    // debug_assert! is compiled out in release builds (overflow-checks/debug-assertions=false),
+    // so there is zero runtime cost in production firmware.
+    debug_assert!(
+        core::ptr::addr_of!(*_framebuffer) as u32 >= platform::dma_safety::AXI_SRAM_BASE,
+        "FRAMEBUFFER not in AXI SRAM — missing or wrong #[link_section = ".axisram"]"
+    );
+    debug_assert!(
+        (core::ptr::addr_of!(*_framebuffer) as u32)
+            < platform::dma_safety::AXI_SRAM_BASE
+                + platform::dma_safety::AXI_SRAM_SIZE_BYTES as u32,
+        "FRAMEBUFFER address past end of AXI SRAM — buffer may overflow into another region"
+    );
 
     // Step 3: Initialize external SDRAM via FMC
     // TODO: call firmware::boot::init_sdram_stub() when FMC API is available.
@@ -274,6 +295,28 @@ async fn main(spawner: Spawner) {
         &spawner, enc_clk, enc_dt, btn_play, btn_next, btn_prev, btn_menu, btn_back, btn_select,
     );
     defmt::info!("Input task spawned — channel depth={=usize}", 16usize);
+
+    // ── Audio power-on sequence (TPA6120A2 + ES9038Q2M) ────────────────────────────────────────────
+    //
+    // The AudioPowerSequencer enforces safe power ordering at compile time:
+    //   1. Start with DAC outputting (initial state after DAC init)
+    //   2. Mute DAC (ES9038Q2M ATT registers → 0xFF)
+    //   3. Enable amp (TPA6120A2 SHUTDOWN → High) — ONLY callable after mute
+    //   4. Unmute DAC with target volume
+    //
+    // This sequence prevents the TPA6120A2 pop/thump on power-on.
+    // Reference: TPA6120A2 SLOS398E §8.3.2, platform::audio_sequencer
+    //
+    // TODO: Replace this stub with actual I2C + GPIO calls when SAI/I2C init is complete.
+    // The typestate machine is the proof of correct ordering — do not bypass it.
+    use platform::audio_sequencer::AudioPowerSequencer;
+    defmt::info!("Audio power-on sequence (stub — actual I2C/GPIO calls pending SAI init)");
+    let _audio_seq = AudioPowerSequencer::new()
+        .mute_dac()      // Step 1: ES9038Q2M ATT → 0xFF (TODO: I2C write)
+        .enable_amp()    // Step 2: TPA6120A2 SHUTDOWN → High (TODO: GPIO write)
+        .unmute_dac();   // Step 3: ES9038Q2M ATT → volume (TODO: I2C write)
+    // _audio_seq is now AudioPowerSequencer<FullyOn> — audio chain is live
+    defmt::info!("Audio power-on sequence complete (typestate: FullyOn)");
 
     // Wait 3 seconds
     Timer::after(Duration::from_secs(3)).await;
