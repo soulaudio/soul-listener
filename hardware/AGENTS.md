@@ -177,7 +177,7 @@ Two layers of automated checks:
 
 | Item | File | Notes |
 |------|------|-------|
-| Display FPC pinout | `display.ato` | Request GDEM0397T81P spec from Good Display (buy@e-ink-display.com) |
+| Display booster circuit | `display.ato` | Add Si1308EDL NMOS + 2× MBR0530 Schottky for SSD2677 GDR/RESE charge pump (see GDEQ0426T82-FL01C reference schematic) |
 
 ## Sourcing Notes
 
