@@ -442,6 +442,35 @@ jobs:
           echo "OK: minimp3 not present in dependency graph"
 
   # ---------------------------------------------------------------------------
+  # Unsafe code audit — cargo-geiger
+  #
+  # Counts unsafe fn/impl/trait/block in workspace crates (not dependencies).
+  # Fails if the count exceeds the baseline in .geiger-baseline.
+  #
+  # cargo-geiger requires Rust >= 1.85 to install; we use stable (not MSRV).
+  # It analyses the codebase at whatever Rust version is installed.
+  #
+  # To update the baseline after intentionally adding new unsafe code:
+  #   cargo geiger --output Json 2>/dev/null | python3 tools/geiger-count.py --check .geiger-baseline
+  #   git add .geiger-baseline && git commit -m "chore: update geiger unsafe baseline"
+  # ---------------------------------------------------------------------------
+  geiger:
+    name: Unsafe code audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
+
+      - name: Install cargo-geiger
+        run: cargo install cargo-geiger
+
+      - name: Run unsafe code audit
+        run: cargo geiger --output Json 2>/dev/null | python3 tools/geiger-count.py --check .geiger-baseline
+
+  # ---------------------------------------------------------------------------
   # Embedded Check (STM32H7) — fast type/borrow check without linking
   #
   # `cargo check` validates types and borrows for the ARM target without
