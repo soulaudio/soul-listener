@@ -19,37 +19,8 @@
 from "interfaces.ato" import SPIDevice, DisplayCtrl
 from "parts/PESD5V0L5UY/PESD5V0L5UY.ato" import PESD5V0L5UY
 from "parts/FH12_24S/FH12_24S.ato" import FH12_24S
-
-# ── Inline component stubs for booster circuit ────────────────────────────────
-#
-# Si1308EDL — Vishay Siliconix N-channel TrenchFET MOSFET, SOT-23 (= SC-70, 3-lead)
-#   Vds = 30 V, Id = 1.5 A, Vgs(th) ≤ 1.5 V, Rds(on) = 0.132 Ω @ Vgs=10 V
-#   SOT-23 pin assignment (Vishay convention): 1=G, 2=S, 3=D
-#   Digi-Key: SI1308EDL-T1-GE3   TME: SI1308EDL-T1-GE3
-component Si1308EDL:
-    trait is_atomic_part<
-        manufacturer = "Vishay Siliconix",
-        partnumber   = "SI1308EDL-T1-GE3",
-        footprint    = "Package_TO_SOT_SMD:SOT-23",
-        symbol       = "Device:Q_NMOS_GSD">
-    trait has_designator_prefix<prefix = "Q">
-    signal G ~ pin 1   # Gate
-    signal S ~ pin 2   # Source
-    signal D ~ pin 3   # Drain
-
-# MBR0530 — ON Semiconductor Schottky rectifier, SOD-123
-#   Vr = 30 V, If(avg) = 500 mA, Vf ≤ 430 mV @ 500 mA
-#   SOD-123 pin assignment: 1=K (cathode), 2=A (anode)
-#   Digi-Key: MBR0530T1GOSCT-ND   TME: MBR0530T1G
-component MBR0530:
-    trait is_atomic_part<
-        manufacturer = "ON Semiconductor",
-        partnumber   = "MBR0530T1G",
-        footprint    = "Diode_SMD:D_SOD-123",
-        symbol       = "Device:D_Schottky">
-    trait has_designator_prefix<prefix = "D">
-    signal K ~ pin 1   # Cathode
-    signal A ~ pin 2   # Anode
+from "parts/Si1308EDL/Si1308EDL.ato" import Si1308EDL
+from "parts/MBR0530/MBR0530.ato" import MBR0530
 
 module Display:
     """

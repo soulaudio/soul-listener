@@ -1,0 +1,19 @@
+# Si1308EDL — Vishay Siliconix N-channel TrenchFET MOSFET, SOT-23 (= SC-70, 3-lead)
+#
+# Vds = 30 V, Id = 1.5 A, Vgs(th) ≤ 1.5 V, Rds(on) = 0.132 Ω @ Vgs=10 V
+# Used in GDEM0397T81P display boost converter (GDR gate drive → Q1 switch).
+# SOT-23 pin assignment (Vishay convention): 1=G, 2=S, 3=D
+# Distributor:
+#   Digi-Key: SI1308EDL-T1-GE3CT-ND    TME: SI1308EDL-T1-GE3
+
+component Si1308EDL:
+    trait is_atomic_part<
+        manufacturer = "Vishay Siliconix",
+        partnumber   = "SI1308EDL-T1-GE3",
+        footprint    = "Package_TO_SOT_SMD:SOT-23",
+        symbol       = "Device:Q_NMOS_GSD">
+    trait has_designator_prefix<prefix = "Q">
+
+    signal G ~ pin 1   # Gate   — connect to SSD2677 GDR (gate drive output)
+    signal S ~ pin 2   # Source — connect to RESE/R_SENSE network
+    signal D ~ pin 3   # Drain  — connect to inductor SW node (L1.p2)
