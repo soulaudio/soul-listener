@@ -7,12 +7,6 @@
 #   Digi-Key: MBR0530T1GOSCT-ND    TME: MBR0530T1G
 
 component MBR0530:
-    trait is_atomic_part<
-        manufacturer = "ON Semiconductor",
-        partnumber   = "MBR0530T1G",
-        footprint    = "Diode_SMD:D_SOD-123",
-        symbol       = "Device:D_Schottky">
-    trait has_designator_prefix<prefix = "D">
 
     signal K ~ pin 1   # Cathode — connect to VSH1 or VSH2 pre-charge rail
     signal A ~ pin 2   # Anode   — connect to SW node (inductor L1.p2 / Q1 drain)

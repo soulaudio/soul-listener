@@ -46,12 +46,6 @@
 #   Mouser:   511-STM32WB55RGV6
 
 component STM32WB55RGV6:
-    trait is_atomic_part<
-        manufacturer = "STMicroelectronics",
-        partnumber   = "STM32WB55RGV6",
-        footprint    = "Package_DFN_QFN:QFN-68-1EP_8x8mm_P0.4mm_EP6.4x6.4mm",
-        symbol       = "MCU_ST_STM32WB:STM32WB55RGVx">
-    trait has_designator_prefix<prefix = "U">
 
     # ── Power supply ─────────────────────────────────────────────────────────
     # VDD appears at three separate pads; all must be connected to 3.3 V.

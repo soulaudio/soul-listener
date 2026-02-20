@@ -177,7 +177,7 @@ Two layers of automated checks:
 
 | Item | File | Notes |
 |------|------|-------|
-| `check-clock` per-module CI excluded | `hardware.yml`, `Crystal.ato` | atopile 0.12.5 parser bug: multi-line `is_atomic_part<>` fails when `Crystal.ato` is the sole atomic file in an isolated check. Neither multi-line (Syntax Error) nor single-line+pragma (Trait Not Found) works. Clock is still validated by the full `ato-check` via `main.ato`. Re-test after upgrading to atopile 0.14.x. |
+| BOM metadata stripped from part stubs | `parts/**/*.ato` | `trait is_atomic_part<>` and `trait has_designator_prefix<>` removed from all 21 component stubs because atopile 0.12.5 fails to parse multi-line trait parameter blocks (Syntax Error), and `atopile/generics` (which provided these traits) is no longer resolvable from the registry. The component `signal` declarations and all ERC asserts are intact; only the KiCad symbol/footprint/BOM metadata is missing. Restore when upgrading to atopile 0.14.x (which has a rewritten trait system). |
 
 ## Sourcing Notes
 

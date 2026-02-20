@@ -13,12 +13,6 @@
 #   TME:      TPS61023DRLR      Digi-Key: 296-TPS61023DRLRT-ND
 
 component TPS61023DRLR:
-    trait is_atomic_part<
-        manufacturer = "Texas Instruments",
-        partnumber   = "TPS61023DRLR",
-        footprint    = "Package_TO_SOT_SMD:SOT-563",
-        symbol       = "Regulator_Switching:TPS61023">
-    trait has_designator_prefix<prefix = "U">
 
     signal FB   ~ pin 1  # Feedback — resistor divider mid-point (VREF = 1.204 V)
     signal EN   ~ pin 2  # Enable — active high; drive from MCU AMP_EN (PC4)

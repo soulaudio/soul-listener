@@ -47,12 +47,6 @@
 #   Mouser:   688-EC11E15244G5
 
 component EC11:
-    trait is_atomic_part<
-        manufacturer = "Alps Alpine",
-        partnumber   = "EC11E15244G5",
-        footprint    = "RotaryEncoder_Switch:RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm",
-        symbol       = "Device:RotaryEncoder_Switch">
-    trait has_designator_prefix<prefix = "SW">
 
     # ── Encoder outputs ───────────────────────────────────────────────────────
     # KiCad footprint pad order (RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm):

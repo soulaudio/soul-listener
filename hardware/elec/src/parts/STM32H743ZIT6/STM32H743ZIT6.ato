@@ -16,12 +16,6 @@
 #   Mouser:   511-STM32H743ZIT6
 
 component STM32H743ZIT6:
-    trait is_atomic_part<
-        manufacturer = "STMicroelectronics",
-        partnumber   = "STM32H743ZIT6",
-        footprint    = "Package_QFP:LQFP-144_20x20mm_P0.5mm",
-        symbol       = "STM32H743ZIT6.kicad_sym">
-    trait has_designator_prefix<prefix = "U">
 
     # ── Power supply ─────────────────────────────────────────────────────────
     # VDD: 3.3 V digital supply — 11 pins; all must be decoupled and connected

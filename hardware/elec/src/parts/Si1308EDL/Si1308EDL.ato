@@ -7,12 +7,6 @@
 #   Digi-Key: SI1308EDL-T1-GE3CT-ND    TME: SI1308EDL-T1-GE3
 
 component Si1308EDL:
-    trait is_atomic_part<
-        manufacturer = "Vishay Siliconix",
-        partnumber   = "SI1308EDL-T1-GE3",
-        footprint    = "Package_TO_SOT_SMD:SOT-23",
-        symbol       = "Device:Q_NMOS_GSD">
-    trait has_designator_prefix<prefix = "Q">
 
     signal G ~ pin 1   # Gate   — connect to SSD2677 GDR (gate drive output)
     signal S ~ pin 2   # Source — connect to RESE/R_SENSE network

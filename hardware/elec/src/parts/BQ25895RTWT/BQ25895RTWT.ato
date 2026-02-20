@@ -44,12 +44,6 @@
 #   Mouser:   595-BQ25895RTWT
 
 component BQ25895RTWT:
-    trait is_atomic_part<
-        manufacturer = "Texas Instruments",
-        partnumber   = "BQ25895RTWT",
-        footprint    = "Package_DFN_QFN:WQFN-24-1EP_4x4mm_P0.5mm_EP2.7x2.7mm",
-        symbol       = "BQ25895RTWT.kicad_sym">
-    trait has_designator_prefix<prefix = "U">
 
     # ── Power input ───────────────────────────────────────────────────────────
     signal VBUS_1 ~ pin 2

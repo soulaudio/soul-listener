@@ -43,12 +43,6 @@
 #   TME:      W9825G6KH-6         (check cz.tme.eu for SDRAM stock)
 
 component W9825G6KH6:
-    trait is_atomic_part<
-        manufacturer = "Winbond Electronics",
-        partnumber   = "W9825G6KH-6",
-        footprint    = "Package_SO:TSOP-II-54_18.4x10.16mm_P0.8mm",
-        symbol       = "W9825G6KH6.kicad_sym">
-    trait has_designator_prefix<prefix = "U">
 
     # ── Address bus A[12:0] ───────────────────────────────────────────────────
     # A0–A12 at pins 23–26, 29–34, 22, 35, 36 (per datasheet pin description)

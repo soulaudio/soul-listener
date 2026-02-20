@@ -24,12 +24,6 @@
 #   Mouser:   474-S2B-PH-K-S
 
 component S2B_PH_K_S:
-    trait is_atomic_part<
-        manufacturer = "JST",
-        partnumber   = "S2B-PH-K-S",
-        footprint    = "Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal",
-        symbol       = "Connector:Conn_01x02_Pin">
-    trait has_designator_prefix<prefix = "J">
 
     signal BAT_POS ~ pin 1   # BAT+ (positive terminal → BQ25895 BAT pin via polyfuse)
     signal BAT_NEG ~ pin 2   # BAT- / GND (negative terminal → system ground)
