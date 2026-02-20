@@ -23,7 +23,8 @@ mod tests {
 
     #[test]
     fn test_hci_command_packet_serialise_reset() {
-        let pkt = HciPacket::from_command(HciCommand::Reset);
+        let pkt = HciPacket::from_command(HciCommand::Reset)
+            .expect("Reset command has zero params and must always fit in HCI buffer");
         // H4 format: [packet_type=0x01, opcode_lo, opcode_hi, param_len, ...params]
         // Reset opcode 0x0C03 little-endian → [0x03, 0x0C]; param_len = 0
         assert_eq!(&pkt[..], &[0x01_u8, 0x03, 0x0C, 0x00]);
@@ -114,40 +115,97 @@ pub enum HciEvent {
     },
 }
 
-/// Errors that can occur when parsing an HCI packet.
+/// Errors that can occur when parsing or serializing an HCI packet.
 #[derive(Debug, PartialEq, Eq)]
 pub enum HciError {
     /// The byte slice is shorter than the minimum valid packet length.
     PacketTooShort,
     /// The first byte is not a recognised H4 packet-type indicator.
     UnknownPacketType(u8),
+    /// The command parameters are too long to fit in the HCI buffer.
+    ///
+    /// heapless::Vec<u8, 64> holds 4 header bytes + max 60 param bytes.
+    /// LE Audio commands can have up to 251 bytes of params — these must
+    /// be rejected explicitly rather than silently truncated.
+    CommandTooLong,
 }
 
 /// Zero-size marker struct that owns the HCI framing logic.
 pub struct HciPacket;
 
+/// A raw HCI command with an opcode and parameter slice.
+///
+/// Used by [`HciPacket::from_raw_command`] to serialize arbitrary HCI commands,
+/// including LE Audio extended commands that exceed the standard 31-byte payload.
+pub struct HciRawCommand<'a> {
+    /// 16-bit opcode: `(OGF << 10) | OCF`.
+    pub opcode: u16,
+    /// Raw parameter bytes (max 60 bytes to fit in the 64-byte HCI buffer
+    /// alongside the 4-byte H4 header).
+    pub params: &'a [u8],
+}
+
+// Compile-time assertion: standard BLE advertising fits in HCI buffer.
+// 4 header bytes + 31 param bytes = 35 bytes <= 64-byte Vec capacity.
+const _: () = assert!(
+    4 + 31 <= 64,
+    "Standard BLE advertising must fit in HCI buffer"
+);
+
 impl HciPacket {
     /// Serialise an HCI command as an H4-framed byte vector.
     ///
     /// Format: `[0x01, opcode_lo, opcode_hi, param_len, ...params]`
-    #[must_use]
-    pub fn from_command(cmd: HciCommand) -> heapless::Vec<u8, 64> {
-        let mut out: heapless::Vec<u8, 64> = heapless::Vec::new();
+    ///
+    /// # Errors
+    ///
+    /// Returns [`HciError::CommandTooLong`] if the params exceed the available
+    /// buffer space (60 bytes: 64-byte Vec minus 4 header bytes).
+    pub fn from_command(cmd: HciCommand) -> Result<heapless::Vec<u8, 64>, HciError> {
         let opcode = cmd.opcode();
         let params = cmd.params();
+        Self::from_raw_command(HciRawCommand {
+            opcode,
+            params: &params,
+        })
+    }
 
-        out.push(0x01).ok(); // H4 packet type: command
-        out.push((opcode & 0xFF) as u8).ok(); // opcode low byte
-        out.push((opcode >> 8) as u8).ok(); // opcode high byte
-        // SAFETY: params is heapless::Vec<u8, 64>; capacity ≤ 64 which fits in u8.
-        #[allow(clippy::cast_possible_truncation)]
-        out.push(params.len() as u8).ok(); // parameter total length
+    /// Serialise a raw HCI command as an H4-framed byte vector.
+    ///
+    /// Format: `[0x01, opcode_lo, opcode_hi, param_len, ...params]`
+    ///
+    /// # Errors
+    ///
+    /// Returns [`HciError::CommandTooLong`] if `params.len() > 60`. The 64-byte
+    /// [`heapless::Vec`] holds 4 header bytes + up to 60 param bytes. Exceeding
+    /// this silently truncates the command, causing the STM32WB55 BLE stack to
+    /// receive a malformed packet and enter a broken state with no error log.
+    pub fn from_raw_command(cmd: HciRawCommand<'_>) -> Result<heapless::Vec<u8, 64>, HciError> {
+        // 4 header bytes + params must fit in the 64-byte Vec
+        const HEADER_BYTES: usize = 4;
+        const MAX_PARAMS: usize = 64 - HEADER_BYTES;
 
-        for b in &params {
-            out.push(*b).ok();
+        if cmd.params.len() > MAX_PARAMS {
+            return Err(HciError::CommandTooLong);
         }
 
-        out
+        let mut out: heapless::Vec<u8, 64> = heapless::Vec::new();
+
+        out.push(0x01).map_err(|_| HciError::CommandTooLong)?; // H4 packet type: command
+        out.push((cmd.opcode & 0xFF) as u8)
+            .map_err(|_| HciError::CommandTooLong)?; // opcode low byte
+        out.push((cmd.opcode >> 8) as u8)
+            .map_err(|_| HciError::CommandTooLong)?; // opcode high byte
+                                                     // SAFETY: params.len() <= MAX_PARAMS <= 60 <= 255, fits in u8.
+        #[allow(clippy::cast_possible_truncation)]
+        out.push(cmd.params.len() as u8)
+            .map_err(|_| HciError::CommandTooLong)?; // parameter total length
+
+        for b in cmd.params {
+            out.push(*b).map_err(|_| HciError::CommandTooLong)?;
+        }
+
+        Ok(out)
     }
 
     /// Parse a raw H4-framed byte slice into an [`HciEvent`].
