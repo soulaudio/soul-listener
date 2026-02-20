@@ -9,6 +9,7 @@
 #   test           – cargo test per crate (host, avoids hardware/emulator conflicts)
 #   check-emulator – cargo check -p firmware with emulator+debug+keyboard-input
 #   check-embedded – cargo check -p firmware --target thumbv7em-none-eabihf --features hardware
+#   check-no-std   – cargo check per embedded crate --target thumbv7em-none-eabihf --no-default-features
 #
 # NOTE on feature flag exclusivity:
 #   `hardware` and `emulator` are mutually exclusive. `hardware` pulls in cortex-m/
@@ -465,6 +466,67 @@ jobs:
           cargo check -p firmware \
             --target thumbv7em-none-eabihf \
             --features hardware
+
+  # ---------------------------------------------------------------------------
+  # No-std validation
+  #
+  # Verifies that embedded crates compile without std on the ARM Cortex-M7 target.
+  # Catches std types (String, Vec, println!) accidentally added to no_std crates.
+  # Uses the ARM target because some no_std issues only surface cross-compiling.
+  #
+  # Crate selection rationale:
+  #   eink-specs       — pure data crate, no deps, expected no_std
+  #   eink-system      — layout engine, no_std by design (uses heapless)
+  #   eink-components  — UI components, no_std by design (uses heapless)
+  #   platform         — HAL trait definitions, no_std (Embassy + embedded-hal)
+  #   ui               — application UI state, #![cfg_attr(not(test), no_std)]
+  #   playback         — audio engine, #![cfg_attr(not(test), no_std)]
+  #   library          — music library, no_std (heapless collections)
+  #   bluetooth        — BLE HCI, #![cfg_attr(not(test), no_std)]
+  #   firmware-ui      — uses --features no-std (cdylib requires std on host by
+  #                       default; the `no-std` feature activates #![no_std])
+  # ---------------------------------------------------------------------------
+  check-no-std:
+    name: No-std validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: thumbv7em-none-eabihf
+
+      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
+
+      - name: eink-specs — no_std
+        run: cargo check -p eink-specs --target thumbv7em-none-eabihf --no-default-features
+
+      - name: eink-system — no_std
+        run: cargo check -p eink-system --target thumbv7em-none-eabihf --no-default-features
+
+      - name: eink-components — no_std
+        run: cargo check -p eink-components --target thumbv7em-none-eabihf --no-default-features
+
+      - name: platform — no_std
+        run: cargo check -p platform --target thumbv7em-none-eabihf --no-default-features
+
+      - name: ui — no_std
+        run: cargo check -p ui --target thumbv7em-none-eabihf --no-default-features
+
+      - name: playback — no_std
+        run: cargo check -p playback --target thumbv7em-none-eabihf --no-default-features
+
+      - name: library — no_std
+        run: cargo check -p library --target thumbv7em-none-eabihf --no-default-features
+
+      - name: bluetooth — no_std
+        run: cargo check -p bluetooth --target thumbv7em-none-eabihf --no-default-features
+
+      # firmware-ui is a cdylib that stays std on the host by default (so that
+      # `cargo clippy --all-targets` compiles it without cross-compilation).
+      # The `no-std` feature activates #![no_std]; we verify that path here.
+      - name: firmware-ui — no_std (via --features no-std)
+        run: cargo check -p firmware-ui --target thumbv7em-none-eabihf --no-default-features --features no-std
 
   # ---------------------------------------------------------------------------
   # Embedded Build (STM32H7) — full link with flip-link stack protection
