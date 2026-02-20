@@ -12,7 +12,9 @@ use embassy_stm32::spi::{Config as SpiConfig, Spi};
 use embassy_stm32::time::Hertz;
 use embassy_time::{Delay, Duration, Timer};
 use embedded_hal_bus::spi::ExclusiveDevice;
+use core::sync::atomic::{AtomicBool, Ordering};
 use platform::DisplayDriver;
+use static_cell::StaticCell;
 
 use firmware::input::builder::InputBuilder;
 use firmware::input::hardware::spawn_input_task;
@@ -22,10 +24,37 @@ use firmware::{Ssd1677Display, DISPLAY_HEIGHT, DISPLAY_WIDTH, FRAMEBUFFER_SIZE};
 // Panic handler
 use panic_probe as _;
 
-// Framebuffer stored in AXI SRAM (large buffer region)
+// Framebuffer stored in AXI SRAM (large buffer region).
+//
+// StaticCell<T> is sound under Rust's aliasing model: it uses UnsafeCell
+// internally and its init() method yields a unique mutable static reference.
+// Taking a reference to a bare mutable static is instant UB (Stacked Borrows)
+// and a hard deny-by-default in Rust 2024 (static_mut_refs lint).
+//
+// The #[link_section] attribute on the StaticCell<T> item ensures the
+// contained buffer lands in AXI SRAM (0x2400_0000, DMA-accessible) rather
+// than DTCM (0x2000_0000, CPU-only, not DMA-accessible).
 #[link_section = ".axisram"]
-#[allow(dead_code)] // Reserved memory region; passed to display driver at runtime via raw pointer
-static mut FRAMEBUFFER: [u8; FRAMEBUFFER_SIZE] = [0xFF; FRAMEBUFFER_SIZE];
+static FRAMEBUFFER: StaticCell<[u8; FRAMEBUFFER_SIZE]> = StaticCell::new();
+
+// Per-task heartbeat flags.
+//
+// Each critical task sets its flag to `true` every watchdog cycle.
+// The main loop checks all flags before feeding the IWDG watchdog.
+// If any flag remains `false` the task has stalled -- the watchdog is NOT
+// fed, the IWDG expires after WATCHDOG_TIMEOUT_MS and resets the device.
+//
+// Flags are cleared (swap to false) by the main loop each cycle so a task
+// that stalled in a later cycle is caught at the next watchdog deadline.
+//
+// NOTE: Currently only the main loop task is tracked. When Embassy audio,
+// display, and input tasks are added they MUST store(true) to their flag
+// each cycle, and the all_tasks_alive check below must include them.
+static TASK_ALIVE_MAIN: AtomicBool = AtomicBool::new(true);
+// Future tasks will add:
+// static TASK_ALIVE_AUDIO:   AtomicBool = AtomicBool::new(false);
+// static TASK_ALIVE_DISPLAY: AtomicBool = AtomicBool::new(false);
+// static TASK_ALIVE_INPUT:   AtomicBool = AtomicBool::new(false);
 
 #[embassy_executor::main]
 async fn main(spawner: Spawner) {
@@ -67,6 +96,12 @@ async fn main(spawner: Spawner) {
         "IWDG watchdog armed: timeout={=u32}ms",
         firmware::boot::WATCHDOG_TIMEOUT_MS
     );
+
+    // Initialize the framebuffer. StaticCell::init() gives a unique mutable static ref:
+    // which is sound under Rust's aliasing model (uses UnsafeCell internally).
+    // The #[link_section = ".axisram"] attribute ensures it lands in DMA-accessible
+    // AXI SRAM (0x24000000) rather than DTCM (not DMA-accessible).
+    let _framebuffer: &'static mut [u8; FRAMEBUFFER_SIZE] = FRAMEBUFFER.init([0xFF; FRAMEBUFFER_SIZE]);
 
     // Step 3: Initialize external SDRAM via FMC
     // TODO: call firmware::boot::init_sdram_stub() when FMC API is available.
@@ -249,7 +284,7 @@ async fn main(spawner: Spawner) {
 
     defmt::info!("Test pattern displayed — full refresh complete");
 
-    // Main loop - heartbeat
+    // Main loop - heartbeat + watchdog guard
     defmt::info!("Entering main loop");
     let mut counter = 0u32;
 
@@ -257,9 +292,29 @@ async fn main(spawner: Spawner) {
         Timer::after(Duration::from_secs(1)).await;
         counter += 1;
         defmt::debug!("Heartbeat tick={=u32}", counter);
-        // Feed the IWDG watchdog. Must be called at least once every
-        // WATCHDOG_TIMEOUT_MS (8 s). This 1-second heartbeat provides
-        // comfortable margin. If this loop stalls, the MCU resets.
-        watchdog.pet();
+
+        // Signal that the main task is alive this cycle.
+        TASK_ALIVE_MAIN.store(true, Ordering::Release);
+
+        // Feed the IWDG watchdog ONLY if all critical tasks are alive.
+        // If any task has not set its heartbeat flag, do NOT pet the watchdog --
+        // the IWDG will expire after WATCHDOG_TIMEOUT_MS (8s) and reset the device.
+        //
+        // swap(false) atomically reads the current value and clears the flag,
+        // so the task must set it again before the next watchdog cycle.
+        //
+        // Currently only tracking the main task. When audio/display tasks are
+        // added (Embassy #[task] functions), they must store(true) to their
+        // respective AtomicBool each cycle, and we add their checks here.
+        let all_tasks_alive = TASK_ALIVE_MAIN.swap(false, Ordering::AcqRel);
+        // Future: && TASK_ALIVE_AUDIO.swap(false, Ordering::AcqRel)
+        //         && TASK_ALIVE_DISPLAY.swap(false, Ordering::AcqRel)
+
+        if all_tasks_alive {
+            watchdog.pet();
+        } else {
+            defmt::error!("Task heartbeat missing -- watchdog NOT fed, reset imminent");
+            // Do not call watchdog.pet() -- let IWDG expire and reset
+        }
     }
 }
