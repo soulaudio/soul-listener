@@ -38,14 +38,16 @@ module HseClock:
                     Place caps < 500 µm from crystal pads to minimise stray.
     """
 
+    # ── Crystal (instantiated first to bootstrap atopile stdlib) ─────────────
+    # clock.ato imports no other atomic component; Crystal.ato carries
+    # is_atomic_part which loads ElectricPower / Electrical / Capacitor.
+    # Instantiate xtal before declaring any ports that need those types.
+    xtal = new Crystal
+    xtal.frequency = 25MHz +/- 30ppm
+
     # ── Ports ─────────────────────────────────────────────────────────────────
     power_3v3 = new ElectricPower  # 3.3 V supply (lv = GND for load caps; connect in main.ato)
     clk       = new ClockSource    # → mcu.hse_clk (wired in main.ato)
-
-    # ── Crystal ───────────────────────────────────────────────────────────────
-    xtal = new Crystal
-    xtal.frequency = 25MHz +/- 30ppm
-    # xtal.package not set — crystal packages (3225) are not in atopile's passive package enum
 
     xtal.p1 ~ clk.osc_in   # OSC_IN  side of crystal (→ MCU PH0)
     xtal.p2 ~ clk.osc_out  # OSC_OUT side of crystal (← MCU PH1 amplifier feedback)
