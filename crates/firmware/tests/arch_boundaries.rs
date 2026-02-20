@@ -1841,7 +1841,12 @@ fn align32_has_32_byte_alignment() {
     assert_eq!(core::mem::align_of::<Align32<[u8; 65536]>>(), 32);
 }
 
-/// Verify that Align32 does not change the size of the inner type (only alignment).
+/// Verify that Align32 pads the inner type up to the next 32-byte boundary.
+///
+/// Three cases are tested:
+///   - Already-aligned type ([u8; 32]): no overhead added.
+///   - Already-aligned type ([u8; 64]): no overhead added.
+///   - Smaller-than-alignment type (u8, 1 byte): padded to exactly 32 bytes.
 #[test]
 fn align32_size_equals_inner_size_rounded_up_to_alignment() {
     use firmware::dma::Align32;
@@ -1849,6 +1854,8 @@ fn align32_size_equals_inner_size_rounded_up_to_alignment() {
     assert_eq!(core::mem::size_of::<Align32<[u8; 32]>>(), 32);
     // For [u8; 64], size should be exactly 64.
     assert_eq!(core::mem::size_of::<Align32<[u8; 64]>>(), 64);
+    // For u8 (1 byte), the wrapper pads to 32 bytes (one full cacheline).
+    assert_eq!(core::mem::size_of::<Align32<u8>>(), 32);
 }
 
 /// Verify that FRAMEBUFFER_SIZE is divisible by 32 (cacheline size).

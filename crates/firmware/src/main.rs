@@ -16,6 +16,7 @@ use core::sync::atomic::{AtomicBool, Ordering};
 use platform::DisplayDriver;
 use static_cell::StaticCell;
 
+use firmware::dma::Align32;
 use firmware::input::builder::InputBuilder;
 use firmware::input::hardware::spawn_input_task;
 use firmware::ui::{SplashScreen, TestPattern};
@@ -35,7 +36,7 @@ use panic_probe as _;
 // contained buffer lands in AXI SRAM (0x2400_0000, DMA-accessible) rather
 // than DTCM (0x2000_0000, CPU-only, not DMA-accessible).
 #[link_section = ".axisram"]
-static FRAMEBUFFER: StaticCell<[u8; FRAMEBUFFER_SIZE]> = StaticCell::new();
+static FRAMEBUFFER: StaticCell<Align32<[u8; FRAMEBUFFER_SIZE]>> = StaticCell::new();
 
 // Per-task heartbeat flags.
 //
@@ -101,7 +102,7 @@ async fn main(spawner: Spawner) {
     // which is sound under Rust's aliasing model (uses UnsafeCell internally).
     // The #[link_section = ".axisram"] attribute ensures it lands in DMA-accessible
     // AXI SRAM (0x24000000) rather than DTCM (not DMA-accessible).
-    let _framebuffer: &'static mut [u8; FRAMEBUFFER_SIZE] = FRAMEBUFFER.init([0xFF; FRAMEBUFFER_SIZE]);
+    let _framebuffer: &'static mut [u8; FRAMEBUFFER_SIZE] = &mut FRAMEBUFFER.init(Align32([0xFF; FRAMEBUFFER_SIZE])).0;
 
     // Step 3: Initialize external SDRAM via FMC
     // TODO: call firmware::boot::init_sdram_stub() when FMC API is available.
