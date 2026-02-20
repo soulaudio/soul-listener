@@ -36,6 +36,14 @@
 //! cargo run --example display_emulator_test --features emulator
 //! ```
 
+// ── Lint policy ─────────────────────────────────────────────────────────────
+#![deny(clippy::unwrap_used)]
+#![deny(clippy::expect_used)]
+#![deny(unused_must_use)]
+// Note: panic! allowed in firmware main task panics (handled by panic-probe)
+// but not in library code. Use defmt::panic! with context on hardware.
+// Note: build.rs is not a lib file — clippy::unwrap_used does not cover it.
+// ────────────────────────────────────────────────────────────────────────────
 #![cfg_attr(all(not(test), not(feature = "std")), no_std)]
 // Upgrade relevant warns to deny; keep pedantic as warn (too noisy for firmware)
 #![warn(missing_docs)]
@@ -67,6 +75,16 @@
 #![allow(clippy::map_unwrap_or)]
 #![allow(clippy::uninlined_format_args)]
 
+// ── HARDWARE INIT REQUIREMENTS ───────────────────────────────────────────────
+// Embassy issue #3049: SDMMC on STM32H743 silently hangs during init_card()
+// unless HSI48 is enabled in RCC BEFORE initializing SDMMC.
+// In main.rs hardware init, ensure RCC configuration enables HSI48:
+//
+//   config.rcc.hsi48 = Some(Hsi48Config { sync_from_usb: false });
+//
+// Failure to do this produces a silent chip lockup with no error code.
+// ─────────────────────────────────────────────────────────────────────────────
+
 pub mod audio;
 pub mod display;
 pub mod hal;
@@ -79,8 +97,8 @@ pub mod input;
 pub use display::{DISPLAY_HEIGHT, DISPLAY_WIDTH, FRAMEBUFFER_SIZE, GDEM0397T81P_SPEC};
 pub use hal::{Color, DapDisplay, DisplayConfig};
 
-pub use audio::MockAmp;
-pub use audio::MockDac;
+#[cfg(any(test, feature = "emulator"))]
+pub use audio::{MockAmp, MockDac};
 
 // SSD1677 driver is always available (generic over HAL traits, no hardware gate).
 pub use display::{DisplayError, Ssd1677};

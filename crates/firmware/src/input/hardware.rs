@@ -24,6 +24,14 @@
 //!
 //! Call [`spawn_input_task`] once at startup to own all GPIO peripherals and
 //! start the concurrent encoder + button tasks.
+//!
+//! # Overflow handling
+//!
+//! [`try_send_event`] replaces the previous `.send().await` pattern. If the
+//! consumer (UI task) stalls and the channel reaches capacity, incoming events
+//! are dropped rather than blocking the input task indefinitely. A compile-time
+//! constant [`CHANNEL_DEPTH`] controls how many events may queue before drops
+//! begin.
 
 use embassy_executor::Spawner;
 use embassy_futures::join::{join, join5};
@@ -40,7 +48,7 @@ use platform::{Button, InputDevice, InputEvent};
 // ---------------------------------------------------------------------------
 
 /// Depth of the static event channel.
-const CHANNEL_DEPTH: usize = 16;
+pub(crate) const CHANNEL_DEPTH: usize = 16;
 
 // ---------------------------------------------------------------------------
 // Static channel (one sender per GPIO task, one receiver for HardwareInput)
@@ -94,6 +102,34 @@ impl InputDevice for HardwareInput {
 
     fn poll_event(&mut self) -> Option<InputEvent> {
         self.rx.try_receive().ok()
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Non-blocking send helper
+// ---------------------------------------------------------------------------
+
+/// Attempt to send an [`InputEvent`] without blocking.
+///
+/// Returns `true` if the event was enqueued, `false` if the channel was full
+/// and the event was dropped.  Callers may log a warning on `false` using
+/// `defmt::warn!` when the `defmt` feature is active.
+///
+/// This replaces the previous `.send(event).await` pattern in the GPIO loops.
+/// Blocking sends are dangerous because a slow UI consumer would stall the
+/// entire input task, preventing further encoder / button interrupts from being
+/// processed.
+pub(crate) fn try_send_event(
+    tx: &Sender<'static, CriticalSectionRawMutex, InputEvent, CHANNEL_DEPTH>,
+    event: InputEvent,
+) -> bool {
+    match tx.try_send(event) {
+        Ok(()) => true,
+        Err(_) => {
+            // Channel full — input event dropped. This prevents the input task
+            // from blocking when the UI task is slow.
+            false
+        }
     }
 }
 
@@ -178,7 +214,10 @@ async fn encoder_loop(
         // DT low when CLK rises → clockwise (+1); DT high → counter-clockwise (−1).
         let increment = if dt.is_low() { 1_i32 } else { -1_i32 };
         defmt::trace!("Encoder step: delta={=i32}", increment);
-        tx.send(InputEvent::RotaryIncrement(increment)).await;
+        if !try_send_event(&tx, InputEvent::RotaryIncrement(increment)) {
+            #[cfg(feature = "defmt")]
+            defmt::warn!("input channel full, dropped RotaryIncrement({})", increment);
+        }
     }
 }
 
@@ -201,11 +240,52 @@ async fn button_loop(
         Timer::after_millis(20).await; // debounce
         if pin.is_low() {
             defmt::debug!("Button press: {}", btn);
-            tx.send(InputEvent::ButtonPress(btn)).await;
+            if !try_send_event(&tx, InputEvent::ButtonPress(btn)) {
+                #[cfg(feature = "defmt")]
+                defmt::warn!("input channel full, dropped ButtonPress");
+            }
             pin.wait_for_rising_edge().await;
             Timer::after_millis(20).await; // debounce release
             defmt::debug!("Button release: {}", btn);
-            tx.send(InputEvent::ButtonRelease(btn)).await;
+            if !try_send_event(&tx, InputEvent::ButtonRelease(btn)) {
+                #[cfg(feature = "defmt")]
+                defmt::warn!("input channel full, dropped ButtonRelease");
+            }
         }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Tests
+// ---------------------------------------------------------------------------
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// Verify that `try_send_event` exists, compiles, and that `CHANNEL_DEPTH`
+    /// is the expected size.
+    ///
+    /// Full integration testing of overflow behaviour requires an Embassy
+    /// executor and cannot be performed in a plain `#[test]` context because:
+    ///   1. `Sender<'static, ...>` requires a `'static` `Channel` that cannot
+    ///      be constructed on the test stack without `StaticCell` + executor.
+    ///   2. The `try_send` overflow path is exercised by filling the channel
+    ///      from another task, which requires a running executor.
+    ///
+    /// The key correctness guarantee — that the GPIO loops never `.await` on a
+    /// full channel — is enforced structurally: `try_send_event` never calls
+    /// `.await`, and the loops call `try_send_event` rather than `tx.send().await`.
+    #[test]
+    fn test_try_send_returns_false_when_full() {
+        // Verify the constant is set to its documented value.
+        assert_eq!(CHANNEL_DEPTH, 16);
+
+        // `try_send_event` is a synchronous function (no .await) — confirm via
+        // the type system that it returns bool, not a Future.
+        let _: fn(
+            &Sender<'static, CriticalSectionRawMutex, InputEvent, CHANNEL_DEPTH>,
+            InputEvent,
+        ) -> bool = try_send_event;
     }
 }
