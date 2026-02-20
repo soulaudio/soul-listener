@@ -31,11 +31,7 @@
 //! and logical row `y = 479` maps to RAM row `0`.  Every method that sets RAM
 //! Y counters / ranges must apply `y_ram = HEIGHT - 1 - y`.
 
-// Display math / audio DSP legitimately uses arithmetic and slice indexing.
-// All operations are bounds-checked at the algorithm level.
-// Per-site #[allow] would be unreadable in low-level driver code.
-#![allow(clippy::arithmetic_side_effects)]
-#![allow(clippy::indexing_slicing)]
+// Per-site lint suppressions are placed at each operation with safety justifications.
 
 use embedded_hal::digital::{InputPin, OutputPin};
 use embedded_hal_async::{delay::DelayNs, spi::SpiDevice};
@@ -277,9 +273,15 @@ where
     /// Returns `None` if `y_logical >= DISPLAY_HEIGHT` (out-of-bounds).
     #[inline]
     pub(crate) fn y_to_ram(y_logical: u16) -> Option<u16> {
+        // DISPLAY_HEIGHT = 480 fits in u16 (max 65535). The cast is lossless.
+        #[allow(clippy::arithmetic_side_effects)]
         if y_logical >= DISPLAY_HEIGHT as u16 {
             return None;
         }
+        // The guard above ensures y_logical <= DISPLAY_HEIGHT - 1, so:
+        //   (DISPLAY_HEIGHT as u16 - 1): 480 - 1 = 479, no underflow (DISPLAY_HEIGHT >= 1).
+        //   (479) - y_logical: y_logical <= 479, so result >= 0, no underflow.
+        #[allow(clippy::arithmetic_side_effects)]
         Some((DISPLAY_HEIGHT as u16 - 1) - y_logical)
     }
 
@@ -346,6 +348,8 @@ where
                                                                   // Both inputs are compile-time constants within valid range; the
                                                                   // `ok_or` guard satisfies the bounds-checked API without runtime cost.
         let y_start_ram = Self::y_to_ram(0).ok_or(DisplayError::InvalidCoordinate)?; // 479 = 0x01DF
+        // DISPLAY_HEIGHT as u16 - 1 = 479; DISPLAY_HEIGHT = 480 >= 1, no underflow.
+        #[allow(clippy::arithmetic_side_effects)]
         let y_end_ram =
             Self::y_to_ram(DISPLAY_HEIGHT as u16 - 1).ok_or(DisplayError::InvalidCoordinate)?; // 0
 
@@ -368,10 +372,22 @@ where
         const CHUNK: usize = 256;
         let mut offset = 0;
         while offset < FRAMEBUFFER_SIZE_1BPP {
+            // offset < FRAMEBUFFER_SIZE_1BPP (loop guard), offset + CHUNK then capped
+            // by .min(FRAMEBUFFER_SIZE_1BPP), so end <= FRAMEBUFFER_SIZE_1BPP.
+            // offset + CHUNK: max is FRAMEBUFFER_SIZE_1BPP - 1 + 256 < usize::MAX.
+            #[allow(clippy::arithmetic_side_effects)]
             let end = (offset + CHUNK).min(FRAMEBUFFER_SIZE_1BPP);
             let mut buf = [0u8; CHUNK];
+            // end = (offset + CHUNK).min(FRAMEBUFFER_SIZE_1BPP) >= offset (since CHUNK > 0
+            // and FRAMEBUFFER_SIZE_1BPP > offset), so end - offset >= 0.
+            // end <= offset + CHUNK = offset + 256, so len <= 256 = CHUNK.
+            #[allow(clippy::arithmetic_side_effects)]
             let len = end - offset;
+            // offset <= end <= FRAMEBUFFER_SIZE_1BPP = len(self.framebuffer): valid slice.
+            // len <= CHUNK = len(buf): valid slice.
+            #[allow(clippy::indexing_slicing)]
             buf[..len].copy_from_slice(&self.framebuffer[offset..end]);
+            #[allow(clippy::indexing_slicing)]
             self.send_data(&buf[..len]).await?;
             offset = end;
         }
@@ -552,18 +568,28 @@ where
             }
             let x = point.x as usize;
             let y = point.y as usize;
+            // Bounds guard above: x < DISPLAY_WIDTH (800), y < DISPLAY_HEIGHT (480).
+            //   y * DISPLAY_WIDTH: max = 479 * 800 = 383200 < usize::MAX.
+            //   + x: max total = 479 * 800 + 799 = 384399 < usize::MAX.
+            #[allow(clippy::arithmetic_side_effects)]
             let pixel_index = y * DISPLAY_WIDTH as usize + x;
             let byte_index = pixel_index / 8;
+            // pixel_index % 8 is in [0, 7]; 7 - (0..=7) is in [0, 7]. No underflow.
+            #[allow(clippy::arithmetic_side_effects)]
             // MSB-first: pixel 0 of a row is in bit 7 of byte 0.
             let bit_shift = 7 - (pixel_index % 8);
             match color {
                 BinaryColor::Off => {
                     // white → set bit
-                    self.framebuffer[byte_index] |= 1 << bit_shift;
+                    // byte_index = pixel_index / 8 <= (DISPLAY_WIDTH*DISPLAY_HEIGHT - 1) / 8
+                    //   = (800*480 - 1) / 8 = 47999, which is < FRAMEBUFFER_SIZE_1BPP (48000).
+                    #[allow(clippy::indexing_slicing)]
+                    { self.framebuffer[byte_index] |= 1 << bit_shift; }
                 }
                 BinaryColor::On => {
-                    // black → clear bit
-                    self.framebuffer[byte_index] &= !(1 << bit_shift);
+                    // black → clear bit (same bound as above).
+                    #[allow(clippy::indexing_slicing)]
+                    { self.framebuffer[byte_index] &= !(1 << bit_shift); }
                 }
             }
         }

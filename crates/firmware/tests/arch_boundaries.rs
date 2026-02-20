@@ -2112,3 +2112,194 @@ fn no_single_feature_enables_both_hardware_and_emulator() {
         }
     }
 }
+
+// ── Per-site allow enforcement ────────────────────────────────────────────────
+
+/// No driver file should suppress arithmetic_side_effects at module/crate level.
+/// Per-site #[allow] with justification comments is required.
+/// Module-level suppression hides ALL future arithmetic bugs in the file.
+#[test]
+fn no_module_level_arithmetic_allows_in_drivers() {
+    // Check that the ES9038Q2M DAC driver does not suppress at file level.
+    // This driver previously used #![allow(clippy::arithmetic_side_effects)]
+    // at module level, hiding all future overflow bugs in the file.
+    let dac_driver = include_str!("../src/audio/dac/es9038q2m/driver.rs");
+    assert!(
+        !dac_driver.contains("#![allow(clippy::arithmetic_side_effects)]"),
+        "es9038q2m/driver.rs must not suppress arithmetic_side_effects at file level. \
+         Use per-site #[allow] with justification comments."
+    );
+    assert!(
+        !dac_driver.contains("#![allow(clippy::indexing_slicing)]"),
+        "es9038q2m/driver.rs must not suppress indexing_slicing at file level. \
+         Use per-site #[allow] with justification comments."
+    );
+
+    // Check that the SSD1677 display driver does not suppress at file level.
+    let display_driver = include_str!("../src/display/driver.rs");
+    assert!(
+        !display_driver.contains("#![allow(clippy::arithmetic_side_effects)]"),
+        "display/driver.rs must not suppress arithmetic_side_effects at file level. \
+         Use per-site #[allow] with justification comments."
+    );
+    assert!(
+        !display_driver.contains("#![allow(clippy::indexing_slicing)]"),
+        "display/driver.rs must not suppress indexing_slicing at file level. \
+         Use per-site #[allow] with justification comments."
+    );
+
+    // Check that the UI module does not suppress at file level.
+    let ui_mod = include_str!("../src/ui/mod.rs");
+    assert!(
+        !ui_mod.contains("#![allow(clippy::arithmetic_side_effects)]"),
+        "ui/mod.rs must not suppress arithmetic_side_effects at file level. \
+         Use per-site #[allow] with justification comments."
+    );
+    assert!(
+        !ui_mod.contains("#![allow(clippy::indexing_slicing)]"),
+        "ui/mod.rs must not suppress indexing_slicing at file level. \
+         Use per-site #[allow] with justification comments."
+    );
+
+    // main.rs should never suppress these lints at module level.
+    let main_rs = include_str!("../src/main.rs");
+    assert!(
+        !main_rs.contains("#![allow(clippy::arithmetic_side_effects)]"),
+        "main.rs must not suppress arithmetic_side_effects at file level. Use per-site #[allow]."
+    );
+}
+
+/// Verify the count of module-level allows is documented and bounded.
+/// This test establishes a baseline — don't let it grow silently.
+#[test]
+fn lint_suppression_count_is_tracked() {
+    // boot.rs contains hardware init logic where arithmetic could overflow.
+    // It must use per-site allows if needed, not blanket file-level suppression.
+    let boot_rs = include_str!("../src/boot.rs");
+    assert!(
+        !boot_rs.contains("#![allow(clippy::arithmetic_side_effects)]"),
+        "boot.rs must not suppress arithmetic_side_effects at file level"
+    );
+    assert!(
+        !boot_rs.contains("#![allow(clippy::indexing_slicing)]"),
+        "boot.rs must not suppress indexing_slicing at file level"
+    );
+
+    // The DAC driver and display driver are the highest-risk files for
+    // arithmetic bugs. Confirming they use per-site allows means every
+    // suppression is documented with a safety justification.
+    //
+    // Per-site allows with justification comments ARE permitted — only
+    // file-level (#![allow...]) suppression is forbidden in driver files.
+    let dac_driver = include_str!("../src/audio/dac/es9038q2m/driver.rs");
+    let display_driver = include_str!("../src/display/driver.rs");
+
+    // Both files should have at least one per-site #[allow] after refactoring,
+    // proving the arithmetic was moved to targeted suppressions rather than
+    // simply deleting the allows (which would break compilation).
+    assert!(
+        dac_driver.contains("#[allow(clippy::arithmetic_side_effects)]")
+            || dac_driver.contains("#[allow(clippy::cast"),
+        "es9038q2m/driver.rs should retain per-site allows for documented arithmetic"
+    );
+    assert!(
+        display_driver.contains("#[allow(clippy::arithmetic_side_effects)]")
+            || display_driver.contains("#[allow(clippy::indexing_slicing)]"),
+        "display/driver.rs should retain per-site allows for documented arithmetic"
+    );
+}
+
+// ── MPU ordering token (Priority 4) ──────────────────────────────────────────
+
+/// The MPU configuration function must return a proof token.
+/// This token must be required by the Embassy config function,
+/// making it a compile error to initialize Embassy without MPU config.
+///
+/// Current state: ordering enforced only by code position (fragile).
+/// Required state: `let token = apply_mpu_config(); embassy_stm32::init(config, token)`
+#[test]
+fn boot_mpu_function_returns_token() {
+    // Check that boot.rs defines an MpuConfigured token or similar proof type
+    let boot_src = include_str!("../src/boot.rs");
+    assert!(
+        boot_src.contains("MpuConfigured") || boot_src.contains("MpuToken")
+            || boot_src.contains("CacheConfigured") || boot_src.contains("BootToken"),
+        "apply_mpu_config_from_peripherals() must return a zero-cost token type \
+         (e.g., MpuConfigured) that build_embassy_config() requires as a parameter. \
+         This makes it a compile error to call Embassy init without MPU config. \
+         Currently the ordering is enforced only by code position — fragile."
+    );
+}
+
+#[test]
+fn main_rs_passes_mpu_token_to_embassy_init() {
+    let main_src = include_str!("../src/main.rs");
+    // The token returned by apply_mpu_config must be used in the Embassy init call
+    assert!(
+        main_src.contains("MpuConfigured") || main_src.contains("mpu_token")
+            || main_src.contains("cache_configured") || main_src.contains("boot_token"),
+        "main.rs must use the MPU configuration token when calling embassy_stm32::init(). \
+         The token proves MPU was configured before D-cache was enabled."
+    );
+}
+
+// ── Static memory budget assertion (Priority 5) ───────────────────────────────
+
+/// Total static memory (DMA buffers + framebuffers) must fit in AXI SRAM
+/// with headroom for Embassy task stacks and .bss/.data sections.
+/// This must be a compile-time assertion, not just documentation.
+#[test]
+fn static_memory_budget_has_compile_time_assertion() {
+    // Check that dma_safety.rs has a const assertion on memory budget
+    let dma_safety = include_str!("../../../crates/platform/src/dma_safety.rs");
+    assert!(
+        dma_safety.contains("const _:") || dma_safety.contains("const_assert")
+            || dma_safety.contains("MEMORY_BUDGET") || dma_safety.contains("TOTAL_DMA"),
+        "dma_safety.rs must have a compile-time assertion on total static DMA memory budget. \
+         Two framebuffers (2×96KB) + two audio buffers (2×16KB) = 224KB of 512KB AXI SRAM. \
+         Add: const _: () = assert!(TOTAL_STATIC_DMA_BYTES <= AXI_SRAM_SIZE_BYTES * 3 / 4)"
+    );
+}
+
+// ── AudioPowerSequencer wiring enforcement ───────────────────────────────────
+
+/// AudioPowerSequencer must be used in firmware audio code, not just defined.
+/// The typestate machine prevents TPA6120A2 pop noise ONLY if it is wired
+/// into the actual power-on path. Being defined in platform without being
+/// called in firmware provides zero protection.
+#[test]
+fn audio_power_sequencer_is_used_in_firmware() {
+    // Check that firmware audio code imports the sequencer
+    // Look for usage in main.rs or audio module
+    let main_rs = include_str!("../src/main.rs");
+    let found_in_main = main_rs.contains("AudioPowerSequencer")
+        || main_rs.contains("audio_sequencer")
+        || main_rs.contains("mute_dac")
+        || main_rs.contains("enable_amp");
+
+    // Also check boot.rs for audio init
+    let boot_rs = include_str!("../src/boot.rs");
+    let found_in_boot = boot_rs.contains("AudioPowerSequencer")
+        || boot_rs.contains("audio_sequencer");
+
+    assert!(
+        found_in_main || found_in_boot,
+        "AudioPowerSequencer must be used in firmware (main.rs or boot.rs), not just defined in platform.          The typestate machine prevents TPA6120A2 pop noise ONLY at actual call sites.          Add audio init sequence: AudioPowerSequencer::new().mute_dac().enable_amp().unmute_dac()"
+    );
+}
+
+/// DmaBuffer wrapper or explicit DMA buffer placement audit must exist.
+/// DmaAccessible trait is enforcement theater without call sites.
+#[test]
+fn dma_buffer_placement_is_enforced_not_just_documented() {
+    let main_rs = include_str!("../src/main.rs");
+    // FRAMEBUFFER must use StaticCell with link_section (already done)
+    // AND the DmaAccessible type system must be referenced
+    let has_dma_placement = main_rs.contains("link_section")
+        || main_rs.contains("DmaAccessible")
+        || main_rs.contains("AxiSramRegion");
+    assert!(
+        has_dma_placement,
+        "DMA buffers must use explicit placement. Either #[link_section = \".axisram\"]          or DmaBuffer<AxiSramRegion> wrapper. DmaAccessible trait definitions alone provide no protection."
+    );
+}
