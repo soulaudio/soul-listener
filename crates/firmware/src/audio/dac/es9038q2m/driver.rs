@@ -78,6 +78,9 @@ pub enum Es9038q2mError<I> {
     InvalidVolume,
 }
 
+// The generic I²C error type `I` only implements Debug, not Display.
+// Using {e:?} here is intentional: it's the only way to render the inner error.
+#[allow(clippy::use_debug)]
 impl<I: core::fmt::Debug> core::fmt::Display for Es9038q2mError<I> {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         match self {

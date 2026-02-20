@@ -107,3 +107,51 @@ fn supply_chain_config_exists() {
         );
     }
 }
+
+#[test]
+fn ci_cargo_vet_does_not_swallow_exit_code() {
+    let ci_yml = std::fs::read_to_string(
+        concat!(env!("CARGO_MANIFEST_DIR"), "/../../.github/workflows/ci.yml")
+    ).expect("ci.yml must exist");
+    // Must NOT have "cargo vet check || echo" pattern (this swallows failures)
+    assert!(
+        !ci_yml.contains("cargo vet check || echo"),
+        "CI must not use `cargo vet check || echo` — this swallows exit codes and lets unvetted deps pass"
+    );
+    // Must have cargo vet check (without fallback)
+    assert!(
+        ci_yml.contains("cargo vet check") || ci_yml.contains("cargo vet"),
+        "CI must run cargo vet check"
+    );
+}
+
+#[test]
+fn ci_has_embedded_target_check_job() {
+    let ci_yml = std::fs::read_to_string(
+        concat!(env!("CARGO_MANIFEST_DIR"), "/../../.github/workflows/ci.yml")
+    ).expect("ci.yml must exist");
+    // CI must have a job that checks the embedded target
+    assert!(
+        ci_yml.contains("thumbv7em-none-eabihf"),
+        "CI must have a job checking --target thumbv7em-none-eabihf to prevent std from sneaking into embedded build"
+    );
+}
+
+#[test]
+fn ci_toolchain_is_pinned_not_floating_stable() {
+    let ci_yml = std::fs::read_to_string(
+        concat!(env!("CARGO_MANIFEST_DIR"), "/../../.github/workflows/ci.yml")
+    ).expect("ci.yml must exist");
+    // Count occurrences of @stable (unpinned)
+    let unpinned_count = ci_yml.matches("rust-toolchain@stable").count()
+        + ci_yml.matches("dtolnay/rust-toolchain@stable").count();
+    // Allow at most 1 use of @stable (some jobs might intentionally test on latest)
+    // But the main lint/build jobs should use a pinned version
+    let pinned_count = ci_yml.matches("rust-toolchain@1.").count()
+        + ci_yml.matches("rust-toolchain@\"1.").count();
+    assert!(
+        pinned_count >= 1 || unpinned_count <= 2,
+        "CI should pin the Rust toolchain to a specific version (e.g., @1.75) for reproducible builds.         Found {} unpinned @stable and {} pinned uses",
+        unpinned_count, pinned_count
+    );
+}

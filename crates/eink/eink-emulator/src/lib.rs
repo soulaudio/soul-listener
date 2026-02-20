@@ -35,6 +35,8 @@
 #![warn(clippy::print_stdout)] // emulator should use tracing, not println
 #![allow(clippy::module_name_repetitions)]
 #![allow(clippy::missing_errors_doc)]
+// Desktop emulator: {:?} is acceptable for debug-only eprintln! diagnostics.
+#![allow(clippy::use_debug)]
 // Pedantic lints too noisy for a graphics/emulator crate:
 #![allow(clippy::cast_possible_truncation)]
 #![allow(clippy::cast_possible_wrap)]

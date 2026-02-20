@@ -17,6 +17,7 @@ pub struct MockAmp {
 
 impl MockAmp {
     /// Create a new mock amplifier. Starts in the disabled state.
+    #[must_use]
     pub fn new() -> Self {
         Self {
             enabled: false,
@@ -36,6 +37,7 @@ impl AmpDriver for MockAmp {
     type Error = core::convert::Infallible;
 
     #[allow(clippy::arithmetic_side_effects)] // Mock counter; overflow not a concern in tests
+    #[allow(clippy::unused_async)] // Required by AmpDriver trait signature (hardware impl uses await)
     async fn enable(&mut self) -> Result<(), Self::Error> {
         self.enabled = true;
         self.enable_count += 1;
@@ -43,6 +45,7 @@ impl AmpDriver for MockAmp {
     }
 
     #[allow(clippy::arithmetic_side_effects)] // Mock counter; overflow not a concern in tests
+    #[allow(clippy::unused_async)] // Required by AmpDriver trait signature (hardware impl uses await)
     async fn disable(&mut self) -> Result<(), Self::Error> {
         self.enabled = false;
         self.disable_count += 1;

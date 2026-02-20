@@ -30,6 +30,7 @@
 //! - ST AN4838: MPU programming model for STM32
 //! - ARM DDI0489F §B3.5: Cache coherency
 
+#![allow(clippy::doc_markdown)] // DMA docs use hardware address notation that is clearer without forced backtick formatting
 /// A `#[repr(align(32))]` wrapper that enforces 32-byte alignment for
 /// Cortex-M7 DMA-accessible buffers.
 ///

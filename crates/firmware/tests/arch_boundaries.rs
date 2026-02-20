@@ -2962,3 +2962,26 @@ fn input_hardware_ok_discards_are_justified() {
         }
     }
 }
+
+/// builder.rs must not use {:?} debug format in production code paths.
+/// use_debug lint requires explicit display strings instead of Debug trait formatting.
+#[test]
+fn builder_rs_has_no_debug_format_in_production_paths() {
+    let builder_rs = include_str!("../src/input/builder.rs");
+    let violations: Vec<(usize, &str)> = builder_rs
+        .lines()
+        .enumerate()
+        .filter(|(_, line)| {
+            let trimmed = line.trim();
+            !trimmed.starts_with("///") && !trimmed.starts_with("//") && line.contains("{:?}")
+        })
+        .collect();
+    assert!(
+        violations.is_empty(),
+        "builder.rs has {} debug format strings in non-comment lines. \
+         Replace with match arms returning &'static str.\n\
+         Violations at lines: {:?}",
+        violations.len(),
+        violations.iter().map(|(i, _)| i + 1).collect::<Vec<_>>()
+    );
+}

@@ -124,7 +124,7 @@ impl InputDevice for HardwareInput {
     }
 
     fn poll_event(&mut self) -> Option<InputEvent> {
-        self.rx.try_receive().ok()
+        self.rx.try_receive().ok() // ok: TryReceiveError::Empty maps to None — correct poll_event semantics; channel never closes
     }
 }
 

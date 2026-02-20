@@ -4,6 +4,7 @@
 //! display interface for the GDEM0397T81P (Good Display 3.97" 800×480) panel
 //! with SSD1677 controller.
 
+#![allow(clippy::doc_markdown)] // Display module docs reference hardware model names (GDEM0397T81P) as plain text
 pub mod driver;
 
 #[cfg(feature = "emulator")]

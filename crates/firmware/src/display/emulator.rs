@@ -14,6 +14,7 @@ use super::{DISPLAY_HEIGHT, DISPLAY_WIDTH, FRAMEBUFFER_SIZE, GDEM0397T81P_SPEC};
 use crate::hal::DapDisplay;
 
 /// Emulator display wrapper
+#[allow(clippy::module_name_repetitions)] // Type is named for its module; used as firmware::EmulatorDisplay
 pub struct EmulatorDisplay {
     emulator: eink_emulator::Emulator,
     refresh_mode: platform::RefreshMode,
@@ -21,6 +22,7 @@ pub struct EmulatorDisplay {
 
 impl EmulatorDisplay {
     /// Create a new emulator display with default configuration
+    #[must_use]
     pub fn new() -> Self {
         // Use with_spec to create with GDEM0397T81P specification
         let emulator = eink_emulator::Emulator::with_spec(&GDEM0397T81P_SPEC);
@@ -44,6 +46,7 @@ impl EmulatorDisplay {
     /// };
     /// let display = EmulatorDisplay::with_config(config);
     /// ```
+    #[must_use]
     pub fn with_config(config: eink_emulator::EmulatorConfig) -> Self {
         let emulator = eink_emulator::Emulator::with_spec_and_config(&GDEM0397T81P_SPEC, config);
 
@@ -77,6 +80,7 @@ impl EmulatorDisplay {
     }
 
     /// Get a reference to the underlying emulator
+    #[must_use]
     pub fn emulator(&self) -> &eink_emulator::Emulator {
         &self.emulator
     }
@@ -283,6 +287,7 @@ impl platform::EinkDisplay for EmulatorDisplay {
 
 /// Emulator display errors
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[allow(clippy::module_name_repetitions)] // Error type named after its module; follows Rust convention for module-scoped errors
 pub enum EmulatorError {
     /// Invalid buffer size
     InvalidBuffer,
