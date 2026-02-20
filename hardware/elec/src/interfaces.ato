@@ -6,6 +6,9 @@
 # Import in module files:
 #   from "interfaces.ato" import I2CBus, SPIBus, I2SBus, ...
 
+import Electrical
+import ElectricPower
+
 # ── I²C ──────────────────────────────────────────────────────────────────────
 interface I2CBus:
     """400 kHz Fast-mode I²C bus (SDA + SCL)."""

@@ -22,6 +22,11 @@
 #
 # IREF resistor: 1.21 kΩ from IREF pin to AGND sets DAC full-scale output current.
 
+import ElectricPower
+import Electrical
+import Resistor
+import Capacitor
+
 from "parts/ES9038Q2M/ES9038Q2M.ato" import ES9038Q2M
 from "interfaces.ato" import I2SBus, I2CBus, AnalogAudioOut, AmpSupplyBus
 from "parts/TPA6120A2/TPA6120A2.ato" import TPA6120A2

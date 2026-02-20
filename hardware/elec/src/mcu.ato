@@ -19,6 +19,9 @@ from "interfaces.ato" import I2CBus, I2SBus, SPIDevice, DisplayCtrl, SDMMCBus
 from "interfaces.ato" import UARTBus, USBDiffPair, SWDPort, FMCBus, QSPIBus
 from "interfaces.ato" import EncoderBus, ClockSource
 from "parts/Crystal/Crystal.ato" import Crystal
+import ElectricPower
+import Electrical
+import Capacitor
 
 module MCU:
     """
