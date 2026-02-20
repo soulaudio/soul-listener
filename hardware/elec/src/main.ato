@@ -21,7 +21,7 @@
 
 from "interfaces.ato" import (
     I2CBus, SPIBus, I2SBus, UARTBus, SWDPort,
-    DisplayCtrl, FMCBus, QSPIBus, EncoderBus, USBDiffPair
+    DisplayCtrl, FMCBus, QSPIBus, EncoderBus, USBDiffPair, AmpSupplyBus
 )
 from "mcu.ato"       import MCU
 from "audio.ato"     import Audio
@@ -55,11 +55,18 @@ module SoulAudioDAP:
     power.power_3v3 ~ memory.power_3v3
     power.power_3v3 ~ input.power_3v3
 
-    # ── MCU ↔ Power (PMIC I²C + USB data) ─────────────────────────────────────
+    # ── Power ↔ Audio (±5.5 V bipolar amp rail) ───────────────────────────────
+    # TPS61023 boost (+5.5 V) + TPS63700 inverter (−5.5 V) in power.ato;
+    # LT3045/LT3094 post-regulators (+5.0 V / −5.0 V) in audio.ato.
+    power.amp_rail ~ audio.amp_rail
+
+    # ── MCU ↔ Power (PMIC I²C + USB data + amp enable) ────────────────────────
     # PMIC I²C: MCU configures / monitors BQ25895 charge state (addr 0x6A)
     mcu.pmic_i2c ~ power.pmic_i2c
     # USB OTG HS data lines pass through PMIC to MCU
     mcu.usb ~ power.usb_in
+    # AMP_EN (MCU PC4) → TPS61023 EN: MCU controls headphone amp power
+    mcu.amp_en ~ power.amp_en
 
     # ── MCU ↔ Audio ───────────────────────────────────────────────────────────
     # SAI1 I²S: 32-bit/768 kHz PCM stream to ES9038Q2M

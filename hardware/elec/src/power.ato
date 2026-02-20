@@ -19,10 +19,76 @@
 # (e.g., FUSB302) is required. BQ25895 handles BC1.2 but not USB-PD.
 # This can be added as a future revision. For v1: 5 V operation only.
 
-from "interfaces.ato" import I2CBus, USBDiffPair
+from "interfaces.ato" import I2CBus, USBDiffPair, AmpSupplyBus
 from "parts/BQ25895RTWT/BQ25895RTWT.ato" import BQ25895RTWT
 from "parts/AP2112K33TRG1/AP2112K33TRG1.ato" import AP2112K33TRG1
 from "parts/S2B_PH_K_S/S2B_PH_K_S.ato" import S2B_PH_K_S
+
+# ── TPS61023DRLR — Boost converter: SYS → +5.5 V ─────────────────────────────
+#
+# Package:      SOT-563 (6-lead, 1.6×1.6 mm)
+# Manufacturer: Texas Instruments
+# Datasheet:    https://www.ti.com/lit/ds/symlink/tps61023.pdf
+# Key specs:    1.5 A switch, 95% efficiency, VREF = 1.204 V, up to 5.5 V in
+# VOUT formula: VOUT = VREF × (1 + R_top / R_bot)
+#   For +5.5 V: R_top = 357 kΩ (VOUT → FB), R_bot = 100 kΩ (FB → GND)
+#   VOUT = 1.204 × (1 + 357/100) = 1.204 × 4.57 = 5.50 V ✓
+# Inductor:     1.5 µH, ≥ 2 A, DCR < 100 mΩ (e.g., Würth 744031150)
+# EN:           active high; tied to amp_en MCU signal (PC4)
+# Distributor:
+#   TME:      TPS61023DRLR      Digi-Key: 296-TPS61023DRLRT-ND
+component TPS61023DRLR:
+    trait is_atomic_part<
+        manufacturer = "Texas Instruments",
+        partnumber   = "TPS61023DRLR",
+        footprint    = "Package_TO_SOT_SMD:SOT-563",
+        symbol       = "Regulator_Switching:TPS61023">
+    trait has_designator_prefix<prefix = "U">
+
+    signal FB   ~ pin 1  # Feedback — resistor divider mid-point (VREF = 1.204 V)
+    signal EN   ~ pin 2  # Enable — active high; drive from MCU AMP_EN (PC4)
+    signal VIN  ~ pin 3  # Input — LiPo SYS rail (3.0–4.2 V)
+    signal GND  ~ pin 4  # Ground
+    signal SW   ~ pin 5  # Switching node — connect to inductor
+    signal VOUT ~ pin 6  # Boost output (+5.5 V)
+
+# ── TPS63700DRCR — Inverting converter: +5.5 V → −5.5 V ──────────────────────
+#
+# Package:      VSON-10 (3×3 mm, 10 leads + EP=GND)
+# Manufacturer: Texas Instruments
+# Datasheet:    https://www.ti.com/lit/ds/symlink/tps63700.pdf
+# Key specs:    300 mA output, VREF = 1.213 V
+# VOUT formula: VOUT = −VREF × (R_top / R_bot)
+#   For −5.5 V: R_top = 453 kΩ (VREF→FB), R_bot = 100 kΩ (FB→OUT)
+#   VOUT = −1.213 × (453/100) = −1.213 × 4.53 = −5.49 V ≈ −5.5 V ✓
+# VIN (pin 3):  Internal bias input — fed from TPS61023 VOUT (+5.5 V) via
+#               10 Ω + 100 nF RC filter (required by datasheet §9.2.1).
+# IN  (pin 5):  Main switching input — LiPo SYS rail (3.0–4.2 V).
+# EN  (pin 4):  RC-delayed from TPS61023 VOUT (100 kΩ + 100 nF = 10 ms τ)
+#               so positive rail is established ≥ 10 ms before negative rail.
+# ⚠ COMP (pin 1): MANDATORY 4.7 nF to GND for loop stability.
+# ⚠ EP   (pin 11): Connect to GND plane.
+# Distributor:
+#   TME:      TPS63700DRCR      Digi-Key: 296-TPS63700DRCRT-ND
+component TPS63700DRCR:
+    trait is_atomic_part<
+        manufacturer = "Texas Instruments",
+        partnumber   = "TPS63700DRCR",
+        footprint    = "Package_DFN_QFN:VSON-10-1EP_3x3mm_P0.5mm_EP1.2x1.7mm",
+        symbol       = "Regulator_Switching:TPS63700">
+    trait has_designator_prefix<prefix = "U">
+
+    signal COMP   ~ pin 1   # Compensation — MUST have 4.7 nF to GND
+    signal GND    ~ pin 2   # Signal/analog ground
+    signal VIN    ~ pin 3   # Bias input — feed from boost VOUT via 10Ω+100nF RC
+    signal EN     ~ pin 4   # Enable — active high; RC-delayed from boost VOUT
+    signal IN     ~ pin 5   # Main switching input (LiPo SYS rail)
+    signal SW     ~ pin 6   # Switching node — connect to inductor
+    signal PS_GND ~ pin 7   # Power-stage ground
+    signal OUT    ~ pin 8   # Inverting output (−5.5 V)
+    signal FB     ~ pin 9   # Feedback — resistor divider mid-point
+    signal VREF   ~ pin 10  # Internal reference (1.213 V) — top of FB divider
+    signal EP     ~ pin 11  # Exposed pad = GND
 
 module Power:
     """
@@ -35,6 +101,8 @@ module Power:
     pmic_i2c   = new I2CBus        # I²C to MCU (BQ25895 status/config, addr 0x6A)
     power_3v3  = new ElectricPower  # Regulated 3.3 V output → all modules
     power_sys  = new ElectricPower  # Raw SYS output (battery-tracking) — internal use
+    amp_rail   = new AmpSupplyBus  # ±5.5 V switching rails → audio.ato (LT3045/LT3094 LDOs)
+    amp_en     = new Electrical    # Amp enable from MCU PC4 (active high → TPS61023 EN)
     gnd        = new Electrical
 
     # ── BQ25895 PMIC ─────────────────────────────────────────────────────────
@@ -121,6 +189,144 @@ module Power:
     power_3v3.hv ~ c_3v3_bulk.p1; c_3v3_bulk.p2 ~ power_3v3.lv
     power_3v3.hv ~ c_3v3_hf.p1;   c_3v3_hf.p2   ~ power_3v3.lv
 
+    # ── TPS61023: SYS → +5.5 V boost ─────────────────────────────────────────
+    # Positive rail for TPA6120A2 headphone amp (post-regulated to +5.0 V in audio.ato).
+    # EN driven by MCU AMP_EN (PC4) via amp_en port — active high.
+    boost = new TPS61023DRLR
+
+    power_sys.hv ~ boost.VIN   # LiPo SYS rail input (3.0–4.2 V)
+    power_sys.lv ~ boost.GND
+    amp_en ~ boost.EN          # MCU controls enable (AMP_EN PC4 → TPS61023 EN)
+
+    # Inductor: 1.5 µH, ≥ 2 A, DCR < 100 mΩ — e.g., Würth 744031150 (0402 size)
+    l_boost = new Inductor
+    l_boost.value   = 1.5uH +/- 20%
+    l_boost.package = "0402"
+    boost.SW ~ l_boost.p1; l_boost.p2 ~ boost.VIN
+
+    # Input decoupling: 10 µF close to VIN pin
+    c_boost_in = new Capacitor
+    c_boost_in.capacitance = 10uF +/- 20%
+    c_boost_in.package = "0805"
+    power_sys.hv ~ c_boost_in.p1; c_boost_in.p2 ~ power_sys.lv
+
+    # Output capacitors: 2× 22 µF X7R (low-ESR ceramic; TPS61023 requires < 30 mΩ ESR)
+    c_boost_o1 = new Capacitor; c_boost_o1.capacitance = 22uF +/- 20%; c_boost_o1.package = "0805"
+    c_boost_o2 = new Capacitor; c_boost_o2.capacitance = 22uF +/- 20%; c_boost_o2.package = "0805"
+    boost.VOUT ~ c_boost_o1.p1; c_boost_o1.p2 ~ power_sys.lv
+    boost.VOUT ~ c_boost_o2.p1; c_boost_o2.p2 ~ power_sys.lv
+
+    # FB divider: VOUT=+5.5 V → R_boost_top → FB node → R_boost_bot → GND
+    # VOUT = VREF × (1 + R_top/R_bot) = 1.204 × (1 + 357/100) = 5.50 V
+    r_boost_top = new Resistor
+    r_boost_top.resistance = 357kohm +/- 1%
+    r_boost_top.package    = "0402"
+    r_boost_bot = new Resistor
+    r_boost_bot.resistance = 100kohm +/- 1%
+    r_boost_bot.package    = "0402"
+    boost.VOUT ~ r_boost_top.p1; r_boost_top.p2 ~ boost.FB
+    boost.FB   ~ r_boost_bot.p1; r_boost_bot.p2 ~ power_sys.lv
+
+    # π-filter: boost VOUT → 10 µF → ferrite bead → amp_rail.pos.hv → 10 µF
+    # Ferrite: 600 Ω @ 100 MHz, ≥ 500 mA rated (e.g., Murata BLM31PG601SN1L).
+    # Replace fb_pos with actual ferrite in BOM; 0 Ω Resistor is the structural placeholder.
+    c_pi_pos_in = new Capacitor
+    c_pi_pos_in.capacitance = 10uF +/- 20%
+    c_pi_pos_in.package = "0805"
+    boost.VOUT ~ c_pi_pos_in.p1; c_pi_pos_in.p2 ~ power_sys.lv
+
+    fb_pos = new Resistor  # BOM: replace with Murata BLM31PG601SN1L ferrite bead
+    fb_pos.resistance = 0ohm +/- 10%
+    fb_pos.package    = "0402"
+    boost.VOUT ~ fb_pos.p1; fb_pos.p2 ~ amp_rail.pos.hv
+
+    c_pi_pos_out = new Capacitor
+    c_pi_pos_out.capacitance = 10uF +/- 20%
+    c_pi_pos_out.package = "0805"
+    amp_rail.pos.hv ~ c_pi_pos_out.p1; c_pi_pos_out.p2 ~ power_sys.lv
+    amp_rail.pos.lv ~ power_sys.lv   # +5.5 V rail LV reference = GND
+
+    # ── TPS63700: +5.5 V → −5.5 V inverting converter ─────────────────────────
+    # Negative rail for TPA6120A2 (post-regulated to −5.0 V in audio.ato via LT3094).
+    # Fed from TPS61023 VOUT for a stable high-side input.
+    # EN is RC-delayed so VS+ is established ≥ 10 ms before VS−.
+    inv = new TPS63700DRCR
+
+    # VIN (bias): TPS61023 VOUT → 10 Ω + 100 nF RC → TPS63700 VIN (datasheet requirement)
+    r_inv_bias = new Resistor
+    r_inv_bias.resistance = 10ohm +/- 5%
+    r_inv_bias.package    = "0402"
+    c_inv_bias = new Capacitor
+    c_inv_bias.capacitance = 100nF +/- 20%
+    c_inv_bias.package     = "0402"
+    boost.VOUT ~ r_inv_bias.p1; r_inv_bias.p2 ~ inv.VIN
+    inv.VIN ~ c_inv_bias.p1; c_inv_bias.p2 ~ power_sys.lv
+
+    # IN (main switching input): LiPo SYS rail
+    power_sys.hv ~ inv.IN
+
+    # GND, PS_GND, EP: all to ground plane
+    power_sys.lv ~ inv.GND
+    power_sys.lv ~ inv.PS_GND
+    power_sys.lv ~ inv.EP
+
+    # EN sequencing: RC delay from boost VOUT → τ = 100 kΩ × 100 nF = 10 ms
+    # VS+ rises first (driven by TPS61023); ~10 ms later TPS63700 EN goes high → VS− appears.
+    r_inv_seq = new Resistor
+    r_inv_seq.resistance = 100kohm +/- 5%
+    r_inv_seq.package    = "0402"
+    c_inv_seq = new Capacitor
+    c_inv_seq.capacitance = 100nF +/- 20%
+    c_inv_seq.package     = "0402"
+    boost.VOUT ~ r_inv_seq.p1; r_inv_seq.p2 ~ inv.EN
+    inv.EN ~ c_inv_seq.p1; c_inv_seq.p2 ~ power_sys.lv
+
+    # COMP: mandatory 4.7 nF to GND for loop stability (TPS63700 datasheet §9.2.2)
+    c_inv_comp = new Capacitor
+    c_inv_comp.capacitance = 4.7nF +/- 20%
+    c_inv_comp.package     = "0402"
+    inv.COMP ~ c_inv_comp.p1; c_inv_comp.p2 ~ power_sys.lv
+
+    # Inductor: 1.0 µH, ≥ 1 A — e.g., Würth 744031100 (0402)
+    l_inv = new Inductor
+    l_inv.value   = 1.0uH +/- 20%
+    l_inv.package = "0402"
+    inv.IN ~ l_inv.p1; l_inv.p2 ~ inv.SW  # Inverting topology: L between IN and SW
+
+    # Output capacitors: 2× 22 µF between OUT (−5.5 V) and GND
+    c_inv_o1 = new Capacitor; c_inv_o1.capacitance = 22uF +/- 20%; c_inv_o1.package = "0805"
+    c_inv_o2 = new Capacitor; c_inv_o2.capacitance = 22uF +/- 20%; c_inv_o2.package = "0805"
+    inv.OUT ~ c_inv_o1.p1; c_inv_o1.p2 ~ power_sys.lv
+    inv.OUT ~ c_inv_o2.p1; c_inv_o2.p2 ~ power_sys.lv
+
+    # FB divider: VREF node → R_inv_top → FB → R_inv_bot → OUT (−5.5 V)
+    # VOUT = −VREF × (R_top/R_bot) = −1.213 × (453/100) = −5.49 V ≈ −5.5 V
+    r_inv_top = new Resistor
+    r_inv_top.resistance = 453kohm +/- 1%
+    r_inv_top.package    = "0402"
+    r_inv_bot = new Resistor
+    r_inv_bot.resistance = 100kohm +/- 1%
+    r_inv_bot.package    = "0402"
+    inv.VREF ~ r_inv_top.p1; r_inv_top.p2 ~ inv.FB
+    inv.FB   ~ r_inv_bot.p1; r_inv_bot.p2 ~ inv.OUT
+
+    # π-filter: inverter OUT → 10 µF → ferrite bead → amp_rail.neg.lv → 10 µF
+    c_pi_neg_in = new Capacitor
+    c_pi_neg_in.capacitance = 10uF +/- 20%
+    c_pi_neg_in.package = "0805"
+    inv.OUT ~ c_pi_neg_in.p1; c_pi_neg_in.p2 ~ power_sys.lv
+
+    fb_neg = new Resistor  # BOM: replace with Murata BLM31PG601SN1L ferrite bead
+    fb_neg.resistance = 0ohm +/- 10%
+    fb_neg.package    = "0402"
+    inv.OUT ~ fb_neg.p1; fb_neg.p2 ~ amp_rail.neg.lv
+
+    c_pi_neg_out = new Capacitor
+    c_pi_neg_out.capacitance = 10uF +/- 20%
+    c_pi_neg_out.package = "0805"
+    amp_rail.neg.lv ~ c_pi_neg_out.p1; c_pi_neg_out.p2 ~ amp_rail.neg.hv
+    amp_rail.neg.hv ~ power_sys.lv   # −5.5 V rail HV reference = GND
+
     # ── Validation ────────────────────────────────────────────────────────────
     assert power_3v3.voltage within 3.2V to 3.4V
     assert power_sys.voltage within 3.0V to 4.35V  # LiPo operating range
@@ -132,3 +338,19 @@ module Power:
     assert c_sys_bulk.capacitance within 15uF to 30uF
     # Switching inductor: 4.7 µH ±20% for BQ25895 boost converter
     assert l_sw.value within 3.5uH to 6uH
+    # ±5 V supply component assertions ─────────────────────────────────────────
+    # TPS61023 FB divider: R_top=357 kΩ ±1%, R_bot=100 kΩ ±1% → VOUT=5.50 V
+    assert r_boost_top.resistance within 350kohm to 364kohm
+    assert r_boost_bot.resistance within 99kohm to 101kohm
+    # TPS61023 output inductor: 1.5 µH ±20% (boost converter energy storage)
+    assert l_boost.value within 1.2uH to 1.8uH
+    # TPS63700 FB divider: R_top=453 kΩ ±1%, R_bot=100 kΩ ±1% → VOUT=−5.50 V
+    assert r_inv_top.resistance within 449kohm to 457kohm
+    assert r_inv_bot.resistance within 99kohm to 101kohm
+    # TPS63700 inductor: 1.0 µH ±20% (inverting converter)
+    assert l_inv.value within 0.8uH to 1.2uH
+    # TPS63700 COMP cap: 4.7 nF mandatory for loop stability
+    assert c_inv_comp.capacitance within 3.5nF to 6nF
+    # EN sequencing: 100 kΩ + 100 nF = 10 ms τ (positive rail up before negative)
+    assert r_inv_seq.resistance within 90kohm to 110kohm
+    assert c_inv_seq.capacitance within 80nF to 120nF

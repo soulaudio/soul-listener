@@ -16,7 +16,7 @@ use platform::DisplayDriver;
 use firmware::input::builder::InputBuilder;
 use firmware::input::hardware::spawn_input_task;
 use firmware::ui::{SplashScreen, TestPattern};
-use firmware::{DapDisplay, Ssd1677Display, FRAMEBUFFER_SIZE};
+use firmware::{DapDisplay, Ssd1677Display, DISPLAY_HEIGHT, DISPLAY_WIDTH, FRAMEBUFFER_SIZE};
 
 // Panic handler
 use panic_probe as _;
@@ -59,9 +59,18 @@ async fn main(spawner: Spawner) {
     let mut display = Ssd1677Display::new(spi, dc, cs, rst, busy);
 
     // Initialize display
-    defmt::info!("Initializing display ({=u32}x{=u32}, {=u8}bpp)...", DISPLAY_WIDTH, DISPLAY_HEIGHT, 2);
+    defmt::info!(
+        "Initializing display ({=u32}x{=u32}, {=u8}bpp)...",
+        DISPLAY_WIDTH,
+        DISPLAY_HEIGHT,
+        2
+    );
     match display.init().await {
-        Ok(_) => defmt::info!("Display ready: {}x{} GDEM0397T81P (SSD1677)", DISPLAY_WIDTH, DISPLAY_HEIGHT),
+        Ok(_) => defmt::info!(
+            "Display ready: {}x{} GDEM0397T81P (SSD1677)",
+            DISPLAY_WIDTH,
+            DISPLAY_HEIGHT
+        ),
         Err(e) => {
             defmt::error!("Display initialization failed: {}", e);
             loop {

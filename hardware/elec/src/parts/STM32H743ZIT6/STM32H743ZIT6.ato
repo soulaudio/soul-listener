@@ -181,3 +181,6 @@ component STM32H743ZIT6:
     signal BTN_BACK  ~ pin 118  # PD4  — Back        (EXTI4, active-low)
     signal BTN_SEL   ~ pin 119  # PD5  — Select      (EXTI5, active-low)
     signal BTN_POWER ~ pin 7    # PC13 — WKUP2 / power button (wake-from-standby, active-low)
+
+    # ── Headphone amp enable ──────────────────────────────────────────────────
+    signal AMP_EN ~ pin 44   # PC4 — headphone amp enable (active high → TPS61023 EN)

@@ -42,6 +42,7 @@ module MCU:
     fmc         = new FMCBus       # → memory module (SDRAM)
     quadspi     = new QSPIBus      # → memory module (NOR flash)
     encoder     = new EncoderBus   # → input module
+    amp_en      = new Electrical   # → power module (headphone amp enable, PC4 active-high)
 
     # ── Main IC ───────────────────────────────────────────────────────────────
     mcu = new STM32H743ZIT6
@@ -192,6 +193,9 @@ module MCU:
     quadspi.io1 ~ mcu.QUADSPI_BK1_IO1
     quadspi.io2 ~ mcu.QUADSPI_BK1_IO2
     quadspi.io3 ~ mcu.QUADSPI_BK1_IO3
+
+    # ── Headphone amp enable → power module ──────────────────────────────────
+    amp_en ~ mcu.AMP_EN  # PC4 (pin 44) — active high, drives TPS61023 EN
 
     # ── Input GPIOs → input module ────────────────────────────────────────────
     encoder.a  ~ mcu.ENC_A

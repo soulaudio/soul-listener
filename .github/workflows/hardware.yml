@@ -123,6 +123,46 @@ jobs:
           fi
           echo "OK: all used interfaces are declared in interfaces.ato"
 
+      - name: Verify amp_rail port is declared and wired
+        run: |
+          # power.ato and audio.ato must declare amp_rail (AmpSupplyBus).
+          # main.ato must wire them together. mcu.ato must expose amp_en.
+          VIOLATIONS=""
+          if ! grep -q 'amp_rail' hardware/elec/src/power.ato; then
+            VIOLATIONS="$VIOLATIONS\n  power.ato: missing amp_rail port (AmpSupplyBus)"
+          fi
+          if ! grep -q 'amp_rail' hardware/elec/src/audio.ato; then
+            VIOLATIONS="$VIOLATIONS\n  audio.ato: missing amp_rail port (AmpSupplyBus)"
+          fi
+          if ! grep -q 'power\.amp_rail ~ audio\.amp_rail' hardware/elec/src/main.ato; then
+            VIOLATIONS="$VIOLATIONS\n  main.ato: missing 'power.amp_rail ~ audio.amp_rail' wiring"
+          fi
+          if ! grep -q 'amp_en' hardware/elec/src/mcu.ato; then
+            VIOLATIONS="$VIOLATIONS\n  mcu.ato: missing amp_en port (MCU PC4 → TPS61023 EN)"
+          fi
+          if [ -n "$VIOLATIONS" ]; then
+            echo "Architecture violation: ±5V amp rail not properly wired:"
+            printf '%b\n' "$VIOLATIONS"
+            exit 1
+          fi
+          echo "OK: amp_rail wired power.ato ↔ audio.ato; amp_en in mcu.ato"
+
+      - name: Verify AmpSupplyBus is imported where used
+        run: |
+          # Every file that uses AmpSupplyBus must import it from interfaces.ato.
+          VIOLATIONS=""
+          for f in hardware/elec/src/power.ato hardware/elec/src/audio.ato hardware/elec/src/main.ato; do
+            if grep -q 'AmpSupplyBus' "$f" && ! grep -q 'import.*AmpSupplyBus' "$f"; then
+              VIOLATIONS="$VIOLATIONS\n  $f: uses AmpSupplyBus but does not import it"
+            fi
+          done
+          if [ -n "$VIOLATIONS" ]; then
+            echo "Import violation:"
+            printf '%b\n' "$VIOLATIONS"
+            exit 1
+          fi
+          echo "OK: AmpSupplyBus imported in all files that use it"
+
       - name: Check for duplicate pin assignments in component stubs
         run: |
           # Each physical pin can only be assigned once in a component stub.
