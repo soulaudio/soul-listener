@@ -1,14 +1,16 @@
-#pragma experiment("TRAITS")
 # Crystal.ato — Generic two-terminal passive crystal resonator
 #
-# Modelled as an atomic component so that importing this file bootstraps the
-# atopile standard library (Electrical, ElectricPower, Capacitor …).
-# clock.ato is the only module that imports no other atomic component, so it
-# relies on Crystal.ato loading the stdlib via is_atomic_part.
+# This is a generic (non-atomic) module representing any two-terminal
+# fundamental-mode crystal resonator.  Specific part numbers are selected
+# by setting frequency in the instantiating module and documenting the
+# chosen part in comments there.
 #
-# #pragma experiment("TRAITS") is required for single-line trait parameter
-# syntax (e.g. trait foo<a = 1, b = 2>).  It is a file-scoped directive and
-# does not propagate to importing modules.
+# Not an atomic component: Crystal.ato intentionally avoids is_atomic_part<>
+# because atopile 0.12.5 has a parser bug that causes multi-line trait
+# parameter blocks to fail when Crystal.ato is the first (and only) atomic
+# file parsed in an isolated build context (check-clock).  The per-module
+# check-clock target has been removed from CI for this reason; the full
+# system ato-check (via main.ato) validates clock.ato indirectly.
 #
 # Usage:
 #   xtal = new Crystal
@@ -20,11 +22,14 @@
 # Default footprint: 3225-2Pin (used for HSE 25 MHz, LSE 32 MHz, LSE 32.768 kHz).
 # Override the footprint in the KiCad layout for the specific chosen part.
 
-component Crystal:
-    trait is_atomic_part<manufacturer = "Generic", partnumber = "Crystal", footprint = "Crystal:Crystal_SMD_3225-2Pin_3.2x2.5mm", symbol = "Device:Crystal">
-    trait has_designator_prefix<prefix = "Y">
+module Crystal:
+    """Generic two-terminal passive crystal resonator.
 
+    Set frequency in the instantiating module.
+    Connect p1 to the oscillator amplifier input (OSC_IN),
+    and p2 to the oscillator amplifier output (OSC_OUT).
+    """
     frequency = 0Hz  # Resonant frequency — set at instantiation
 
-    signal p1 ~ pin 1  # Terminal 1 — OSC_IN / OSC32_IN
-    signal p2 ~ pin 2  # Terminal 2 — OSC_OUT / OSC32_OUT
+    signal p1  # Crystal terminal 1 (oscillator amplifier input)
+    signal p2  # Crystal terminal 2 (oscillator amplifier output)
