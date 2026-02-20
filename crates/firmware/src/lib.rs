@@ -104,6 +104,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 pub mod audio;
+pub mod boot;
 pub mod display;
 pub mod hal;
 pub mod ui;

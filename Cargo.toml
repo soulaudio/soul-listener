@@ -38,7 +38,7 @@ embassy-sync = "=0.6.2"
 embassy-futures = "=0.1.2"
 
 # Embassy HAL (STM32)
-embassy-stm32 = { version = "=0.1.0", features = ["stm32h743zi", "time-driver-any", "unstable-pac", "exti"] }
+embassy-stm32 = { version = "=0.1.0", features = ["stm32h743zi", "time-driver-tim2", "unstable-pac", "exti"] }
 embassy-embedded-hal = "=0.1.0"
 
 # Embedded HAL traits

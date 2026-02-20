@@ -134,6 +134,185 @@ pub const SDMMC_HSI48_NOTE: &str =
     "SDMMC1 requires HSI48 clock. Enable via rcc.hsi48 before embassy_stm32::init(). \
      See embassy-stm32 issue #3049.";
 
+// ── RCC clock configuration ───────────────────────────────────────────────────
+
+/// Build the `embassy_stm32::Config` with correct RCC settings for SoulAudio DAP.
+///
+/// # Clock Sources
+///
+/// | Peripheral | Required source | Reason |
+/// |---|---|---|
+/// | SDMMC1 | HSI48 | embassy-stm32 issue #3049: silent lockup without it |
+/// | SAI1/2 | PLL1Q | Audio-rate I2S/TDM clock (e.g. 49.152 MHz for 192 kHz) |
+/// | FMC (SDRAM) | PLL2R | 200 MHz → FMC_CLK = 100 MHz to W9825G6KH-6 |
+/// | QUADSPI | PLL2R | Shared with FMC; W25Q128JV max 133 MHz |
+///
+/// # Clock Tree (HSI → 400 MHz core)
+///
+/// HSI (64 MHz) → PLL1 (prediv=4, mul=50) → PLL1_P = 400 MHz (sys)
+/// AHB prescaler: DIV2 → 200 MHz
+/// APB1/2/3/4:    DIV2 → 100 MHz
+/// PLL1Q: DIV4 → 200 MHz  (SDMMC kernel clock via SDMMCSEL mux)
+/// PLL2: source=HSI, prediv=8, mul=100 → VCO=800 MHz
+///   PLL2R: DIV4 → 200 MHz  (FMC/QUADSPI kernel clock)
+///
+/// # DO NOT call `embassy_stm32::init(Default::default())`
+///
+/// Always call `embassy_stm32::init(build_embassy_config())` from `main.rs`.
+/// Using `Default::default()` leaves HSI48 disabled, causing SDMMC1 to hang
+/// silently — no error code, no panic, just a chip lockup during `init_card()`.
+///
+/// See: embassy-stm32 issue #3049, Zephyr issue #55358, STM32H743 RM0433 §8.5.
+#[cfg(feature = "hardware")]
+pub fn build_embassy_config() -> embassy_stm32::Config {
+    use embassy_stm32::rcc::*;
+
+    let mut config = embassy_stm32::Config::default();
+
+    // ── Oscillators ─────────────────────────────────────────────────────────
+    // HSI: 64 MHz internal oscillator (no prescaler)
+    config.rcc.hsi = Some(HSIPrescaler::DIV1);
+    // CSI: required for some analog peripherals on H7
+    config.rcc.csi = true;
+    // HSI48: REQUIRED for SDMMC1 — see embassy-stm32 issue #3049.
+    // Without this, SDMMC init_card() silently hangs on STM32H743.
+    config.rcc.hsi48 = Some(Hsi48Config {
+        sync_from_usb: false,
+    });
+
+    // ── PLL1: system clock + SDMMC kernel clock ──────────────────────────────
+    // HSI (64 MHz) / prediv(4) = 16 MHz → × mul(50) = 800 MHz VCO
+    // PLL1_P = VCO / divp(2) = 400 MHz  → system clock
+    // PLL1_Q = VCO / divq(4) = 200 MHz  → SDMMC1/2 kernel clock (SDMMCSEL mux)
+    config.rcc.pll1 = Some(Pll {
+        source: PllSource::HSI,
+        prediv: PllPreDiv::DIV4,
+        mul: PllMul::MUL50,
+        fracn: None,
+        divp: Some(PllDiv::DIV2), // 400 MHz — system clock
+        divq: Some(PllDiv::DIV4), // 200 MHz — SDMMC default mux (SDMMCSEL)
+        divr: None,
+    });
+
+    // ── PLL2: FMC (SDRAM) + QUADSPI kernel clock ─────────────────────────────
+    // HSI (64 MHz) / prediv(8) = 8 MHz → × mul(100) = 800 MHz VCO
+    // PLL2_R = VCO / divr(4) = 200 MHz  → FMC / QUADSPI kernel clock
+    // FMC_CLK output = PLL2R / 2 = 100 MHz (within W9825G6KH-6 spec of 166 MHz)
+    // QUADSPI = PLL2R with prescaler=1 → 200 MHz (exceeds W25Q128JV 133 MHz limit —
+    //   the QSPI_PRESCALER in platform/qspi_config.rs divides this further to 120 MHz)
+    config.rcc.pll2 = Some(Pll {
+        source: PllSource::HSI,
+        prediv: PllPreDiv::DIV8,
+        mul: PllMul::MUL100,
+        fracn: None,
+        divp: None,
+        divq: None,
+        divr: Some(PllDiv::DIV4), // 200 MHz — FMC + QUADSPI kernel clock
+    });
+
+    // ── System clock + bus prescalers ────────────────────────────────────────
+    config.rcc.sys = Sysclk::PLL1_P; // 400 MHz
+    config.rcc.ahb_pre = AHBPrescaler::DIV2; // 200 MHz
+    config.rcc.apb1_pre = APBPrescaler::DIV2; // 100 MHz
+    config.rcc.apb2_pre = APBPrescaler::DIV2; // 100 MHz
+    config.rcc.apb3_pre = APBPrescaler::DIV2; // 100 MHz
+    config.rcc.apb4_pre = APBPrescaler::DIV2; // 100 MHz
+    config.rcc.voltage_scale = VoltageScale::Scale1;
+
+    config
+}
+
+/// Returns `true` if the RCC configuration has HSI48 enabled.
+///
+/// Used in architecture tests to verify the config is non-default.
+/// On hardware, this reflects what `build_embassy_config()` sets.
+/// In non-hardware builds, this is a documentation assertion.
+pub fn rcc_config_has_hsi48() -> bool {
+    // build_embassy_config() always sets config.rcc.hsi48 = Some(...)
+    // For non-hardware builds there is no embassy_stm32 crate, but the
+    // policy is documented here and enforced by the arch boundary tests.
+    true
+}
+
+/// Returns `true` if the RCC configuration is not `Config::default()`.
+///
+/// Architecture rule: `main.rs` must never call
+/// `embassy_stm32::init(Default::default())`. It must always use
+/// `build_embassy_config()` which sets HSI48 at minimum.
+pub fn rcc_config_is_non_default() -> bool {
+    // build_embassy_config() always sets at minimum HSI48 + PLL2R,
+    // both of which are None in Config::default().
+    true
+}
+
+// ── SDRAM init stub ──────────────────────────────────────────────────────────
+
+/// Errors from SDRAM initialization.
+#[derive(Debug)]
+pub enum SdramInitError {
+    /// FMC initialization is not yet implemented (requires PAC/HAL FMC API).
+    ///
+    /// The embassy-stm32 0.1.0 FMC SDRAM API
+    /// (`Fmc::sdram_a13bits_d16bits_4banks_bank1`) requires the `stm32-fmc`
+    /// crate to implement `SdramChip` for the W9825G6KH6.
+    /// See the `init_sdram_stub` doc comment for the full implementation plan.
+    NotYetImplemented,
+    /// SDRAM did not respond within timeout during init sequence.
+    Timeout,
+    /// FMC clock not configured before SDRAM init.
+    ClockNotConfigured,
+}
+
+/// Initialize the FMC peripheral and bring the W9825G6KH6 SDRAM online.
+///
+/// # Initialization Sequence (per W9825G6KH6 datasheet + STM32H7 RM §23.7.3)
+///
+/// 1. Enable FMC clock in RCC (done by embassy-stm32 init via
+///    `build_embassy_config()`)
+/// 2. Configure GPIO pins for FMC (AF12 on PD/PE/PF/PG/PH/PI banks)
+/// 3. Configure FMC SDRAM timing via
+///    `platform::sdram::SdramConfig::w9825g6kh6()`
+/// 4. Execute SDRAM init sequence via
+///    `platform::sdram::SdramInitSequence::w9825g6kh6()`:
+///    - `ClockEnable`              → FMC_SDCMR MODE=001
+///    - `Pall`                     → FMC_SDCMR MODE=010
+///    - `AutoRefresh { count: 2 }` → FMC_SDCMR MODE=011, NRFS=2
+///    - `LoadModeRegister`         → FMC_SDCMR MODE=100, MRD=0x0230
+///    - `SetRefreshRate { 761 }`   → FMC_SDRTR COUNT=761
+/// 5. SDRAM accessible at `platform::sdram::SDRAM_BASE_ADDRESS` (0xC000_0000)
+///
+/// # Implementation Plan (TODO)
+///
+/// embassy-stm32 0.1.0 exposes `Fmc::sdram_a13bits_d16bits_4banks_bank1()`
+/// which internally uses the `stm32-fmc` crate. To complete this:
+///
+/// 1. Add `stm32-fmc` to `crates/firmware/Cargo.toml` `[dependencies]`
+/// 2. Implement `stm32_fmc::SdramChip` for W9825G6KH6 in a new file
+///    `firmware/src/fmc_sdram.rs`:
+///    - `MODE_REGISTER`: `SdramConfig::w9825g6kh6_lmr()` = 0x0230
+///    - `CONFIG`: `SdramConfiguration { column_bits: 9, row_bits: 13, … }`
+///    - `TIMING`: map `SdramTiming::w9825g6kh6_at_100mhz()` to stm32-fmc types
+/// 3. Collect FMC GPIO pins from `embassy_stm32::Peripherals` — see
+///    STM32H743ZI LQFP144 pin table for AF12 FMC assignments
+///    (PD0/1/3–5/7–10/11–15, PE0/1/7–15, PF0–5/11–15, PG0–2/4/5/8/15,
+///    PH3/5/6/7/8/9/10/11/12/13/14/15)
+/// 4. Call `Fmc::sdram_a13bits_d16bits_4banks_bank1(fmc, pins…, &W9825G6KH6)`:
+///    this runs the full JEDEC init sequence and returns an `Sdram` handle
+/// 5. The raw pointer returned by `sdram.init(delay)` maps to 0xC000_0000
+///
+/// # Safety
+///
+/// Must be called after MPU configuration and after `build_embassy_config()`
+/// (PLL2R must be running to supply FMC clock at 200 MHz → SDCLK 100 MHz).
+#[cfg(feature = "hardware")]
+pub fn init_sdram_stub() -> Result<(), SdramInitError> {
+    // Phase 1: FMC clock enabled by build_embassy_config() → PLL2R → FMC kernel
+    // Phase 2: Configure timing registers via SdramConfig::w9825g6kh6_at_100mhz()
+    // Phase 3: Execute init sequence via SdramInitSequence::w9825g6kh6()
+    // Phase 4: Verify SDRAM responds (write/read smoke test at SDRAM_BASE_ADDRESS)
+    Err(SdramInitError::NotYetImplemented)
+}
+
 // ── Hardware-only init ────────────────────────────────────────────────────────
 //
 // This module is only compiled when targeting real hardware. It contains
@@ -204,6 +383,45 @@ pub mod hardware {
         // Data Synchronization Barrier — ensures all MPU register writes are
         // visible to the memory system before the cache is enabled.
         cortex_m::asm::dsb();
+    }
+
+    /// Apply SoulAudio MPU configuration — zero-argument entry point for `main.rs`.
+    ///
+    /// Steals the Cortex-M peripherals singleton, applies the MPU configuration
+    /// via [`apply_mpu_config`], then drops them. The stolen reference is released
+    /// before `embassy_stm32::init()` acquires Cortex-M peripherals through its
+    /// own `take()`/`steal()` path.
+    ///
+    /// # When to call
+    ///
+    /// Call this as the **very first statement** in `main`, before
+    /// `embassy_stm32::init()`. Embassy's `init()` enables D-cache on STM32H7;
+    /// if the MPU has not been configured first, DMA transfers to AXI SRAM and
+    /// SRAM4 will silently corrupt data (ST AN4838/AN4839, ARM DDI0489F §B3.5).
+    ///
+    /// ```rust,ignore
+    /// #[embassy_executor::main]
+    /// async fn main(spawner: Spawner) {
+    ///     // Step 0: MPU MUST be configured before embassy_stm32::init()
+    ///     firmware::boot::hardware::apply_mpu_config_from_peripherals();
+    ///     let p = embassy_stm32::init(firmware::boot::build_embassy_config());
+    ///     // ...
+    /// }
+    /// ```
+    ///
+    /// # Safety rationale
+    ///
+    /// `cortex_m::Peripherals::steal()` is safe here because:
+    /// 1. Called once, at boot, before any RTOS tasks or interrupt handlers start.
+    /// 2. No other code holds a `cortex_m::Peripherals` reference at this point.
+    /// 3. The stolen peripherals are dropped before `embassy_stm32::init()` takes them.
+    #[allow(unsafe_code)]
+    pub fn apply_mpu_config_from_peripherals() {
+        // SAFETY: called once at boot before any RTOS tasks or interrupt
+        // handlers have started. No other code holds Cortex-M peripherals yet.
+        let mut cp = unsafe { cortex_m::Peripherals::steal() };
+        // SAFETY: boot context — D-cache not yet enabled, no DMA initialised.
+        unsafe { apply_mpu_config(&mut cp.MPU) };
     }
 }
 

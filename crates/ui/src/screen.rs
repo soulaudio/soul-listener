@@ -1,5 +1,18 @@
 //! Screen identifier enum — every top-level screen and overlay the UI can display.
 
+/// Every top-level screen or overlay the navigator can push onto its stack.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Screen {
+    /// Main playback view.
+    NowPlaying,
+    /// Music library browser.
+    LibraryBrowse,
+    /// Application settings.
+    Settings,
+    /// Transient volume-adjustment overlay (pushed on top of any screen).
+    VolumeOverlay,
+}
+
 #[cfg(test)]
 mod tests {
     use super::Screen;
@@ -32,21 +45,8 @@ mod tests {
     fn test_screen_is_copy() {
         let a = Screen::NowPlaying;
         let b = a; // copy
-        let c = b.clone(); // clone
+        let c = b; // copy (Screen implements Copy, no need to clone)
         assert_eq!(a, b);
         assert_eq!(b, c);
     }
-}
-
-/// Every top-level screen or overlay the navigator can push onto its stack.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Screen {
-    /// Main playback view.
-    NowPlaying,
-    /// Music library browser.
-    LibraryBrowse,
-    /// Application settings.
-    Settings,
-    /// Transient volume-adjustment overlay (pushed on top of any screen).
-    VolumeOverlay,
 }

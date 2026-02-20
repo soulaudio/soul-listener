@@ -17,7 +17,7 @@ embassy-executor = { workspace = true, optional = true }
 embassy-time = { workspace = true, optional = true }
 embassy-sync = { workspace = true, optional = true }
 embassy-futures = { workspace = true, optional = true }
-embassy-stm32 = { workspace = true, optional = true, features = ["stm32h743zi", "time-driver-any", "unstable-pac"] }
+embassy-stm32 = { workspace = true, optional = true, features = ["stm32h743zi", "time-driver-tim2", "unstable-pac"] }
 embassy-embedded-hal = { workspace = true, optional = true }
 
 # Embedded HAL traits

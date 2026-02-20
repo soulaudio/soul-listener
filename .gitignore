@@ -29,8 +29,10 @@ simulator_output/
 # Hardware tools
 *.kicad_prl
 
-# Temporary datasheet/reference screenshots
+# Temporary datasheet/reference screenshots (except committed golden files)
 *.png
+# Allow golden screenshot reference files for visual regression tests
+!**/tests/golden/*.png
 *.kicad_pcb-bak
 _autosave-*
 fp-info-cache

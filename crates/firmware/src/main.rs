@@ -29,11 +29,31 @@ static mut FRAMEBUFFER: [u8; FRAMEBUFFER_SIZE] = [0xFF; FRAMEBUFFER_SIZE];
 
 #[embassy_executor::main]
 async fn main(spawner: Spawner) {
+    // Step 0: Configure MPU BEFORE embassy_stm32::init() enables D-cache.
+    //
+    // embassy_stm32::init() enables the Cortex-M7 D-cache on STM32H7. Without
+    // MPU configuration first, the cache will serve DMA buffer addresses as
+    // cacheable, causing silent data corruption in audio, display, and SD I/O.
+    //
+    // This call marks AXI SRAM (0x2400_0000, 512 KB) and SRAM4 (0x3800_0000,
+    // 64 KB) as non-cacheable before any DMA peripheral is initialised.
+    //
+    // References: ST AN4838/AN4839, ARM DDI0489F §B3.5.
+    // See: firmware::boot::BOOT_SEQUENCE_STEPS for the full ordered sequence.
+    firmware::boot::hardware::apply_mpu_config_from_peripherals();
+
     // Initialize Embassy
     defmt::info!("SoulAudio DAP Firmware v{=str}", "0.1.0");
     defmt::info!("Initializing STM32H743ZI — Cortex-M7 @ 480 MHz");
 
-    let p = embassy_stm32::init(Default::default());
+    let p = embassy_stm32::init(firmware::boot::build_embassy_config());
+
+    // Step 3: Initialize external SDRAM via FMC
+    // TODO: call firmware::boot::init_sdram_stub() when FMC API is available.
+    // The SDRAM at 0xC0000000 is needed for library cache + audio decode scratch.
+    // Sequence: CLK_EN → PALL → AUTO_REFRESH × 2 → LMR → SET_REFRESH_RATE (761)
+    // See: crates/firmware/src/boot.rs::init_sdram_stub()
+    // See: crates/platform/src/sdram.rs::SdramInitSequence::w9825g6kh6()
 
     // Configure SPI1 for display
     // PA5 (SPI1_SCK), PA7 (SPI1_MOSI)
@@ -57,7 +77,8 @@ async fn main(spawner: Spawner) {
 
     // Wrap raw SPI bus + CS pin into an SpiDevice (manages CS assertion/deassert).
     // Ssd1677 takes SpiDevice (not SpiBus) so it controls transactions atomically.
-    let spi_device = ExclusiveDevice::new(spi, cs, Delay);
+    // new() asserts CS HIGH immediately; safe since CS is already high from initialization.
+    let spi_device = ExclusiveDevice::new(spi, cs, Delay).expect("CS pin init failed");
 
     // Create display driver: Ssd1677::new(spi, dc, rst, busy, delay)
     defmt::info!("Creating SSD1677 display driver — SPI @ {=u32}MHz", 4);
