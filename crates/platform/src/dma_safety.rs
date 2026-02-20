@@ -158,3 +158,68 @@ unsafe impl BdmaAccessible for Sram4Region {}
 #[derive(Debug, Clone, Copy)]
 pub struct DtcmRegion;
 // DtcmRegion intentionally does NOT implement DmaAccessible or BdmaAccessible.
+
+// ── DmaBuffer wrapper ────────────────────────────────────────────────────────
+
+/// A DMA-accessible buffer with compile-time region enforcement.
+///
+/// The phantom type `Region: DmaAccessible` ensures this buffer was declared
+/// for a DMA-accessible memory region. Use `#[link_section]` to physically
+/// place it in the correct memory.
+///
+/// # Usage
+///
+/// ```rust,ignore
+/// // Framebuffer in AXI SRAM for display SPI DMA:
+/// #[link_section = ".axisram"]
+/// static FRAMEBUFFER: StaticCell<DmaBuffer<AxiSramRegion, [u8; FRAMEBUFFER_SIZE_BYTES]>>
+///     = StaticCell::new();
+/// ```
+pub struct DmaBuffer<Region: DmaAccessible, T> {
+    /// The inner data being protected by this DMA buffer wrapper.
+    pub data: T,
+    _region: core::marker::PhantomData<Region>,
+}
+
+impl<Region: DmaAccessible, T> DmaBuffer<Region, T> {
+    /// Create a new DMA buffer for the given region.
+    ///
+    /// The caller is responsible for placing this in the correct
+    /// memory via `#[link_section = ".axisram"]` etc.
+    pub const fn new(data: T) -> Self {
+        Self {
+            data,
+            _region: core::marker::PhantomData,
+        }
+    }
+}
+
+// ── Static DMA memory budget ──────────────────────────────────────────────────
+
+/// Total static DMA buffer memory allocated in AXI SRAM.
+///
+/// Budget breakdown:
+/// - 2× FRAMEBUFFER_SIZE_BYTES (ping-pong display planes): 2 × 96,000 = 192,000 bytes
+/// - 2× AUDIO_DMA_BUFFER_BYTES (ping-pong SAI DMA):        2 × 16,384 =  32,768 bytes
+/// - Total: 224,768 bytes of 524,288 bytes AXI SRAM = ~43% utilization
+/// - Remaining ~57% (299,520 bytes): Embassy task stacks, .bss, .data
+///
+/// The display actually uses a single framebuffer (96,000 bytes) in the current
+/// firmware. The second slot is reserved for future double-buffered rendering.
+/// The audio DMA uses two half-buffers (ping-pong) in a single 32,768-byte ring.
+pub const TOTAL_STATIC_DMA_BYTES: usize =
+    FRAMEBUFFER_SIZE_BYTES * 2 + AUDIO_DMA_BUFFER_BYTES * 2;
+
+/// Compile-time assertion: static DMA buffers fit in AXI SRAM with 25% headroom.
+///
+/// The remaining 75% (at minimum) is needed for Embassy task stacks, .bss,
+/// .data sections, and heapless collections placed in AXI SRAM.
+///
+/// If this assertion fails:
+/// - Move large caches (library index, album art) to external SDRAM (0xC000_0000)
+/// - Reduce AUDIO_DMA_BUFFER_SAMPLES (each halving saves 16,384 bytes)
+/// - Use single framebuffer (remove the second 96,000-byte display plane)
+const _: () = assert!(
+    TOTAL_STATIC_DMA_BYTES <= AXI_SRAM_SIZE_BYTES * 3 / 4,
+    "Static DMA buffers exceed 75% of AXI SRAM — insufficient headroom for task stacks"
+);
