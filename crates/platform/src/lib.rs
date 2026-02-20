@@ -48,11 +48,12 @@
 //! ```
 
 // ── Lint policy ─────────────────────────────────────────────────────────────
-#![deny(clippy::unwrap_used)]       // no .unwrap() in production code
-#![deny(clippy::expect_used)]       // no .expect() in production code
-#![deny(clippy::panic)]             // no panic!() in production code
-#![deny(clippy::unreachable)]       // no unreachable!() that isn't documented
-#![deny(unused_must_use)]           // all Results must be handled
+#![deny(clippy::unwrap_used)] // no .unwrap() in production code
+#![deny(clippy::expect_used)] // no .expect() in production code
+#![deny(clippy::panic)] // no panic!() in production code
+#![deny(clippy::unreachable)] // no unreachable!() that isn't documented
+#![deny(unused_must_use)]
+// all Results must be handled
 // ────────────────────────────────────────────────────────────────────────────
 #![cfg_attr(not(test), no_std)]
 #![warn(missing_docs)]
@@ -61,7 +62,13 @@
 #![deny(clippy::await_holding_lock)] // holding a blocking Mutex across .await is a bug
 #![deny(unsafe_op_in_unsafe_fn)] // unsafe fn body is not implicitly unsafe block
 #![warn(clippy::print_stdout)] // prefer tracing/defmt over println! in lib code
-#![warn(clippy::dbg_macro)] // dbg! should not be left in committed code
+#![warn(clippy::dbg_macro)]
+// dbg! should not be left in committed code
+// Pedantic lints suppressed for this hardware HAL crate:
+#![allow(clippy::doc_markdown)] // hex addresses and register names in doc comments
+#![allow(clippy::missing_panics_doc)] // statically-valid expect() with safety comments
+#![allow(clippy::must_use_candidate)] // hardware accessors — callers decide
+#![allow(clippy::match_same_arms)] // intentional for readability in DMA access tables
 #![allow(clippy::module_name_repetitions)]
 #![allow(clippy::missing_errors_doc)]
 #![allow(async_fn_in_trait)] // Embassy no_std: single-threaded, Send bounds not needed

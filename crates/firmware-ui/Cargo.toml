@@ -22,6 +22,14 @@ embedded-graphics = { workspace = true }
 # Emulator display wrapper (desktop only)
 eink-emulator = { path = "../eink/eink-emulator", optional = true }
 
+# UI state (NowPlayingState, Navigator, etc.)
+ui = { path = "../ui" }
+
+[dev-dependencies]
+eink-testing = { path = "../eink/eink-testing" }
+ui = { path = "../ui" }
+embedded-graphics = { workspace = true }
+
 [features]
 default = []
 

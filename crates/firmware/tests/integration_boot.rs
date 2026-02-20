@@ -122,16 +122,10 @@ fn test_sdram_timing_applied_correctly() {
     );
 
     // tRP = 15 ns → ceil(15 ns / 10 ns) = 2 cycles at 100 MHz
-    assert_eq!(
-        timing.rp_delay, 2,
-        "rp_delay (tRP) must be 2 at 100 MHz"
-    );
+    assert_eq!(timing.rp_delay, 2, "rp_delay (tRP) must be 2 at 100 MHz");
 
     // tRCD = 15 ns → ceil(15 ns / 10 ns) = 2 cycles at 100 MHz
-    assert_eq!(
-        timing.rc_delay, 2,
-        "rc_delay (tRCD) must be 2 at 100 MHz"
-    );
+    assert_eq!(timing.rc_delay, 2, "rc_delay (tRCD) must be 2 at 100 MHz");
 }
 
 /// Verify the SDRAM refresh counter formula at the W9825G6KH-6 operating point.

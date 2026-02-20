@@ -519,7 +519,11 @@ mod tests {
         );
 
         // Sanity check the bit 4 (32-bit word length) is set.
-        assert_ne!(INPUT_I2S_32BIT & 0b0001_0000, 0, "bit 4 must be set for 32-bit word length");
+        assert_ne!(
+            INPUT_I2S_32BIT & 0b0001_0000,
+            0,
+            "bit 4 must be set for 32-bit word length"
+        );
     }
 
     // ---------------------------------------------------------------------------
@@ -546,7 +550,10 @@ mod tests {
             .await
             .expect("read_reg must succeed");
 
-        assert_eq!(value, 0xAB, "read_reg must return the mocked register value");
+        assert_eq!(
+            value, 0xAB,
+            "read_reg must return the mocked register value"
+        );
         mock.done(); // panics if more than one byte was requested
     }
 
@@ -581,13 +588,13 @@ mod tests {
     #[tokio::test]
     async fn test_set_filter_all_variants() {
         let cases: &[(OversamplingFilter, u8)] = &[
-            (OversamplingFilter::FastRollOffLinearPhase,  0b000),
-            (OversamplingFilter::SlowRollOffLinearPhase,  0b001),
+            (OversamplingFilter::FastRollOffLinearPhase, 0b000),
+            (OversamplingFilter::SlowRollOffLinearPhase, 0b001),
             (OversamplingFilter::FastRollOffMinimumPhase, 0b010),
             (OversamplingFilter::SlowRollOffMinimumPhase, 0b011),
-            (OversamplingFilter::ApodizingFastRollOff,    0b100),
-            (OversamplingFilter::BrickWall,               0b101),
-            (OversamplingFilter::HybridFastRollOff,       0b110),
+            (OversamplingFilter::ApodizingFastRollOff, 0b100),
+            (OversamplingFilter::BrickWall, 0b101),
+            (OversamplingFilter::HybridFastRollOff, 0b110),
         ];
 
         for &(filter, expected_bits) in cases {
@@ -595,7 +602,10 @@ mod tests {
             let mut mock = I2cMock::new(&expectations);
             let mut driver = Es9038q2mDriver::new(mock.clone());
 
-            driver.set_filter(filter).await.expect("set_filter must succeed");
+            driver
+                .set_filter(filter)
+                .await
+                .expect("set_filter must succeed");
             mock.done();
         }
     }

@@ -230,13 +230,15 @@ impl SdramTiming {
     ///
     /// Formula: `cycles = ceil(ns * fmc_hz / 1_000_000_000)`.
     /// Uses integer arithmetic to avoid floating-point in `no_std`.
+    #[must_use]
+    // cycles ≤ ceil(ns*fmc_hz/1e9); for any real SDRAM timing fits in u32.
+    #[allow(clippy::cast_possible_truncation)]
     pub fn ns_to_cycles(ns: u32, fmc_hz: u32) -> u32 {
         // period_ns = 1_000_000_000 / fmc_hz
         // cycles    = ceil(ns / period_ns)
         //           = ceil(ns * fmc_hz / 1_000_000_000)
-        // Integer ceiling: (a + b - 1) / b  where b = 1_000_000_000
-        let numer = ns as u64 * fmc_hz as u64;
-        let cycles = (numer + 999_999_999) / 1_000_000_000;
+        let numer = u64::from(ns) * u64::from(fmc_hz);
+        let cycles = numer.div_ceil(1_000_000_000_u64);
         cycles.max(1) as u32
     }
 
@@ -293,6 +295,8 @@ impl SdramTiming {
     /// - tWR  = 2 CLK min → `write_recovery_time = 2`
     /// - tRP  = 15 ns     → `rp_delay = ceil(15/10) = 2`
     /// - tRCD = 15 ns     → `rc_delay = ceil(15/10) = 2`
+    #[must_use]
+    #[allow(clippy::expect_used)] // statically valid SDRAM timing constants
     pub fn w9825g6kh6_at_100mhz() -> Self {
         Self::new(
             SdramTimingNs {
@@ -357,6 +361,9 @@ impl SdramTiming {
 ///
 /// - STM32H743 Reference Manual §23.7.7 — FMC_SDRTR register description
 /// - W9825G6KH-6 datasheet (Winbond): tREF = 64 ms, 8192 rows
+#[must_use]
+// count ≤ (fmc_hz*refresh_ms)/(rows*1000); at nominal values (~781) fits in u32.
+#[allow(clippy::cast_possible_truncation)]
 pub fn sdram_refresh_count(fmc_hz: u64, rows: u64, refresh_ms: u64) -> u32 {
     // Formula from STM32H7 RM §23.7.7:
     //   COUNT = (SDRAM_CLK_FREQ * refresh_period_ms) / (rows * 1000) - 20

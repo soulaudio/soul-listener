@@ -30,6 +30,8 @@
 //! Step 1: cargo build --package firmware-ui --features hot-reload
 //! Step 2: cargo run --example display_emulator --features emulator,hot-reload
 
+pub mod screens;
+
 #[cfg(feature = "emulator")]
 mod render;
 

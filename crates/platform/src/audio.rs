@@ -139,21 +139,35 @@ mod tests {
 
     #[test]
     fn test_audio_config_rejects_zero_sample_rate() {
-        let cfg = AudioConfig { sample_rate: 0, ..AudioConfig::default() };
+        let cfg = AudioConfig {
+            sample_rate: 0,
+            ..AudioConfig::default()
+        };
         assert!(cfg.validate().is_err(), "sample rate 0 must be invalid");
     }
 
     #[test]
     fn test_audio_config_rejects_out_of_range_sample_rate() {
         // ES9038Q2M supports up to 768000 Hz
-        let cfg = AudioConfig { sample_rate: 1_000_000, ..AudioConfig::default() };
-        assert!(cfg.validate().is_err(), "sample rate >768000 must be invalid");
+        let cfg = AudioConfig {
+            sample_rate: 1_000_000,
+            ..AudioConfig::default()
+        };
+        assert!(
+            cfg.validate().is_err(),
+            "sample rate >768000 must be invalid"
+        );
     }
 
     #[test]
     fn test_audio_config_accepts_valid_sample_rates() {
-        for &sr in &[44_100u32, 48_000, 88_200, 96_000, 176_400, 192_000, 352_800, 384_000, 768_000] {
-            let cfg = AudioConfig { sample_rate: sr, ..AudioConfig::default() };
+        for &sr in &[
+            44_100u32, 48_000, 88_200, 96_000, 176_400, 192_000, 352_800, 384_000, 768_000,
+        ] {
+            let cfg = AudioConfig {
+                sample_rate: sr,
+                ..AudioConfig::default()
+            };
             assert!(cfg.validate().is_ok(), "sample rate {} must be valid", sr);
         }
     }

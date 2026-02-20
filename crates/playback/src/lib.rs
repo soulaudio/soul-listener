@@ -4,6 +4,7 @@
 
 pub mod decoder;
 pub mod engine;
+pub mod mp3_decoder;
 pub mod ring_buffer;
 pub mod volume;
 
@@ -146,7 +147,8 @@ mod tests {
         fn test_ring_buffer_full_returns_err() {
             let mut rb: RingBuffer<8> = RingBuffer::new();
             let data = [0i32; 8];
-            rb.write_slice(&data).expect("filling to capacity should succeed");
+            rb.write_slice(&data)
+                .expect("filling to capacity should succeed");
             // One more should fail
             let result = rb.write_slice(&[42i32]);
             assert!(result.is_err(), "writing past capacity must fail");

@@ -7,7 +7,9 @@ license.workspace = true
 
 [dependencies]
 platform = { path = "../platform" }
+nanomp3 = { workspace = true, optional = true }
 
 [features]
 default = []
 std = []
+mp3 = ["dep:nanomp3"]

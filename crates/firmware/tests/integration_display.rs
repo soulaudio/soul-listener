@@ -31,8 +31,7 @@ fn test_display_constants() {
     assert_eq!(DISPLAY_HEIGHT, 480, "GDEM0397T81P is 480 pixels tall");
     // 1bpp: 800*480/8 = 48000 bytes
     assert_eq!(
-        FRAMEBUFFER_SIZE,
-        48_000,
+        FRAMEBUFFER_SIZE, 48_000,
         "1bpp framebuffer must be 48000 bytes"
     );
 }
@@ -104,7 +103,7 @@ async fn test_sleep_emits_deep_sleep_command() {
     // DeepSleep = 0x10, data = 0x01
     let spi_expectations: Vec<SpiTransaction<u8>> = [
         &spi_device_write(&[0x10_u8]) as &[_], // DeepSleep command byte
-        &spi_device_write(&[0x01]),             // data: preserve RAM
+        &spi_device_write(&[0x01]),            // data: preserve RAM
     ]
     .iter()
     .flat_map(|s| s.iter().cloned())
@@ -120,7 +119,13 @@ async fn test_sleep_emits_deep_sleep_command() {
     let mut rst = idle_pin();
     let mut busy = idle_pin();
 
-    let mut drv = Ssd1677::new(spi.clone(), dc.clone(), rst.clone(), busy.clone(), NoopDelay);
+    let mut drv = Ssd1677::new(
+        spi.clone(),
+        dc.clone(),
+        rst.clone(),
+        busy.clone(),
+        NoopDelay,
+    );
     drv.sleep().await.expect("sleep() must succeed");
 
     spi.done();

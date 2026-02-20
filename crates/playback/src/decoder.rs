@@ -49,6 +49,21 @@ impl PcmFrame {
     }
 }
 
+impl Default for PcmFrame {
+    /// Create a zeroed `PcmFrame` with `sample_rate` and `channels` both set
+    /// to 0.  Prefer [`PcmFrame::zeroed`] in production code where 44.1 kHz
+    /// stereo defaults are appropriate; use `Default` in tests where the
+    /// initial metadata values must be observable.
+    fn default() -> Self {
+        Self {
+            samples: [0i32; 4096],
+            len: 0,
+            sample_rate: 0,
+            channels: 0,
+        }
+    }
+}
+
 /// Errors that a [`FrameDecoder`] may return.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum DecodeError {

@@ -21,18 +21,19 @@ async fn test_mock_dac_implements_audio_codec() {
     let config = AudioConfig::default();
 
     // init should succeed
-    dac.init(config).await.expect("mock DAC init should succeed");
+    dac.init(config)
+        .await
+        .expect("mock DAC init should succeed");
 
     // volume 0-100 should succeed
     dac.set_volume(0).await.expect("volume 0 should succeed");
-    dac.set_volume(100).await.expect("volume 100 should succeed");
+    dac.set_volume(100)
+        .await
+        .expect("volume 100 should succeed");
     dac.set_volume(50).await.expect("volume 50 should succeed");
 
     // volume > 100 should fail
-    assert!(
-        dac.set_volume(101).await.is_err(),
-        "volume 101 must fail"
-    );
+    assert!(dac.set_volume(101).await.is_err(), "volume 101 must fail");
 }
 
 /// Verify AudioConfig validation is enforced before driver use

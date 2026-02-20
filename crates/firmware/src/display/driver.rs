@@ -337,12 +337,11 @@ where
     /// - Counters: start at X=0, Y=479 (logical top-left)
     async fn set_full_window(&mut self) -> Result<(), DisplayError> {
         let x_end_byte = (BYTES_PER_ROW as u8).saturating_sub(1); // 99
-        // Both inputs are compile-time constants within valid range; the
-        // `ok_or` guard satisfies the bounds-checked API without runtime cost.
-        let y_start_ram = Self::y_to_ram(0)
-            .ok_or(DisplayError::InvalidCoordinate)?; // 479 = 0x01DF
-        let y_end_ram = Self::y_to_ram(DISPLAY_HEIGHT as u16 - 1)
-            .ok_or(DisplayError::InvalidCoordinate)?; // 0
+                                                                  // Both inputs are compile-time constants within valid range; the
+                                                                  // `ok_or` guard satisfies the bounds-checked API without runtime cost.
+        let y_start_ram = Self::y_to_ram(0).ok_or(DisplayError::InvalidCoordinate)?; // 479 = 0x01DF
+        let y_end_ram =
+            Self::y_to_ram(DISPLAY_HEIGHT as u16 - 1).ok_or(DisplayError::InvalidCoordinate)?; // 0
 
         self.set_ram_x_range(0x00, x_end_byte).await?;
         self.set_ram_y_range_raw(y_start_ram, y_end_ram).await?;
@@ -841,7 +840,13 @@ mod tests {
         let mut rst = idle_pin();
         let mut busy = idle_pin();
 
-        let mut drv = Ssd1677::new(spi.clone(), dc.clone(), rst.clone(), busy.clone(), NoopDelay);
+        let mut drv = Ssd1677::new(
+            spi.clone(),
+            dc.clone(),
+            rst.clone(),
+            busy.clone(),
+            NoopDelay,
+        );
         drv.sleep().await.unwrap();
 
         spi.done();
@@ -1075,7 +1080,7 @@ mod tests {
         let dc_expectations: Vec<PinTransaction> = {
             let mut v = vec![PinTransaction::set(PinState::Low)]; // SoftReset cmd
             for _ in 0..11 {
-                v.push(PinTransaction::set(PinState::Low));  // cmd
+                v.push(PinTransaction::set(PinState::Low)); // cmd
                 v.push(PinTransaction::set(PinState::High)); // data
             }
             v
@@ -1142,8 +1147,7 @@ mod tests {
     fn test_framebuffer_size() {
         // 1bpp: 800×480 / 8 = 48 000 bytes
         assert_eq!(
-            FRAMEBUFFER_SIZE_1BPP,
-            48_000,
+            FRAMEBUFFER_SIZE_1BPP, 48_000,
             "1bpp framebuffer must be 48 000 bytes"
         );
         assert_eq!(BYTES_PER_ROW, 100, "bytes per row must be 100 (800/8)");
@@ -1376,10 +1380,9 @@ mod tests {
         use std::io::ErrorKind;
 
         // One failing read — simulates a GPIO bus error.
-        let busy_txns = [
-            PinTransaction::get(PinState::High)
-                .with_error(MockError::Io(ErrorKind::NotConnected)),
-        ];
+        let busy_txns =
+            [PinTransaction::get(PinState::High)
+                .with_error(MockError::Io(ErrorKind::NotConnected))];
 
         let mut spi_handle = SpiMock::new(&[]);
         let mut dc_handle = idle_pin();
