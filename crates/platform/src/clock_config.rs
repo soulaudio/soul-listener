@@ -120,6 +120,7 @@ pub const SOUL_AUDIO_CLOCK_REQUIREMENTS: &[ClockRequirement] = &[
 // ─── Tests ───────────────────────────────────────────────────────────────────
 
 #[cfg(test)]
+#[allow(clippy::expect_used, clippy::assertions_on_constants)]
 mod tests {
     use super::*;
 
