@@ -56,8 +56,7 @@ fn unmute_dac_only_from_amp_enabled_state() {
 fn power_down_sequence_is_enforced() {
     use platform::audio_sequencer::DacOutputting;
     let seq: AudioPowerSequencer<DacOutputting> = AudioPowerSequencer::new();
-    let fully_on: AudioPowerSequencer<FullyOn> =
-        seq.mute_dac().enable_amp().unmute_dac();
+    let fully_on: AudioPowerSequencer<FullyOn> = seq.mute_dac().enable_amp().unmute_dac();
     // Power down: mute first, then disable amp
     let muted = fully_on.mute_dac_for_shutdown();
     let _off: AudioPowerSequencer<DacOutputting> = muted.disable_amp();

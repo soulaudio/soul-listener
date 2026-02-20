@@ -6,7 +6,6 @@
 // TODO: Add rustdoc to all public items (tracked as tech debt)
 #![allow(missing_docs)]
 
-
 pub mod decoder;
 pub mod engine;
 pub mod mp3_decoder;

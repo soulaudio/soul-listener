@@ -41,7 +41,8 @@
 #![allow(clippy::no_effect_underscore_binding)]
 #![allow(clippy::unused_self)]
 #![allow(clippy::explicit_iter_loop)]
-#![allow(clippy::unreadable_literal)] // hex ARGB color constants in debug.rs
+#![allow(clippy::unreadable_literal)]
+// hex ARGB color constants in debug.rs
 // TODO: Add rustdoc to all public items (tracked as tech debt)
 #![allow(missing_docs)]
 

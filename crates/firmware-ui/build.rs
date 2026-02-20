@@ -33,8 +33,7 @@ fn main() {
     // This string must exactly mirror the parameter types of the `render_ui`
     // function in src/lib.rs. Update it whenever the signature changes, and
     // bump ABI_VERSION at the same time.
-    let render_ui_signature =
-        "render_ui(emulator_ptr: *mut eink_emulator::Emulator) -> ()";
+    let render_ui_signature = "render_ui(emulator_ptr: *mut eink_emulator::Emulator) -> ()";
 
     let hash = fnv1a_32(render_ui_signature);
     println!("cargo:rustc-env=RENDER_UI_SIGNATURE_HASH={hash:08x}");
