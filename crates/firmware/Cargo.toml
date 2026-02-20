@@ -111,6 +111,7 @@ debug = [
 keyboard-input = [
     "emulator",
     "eink-emulator/keyboard-input",
+    "firmware-ui",
 ]
 
 # True in-process hot-reload using hot-lib-reloader.

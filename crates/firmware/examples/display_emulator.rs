@@ -26,6 +26,18 @@ use tracing_subscriber::EnvFilter;
 use firmware::EmulatorDisplay;
 use platform::config;
 
+#[cfg(all(feature = "keyboard-input", not(feature = "hot-reload")))]
+use firmware::input::{Button, InputEvent};
+#[cfg(all(feature = "keyboard-input", not(feature = "hot-reload")))]
+use ui::navigation::Navigator;
+#[cfg(all(feature = "keyboard-input", not(feature = "hot-reload")))]
+use ui::screen::Screen;
+#[cfg(all(feature = "keyboard-input", not(feature = "hot-reload")))]
+use ui::now_playing::NowPlayingState;
+#[cfg(all(feature = "keyboard-input", not(feature = "hot-reload")))]
+#[allow(unused_imports)]
+use firmware_ui::screens::now_playing::render_now_playing_to;
+
 // The #[hot_module] attribute macro (hot-lib-reloader 0.8) generates
 // a mod with hot-reloadable wrappers for the dylib functions.
 // Build the dylib FIRST: cargo build --package firmware-ui --features hot-reload
@@ -40,6 +52,69 @@ mod hot_ui {
 
     #[lib_change_subscription]
     pub fn subscribe() -> hot_lib_reloader::LibReloadObserver {}
+}
+
+#[cfg(all(feature = "keyboard-input", not(feature = "hot-reload")))]
+struct AppState {
+    now_playing: NowPlayingState,
+    nav: Navigator,
+    needs_redraw: bool,
+}
+
+#[cfg(all(feature = "keyboard-input", not(feature = "hot-reload")))]
+impl Default for AppState {
+    fn default() -> Self {
+        let mut now_playing = NowPlayingState::default();
+        now_playing.title.push_str("Sample Track").ok();
+        now_playing.artist.push_str("Sample Artist").ok();
+        now_playing.set_duration_ms(180_000); // 3 minutes demo
+        AppState {
+            now_playing,
+            nav: Navigator::new(),
+            needs_redraw: true,
+        }
+    }
+}
+
+#[cfg(all(feature = "keyboard-input", not(feature = "hot-reload")))]
+impl AppState {
+    fn handle_input(&mut self, ev: InputEvent) {
+        match ev {
+            InputEvent::ButtonPress(Button::Play) => {
+                self.now_playing.set_playing(!self.now_playing.playing);
+                self.needs_redraw = true;
+            }
+            InputEvent::ButtonPress(Button::VolumeUp) => {
+                self.now_playing.set_volume(self.now_playing.volume.saturating_add(5));
+                self.needs_redraw = true;
+            }
+            InputEvent::ButtonPress(Button::VolumeDown) => {
+                self.now_playing.set_volume(self.now_playing.volume.saturating_sub(5));
+                self.needs_redraw = true;
+            }
+            InputEvent::ButtonPress(Button::Menu) => {
+                self.nav.push(Screen::LibraryBrowse);
+                self.needs_redraw = true;
+            }
+            InputEvent::ButtonPress(Button::Back) => {
+                self.nav.back();
+                self.needs_redraw = true;
+            }
+            InputEvent::RotaryIncrement(steps) => {
+                if steps > 0 {
+                    let delta = (steps.unsigned_abs() as u8).min(50) * 2;
+                    self.now_playing
+                        .set_volume(self.now_playing.volume.saturating_add(delta));
+                } else {
+                    let delta = (steps.unsigned_abs() as u8).min(50) * 2;
+                    self.now_playing
+                        .set_volume(self.now_playing.volume.saturating_sub(delta));
+                }
+                self.needs_redraw = true;
+            }
+            _ => {} // ButtonRelease and unmapped events are ignored
+        }
+    }
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -197,6 +272,110 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     Ok(())
+}
+
+#[cfg(all(test, feature = "keyboard-input"))]
+mod tests {
+    use super::*;
+
+    fn make_state() -> AppState {
+        AppState {
+            now_playing: NowPlayingState::default(),
+            nav: Navigator::new(),
+            needs_redraw: false,
+        }
+    }
+
+    #[test]
+    fn play_button_toggles_playing() {
+        let mut s = make_state();
+        assert!(!s.now_playing.playing);
+        s.handle_input(InputEvent::ButtonPress(Button::Play));
+        assert!(s.now_playing.playing);
+        assert!(s.needs_redraw);
+    }
+
+    #[test]
+    fn play_button_twice_toggles_back() {
+        let mut s = make_state();
+        s.handle_input(InputEvent::ButtonPress(Button::Play));
+        s.handle_input(InputEvent::ButtonPress(Button::Play));
+        assert!(!s.now_playing.playing);
+    }
+
+    #[test]
+    fn volume_up_increments_by_5() {
+        let mut s = make_state();
+        let before = s.now_playing.volume;
+        s.handle_input(InputEvent::ButtonPress(Button::VolumeUp));
+        assert_eq!(s.now_playing.volume, before + 5);
+        assert!(s.needs_redraw);
+    }
+
+    #[test]
+    fn volume_down_decrements_by_5() {
+        let mut s = make_state();
+        s.now_playing.set_volume(50);
+        s.handle_input(InputEvent::ButtonPress(Button::VolumeDown));
+        assert_eq!(s.now_playing.volume, 45);
+    }
+
+    #[test]
+    fn volume_does_not_underflow() {
+        let mut s = make_state();
+        s.now_playing.set_volume(2);
+        s.handle_input(InputEvent::ButtonPress(Button::VolumeDown));
+        assert_eq!(s.now_playing.volume, 0);
+    }
+
+    #[test]
+    fn volume_does_not_overflow() {
+        let mut s = make_state();
+        s.now_playing.set_volume(98);
+        s.handle_input(InputEvent::ButtonPress(Button::VolumeUp));
+        assert_eq!(s.now_playing.volume, 100);
+    }
+
+    #[test]
+    fn encoder_up_increases_volume() {
+        let mut s = make_state();
+        s.now_playing.set_volume(50);
+        s.handle_input(InputEvent::RotaryIncrement(1));
+        assert!(s.now_playing.volume > 50);
+        assert!(s.needs_redraw);
+    }
+
+    #[test]
+    fn encoder_down_decreases_volume() {
+        let mut s = make_state();
+        s.now_playing.set_volume(50);
+        s.handle_input(InputEvent::RotaryIncrement(-1));
+        assert!(s.now_playing.volume < 50);
+    }
+
+    #[test]
+    fn menu_button_pushes_library_screen() {
+        let mut s = make_state();
+        assert_eq!(s.nav.current(), Screen::NowPlaying);
+        s.handle_input(InputEvent::ButtonPress(Button::Menu));
+        assert_eq!(s.nav.current(), Screen::LibraryBrowse);
+    }
+
+    #[test]
+    fn back_button_pops_nav_stack() {
+        let mut s = make_state();
+        s.handle_input(InputEvent::ButtonPress(Button::Menu));
+        s.handle_input(InputEvent::ButtonPress(Button::Back));
+        assert_eq!(s.nav.current(), Screen::NowPlaying);
+    }
+
+    #[test]
+    fn button_release_events_are_ignored() {
+        let mut s = make_state();
+        s.handle_input(InputEvent::ButtonRelease(Button::Play));
+        assert!(!s.now_playing.playing);
+        assert!(!s.needs_redraw);
+    }
 }
 
 /// Register named DAP scene components with the debug inspector.
