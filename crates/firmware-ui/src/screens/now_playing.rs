@@ -131,7 +131,11 @@ where
     // ── Play/Pause button ─────────────────────────────────────────────────
     let btn_h = 40u32;
     let btn_w = 100u32;
+    // SAFETY: display dimensions (800×480) are far below i32::MAX; wrapping is impossible.
+    #[allow(clippy::cast_possible_wrap)]
     let btn_y = (h as i32).saturating_sub(80);
+    // SAFETY: display dimensions (800×480) are far below i32::MAX; wrapping is impossible.
+    #[allow(clippy::cast_possible_wrap)]
     let btn_x = ((w as i32).saturating_sub(btn_w as i32)) / 2;
     let btn_label = if state.playing { "Pause" } else { "Play" };
 

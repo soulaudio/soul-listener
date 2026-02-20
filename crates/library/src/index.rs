@@ -157,7 +157,10 @@ mod tests {
         let mut digits = [0u8; 20];
         let mut count = 0;
         while n > 0 {
-            digits[count] = (n % 10) as u8;
+            // SAFETY: n % 10 is always in the range 0..=9 which fits in u8.
+            #[allow(clippy::cast_possible_truncation)]
+            let digit = (n % 10) as u8;
+            digits[count] = digit;
             n /= 10;
             count += 1;
         }
