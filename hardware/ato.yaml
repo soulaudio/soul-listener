@@ -24,16 +24,19 @@ builds:
       - PCB.requires_drc_check
 
   # ── check-only ────────────────────────────────────────────────────────────
-  # Schematic + ERC validation only (assert statements), no output generation.
+  # Schematic + ERC validation only (assert statements), no BOM/PCB output.
   # Used in CI: `ato build --build check-only`.
   #
-  # targets: [] (empty) — run assert/ERC checks without generating any output
-  # files.  Using targets: [bom] causes ato 0.12.5 to hang indefinitely when
-  # processing custom atomic parts (is_atomic_part<> trait) during BOM
-  # generation; the empty-targets form skips all output and completes quickly.
+  # targets: [bom] — REQUIRED for correct stdlib initialization in CI.
+  #   - Initializes atopile in BOM mode (no KiCad installation needed).
+  #   - Registers Electrical/ElectricPower/Capacitor/Resistor stdlib types.
+  # DO NOT use targets: [] — that triggers full KiCad build mode which fails
+  # on CI runners without KiCad installed ("Initializing app" fails and stdlib
+  # types are never registered → "No class found for Electrical" on every file).
   check-only:
     entry: elec/src/main.ato:SoulAudioDAP
-    targets: []
+    targets:
+      - bom
     exclude_checks:
       - PCB.requires_drc_check
 
@@ -58,54 +61,63 @@ builds:
   # additionally verified by the full check-only target which propagates
   # voltages across module boundaries via main.ato.
   #
-  # targets: [] (empty) — validate asserts without generating BOM output.
-  # See check-only comment above for why targets: [bom] is avoided.
+  # targets: [bom] — see check-only comment above for why this is required.
+  # DO NOT use targets: [] — triggers KiCad full-build mode initialization
+  # which fails on CI without KiCad installed.
   #
   # Run a single module: ato build --build check-power
   check-power:
     entry: elec/src/power.ato:Power
-    targets: []
+    targets:
+      - bom
     exclude_checks:
       - PCB.requires_drc_check
 
   check-mcu:
     entry: elec/src/mcu.ato:MCU
-    targets: []
+    targets:
+      - bom
     exclude_checks:
       - PCB.requires_drc_check
 
   check-audio:
     entry: elec/src/audio.ato:Audio
-    targets: []
+    targets:
+      - bom
     exclude_checks:
       - PCB.requires_drc_check
 
   check-display:
     entry: elec/src/display.ato:Display
-    targets: []
+    targets:
+      - bom
     exclude_checks:
       - PCB.requires_drc_check
 
   check-bluetooth:
     entry: elec/src/bluetooth.ato:Bluetooth
-    targets: []
+    targets:
+      - bom
     exclude_checks:
       - PCB.requires_drc_check
 
   check-memory:
     entry: elec/src/memory.ato:Memory
-    targets: []
+    targets:
+      - bom
     exclude_checks:
       - PCB.requires_drc_check
 
   check-input:
     entry: elec/src/input.ato:Input
-    targets: []
+    targets:
+      - bom
     exclude_checks:
       - PCB.requires_drc_check
 
   check-clock:
     entry: elec/src/clock.ato:HseClock
-    targets: []
+    targets:
+      - bom
     exclude_checks:
       - PCB.requires_drc_check
