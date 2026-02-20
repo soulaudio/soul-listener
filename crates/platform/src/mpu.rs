@@ -403,6 +403,30 @@ impl SoulAudioMpuConfig {
         MpuRegion::new(0x3800_0000, 64 * 1024, MpuAttributes::NonCacheable)
             .expect("SRAM4 MPU region parameters are statically valid")
     }
+
+    /// SRAM1+SRAM2 non-cacheable region — 256 KB at 0x3000_0000.
+    ///
+    /// SRAM1 and SRAM2 are in the D2 domain. DMA1 and DMA2 can access them
+    /// via the AHB bus matrix. Embassy task stacks and heapless collections
+    /// live here. Without an MPU non-cacheable region, the Cortex-M7 D-cache
+    /// serves stale CPU data while DMA sees the uncached version — silent
+    /// data corruption on any SDMMC descriptor table or similar DMA use.
+    ///
+    /// SRAM1: 128 KB at 0x3000_0000
+    /// SRAM2: 128 KB at 0x3002_0000
+    /// Combined: 256 KB, base 0x3000_0000, power-of-2 aligned.
+    ///
+    /// Reference: ST AN4839, STM32H743ZI DS12110 Rev 9 Table 4.
+    ///
+    /// Attributes:  (TEX=001, S=0, C=0, B=0)
+    #[must_use]
+    pub fn sram12_dma_region() -> MpuRegion {
+        // Safety: 0x3000_0000 is a 256 KB-aligned address (256*1024 = 0x40000,
+        // 0x3000_0000 % 0x40000 == 0). Parameters are statically correct.
+        #[allow(clippy::expect_used)]
+        MpuRegion::new(0x3000_0000, 256 * 1024, MpuAttributes::NonCacheable)
+            .expect("SRAM1/2 MPU region parameters are statically valid")
+    }
 }
 
 /// Pure register-value computation for the Cortex-M7 MPU.
@@ -511,6 +535,7 @@ impl MpuApplier {
     /// |-------|----------|-------------|--------|------|-------------|-------------|
     /// | 0     | AXI SRAM | 0x2400_0000 | 512 KB | 0    | 0x2400_0010 | 0x1308_0025 |
     /// | 1     | SRAM4    | 0x3800_0000 |  64 KB | 1    | 0x3800_0011 | 0x1308_001F |
+    /// | 2     | SRAM1/2  | 0x3000_0000 | 256 KB | 2    | 0x3000_0012 | 0x1308_0023 |
     ///
     /// Apply pair 0 first, then pair 1. This ordering must be maintained
     /// so that the primary DMA pool (AXI SRAM) is configured before BDMA-only
@@ -523,9 +548,10 @@ impl MpuApplier {
     /// responsible for writing these pairs to the actual MPU RBAR/RASR registers
     /// before enabling D-cache and before any DMA peripheral is initialised.
     #[must_use]
-    pub fn soul_audio_register_pairs() -> [(u32, u32); 2] {
+    pub fn soul_audio_register_pairs() -> [(u32, u32); 3] {
         let axi_region = SoulAudioMpuConfig::axi_sram_dma_region();
         let sram4_region = SoulAudioMpuConfig::sram4_bdma_region();
+        let sram12_region = SoulAudioMpuConfig::sram12_dma_region();
 
         #[allow(clippy::expect_used)]
         let axi_size =
@@ -533,6 +559,9 @@ impl MpuApplier {
         #[allow(clippy::expect_used)]
         let sram4_size =
             MpuRegion::encode_size(sram4_region.size()).expect("SRAM4 size is statically valid");
+        #[allow(clippy::expect_used)]
+        let sram12_size =
+            MpuRegion::encode_size(sram12_region.size()).expect("SRAM1/2 size is statically valid");
 
         [
             (
@@ -542,6 +571,10 @@ impl MpuApplier {
             (
                 Self::rbar(sram4_region.base(), 1),
                 Self::non_cacheable_rasr(sram4_size),
+            ),
+            (
+                Self::rbar(sram12_region.base(), 2),
+                Self::non_cacheable_rasr(sram12_size),
             ),
         ]
     }
@@ -721,8 +754,8 @@ mod apply_tests {
         let pairs = MpuApplier::soul_audio_register_pairs();
         assert_eq!(
             pairs.len(),
-            2,
-            "SoulAudioMpuConfig must configure exactly 2 MPU regions (AXI SRAM + SRAM4)"
+            3,
+            "SoulAudioMpuConfig must configure exactly 3 MPU regions (AXI SRAM + SRAM4 + SRAM1/2)"
         );
     }
 
@@ -815,7 +848,7 @@ mod apply_tests {
         let pairs = MpuApplier::soul_audio_register_pairs();
         mpu.apply_pairs(&pairs);
 
-        assert_eq!(mpu.writes.len(), 2, "Expected exactly 2 MPU region writes");
+        assert_eq!(mpu.writes.len(), 3, "Expected exactly 3 MPU region writes");
 
         // First write: AXI SRAM — base 0x2400_0000, region slot 0
         // RBAR = 0x2400_0000 | VALID(bit4)=0x10 | REGION=0 = 0x2400_0010
@@ -839,6 +872,19 @@ mod apply_tests {
         assert_eq!(
             rasr1, 0x1308_001F,
             "Second write RASR must be SRAM4 NonCacheable 64 KB (0x1308_001F)"
+        );
+
+        // Third write: SRAM1/2 at 0x3000_0000, region slot 2
+        // RBAR = 0x3000_0000 | VALID(bit4)=0x10 | REGION=2 = 0x3000_0012
+        // RASR: NON_CACHEABLE_ATTR_MASK | (SIZE=17 << 1) | ENABLE = 0x1308_0023
+        let (rbar2, rasr2) = mpu.writes[2];
+        assert_eq!(
+            rbar2, 0x3000_0012,
+            "Third write RBAR must be SRAM1/2 at slot 2 (0x3000_0012)"
+        );
+        assert_eq!(
+            rasr2, 0x1308_0023,
+            "Third write RASR must be SRAM1/2 NonCacheable 256 KB (0x1308_0023)"
         );
     }
 }
