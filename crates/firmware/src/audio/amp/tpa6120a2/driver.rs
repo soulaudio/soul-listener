@@ -21,6 +21,7 @@ impl<P: OutputPin> Tpa6120a2<P> {
     ///
     /// Takes ownership of the `SHUTDOWN` GPIO pin and immediately drives it
     /// low, placing the amplifier in shutdown (disabled) state.
+    #[allow(clippy::expect_used)] // hardware init panic is intentional — firmware cannot continue without SHUTDOWN pin
     pub fn new(mut shutdown_pin: P) -> Self {
         // Drive low on construction — amplifier starts disabled.
         // Panics on GPIO failure: if SHUTDOWN cannot be driven low during init,
@@ -62,6 +63,7 @@ impl<P: OutputPin> AmpDriver for Tpa6120a2<P> {
 // ---------------------------------------------------------------------------
 
 #[cfg(test)]
+#[allow(clippy::unwrap_used)]
 mod tests {
     use super::*;
     use embedded_hal_mock::eh1::digital::{

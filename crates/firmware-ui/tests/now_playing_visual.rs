@@ -24,6 +24,7 @@ fn mock_state() -> NowPlayingState {
 /// the double-borrow problem (drawing borrows via DerefMut, registration
 /// borrows TestEmulator directly).
 fn render(t: &mut TestEmulator, state: &NowPlayingState) {
+    #[allow(clippy::type_complexity)]
     let mut regs: Vec<(String, String, (i32, i32), (u32, u32))> = Vec::new();
     firmware_ui::screens::now_playing::render_now_playing_to(
         &mut **t,

@@ -53,12 +53,7 @@ fn platform_hal_is_independent() {
     fn _assert_input_trait_exists<T: platform::InputDevice>() {}
     fn _assert_audio_trait_exists<T: platform::AudioCodec>() {}
 
-    // The trait-existence assertions above are sufficient. This runtime check
-    // is just a placeholder so the test body is non-empty.
-    assert!(
-        true,
-        "platform HAL compiled without firmware dependencies — boundary intact"
-    );
+    // Compile-only check — if this test compiles, the boundary is intact.
 }
 
 /// Verify that the `ui` crate's `Navigator` starts at `NowPlaying` and
@@ -489,6 +484,7 @@ fn main_does_not_use_default_config() {
 /// rather than `time-driver-any`. `time-driver-any` selects an arbitrary
 /// timer at link time; `time-driver-tim2` pins TIM2 deterministically on the
 /// STM32H743, avoiding conflicts with audio (TIM1/TIM8) and PWM timers.
+#[allow(clippy::assertions_on_constants)]
 #[test]
 fn time_driver_is_explicit_tim2() {
     assert!(

@@ -298,6 +298,11 @@ impl<I: I2c> AudioCodec for Es9038q2mDriver<I> {
 // ---------------------------------------------------------------------------
 
 #[cfg(test)]
+#[allow(
+    clippy::unwrap_used,
+    clippy::expect_used,
+    clippy::manual_range_contains
+)]
 mod tests {
     //! Host-side tests for the ES9038Q2M driver.
     //!

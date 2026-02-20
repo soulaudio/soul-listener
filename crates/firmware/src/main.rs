@@ -17,7 +17,7 @@ use platform::DisplayDriver;
 use firmware::input::builder::InputBuilder;
 use firmware::input::hardware::spawn_input_task;
 use firmware::ui::{SplashScreen, TestPattern};
-use firmware::{DapDisplay, Ssd1677Display, DISPLAY_HEIGHT, DISPLAY_WIDTH, FRAMEBUFFER_SIZE};
+use firmware::{Ssd1677Display, DISPLAY_HEIGHT, DISPLAY_WIDTH, FRAMEBUFFER_SIZE};
 
 // Panic handler
 use panic_probe as _;

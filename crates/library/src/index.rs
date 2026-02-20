@@ -77,6 +77,7 @@ impl<const N: usize> Default for TrackIndex<N> {
 }
 
 #[cfg(test)]
+#[allow(clippy::unwrap_used)]
 mod tests {
     use super::*;
     use crate::track::{AudioFormat, Track};
