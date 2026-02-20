@@ -74,6 +74,7 @@ pub mod asset_store;
 pub mod audio;
 pub mod audio_config;
 pub mod audio_types;
+pub mod audio_sequencer;
 pub mod bluetooth;
 pub mod clock_config;
 pub mod config;
