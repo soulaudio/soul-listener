@@ -48,6 +48,19 @@
 #![allow(clippy::module_name_repetitions)]
 // TODO: Add rustdoc to all public items (tracked as tech debt)
 #![allow(missing_docs)]
+// This is a desktop testing library: panic/unwrap/expect are intentional assertion
+// mechanisms, and graphics math routinely casts between coordinate types.
+#![allow(
+    clippy::unwrap_used,
+    clippy::expect_used,
+    clippy::panic,
+    clippy::unwrap_in_result,
+    clippy::cast_possible_truncation,
+    clippy::cast_possible_wrap,
+    clippy::cast_sign_loss,
+    clippy::arithmetic_side_effects,
+    clippy::indexing_slicing,
+)]
 
 use std::path::Path;
 

@@ -556,6 +556,10 @@ pub fn rcc_config_has_pll3_for_sai() -> bool {
 /// Architecture tests assert both sources agree, catching any drift between
 /// the hardware config and the platform documentation constants.
 pub fn sai_pll3_divisors() -> (u8, u8, u8) {
+    // pll3_n() returns u16; the actual PLL3 N value is in range 4–512 per RM0433.
+    // The function returns (u8, u8, u8) for compact storage; callers that need the
+    // full u16 range should use SaiAudioConfig::pll3_n() directly.
+    #[allow(clippy::cast_possible_truncation)]
     (
         platform::audio_config::SaiAudioConfig::pll3_m(),
         platform::audio_config::SaiAudioConfig::pll3_n() as u8,

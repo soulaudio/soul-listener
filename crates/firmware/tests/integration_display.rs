@@ -1,4 +1,14 @@
 //! Display integration tests — verify the display driver stack.
+// Integration test file: expect/unwrap/panic are intentional test mechanisms.
+#![allow(
+    clippy::unwrap_used,
+    clippy::expect_used,
+    clippy::panic,
+    clippy::cast_possible_truncation,
+    clippy::cast_possible_wrap,
+    clippy::cast_sign_loss,
+    clippy::cast_lossless,
+)]
 //!
 //! Verifies public constants and driver behaviour accessible from outside
 //! the firmware crate.

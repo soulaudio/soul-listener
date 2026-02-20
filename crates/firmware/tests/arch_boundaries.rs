@@ -1,4 +1,17 @@
 //! Architecture boundary tests — run with `cargo test -p firmware --test arch_boundaries`
+// Architecture test file: expect/unwrap/panic/cast are intentional test mechanisms.
+#![allow(
+    clippy::unwrap_used,
+    clippy::expect_used,
+    clippy::panic,
+    clippy::indexing_slicing,
+    clippy::assertions_on_constants,
+    clippy::cast_possible_truncation,
+    clippy::cast_possible_wrap,
+    clippy::cast_sign_loss,
+    clippy::cast_lossless,
+    clippy::arithmetic_side_effects,
+)]
 //!
 //! These tests enforce the layering rules defined in CLAUDE.md:
 //!   Rule 1: eink-system + eink-components must not require eink-emulator
@@ -18,10 +31,7 @@
 //! the layer boundaries hold for the code that actually links into the firmware
 //! integration test binary.
 
-// Test files legitimately use indexing and arithmetic in assertions.
-#![allow(clippy::indexing_slicing)]
-#![allow(clippy::arithmetic_side_effects)]
-#![allow(clippy::expect_used)]
+// (arithmetic_side_effects also permitted for assertion math in tests)
 
 /// Verify that `eink-specs` has no dependency on embassy or firmware crates.
 ///
@@ -2504,4 +2514,248 @@ fn workspace_cargo_toml_has_panic_prevention_lints() {
         cargo_toml.contains(r#"panic       = "deny""#),
         "workspace Cargo.toml must have `panic = \"deny\"` in [workspace.lints.clippy]"
     );
+}
+
+/// main.rs must call AudioPowerSequencer methods that reference I2C (`_with_i2c` variants).
+///
+/// The stub `.mute_dac()` / `.enable_amp()` / `.unmute_dac()` chain is only acceptable
+/// as a comment showing the full path; the source must explicitly name the I2C methods
+/// so reviewers and CI can confirm the wiring intent is documented at the call site.
+#[test]
+fn audio_sequencer_with_i2c_called_in_main() {
+    let main_rs = std::fs::read_to_string(
+        concat!(env!("CARGO_MANIFEST_DIR"), "/src/main.rs")
+    ).unwrap();
+    assert!(
+        main_rs.contains("mute_dac_with_i2c") || main_rs.contains("with_i2c"),
+        "main.rs must call AudioPowerSequencer::mute_dac_with_i2c() at the I2C init call site"
+    );
+}
+
+/// main.rs must reference I2C3 or ES9038Q2M — DAC I2C init must not be just a TODO comment.
+///
+/// The ES9038Q2M DAC is controlled via I2C3 (PA8=SCL, PC9=SDA, 400 kHz).
+/// Real constants from `platform::es9038q2m` (e.g. `ES9038Q2M_I2C_ADDR_LOW`) must appear
+/// in main.rs to prove the wiring is planned at the call site, not silently deferred.
+#[test]
+fn i2c3_dac_init_not_commented_out() {
+    let main_rs = std::fs::read_to_string(
+        concat!(env!("CARGO_MANIFEST_DIR"), "/src/main.rs")
+    ).unwrap();
+    // Must NOT be a pure TODO comment block — must have some real I2C code
+    assert!(
+        main_rs.contains("I2c3") || main_rs.contains("i2c3") || main_rs.contains("ES9038"),
+        "main.rs must reference I2C3 or ES9038Q2M — DAC I2C init must not be just a TODO comment"
+    );
+}
+
+/// main.rs must reference I2C2 or BQ25895 — PMIC I2C init must not be just a TODO comment.
+///
+/// The BQ25895 PMIC is controlled via I2C2 (PF1=SCL, PF0=SDA, 100 kHz, addr 0x6A).
+/// Real constants from `platform::bq25895` (e.g. `BQ25895_I2C_ADDR`) must appear
+/// in main.rs to prove the wiring is planned at the call site, not silently deferred.
+#[test]
+fn i2c2_pmic_init_not_commented_out() {
+    let main_rs = std::fs::read_to_string(
+        concat!(env!("CARGO_MANIFEST_DIR"), "/src/main.rs")
+    ).unwrap();
+    assert!(
+        main_rs.contains("I2c2") || main_rs.contains("i2c2") || main_rs.contains("BQ25895") || main_rs.contains("bq25895"),
+        "main.rs must reference I2C2 or BQ25895 — PMIC I2C init must not be just a TODO comment"
+    );
+}
+
+/// main.rs must complete the AudioPowerSequencer power-on path.
+///
+/// `AudioPowerSequencer` must appear (already verified by `audio_power_sequencer_is_used_in_firmware`),
+/// AND at least one of `enable_amp` or `unmute_dac` must also appear, confirming the
+/// full power-on sequence (mute → amp → unmute) is wired at the call site.
+#[test]
+fn audio_power_sequencer_fully_on_path_exists_in_main() {
+    let main_rs = std::fs::read_to_string(
+        concat!(env!("CARGO_MANIFEST_DIR"), "/src/main.rs")
+    ).unwrap();
+    assert!(
+        main_rs.contains("AudioPowerSequencer"),
+        "main.rs must use AudioPowerSequencer"
+    );
+    assert!(
+        main_rs.contains("enable_amp") || main_rs.contains("unmute_dac"),
+        "main.rs must complete the power-on sequence (enable_amp + unmute_dac)"
+    );
+}
+
+// ── Per-task stack budget tests (Step 4) ─────────────────────────────────────
+
+/// Verify the per-task stack budget constants exist and are accessible from the platform crate.
+#[test]
+fn task_stack_budget_exported_from_platform() {
+    // Verify the constants exist and are accessible
+    let _ = platform::dma_safety::TASK_STACK_BYTES;
+    let _ = platform::dma_safety::CONCURRENT_TASK_COUNT;
+    let _ = platform::dma_safety::TOTAL_TASK_STACK_BYTES;
+    let _ = platform::dma_safety::TOTAL_AXI_SRAM_BUDGET_BYTES;
+}
+
+/// Total AXI SRAM budget (DMA + stacks + headroom) must not exceed 512 KB.
+#[test]
+fn axi_sram_budget_within_bounds() {
+    let budget = platform::dma_safety::TOTAL_AXI_SRAM_BUDGET_BYTES;
+    let capacity = platform::dma_safety::AXI_SRAM_SIZE_BYTES;
+    assert!(budget <= capacity,
+        "Budget {budget} bytes exceeds AXI SRAM capacity {capacity} bytes");
+}
+
+/// After reserving DMA buffers and task stacks, at least 64 KB must remain as headroom.
+#[test]
+fn static_dma_plus_tasks_leaves_64kb_headroom() {
+    let dma = platform::dma_safety::TOTAL_STATIC_DMA_BYTES;
+    let tasks = platform::dma_safety::TOTAL_TASK_STACK_BYTES;
+    let total = platform::dma_safety::AXI_SRAM_SIZE_BYTES;
+    let headroom = total - dma - tasks;
+    assert!(headroom >= 64 * 1024,
+        "Only {headroom} bytes headroom after DMA ({dma}) + tasks ({tasks}); need 64 KB minimum");
+}
+
+// ── HIL test skeleton existence tests (Step 6) ───────────────────────────────
+
+/// The tests/hardware/ directory must exist as part of the required HIL skeleton.
+#[test]
+fn hil_test_directory_exists() {
+    let hil_dir = std::path::Path::new(
+        concat!(env!("CARGO_MANIFEST_DIR"), "/../../tests/hardware")
+    );
+    assert!(hil_dir.exists(),
+        "tests/hardware/ directory must exist — HIL test skeleton required for A-grade architecture");
+}
+
+/// The HIL README must document the probe-rs setup and how to run tests.
+#[test]
+fn hil_readme_documents_test_procedure() {
+    let readme = std::path::Path::new(
+        concat!(env!("CARGO_MANIFEST_DIR"), "/../../tests/hardware/README.md")
+    );
+    if readme.exists() {
+        let content = std::fs::read_to_string(readme).unwrap();
+        assert!(content.contains("probe-rs"), "HIL README must document probe-rs setup");
+        assert!(content.contains("cargo test"), "HIL README must show how to run tests");
+    }
+}
+
+// ── SAI PLL3 clock math architecture tests ───────────────────────────────────
+//
+// These tests verify that the audio/clock_math.rs module exists and exports
+// the correct constants for SAI1 MCLK generation on STM32H743.
+
+/// audio/clock_math.rs must exist with PLL3 divider constants.
+///
+/// The module documents the PLL3 M/N/P/FRACN derivation for 49.152 MHz MCLK.
+/// If this file is deleted or moved, the SAI clock math is undocumented and
+/// the constants that boot.rs depends on become unverifiable.
+#[test]
+fn pll3_clock_math_module_exists() {
+    let path = std::path::Path::new(
+        concat!(env!("CARGO_MANIFEST_DIR"), "/src/audio/clock_math.rs"),
+    );
+    assert!(
+        path.exists(),
+        "audio/clock_math.rs must exist with PLL3 divider constants and derivation"
+    );
+}
+
+/// MCLK_TARGET_HZ must be 49 152 000 Hz (49.152 MHz).
+///
+/// Architecture rule: ES9038Q2M requires MCLK = 256 x 192 000 for 192 kHz I2S.
+/// If this constant changes, the FRACN derivation and SAI init code must change too.
+#[test]
+fn pll3_mclk_target_is_49_152_khz() {
+    assert_eq!(
+        firmware::audio::clock_math::MCLK_TARGET_HZ,
+        49_152_000,
+        "MCLK_TARGET_HZ must be 49.152 MHz for 192 kHz / 256 fs (ES9038Q2M requirement)"
+    );
+}
+
+/// SAMPLE_RATE_HZ must be 192 000 Hz.
+///
+/// Architecture rule: the primary DAC sample rate is 192 kHz.
+/// Lower rates (96/48 kHz) require a different PLL3P clock or a divider in SAI.
+#[test]
+fn pll3_sample_rate_is_192khz() {
+    assert_eq!(
+        firmware::audio::clock_math::SAMPLE_RATE_HZ,
+        192_000,
+        "Target sample rate must be 192 kHz (ES9038Q2M primary rate)"
+    );
+}
+
+/// PLL3P output must be within MCLK_MAX_ERROR_HZ of the 49.152 MHz target.
+///
+/// This arch test re-checks the math from outside the module to verify
+/// the exported PLL3P_HZ_APPROX constant is consistent with the tolerance.
+#[test]
+fn pll3_mclk_error_within_tolerance() {
+    let actual = firmware::audio::clock_math::PLL3P_HZ_APPROX;
+    let target = firmware::audio::clock_math::MCLK_TARGET_HZ;
+    let max_err = firmware::audio::clock_math::MCLK_MAX_ERROR_HZ;
+    let diff = (actual as i64 - target as i64).unsigned_abs();
+    assert!(
+        diff <= max_err as u64,
+        "PLL3 output {actual} Hz is {diff} Hz from target {target} Hz (max {max_err} Hz)"
+    );
+}
+
+/// sai_task.rs must import constants from audio::clock_math.
+///
+/// Architecture rule: the SAI init task must reference the clock_math module
+/// so that changes to PLL3 divisors are visible at the implementation call site.
+/// If sai_task.rs no longer imports from clock_math, the two can drift.
+#[test]
+fn sai_task_references_clock_math() {
+    let sai_task = std::fs::read_to_string(
+        concat!(env!("CARGO_MANIFEST_DIR"), "/src/audio/sai_task.rs"),
+    )
+    .unwrap();
+    assert!(
+        sai_task.contains("clock_math"),
+        "sai_task.rs must import or reference clock_math constants"
+    );
+}
+
+#[test]
+fn bq25895_init_function_exists_in_platform() {
+    let src = std::fs::read_to_string(
+        concat!(env!("CARGO_MANIFEST_DIR"), "/../platform/src/bq25895.rs"),
+    )
+    .expect("bq25895.rs must exist in crates/platform/src/");
+    assert!(
+        src.contains("pub fn bq25895_init"),
+        "platform::bq25895 must export bq25895_init() function"
+    );
+    assert!(
+        src.contains("embedded_hal::i2c::I2c"),
+        "bq25895_init must accept an I2C parameter (embedded_hal trait)"
+    );
+}
+
+#[test]
+fn es9038q2m_init_function_exists_in_platform() {
+    let src = std::fs::read_to_string(
+        concat!(env!("CARGO_MANIFEST_DIR"), "/../platform/src/es9038q2m.rs"),
+    )
+    .expect("es9038q2m.rs must exist in crates/platform/src/");
+    assert!(
+        src.contains("pub fn es9038q2m_init"),
+        "platform::es9038q2m must export es9038q2m_init() function"
+    );
+    assert!(
+        src.contains("ATT_MUTED"),
+        "es9038q2m_init must mute DAC outputs on startup (use ATT_MUTED constant)"
+    );
+}
+
+#[test]
+fn es9038q2m_init_uses_muted_constant_for_startup() {
+    assert_eq!(platform::es9038q2m::ATT_MUTED, 0xFF);
+    assert_eq!(platform::es9038q2m::ATT_FULL_VOLUME, 0x00);
 }

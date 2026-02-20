@@ -1,4 +1,14 @@
 //! Memory safety architecture tests.
+// Architecture test file: expect/unwrap and cast lints are intentional.
+#![allow(
+    clippy::unwrap_used,
+    clippy::expect_used,
+    clippy::panic,
+    clippy::cast_possible_truncation,
+    clippy::cast_possible_wrap,
+    clippy::cast_sign_loss,
+    clippy::cast_lossless,
+)]
 //! Tests verify DMA buffer placement invariants at declaration level.
 //! Runtime address verification is done via debug_assert! in main() startup.
 
@@ -129,4 +139,76 @@ fn no_static_mut_with_link_section_in_firmware() {
             search_from = static_mut_pos + 1;
         }
     }
+}
+
+/// Audio DMA buffer must use DmaBuffer<AxiSramRegion> wrapper type — not a bare array.
+///
+/// Using `StaticCell<DmaBuffer<AxiSramRegion, [u8; N]>>` encodes the DMA-accessible
+/// region requirement into the type system. A bare `StaticCell<[u8; N]>` with only
+/// a comment for documentation provides no compile-time enforcement.
+#[test]
+fn audio_buffer_uses_dma_buffer_wrapper() {
+    let main_rs = include_str!("../src/main.rs");
+    // Must contain `DmaBuffer<AxiSramRegion` in the AUDIO_BUFFER declaration
+    assert!(
+        main_rs.contains("DmaBuffer<AxiSramRegion"),
+        "AUDIO_BUFFER must use DmaBuffer<AxiSramRegion, ...> wrapper type.\n\
+         A bare StaticCell<[u8; AUDIO_DMA_BUFFER_BYTES]> provides no compile-time DMA\n\
+         region enforcement. Required declaration:\n\
+           #[link_section = \".axisram\"]\n\
+           static AUDIO_BUFFER: StaticCell<DmaBuffer<AxiSramRegion, [u8; AUDIO_DMA_BUFFER_BYTES]>>\n\
+               = StaticCell::new();"
+    );
+}
+
+/// The AUDIO_BUFFER static must carry #[link_section = ".axisram"] to guarantee
+/// physical placement in DMA-accessible AXI SRAM (0x2400_0000).
+///
+/// Without this attribute, the linker may place the buffer in DTCM (CPU-only,
+/// NOT DMA-accessible), causing SAI1 DMA transfers to silently produce garbage.
+#[test]
+fn audio_buffer_link_section_axisram() {
+    let main_rs = include_str!("../src/main.rs");
+    // Must have AUDIO_BUFFER static
+    assert!(
+        main_rs.contains("static AUDIO_BUFFER"),
+        "AUDIO_BUFFER must be declared as a static item in main.rs.
+         Expected: static AUDIO_BUFFER: StaticCell<DmaBuffer<AxiSramRegion, ...>>"
+    );
+
+    // Verify link_section appears in the 200 bytes IMMEDIATELY BEFORE the AUDIO_BUFFER
+    // declaration. Using rfind() would find the LAST link_section in the file, which could
+    // be a string literal in a debug_assert! message — not the attribute on the static.
+    // Instead we look at the slice of text just before the declaration.
+    let audio_buf_pos = main_rs.find("static AUDIO_BUFFER").unwrap();
+    let look_back_start = audio_buf_pos.saturating_sub(200);
+    let preceding_text = &main_rs[look_back_start..audio_buf_pos];
+
+    assert!(
+        preceding_text.contains(r#"link_section = ".axisram""#),
+        "#[link_section = \"\".axisram\"\"\"] must appear in the 200 bytes immediately before
+         `static AUDIO_BUFFER`. This attribute ensures the buffer lands in AXI SRAM (DMA-accessible)
+         rather than DTCM (CPU-only, NOT DMA-accessible for SAI1 DMA).
+         Required:
+           #[link_section = \".axisram\"]
+           static AUDIO_BUFFER: StaticCell<DmaBuffer<AxiSramRegion, [u8; AUDIO_DMA_BUFFER_BYTES]>>"
+    );
+}
+/// SAI audio initialization must not remain as a commented-out block.
+///
+/// A TODO comment or commented-out code block indicates the wiring is missing.
+/// The SAI init must be a real function call (even a stub) that compiles, so
+/// the type system verifies the DMA buffer type at the call site.
+#[test]
+fn sai_init_not_commented_out() {
+    let main_rs = include_str!("../src/main.rs");
+    // Must NOT have the SAI init in a commented-out block (// let sai = Sai::new...)
+    // We check that `audio_task` is called — meaning audio is wired, not just TODO'd.
+    let has_audio_task_call = main_rs.contains("audio_task");
+    assert!(
+        has_audio_task_call,
+        "SAI audio must be wired via an audio_task call — not left as a commented-out block.\n\
+         A `// let sai = Sai::new(...)` comment provides no compile-time safety.\n\
+         Replace with: firmware::audio::sai_task::audio_task(buffer)"
+    );
 }

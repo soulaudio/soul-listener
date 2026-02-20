@@ -3,7 +3,13 @@
 //! This module contains UI screens and components for the SoulAudio DAP.
 //! Currently a placeholder for future UI implementation.
 
-// Per-site lint suppressions are placed at each operation with safety justifications.
+// UI rendering code casts display dimensions (u32 from embedded-graphics) to i32
+// for coordinate arithmetic.  Display sizes are at most 800×480, which fit safely
+// in i32.  Arithmetic operations on small display coordinates cannot overflow i32.
+#![allow(
+    clippy::cast_possible_wrap,
+    clippy::arithmetic_side_effects,
+)]
 
 use embedded_graphics::mono_font::{ascii::FONT_9X18, MonoTextStyle};
 use embedded_graphics::pixelcolor::Gray2;

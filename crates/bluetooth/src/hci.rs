@@ -147,6 +147,9 @@ pub struct HciRawCommand<'a> {
 
 // Compile-time assertion: standard BLE advertising fits in HCI buffer.
 // 4 header bytes + 31 param bytes = 35 bytes <= 64-byte Vec capacity.
+// The allow is needed because clippy treats `const _: () = assert!(...)` on
+// literal expressions as `assertions_on_constants` even in a const context.
+#[allow(clippy::assertions_on_constants)]
 const _: () = assert!(
     4 + 31 <= 64,
     "Standard BLE advertising must fit in HCI buffer"

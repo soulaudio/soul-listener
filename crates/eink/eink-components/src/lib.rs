@@ -22,6 +22,13 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 // TODO: Add rustdoc to all public items (tracked as tech debt)
 #![allow(missing_docs)]
+// Graphics math routinely casts between integer types and from float to u32 for
+// pixel coordinates.  These casts are intentional and bounded by display dimensions.
+#![allow(
+    clippy::cast_possible_truncation,
+    clippy::cast_possible_wrap,
+    clippy::cast_sign_loss,
+)]
 
 pub mod button;
 pub mod icon;

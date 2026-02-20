@@ -160,7 +160,10 @@ impl<I: I2c> Es9038q2mDriver<I> {
         //   (100 - clamped) is in [0, 100] ⊆ u8, no underflow.
         //   cast to u16: max value is 100; 100 * 255 = 25500 < u16::MAX (65535), no overflow.
         //   / 100: integer division, result ≤ 255 ⊆ u8 range, final cast is lossless.
+        // u8 as u16: lossless widening (values in [0, 100]).
+        // u16 as u8: safe, result = (100 - clamped) * 255 / 100 ≤ 255.
         #[allow(clippy::arithmetic_side_effects)]
+        #[allow(clippy::cast_lossless, clippy::cast_possible_truncation)]
         let att = ((100 - volume.min(100)) as u16 * 255 / 100) as u8;
         att
     }

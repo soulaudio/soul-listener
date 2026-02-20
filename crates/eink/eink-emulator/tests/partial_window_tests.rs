@@ -1,5 +1,18 @@
 //! Integration tests for partial window and dirty tracking functionality
 
+// Integration test file — cast/arithmetic/unwrap lints are overly strict for
+// pixel coordinate tests where panics on failure are intentional.
+#![allow(
+    clippy::cast_possible_truncation,
+    clippy::cast_possible_wrap,
+    clippy::cast_sign_loss,
+    clippy::arithmetic_side_effects,
+    clippy::unwrap_used,
+    clippy::expect_used,
+    clippy::panic,
+    clippy::indexing_slicing,
+)]
+
 use eink_emulator::{Emulator, PartialWindow};
 use embedded_graphics::pixelcolor::Gray4;
 use embedded_graphics::prelude::*;

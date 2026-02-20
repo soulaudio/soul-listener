@@ -261,23 +261,27 @@ mod tests {
     }
 
     #[test]
+    // PLL divisor variables are conventionally named m/n/p in datasheet formulas.
+    #[allow(clippy::many_single_char_names)]
     fn pll3_divisors_produce_correct_mclk() {
         // Verify PLL3 M/N/P produce the correct achievable MCLK frequency.
         // MCLK = HSI / M × N / P
         let hsi_hz: u64 = 64_000_000;
-        let m = SaiAudioConfig::pll3_m() as u64;
-        let n = SaiAudioConfig::pll3_n() as u64;
-        let p = SaiAudioConfig::pll3_p() as u64;
+        let m = u64::from(SaiAudioConfig::pll3_m());
+        let n = u64::from(SaiAudioConfig::pll3_n());
+        let p = u64::from(SaiAudioConfig::pll3_p());
         let mclk = hsi_hz / m * n / p;
         assert_eq!(mclk, 49_000_000, "PLL3 must produce 49.0 MHz for SAI MCLK");
     }
 
     #[test]
+    // PLL divisor variables are conventionally named m/n/p in datasheet formulas.
+    #[allow(clippy::many_single_char_names)]
     fn pll3_vco_within_stm32h7_spec() {
         // STM32H7 PLL VCO must be 192–836 MHz (RM0433 §8.3.2)
         let hsi_hz: u64 = 64_000_000;
-        let m = SaiAudioConfig::pll3_m() as u64;
-        let n = SaiAudioConfig::pll3_n() as u64;
+        let m = u64::from(SaiAudioConfig::pll3_m());
+        let n = u64::from(SaiAudioConfig::pll3_n());
         let vco = hsi_hz / m * n;
         assert!(vco >= 192_000_000, "PLL3 VCO ({vco} Hz) must be >= 192 MHz");
         assert!(vco <= 836_000_000, "PLL3 VCO ({vco} Hz) must be <= 836 MHz");
@@ -286,7 +290,7 @@ mod tests {
     #[test]
     fn pll3_mclk_error_within_1_percent() {
         let target = 49_152_000u64; // ideal 256 × 192000
-        let actual = SaiAudioConfig::actual_mclk_hz() as u64;
+        let actual = u64::from(SaiAudioConfig::actual_mclk_hz());
         let error_ppm = (target.abs_diff(actual) * 1_000_000) / target;
         assert!(
             error_ppm < 10_000, // < 1% = < 10000 ppm

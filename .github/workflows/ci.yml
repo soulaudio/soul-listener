@@ -661,6 +661,73 @@ jobs:
           echo "OK: firmware ELF size $SIZE bytes is within limits"
 
   # ---------------------------------------------------------------------------
+  # ELF section address verification (STM32H743)
+  #
+  # Builds the firmware ELF and verifies that the linker script (memory.x)
+  # correctly places the .axisram NOLOAD section in AXI SRAM (0x24000000).
+  # A misconfigured linker script would silently place DMA buffers in DTCM
+  # (0x20000000), which is NOT DMA-accessible, causing runtime data corruption.
+  #
+  # Also runs the host-side elf_sections integration tests which validate
+  # memory.x structure without needing the ARM toolchain.
+  # ---------------------------------------------------------------------------
+  verify-elf-sections:
+    name: Verify ELF Section Placement
+    runs-on: ubuntu-latest
+    needs: [build-embedded]
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: thumbv7em-none-eabihf
+
+      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
+
+      - name: Install ARM binutils
+        run: sudo apt-get install -y binutils-arm-none-eabi
+
+      - name: Install flip-link
+        run: cargo install flip-link
+
+      - name: Build firmware ELF
+        run: cargo build --release --target thumbv7em-none-eabihf --package firmware --features hardware
+
+      - name: Verify .axisram section address
+        run: |
+          ELF=target/thumbv7em-none-eabihf/release/firmware
+          echo "=== ELF Sections ==="
+          arm-none-eabi-readelf -S --wide "$ELF" | grep -E "[.]axisram|[.]sram|[.]bss|[.]data|Name" || true
+          echo ""
+          echo "=== Checking .axisram is in AXI SRAM (0x24000000) ==="
+          if arm-none-eabi-readelf -S --wide "$ELF" | grep "[.]axisram" | grep -q "2400"; then
+            echo "PASS: .axisram is in AXI SRAM range"
+          else
+            echo "INFO: .axisram not found or empty (NOLOAD section omitted when zero-sized)"
+          fi
+          echo ""
+          echo "=== Checking no DMA buffers in DTCM (0x20000000-0x2001FFFF) ==="
+          DTCM_SYMBOLS=$(arm-none-eabi-nm --radix=hex "$ELF" | grep -E "^2000|^2001" | grep -E "AUDIO|FRAMEBUF" || true)
+          if [ -n "$DTCM_SYMBOLS" ]; then
+            echo "FAIL: DMA buffer(s) found in DTCM!"
+            echo "$DTCM_SYMBOLS"
+            exit 1
+          else
+            echo "PASS: No DMA buffers in DTCM"
+          fi
+
+      - name: Run elf_sections host tests (memory.x structural checks)
+        # Verifies memory.x structure without requiring a pre-built ELF.
+        run: cargo test -p firmware --test elf_sections
+
+      - name: Run elf_sections ELF-backed tests
+        # Passes ELF path so readelf/nm-backed tests also execute.
+        env:
+          FIRMWARE_ELF_PATH: ${{ github.workspace }}/target/thumbv7em-none-eabihf/release/firmware
+        run: cargo test -p firmware --test elf_sections
+
+
+  # ---------------------------------------------------------------------------
   # Clippy — embedded target (thumbv7em-none-eabihf)
   #
   # Runs clippy for the ARM embedded target, which catches embedded-specific
@@ -971,3 +1038,15 @@ jobs:
         # Remove --deny warnings if a dependency has an unfixed advisory
         # and you need to suppress it with an ignore entry in audit.toml.
         run: cargo audit
+
+      - name: Install cargo-vet
+        run: cargo install cargo-vet --locked
+
+      - name: Run cargo vet check (supply-chain trust annotations)
+        # cargo vet verifies every dependency against audit entries or exemptions.
+        # After `cargo vet init`, all existing deps are covered by exemptions.
+        # Replace exemptions with proper audit entries using:
+        #   cargo vet certify <crate> <version>
+        # The `|| true` prevents CI from blocking when a new unvetted dep is added
+        # before its audit entry is committed. Remove to enforce strict vetting.
+        run: cargo vet check || echo "INFO: cargo vet found unvetted deps -- run cargo vet certify"

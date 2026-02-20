@@ -2,6 +2,19 @@
 //!
 //! Tests for Spectra 6 and Kaleido 3 color e-ink displays
 
+// Integration test file — cast/arithmetic/unwrap lints are overly strict for
+// color-value tests where panics on failure are intentional.
+#![allow(
+    clippy::cast_possible_truncation,
+    clippy::cast_possible_wrap,
+    clippy::cast_sign_loss,
+    clippy::arithmetic_side_effects,
+    clippy::unwrap_used,
+    clippy::expect_used,
+    clippy::panic,
+    clippy::indexing_slicing,
+)]
+
 use eink_emulator::{ColorMode, EinkColor, Framebuffer, PixelState, SpectraColor, WaveformMode};
 use embedded_graphics::pixelcolor::Gray4;
 use embedded_graphics::prelude::GrayColor;

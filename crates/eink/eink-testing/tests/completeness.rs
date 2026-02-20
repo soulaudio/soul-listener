@@ -1,8 +1,14 @@
 //! Completeness tests for eink-testing utilities.
 //! These tests verify the full testing API is functional.
 
-// Test file — unwrap/expect/panic acceptable in test code.
-#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
+// Test file — unwrap/expect/panic and cast lints acceptable in test code.
+#![allow(
+    clippy::unwrap_used,
+    clippy::expect_used,
+    clippy::panic,
+    clippy::cast_possible_wrap,
+    clippy::arithmetic_side_effects,
+)]
 
 use eink_testing::TestEmulator;
 use embedded_graphics::{
