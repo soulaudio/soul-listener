@@ -27,6 +27,21 @@
 #![warn(clippy::dbg_macro)]
 #![allow(clippy::module_name_repetitions)]
 #![allow(clippy::missing_errors_doc)]
+// Pedantic lints that are too noisy for a layout/style engine crate:
+#![allow(clippy::cast_possible_truncation)]
+#![allow(clippy::cast_possible_wrap)]
+#![allow(clippy::cast_sign_loss)]
+#![allow(clippy::cast_precision_loss)]
+#![allow(clippy::cast_lossless)]
+#![allow(clippy::must_use_candidate)]
+#![allow(clippy::return_self_not_must_use)]
+#![allow(clippy::doc_markdown)]
+#![allow(clippy::match_same_arms)]
+#![allow(clippy::should_panic_without_expect)]
+#![allow(clippy::uninlined_format_args)]
+#![allow(clippy::no_effect_underscore_binding)]
+#![allow(clippy::unused_self)]
+#![allow(clippy::explicit_iter_loop)]
 
 pub mod containers;
 #[cfg(feature = "debug")]

@@ -43,13 +43,26 @@
 #![warn(clippy::pedantic)]
 // Critical correctness: deny these
 #![deny(clippy::await_holding_lock)] // holding a blocking Mutex across .await is a bug
-#![deny(unsafe_op_in_unsafe_fn)] // unsafe fn body is not implicitly unsafe block
+#![deny(unsafe_op_in_unsafe_fn)]
+// unsafe fn body is not implicitly unsafe block
 // Logging discipline (allow println in tests via clippy.toml)
 #![warn(clippy::print_stdout)] // prefer tracing/defmt over println! in lib code
 #![warn(clippy::dbg_macro)] // dbg! should not be left in committed code
 // Intentional allows for this codebase:
 #![allow(clippy::module_name_repetitions)] // common in Rust crates; not a real issue
 #![allow(clippy::missing_errors_doc)] // most errors are self-explanatory
+// Pedantic lints too noisy for firmware application code:
+#![allow(clippy::cast_possible_truncation)]
+#![allow(clippy::cast_possible_wrap)]
+#![allow(clippy::cast_sign_loss)]
+#![allow(clippy::cast_precision_loss)]
+#![allow(clippy::cast_lossless)]
+#![allow(clippy::must_use_candidate)]
+#![allow(clippy::return_self_not_must_use)]
+#![allow(clippy::doc_markdown)]
+#![allow(clippy::similar_names)]
+#![allow(clippy::unused_self)]
+#![allow(clippy::unused_async)]
 
 pub mod audio;
 pub mod display;
