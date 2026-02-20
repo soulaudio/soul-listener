@@ -1,11 +1,16 @@
 # BOM sourcing — Mouser EU (mouser.de — DE warehouse)
-# Updated: 2026-02-19
+# Updated: 2026-02-20
 # Format: Ref,QtyTotal,MfrPartNo,MouserPartNo,Description,Package,UnitPriceEUR,Notes
 #
 # Mouser EU as secondary source for TI and ADI parts.
 # TODO: populate Mouser part numbers and prices
 
 Ref,QtyTotal,MfrPartNo,MouserPartNo,Description,Package,UnitPriceEUR,Notes
-U3,1,TPA6120A2DGN,,Headphone Amp ±5V class-AB,MSOP-8 PowerPAD,,Good TI stock at Mouser
+U3,1,TPA6120A2RGYR,,Headphone Amp ±5V class-AB CFA,VQFN-14,,TI; good Mouser stock
 U4,1,LT3042EMSE#PBF,,Ultra-LN LDO 3.3V 200mA,MSOP-8E,,ADI/LTC part — Mouser stocks well
 U5,1,BQ25895RTWT,,USB-C PMIC LiPo charger I2C,WQFN-24,,TI PMIC — good Mouser stock
+D1,1,MBR0530T1G,863-MBR0530T1G,Schottky rectifier 30V 500mA (display boost D1),SOD-123,,ON Semi
+D2,1,MBR0530T1G,863-MBR0530T1G,Schottky rectifier 30V 500mA (display boost D2),SOD-123,,ON Semi; same p/n as D1
+Q1,1,SI1308EDL-T1-GE3,78-SI1308EDL-T1-GE3,N-ch MOSFET 30V 1.5A (display boost),SOT-23,,Vishay
+TVS1,1,PESD5V0L5UY,771-PESD5V0L5UY115,ESD array 5-ch 5V VRWM (SPI/ctrl),SOT-363,,Nexperia
+TVS2,1,PESD5V0L5UY,771-PESD5V0L5UY115,ESD array 5-ch 5V VRWM (BUSY),SOT-363,,Nexperia; same p/n as TVS1
