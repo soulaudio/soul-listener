@@ -116,6 +116,36 @@ jobs:
             -- -D warnings
 
   # ---------------------------------------------------------------------------
+  # Documentation build — warnings as errors
+  #
+  # RUSTDOCFLAGS="-D warnings" fails on broken intra-doc links, missing items
+  # referenced in doc comments, and malformed code examples.
+  #
+  # --no-deps: only document workspace crates. Without this flag, a warning
+  # in a transitive dependency's docs would break our build.
+  # ---------------------------------------------------------------------------
+  docs:
+    name: Documentation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
+
+      - name: Install Linux GUI dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            libwayland-dev libxkbcommon-dev libx11-dev libxi-dev libxrandr-dev
+
+      - name: cargo doc (warnings as errors)
+        env:
+          RUSTDOCFLAGS: -D warnings
+        run: cargo doc --no-deps --workspace
+
+  # ---------------------------------------------------------------------------
   # Tests — host-native, per crate
   #
   # cargo test --workspace --all-features is unsafe here because:
@@ -593,11 +623,19 @@ jobs:
         # Ref: https://github.com/knurling-rs/flip-link
         run: cargo install flip-link
 
+      - name: Install cargo-auditable
+        # cargo-auditable embeds a compressed dependency manifest into the firmware ELF.
+        # Enables post-deployment CVE scanning:
+        #   cargo audit bin target/thumbv7em-none-eabihf/release/firmware
+        # Critical for field-deployed units where Cargo.lock may not be available.
+        # Ref: https://github.com/rust-secure-code/cargo-auditable
+        run: cargo install cargo-auditable --locked
+
       - name: cargo build -p firmware (hardware, ARM target, release)
         # Full link: catches linker errors, section overflow, flip-link issues.
         # Uses --release to match the production build profile (LTO, opt-level=z).
         run: |
-          cargo build --release \
+          cargo auditable build --release \
             --target thumbv7em-none-eabihf \
             --package firmware \
             --features hardware
@@ -867,9 +905,9 @@ jobs:
   #   Use via:     cargo auditable build --release ...
   #   Audit ELF:   cargo audit bin target/.../firmware
   #
-  # For now we run `cargo audit` on Cargo.lock (pre-deployment check). The
-  # cargo-auditable ELF embedding is tracked as a future improvement for the
-  # hardware build job.
+  # cargo audit (below) checks Cargo.lock for pre-deployment CVE scanning.
+  # cargo-auditable ELF embedding is now done in the build-embedded job above.
+  # Use: cargo audit bin target/thumbv7em-none-eabihf/release/firmware
   # ---------------------------------------------------------------------------
   supply-chain:
     name: Supply chain security

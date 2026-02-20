@@ -252,7 +252,7 @@ impl TestEmulator {
     /// Register (or update) a component by test ID.
     ///
     /// Call this after rendering a screen to annotate where each logical
-    /// component sits, so tests can use [`query_by_test_id`] to look it up.
+    /// component sits, so tests can use [`Self::query_by_test_id`] to look it up.
     pub fn register_component(
         &mut self,
         test_id: &str,

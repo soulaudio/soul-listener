@@ -1,7 +1,7 @@
 //! Flexbox layout engine for e-ink displays
 //!
 //! This module implements a complete flexbox layout algorithm based on the CSS Flexbox
-//! specification (https://www.w3.org/TR/css-flexbox-1/), adapted for embedded systems
+//! specification (<https://www.w3.org/TR/css-flexbox-1/>), adapted for embedded systems
 //! and e-ink displays.
 //!
 //! # Layout Algorithm

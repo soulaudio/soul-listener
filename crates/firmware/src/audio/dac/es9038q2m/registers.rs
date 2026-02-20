@@ -26,10 +26,10 @@
 //! REG_VOLUME_RIGHT. Without this write the volume registers may not take
 //! effect. Source: Linux driver reference implementations (royno/Rpi-ES90x8-DAC).
 //!
-//! ## REG_INPUT_CONFIG bits [3:2] = 0b00
-//! The `input_select` field occupies bits [3:2] of REG_INPUT_CONFIG (0x01).
+//! ## REG_INPUT_CONFIG bits \[3:2\] = 0b00
+//! The `input_select` field occupies bits \[3:2\] of REG_INPUT_CONFIG (0x01).
 //! For I²S (as opposed to SPDIF) the field must be 0b00. The constant
-//! `INPUT_I2S_32BIT = 0b0001_0000` has bits[3:2] = 0b00, so this is satisfied.
+//! `INPUT_I2S_32BIT = 0b0001_0000` has bits\[3:2\] = 0b00, so this is satisfied.
 //! Bit 4 (0x10) selects 32-bit word length within the I²S format.
 
 // ---------------------------------------------------------------------------
@@ -41,7 +41,7 @@ pub const REG_SYSTEM: u8 = 0x00;
 
 /// Input configuration — I²S format, bit depth, justification
 ///
-/// bits[3:2] = input_select: 0b00 = I²S (default), 0b01/0b10/0b11 = SPDIF sources.
+/// bits\[3:2\] = input_select: 0b00 = I²S (default), 0b01/0b10/0b11 = SPDIF sources.
 /// Must be 0b00 for I²S operation.
 pub const REG_INPUT_CONFIG: u8 = 0x01;
 
@@ -112,8 +112,8 @@ pub const MASTER_MODE_SLAVE: u8 = 0x00;
 /// Input config: I²S format, 32-bit, normal polarity
 ///
 /// Bit 4 = 1 selects 32-bit I²S word length.
-/// Bits [3:2] = 0b00 keeps input_select = I²S (required).
-/// Bits [1:0] = 0b00 selects normal (non-inverted) polarity.
+/// Bits \[3:2\] = 0b00 keeps input_select = I²S (required).
+/// Bits \[1:0\] = 0b00 selects normal (non-inverted) polarity.
 pub const INPUT_I2S_32BIT: u8 = 0b0001_0000;
 
 /// DSD config: DoP (DSD over PCM) enable
