@@ -242,40 +242,6 @@ fn rotate_270_cw(src: &[u32], width: u32, height: u32) -> Vec<u32> {
     dst
 }
 
-// --- Pump handler ------------------------------------------------------------
-
-/// Minimal handler for `pump_events()` during refresh animations.
-///
-/// Only handles close and DPI changes — `present()` manages the surface size
-/// itself, so we don't need surface access here.
-struct PumpEventHandler {
-    phys_w: u32,
-    phys_h: u32,
-    pub should_exit: bool,
-}
-
-impl ApplicationHandler for PumpEventHandler {
-    fn resumed(&mut self, _: &ActiveEventLoop) {}
-
-    fn window_event(&mut self, event_loop: &ActiveEventLoop, _: WindowId, event: WindowEvent) {
-        match event {
-            WindowEvent::CloseRequested => {
-                self.should_exit = true;
-                event_loop.exit();
-            }
-            // Override the OS-suggested size to keep fixed physical pixels.
-            // A Resized event may follow; present() always re-syncs the surface.
-            WindowEvent::ScaleFactorChanged {
-                mut inner_size_writer,
-                ..
-            } => {
-                let _ = inner_size_writer
-                    .request_inner_size(PhysicalSize::new(self.phys_w, self.phys_h));
-            }
-            _ => {}
-        }
-    }
-}
 
 // --- Window ------------------------------------------------------------------
 
@@ -678,23 +644,16 @@ impl Window {
             std::thread::sleep(remaining.min(step));
             remaining = remaining.saturating_sub(step);
 
-            let mut handler = PumpEventHandler {
-                phys_w: self.phys_w,
-                phys_h: self.phys_h,
-                should_exit: false,
-            };
-
-            if let Some(ref mut el) = self.event_loop {
-                match el.pump_app_events(Some(Duration::ZERO), &mut handler) {
-                    PumpStatus::Exit(_) => break,
-                    PumpStatus::Continue => {}
+            // Take the event_loop out so we can pass `self` as the ApplicationHandler.
+            // After pumping we put it back.  If el is gone the window is already closed.
+            if let Some(mut el) = self.event_loop.take() {
+                let status = el.pump_app_events(Some(Duration::ZERO), self);
+                self.event_loop = Some(el);
+                if matches!(status, PumpStatus::Exit(_)) {
+                    break;
                 }
             } else {
                 std::thread::sleep(remaining);
-                break;
-            }
-
-            if handler.should_exit {
                 break;
             }
         }
@@ -1082,5 +1041,14 @@ impl Window {
         };
 
         self.window.set_title(&title);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn pump_events_compiles_without_pump_event_handler() {
+        // Compile-only test — documents that PumpEventHandler has been removed
+        // and pump_events() uses Window as its ApplicationHandler.
     }
 }
