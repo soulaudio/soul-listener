@@ -69,6 +69,7 @@
 pub mod asset_store;
 pub mod audio;
 pub mod bluetooth;
+pub mod clock_config;
 pub mod config;
 pub mod display;
 pub mod dma;
@@ -77,6 +78,7 @@ pub mod input;
 pub mod mpu;
 pub mod peripheral;
 pub mod power;
+pub mod qspi_config;
 pub mod sdram;
 pub mod storage;
 

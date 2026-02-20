@@ -1,14 +1,10 @@
-//! Application UI layer — screen definitions, navigation state, component composition
+//! Application UI layer — screen definitions, navigation state, component composition.
 //!
-//! # Status
-//!
-//! Placeholder crate — implementation pending.
+//! This crate is `no_std` by default; it only uses `core` + `heapless`.
 
-#![cfg_attr(not(feature = "std"), no_std)]
+#![cfg_attr(not(test), no_std)]
+#![deny(clippy::unwrap_used)]
 
-// TODO: Implement application UI layer (screen definitions, navigation state, component composition)
-
-#[cfg(test)]
-mod tests {
-    // Placeholder module — add tests when the implementation begins.
-}
+pub mod navigation;
+pub mod now_playing;
+pub mod screen;
