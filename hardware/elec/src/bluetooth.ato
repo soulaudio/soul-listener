@@ -19,8 +19,8 @@
 # SWD: The WB55 has its own SWD port for debugging the BLE stack.
 # Connect via secondary debug header (separate from STM32H743 debug).
 
-from "interfaces.ato" import UARTBus, SWDPort
 from "parts/STM32WB55RGV6/STM32WB55RGV6.ato" import STM32WB55RGV6
+from "interfaces.ato" import UARTBus, SWDPort
 from "parts/0433AT62A0100E/0433AT62A0100E.ato" import Ant2450AT18A100E
 
 module Bluetooth:

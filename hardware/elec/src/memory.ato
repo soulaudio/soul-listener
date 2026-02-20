@@ -27,8 +27,8 @@
 #   QSPI:  Short traces (< 25 mm). 50 Ω series termination resistors (33 Ω on each
 #          IO line) to reduce reflections. VCC decoupling: 100 nF + 10 µF.
 
-from "interfaces.ato" import FMCBus, QSPIBus
 from "parts/W9825G6KH6/W9825G6KH6.ato" import W9825G6KH6
+from "interfaces.ato" import FMCBus, QSPIBus
 from "parts/W25Q128JVSIQ/W25Q128JVSIQ.ato" import W25Q128JVSIQ
 
 module Memory:

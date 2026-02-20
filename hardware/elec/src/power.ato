@@ -19,8 +19,8 @@
 # (e.g., FUSB302) is required. BQ25895 handles BC1.2 but not USB-PD.
 # This can be added as a future revision. For v1: 5 V operation only.
 
-from "interfaces.ato" import I2CBus, USBDiffPair, AmpSupplyBus
 from "parts/BQ25895RTWT/BQ25895RTWT.ato" import BQ25895RTWT
+from "interfaces.ato" import I2CBus, USBDiffPair, AmpSupplyBus
 from "parts/AP2112K33TRG1/AP2112K33TRG1.ato" import AP2112K33TRG1
 from "parts/S2B_PH_K_S/S2B_PH_K_S.ato" import S2B_PH_K_S
 from "parts/TPS61023DRLR/TPS61023DRLR.ato" import TPS61023DRLR

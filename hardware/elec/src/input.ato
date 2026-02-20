@@ -14,8 +14,8 @@
 #
 # Power button: connected to WKUP pin on STM32H743 for wake-from-standby
 
-from "interfaces.ato" import EncoderBus
 from "parts/EC11/EC11.ato" import EC11
+from "interfaces.ato" import EncoderBus
 from "parts/PTS526/PTS526.ato" import PTS526
 
 module Input:
