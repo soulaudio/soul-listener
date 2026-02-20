@@ -85,6 +85,24 @@
 // Failure to do this produces a silent chip lockup with no error code.
 // ─────────────────────────────────────────────────────────────────────────────
 
+// ── Critical Hardware Constraints (DO NOT IGNORE) ────────────────────────────
+//
+// ### BDMA Peripheral Buffer Placement
+// Peripherals served by BDMA (SPI6, I2C4, LPUART1, ADC3, SAI4) can ONLY
+// DMA to/from SRAM4 (`0x3800_0000`, 64KB). Using any other region causes
+// silent transfer failure. Use `#[link_section = ".sram4"]` for BDMA buffers.
+//
+// ### QSPI Memory-Mapped (XiP) Mode
+// Embassy issue #3149: `embassy_stm32::qspi` does NOT implement memory-mapped
+// mode. To enable XiP from QSPI NOR flash, you must write PAC-level registers:
+//
+//   QUADSPI.CCR: FMODE = 0b11 (memory-mapped)
+//   QUADSPI.AR:  set base address (0x9000_0000)
+//   QUADSPI.CR:  TCEN = 0 (disable timeout)
+//
+// This must be done AFTER firmware has finished using QSPI in command mode.
+// ─────────────────────────────────────────────────────────────────────────────
+
 pub mod audio;
 pub mod display;
 pub mod hal;
