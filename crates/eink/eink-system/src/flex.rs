@@ -118,6 +118,11 @@ impl FlexLayout {
     /// # Returns
     ///
     /// A vector of ChildLayoutResults with final positions and sizes for each child
+    // SAFETY: all arithmetic operates on display layout pixel values (max ~4000px) and
+    // small child counts (max 32). Overflow is not possible in practice.
+    // positions_main and positions_cross have exactly one entry per flex_item (both are
+    // built by iterating items), so indexing by `i` over flex_items is always in bounds.
+    #[allow(clippy::arithmetic_side_effects, clippy::indexing_slicing)]
     pub fn layout(
         &self,
         constraints: Constraints,
@@ -315,6 +320,8 @@ impl FlexLayout {
     }
 
     /// Applies flex-grow or flex-shrink to distribute remaining space
+    // SAFETY: flex grow/shrink arithmetic is bounded by display dimensions and f32 grow factors.
+    #[allow(clippy::arithmetic_side_effects)]
     fn apply_flex_sizing(&self, items: &mut [FlexItem], remaining_space: i32) {
         if remaining_space > 0 {
             // Flex-grow: distribute extra space
@@ -354,6 +361,8 @@ impl FlexLayout {
     }
 
     /// Calculates positions along the main axis based on justify-content
+    // SAFETY: position arithmetic is bounded by display dimensions (max ~4000px).
+    #[allow(clippy::arithmetic_side_effects)]
     fn calculate_main_axis_positions(
         &self,
         items: &[FlexItem],
@@ -444,6 +453,7 @@ impl FlexLayout {
 
 #[cfg(test)]
 mod tests {
+    #![allow(clippy::indexing_slicing, clippy::arithmetic_side_effects)]
     use super::*;
     extern crate std;
     use std::vec;

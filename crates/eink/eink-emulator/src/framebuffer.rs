@@ -33,6 +33,9 @@ impl Framebuffer {
     }
 
     /// Create framebuffer with specific color mode
+    // SAFETY: width * height is a pixel count bounded by display dimensions (~800×480 max),
+    // so width * height fits in u32; cast to usize is always safe on 32-bit+ targets.
+    #[allow(clippy::arithmetic_side_effects)]
     pub fn with_color_mode(width: u32, height: u32, mode: ColorMode) -> Self {
         let size = (width * height) as usize;
         let default_pixel = match mode {
@@ -68,6 +71,9 @@ impl Framebuffer {
     }
 
     /// Set pixel at coordinates
+    // SAFETY: x < width and y < height are checked before use; y * width + x is bounded
+    // by width * height which fits in u32 for display-sized framebuffers.
+    #[allow(clippy::arithmetic_side_effects, clippy::indexing_slicing)]
     pub fn set_pixel(&mut self, x: u32, y: u32, color: EinkColor) {
         if x < self.width && y < self.height {
             let idx = (y * self.width + x) as usize;
@@ -76,6 +82,9 @@ impl Framebuffer {
     }
 
     /// Get pixel at coordinates
+    // SAFETY: x < width and y < height are checked before use; y * width + x is bounded
+    // by width * height which fits in u32 for display-sized framebuffers.
+    #[allow(clippy::arithmetic_side_effects, clippy::indexing_slicing)]
     pub fn get_pixel(&self, x: u32, y: u32) -> Option<EinkColor> {
         if x < self.width && y < self.height {
             Some(self.pixels[(y * self.width + x) as usize])
@@ -121,6 +130,8 @@ impl Framebuffer {
             },
             ColorMode::Kaleido3 => {
                 // Convert grayscale to RGB
+                // SAFETY: luma() returns 0-3; 3 * 5 = 15 which fits in u8.
+                #[allow(clippy::arithmetic_side_effects)]
                 let value = gray.luma() * 5; // 0-3 → 0-15
                 EinkColor::Kaleido3 {
                     r: value,
@@ -134,6 +145,7 @@ impl Framebuffer {
 
 #[cfg(test)]
 mod tests {
+    #![allow(clippy::indexing_slicing)]
     use super::*;
 
     #[test]

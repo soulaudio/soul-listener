@@ -124,6 +124,9 @@ pub struct DisplayStats {
 }
 
 impl DisplayStats {
+    // SAFETY: refresh counters are u64 totals; duration in ms fits in u64 for any reasonable
+    // total display runtime.
+    #[allow(clippy::arithmetic_side_effects)]
     fn record_refresh(&mut self, mode: WaveformMode, duration_ms: u32) {
         match mode {
             WaveformMode::GC16 | WaveformMode::GL16 | WaveformMode::GCC16 => {
@@ -244,6 +247,8 @@ impl Emulator {
     }
 
     /// Create emulator with specific display specification and configuration
+    // SAFETY: spec.width * spec.height is a display pixel count bounded to fit in u32.
+    #[allow(clippy::arithmetic_side_effects)]
     pub fn with_spec_and_config(
         spec: &'static eink_specs::DisplaySpec,
         config: config::EmulatorConfig,
@@ -303,6 +308,8 @@ impl Emulator {
     }
 
     /// Select appropriate power profile based on display specification
+    // SAFETY: spec.width * spec.height pixel count fits in u32 for any standard display.
+    #[allow(clippy::arithmetic_side_effects)]
     fn select_power_profile(spec: &eink_specs::DisplaySpec) -> &'static PowerProfile {
         // Match by display name first (most accurate)
         match spec.name {
@@ -332,6 +339,8 @@ impl Emulator {
     }
 
     /// Create headless emulator with specific display specification
+    // SAFETY: spec.width * spec.height is a display pixel count that fits in u32.
+    #[allow(clippy::arithmetic_side_effects)]
     pub fn headless_with_spec(spec: &'static eink_specs::DisplaySpec) -> Self {
         let buffer_size = (spec.width * spec.height) as usize;
         let power_profile = Self::select_power_profile(spec);
@@ -522,6 +531,8 @@ impl Emulator {
     }
 
     /// Display checkerboard pattern (used during initialization)
+    // SAFETY: square_x + square_y are pixel coordinates divided by 8; their sum fits in u32.
+    #[allow(clippy::arithmetic_side_effects)]
     async fn display_checkerboard(&mut self) {
         const SQUARE_SIZE: u32 = 8;
 
@@ -556,6 +567,9 @@ impl Emulator {
     /// Quantize a buffer based on waveform mode
     ///
     /// Converts EinkColor buffer to waveform-quantized values
+    // SAFETY: all arithmetic operates on small pixel channel values (0-15 or 0-255 range);
+    // no overflow is possible for these display-scale values.
+    #[allow(clippy::arithmetic_side_effects)]
     fn quantize_buffer(&self, buffer: &[EinkColor], mode: WaveformMode) -> Vec<Gray4> {
         buffer
             .iter()
@@ -586,7 +600,9 @@ impl Emulator {
     }
 
     /// Present solid color frame (for flashing)
+    // SAFETY: spec.width * spec.height is a display pixel count that fits in u32.
     #[cfg(not(feature = "headless"))]
+    #[allow(clippy::arithmetic_side_effects)]
     async fn present_solid_color(&mut self, color: u32) {
         if let Some(window) = &mut self.window {
             let frame = vec![color; (self.spec.width * self.spec.height) as usize];
@@ -603,6 +619,9 @@ impl Emulator {
     }
 
     /// Render with flash animations based on waveform mode
+    // SAFETY: flash_count * 3 is bounded by small u32 values (max 4 flashes * 3 = 12);
+    // adjusted / 3 is integer division on a refresh duration in ms, both safely bounded.
+    #[allow(clippy::arithmetic_side_effects)]
     #[cfg_attr(not(feature = "debug"), allow(unused_mut))]
     #[cfg_attr(
         all(feature = "headless", not(feature = "debug")),
@@ -725,6 +744,9 @@ impl Emulator {
     ///
     /// Per embedded-graphics-simulator pattern: use for
     /// automated testing and visual regression.
+    // SAFETY: pixel color arithmetic operates on small values (0-255 RGB, 0-15 grayscale);
+    // no overflow is possible for these display-scale values.
+    #[allow(clippy::arithmetic_side_effects)]
     pub fn screenshot(
         &self,
         path: impl AsRef<std::path::Path>,
@@ -904,6 +926,9 @@ impl Emulator {
     ///
     /// This is the internal method that performs the actual refresh using the staged buffer.
     /// It uses the staged buffer (not the framebuffer) for the refresh, matching real hardware behavior.
+    // SAFETY: dc_warnings is a u32 counter; quantize/pixel luma arithmetic operates on
+    // small display-scale values (0-15 grayscale, 0-255 RGB). No overflow is possible.
+    #[allow(clippy::arithmetic_side_effects)]
     async fn display_with_staged_buffer(
         &mut self,
         mode: WaveformMode,
@@ -1401,6 +1426,7 @@ impl EinkDisplay for Emulator {
 
 #[cfg(test)]
 mod tests {
+    #![allow(clippy::indexing_slicing, clippy::arithmetic_side_effects)]
     use super::*;
 
     #[test]

@@ -147,6 +147,9 @@ where
         .into_styled(PrimitiveStyle::with_stroke(Gray4::BLACK, 1))
         .draw(display)?;
     let btn_style = MonoTextStyle::new(&FONT_10X20, Gray4::WHITE);
+    // SAFETY: btn_x and btn_y are derived from display dimensions (800×480 max) minus
+    // btn dimensions, so btn_x + 10 and btn_y + 26 are well within i32 range.
+    #[allow(clippy::arithmetic_side_effects)]
     Text::new(btn_label, Point::new(btn_x + 10, btn_y + 26), btn_style).draw(display)?;
     register(
         "now-playing-play-btn",

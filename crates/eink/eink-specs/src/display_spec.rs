@@ -88,7 +88,12 @@ impl DisplaySpec {
     /// Use for rough size estimates only.
     pub fn diagonal_inches(&self) -> f32 {
         const TYPICAL_PPI: f32 = 130.0;
-        let diagonal_px = libm::sqrtf((self.width.pow(2) + self.height.pow(2)) as f32);
+        // SAFETY: display dimensions are at most a few thousand pixels; squaring a u32
+        // display dimension and summing two results fits comfortably in u64 and the
+        // conversion to f32 for sqrt is lossless at these scales.
+        #[allow(clippy::arithmetic_side_effects)]
+        let sum_sq = self.width.pow(2) + self.height.pow(2);
+        let diagonal_px = libm::sqrtf(sum_sq as f32);
         diagonal_px / TYPICAL_PPI
     }
 
@@ -115,6 +120,9 @@ impl DisplaySpec {
     /// - 5-35°C: Optimal performance (1.0x speed)
     /// - 35-45°C: Gradual slowdown due to increased viscosity
     /// - Above 45°C: Significant slowdown
+    // SAFETY: all arithmetic here is f32 display-timing math with temperature values in
+    // [-128, 127] and refresh times in [0, ~5000] ms. No meaningful overflow is possible.
+    #[allow(clippy::arithmetic_side_effects)]
     pub fn adjusted_refresh_ms(&self, base_ms: u32, temp: i8) -> u32 {
         let factor = match temp {
             t if t < 0 => {

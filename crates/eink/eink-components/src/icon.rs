@@ -81,6 +81,8 @@ impl Icon {
         }
     }
 
+    // SAFETY: icon rendering arithmetic is bounded by the icon size (small UI value).
+    #[allow(clippy::arithmetic_side_effects)]
     fn render_play<D>(&self, display: &mut D, position: Point) -> Result<(), D::Error>
     where
         D: DrawTarget<Color = Gray4>,
@@ -98,6 +100,8 @@ impl Icon {
         Ok(())
     }
 
+    // SAFETY: icon rendering arithmetic is bounded by the icon size (small UI value).
+    #[allow(clippy::arithmetic_side_effects)]
     fn render_pause<D>(&self, display: &mut D, position: Point) -> Result<(), D::Error>
     where
         D: DrawTarget<Color = Gray4>,
@@ -132,6 +136,8 @@ impl Icon {
         Ok(())
     }
 
+    // SAFETY: icon rendering arithmetic is bounded by the icon size (small UI value).
+    #[allow(clippy::arithmetic_side_effects)]
     fn render_next<D>(&self, display: &mut D, position: Point) -> Result<(), D::Error>
     where
         D: DrawTarget<Color = Gray4>,
@@ -159,6 +165,8 @@ impl Icon {
         Ok(())
     }
 
+    // SAFETY: icon rendering arithmetic is bounded by the icon size (small UI value).
+    #[allow(clippy::arithmetic_side_effects)]
     fn render_previous<D>(&self, display: &mut D, position: Point) -> Result<(), D::Error>
     where
         D: DrawTarget<Color = Gray4>,
@@ -186,6 +194,8 @@ impl Icon {
         Ok(())
     }
 
+    // SAFETY: icon rendering arithmetic is bounded by the icon size (small UI value).
+    #[allow(clippy::arithmetic_side_effects)]
     fn render_volume_up<D>(&self, display: &mut D, position: Point) -> Result<(), D::Error>
     where
         D: DrawTarget<Color = Gray4>,
@@ -214,6 +224,8 @@ impl Icon {
         self.render_volume_up(display, position)
     }
 
+    // SAFETY: icon rendering arithmetic is bounded by the icon size (small UI value).
+    #[allow(clippy::arithmetic_side_effects)]
     fn render_settings<D>(&self, display: &mut D, position: Point) -> Result<(), D::Error>
     where
         D: DrawTarget<Color = Gray4>,

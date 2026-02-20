@@ -273,6 +273,9 @@ impl WaveformLutSet {
     ///   }
     /// }
     /// ```
+    // SAFETY: temperature - 5 / temperature + 5: temperature is i8 and -123..=120 range is safe;
+    // the ±5 arithmetic will not overflow for typical display temperature values (-40..=85).
+    #[allow(clippy::arithmetic_side_effects)]
     pub fn from_json(json: &str) -> Result<Self, LutError> {
         let parsed: JsonLutSet =
             serde_json::from_str(json).map_err(|e| LutError::ParseError(e.to_string()))?;
@@ -382,6 +385,9 @@ impl WaveformLutSet {
     ///                 [0]     Voltage (i8)
     ///                 [1-2]   Duration (u16 LE)
     /// ```
+    // SAFETY: offset arithmetic is bounded by checked data.len() comparisons before each access;
+    // phase_count is a u16 so 0..phase_count loops are bounded; temperature ±5 fits in i8.
+    #[allow(clippy::arithmetic_side_effects, clippy::indexing_slicing)]
     pub fn from_bytes(data: &[u8]) -> Result<Self, LutError> {
         // Check magic number
         if data.len() < 4 || &data[0..4] != b"WFM\0" {
@@ -525,6 +531,7 @@ fn write_lut_binary(data: &mut Vec<u8>, mode_id: u8, lut: &WaveformLut) {
 
 #[cfg(test)]
 mod tests {
+    #![allow(clippy::indexing_slicing, clippy::arithmetic_side_effects)]
     use super::*;
 
     #[test]

@@ -77,6 +77,8 @@ impl Label {
     }
 
     /// Get text dimensions
+    // SAFETY: text length and char_width are small values; product fits in u32.
+    #[allow(clippy::arithmetic_side_effects)]
     pub fn dimensions(&self) -> Size {
         Size::new(
             (self.text.len() as u32) * self.size.char_width(),

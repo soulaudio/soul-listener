@@ -152,6 +152,9 @@ impl PixelState {
     /// Update pixel with partial refresh using custom LUT
     ///
     /// Uses LUT-derived ghosting and DC balance characteristics.
+    // SAFETY: all arithmetic here is on f32 pixel values in [0.0, 1.0] and u8 grayscale
+    // levels in [0, 15]. No meaningful overflow is possible with these bounded values.
+    #[allow(clippy::arithmetic_side_effects)]
     pub fn partial_refresh_with_lut(&mut self, target: u8, lut: &WaveformLut, temperature: i8) {
         let target = target.min(15);
 
@@ -187,6 +190,9 @@ impl PixelState {
     ///
     /// Fast update with content-dependent ghosting accumulation.
     /// Uses asymmetric ghosting: lightening (0→15) accumulates more than darkening (15→0).
+    // SAFETY: all arithmetic is on f32 physics simulation values bounded by [0.0, 1.0] range
+    // for ghosting and small u8 values for pixel levels. No overflow is possible.
+    #[allow(clippy::arithmetic_side_effects)]
     pub fn partial_refresh(&mut self, target: u8, ghosting_rate: f32, temperature: i8) {
         let target = target.min(15);
 
@@ -249,6 +255,9 @@ impl PixelState {
     ///
     /// Ultra-fast update with high ghosting accumulation.
     /// Uses asymmetric ghosting: lightening (0→15) accumulates more than darkening (15→0).
+    // SAFETY: all arithmetic is on f32 physics simulation values bounded by [0.0, 1.0] range
+    // for ghosting and small u8 values for pixel levels. No overflow is possible.
+    #[allow(clippy::arithmetic_side_effects)]
     pub fn fast_refresh(&mut self, target: u8, ghosting_rate: f32, temperature: i8) {
         let target = target.min(15);
 
@@ -373,6 +382,8 @@ pub struct PixelStateBuffer {
 
 impl PixelStateBuffer {
     /// Create new pixel state buffer
+    // SAFETY: width * height is a display pixel count that fits in u32 for typical displays.
+    #[allow(clippy::arithmetic_side_effects)]
     pub fn new(width: u32, height: u32) -> Self {
         let size = (width * height) as usize;
         Self {
@@ -383,6 +394,8 @@ impl PixelStateBuffer {
     }
 
     /// Get pixel state at position
+    // SAFETY: x < width and y < height are checked; x + y * width is bounded by width * height.
+    #[allow(clippy::arithmetic_side_effects)]
     pub fn get(&self, x: u32, y: u32) -> Option<&PixelState> {
         if x < self.width && y < self.height {
             let index = (x + y * self.width) as usize;
@@ -393,6 +406,8 @@ impl PixelStateBuffer {
     }
 
     /// Get mutable pixel state at position
+    // SAFETY: x < width and y < height are checked; x + y * width is bounded by width * height.
+    #[allow(clippy::arithmetic_side_effects)]
     pub fn get_mut(&mut self, x: u32, y: u32) -> Option<&mut PixelState> {
         if x < self.width && y < self.height {
             let index = (x + y * self.width) as usize;
@@ -441,6 +456,8 @@ impl PixelStateBuffer {
     }
 
     /// Full refresh all pixels
+    // SAFETY: luma() returns 0-3; 3 * 5 = 15 which fits in u8.
+    #[allow(clippy::arithmetic_side_effects)]
     pub fn full_refresh_all(&mut self, framebuffer: &[Gray4]) {
         for (i, state) in self.states.iter_mut().enumerate() {
             // Convert Gray4 luma (0-3) to 0-15 range for pixel state
@@ -451,6 +468,8 @@ impl PixelStateBuffer {
     }
 
     /// Partial refresh all pixels
+    // SAFETY: luma() returns 0-3; 3 * 5 = 15 which fits in u8.
+    #[allow(clippy::arithmetic_side_effects)]
     pub fn partial_refresh_all(
         &mut self,
         framebuffer: &[Gray4],
@@ -466,6 +485,8 @@ impl PixelStateBuffer {
     }
 
     /// Fast refresh all pixels
+    // SAFETY: luma() returns 0-3; 3 * 5 = 15 which fits in u8.
+    #[allow(clippy::arithmetic_side_effects)]
     pub fn fast_refresh_all(&mut self, framebuffer: &[Gray4], ghosting_rate: f32, temperature: i8) {
         for (i, state) in self.states.iter_mut().enumerate() {
             // Convert Gray4 luma (0-3) to 0-15 range for pixel state

@@ -230,11 +230,15 @@ impl Edges {
     }
 
     /// Returns the total horizontal space (left + right).
+    // SAFETY: edge values are display pixel counts (max ~4000); left + right cannot overflow u32.
+    #[allow(clippy::arithmetic_side_effects)]
     pub const fn horizontal(self) -> u32 {
         self.left + self.right
     }
 
     /// Returns the total vertical space (top + bottom).
+    // SAFETY: edge values are display pixel counts (max ~4000); top + bottom cannot overflow u32.
+    #[allow(clippy::arithmetic_side_effects)]
     pub const fn vertical(self) -> u32 {
         self.top + self.bottom
     }
@@ -531,11 +535,15 @@ impl Style {
     }
 
     /// Returns the total horizontal space taken by margin and padding.
+    // SAFETY: margin and padding are pixel counts; their sum fits trivially in u32.
+    #[allow(clippy::arithmetic_side_effects)]
     pub const fn horizontal_space(self) -> u32 {
         self.margin.horizontal() + self.padding.horizontal()
     }
 
     /// Returns the total vertical space taken by margin and padding.
+    // SAFETY: margin and padding are pixel counts; their sum fits trivially in u32.
+    #[allow(clippy::arithmetic_side_effects)]
     pub const fn vertical_space(self) -> u32 {
         self.margin.vertical() + self.padding.vertical()
     }

@@ -81,6 +81,9 @@ mod windows_dpi {
     /// formula that computes a wrong window position when the app overrides the
     /// OS-suggested outer size.  By returning 0 here we prevent winit from
     /// running that handler at all.
+    // SAFETY: outer.right - outer.left and outer.bottom - outer.top are RECT dimensions
+    // returned by AdjustWindowRectExForDpi which guarantees right >= left and bottom >= top.
+    #[allow(clippy::arithmetic_side_effects)]
     pub unsafe extern "system" fn subclass_proc(
         hwnd: isize,
         msg: u32,
@@ -187,6 +190,9 @@ const PANEL_W: u32 = 280;
 
 // --- Pixel helpers -----------------------------------------------------------
 
+// SAFETY: color channel arithmetic is on u8/u32 values in [0, 255] range; bit shifts
+// are bounded at 24 bits; no overflow is possible for display pixel values.
+#[allow(clippy::arithmetic_side_effects)]
 fn apply_eink_appearance(pixel: u32, x: u32, y: u32) -> u32 {
     let r = ((pixel >> 16) & 0xFF) as u8;
     let g = ((pixel >> 8) & 0xFF) as u8;
@@ -207,6 +213,9 @@ fn apply_eink_appearance(pixel: u32, x: u32, y: u32) -> u32 {
     0xFF000000 | ((r as u32) << 16) | ((g as u32) << 8) | (b as u32)
 }
 
+// SAFETY: wrapping_mul and wrapping_add are explicitly wrapping; XOR and shift are safe;
+// the final masking and subtraction yield a bounded i16 result.
+#[allow(clippy::arithmetic_side_effects)]
 fn pseudo_random_noise(x: u32, y: u32) -> i16 {
     // Murmur3-style finalizer: no cross-term (x*y creates hyperbolic patterns),
     // full bit-avalanche so every input bit affects every output bit.
@@ -232,6 +241,9 @@ fn darken(pixel: u32, amount: u8) -> u32 {
     0xFF000000 | ((r as u32) << 16) | ((g as u32) << 8) | (b as u32)
 }
 
+// SAFETY: rotation index arithmetic is bounded by width * height pixel count; all indices
+// are in range [0, width * height) by construction from loop bounds.
+#[allow(clippy::arithmetic_side_effects, clippy::indexing_slicing)]
 fn rotate_90_cw(src: &[u32], width: u32, height: u32) -> Vec<u32> {
     // (x, y) → (height-1-y, x);  output: height × width
     let mut dst = vec![0u32; (width * height) as usize];
@@ -243,6 +255,8 @@ fn rotate_90_cw(src: &[u32], width: u32, height: u32) -> Vec<u32> {
     dst
 }
 
+// SAFETY: rotation index arithmetic is bounded by width * height pixel count.
+#[allow(clippy::arithmetic_side_effects, clippy::indexing_slicing)]
 fn rotate_180(src: &[u32], width: u32, height: u32) -> Vec<u32> {
     let mut dst = vec![0u32; (width * height) as usize];
     for y in 0..height {
@@ -254,6 +268,8 @@ fn rotate_180(src: &[u32], width: u32, height: u32) -> Vec<u32> {
     dst
 }
 
+// SAFETY: rotation index arithmetic is bounded by width * height pixel count.
+#[allow(clippy::arithmetic_side_effects, clippy::indexing_slicing)]
 fn rotate_270_cw(src: &[u32], width: u32, height: u32) -> Vec<u32> {
     // (x, y) → (y, width-1-x);  output: height × width
     let mut dst = vec![0u32; (width * height) as usize];
@@ -533,6 +549,9 @@ impl Window {
     ///
     /// `width` / `height` are display content dimensions before rotation.
     /// Physical window pixels = rotated dimensions × `config.scale`.
+    // SAFETY: win_w * config.scale and win_h * config.scale are bounded by display dimensions
+    // (max ~4000px) * scale (max ~4); product fits in u32.
+    #[allow(clippy::arithmetic_side_effects)]
     pub fn new(width: u32, height: u32, config: &crate::config::EmulatorConfig) -> Self {
         let mut event_loop = EventLoop::builder()
             .build()
@@ -857,6 +876,10 @@ impl Window {
     }
 
     /// Core render pipeline: e-ink effects → rotation → scale → softbuffer.
+    // SAFETY: all arithmetic here operates on display/window pixel coordinates bounded by
+    // phys_w * phys_h and rot_w * rot_h * scale — all display-scale values that fit in u32/usize.
+    // Indexing is bounded by the same coordinate checks (x < rot_w, y < rot_h, etc.).
+    #[allow(clippy::arithmetic_side_effects, clippy::indexing_slicing)]
     fn present_internal(&mut self, rgba_pixels: &[u32]) {
         let disp_w = self.disp_w;
         let disp_h = self.disp_h;

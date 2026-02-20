@@ -143,11 +143,14 @@ impl InitSequence {
 
                 if current_step < *total_steps {
                     // Advance to next step
+                    // SAFETY: current_step < total_steps <= 7; current_step + 1 fits in u8.
+                    #[allow(clippy::arithmetic_side_effects)]
+                    let next = current_step + 1;
                     self.state = InitializationState::Initializing {
-                        step: current_step + 1,
+                        step: next,
                         total_steps: *total_steps,
                     };
-                    Ok(Some(current_step + 1))
+                    Ok(Some(next))
                 } else {
                     // Complete initialization
                     self.state = InitializationState::Initialized;

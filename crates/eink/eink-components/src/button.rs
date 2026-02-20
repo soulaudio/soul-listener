@@ -101,6 +101,8 @@ impl Button {
     }
 
     /// Calculate button size including padding
+    // SAFETY: text/padding dimensions are small UI values; overflow is not possible.
+    #[allow(clippy::arithmetic_side_effects)]
     fn calculate_size(&self) -> Size {
         // Text size: approximately 10 pixels per character width, 20 pixels height
         let text_width = (self.label.len() as u32) * 10;
@@ -119,6 +121,8 @@ impl Button {
     }
 
     /// Render button to display
+    // SAFETY: button position/size arithmetic is bounded by display dimensions.
+    #[allow(clippy::arithmetic_side_effects)]
     pub fn render<D>(&self, display: &mut D, position: Point) -> Result<(), D::Error>
     where
         D: DrawTarget<Color = Gray4>,
