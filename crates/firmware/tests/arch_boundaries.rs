@@ -179,11 +179,11 @@ fn test_qspi_clock_within_flash_spec() {
 
 // ─── MPU boot architecture tests ─────────────────────────────────────────────
 
-/// Verify `MpuApplier::soul_audio_register_pairs()` returns exactly 2 pairs.
+/// Verify `MpuApplier::soul_audio_register_pairs()` returns exactly 3 pairs.
 ///
-/// Architecture rule: the SoulAudio boot sequence configures exactly two
-/// non-cacheable MPU regions. Any change to this count must be intentional
-/// and documented.
+/// Architecture rule: the SoulAudio boot sequence configures exactly three
+/// non-cacheable MPU regions: AXI SRAM, SRAM4, SRAM1/2.
+/// Any change to this count must be intentional and documented.
 #[test]
 fn test_mpu_applier_returns_two_pairs() {
     use platform::mpu::MpuApplier;
@@ -191,8 +191,8 @@ fn test_mpu_applier_returns_two_pairs() {
     let pairs = MpuApplier::soul_audio_register_pairs();
     assert_eq!(
         pairs.len(),
-        2,
-        "MpuApplier must return exactly 2 (RBAR, RASR) pairs for the SoulAudio DAP"
+        3,
+        "MpuApplier must return exactly 3 (RBAR, RASR) pairs for the SoulAudio DAP"
     );
 }
 
@@ -323,19 +323,19 @@ fn boot_sequence_step_0_is_mpu_not_cache() {
     );
 }
 
-/// Verify that `firmware::boot::mpu_register_pairs()` returns exactly 2 pairs.
+/// Verify that `firmware::boot::mpu_register_pairs()` returns exactly 3 pairs.
 ///
 /// Architecture rule: the SoulAudio boot sequence must configure exactly
-/// two non-cacheable MPU regions — AXI SRAM (DMA1/DMA2 pool) and SRAM4
-/// (BDMA pool). Any change to this count is a deliberate hardware change
-/// that must be reviewed.
+/// three non-cacheable MPU regions: AXI SRAM (DMA1/DMA2 pool), SRAM4
+/// (BDMA pool), and SRAM1/2 (D2 domain DMA1/2 accessible).
+/// Any change to this count is a deliberate hardware change that must be reviewed.
 #[test]
 fn mpu_register_pairs_correct_count() {
     let pairs = firmware::boot::mpu_register_pairs();
     assert_eq!(
         pairs.len(),
-        2,
-        "must configure exactly 2 non-cacheable MPU regions"
+        3,
+        "must configure exactly 3 non-cacheable MPU regions"
     );
 }
 
@@ -1481,5 +1481,134 @@ fn ci_yml_has_size_check_job() {
         ci_yml.contains("size") || ci_yml.contains("binary-size") || ci_yml.contains("arm-none-eabi"),
         "CI workflow should check binary size to catch flash bloat. \
          Use arm-none-eabi-size or equivalent."
+    );
+}
+
+
+// ---- Workspace lint propagation tests (TDD round 8 slice 1) ----------------
+
+/// Every workspace member must opt into workspace lints.
+/// Without [lints] workspace = true, ALL safety lints are silently bypassed.
+#[test]
+fn all_workspace_members_opt_into_workspace_lints() {
+    let crates_to_check = [
+        include_str!("../../../crates/eink/eink-emulator/Cargo.toml"),
+        include_str!("../../../crates/eink/eink-testing/Cargo.toml"),
+        include_str!("../../../crates/eink/eink-specs/Cargo.toml"),
+        include_str!("../../../crates/eink/eink-system/Cargo.toml"),
+        include_str!("../../../crates/eink/eink-components/Cargo.toml"),
+        include_str!("../../../crates/firmware-ui/Cargo.toml"),
+        include_str!("../../../xtask/Cargo.toml"),
+    ];
+    for (i, cargo_toml) in crates_to_check.iter().enumerate() {
+        assert!(
+            cargo_toml.contains("[lints]") && cargo_toml.contains("workspace = true"),
+            "Cargo.toml index {} is missing [lints] workspace = true",
+            i
+        );
+    }
+}
+
+#[test]
+fn eink_emulator_crate_opts_into_workspace_lints() {
+    let cargo_toml = include_str!("../../../crates/eink/eink-emulator/Cargo.toml");
+    assert!(cargo_toml.contains("[lints]"), "eink-emulator/Cargo.toml missing [lints] section");
+    assert!(
+        cargo_toml.contains("workspace = true"),
+        "eink-emulator/Cargo.toml missing workspace = true under [lints]"
+    );
+}
+
+#[test]
+fn eink_testing_crate_opts_into_workspace_lints() {
+    let cargo_toml = include_str!("../../../crates/eink/eink-testing/Cargo.toml");
+    assert!(cargo_toml.contains("[lints]"), "eink-testing/Cargo.toml missing [lints] section");
+    assert!(
+        cargo_toml.contains("workspace = true"),
+        "eink-testing/Cargo.toml missing workspace = true"
+    );
+}
+
+#[test]
+fn eink_specs_crate_opts_into_workspace_lints() {
+    let cargo_toml = include_str!("../../../crates/eink/eink-specs/Cargo.toml");
+    assert!(cargo_toml.contains("[lints]"), "eink-specs/Cargo.toml missing [lints] section");
+    assert!(
+        cargo_toml.contains("workspace = true"),
+        "eink-specs/Cargo.toml missing workspace = true"
+    );
+}
+
+#[test]
+fn eink_system_crate_opts_into_workspace_lints() {
+    let cargo_toml = include_str!("../../../crates/eink/eink-system/Cargo.toml");
+    assert!(cargo_toml.contains("[lints]"), "eink-system/Cargo.toml missing [lints] section");
+    assert!(
+        cargo_toml.contains("workspace = true"),
+        "eink-system/Cargo.toml missing workspace = true"
+    );
+}
+
+#[test]
+fn eink_components_crate_opts_into_workspace_lints() {
+    let cargo_toml = include_str!("../../../crates/eink/eink-components/Cargo.toml");
+    assert!(
+        cargo_toml.contains("[lints]"),
+        "eink-components/Cargo.toml missing [lints] section"
+    );
+    assert!(
+        cargo_toml.contains("workspace = true"),
+        "eink-components/Cargo.toml missing workspace = true"
+    );
+}
+
+#[test]
+fn firmware_ui_crate_opts_into_workspace_lints() {
+    let cargo_toml = include_str!("../../../crates/firmware-ui/Cargo.toml");
+    assert!(cargo_toml.contains("[lints]"), "firmware-ui/Cargo.toml missing [lints] section");
+    assert!(
+        cargo_toml.contains("workspace = true"),
+        "firmware-ui/Cargo.toml missing workspace = true"
+    );
+}
+
+#[test]
+fn xtask_crate_opts_into_workspace_lints() {
+    let cargo_toml = include_str!("../../../xtask/Cargo.toml");
+    assert!(cargo_toml.contains("[lints]"), "xtask/Cargo.toml missing [lints] section");
+    assert!(
+        cargo_toml.contains("workspace = true"),
+        "xtask/Cargo.toml missing workspace = true"
+    );
+}
+
+#[test]
+fn window_rs_transmute_has_safety_comment() {
+    // transmute of raw isize to WNDPROC must have SAFETY: justification.
+    let window_src = include_str!("../../../crates/eink/eink-emulator/src/window.rs");
+    if window_src.contains("transmute") {
+        assert!(
+            window_src.contains("// SAFETY:") || window_src.contains("SAFETY:"),
+            "window.rs contains transmute but no SAFETY: comment"
+        );
+    }
+}
+
+// -- SAI DMA ping-pong documentation (GAP-M6) ---------------------------------
+
+/// SAI audio must use ping-pong (double-buffer) DMA with half-complete interrupt.
+/// Without half-complete handling, the CPU refill window is half as large,
+/// doubling effective audio latency and risking glitches.
+///
+/// This test ensures the architecture is documented before implementation.
+/// Reference: Embassy ring buffer DMA pattern (embassy-rs issue #2752)
+#[test]
+fn audio_sai_ping_pong_dma_pattern_documented() {
+    let note = firmware::boot::SAI_INIT_NOTE;
+    // SAI_INIT_NOTE must reference ping-pong / half-complete pattern
+    assert!(
+        note.contains("half") || note.contains("ping") || note.contains("HTIF")
+            || note.contains("double"),
+        "firmware::boot::SAI_INIT_NOTE must document the ping-pong/half-complete DMA pattern.          Add: ping-pong (double-buffer), HT interrupt, TC interrupt.          See: embassy-rs issue #2752, ST AN5051 s5.3.          Current note: {note}"
     );
 }

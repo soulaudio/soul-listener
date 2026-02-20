@@ -112,7 +112,7 @@ impl SdramConfig {
 /// unsafe { firmware::boot::hardware::apply_mpu_config(&mut cortex_m_peripherals.MPU); }
 /// ```
 #[must_use]
-pub fn mpu_register_pairs() -> [(u32, u32); 2] {
+pub fn mpu_register_pairs() -> [(u32, u32); 3] {
     MpuApplier::soul_audio_register_pairs()
 }
 
@@ -233,7 +233,11 @@ pub const QSPI_INIT_NOTE: &str =
 /// - `platform::clock_config::InterruptPriorities::AUDIO_SAI_DMA` — interrupt priority
 pub const SAI_INIT_NOTE: &str =
     "SAI1 Block A: I2S master TX to ES9038Q2M, 32-bit/192kHz, MCLK=49.152MHz (PLL1Q), \
-     DMA1 CH0 circular, buffer in .axisram";
+     DMA1 CH0 circular ping-pong (double-buffer), buffer in .axisram; \
+     HT interrupt (half-transfer): CPU refills first half; \
+     TC interrupt (transfer-complete): CPU refills second half; \
+     half-complete handling halves effective audio latency; \
+     ref: embassy-rs issue #2752, ST AN5051 s5.3";
 
 /// Documentation anchor: I2C2 and I2C3 must be initialized for PMIC and DAC control.
 ///
@@ -584,6 +588,39 @@ pub fn init_sdram_stub() -> Result<(), SdramInitError> {
 // Host tests (cargo test -p firmware) never compile or link this module,
 // keeping all non-hardware tests safe to run on the development machine.
 
+/// Configure the Cortex-M7 Configuration Control Register fault traps.
+///
+/// Sets:
+/// - CCR.DIV_0_TRP (bit 4): trap divide-by-zero (SDIV/UDIV return 0
+///   silently without this on Cortex-M7).
+/// - CCR.UNALIGN_TRP (bit 3): trap unaligned memory accesses.
+///
+/// Must be called early in boot, **before** any arithmetic or DMA operations.
+///
+/// Reference: ARM DDI0489F §B3.2.8, ARM Application Note AN209.
+///
+/// # Safety
+///
+/// Writes to the SCB CCR register. Safe to call once during initialization.
+/// On Cortex-M7, CCR bits 3 and 4 are valid (unlike Cortex-M0/M0+ where
+/// they are reserved).
+#[allow(unsafe_code)]
+pub fn configure_scb_fault_traps() {
+    // SAFETY: Single writer during initialization. CCR bits 3 (UNALIGN_TRP)
+    // and 4 (DIV_0_TRP) are valid and writable on Cortex-M7. No concurrent
+    // SCB access occurs during boot sequence.
+    #[cfg(feature = "hardware")]
+    unsafe {
+        let scb = &*cortex_m::peripheral::SCB::PTR;
+        let ccr = scb.ccr.read();
+        // DIV_0_TRP (bit 4) | UNALIGN_TRP (bit 3)
+        scb.ccr.write(ccr | (1 << 4) | (1 << 3));
+        // ISB: Instruction Synchronization Barrier ensures CCR write takes
+        // effect before the next instruction executes.
+        cortex_m::asm::isb();
+    }
+}
+
 #[cfg(feature = "hardware")]
 pub mod hardware {
     //! Actual hardware register write implementations.
@@ -697,9 +734,9 @@ mod tests {
 
     #[test]
     fn test_boot_mpu_pair_count() {
-        // Boot sequence must configure exactly 2 MPU regions
+        // Boot sequence must configure exactly 3 MPU regions
         let pairs = platform::mpu::MpuApplier::soul_audio_register_pairs();
-        assert_eq!(pairs.len(), 2, "SoulAudio requires exactly 2 MPU regions");
+        assert_eq!(pairs.len(), 3, "SoulAudio requires exactly 3 MPU regions");
     }
 
     #[test]
