@@ -259,7 +259,7 @@ jobs:
         run: ato sync
 
       - name: Run Atopile ERC (ato check)
-        run: ato check --build check-only
+        run: ato build --build check-only
 
   # ---------------------------------------------------------------------------
   # Per-module independent validation
@@ -305,7 +305,7 @@ jobs:
         run: ato sync
 
       - name: Validate ${{ matrix.module }} module standalone
-        run: ato check --build check-${{ matrix.module }}
+        run: ato build --build check-${{ matrix.module }}
 
   # ---------------------------------------------------------------------------
   # BOM generation
