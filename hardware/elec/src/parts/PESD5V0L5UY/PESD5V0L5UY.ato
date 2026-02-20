@@ -1,0 +1,27 @@
+# PESD5V0L5UY — Nexperia 5-channel ESD protection array (SOT363 / SC-70-6)
+#
+# VRWM = 5.0 V; suitable for 3.3 V logic; ~16 pF/ch typ; 20 kV IEC 61000-4-2.
+# SOT363 pin assignment (bottom view):
+#   Pin 1: IO1 — cathode 1 (I/O line)
+#   Pin 2: GND — common anode (connect to ground plane)
+#   Pin 3: IO2 — cathode 2 (I/O line)
+#   Pin 4: IO3 — cathode 3 (I/O line)
+#   Pin 5: IO4 — cathode 4 (I/O line)
+#   Pin 6: IO5 — cathode 5 (I/O line)
+# Distributor:
+#   Digi-Key: 1727-PESD5V0L5UY,115CT-ND    Mouser: 771-PESD5V0L5UY,115
+
+component PESD5V0L5UY:
+    trait is_atomic_part<
+        manufacturer = "Nexperia",
+        partnumber   = "PESD5V0L5UY,115",
+        footprint    = "Package_TO_SOT_SMD:SOT-363_SC-70-6",
+        symbol       = "ESD_Protection:PESD5V0L5UY">
+    trait has_designator_prefix<prefix = "U">
+
+    signal IO1 ~ pin 1   # Cathode 1 — I/O line 1
+    signal GND ~ pin 2   # Common anode — connect to ground plane
+    signal IO2 ~ pin 3   # Cathode 2 — I/O line 2
+    signal IO3 ~ pin 4   # Cathode 3 — I/O line 3
+    signal IO4 ~ pin 5   # Cathode 4 — I/O line 4
+    signal IO5 ~ pin 6   # Cathode 5 — I/O line 5

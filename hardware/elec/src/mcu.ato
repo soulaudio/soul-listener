@@ -18,6 +18,7 @@ from "interfaces.ato" import I2CBus, I2SBus, SPIDevice, DisplayCtrl, SDMMCBus
 from "interfaces.ato" import UARTBus, USBDiffPair, SWDPort, FMCBus, QSPIBus
 from "interfaces.ato" import EncoderBus, ClockSource
 from "parts/STM32H743ZIT6/STM32H743ZIT6.ato" import STM32H743ZIT6
+from "parts/Crystal/Crystal.ato" import Crystal
 
 module MCU:
     """

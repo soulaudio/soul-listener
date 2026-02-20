@@ -26,78 +26,8 @@ from "interfaces.ato" import I2SBus, I2CBus, AnalogAudioOut, AmpSupplyBus
 from "parts/ES9038Q2M/ES9038Q2M.ato" import ES9038Q2M
 from "parts/TPA6120A2/TPA6120A2.ato" import TPA6120A2
 from "parts/LT3042EMSE/LT3042EMSE.ato" import LT3042EMSE
-
-# ── LT3045EMSE — Ultra-low-noise positive LDO: +5.5 V → +5.0 V ───────────────
-#
-# Package:      MSOP-12E (exposed pad, 3×4 mm, 12 leads + EP)
-# Manufacturer: Analog Devices
-# Datasheet:    https://www.analog.com/media/en/technical-documentation/data-sheets/lt3045.pdf
-# Key specs:    0.8 µVRMS noise, PSRR 76 dB @ 1 MHz, 500 mA, VOUT = ISET × RSET
-#   ISET = 100 µA (internal fixed), RSET = 49.9 kΩ → VOUT = 4.99 V ≈ +5.0 V
-# ⚠ EP (pin 13): connect to GND — unlike LT3094 where EP = IN
-# EN_UV (pin 4): tie to IN for always-on; pull below UVLO threshold to disable
-# OUTS  (pin 10): local output sense — connect to OUT (no remote sense on this board)
-# VIOC  (pin 3): current monitor/limit — connect to OUT for bypass
-# Distributor:
-#   Digi-Key: LT3045EMSE#PBFCT-ND    Mouser: 584-LT3045EMSE#PBF
-component LT3045EMSE:
-    trait is_atomic_part<
-        manufacturer = "Analog Devices",
-        partnumber   = "LT3045EMSE#PBF",
-        footprint    = "Package_SO:MSOP-12-1EP_3x4mm_P0.65mm_EP1.68x1.88mm_ThermalVias",
-        symbol       = "Regulator_Linear:LT3045">
-    trait has_designator_prefix<prefix = "U">
-
-    signal IN    ~ pin 1   # Input (share pin — both IN pins connect to input)
-    signal IN_2  ~ pin 2   # Input (share)
-    signal VIOC  ~ pin 3   # Output current monitor — connect to OUT for bypass
-    signal EN_UV ~ pin 4   # Enable/UVLO — tie to IN for always-on
-    signal PG    ~ pin 5   # Power good (open-drain; pull up to OUT via 100 kΩ)
-    signal ILIM  ~ pin 6   # Current limit — 2.0 kΩ to IN → 500 mA limit
-    signal PGFB  ~ pin 7   # PG feedback — connect to OUT for standard threshold
-    signal SET   ~ pin 8   # Output set — RSET = 49.9 kΩ to GND → VOUT = +5.0 V
-    signal GND   ~ pin 9   # Ground
-    signal OUTS  ~ pin 10  # Output sense — connect to OUT for local sense
-    signal OUT   ~ pin 11  # Regulated output (share)
-    signal OUT_2 ~ pin 12  # Regulated output (share)
-    signal EP    ~ pin 13  # Exposed pad = GND (solder to ground plane for thermal)
-
-# ── LT3094EMSE — Ultra-low-noise negative LDO: −5.5 V → −5.0 V ───────────────
-#
-# Package:      MSOP-12E (identical footprint to LT3045)
-# Manufacturer: Analog Devices
-# Datasheet:    https://www.analog.com/media/en/technical-documentation/data-sheets/lt3094.pdf
-# Key specs:    0.8 µVRMS noise, PSRR 74 dB @ 1 MHz, 500 mA, VOUT = −ISET × RSET
-#   ISET = 100 µA (internal), RSET = 49.9 kΩ → VOUT = −4.99 V ≈ −5.0 V
-# ⚠ EP (pin 13): connect to IN (the −5.5 V input rail) — NOT to GND!
-#   This is the critical difference from LT3045 (EP=GND). Failure to do this
-#   leaves the thermal pad floating at an intermediate potential.
-# EN_UV (pin 3): tie to GND for always-on (GND is the high-potential side)
-# ILIM  (pin 6): 2.0 kΩ to GND → 500 mA current limit (resistor to GND, not IN)
-# PG    (pin 4): pull up to GND via 100 kΩ (GND is the "positive" reference here)
-# Distributor:
-#   Digi-Key: LT3094EMSE#PBFCT-ND    Mouser: 584-LT3094EMSE#PBF
-component LT3094EMSE:
-    trait is_atomic_part<
-        manufacturer = "Analog Devices",
-        partnumber   = "LT3094EMSE#PBF",
-        footprint    = "Package_SO:MSOP-12-1EP_3x4mm_P0.65mm_EP1.68x1.88mm_ThermalVias",
-        symbol       = "Regulator_Linear:LT3094">
-    trait has_designator_prefix<prefix = "U">
-
-    signal IN    ~ pin 1   # Negative input (−5.5 V switching rail — share)
-    signal IN_2  ~ pin 2   # Negative input (share)
-    signal EN_UV ~ pin 3   # Enable/UVLO — tie to GND for always-on (GND = high-side)
-    signal PG    ~ pin 4   # Power good (open-drain; pull up to GND via 100 kΩ)
-    signal PGFB  ~ pin 5   # PG feedback — connect to OUT for standard threshold
-    signal ILIM  ~ pin 6   # Current limit — 2.0 kΩ to GND → 500 mA limit
-    signal VIOC  ~ pin 7   # Output current monitor — connect to OUT
-    signal SET   ~ pin 8   # Output set — RSET = 49.9 kΩ to GND → VOUT = −5.0 V
-    signal GND   ~ pin 9   # Ground (0 V reference = circuit ground)
-    signal OUTS  ~ pin 10  # Output sense — connect to OUT for local sense
-    signal OUT   ~ pin 11  # Regulated negative output (share)
-    signal OUT_2 ~ pin 12  # Regulated negative output (share)
-    signal EP    ~ pin 13  # Exposed pad = IN (−5.5 V rail — NOT GND!)
+from "parts/LT3045EMSE/LT3045EMSE.ato" import LT3045EMSE
+from "parts/LT3094EMSE/LT3094EMSE.ato" import LT3094EMSE
 
 module Audio:
     """

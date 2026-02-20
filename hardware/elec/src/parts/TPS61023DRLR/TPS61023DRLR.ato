@@ -1,0 +1,28 @@
+# TPS61023DRLR — TI Boost Converter: SYS (3.0–4.2 V) → +5.5 V
+#
+# Package:      SOT-563 (6-lead, 1.6×1.6 mm)
+# Manufacturer: Texas Instruments
+# Datasheet:    https://www.ti.com/lit/ds/symlink/tps61023.pdf
+# Key specs:    1.5 A switch, 95% efficiency, VREF = 1.204 V, up to 5.5 V in
+# VOUT formula: VOUT = VREF × (1 + R_top / R_bot)
+#   For +5.5 V: R_top = 357 kΩ (VOUT → FB), R_bot = 100 kΩ (FB → GND)
+#   VOUT = 1.204 × (1 + 357/100) = 1.204 × 4.57 = 5.50 V ✓
+# Inductor:     1.5 µH, ≥ 2 A, DCR < 100 mΩ (e.g., Würth 744031150)
+# EN:           active high; tied to amp_en MCU signal (PC4)
+# Distributor:
+#   TME:      TPS61023DRLR      Digi-Key: 296-TPS61023DRLRT-ND
+
+component TPS61023DRLR:
+    trait is_atomic_part<
+        manufacturer = "Texas Instruments",
+        partnumber   = "TPS61023DRLR",
+        footprint    = "Package_TO_SOT_SMD:SOT-563",
+        symbol       = "Regulator_Switching:TPS61023">
+    trait has_designator_prefix<prefix = "U">
+
+    signal FB   ~ pin 1  # Feedback — resistor divider mid-point (VREF = 1.204 V)
+    signal EN   ~ pin 2  # Enable — active high; drive from MCU AMP_EN (PC4)
+    signal VIN  ~ pin 3  # Input — LiPo SYS rail (3.0–4.2 V)
+    signal GND  ~ pin 4  # Ground
+    signal SW   ~ pin 5  # Switching node — connect to inductor
+    signal VOUT ~ pin 6  # Boost output (+5.5 V)
