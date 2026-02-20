@@ -26,9 +26,9 @@
 # Current pins (as of 2026-02-20):
 #   actions/checkout          v4.2.2   11bd71901bbe5b1630ceea73d27597364c9af683
 #   Swatinem/rust-cache       v2.8.2   779680da715d629ac1d338a641029a2f4372abb5
-#   dtolnay/rust-toolchain    @stable  (not SHA-pinnable: action reads channel
-#                                       from the git ref name; @stable is the
-#                                       correct moving tag as designed by the author)
+#   dtolnay/rust-toolchain    @1.87    (pinned to a specific stable release for
+#                                       reproducible builds; update periodically
+#                                       to track new stable releases)
 
 name: CI
 
@@ -54,7 +54,7 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@1.87
         with:
           components: rustfmt
 
@@ -79,7 +79,7 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@1.87
         with:
           components: clippy
 
@@ -130,7 +130,7 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@1.87
 
       - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
 
@@ -164,7 +164,7 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@1.87
 
       - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
 
@@ -226,7 +226,7 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@1.87
 
       - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
 
@@ -284,7 +284,7 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@1.87
 
       - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
 
@@ -435,7 +435,7 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@1.87
 
       - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
 
@@ -490,7 +490,7 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@1.87
 
       - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
 
@@ -514,7 +514,7 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@1.87
         with:
           targets: thumbv7em-none-eabihf
 
@@ -551,7 +551,7 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@1.87
         with:
           targets: thumbv7em-none-eabihf
 
@@ -611,7 +611,7 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@1.87
         with:
           targets: thumbv7em-none-eabihf
 
@@ -678,7 +678,7 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@1.87
         with:
           targets: thumbv7em-none-eabihf
 
@@ -745,7 +745,7 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@1.87
         with:
           targets: thumbv7em-none-eabihf
           components: clippy
@@ -789,7 +789,7 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@1.87
         with:
           targets: thumbv7em-none-eabihf
 
@@ -867,6 +867,21 @@ jobs:
           echo "  .bss   ${BSS} / ${MAX_BSS} bytes ($(( BSS * 100 / MAX_BSS ))% of limit)"
           echo "  Flash  ${FLASH_TOTAL} bytes total"
 
+      - name: No-malloc check
+        run: |
+          echo "Checking for heap allocation symbols in firmware ELF..."
+          HEAP_SYMS=$(arm-none-eabi-nm target/thumbv7em-none-eabihf/release/firmware 2>/dev/null \
+            | grep -E '\b(malloc|free|_sbrk|__malloc_av_)\b' || true)
+          if [ -n "$HEAP_SYMS" ]; then
+            echo "ERROR: Heap allocation symbols found in firmware ELF:"
+            echo "$HEAP_SYMS"
+            echo ""
+            echo "This means a dependency is using malloc/free."
+            echo "Audit new dependencies with 'cargo tree' and check for std allocator usage."
+            exit 1
+          fi
+          echo "OK: No heap allocation symbols found."
+
   # ---------------------------------------------------------------------------
   # MSRV — Minimum Supported Rust Version
   #
@@ -916,7 +931,7 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@1.87
 
       - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
 
@@ -980,7 +995,7 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@1.87
 
       - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
 
@@ -1025,7 +1040,7 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@1.87
 
       - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
 
@@ -1047,6 +1062,72 @@ jobs:
         # After `cargo vet init`, all existing deps are covered by exemptions.
         # Replace exemptions with proper audit entries using:
         #   cargo vet certify <crate> <version>
-        # The `|| true` prevents CI from blocking when a new unvetted dep is added
-        # before its audit entry is committed. Remove to enforce strict vetting.
-        run: cargo vet check || echo "INFO: cargo vet found unvetted deps -- run cargo vet certify"
+        # Fails CI if any unvetted dependency is found (no fallback echo).
+        run: cargo vet check
+
+  # ---------------------------------------------------------------------------
+  # GAP-27: No todo!/unimplemented! in production code
+  #
+  # Belt-and-suspenders check alongside the workspace clippy::todo = "deny"
+  # lint. The clippy lint catches todo!() at compile time; this job catches
+  # any cases where the lint was locally suppressed or bypassed.
+  #
+  # Checks firmware and platform src/ trees — the two crates that run on the
+  # embedded target and where todo!() would cause a runtime panic.
+  # ---------------------------------------------------------------------------
+  no-todo-in-production:
+    name: No todo!/unimplemented! in production code
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      - name: Check for todo! in production source
+        run: |
+          # Find todo!() in src/ files.
+          # Lines that are pure comments (trimmed start = //) are excluded.
+          # The grep -v "^[[:space:]]*//" filter removes comment-only lines.
+          VIOLATIONS=$(grep -rn "todo!()" \
+            crates/firmware/src/ \
+            crates/platform/src/ \
+            --include="*.rs" \
+            | grep -v "^[^:]*:[^:]*:[[:space:]]*//" \
+            || true)
+          if [ -n "$VIOLATIONS" ]; then
+            echo "FAIL: Found todo!() in production source:"
+            echo "$VIOLATIONS"
+            exit 1
+          fi
+          echo "PASS: No todo!() in production source files"
+
+      - name: Check for unimplemented! in production source
+        run: |
+          VIOLATIONS=$(grep -rn "unimplemented!()" \
+            crates/firmware/src/ \
+            crates/platform/src/ \
+            --include="*.rs" \
+            | grep -v "^[^:]*:[^:]*:[[:space:]]*//" \
+            || true)
+          if [ -n "$VIOLATIONS" ]; then
+            echo "FAIL: Found unimplemented!() in production source:"
+            echo "$VIOLATIONS"
+            exit 1
+          fi
+          echo "PASS: No unimplemented!() in production source files"
+
+      - name: Verify workspace lints deny todo macro
+        run: |
+          if grep -q 'todo = "deny"' Cargo.toml; then
+            echo "PASS: workspace lints deny todo macro"
+          else
+            echo "FAIL: Cargo.toml workspace lints must include: todo = \"deny\""
+            exit 1
+          fi
+
+      - name: Verify workspace lints deny unimplemented macro
+        run: |
+          if grep -q 'unimplemented = "deny"' Cargo.toml; then
+            echo "PASS: workspace lints deny unimplemented macro"
+          else
+            echo "FAIL: Cargo.toml workspace lints must include: unimplemented = \"deny\""
+            exit 1
+          fi
