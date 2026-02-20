@@ -11,6 +11,7 @@
 //! # Safety
 //! These steps must run from privileged mode before any RTOS tasks start.
 
+#![allow(clippy::doc_markdown)] // Embedded firmware docs use hardware register names (e.g. PLL2R, HSI48) that are not code but are clearer without forced backticks
 use platform::mpu::MpuApplier;
 use platform::sdram::{SdramTiming, W9825G6KH6_REFRESH_COUNT};
 
@@ -132,6 +133,7 @@ impl SdramConfig {
     /// - 9-bit column address (512 columns)
     /// - 4 internal banks
     /// - CAS latency 3 at 100 MHz (see datasheet Table 1, CL=3 for fCK ≤ 133 MHz)
+    #[must_use]
     pub fn w9825g6kh6_at_100mhz() -> Self {
         Self {
             timing: SdramTiming::w9825g6kh6_at_100mhz(),
@@ -159,7 +161,7 @@ impl SdramConfig {
 ///
 /// ```rust,ignore
 /// let pairs = firmware::boot::mpu_register_pairs();
-/// // Safety: called before D-cache enable, from privileged boot context
+/// // SAFETY: called before D-cache enable, from privileged boot context.
 /// unsafe { firmware::boot::hardware::apply_mpu_config(&mut cortex_m_peripherals.MPU); }
 /// ```
 #[must_use]
@@ -483,6 +485,7 @@ pub fn init_watchdog_config() -> u32 {
 ///
 /// This function documents that policy as an architecture assertion.
 /// It is checked by `arch_boundaries::d3_power_domain_enabled_in_rcc_config`.
+#[must_use]
 pub fn rcc_config_enables_d3_domain() -> bool {
     // D3 peripheral clocks (BDMA, SPI6, SAI4, LPUART1, I2C4) are enabled
     // by embassy-stm32 at peripheral construction time via the RCC peripheral
@@ -502,6 +505,7 @@ pub fn rcc_config_enables_d3_domain() -> bool {
 /// Used in architecture tests to verify the config is non-default.
 /// On hardware, this reflects what `build_embassy_config()` sets.
 /// In non-hardware builds, this is a documentation assertion.
+#[must_use]
 pub fn rcc_config_has_hsi48() -> bool {
     // build_embassy_config() always sets config.rcc.hsi48 = Some(...)
     // For non-hardware builds there is no embassy_stm32 crate, but the
@@ -514,6 +518,7 @@ pub fn rcc_config_has_hsi48() -> bool {
 /// Architecture rule: `main.rs` must never call
 /// `embassy_stm32::init(Default::default())`. It must always use
 /// `build_embassy_config()` which sets HSI48 at minimum.
+#[must_use]
 pub fn rcc_config_is_non_default() -> bool {
     // build_embassy_config() always sets at minimum HSI48 + PLL2R,
     // both of which are None in Config::default().
@@ -534,6 +539,7 @@ pub fn rcc_config_is_non_default() -> bool {
 /// In embassy-stm32 0.1.0, `config.rcc.pll3` accepts `Option<Pll>` for
 /// STM32H7 targets. The field is only available under `#[cfg(feature = "hardware")]`
 /// but this proxy function is always available for host-based arch tests.
+#[must_use]
 pub fn rcc_config_has_pll3_for_sai() -> bool {
     // build_embassy_config() (hardware-only, above) sets:
     //   config.rcc.pll3 = Some(Pll { source: HSI, prediv: DIV4, mul: MUL49,
@@ -555,6 +561,7 @@ pub fn rcc_config_has_pll3_for_sai() -> bool {
 ///
 /// Architecture tests assert both sources agree, catching any drift between
 /// the hardware config and the platform documentation constants.
+#[must_use]
 pub fn sai_pll3_divisors() -> (u8, u8, u8) {
     // pll3_n() returns u16; the actual PLL3 N value is in range 4–512 per RM0433.
     // The function returns (u8, u8, u8) for compact storage; callers that need the
@@ -661,10 +668,10 @@ pub fn init_sdram_stub() -> Result<(), SdramInitError> {
 /// they are reserved).
 #[allow(unsafe_code)]
 pub fn configure_scb_fault_traps() {
-    // SAFETY: Single writer during initialization. CCR bits 3 (UNALIGN_TRP)
-    // and 4 (DIV_0_TRP) are valid and writable on Cortex-M7. No concurrent
-    // SCB access occurs during boot sequence.
     #[cfg(feature = "hardware")]
+    // SAFETY: Single writer during initialization (boot, before any tasks or IRQs).
+    // CCR bits 3 (UNALIGN_TRP) and 4 (DIV_0_TRP) are valid and writable on Cortex-M7
+    // per ARM DDI0489F §B3.2.8. No concurrent SCB access is possible at this point.
     unsafe {
         let scb = &*cortex_m::peripheral::SCB::PTR;
         let ccr = scb.ccr.read();
@@ -703,10 +710,10 @@ pub fn configure_scb_fault_traps() {
 /// before DMA enable). No concurrent access to this register is possible.
 #[allow(unsafe_code)]
 pub fn apply_axi_sram_read_iss_override() {
-    // SAFETY: AXI_TARG7_FN_MOD at 0x5100_1108 is a write-once configuration
-    // register in the AXI interconnect. Safe to write once at boot before any
-    // DMA transfer to AXI SRAM begins. No other code accesses this register.
     #[cfg(feature = "hardware")]
+    // Per STM32H743 errata ES0392 Rev 9 §2.2.9: AXI_TARG7_FN_MOD at 0x5100_1108
+    // (READ_ISS_OVERRIDE bit) prevents stale-data hazard during concurrent CPU+DMA reads.
+    // SAFETY: Write-once config register per RM0433 Rev 9 §11.3.4; no concurrent access.
     unsafe {
         core::ptr::write_volatile(0x5100_1108_u32 as *mut u32, 0x0000_0001_u32);
         // DSB: ensure the write reaches the AXI interconnect before any DMA starts.
@@ -799,6 +806,9 @@ pub fn apply_interrupt_priorities() {
          SDMMC=Priority::P4, EXTI=Priority::P6 (set_priority pending peripheral init)"
     );
     // When peripherals are ready, enable the block below:
+    // SAFETY: (for when this block is enabled) called before any interrupt handler that
+    // uses these priorities is unmasked. set_priority() writes to NVIC_IPR registers
+    // which is safe from privileged mode per ARM DDI0489F §B3.4.2.
     // unsafe {
     //     use embassy_stm32::interrupt::{self, InterruptExt, Priority};
     //     interrupt::SAI1.set_priority(Priority::P0);
@@ -838,7 +848,8 @@ pub mod hardware {
 
         // Disable MPU before reconfiguring — required by ARM DDI0489F §B3.5.1.
         // Writing 0 to MPU_CTRL disables the MPU; all subsequent accesses use
-        // the default memory map until the MPU is re-enabled below.
+        // SAFETY: MPU_CTRL is writable from privileged mode (ARM DDI0489F §B3.5.2).
+        // Writing 0 to CTRL.ENABLE disables the MPU; required before region updates.
         unsafe {
             mpu.ctrl.write(0);
         }
@@ -847,6 +858,9 @@ pub mod hardware {
         // implicitly selects the region slot (the 4-bit REGION field in RBAR
         // takes effect immediately, overriding MPU_RNR).
         for (rbar, rasr) in mpu_register_pairs() {
+            // SAFETY: MPU is disabled (CTRL=0 written above), so updating RBAR/RASR
+            // is safe per ARM DDI0489F §B3.5.1. RBAR.VALID=1 selects the region slot
+            // from the REGION field, eliminating the need to write MPU_RNR separately.
             unsafe {
                 mpu.rbar.write(rbar);
                 mpu.rasr.write(rasr);
@@ -860,6 +874,8 @@ pub mod hardware {
         //                       without needing explicit MPU entries for them).
         //
         // Reference: ARM DDI0489F §B3.5.2, Table B3-12 (MPU_CTRL bit fields).
+        // SAFETY: All regions written (loop above). PRIVDEFENA allows privileged
+        // flash/DTCM access. DSB+ISB below flush the pipeline after this write.
         unsafe {
             mpu.ctrl.write(0b101); // ENABLE | PRIVDEFENA
         }
@@ -956,24 +972,21 @@ mod tests {
         let pairs = platform::mpu::MpuApplier::soul_audio_register_pairs();
         for (i, (_, rasr)) in pairs.iter().enumerate() {
             // ENABLE bit (bit 0) must be set
-            assert!(rasr & 0x1 != 0, "Region {} RASR ENABLE bit must be set", i);
+            assert!(rasr & 0x1 != 0, "Region {i} RASR ENABLE bit must be set");
             // TEX[2:0] bits [21:19]: must have TEX bit 19 set (TEX=001)
             assert!(
                 rasr & (1 << 19) != 0,
-                "Region {} must have TEX[0] set for NonCacheable",
-                i
+                "Region {i} must have TEX[0] set for NonCacheable"
             );
             // C bit [17] must be clear
             assert!(
                 rasr & (1 << 17) == 0,
-                "Region {} C bit must be 0 for NonCacheable",
-                i
+                "Region {i} C bit must be 0 for NonCacheable"
             );
             // B bit [16] must be clear
             assert!(
                 rasr & (1 << 16) == 0,
-                "Region {} B bit must be 0 for NonCacheable",
-                i
+                "Region {i} B bit must be 0 for NonCacheable"
             );
         }
     }

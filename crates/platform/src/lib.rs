@@ -68,6 +68,10 @@
 #![allow(clippy::module_name_repetitions)]
 #![allow(clippy::missing_errors_doc)]
 #![allow(async_fn_in_trait)] // Embassy no_std: single-threaded, Send bounds not needed
+// embedded_graphics::mock_display::MockDisplay has a 64×64 internal pixel
+// buffer (> 512 bytes) that we cannot annotate (external crate). Only suppress
+// in test builds — production embedded code still sees the lint.
+#![cfg_attr(test, allow(clippy::large_stack_arrays))]
 
 pub mod asset_store;
 pub mod audio;

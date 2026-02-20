@@ -12,6 +12,11 @@ cognitive-complexity-threshold = 30
 # Don't warn until variant is >512 bytes larger than next
 enum-variant-size-threshold = 512
 
+# Array size threshold for large_stack_arrays lint.
+# 512 bytes = 128 × u32 or 64 × f64.  Anything larger belongs in a StaticCell or heapless pool.
+# Override per-site with #[allow(clippy::large_stack_arrays)] when genuinely stack-local.
+array-size-threshold = 512
+
 # Allow single-char binding names common in embedded (e.g. 'p' for peripherals, 'e' for error)
 single-char-binding-names-threshold = 2
 

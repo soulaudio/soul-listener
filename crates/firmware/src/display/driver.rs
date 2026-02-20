@@ -31,6 +31,7 @@
 //! and logical row `y = 479` maps to RAM row `0`.  Every method that sets RAM
 //! Y counters / ranges must apply `y_ram = HEIGHT - 1 - y`.
 
+#![allow(clippy::doc_markdown)] // SSD1677 driver docs use hardware signal names and register names that read better without backticks
 // Display geometry constants are u32 (matching embedded-graphics) but SSD1677
 // registers are u16/u8.  These narrowing casts are safe because DISPLAY_WIDTH=800
 // and DISPLAY_HEIGHT=480 both fit in u16, and BYTES_PER_ROW=100 fits in u8.
@@ -180,6 +181,7 @@ where
     /// Create a new driver instance.
     ///
     /// The framebuffer is initialised to all-white (0xFF).
+    #[must_use]
     pub fn new(spi: SPI, dc: DC, rst: RST, busy: BUSY, delay: DELAY) -> Self {
         // SAFETY / note: On embedded (no_std) targets this struct is typically
         // placed in a `static` or on a task stack that lives in AXI SRAM, so
@@ -376,6 +378,7 @@ where
     /// Push the internal framebuffer to the controller's B/W RAM via SPI.
     ///
     /// Sends in fixed 256-byte chunks to avoid borrow-checker conflicts.
+    #[allow(clippy::items_after_statements)] // const CHUNK defined after first statement for locality
     async fn flush_framebuffer(&mut self) -> Result<(), DisplayError> {
         self.send_command(Command::WriteRamBW).await?;
 
@@ -412,6 +415,10 @@ where
     ///
     /// Must be called once after power-on or wake-from-sleep before any
     /// display operations.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`DisplayError`] if any SPI command or reset sequence fails.
     pub async fn init(&mut self) -> Result<(), DisplayError> {
         // 1. Hardware reset
         self.hardware_reset().await?;
@@ -640,6 +647,7 @@ where
         self.refresh_mode = mode;
     }
 
+    #[allow(clippy::unused_self)] // Required by EinkDisplay trait; temperature register read not yet implemented
     fn temperature(&self) -> Option<i8> {
         // Reading the on-chip temperature ADC register is not yet implemented.
         None
@@ -812,6 +820,8 @@ mod tests {
     /// `test_set_window_coordinates` — verify the exact bytes for X and Y
     /// range commands for both full-screen and a sub-region.
     #[test]
+    // px_start/px_end and py_start/py_end are intentionally symmetric pixel-coordinate names.
+    #[allow(clippy::similar_names)]
     fn test_set_window_coordinates() {
         // Full-screen X byte range: 0..=99 (800/8-1=99)
         let x_end_byte = (BYTES_PER_ROW as u8).saturating_sub(1);

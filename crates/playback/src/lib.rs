@@ -21,6 +21,9 @@ mod tests {
         use crate::decoder::{AudioFormat, DecodeError, PcmFrame};
 
         #[test]
+        // LARGE_STACK_ARRAYS: inline 4 096-element array mirrors production PcmFrame
+        // construction; acceptable in a test on the host (unlimited stack).
+        #[allow(clippy::large_stack_arrays)]
         fn test_pcm_frame_holds_sample_count() {
             let frame = PcmFrame {
                 samples: [0i32; 4096],

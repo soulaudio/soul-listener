@@ -1,4 +1,4 @@
-//! SoulAudio DAP Firmware
+//! `SoulAudio` DAP Firmware
 //!
 //! Professional-grade Digital Audio Player firmware for STM32H7 with e-ink display.
 //!
@@ -45,8 +45,6 @@
 // ────────────────────────────────────────────────────────────────────────────
 #![cfg_attr(all(not(test), not(feature = "std")), no_std)]
 // Upgrade relevant warns to deny; keep pedantic as warn (too noisy for firmware)
-// TODO: Add rustdoc to all public items (tracked as tech debt)
-#![allow(missing_docs)]
 #![warn(clippy::all)]
 #![warn(clippy::pedantic)]
 // Critical correctness: deny these
@@ -54,19 +52,10 @@
 // unsafe fn body is not implicitly unsafe block
 // Logging discipline (allow println in tests via clippy.toml)
 #![warn(clippy::print_stdout)] // prefer tracing/defmt over println! in lib code
-// Intentional allows for this codebase:
-#![allow(clippy::module_name_repetitions)] // common in Rust crates; not a real issue
-#![allow(clippy::missing_errors_doc)] // most errors are self-explanatory
-// Pedantic lints too noisy for firmware application code:
-#![allow(clippy::must_use_candidate)]
-#![allow(clippy::return_self_not_must_use)]
-#![allow(clippy::doc_markdown)]
-#![allow(clippy::similar_names)]
-#![allow(clippy::unused_self)]
-#![allow(clippy::unused_async)]
-#![allow(clippy::items_after_statements)]
-#![allow(clippy::map_unwrap_or)]
-#![allow(clippy::uninlined_format_args)]
+// embedded_graphics::mock_display::MockDisplay has a large internal pixel buffer
+// (> 512 bytes) that we cannot annotate (external crate). Only suppress in test
+// builds — production embedded code still sees the lint.
+#![cfg_attr(test, allow(clippy::large_stack_arrays))]
 
 // ── HARDWARE INIT REQUIREMENTS ───────────────────────────────────────────────
 // Embassy issue #3049: SDMMC on STM32H743 silently hangs during init_card()

@@ -15,27 +15,27 @@
 //!
 //! # Initialization sequence (order is critical)
 //!
-//! 1. **Mute immediately** — the ES9038Q2M powers up with REG_VOLUME_LEFT /
-//!    REG_VOLUME_RIGHT at 0x00 (0 dB = loudest). Any I²S signal present on the
+//! 1. **Mute immediately** — the ES9038Q2M powers up with `REG_VOLUME_LEFT` /
+//!    `REG_VOLUME_RIGHT` at 0x00 (0 dB = loudest). Any I²S signal present on the
 //!    bus at boot is passed through at maximum level, causing a loud pop.
-//!    Writing VOLUME_MUTE (0xFF) to both channel registers before anything else
+//!    Writing `VOLUME_MUTE` (0xFF) to both channel registers before anything else
 //!    prevents this.
 //!
-//! 2. **Soft reset** — clears internal state; bit 0 of REG_SYSTEM self-clears.
+//! 2. **Soft reset** — clears internal state; bit 0 of `REG_SYSTEM` self-clears.
 //!
-//! 3. **Configure I²S input** — REG_INPUT_CONFIG sets word length and format.
-//!    Bits [3:2] MUST remain 0b00 (I²S input select); INPUT_I2S_32BIT satisfies
+//! 3. **Configure I²S input** — `REG_INPUT_CONFIG` sets word length and format.
+//!    Bits [3:2] MUST remain 0b00 (I²S input select); `INPUT_I2S_32BIT` satisfies
 //!    this (bit 4 = 1 for 32-bit, bits [3:0] = 0b0000).
 //!
-//! 4. **Master mode** — set REG_MASTER_MODE = 0x00 (slave: STM32 SAI drives all
+//! 4. **Master mode** — set `REG_MASTER_MODE` = 0x00 (slave: STM32 SAI drives all
 //!    clocks).
 //!
-//! 5. **Enable individual channel volume control** — REG_VOLUME_CTRL must be
-//!    written (0x00 = VOLUME_CTRL_INDIVIDUAL_CHANNELS) so that REG_VOLUME_LEFT /
-//!    REG_VOLUME_RIGHT take effect. Without this write the volume registers are
+//! 5. **Enable individual channel volume control** — `REG_VOLUME_CTRL` must be
+//!    written (0x00 = `VOLUME_CTRL_INDIVIDUAL_CHANNELS`) so that `REG_VOLUME_LEFT` /
+//!    `REG_VOLUME_RIGHT` take effect. Without this write the volume registers are
 //!    not guaranteed to be active.
 //!
-//! 6. **DSD mode** — configure REG_DSD_CONFIG for DoP, native DSD, or disabled.
+//! 6. **DSD mode** — configure `REG_DSD_CONFIG` for `DoP`, native DSD, or disabled.
 //!    This should be written before any I²S clock is applied, so it belongs in
 //!    init (not after the I²S link is running).
 //!
@@ -103,6 +103,7 @@ impl<I: I2c> Es9038q2mDriver<I> {
     /// `i2c` must be a configured async I²C peripheral pointing at the chip.
     /// The initial volume is 80 (out of 100); `hardware_init` will apply it
     /// after muting on startup.
+    #[must_use]
     pub fn new(i2c: I) -> Self {
         Self { i2c, volume: 80 }
     }
