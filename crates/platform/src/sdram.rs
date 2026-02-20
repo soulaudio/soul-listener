@@ -310,6 +310,79 @@ impl SdramTiming {
     }
 }
 
+// ─── SDRAM refresh counter ────────────────────────────────────────────────────
+
+/// Compute the SDRAM auto-refresh rate counter register value (FMC_SDRTR).
+///
+/// The FMC SDRAM refresh counter (FMC_SDRTR.COUNT) specifies the number of
+/// FMC clock cycles between consecutive auto-refresh commands. It must be set
+/// low enough that all rows are refreshed within the JEDEC refresh period
+/// (64 ms for most SDRAM devices).
+///
+/// # Formula
+///
+/// ```text
+/// COUNT = (fmc_hz * refresh_ms) / (rows * 1000) - 20
+/// ```
+///
+/// The `- 20` provides the safety margin recommended by STM32H7 Reference
+/// Manual §23.7.7 to account for worst-case FMC bus arbitration delays.
+///
+/// # Arguments
+///
+/// * `fmc_hz`      — FMC clock frequency in Hz (typ. 100_000_000 for W9825G6KH-6)
+/// * `rows`        — Number of SDRAM rows. W9825G6KH-6 has 8192 rows.
+/// * `refresh_ms`  — Total refresh period in milliseconds (JEDEC standard: 64 ms)
+///
+/// # Returns
+///
+/// The FMC_SDRTR.COUNT value to program. Write this to the FMC_SDRTR register
+/// after SDRAM initialisation is complete.
+///
+/// # Example
+///
+/// At 100 MHz FMC, 8192 rows, 64 ms refresh:
+///
+/// ```
+/// # use platform::sdram::sdram_refresh_count;
+/// // (100_000_000 * 64) / (8192 * 1000) - 20
+/// // = 6_400_000_000 / 8_192_000 - 20
+/// // = 781 - 20
+/// // = 761
+/// let count = sdram_refresh_count(100_000_000, 8192, 64);
+/// assert_eq!(count, 761);
+/// ```
+///
+/// # References
+///
+/// - STM32H743 Reference Manual §23.7.7 — FMC_SDRTR register description
+/// - W9825G6KH-6 datasheet (Winbond): tREF = 64 ms, 8192 rows
+pub fn sdram_refresh_count(fmc_hz: u64, rows: u64, refresh_ms: u64) -> u32 {
+    // Formula from STM32H7 RM §23.7.7:
+    //   COUNT = (SDRAM_CLK_FREQ * refresh_period_ms) / (rows * 1000) - 20
+    //
+    // Integer division truncates toward zero, which is conservative (fewer
+    // cycles between refreshes = more frequent refresh = safe).
+    let count = (fmc_hz * refresh_ms) / (rows * 1000);
+    // Saturating sub: if the computed count is unexpectedly < 20 (pathological
+    // inputs), return 0 rather than wrapping to a huge u32.
+    count.saturating_sub(20) as u32
+}
+
+/// W9825G6KH-6 SDRAM refresh counter at 100 MHz FMC clock.
+///
+/// Pre-computed for the canonical operating point:
+///   fmc_hz = 100_000_000, rows = 8192, refresh_ms = 64
+///
+/// Derivation:
+///   (100_000_000 * 64) / (8192 * 1000) - 20
+///   = 6_400_000_000 / 8_192_000 - 20
+///   = 781 - 20
+///   = **761**
+///
+/// Write to FMC_SDRTR.COUNT after SDRAM init.
+pub const W9825G6KH6_REFRESH_COUNT: u32 = 761;
+
 // ─── Tests ───────────────────────────────────────────────────────────────────
 
 #[cfg(test)]
@@ -402,5 +475,96 @@ mod tests {
         let ui = RamRegion::UI_OVERFLOW;
         let total = ui.offset + ui.len;
         assert_eq!(total, 32 * 1024 * 1024);
+    }
+
+    // ── Test E ────────────────────────────────────────────────────────────────
+    /// SDRAM refresh counter computation at 100 MHz, 64 ms, 8192 rows.
+    ///
+    /// Formula: `(fmc_hz * refresh_ms) / (rows * 1000) - 20`
+    ///
+    /// Derivation:
+    ///   (100_000_000 * 64) / (8192 * 1000) - 20
+    ///   = 6_400_000_000 / 8_192_000 - 20
+    ///   = 781 - 20          (integer division truncates toward 0)
+    ///   = 761
+    #[test]
+    fn test_sdram_refresh_rate_computation() {
+        // Primary assertion: canonical operating point for W9825G6KH-6
+        let count = sdram_refresh_count(100_000_000, 8192, 64);
+        assert_eq!(
+            count, 761,
+            "W9825G6KH-6 at 100 MHz, 8192 rows, 64 ms must give refresh count 761"
+        );
+
+        // Cross-check: the pre-computed const must agree
+        assert_eq!(
+            W9825G6KH6_REFRESH_COUNT, 761,
+            "W9825G6KH6_REFRESH_COUNT const must equal 761"
+        );
+    }
+
+    // ── Test F ────────────────────────────────────────────────────────────────
+    /// Verify sdram_refresh_count scales correctly with clock frequency.
+    ///
+    /// At 200 MHz (double the clock), the count should be approximately double.
+    #[test]
+    fn test_sdram_refresh_count_scales_with_freq() {
+        let count_100mhz = sdram_refresh_count(100_000_000, 8192, 64);
+        let count_200mhz = sdram_refresh_count(200_000_000, 8192, 64);
+
+        // At 200 MHz: (200_000_000 * 64) / (8192 * 1000) - 20 = 1562 - 20 = 1542
+        assert_eq!(count_200mhz, 1542, "200 MHz should give refresh count 1542");
+
+        // Must be larger than 100 MHz count
+        assert!(
+            count_200mhz > count_100mhz,
+            "Higher FMC clock must yield higher refresh count"
+        );
+    }
+
+    // ── Test G ────────────────────────────────────────────────────────────────
+    /// W9825G6KH-6 datasheet timing values applied to SdramTiming.
+    ///
+    /// Checks that the pre-computed timing matches the expected cycle counts
+    /// derived from the W9825G6KH-6 datasheet at 100 MHz.
+    #[test]
+    fn test_sdram_timing_applied_correctly() {
+        let timing = SdramTiming::w9825g6kh6_at_100mhz();
+
+        // tMRD = 2 CLK minimum (datasheet: CLK-based, not ns-based)
+        assert_eq!(
+            timing.load_to_active_delay, 2,
+            "tMRD must be 2 CLK cycles minimum for W9825G6KH-6"
+        );
+
+        // tXSR = 70 ns at 100 MHz = ceil(70/10) = 7 cycles
+        assert_eq!(
+            timing.exit_self_refresh_delay, 7,
+            "tXSR must be 7 cycles at 100 MHz (70 ns)"
+        );
+
+        // tRAS = 42 ns at 100 MHz = ceil(42/10) = 5 cycles
+        assert_eq!(
+            timing.self_refresh_time, 5,
+            "tRAS must be 5 cycles at 100 MHz (42 ns)"
+        );
+
+        // tRC = 60 ns at 100 MHz = ceil(60/10) = 6 cycles
+        assert_eq!(
+            timing.row_cycle_delay, 6,
+            "tRC must be 6 cycles at 100 MHz (60 ns)"
+        );
+
+        // tRP = 15 ns at 100 MHz = ceil(15/10) = 2 cycles
+        assert_eq!(
+            timing.rp_delay, 2,
+            "tRP must be 2 cycles at 100 MHz (15 ns)"
+        );
+
+        // tRCD = 15 ns at 100 MHz = ceil(15/10) = 2 cycles
+        assert_eq!(
+            timing.rc_delay, 2,
+            "tRCD must be 2 cycles at 100 MHz (15 ns)"
+        );
     }
 }

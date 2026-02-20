@@ -7,6 +7,7 @@ license.workspace = true
 
 [dependencies]
 platform = { path = "../platform" }
+heapless = { workspace = true }
 
 [features]
 default = []

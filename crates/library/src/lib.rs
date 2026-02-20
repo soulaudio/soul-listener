@@ -1,14 +1,22 @@
-//! Music library management — FAT32 scan, metadata parsing, track database
+//! Music library management — FAT32 scan, metadata parsing, track database.
 //!
-//! # Status
+//! # Modules
 //!
-//! Placeholder crate — implementation pending.
+//! - [`track`] — `Track` record and `AudioFormat` enum
+//! - [`index`] — `TrackIndex<N>` fixed-capacity catalogue
+//! - [`scanner`] — directory walk and extension filtering
+//! - [`metadata`] — magic-byte format detection
 
-#![cfg_attr(not(feature = "std"), no_std)]
+#![cfg_attr(not(test), no_std)]
+#![deny(clippy::unwrap_used)]
 
-// TODO: Implement music library management (FAT32 scan, metadata parsing, track database)
+pub mod index;
+pub mod metadata;
+pub mod scanner;
+pub mod track;
 
-#[cfg(test)]
-mod tests {
-    // Placeholder module — add tests when the implementation begins.
-}
+// Top-level re-exports for convenience
+pub use index::{FullIndex, IndexError, SmallIndex, TrackIndex, MAX_TRACKS};
+pub use metadata::detect_format;
+pub use scanner::{ScanEntry, Scanner};
+pub use track::{AudioFormat, Track};
