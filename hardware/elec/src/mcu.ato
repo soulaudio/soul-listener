@@ -14,10 +14,10 @@
 # Add 10 µF bulk capacitor near the MCU.
 # VDDA must be filtered: 1 µH ferrite bead + 1 µF + 10 nF to GND.
 
+from "parts/STM32H743ZIT6/STM32H743ZIT6.ato" import STM32H743ZIT6
 from "interfaces.ato" import I2CBus, I2SBus, SPIDevice, DisplayCtrl, SDMMCBus
 from "interfaces.ato" import UARTBus, USBDiffPair, SWDPort, FMCBus, QSPIBus
 from "interfaces.ato" import EncoderBus, ClockSource
-from "parts/STM32H743ZIT6/STM32H743ZIT6.ato" import STM32H743ZIT6
 from "parts/Crystal/Crystal.ato" import Crystal
 
 module MCU:
