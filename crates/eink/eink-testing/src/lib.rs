@@ -348,7 +348,13 @@ impl TestEmulator {
         use image::GenericImageView;
         let tmp = {
             let mut p = std::env::temp_dir();
-            p.push(format!("eink_testing_{}.png", std::process::id()));
+            // Include thread ID to avoid collisions when tests run in parallel
+            // within the same process (same PID, different threads).
+            p.push(format!(
+                "eink_testing_{}_{:?}.png",
+                std::process::id(),
+                std::thread::current().id()
+            ));
             p
         };
         self.inner

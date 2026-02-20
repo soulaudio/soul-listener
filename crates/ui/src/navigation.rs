@@ -3,6 +3,68 @@
 //! The stack is capped at 8 entries (embedded-safe, no heap). Pushing when
 //! the stack is full is a silent no-op (embedded reality: bounded buffer).
 
+use heapless::Vec;
+
+use crate::screen::Screen;
+
+/// Navigation stack bounded at 8 entries.
+pub struct Navigator {
+    stack: Vec<Screen, 8>,
+}
+
+impl Navigator {
+    /// Create a new navigator with `NowPlaying` as the root screen.
+    pub fn new() -> Self {
+        let mut stack = Vec::new();
+        // This push always succeeds: the stack starts empty and cap is 8.
+        stack.push(Screen::NowPlaying).ok();
+        Navigator { stack }
+    }
+
+    /// Return the screen currently at the top of the stack.
+    #[must_use]
+    pub fn current(&self) -> Screen {
+        // SAFETY: the stack is never empty (new() seeds it; back() guards depth > 1).
+        match self.stack.last() {
+            Some(s) => *s,
+            None => Screen::NowPlaying, // unreachable by construction
+        }
+    }
+
+    /// Push a new screen. If the stack is already at capacity the push is a
+    /// silent no-op (embedded bounded-buffer contract).
+    pub fn push(&mut self, screen: Screen) {
+        // heapless::Vec::push returns Err when full; we discard the error.
+        self.stack.push(screen).ok();
+    }
+
+    /// Pop the top screen. Does nothing if only the root screen remains.
+    pub fn back(&mut self) {
+        if self.stack.len() > 1 {
+            self.stack.pop();
+        }
+    }
+
+    /// Replace the top screen without growing the stack.
+    pub fn replace(&mut self, screen: Screen) {
+        if let Some(top) = self.stack.last_mut() {
+            *top = screen;
+        }
+    }
+
+    /// Return the number of entries currently on the stack.
+    #[must_use]
+    pub fn depth(&self) -> usize {
+        self.stack.len()
+    }
+}
+
+impl Default for Navigator {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::Navigator;
@@ -76,67 +138,5 @@ mod tests {
         nav.replace(Screen::Settings);
         assert_eq!(nav.current(), Screen::Settings);
         assert_eq!(nav.depth(), depth_before); // stack did not grow
-    }
-}
-
-use heapless::Vec;
-
-use crate::screen::Screen;
-
-/// Navigation stack bounded at 8 entries.
-pub struct Navigator {
-    stack: Vec<Screen, 8>,
-}
-
-impl Navigator {
-    /// Create a new navigator with `NowPlaying` as the root screen.
-    pub fn new() -> Self {
-        let mut stack = Vec::new();
-        // This push always succeeds: the stack starts empty and cap is 8.
-        stack.push(Screen::NowPlaying).ok();
-        Navigator { stack }
-    }
-
-    /// Return the screen currently at the top of the stack.
-    #[must_use]
-    pub fn current(&self) -> Screen {
-        // SAFETY: the stack is never empty (new() seeds it; back() guards depth > 1).
-        match self.stack.last() {
-            Some(s) => *s,
-            None => Screen::NowPlaying, // unreachable by construction
-        }
-    }
-
-    /// Push a new screen. If the stack is already at capacity the push is a
-    /// silent no-op (embedded bounded-buffer contract).
-    pub fn push(&mut self, screen: Screen) {
-        // heapless::Vec::push returns Err when full; we discard the error.
-        self.stack.push(screen).ok();
-    }
-
-    /// Pop the top screen. Does nothing if only the root screen remains.
-    pub fn back(&mut self) {
-        if self.stack.len() > 1 {
-            self.stack.pop();
-        }
-    }
-
-    /// Replace the top screen without growing the stack.
-    pub fn replace(&mut self, screen: Screen) {
-        if let Some(top) = self.stack.last_mut() {
-            *top = screen;
-        }
-    }
-
-    /// Return the number of entries currently on the stack.
-    #[must_use]
-    pub fn depth(&self) -> usize {
-        self.stack.len()
-    }
-}
-
-impl Default for Navigator {
-    fn default() -> Self {
-        Self::new()
     }
 }

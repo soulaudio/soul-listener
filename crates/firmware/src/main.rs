@@ -10,7 +10,8 @@ use embassy_stm32::exti::{Channel, ExtiInput};
 use embassy_stm32::gpio::{AnyPin, Input, Level, Output, Pull, Speed};
 use embassy_stm32::spi::{Config as SpiConfig, Spi};
 use embassy_stm32::time::Hertz;
-use embassy_time::{Duration, Timer};
+use embassy_time::{Delay, Duration, Timer};
+use embedded_hal_bus::spi::ExclusiveDevice;
 use platform::DisplayDriver;
 
 use firmware::input::builder::InputBuilder;
@@ -54,9 +55,13 @@ async fn main(spawner: Spawner) {
     let rst = Output::new(p.PB2, Level::High, Speed::VeryHigh); // Reset (active low)
     let busy = Input::new(p.PE3, Pull::None); // Busy status
 
-    // Create display driver
+    // Wrap raw SPI bus + CS pin into an SpiDevice (manages CS assertion/deassert).
+    // Ssd1677 takes SpiDevice (not SpiBus) so it controls transactions atomically.
+    let spi_device = ExclusiveDevice::new(spi, cs, Delay);
+
+    // Create display driver: Ssd1677::new(spi, dc, rst, busy, delay)
     defmt::info!("Creating SSD1677 display driver — SPI @ {=u32}MHz", 4);
-    let mut display = Ssd1677Display::new(spi, dc, cs, rst, busy);
+    let mut display = Ssd1677Display::new(spi_device, dc, rst, busy, Delay);
 
     // Initialize display
     defmt::info!(
