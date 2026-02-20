@@ -87,28 +87,26 @@ module Memory:
     power_3v3.hv ~ nor.VCC
     power_3v3.lv ~ nor.GND
 
-    # QUADSPI bus
+    # QUADSPI bus — CS and CLK connect directly; IO lines go through series resistors
     quadspi.cs  ~ nor.CS_NEG
     quadspi.clk ~ nor.CLK
-    quadspi.io0 ~ nor.IO0
-    quadspi.io1 ~ nor.IO1
-    quadspi.io2 ~ nor.IO2
-    quadspi.io3 ~ nor.IO3
+
+    # QSPI series termination (33 Ω on each IO line at the MCU end of trace)
+    # Reduces reflections at 133 MHz. Place resistors close to the QUADSPI pins.
+    r_io0 = new Resistor; r_io0.resistance = 33ohm +/- 5%; r_io0.package = "0402"
+    r_io1 = new Resistor; r_io1.resistance = 33ohm +/- 5%; r_io1.package = "0402"
+    r_io2 = new Resistor; r_io2.resistance = 33ohm +/- 5%; r_io2.package = "0402"
+    r_io3 = new Resistor; r_io3.resistance = 33ohm +/- 5%; r_io3.package = "0402"
+    quadspi.io0 ~ r_io0.p1; r_io0.p2 ~ nor.IO0
+    quadspi.io1 ~ r_io1.p1; r_io1.p2 ~ nor.IO1
+    quadspi.io2 ~ r_io2.p1; r_io2.p2 ~ nor.IO2
+    quadspi.io3 ~ r_io3.p1; r_io3.p2 ~ nor.IO3
 
     # NOR flash decoupling: 100 nF + 10 µF
     c_nor_hf   = new Capacitor; c_nor_hf.capacitance   = 100nF +/- 20%; c_nor_hf.package   = "0402"
     c_nor_bulk = new Capacitor; c_nor_bulk.capacitance = 10uF  +/- 20%; c_nor_bulk.package = "0805"
     power_3v3.hv ~ c_nor_hf.p1;   c_nor_hf.p2   ~ power_3v3.lv
     power_3v3.hv ~ c_nor_bulk.p1; c_nor_bulk.p2 ~ power_3v3.lv
-
-    # QSPI series termination resistors (33 Ω on each IO line — reduce reflections)
-    r_io0 = new Resistor; r_io0.resistance = 33ohm +/- 5%; r_io0.package = "0402"
-    r_io1 = new Resistor; r_io1.resistance = 33ohm +/- 5%; r_io1.package = "0402"
-    r_io2 = new Resistor; r_io2.resistance = 33ohm +/- 5%; r_io2.package = "0402"
-    r_io3 = new Resistor; r_io3.resistance = 33ohm +/- 5%; r_io3.package = "0402"
-    # Note: Place termination resistors at the MCU end of the trace
-    # quadspi.io0 ~ r_io0.p1; r_io0.p2 ~ nor.IO0  (etc.)
-    # TODO: reroute after adding series resistors in signal path
 
     # ── Validation ────────────────────────────────────────────────────────────
     assert power_3v3.voltage within 2.7V to 3.6V

@@ -11,6 +11,7 @@
 #   MCU    → FMC → Memory (SDRAM)
 #   MCU    → QUADSPI → Memory (NOR flash)
 #   MCU    → GPIOs → Input (encoder + buttons)
+#   Clock  → HSE PH0/PH1 → MCU (swappable: HseClock / TcxoClock — change in main.ato only)
 #   Power  → I²C → MCU (PMIC status)
 #   Power  → USB data lines → MCU (OTG HS)
 #
@@ -19,7 +20,7 @@
 # via the star-connected agnd node; both connect to the board GND plane at
 # the single star junction near the DAC.
 
-from "interfaces.ato" import I2CBus, SPIBus, I2SBus, UARTBus, SWDPort, DisplayCtrl, FMCBus, QSPIBus, EncoderBus, USBDiffPair, AmpSupplyBus
+from "interfaces.ato" import I2CBus, SPIDevice, I2SBus, UARTBus, SWDPort, DisplayCtrl, FMCBus, QSPIBus, EncoderBus, USBDiffPair, AmpSupplyBus
 from "mcu.ato"       import MCU
 from "audio.ato"     import Audio
 from "power.ato"     import Power
@@ -27,6 +28,7 @@ from "display.ato"   import Display
 from "bluetooth.ato" import Bluetooth
 from "memory.ato"    import Memory
 from "input.ato"     import Input
+from "clock.ato"     import HseClock
 
 module SoulAudioDAP:
     """
@@ -42,6 +44,7 @@ module SoulAudioDAP:
     bluetooth = new Bluetooth
     memory    = new Memory
     input     = new Input
+    clock     = new HseClock   # HSE 25 MHz (to swap: replace HseClock here only)
 
     # ── Power distribution (3.3 V rail → all modules) ─────────────────────────
     # The Power module generates the 3.3 V rail from USB-C / LiPo via BQ25895 + AP2112K-3.3.
@@ -90,6 +93,11 @@ module SoulAudioDAP:
     # ── MCU ↔ Input ───────────────────────────────────────────────────────────
     # Encoder quadrature A/B + push-switch, 5 buttons (play/prev/next/menu/power)
     mcu.encoder ~ input.encoder
+
+    # ── Clock source → MCU ───────────────────────────────────────────────────
+    # To swap the clock source: replace `new HseClock` above — mcu.ato is untouched.
+    mcu.hse_clk ~ clock.clk
+    clock.gnd   ~ power.power_3v3.lv
 
     # ── Debug / programming headers ───────────────────────────────────────────
     # STM32H743 SWD: primary debug header (J1 — 10-pin Cortex Debug Connector)

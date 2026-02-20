@@ -134,7 +134,9 @@ interface EncoderBus:
     btn_play  = new Electrical  # Play/Pause    → MCU PA0  EXTI0
     btn_next  = new Electrical  # Next track    → MCU PA1  EXTI1
     btn_prev  = new Electrical  # Previous track→ MCU PA2  EXTI2
-    btn_menu  = new Electrical  # Menu/Back     → MCU PD3  EXTI3
+    btn_menu  = new Electrical  # Menu          → MCU PD3  EXTI3
+    btn_back  = new Electrical  # Back          → MCU PD4  EXTI4
+    btn_sel   = new Electrical  # Select        → MCU PD5  EXTI5
     btn_power = new Electrical  # Power/Wake    → MCU PC13 WKUP (active low)
 
 # ── Bipolar amp supply (Power → Audio module boundary) ───────────────────────
@@ -150,6 +152,25 @@ interface AmpSupplyBus:
     """
     pos = new ElectricPower  # +5.5 V rail (TPS61023 output, π-filtered)
     neg = new ElectricPower  # −5.5 V rail (TPS63700 output, π-filtered)
+
+# ── HSE clock source (swappable oscillator interface) ────────────────────────
+interface ClockSource:
+    """External clock reference for MCU HSE (High-Speed External) input.
+
+    Supports three clock source topologies without changing mcu.ato:
+      Crystal oscillator: osc_in + osc_out both wired (passive resonator;
+                          MCU provides the amplifier)
+      TCXO / OCXO:        osc_in wired to CLK output; osc_out left NC
+      MEMS oscillator:    osc_in wired to CLK output; osc_out left NC
+
+    To substitute the clock source: create a new module implementing this
+    interface (e.g., TcxoClock) and replace HseClock in main.ato — no
+    changes to mcu.ato or STM32H743ZIT6.ato required.
+
+    Mirrors: STM32H743 PH0-OSC_IN / PH1-OSC_OUT pins.
+    """
+    osc_in  = new Electrical  # Clock to MCU (PH0/OSC_IN); crystal p1 or TCXO CLK
+    osc_out = new Electrical  # MCU amplifier feedback (PH1/OSC_OUT); NC for TCXO
 
 # ── Analog audio output ───────────────────────────────────────────────────────
 interface AnalogAudioOut:

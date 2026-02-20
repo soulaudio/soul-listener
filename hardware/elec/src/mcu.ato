@@ -14,9 +14,9 @@
 # Add 10 µF bulk capacitor near the MCU.
 # VDDA must be filtered: 1 µH ferrite bead + 1 µF + 10 nF to GND.
 
-from "interfaces.ato" import I2CBus, I2SBus, SPIBus, DisplayCtrl, SDMMCBus
+from "interfaces.ato" import I2CBus, I2SBus, SPIDevice, DisplayCtrl, SDMMCBus
 from "interfaces.ato" import UARTBus, USBDiffPair, SWDPort, FMCBus, QSPIBus
-from "interfaces.ato" import EncoderBus
+from "interfaces.ato" import EncoderBus, ClockSource
 from "parts/STM32H743ZIT6/STM32H743ZIT6.ato" import STM32H743ZIT6
 
 module MCU:
@@ -33,7 +33,7 @@ module MCU:
     audio_i2s   = new I2SBus       # → audio module (SAI1 master)
     audio_i2c   = new I2CBus       # → audio module (ES9038Q2M config)
     pmic_i2c    = new I2CBus       # → power module (BQ25895 config)
-    display_spi = new SPIBus       # → display module (SPI1)
+    display_spi = new SPIDevice    # → display module (SPI1 + NSS chip-select)
     display_ctrl = new DisplayCtrl  # → display module (DC/RST/BUSY)
     sdcard      = new SDMMCBus     # → SD card slot (SDMMC1)
     bt_uart     = new UARTBus      # → bluetooth module (UART1 HCI)
@@ -43,6 +43,7 @@ module MCU:
     quadspi     = new QSPIBus      # → memory module (NOR flash)
     encoder     = new EncoderBus   # → input module
     amp_en      = new Electrical   # → power module (headphone amp enable, PC4 active-high)
+    hse_clk     = new ClockSource # → clock module (HSE 25 MHz reference, PH0/PH1)
 
     # ── Main IC ───────────────────────────────────────────────────────────────
     mcu = new STM32H743ZIT6
@@ -112,14 +113,10 @@ module MCU:
     power_3v3.hv ~ c_vdda_1.p1; c_vdda_1.p2 ~ power_3v3.lv
     power_3v3.hv ~ c_vdda_2.p1; c_vdda_2.p2 ~ power_3v3.lv
 
-    # ── HSE Crystal (25 MHz for PLLs) ─────────────────────────────────────────
-    hse_xtal = new Crystal
-    hse_xtal.frequency = 25MHz +/- 30ppm
-    hse_xtal.package   = "3225"
-    # Load capacitors (12 pF, verify from crystal datasheet)
-    c_hse_1 = new Capacitor; c_hse_1.capacitance = 12pF +/- 5%; c_hse_1.package = "0402"
-    c_hse_2 = new Capacitor; c_hse_2.capacitance = 12pF +/- 5%; c_hse_2.package = "0402"
-    # TODO: wire OSC_IN/OSC_OUT after verifying MCU pin numbers in symbol
+    # ── HSE clock interface wiring (crystal/TCXO lives in clock.ato) ──────────
+    # Swap clock source by replacing HseClock in main.ato — mcu.ato is untouched.
+    hse_clk.osc_in  ~ mcu.PH0_OSC_IN   # PH0 pin 69 — crystal resonator input
+    hse_clk.osc_out ~ mcu.PH1_OSC_OUT  # PH1 pin 70 — crystal resonator feedback
 
     # ── LSE Crystal (32.768 kHz for RTC) ─────────────────────────────────────
     lse_xtal = new Crystal
@@ -144,6 +141,7 @@ module MCU:
     display_spi.mosi ~ mcu.SPI1_MOSI
     display_spi.miso ~ mcu.SPI1_MISO
     display_spi.sclk ~ mcu.SPI1_SCK
+    display_spi.cs   ~ mcu.SPI1_NSS  # PA4 — software NSS for display chip-select
     display_ctrl.dc   ~ mcu.LCD_DC
     display_ctrl.rst  ~ mcu.LCD_RST
     display_ctrl.busy ~ mcu.LCD_BUSY
@@ -206,10 +204,11 @@ module MCU:
     encoder.btn_next  ~ mcu.BTN_NEXT
     encoder.btn_prev  ~ mcu.BTN_PREV
     encoder.btn_menu  ~ mcu.BTN_MENU
+    encoder.btn_back  ~ mcu.BTN_BACK
+    encoder.btn_sel   ~ mcu.BTN_SEL
     encoder.btn_power ~ mcu.BTN_POWER  # PC13/WKUP2 — wake-from-standby on long press
 
     # ── Validation ───────────────────────────────────────────────────────────
     assert power_3v3.voltage within 3.0V to 3.6V
-    # Crystal frequency constraints (application-level tolerance for USB/BLE clocking)
-    assert hse_xtal.frequency within 24MHz to 26MHz       # 25 MHz HSE — PLL input
+    # HSE frequency check lives in clock.ato:HseClock — mcu.ato is clock-agnostic.
     assert lse_xtal.frequency within 32kHz to 33768Hz     # 32.768 kHz LSE — RTC

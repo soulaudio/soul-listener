@@ -60,6 +60,7 @@ jobs:
             hardware/elec/src/bluetooth.ato \
             hardware/elec/src/memory.ato \
             hardware/elec/src/input.ato \
+            hardware/elec/src/clock.ato \
             | grep -v '"interfaces\.ato"' \
             | grep -v '"parts/' \
             || true)
@@ -107,6 +108,7 @@ jobs:
             hardware/elec/src/bluetooth.ato \
             hardware/elec/src/memory.ato \
             hardware/elec/src/input.ato \
+            hardware/elec/src/clock.ato \
             hardware/elec/src/main.ato \
             | sed 's/.*import //' | tr ',' '\n' | tr -d ' ' | sort -u)
           # Verify each used interface is declared in interfaces.ato
@@ -162,6 +164,49 @@ jobs:
             exit 1
           fi
           echo "OK: AmpSupplyBus imported in all files that use it"
+
+      - name: Verify all EncoderBus buttons are wired in mcu.ato and input.ato
+        run: |
+          # All 6 navigation buttons + encoder SW + power must be wired in mcu.ato.
+          VIOLATIONS=""
+          for btn in btn_play btn_next btn_prev btn_menu btn_back btn_sel btn_power; do
+            if ! grep -q "encoder\.$btn" hardware/elec/src/mcu.ato; then
+              VIOLATIONS="$VIOLATIONS\n  mcu.ato: missing encoder.$btn wiring"
+            fi
+          done
+          for btn in btn_play btn_next btn_prev btn_menu btn_back btn_sel btn_power; do
+            if ! grep -q "encoder\.$btn\b" hardware/elec/src/input.ato; then
+              VIOLATIONS="$VIOLATIONS\n  input.ato: missing $btn connection"
+            fi
+          done
+          if [ -n "$VIOLATIONS" ]; then
+            echo "Architecture violation: EncoderBus buttons not fully wired:"
+            printf '%b\n' "$VIOLATIONS"
+            exit 1
+          fi
+          echo "OK: all 7 EncoderBus buttons wired in mcu.ato and input.ato"
+
+      - name: Verify ClockSource interface wired MCU↔clock module
+        run: |
+          # mcu.ato must declare hse_clk (ClockSource port) and import ClockSource.
+          # main.ato must wire mcu.hse_clk ~ clock.clk.
+          # This enforces clock-source modularity: mcu.ato must not contain the crystal.
+          VIOLATIONS=""
+          if ! grep -q 'hse_clk' hardware/elec/src/mcu.ato; then
+            VIOLATIONS="$VIOLATIONS\n  mcu.ato: missing hse_clk port (ClockSource)"
+          fi
+          if ! grep -q 'ClockSource' hardware/elec/src/mcu.ato; then
+            VIOLATIONS="$VIOLATIONS\n  mcu.ato: missing ClockSource import"
+          fi
+          if ! grep -q 'mcu\.hse_clk ~ clock\.clk' hardware/elec/src/main.ato; then
+            VIOLATIONS="$VIOLATIONS\n  main.ato: missing 'mcu.hse_clk ~ clock.clk' wiring"
+          fi
+          if [ -n "$VIOLATIONS" ]; then
+            echo "Architecture violation: ClockSource not properly wired:"
+            printf '%b\n' "$VIOLATIONS"
+            exit 1
+          fi
+          echo "OK: ClockSource port wired mcu.ato → main.ato → clock.ato (HseClock)"
 
       - name: Check for duplicate pin assignments in component stubs
         run: |
@@ -238,7 +283,7 @@ jobs:
     strategy:
       fail-fast: false  # Run all modules; don't cancel others if one fails
       matrix:
-        module: [power, mcu, audio, display, bluetooth, memory, input]
+        module: [power, mcu, audio, display, bluetooth, memory, input, clock]
     defaults:
       run:
         working-directory: hardware

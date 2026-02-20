@@ -13,7 +13,24 @@
 # FPC connector: 24-pin, 0.5 mm pitch (verify from GDEM0397T81P module spec)
 # Common connector: Molex 52271-2490 or equivalent 24-pin FPC ZIF
 
-from "interfaces.ato" import SPIBus, DisplayCtrl
+from "interfaces.ato" import SPIDevice, DisplayCtrl
+
+# PESD5V0L5UY — Nexperia 5-channel ESD protection array (SOT363 / SC-70-6)
+# VRWM = 5.0 V; suitable for 3.3 V logic; ~16 pF/ch typ; 20 kV IEC 61000-4-2.
+# SOT363 pin assignment (bottom view): pin 2 = common anode (GND); pins 1/3/4/5/6 = cathodes.
+component PESD5V0L5UY:
+    trait is_atomic_part<
+        manufacturer = "Nexperia",
+        partnumber   = "PESD5V0L5UY,115",
+        footprint    = "Package_TO_SOT_SMD:SOT-363_SC-70-6",
+        symbol       = "ESD_Protection:PESD5V0L5UY">
+    trait has_designator_prefix<prefix = "U">
+    signal IO1 ~ pin 1   # Cathode 1 — I/O line 1
+    signal GND ~ pin 2   # Common anode — connect to ground plane
+    signal IO2 ~ pin 3   # Cathode 2 — I/O line 2
+    signal IO3 ~ pin 4   # Cathode 3 — I/O line 3
+    signal IO4 ~ pin 5   # Cathode 4 — I/O line 4
+    signal IO5 ~ pin 6   # Cathode 5 — I/O line 5
 
 module Display:
     """
@@ -23,9 +40,8 @@ module Display:
 
     # ── Ports ─────────────────────────────────────────────────────────────────
     power_3v3   = new ElectricPower   # 3.3 V VCI input
-    spi         = new SPIBus          # SPI bus from MCU (MOSI + MISO + SCLK)
+    spi         = new SPIDevice       # SPI bus from MCU (MOSI + MISO + SCLK + CS)
     ctrl        = new DisplayCtrl     # DC, RST, BUSY from/to MCU
-    spi_cs      = new Electrical      # Chip select (driven by MCU SPI1_NSS or GPIO)
 
     # ── FPC connector placeholder ─────────────────────────────────────────────
     # TODO: Replace Connector_Generic with the actual 24-pin 0.5 mm FPC footprint.
@@ -44,8 +60,18 @@ module Display:
     #   Pins 12-24: reserved / NC
 
     # ── ESD protection ────────────────────────────────────────────────────────
-    # TVS diode array on SPI lines and control lines (PRTR5V0U2X or similar)
-    # TODO: Add TVS array footprint
+    # 2× PESD5V0L5UY (SOT363, 5-ch, 5.0 V VRWM, ~16 pF/ch) placed close to FPC connector.
+    # tvs1 covers the 5 output/bidirectional lines; tvs2 covers BUSY (input-only, IO1 used).
+    tvs1 = new PESD5V0L5UY   # MOSI / SCK / CS / DC / RST
+    tvs2 = new PESD5V0L5UY   # BUSY (IO1 only; IO2-IO5 cathodes left unconnected)
+    power_3v3.lv ~ tvs1.GND
+    power_3v3.lv ~ tvs2.GND
+    tvs1.IO1 ~ spi.mosi
+    tvs1.IO2 ~ spi.sclk
+    tvs1.IO3 ~ spi.cs
+    tvs1.IO4 ~ ctrl.dc
+    tvs1.IO5 ~ ctrl.rst
+    tvs2.IO1 ~ ctrl.busy
 
     # ── Supply decoupling ─────────────────────────────────────────────────────
     c_vci_bulk = new Capacitor; c_vci_bulk.capacitance = 10uF  +/- 20%; c_vci_bulk.package = "0805"

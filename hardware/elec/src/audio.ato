@@ -302,46 +302,50 @@ module Audio:
     # ── TPA6120A2 Headphone Amplifier ─────────────────────────────────────────
     amp = new TPA6120A2
 
-    # Supply: ±5.0 V from LT3045/LT3094
-    pvdd.hv ~ amp.PVDD
-    pvss.lv ~ amp.PVSSa; pvss.lv ~ amp.PVSSb; pvss.lv ~ amp.EP
+    # Supply: ±5.0 V from LT3045/LT3094 regulators.
+    # LVCC_POS and RVCC_POS must be at the same potential → both to +5.0 V (per datasheet §8.1).
+    # LVCC_NEG and RVCC_NEG must be at the same potential → both to −5.0 V.
+    pvdd.hv ~ amp.LVCC_POS;  pvdd.hv ~ amp.RVCC_POS
+    pvss.lv ~ amp.LVCC_NEG;  pvss.lv ~ amp.RVCC_NEG
 
-    # Per-pin bypass capacitors (100 nF at each power pin, placed as close as possible)
-    c_amp_pvdd  = new Capacitor; c_amp_pvdd.capacitance  = 100nF +/- 20%; c_amp_pvdd.package  = "0402"
-    c_amp_pvssa = new Capacitor; c_amp_pvssa.capacitance = 100nF +/- 20%; c_amp_pvssa.package = "0402"
-    c_amp_pvssb = new Capacitor; c_amp_pvssb.capacitance = 100nF +/- 20%; c_amp_pvssb.package = "0402"
-    pvdd.hv ~ c_amp_pvdd.p1;   c_amp_pvdd.p2  ~ pvss.lv
-    pvss.lv ~ c_amp_pvssa.p1;  c_amp_pvssa.p2 ~ pvdd.lv
-    pvss.lv ~ c_amp_pvssb.p1;  c_amp_pvssb.p2 ~ pvdd.lv
+    # EP (pin 15, thermal pad) = PCB GND (0 V). MUST NOT connect to LVCC−/RVCC− (−5 V).
+    pvdd.lv ~ amp.EP   # pvdd.lv = GND (0 V reference of the +5 V domain)
 
-    # VOCM: tie to AGND for fully differential (balanced) output
-    avdd.lv ~ amp.VOCM
+    # Per-channel bypass caps: 100 nF from each VCC+ pin to GND, and GND to each VCC−.
+    # Place each cap as close as possible to its respective supply pin on the VQFN-14.
+    c_amp_l_pos = new Capacitor; c_amp_l_pos.capacitance = 100nF +/- 20%; c_amp_l_pos.package = "0402"
+    c_amp_r_pos = new Capacitor; c_amp_r_pos.capacitance = 100nF +/- 20%; c_amp_r_pos.package = "0402"
+    c_amp_l_neg = new Capacitor; c_amp_l_neg.capacitance = 100nF +/- 20%; c_amp_l_neg.package = "0402"
+    c_amp_r_neg = new Capacitor; c_amp_r_neg.capacitance = 100nF +/- 20%; c_amp_r_neg.package = "0402"
+    pvdd.hv ~ c_amp_l_pos.p1; c_amp_l_pos.p2 ~ pvdd.lv   # LVCC+ bypass (pin 14) to GND
+    pvdd.hv ~ c_amp_r_pos.p1; c_amp_r_pos.p2 ~ pvdd.lv   # RVCC+ bypass (pin 8) to GND
+    pvdd.lv ~ c_amp_l_neg.p1; c_amp_l_neg.p2 ~ pvss.lv   # GND to LVCC− bypass (pin 12)
+    pvdd.lv ~ c_amp_r_neg.p1; c_amp_r_neg.p2 ~ pvss.lv   # GND to RVCC− bypass (pin 10)
 
-    # DAC → amp inputs (direct connection; no coupling caps with ±5 V supply)
-    dac.AOUT_L_POS ~ amp.IN1_POS
-    dac.AOUT_R_POS ~ amp.IN2_POS
+    # DAC → amp inputs (DC-coupled; ±5 V supply allows direct coupling from ES9038Q2M)
+    dac.AOUT_L_POS ~ amp.LIN_POS   # Left non-inverting input  (from DAC AOUT_L+ pin)
+    dac.AOUT_R_POS ~ amp.RIN_POS   # Right non-inverting input (from DAC AOUT_R+ pin)
 
-    # Unity-gain CFA feedback: R_F = 1.5 kΩ from output node back to IN_NEG.
-    # For a current-feedback amplifier: R_F sets loop stability (1–2 kΩ typical).
-    # R_G is open (not fitted) for unity gain (0 dB).
-    # The headphone output node is the junction of R_F and the headphone load.
-    # ⚠ TPA6120A2 stub (parts/TPA6120A2/) is missing explicit OUT1/OUT2 signal
-    #   definitions. The output is implicit: the net at IN_NEG (through R_F) drives
-    #   the headphone and feeds back to IN_NEG. Verify against KiCad symbol before layout.
+    # Unity-gain CFA feedback: RF = 1.5 kΩ from LOUT/ROUT back to LIN_NEG/RIN_NEG.
+    # CFA stability range: RF = 1–2 kΩ per TPA6120A2 datasheet §7.3.5.
+    # RG = open (not fitted) → unity gain (0 dB). Output is single-ended, GND-referenced.
+    # LOUT/ROUT drive the headphone load and feed back to LIN_NEG/RIN_NEG through RF.
 
-    # Left channel (amp A): R_F from headphone_out.out_l_pos to amp.IN1_NEG
+    # Left channel: LOUT → headphone jack + RF feedback to LIN_NEG
     r_fb_l = new Resistor
     r_fb_l.resistance = 1.5kohm +/- 1%
     r_fb_l.package    = "0402"
-    headphone_out.out_l_pos ~ r_fb_l.p1; r_fb_l.p2 ~ amp.IN1_NEG
+    amp.LOUT ~ r_fb_l.p1; r_fb_l.p2 ~ amp.LIN_NEG   # RF: LOUT → inverting input
+    amp.LOUT ~ headphone_out.out_l_pos                # Left output to headphone jack
 
-    # Right channel (amp B): R_F from headphone_out.out_r_pos to amp.IN2_NEG
+    # Right channel: ROUT → headphone jack + RF feedback to RIN_NEG
     r_fb_r = new Resistor
     r_fb_r.resistance = 1.5kohm +/- 1%
     r_fb_r.package    = "0402"
-    headphone_out.out_r_pos ~ r_fb_r.p1; r_fb_r.p2 ~ amp.IN2_NEG
+    amp.ROUT ~ r_fb_r.p1; r_fb_r.p2 ~ amp.RIN_NEG   # RF: ROUT → inverting input
+    amp.ROUT ~ headphone_out.out_r_pos                # Right output to headphone jack
 
-    # Headphone negative references to AGND (single-ended, GND-referenced output)
+    # Headphone GND references (single-ended output, referenced to GND)
     headphone_out.out_l_neg ~ avdd.lv
     headphone_out.out_r_neg ~ avdd.lv
 
