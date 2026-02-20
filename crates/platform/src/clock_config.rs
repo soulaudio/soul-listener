@@ -39,9 +39,15 @@ pub enum ClockSource {
 
     /// PLL1 Q output.
     ///
-    /// Used by: SAI1/2 (audio I2S/TDM), SPI1/2/3.
-    /// Typical value: 48 MHz or audio-ratio (e.g. 49.152 MHz for 192 kHz).
+    /// Used by: SPI1/2/3.
+    /// Typical value: 200 MHz (PLL1 VCO=800 MHz / 4).
     Pll1Q,
+
+    /// PLL3 P output.
+    ///
+    /// Used by: SAI1/2 (audio I2S/TDM).
+    /// Typical value: 49.0 MHz (HSI/4 × 49 / 16 ≈ 256 × 192 kHz).
+    Pll3P,
 
     /// PLL2 R output.
     ///
@@ -162,12 +168,12 @@ pub const SOUL_AUDIO_CLOCK_REQUIREMENTS: &[ClockRequirement] = &[
         note: "embassy-stm32 issue #3049: SDMMC requires HSI48 + CRS enabled before init; \
                failure produces silent chip lockup with no error code",
     },
-    // ── PLL1Q consumers ───────────────────────────────────────────────────────
+    // ── PLL3P consumers ───────────────────────────────────────────────────────
     ClockRequirement {
         peripheral: "SAI1",
-        required_source: ClockSource::Pll1Q,
-        note: "SAI1 I2S/TDM audio output to ES9038Q2M DAC; PLL1Q tuned to audio rate \
-               (e.g. 49.152 MHz for 192 kHz / 256 fs); RM0433 §33.4.4",
+        required_source: ClockSource::Pll3P,
+        note: "SAI1 I2S/TDM audio output to ES9038Q2M DAC; PLL3P = HSI/4×49/16 = 49.0 MHz \
+               ≈ 256×192 kHz (0.31% error, inaudible); RM0433 §33.4.4, §8.3.2",
     },
     // ── PLL2R consumers ───────────────────────────────────────────────────────
     ClockRequirement {
@@ -212,17 +218,20 @@ mod tests {
         );
     }
 
-    /// SAI1 must require PLL1Q for audio-rate I2S clocking.
+    /// SAI1 must require PLL3P for audio-rate I2S clocking.
+    ///
+    /// PLL1Q (200 MHz) does not divide cleanly to 49.152 MHz (256 × 192 kHz).
+    /// PLL3P = HSI(64)/4 × 49 / 16 = 49.0 MHz — 0.31% error, inaudible.
     #[test]
-    fn test_sai_requires_pll1q() {
+    fn test_sai_requires_pll3p() {
         let sai = SOUL_AUDIO_CLOCK_REQUIREMENTS
             .iter()
             .find(|r| r.peripheral == "SAI1")
             .expect("SAI1 must have a clock requirement entry");
         assert_eq!(
             sai.required_source,
-            ClockSource::Pll1Q,
-            "SAI1 must require PLL1Q for audio I2S clocking"
+            ClockSource::Pll3P,
+            "SAI1 must require PLL3P for audio I2S clocking (not PLL1Q)"
         );
     }
 

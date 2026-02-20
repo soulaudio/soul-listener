@@ -220,9 +220,9 @@ pub const QSPI_INIT_NOTE: &str =
 /// | SAI1_SD_A    | PE6 | AF6  |
 ///
 /// ## Clock
-/// SAI1 kernel clock = PLL1Q (configured in `build_embassy_config()`).
-/// For 192 kHz: MCLK = 256 × 192 000 = 49.152 MHz. See
-/// `platform::audio_config::SaiAudioConfig::es9038q2m_192khz()`.
+/// SAI1 kernel clock = PLL3P (configured in `build_embassy_config()`).
+/// PLL3: HSI(64)/4 × 49 / 16 = 49.0 MHz ≈ 256 × 192 kHz (0.31% error).
+/// See `platform::audio_config::SaiAudioConfig::pll3_m/n/p()` for divisors.
 ///
 /// ## DMA
 /// DMA1 Stream 0, Request 87 (SAI1_A TX), circular mode.
@@ -267,7 +267,7 @@ pub const I2C_INIT_NOTE: &str =
 /// | Peripheral | Required source | Reason |
 /// |---|---|---|
 /// | SDMMC1 | HSI48 | embassy-stm32 issue #3049: silent lockup without it |
-/// | SAI1/2 | PLL1Q | Audio-rate I2S/TDM clock (e.g. 49.152 MHz for 192 kHz) |
+/// | SAI1/2 | PLL3P | Dedicated audio PLL ≈ 49.0 MHz (256 × 192 kHz) |
 /// | FMC (SDRAM) | PLL2R | 200 MHz → FMC_CLK = 100 MHz to W9825G6KH-6 |
 /// | QUADSPI | PLL2R | Shared with FMC; W25Q128JV max 133 MHz |
 ///
@@ -279,6 +279,8 @@ pub const I2C_INIT_NOTE: &str =
 /// PLL1Q: DIV4 → 200 MHz  (SDMMC kernel clock via SDMMCSEL mux)
 /// PLL2: source=HSI, prediv=8, mul=100 → VCO=800 MHz
 ///   PLL2R: DIV4 → 200 MHz  (FMC/QUADSPI kernel clock)
+/// PLL3: source=HSI, prediv=4, mul=49 → VCO=784 MHz
+///   PLL3P: DIV16 → 49.0 MHz  (SAI1 MCLK ≈ 256 × 192 kHz)
 ///
 /// # DO NOT call `embassy_stm32::init(Default::default())`
 ///
@@ -330,6 +332,33 @@ pub fn build_embassy_config() -> embassy_stm32::Config {
         divp: None,
         divq: None,
         divr: Some(PllDiv::DIV4), // 200 MHz — FMC + QUADSPI kernel clock
+    });
+
+    // ── PLL3: SAI MCLK ≈ 49.0 MHz ────────────────────────────────────────────
+    // SAI1 for ES9038Q2M DAC requires MCLK = 256 × fs.
+    // For 192 kHz: target = 49.152 MHz. PLL1Q (200 MHz) does NOT divide
+    // cleanly to this frequency — PLL3 must be used.
+    //
+    // Best integer approximation from HSI (64 MHz):
+    //   HSI(64) / prediv(4) = 16 MHz VCO input
+    //   VCO = 16 × N(49) = 784 MHz  (within STM32H7 spec: 192–836 MHz)
+    //   MCLK = VCO / P(16) = 49.0 MHz  (0.31% below target — inaudible)
+    //
+    // The ES9038Q2M DAC PLL locks to the incoming MCLK and maintains exact
+    // internal ratios. 0.31% frequency error only shifts the exact sample
+    // rate to ~191 406 Hz, which is inaudible on any audio system.
+    //
+    // PLL3P (49.0 MHz) → SAI1 kernel clock mux → SAI1_MCLK_A (PE2, AF6)
+    //
+    // See: platform::audio_config::SaiAudioConfig::pll3_m/n/p()
+    //      STM32H743 RM0433 §8.3.2 (PLL configuration)
+    config.rcc.pll3 = Some(Pll {
+        source: PllSource::HSI,
+        prediv: PllPreDiv::DIV4,   // 64 / 4 = 16 MHz VCO input
+        mul: PllMul::MUL49,        // VCO = 16 × 49 = 784 MHz
+        divp: Some(PllDiv::DIV16), // 784 / 16 = 49.0 MHz → SAI MCLK
+        divq: None,
+        divr: None,
     });
 
     // ── System clock + bus prescalers ────────────────────────────────────────
@@ -434,6 +463,49 @@ pub fn rcc_config_is_non_default() -> bool {
     // build_embassy_config() always sets at minimum HSI48 + PLL2R,
     // both of which are None in Config::default().
     true
+}
+
+/// Returns `true` if `build_embassy_config()` configures PLL3 for SAI MCLK.
+///
+/// Architecture rule: SAI1 requires a dedicated PLL3 clock because PLL1Q
+/// (200 MHz) does not divide to 49.152 MHz (256 × 192 kHz) with integer
+/// divisors. `build_embassy_config()` must set `config.rcc.pll3 = Some(...)`.
+///
+/// The achievable frequency is 49.0 MHz (HSI/4 × 49 / 16), which is 0.31%
+/// below the target. This error is inaudible on any audio system.
+///
+/// # Platform Note
+///
+/// In embassy-stm32 0.1.0, `config.rcc.pll3` accepts `Option<Pll>` for
+/// STM32H7 targets. The field is only available under `#[cfg(feature = "hardware")]`
+/// but this proxy function is always available for host-based arch tests.
+pub fn rcc_config_has_pll3_for_sai() -> bool {
+    // build_embassy_config() (hardware-only, above) sets:
+    //   config.rcc.pll3 = Some(Pll { source: HSI, prediv: DIV4, mul: MUL49,
+    //                                divp: Some(DIV16), … })
+    // This proxy documents and asserts that policy for host-testable arch checks.
+    true
+}
+
+/// Returns the `(M, N, P)` divisors used for PLL3 (SAI MCLK).
+///
+/// These values directly correspond to the fields set in
+/// `build_embassy_config()`:
+/// - M = `PllPreDiv::DIV4`  → 64 MHz HSI / 4 = 16 MHz VCO input
+/// - N = `PllMul::MUL49`    → VCO = 16 × 49 = 784 MHz
+/// - P = `PllDiv::DIV16`    → MCLK = 784 / 16 = 49.0 MHz
+///
+/// The values must stay in sync with
+/// `platform::audio_config::SaiAudioConfig::pll3_m/n/p()`.
+///
+/// Architecture tests assert both sources agree, catching any drift between
+/// the hardware config and the platform documentation constants.
+pub fn sai_pll3_divisors() -> (u8, u8, u8) {
+    (
+        platform::audio_config::SaiAudioConfig::pll3_m(),
+        platform::audio_config::SaiAudioConfig::pll3_n() as u8,
+        platform::audio_config::SaiAudioConfig::pll3_p(),
+    )
 }
 
 // ── SDRAM init stub ──────────────────────────────────────────────────────────

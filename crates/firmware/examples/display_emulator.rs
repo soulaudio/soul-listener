@@ -29,14 +29,14 @@ use platform::config;
 #[cfg(all(feature = "keyboard-input", not(feature = "hot-reload")))]
 use firmware::input::{Button, InputEvent};
 #[cfg(all(feature = "keyboard-input", not(feature = "hot-reload")))]
-use ui::navigation::Navigator;
+#[allow(unused_imports)]
+use firmware_ui::screens::now_playing::render_now_playing_to;
 #[cfg(all(feature = "keyboard-input", not(feature = "hot-reload")))]
-use ui::screen::Screen;
+use ui::navigation::Navigator;
 #[cfg(all(feature = "keyboard-input", not(feature = "hot-reload")))]
 use ui::now_playing::NowPlayingState;
 #[cfg(all(feature = "keyboard-input", not(feature = "hot-reload")))]
-#[allow(unused_imports)]
-use firmware_ui::screens::now_playing::render_now_playing_to;
+use ui::screen::Screen;
 
 // The #[hot_module] attribute macro (hot-lib-reloader 0.8) generates
 // a mod with hot-reloadable wrappers for the dylib functions.
@@ -85,11 +85,13 @@ impl AppState {
                 self.needs_redraw = true;
             }
             InputEvent::ButtonPress(Button::VolumeUp) => {
-                self.now_playing.set_volume(self.now_playing.volume.saturating_add(5));
+                self.now_playing
+                    .set_volume(self.now_playing.volume.saturating_add(5));
                 self.needs_redraw = true;
             }
             InputEvent::ButtonPress(Button::VolumeDown) => {
-                self.now_playing.set_volume(self.now_playing.volume.saturating_sub(5));
+                self.now_playing
+                    .set_volume(self.now_playing.volume.saturating_sub(5));
                 self.needs_redraw = true;
             }
             InputEvent::ButtonPress(Button::Menu) => {

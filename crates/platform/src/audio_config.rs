@@ -89,6 +89,46 @@ impl SaiAudioConfig {
     pub fn bclk_hz(&self) -> u32 {
         u32::from(self.bit_depth) * u32::from(self.channels) * self.sample_rate_hz
     }
+
+    /// Best-achievable MCLK from HSI (64 MHz) with integer PLL divisors.
+    ///
+    /// Target: 49.152 MHz (256 × 192 kHz)
+    /// Achieved: HSI(64) / M(4) × N(49) / P(16) = 49.0 MHz (0.31% error)
+    ///
+    /// This is acceptable for ES9038Q2M — the DAC PLL locks to the incoming
+    /// MCLK and maintains exact ratios internally. 0.31% frequency error
+    /// does not affect audio quality; it only shifts the exact sample rate
+    /// from 192 000 Hz to ~191 406 Hz. For a DAP this is inaudible.
+    ///
+    /// Note: `mclk_hz()` returns the specification target (49.152 MHz);
+    /// this method returns the hardware-achievable value (49.0 MHz).
+    pub fn actual_mclk_hz() -> u32 {
+        49_000_000 // 49.0 MHz achievable with integer PLL from HSI
+    }
+
+    /// PLL3 M divider for SAI MCLK.
+    ///
+    /// Divides HSI (64 MHz) input to the VCO reference: 64 / 4 = 16 MHz.
+    /// Corresponds to `PllPreDiv::DIV4` in embassy-stm32.
+    pub fn pll3_m() -> u8 {
+        4
+    }
+
+    /// PLL3 N multiplier for SAI MCLK.
+    ///
+    /// VCO = 16 MHz × 49 = 784 MHz (within STM32H7 VCO range 192–836 MHz).
+    /// Corresponds to `PllMul::MUL49` in embassy-stm32.
+    pub fn pll3_n() -> u16 {
+        49
+    }
+
+    /// PLL3 P divider for SAI MCLK output.
+    ///
+    /// MCLK = 784 MHz / 16 = 49.0 MHz → SAI1_MCLK_A pin (PE2, AF6).
+    /// Corresponds to `PllDiv::DIV16` in embassy-stm32.
+    pub fn pll3_p() -> u8 {
+        16
+    }
 }
 
 /// I2C addresses for SoulAudio DAP peripherals.
@@ -200,6 +240,55 @@ mod tests {
         assert!(
             addr == 0x6A || addr == 0x6B,
             "BQ25895 I2C address must be 0x6A or 0x6B, got 0x{addr:02X}"
+        );
+    }
+
+    #[test]
+    fn bq25895_address_is_0x6a() {
+        // BQ25895 datasheet (SLUUBA2B, Table 6): 7-bit address = 0x6A.
+        // The value 0x6B appearing in some documents is a confirmed datasheet
+        // errata. TI E2E forum confirms 0x6A as the functional address:
+        // https://e2e.ti.com/support/power-management-group/power-management/
+        // f/power-management-forum/507682
+        // There is NO address pin — the address is hardware-fixed.
+        assert_eq!(
+            I2cAddresses::BQ25895_PMIC,
+            0x6A,
+            "BQ25895 I2C address is hardware-fixed at 0x6A (not 0x6B)"
+        );
+    }
+
+    #[test]
+    fn pll3_divisors_produce_correct_mclk() {
+        // Verify PLL3 M/N/P produce the correct achievable MCLK frequency.
+        // MCLK = HSI / M × N / P
+        let hsi_hz: u64 = 64_000_000;
+        let m = SaiAudioConfig::pll3_m() as u64;
+        let n = SaiAudioConfig::pll3_n() as u64;
+        let p = SaiAudioConfig::pll3_p() as u64;
+        let mclk = hsi_hz / m * n / p;
+        assert_eq!(mclk, 49_000_000, "PLL3 must produce 49.0 MHz for SAI MCLK");
+    }
+
+    #[test]
+    fn pll3_vco_within_stm32h7_spec() {
+        // STM32H7 PLL VCO must be 192–836 MHz (RM0433 §8.3.2)
+        let hsi_hz: u64 = 64_000_000;
+        let m = SaiAudioConfig::pll3_m() as u64;
+        let n = SaiAudioConfig::pll3_n() as u64;
+        let vco = hsi_hz / m * n;
+        assert!(vco >= 192_000_000, "PLL3 VCO ({vco} Hz) must be >= 192 MHz");
+        assert!(vco <= 836_000_000, "PLL3 VCO ({vco} Hz) must be <= 836 MHz");
+    }
+
+    #[test]
+    fn pll3_mclk_error_within_1_percent() {
+        let target = 49_152_000u64; // ideal 256 × 192000
+        let actual = SaiAudioConfig::actual_mclk_hz() as u64;
+        let error_ppm = (target.abs_diff(actual) * 1_000_000) / target;
+        assert!(
+            error_ppm < 10_000, // < 1% = < 10000 ppm
+            "MCLK frequency error must be < 1%, got {error_ppm} ppm"
         );
     }
 
