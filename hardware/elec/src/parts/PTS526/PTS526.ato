@@ -71,8 +71,6 @@ component PTS526:
     # and pads 3+4 connected internally (terminal B).
     # In the KiCad SW_Push symbol there are only 2 logical pins (1 and 2).
     # Both physical pad pairs must be soldered; signal routing is via pins 1 and 2 above.
-    # If the footprint assigns individual pad numbers 1/2/3/4 to symbol pins:
-    #   signal A2 ~ pin 2   # Terminal A, pad 2 (same net as A1)
-    #   signal B2 ~ pin 3   # Terminal B, pad 3 (same net as B1)
-    #   signal B3 ~ pin 4   # Terminal B, pad 4 (same net as B1)
+    # If the footprint assigns individual pad numbers 1/2/3/4 to symbol pins,
+    # additional signal declarations would be needed (A2 at pad 2, B2 at pad 3, B3 at pad 4).
     # TODO: confirm footprint pad-to-symbol-pin mapping when adding PTS526 footprint.
