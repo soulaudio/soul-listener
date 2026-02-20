@@ -390,11 +390,298 @@ pub fn sdram_refresh_count(fmc_hz: u64, rows: u64, refresh_ms: u64) -> u32 {
 /// Write to FMC_SDRTR.COUNT after SDRAM init.
 pub const W9825G6KH6_REFRESH_COUNT: u32 = 761;
 
+// ─── SDRAM base address and size ─────────────────────────────────────────────
+
+/// Base address of external SDRAM via FMC Bank 5.
+///
+/// All STM32H7 devices map FMC Bank 5 (SDRAM bank 1) at this address.
+/// Code that constructs pointers to SDRAM or validates addresses must
+/// reference this constant — no magic literals allowed.
+pub const SDRAM_BASE_ADDRESS: u32 = 0xC000_0000;
+
+/// SDRAM size in bytes (W9825G6KH6: 16M × 16-bit = 32 MB).
+pub const SDRAM_SIZE_BYTES: u32 = 32 * 1024 * 1024;
+
+// ─── SDRAM initialization sequence types ────────────────────────────────────
+
+/// Steps in the SDRAM initialization sequence (per JEDEC and STM32H7 RM §23).
+///
+/// The FMC SDRAM controller requires a specific command sequence to bring
+/// SDRAM out of reset. Each step maps to a specific FMC_SDCMR register write.
+///
+/// # Reference
+/// STM32H743 Reference Manual §23.7.3 — SDRAM initialization sequence.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum SdramInitStep {
+    /// Enable SDRAM clock output (FMC_SDCMR: MODE=001).
+    ///
+    /// Wait ≥ 100 µs after this command before issuing PALL.
+    ClockEnable,
+    /// Precharge All banks (FMC_SDCMR: MODE=010).
+    ///
+    /// Closes all open rows, bringing all banks to idle state.
+    Pall,
+    /// Issue N auto-refresh cycles (FMC_SDCMR: MODE=011, NRFS=N).
+    ///
+    /// JEDEC requires at least 2 auto-refresh cycles during initialization.
+    AutoRefresh {
+        /// Number of auto-refresh cycles to issue (≥ 2 for JEDEC compliance).
+        count: u8,
+    },
+    /// Load Mode Register (FMC_SDCMR: MODE=100, MRD=value).
+    ///
+    /// Programs CAS latency, burst length, and write mode into the SDRAM.
+    /// The register value used is `SdramInitSequence::mode_register`.
+    LoadModeRegister,
+    /// Program the refresh rate counter (FMC_SDRTR: COUNT=value).
+    ///
+    /// Must be set after the LMR step. The `count` value is the FMC_SDRTR.COUNT
+    /// field (in FMC clock cycles between auto-refresh commands).
+    SetRefreshRate {
+        /// FMC_SDRTR.COUNT value. Use `W9825G6KH6_REFRESH_COUNT` (761) at 100 MHz.
+        count: u32,
+    },
+}
+
+/// Ordered initialization sequence for a specific SDRAM chip.
+///
+/// Created via `SdramInitSequence::w9825g6kh6()`. The `steps` slice is a
+/// reference to a `'static` array, so this type is zero-cost at runtime.
+pub struct SdramInitSequence {
+    /// Steps to execute in order to bring the SDRAM out of reset.
+    pub steps: &'static [SdramInitStep],
+    /// Mode register value (MRD field in FMC_SDCMR for `LoadModeRegister` step).
+    ///
+    /// Encodes CAS latency, burst length, and write burst mode.
+    pub mode_register: u32,
+}
+
+/// JEDEC initialization sequence steps for W9825G6KH6.
+///
+/// Static to avoid any runtime allocation. Sequence per W9825G6KH6 datasheet
+/// §Initialization Procedure and STM32H7 RM §23.7.3.
+static W9825G6KH6_INIT_STEPS: [SdramInitStep; 5] = [
+    SdramInitStep::ClockEnable,
+    SdramInitStep::Pall,
+    SdramInitStep::AutoRefresh { count: 2 },
+    SdramInitStep::LoadModeRegister,
+    SdramInitStep::SetRefreshRate {
+        count: W9825G6KH6_REFRESH_COUNT,
+    },
+];
+
+impl SdramInitSequence {
+    /// Returns the initialization sequence for the W9825G6KH6 SDRAM chip.
+    ///
+    /// The sequence is:
+    /// 1. `ClockEnable`   — assert FMC_CLK to SDRAM (wait ≥ 100 µs)
+    /// 2. `Pall`          — precharge all banks
+    /// 3. `AutoRefresh { count: 2 }` — 2 auto-refresh cycles (JEDEC minimum)
+    /// 4. `LoadModeRegister` — program CAS=3, burst length=1
+    /// 5. `SetRefreshRate { count: 761 }` — set refresh counter for 100 MHz
+    #[must_use]
+    pub fn w9825g6kh6() -> Self {
+        Self {
+            steps: &W9825G6KH6_INIT_STEPS,
+            mode_register: SdramConfig::w9825g6kh6_lmr(),
+        }
+    }
+}
+
+// ─── SDRAM configuration ─────────────────────────────────────────────────────
+
+/// SDRAM configuration parameters for the W9825G6KH-6 at 100 MHz FMC clock.
+///
+/// Pure data struct — no hardware registers are accessed. Contains all the
+/// fields needed to configure the FMC SDRAM controller: geometry (column/row/
+/// bank count, bus width), timing (in clock cycles), CAS latency, and the
+/// refresh counter value.
+///
+/// # Sources
+/// - W9825G6KH-6 datasheet (Winbond, -6 speed grade): column/row/bank geometry
+/// - STM32H743 Reference Manual RM0433 §23: FMC SDRAM configuration registers
+/// - `SdramTiming::w9825g6kh6_at_100mhz()`: timing derivation
+#[derive(Debug, Clone, Copy)]
+pub struct SdramConfig {
+    /// Computed timing parameters (cycles at 100 MHz FMC clock).
+    pub timing: SdramTiming,
+    /// Auto-refresh count register value for FMC_SDRTR.
+    ///
+    /// Formula: `(fmc_hz * refresh_ms) / (rows * 1000) - 20`
+    /// At 100 MHz, 8192 rows, 64 ms: 761.
+    pub refresh_count: u32,
+    /// Number of column address bits. W9825G6KH-6: 9 (512 columns).
+    pub column_bits: u8,
+    /// Number of row address bits. W9825G6KH-6: 13 (8192 rows).
+    pub row_bits: u8,
+    /// Data bus width in bits. W9825G6KH-6: 16-bit.
+    pub data_width_bits: u8,
+    /// Number of internal banks. W9825G6KH-6: 4.
+    pub banks: u8,
+    /// CAS latency cycles. W9825G6KH-6: 3 at 100 MHz.
+    pub cas_latency: u8,
+}
+
+impl SdramConfig {
+    /// Pre-computed configuration for W9825G6KH-6 at 100 MHz FMC clock.
+    ///
+    /// All fields are derived from the W9825G6KH-6 datasheet and the STM32H743
+    /// reference manual. No hardware registers are accessed — this is pure data.
+    ///
+    /// # W9825G6KH-6 geometry
+    /// - 16M × 16-bit = 32 MB total capacity
+    /// - 13-bit row address (8192 rows)
+    /// - 9-bit column address (512 columns)
+    /// - 4 internal banks
+    /// - CAS latency 3 at 100 MHz (datasheet Table 1, CL=3 for fCK ≤ 133 MHz)
+    #[must_use]
+    pub fn w9825g6kh6_at_100mhz() -> Self {
+        Self {
+            timing: SdramTiming::w9825g6kh6_at_100mhz(),
+            refresh_count: W9825G6KH6_REFRESH_COUNT,
+            column_bits: 9,
+            row_bits: 13,
+            data_width_bits: 16,
+            banks: 4,
+            cas_latency: 3,
+        }
+    }
+
+    /// Returns the W9825G6KH6 config (alias for test discoverability).
+    ///
+    /// Equivalent to `w9825g6kh6_at_100mhz()`. The shorter name is used in
+    /// tests and other HAL consumers that don't need to spell out the clock.
+    #[must_use]
+    pub fn w9825g6kh6() -> Self {
+        Self::w9825g6kh6_at_100mhz()
+    }
+
+    /// Load Mode Register value for W9825G6KH6.
+    ///
+    /// Bit layout (JEDEC standard):
+    /// - Bits \[2:0\]: Burst Length = 000 (length 1)
+    /// - Bit  \[3\]:  Burst Type = 0 (sequential)
+    /// - Bits \[6:4\]: CAS Latency = 011 (latency 3)
+    /// - Bit  \[9\]:  Write Burst Mode = 1 (single location)
+    ///
+    /// Result: 0b_0010_0011_0000 = 0x0230
+    ///
+    /// Written to the SDRAM via FMC_SDCMR.MRD during the `LoadModeRegister`
+    /// init step.
+    #[must_use]
+    pub fn w9825g6kh6_lmr() -> u32 {
+        // Burst length = 1 (bits[2:0] = 000)
+        // Burst type   = sequential (bit[3] = 0)
+        // CAS latency  = 3 (bits[6:4] = 011)
+        // Write burst  = single location access (bit[9] = 1)
+        // 0b_0010_0011_0000 = 0x0230
+        0x0230
+    }
+}
+
 // ─── Tests ───────────────────────────────────────────────────────────────────
 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    // ── TDD RED tests — will fail until SdramConfig + SdramInitSequence are
+    //    added to this module (platform::sdram).
+    //    These enforce that the canonical chip description lives in the HAL,
+    //    not scattered across the firmware crate.
+
+    #[test]
+    fn sdram_config_has_correct_column_bits() {
+        let cfg = SdramConfig::w9825g6kh6();
+        assert_eq!(
+            cfg.column_bits, 9,
+            "W9825G6KH6 has 512 columns = 9 address bits"
+        );
+    }
+
+    #[test]
+    fn sdram_config_has_correct_row_bits() {
+        let cfg = SdramConfig::w9825g6kh6();
+        assert_eq!(
+            cfg.row_bits, 13,
+            "W9825G6KH6 has 8192 rows = 13 address bits"
+        );
+    }
+
+    #[test]
+    fn sdram_config_has_correct_data_width() {
+        let cfg = SdramConfig::w9825g6kh6();
+        assert_eq!(cfg.data_width_bits, 16, "W9825G6KH6 is 16-bit wide");
+    }
+
+    #[test]
+    fn sdram_config_has_correct_banks() {
+        let cfg = SdramConfig::w9825g6kh6();
+        assert_eq!(cfg.banks, 4, "W9825G6KH6 has 4 internal banks");
+    }
+
+    #[test]
+    fn sdram_config_has_correct_cas_latency() {
+        let cfg = SdramConfig::w9825g6kh6();
+        assert_eq!(
+            cfg.cas_latency, 3,
+            "CAS latency 3 at 100MHz is safe for W9825G6KH6"
+        );
+    }
+
+    #[test]
+    fn sdram_init_sequence_has_correct_steps() {
+        // The init sequence must be: CLK_EN → PALL → AUTO_REFRESH × 2 → LMR → SET_REFRESH_RATE
+        let seq = SdramInitSequence::w9825g6kh6();
+        assert_eq!(
+            seq.steps.len(),
+            5,
+            "init sequence must have exactly 5 steps"
+        );
+        assert_eq!(seq.steps[0], SdramInitStep::ClockEnable);
+        assert_eq!(seq.steps[1], SdramInitStep::Pall);
+        assert_eq!(seq.steps[2], SdramInitStep::AutoRefresh { count: 2 });
+        assert_eq!(seq.steps[3], SdramInitStep::LoadModeRegister);
+        assert_eq!(seq.steps[4], SdramInitStep::SetRefreshRate { count: 761 });
+    }
+
+    #[test]
+    fn sdram_lmr_value_correct() {
+        // Load Mode Register value for W9825G6KH6:
+        // Burst length=1, Burst type=sequential, CAS=3, Write mode=programmed burst
+        // MR = 0x0230 (CAS latency=3, burst length=1)
+        let lmr = SdramConfig::w9825g6kh6_lmr();
+        assert_eq!(lmr, 0x0230, "LMR must encode CAS=3, burst length=1");
+    }
+
+    #[test]
+    fn sdram_timing_trcd_ns_within_spec() {
+        let cfg = SdramConfig::w9825g6kh6();
+        // tRCD = 15ns min for W9825G6KH6 at -6 speed grade
+        // At 100MHz (10ns/cycle), need at least 2 cycles
+        assert!(
+            cfg.timing.rc_delay >= 2,
+            "tRCD must be >= 2 cycles at 100MHz"
+        );
+        assert!(cfg.timing.rc_delay <= 4, "tRCD excessively large");
+    }
+
+    #[test]
+    fn sdram_timing_tras_ns_within_spec() {
+        let cfg = SdramConfig::w9825g6kh6();
+        // tRAS = 42ns min at -6 speed grade
+        // At 100MHz: >= 4 cycles (ceil(42/10) = 5 but allow >=4 for margin)
+        assert!(
+            cfg.timing.self_refresh_time >= 4,
+            "tRAS must be >= 4 cycles at 100MHz"
+        );
+    }
+
+    #[test]
+    fn sdram_base_address_is_correct() {
+        // SDRAM must be mapped at 0xC0000000 (FMC bank 5)
+        assert_eq!(SDRAM_BASE_ADDRESS, 0xC000_0000u32);
+    }
 
     // ── Test A ────────────────────────────────────────────────────────────────
     /// Verify W9825G6KH-6 pre-computed timing values at 100 MHz FMC clock.

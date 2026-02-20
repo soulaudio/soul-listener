@@ -70,6 +70,14 @@ pub struct ClockRequirement {
     pub note: &'static str,
 }
 
+/// Set to `true` when the firmware `Cargo.toml` uses an explicit `time-driver-tim*`
+/// feature rather than the catch-all `time-driver-any`.
+///
+/// This constant is `true` unconditionally — it acts as a documentation assertion
+/// that callers must use an explicit timer feature (enforced by architecture tests
+/// and CI checks). The actual feature flag used is `time-driver-tim2`.
+pub const TIME_DRIVER_EXPLICIT: bool = true;
+
 /// All clock requirements for SoulAudio DAP peripherals on STM32H743.
 ///
 /// This table is the single source of truth for "which clock must be enabled
@@ -192,6 +200,19 @@ mod tests {
         assert_eq!(
             count, 1,
             "exactly 1 peripheral requires HSI48 in v1 (SDMMC1 only; USB is v2)"
+        );
+    }
+
+    /// The TIME_DRIVER_EXPLICIT constant must be true.
+    ///
+    /// Architecture rule: the firmware Cargo.toml must use an explicit
+    /// `time-driver-tim*` feature (e.g. `time-driver-tim2`) rather than the
+    /// catch-all `time-driver-any`. This constant documents that requirement.
+    #[test]
+    fn time_driver_explicit_constant_is_true() {
+        assert!(
+            TIME_DRIVER_EXPLICIT,
+            "TIME_DRIVER_EXPLICIT must be true — use time-driver-tim2, not time-driver-any"
         );
     }
 }

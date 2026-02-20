@@ -1,55 +1,5 @@
 //! Now-playing screen state — track metadata, playback status, volume, progress.
 
-#[cfg(test)]
-mod tests {
-    use super::NowPlayingState;
-
-    #[test]
-    fn test_now_playing_state_default() {
-        let state = NowPlayingState::default();
-        assert!(!state.playing);
-        assert_eq!(state.volume, 50);
-        assert_eq!(state.position_ms, 0);
-    }
-
-    #[test]
-    fn test_now_playing_set_playing() {
-        let mut state = NowPlayingState::default();
-        state.set_playing(true);
-        assert!(state.playing);
-    }
-
-    #[test]
-    fn test_now_playing_volume_clamped() {
-        let mut state = NowPlayingState::default();
-        state.set_volume(200);
-        assert_eq!(state.volume, 100);
-    }
-
-    #[test]
-    fn test_now_playing_volume_zero_valid() {
-        let mut state = NowPlayingState::default();
-        state.set_volume(0);
-        assert_eq!(state.volume, 0);
-    }
-
-    #[test]
-    fn test_now_playing_progress_ratio() {
-        let mut state = NowPlayingState::default();
-        state.set_duration_ms(10_000);
-        state.set_position_ms(5_000);
-        let ratio = state.progress();
-        // Allow small floating-point tolerance.
-        assert!((ratio - 0.5_f32).abs() < 1e-6, "expected ~0.5, got {ratio}");
-    }
-
-    #[test]
-    fn test_now_playing_progress_zero_duration() {
-        let state = NowPlayingState::default();
-        assert_eq!(state.progress(), 0.0_f32);
-    }
-}
-
 /// State for the now-playing screen.
 pub struct NowPlayingState {
     /// Whether audio is currently playing (vs. paused).
@@ -110,5 +60,55 @@ impl Default for NowPlayingState {
             title: heapless::String::new(),
             artist: heapless::String::new(),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::NowPlayingState;
+
+    #[test]
+    fn test_now_playing_state_default() {
+        let state = NowPlayingState::default();
+        assert!(!state.playing);
+        assert_eq!(state.volume, 50);
+        assert_eq!(state.position_ms, 0);
+    }
+
+    #[test]
+    fn test_now_playing_set_playing() {
+        let mut state = NowPlayingState::default();
+        state.set_playing(true);
+        assert!(state.playing);
+    }
+
+    #[test]
+    fn test_now_playing_volume_clamped() {
+        let mut state = NowPlayingState::default();
+        state.set_volume(200);
+        assert_eq!(state.volume, 100);
+    }
+
+    #[test]
+    fn test_now_playing_volume_zero_valid() {
+        let mut state = NowPlayingState::default();
+        state.set_volume(0);
+        assert_eq!(state.volume, 0);
+    }
+
+    #[test]
+    fn test_now_playing_progress_ratio() {
+        let mut state = NowPlayingState::default();
+        state.set_duration_ms(10_000);
+        state.set_position_ms(5_000);
+        let ratio = state.progress();
+        // Allow small floating-point tolerance.
+        assert!((ratio - 0.5_f32).abs() < 1e-6, "expected ~0.5, got {ratio}");
+    }
+
+    #[test]
+    fn test_now_playing_progress_zero_duration() {
+        let state = NowPlayingState::default();
+        assert_eq!(state.progress(), 0.0_f32);
     }
 }
