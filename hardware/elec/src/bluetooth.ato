@@ -79,8 +79,8 @@ module Bluetooth:
     hse = new Crystal
     hse.frequency = 32MHz +/- 10ppm
     # hse.package not set — crystal packages (2016) are not in atopile's passive package enum
-    c_hse_1 = new Capacitor; c_hse_1.capacitance = 8pF +/- 5%; c_hse_1.package = "0402"
-    c_hse_2 = new Capacitor; c_hse_2.capacitance = 8pF +/- 5%; c_hse_2.package = "0402"
+    c_hse_1 = new Capacitor; c_hse_1.capacitance = 10pF +/- 20%; c_hse_1.package = "0402"  # Nearest registry value to ideal 8 pF CL
+    c_hse_2 = new Capacitor; c_hse_2.capacitance = 10pF +/- 20%; c_hse_2.package = "0402"  # Nearest registry value to ideal 8 pF CL
     # HSE connections (dedicated OSC_IN/OSC_OUT pads — NOT PH0/PH1 GPIO)
     hse.p1 ~ wb55.OSC_IN;  hse.p2 ~ wb55.OSC_OUT
     hse.p1 ~ c_hse_1.p1; c_hse_1.p2 ~ power_3v3.lv  # Load cap A
@@ -90,8 +90,8 @@ module Bluetooth:
     lse = new Crystal
     lse.frequency = 32768Hz +/- 20ppm
     # lse.package not set — crystal packages (3215) are not in atopile's passive package enum
-    c_lse_1 = new Capacitor; c_lse_1.capacitance = 6pF +/- 5%; c_lse_1.package = "0402"
-    c_lse_2 = new Capacitor; c_lse_2.capacitance = 6pF +/- 5%; c_lse_2.package = "0402"
+    c_lse_1 = new Capacitor; c_lse_1.capacitance = 10pF +/- 20%; c_lse_1.package = "0402"  # Nearest registry value to ideal 6 pF CL
+    c_lse_2 = new Capacitor; c_lse_2.capacitance = 10pF +/- 20%; c_lse_2.package = "0402"  # Nearest registry value to ideal 6 pF CL
     lse.p1 ~ wb55.PC14_OSC32_IN;  lse.p2 ~ wb55.PC15_OSC32_OUT
     lse.p1 ~ c_lse_1.p1; c_lse_1.p2 ~ power_3v3.lv  # Load cap A
     lse.p2 ~ c_lse_2.p1; c_lse_2.p2 ~ power_3v3.lv  # Load cap B

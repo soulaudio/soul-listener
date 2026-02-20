@@ -126,8 +126,8 @@ module MCU:
     lse_xtal = new Crystal
     lse_xtal.frequency = 32768Hz +/- 20ppm
     # lse_xtal.package not set — crystal packages (3215) are not in atopile's passive package enum
-    c_lse_1 = new Capacitor; c_lse_1.capacitance = 6pF +/- 5%; c_lse_1.package = "0402"
-    c_lse_2 = new Capacitor; c_lse_2.capacitance = 6pF +/- 5%; c_lse_2.package = "0402"
+    c_lse_1 = new Capacitor; c_lse_1.capacitance = 10pF +/- 20%; c_lse_1.package = "0402"  # Nearest registry value to ideal 6 pF CL
+    c_lse_2 = new Capacitor; c_lse_2.capacitance = 10pF +/- 20%; c_lse_2.package = "0402"  # Nearest registry value to ideal 6 pF CL
 
     # ── I²S port → audio module ───────────────────────────────────────────────
     audio_i2s.mclk  ~ mcu.SAI1_MCLK_A

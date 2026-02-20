@@ -178,7 +178,7 @@ module Power:
     boost.VOUT ~ c_pi_pos_in.p1; c_pi_pos_in.p2 ~ power_sys.lv
 
     fb_pos = new Resistor  # BOM: replace with Murata BLM31PG601SN1L ferrite bead
-    fb_pos.resistance = 0ohm +/- 10%
+    fb_pos.resistance = 1ohm +/- 99%  # Placeholder; 0Ω causes atopile ZeroDivisionError
     fb_pos.package    = "0402"
     boost.VOUT ~ fb_pos.p1; fb_pos.p2 ~ amp_rail.pos.hv
 
@@ -259,7 +259,7 @@ module Power:
     inv.OUT ~ c_pi_neg_in.p1; c_pi_neg_in.p2 ~ power_sys.lv
 
     fb_neg = new Resistor  # BOM: replace with Murata BLM31PG601SN1L ferrite bead
-    fb_neg.resistance = 0ohm +/- 10%
+    fb_neg.resistance = 1ohm +/- 99%  # Placeholder; 0Ω causes atopile ZeroDivisionError
     fb_neg.package    = "0402"
     inv.OUT ~ fb_neg.p1; fb_neg.p2 ~ amp_rail.neg.lv
 
