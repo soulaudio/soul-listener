@@ -16,6 +16,9 @@
 #   2. In main.ato: replace `hse = new HseClock` with `hse = new TcxoClock`
 #   3. No changes needed in mcu.ato or the MCU component stub.
 
+import ElectricPower
+import Capacitor
+
 from "parts/Crystal/Crystal.ato" import Crystal
 from "interfaces.ato" import ClockSource
 

@@ -16,6 +16,11 @@
 # Confirmed by GxEPD2 driver (ZinggJM) which uses identical init for GDEM0397T81P.
 # STM32 sample code: https://v4.cecdn.yun300.cn/100001_1909185148/S-GDEM0397T81P.rar
 
+import ElectricPower
+import Resistor
+import Capacitor
+import Inductor
+
 from "parts/PESD5V0L5UY/PESD5V0L5UY.ato" import PESD5V0L5UY
 from "interfaces.ato" import SPIDevice, DisplayCtrl
 from "parts/FH12_24S/FH12_24S.ato" import FH12_24S
