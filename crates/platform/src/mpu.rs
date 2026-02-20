@@ -465,17 +465,17 @@ impl SoulAudioMpuConfig {
 ///
 /// | Field | Bits  | Value | Hex contribution |
 /// |-------|-------|-------|-----------------|
-/// | XN    | [28]  | 1     | 0x1000_0000     |
-/// | AP    | [26:24]| 0b011| 0x0300_0000     |
-/// | TEX   | [21:19]| 0b001| 0x0008_0000     |
-/// | S, C, B | [18:16] | 0 | 0x0000_0000   |
-/// | SRD   | [15:8]| 0     | 0x0000_0000     |
+/// | XN    | \[28\]  | 1     | 0x1000_0000     |
+/// | AP    | \[26:24\]| 0b011| 0x0300_0000     |
+/// | TEX   | \[21:19\]| 0b001| 0x0008_0000     |
+/// | S, C, B | \[18:16\] | 0 | 0x0000_0000   |
+/// | SRD   | \[15:8\]| 0     | 0x0000_0000     |
 ///
 /// Combined attribute mask (without SIZE and ENABLE): **0x1308_0000**
 ///
-/// Per-region RASR values (SIZE field in bits [5:1], ENABLE=1 in bit [0]):
-/// - 512 KB: SIZE = 18 = 0x12 → bits[5:1] = 0x24 → +ENABLE = 0x25 → RASR = **0x1308_0025**
-/// - 64 KB:  SIZE = 15 = 0x0F → bits[5:1] = 0x1E → +ENABLE = 0x1F → RASR = **0x1308_001F**
+/// Per-region RASR values (SIZE field in bits \[5:1\], ENABLE=1 in bit \[0\]):
+/// - 512 KB: SIZE = 18 = 0x12 → bits\[5:1\] = 0x24 → +ENABLE = 0x25 → RASR = **0x1308_0025**
+/// - 64 KB:  SIZE = 15 = 0x0F → bits\[5:1\] = 0x1E → +ENABLE = 0x1F → RASR = **0x1308_001F**
 pub struct MpuApplier;
 
 impl MpuApplier {
@@ -487,7 +487,7 @@ impl MpuApplier {
 
     /// Compute the RASR value for a NonCacheable DMA region.
     ///
-    /// Combines [`NON_CACHEABLE_ATTR_MASK`] with the SIZE field and ENABLE bit.
+    /// Combines [`Self::NON_CACHEABLE_ATTR_MASK`] with the SIZE field and ENABLE bit.
     ///
     /// # Arguments
     ///

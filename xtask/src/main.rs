@@ -56,7 +56,7 @@ enum Commands {
         open: bool,
     },
     /// Hardware design tools (Atopile): check, build, sync, bom
-    /// Alias: cargo hw <command>
+    /// Alias: `cargo hw <subcommand>`
     Hardware {
         #[command(subcommand)]
         command: hardware::HwCommand,
