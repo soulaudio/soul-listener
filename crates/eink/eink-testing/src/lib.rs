@@ -50,11 +50,7 @@
 
 use std::path::Path;
 
-use embedded_graphics::{
-    pixelcolor::Gray4,
-    prelude::*,
-    primitives::Rectangle,
-};
+use embedded_graphics::{pixelcolor::Gray4, prelude::*, primitives::Rectangle};
 
 pub use eink_emulator::{EinkColor, Emulator};
 pub use eink_specs::DisplaySpec;
@@ -215,9 +211,8 @@ impl TestEmulator {
             for dx in 0..rect.size.width {
                 let x = (tl.x as u32).wrapping_add(dx);
                 let y = (tl.y as u32).wrapping_add(dy);
-                self.assert_pixel(x, y, color).map_err(|e| {
-                    format!("assert_region_uniform failed in {rect:?}: {e}")
-                })?;
+                self.assert_pixel(x, y, color)
+                    .map_err(|e| format!("assert_region_uniform failed in {rect:?}: {e}"))?;
             }
         }
         Ok(())
@@ -342,9 +337,12 @@ impl TestEmulator {
         let golden_path = golden_path.as_ref();
 
         if std::env::var("UPDATE_GOLDEN").is_ok() {
-            return self
-                .save_golden(golden_path)
-                .map_err(|e| format!("Failed to save golden '{p}': {e}", p = golden_path.display()));
+            return self.save_golden(golden_path).map_err(|e| {
+                format!(
+                    "Failed to save golden '{p}': {e}",
+                    p = golden_path.display()
+                )
+            });
         }
 
         use image::GenericImageView;
@@ -356,8 +354,7 @@ impl TestEmulator {
         self.inner
             .screenshot(&tmp)
             .map_err(|e| format!("Failed to capture screenshot: {e}"))?;
-        let current =
-            image::open(&tmp).map_err(|e| format!("Failed to open screenshot: {e}"))?;
+        let current = image::open(&tmp).map_err(|e| format!("Failed to open screenshot: {e}"))?;
         let _ = std::fs::remove_file(&tmp);
 
         let golden = image::open(golden_path).map_err(|e| {
@@ -379,11 +376,10 @@ impl TestEmulator {
         let golden_rgba = golden.to_rgba8();
         let mut diff_pixels: u64 = 0;
         for (cp, gp) in current_rgba.pixels().zip(golden_rgba.pixels()) {
-            let differs = cp
-                .0
-                .iter()
-                .zip(gp.0.iter())
-                .any(|(&a, &b)| (a as i32 - b as i32).unsigned_abs() as u8 > threshold);
+            let differs =
+                cp.0.iter()
+                    .zip(gp.0.iter())
+                    .any(|(&a, &b)| (a as i32 - b as i32).unsigned_abs() as u8 > threshold);
             if differs {
                 diff_pixels += 1;
             }
@@ -415,8 +411,7 @@ impl TestEmulator {
     /// Positive `steps` = clockwise; negative = counter-clockwise.
     #[cfg(feature = "keyboard-input")]
     pub fn simulate_scroll(&mut self, steps: i32) {
-        self.pending_events
-            .push(InputEvent::RotaryIncrement(steps));
+        self.pending_events.push(InputEvent::RotaryIncrement(steps));
     }
 
     /// Drain and return all pending input events.
@@ -546,7 +541,10 @@ mod tests {
             .draw(&mut *t)
             .unwrap();
         assert_eq!(
-            t.pixel_count_of_color(Rectangle::new(Point::zero(), Size::new(10, 10)), Gray4::BLACK),
+            t.pixel_count_of_color(
+                Rectangle::new(Point::zero(), Size::new(10, 10)),
+                Gray4::BLACK
+            ),
             25
         );
     }

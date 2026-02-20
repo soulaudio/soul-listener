@@ -22,10 +22,82 @@
 #
 # IREF resistor: 1.21 kΩ from IREF pin to AGND sets DAC full-scale output current.
 
-from "interfaces.ato" import I2SBus, I2CBus, AnalogAudioOut
+from "interfaces.ato" import I2SBus, I2CBus, AnalogAudioOut, AmpSupplyBus
 from "parts/ES9038Q2M/ES9038Q2M.ato" import ES9038Q2M
 from "parts/TPA6120A2/TPA6120A2.ato" import TPA6120A2
 from "parts/LT3042EMSE/LT3042EMSE.ato" import LT3042EMSE
+
+# ── LT3045EMSE — Ultra-low-noise positive LDO: +5.5 V → +5.0 V ───────────────
+#
+# Package:      MSOP-12E (exposed pad, 3×4 mm, 12 leads + EP)
+# Manufacturer: Analog Devices
+# Datasheet:    https://www.analog.com/media/en/technical-documentation/data-sheets/lt3045.pdf
+# Key specs:    0.8 µVRMS noise, PSRR 76 dB @ 1 MHz, 500 mA, VOUT = ISET × RSET
+#   ISET = 100 µA (internal fixed), RSET = 49.9 kΩ → VOUT = 4.99 V ≈ +5.0 V
+# ⚠ EP (pin 13): connect to GND — unlike LT3094 where EP = IN
+# EN_UV (pin 4): tie to IN for always-on; pull below UVLO threshold to disable
+# OUTS  (pin 10): local output sense — connect to OUT (no remote sense on this board)
+# VIOC  (pin 3): current monitor/limit — connect to OUT for bypass
+# Distributor:
+#   Digi-Key: LT3045EMSE#PBFCT-ND    Mouser: 584-LT3045EMSE#PBF
+component LT3045EMSE:
+    trait is_atomic_part<
+        manufacturer = "Analog Devices",
+        partnumber   = "LT3045EMSE#PBF",
+        footprint    = "Package_SO:MSOP-12-1EP_3x4mm_P0.65mm_EP1.68x1.88mm_ThermalVias",
+        symbol       = "Regulator_Linear:LT3045">
+    trait has_designator_prefix<prefix = "U">
+
+    signal IN    ~ pin 1   # Input (share pin — both IN pins connect to input)
+    signal IN_2  ~ pin 2   # Input (share)
+    signal VIOC  ~ pin 3   # Output current monitor — connect to OUT for bypass
+    signal EN_UV ~ pin 4   # Enable/UVLO — tie to IN for always-on
+    signal PG    ~ pin 5   # Power good (open-drain; pull up to OUT via 100 kΩ)
+    signal ILIM  ~ pin 6   # Current limit — 2.0 kΩ to IN → 500 mA limit
+    signal PGFB  ~ pin 7   # PG feedback — connect to OUT for standard threshold
+    signal SET   ~ pin 8   # Output set — RSET = 49.9 kΩ to GND → VOUT = +5.0 V
+    signal GND   ~ pin 9   # Ground
+    signal OUTS  ~ pin 10  # Output sense — connect to OUT for local sense
+    signal OUT   ~ pin 11  # Regulated output (share)
+    signal OUT_2 ~ pin 12  # Regulated output (share)
+    signal EP    ~ pin 13  # Exposed pad = GND (solder to ground plane for thermal)
+
+# ── LT3094EMSE — Ultra-low-noise negative LDO: −5.5 V → −5.0 V ───────────────
+#
+# Package:      MSOP-12E (identical footprint to LT3045)
+# Manufacturer: Analog Devices
+# Datasheet:    https://www.analog.com/media/en/technical-documentation/data-sheets/lt3094.pdf
+# Key specs:    0.8 µVRMS noise, PSRR 74 dB @ 1 MHz, 500 mA, VOUT = −ISET × RSET
+#   ISET = 100 µA (internal), RSET = 49.9 kΩ → VOUT = −4.99 V ≈ −5.0 V
+# ⚠ EP (pin 13): connect to IN (the −5.5 V input rail) — NOT to GND!
+#   This is the critical difference from LT3045 (EP=GND). Failure to do this
+#   leaves the thermal pad floating at an intermediate potential.
+# EN_UV (pin 3): tie to GND for always-on (GND is the high-potential side)
+# ILIM  (pin 6): 2.0 kΩ to GND → 500 mA current limit (resistor to GND, not IN)
+# PG    (pin 4): pull up to GND via 100 kΩ (GND is the "positive" reference here)
+# Distributor:
+#   Digi-Key: LT3094EMSE#PBFCT-ND    Mouser: 584-LT3094EMSE#PBF
+component LT3094EMSE:
+    trait is_atomic_part<
+        manufacturer = "Analog Devices",
+        partnumber   = "LT3094EMSE#PBF",
+        footprint    = "Package_SO:MSOP-12-1EP_3x4mm_P0.65mm_EP1.68x1.88mm_ThermalVias",
+        symbol       = "Regulator_Linear:LT3094">
+    trait has_designator_prefix<prefix = "U">
+
+    signal IN    ~ pin 1   # Negative input (−5.5 V switching rail — share)
+    signal IN_2  ~ pin 2   # Negative input (share)
+    signal EN_UV ~ pin 3   # Enable/UVLO — tie to GND for always-on (GND = high-side)
+    signal PG    ~ pin 4   # Power good (open-drain; pull up to GND via 100 kΩ)
+    signal PGFB  ~ pin 5   # PG feedback — connect to OUT for standard threshold
+    signal ILIM  ~ pin 6   # Current limit — 2.0 kΩ to GND → 500 mA limit
+    signal VIOC  ~ pin 7   # Output current monitor — connect to OUT
+    signal SET   ~ pin 8   # Output set — RSET = 49.9 kΩ to GND → VOUT = −5.0 V
+    signal GND   ~ pin 9   # Ground (0 V reference = circuit ground)
+    signal OUTS  ~ pin 10  # Output sense — connect to OUT for local sense
+    signal OUT   ~ pin 11  # Regulated negative output (share)
+    signal OUT_2 ~ pin 12  # Regulated negative output (share)
+    signal EP    ~ pin 13  # Exposed pad = IN (−5.5 V rail — NOT GND!)
 
 module Audio:
     """
@@ -38,10 +110,13 @@ module Audio:
     i2s            = new I2SBus          # I²S serial audio from MCU SAI1
     i2c            = new I2CBus          # I²C config from MCU (ES9038Q2M addr: 0x48 default)
     headphone_out  = new AnalogAudioOut  # Balanced output to 3.5 mm jack
+    amp_rail       = new AmpSupplyBus   # ±5.5 V switching rails from power.ato
 
     # ── Internal signals ──────────────────────────────────────────────────────
     avdd = new ElectricPower  # Ultra-low-noise 3.3 V analog supply (generated internally)
     agnd = new Electrical     # Analog ground (star point)
+    pvdd = new ElectricPower  # +5.0 V regulated (LT3045 output): hv=+5.0V, lv=GND
+    pvss = new ElectricPower  # −5.0 V regulated (LT3094 output): hv=GND, lv=−5.0V
 
     # ── LT3042: ultra-low-noise 3.3 V AVDD for ES9038Q2M analog domain ───────
     ldo_avdd = new LT3042EMSE
@@ -140,33 +215,135 @@ module Audio:
     avdd.hv ~ c_dac_1.p1; c_dac_1.p2 ~ avdd.lv
     avdd.hv ~ c_dac_2.p1; c_dac_2.p2 ~ avdd.lv
 
+    # ── LT3045: +5.5 V (amp_rail.pos) → +5.0 V PVDD ────────────────────────────
+    # Ultra-low-noise LDO post-regulates the switching boost rail.
+    # 500 mV headroom (5.5 V in, 5.0 V out) keeps LT3045 above dropout (~300 mV max).
+    ldo_pvdd = new LT3045EMSE
+
+    amp_rail.pos.hv ~ ldo_pvdd.IN;    amp_rail.pos.hv ~ ldo_pvdd.IN_2
+    amp_rail.pos.lv ~ ldo_pvdd.GND    # GND reference
+    amp_rail.pos.lv ~ ldo_pvdd.EP     # EP = GND for LT3045
+    ldo_pvdd.EN_UV ~ ldo_pvdd.IN      # Always enabled (EN_UV tied to IN)
+    ldo_pvdd.OUTS  ~ ldo_pvdd.OUT     # Local output sense (no PCB remote sense)
+    ldo_pvdd.VIOC  ~ ldo_pvdd.OUT     # VIOC to OUT = bypass current monitor
+    ldo_pvdd.OUT   ~ pvdd.hv
+    ldo_pvdd.OUT_2 ~ pvdd.hv
+    pvdd.lv ~ amp_rail.pos.lv         # +5.0 V rail LV = GND
+
+    # SET resistor: 49.9 kΩ → VOUT = 100 µA × 49.9 kΩ = 4.99 V ≈ +5.0 V
+    r_pvdd_set = new Resistor
+    r_pvdd_set.resistance = 49.9kohm +/- 1%
+    r_pvdd_set.package    = "0402"
+    ldo_pvdd.SET ~ r_pvdd_set.p1; r_pvdd_set.p2 ~ amp_rail.pos.lv
+
+    # ILIM: 2.0 kΩ to IN → 500 mA current limit (TPA6120A2 draws ~150 mA typical)
+    r_pvdd_ilim = new Resistor
+    r_pvdd_ilim.resistance = 2.0kohm +/- 5%
+    r_pvdd_ilim.package    = "0402"
+    ldo_pvdd.ILIM ~ r_pvdd_ilim.p1; r_pvdd_ilim.p2 ~ amp_rail.pos.hv
+
+    # PG: 100 kΩ pull-up to PVDD (open-drain power-good indicator)
+    r_pvdd_pg = new Resistor
+    r_pvdd_pg.resistance = 100kohm +/- 5%
+    r_pvdd_pg.package    = "0402"
+    ldo_pvdd.PG ~ r_pvdd_pg.p1; r_pvdd_pg.p2 ~ pvdd.hv
+
+    # PGFB: connect to OUT for standard power-good threshold
+    ldo_pvdd.PGFB ~ pvdd.hv
+
+    # Output decoupling: 10 µF + 100 nF at the OUT pins
+    c_pvdd_bulk = new Capacitor; c_pvdd_bulk.capacitance = 10uF  +/- 20%; c_pvdd_bulk.package = "0805"
+    c_pvdd_hf   = new Capacitor; c_pvdd_hf.capacitance   = 100nF +/- 20%; c_pvdd_hf.package   = "0402"
+    pvdd.hv ~ c_pvdd_bulk.p1; c_pvdd_bulk.p2 ~ pvdd.lv
+    pvdd.hv ~ c_pvdd_hf.p1;   c_pvdd_hf.p2   ~ pvdd.lv
+
+    # ── LT3094: −5.5 V (amp_rail.neg) → −5.0 V PVSS ────────────────────────────
+    # Mirror of LT3045 for the negative rail.
+    # ⚠ EP (pin 13) MUST connect to IN (−5.5 V), NOT to GND — see LT3094 datasheet §8.1.
+    ldo_pvss = new LT3094EMSE
+
+    amp_rail.neg.lv ~ ldo_pvss.IN;    amp_rail.neg.lv ~ ldo_pvss.IN_2
+    amp_rail.neg.lv ~ ldo_pvss.EP     # ⚠ EP = IN for LT3094 (−5.5 V, not GND!)
+    amp_rail.neg.hv ~ ldo_pvss.GND    # GND = 0 V (amp_rail.neg.hv = GND)
+    ldo_pvss.EN_UV ~ ldo_pvss.GND     # Always enabled (EN_UV to GND = enabled on neg supply)
+    ldo_pvss.OUTS  ~ ldo_pvss.OUT     # Local output sense
+    ldo_pvss.VIOC  ~ ldo_pvss.OUT     # VIOC to OUT = bypass current monitor
+    ldo_pvss.OUT   ~ pvss.lv
+    ldo_pvss.OUT_2 ~ pvss.lv
+    pvss.hv ~ amp_rail.neg.hv         # −5.0 V rail HV = GND
+
+    # SET resistor: 49.9 kΩ → VOUT = −100 µA × 49.9 kΩ = −4.99 V ≈ −5.0 V
+    r_pvss_set = new Resistor
+    r_pvss_set.resistance = 49.9kohm +/- 1%
+    r_pvss_set.package    = "0402"
+    ldo_pvss.SET ~ r_pvss_set.p1; r_pvss_set.p2 ~ amp_rail.neg.hv
+
+    # ILIM: 2.0 kΩ to GND → 500 mA (for negative LDO, resistor goes to GND not IN)
+    r_pvss_ilim = new Resistor
+    r_pvss_ilim.resistance = 2.0kohm +/- 5%
+    r_pvss_ilim.package    = "0402"
+    ldo_pvss.ILIM ~ r_pvss_ilim.p1; r_pvss_ilim.p2 ~ amp_rail.neg.hv
+
+    # PG: 100 kΩ pull-up to GND (on negative supply, GND is the pull-up reference)
+    r_pvss_pg = new Resistor
+    r_pvss_pg.resistance = 100kohm +/- 5%
+    r_pvss_pg.package    = "0402"
+    ldo_pvss.PG ~ r_pvss_pg.p1; r_pvss_pg.p2 ~ amp_rail.neg.hv
+
+    # PGFB: connect to OUT for standard power-good threshold
+    ldo_pvss.PGFB ~ pvss.lv
+
+    # Output decoupling: 10 µF + 100 nF
+    c_pvss_bulk = new Capacitor; c_pvss_bulk.capacitance = 10uF  +/- 20%; c_pvss_bulk.package = "0805"
+    c_pvss_hf   = new Capacitor; c_pvss_hf.capacitance   = 100nF +/- 20%; c_pvss_hf.package   = "0402"
+    pvss.lv ~ c_pvss_bulk.p1; c_pvss_bulk.p2 ~ pvss.hv
+    pvss.lv ~ c_pvss_hf.p1;   c_pvss_hf.p2   ~ pvss.hv
+
     # ── TPA6120A2 Headphone Amplifier ─────────────────────────────────────────
-    # NOTE: TPA6120A2 requires ±5 V split supply.
-    # TODO: Add charge pump / boost+inverting converter to power.ato.
-    # For now, pvdd and pvss are declared as external ports pending power module update.
     amp = new TPA6120A2
 
-    # Amp supply — TODO: connect to ±5 V rails from power module
-    # power_plus5.hv ~ amp.PVDD
-    # power_minus5.lv ~ amp.PVSSa; power_minus5.lv ~ amp.PVSSb; power_minus5.lv ~ amp.EP
-    # VOCM: tie to 0 V (AGND) for balanced differential output
+    # Supply: ±5.0 V from LT3045/LT3094
+    pvdd.hv ~ amp.PVDD
+    pvss.lv ~ amp.PVSSa; pvss.lv ~ amp.PVSSb; pvss.lv ~ amp.EP
+
+    # Per-pin bypass capacitors (100 nF at each power pin, placed as close as possible)
+    c_amp_pvdd  = new Capacitor; c_amp_pvdd.capacitance  = 100nF +/- 20%; c_amp_pvdd.package  = "0402"
+    c_amp_pvssa = new Capacitor; c_amp_pvssa.capacitance = 100nF +/- 20%; c_amp_pvssa.package = "0402"
+    c_amp_pvssb = new Capacitor; c_amp_pvssb.capacitance = 100nF +/- 20%; c_amp_pvssb.package = "0402"
+    pvdd.hv ~ c_amp_pvdd.p1;   c_amp_pvdd.p2  ~ pvss.lv
+    pvss.lv ~ c_amp_pvssa.p1;  c_amp_pvssa.p2 ~ pvdd.lv
+    pvss.lv ~ c_amp_pvssb.p1;  c_amp_pvssb.p2 ~ pvdd.lv
+
+    # VOCM: tie to AGND for fully differential (balanced) output
     avdd.lv ~ amp.VOCM
 
-    # DAC → amp (direct differential connection, no coupling caps needed for ±5 V supply)
+    # DAC → amp inputs (direct connection; no coupling caps with ±5 V supply)
     dac.AOUT_L_POS ~ amp.IN1_POS
     dac.AOUT_R_POS ~ amp.IN2_POS
-    # IN_NEG pins are feedback (closed-loop unity gain or gain set by R_F/R_G)
-    # For unity gain (0 dB): tie IN_NEG to output
-    # TODO: Add feedback resistors for configured gain (see TPA6120A2 datasheet §8.2)
 
-    # Amp → headphone output
-    # TODO: headphone_out connections after ±5 V supply is implemented
-    # headphone_out.out_l_pos ~ amp_out_l_pos
-    # headphone_out.out_r_pos ~ amp_out_r_pos
+    # Unity-gain CFA feedback: R_F = 1.5 kΩ from output node back to IN_NEG.
+    # For a current-feedback amplifier: R_F sets loop stability (1–2 kΩ typical).
+    # R_G is open (not fitted) for unity gain (0 dB).
+    # The headphone output node is the junction of R_F and the headphone load.
+    # ⚠ TPA6120A2 stub (parts/TPA6120A2/) is missing explicit OUT1/OUT2 signal
+    #   definitions. The output is implicit: the net at IN_NEG (through R_F) drives
+    #   the headphone and feeds back to IN_NEG. Verify against KiCad symbol before layout.
 
-    # DC-blocking output capacitors: 100 µF electrolytic in series with output
-    # (required unless the headphone jack chassis is fully isolated)
-    # TODO: verify if needed based on final amp configuration
+    # Left channel (amp A): R_F from headphone_out.out_l_pos to amp.IN1_NEG
+    r_fb_l = new Resistor
+    r_fb_l.resistance = 1.5kohm +/- 1%
+    r_fb_l.package    = "0402"
+    headphone_out.out_l_pos ~ r_fb_l.p1; r_fb_l.p2 ~ amp.IN1_NEG
+
+    # Right channel (amp B): R_F from headphone_out.out_r_pos to amp.IN2_NEG
+    r_fb_r = new Resistor
+    r_fb_r.resistance = 1.5kohm +/- 1%
+    r_fb_r.package    = "0402"
+    headphone_out.out_r_pos ~ r_fb_r.p1; r_fb_r.p2 ~ amp.IN2_NEG
+
+    # Headphone negative references to AGND (single-ended, GND-referenced output)
+    headphone_out.out_l_neg ~ avdd.lv
+    headphone_out.out_r_neg ~ avdd.lv
 
     # ── Validation ────────────────────────────────────────────────────────────
     assert power_3v3.voltage within 3.0V to 3.6V
@@ -175,3 +352,14 @@ module Audio:
     assert r_mute.resistance within 8kohm to 12kohm
     # IREF resistor: 1.21 kΩ ±1% sets ES9038Q2M full-scale output current
     assert r_iref.resistance within 1.19kohm to 1.23kohm
+    # LT3045 SET: 49.9 kΩ ±1% → PVDD = 100µA × 49.9kΩ = +4.99 V ≈ +5.0 V
+    assert r_pvdd_set.resistance within 49.4kohm to 50.4kohm
+    # LT3094 SET: 49.9 kΩ ±1% → PVSS = −100µA × 49.9kΩ = −4.99 V ≈ −5.0 V
+    assert r_pvss_set.resistance within 49.4kohm to 50.4kohm
+    # CFA feedback resistors: 1.5 kΩ ±1% for TPA6120A2 loop stability (1–2 kΩ range)
+    assert r_fb_l.resistance within 1.35kohm to 1.65kohm
+    assert r_fb_r.resistance within 1.35kohm to 1.65kohm
+    # PVDD output voltage: LT3045 ±2% typical (±1% resistor sets 4.99 V)
+    assert pvdd.voltage within 4.8V to 5.2V
+    # PVSS output magnitude: LT3094 ±2% typical (pvss.voltage = |VOUT| = hv−lv = 5.0 V)
+    assert pvss.voltage within 4.8V to 5.2V

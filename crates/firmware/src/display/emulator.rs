@@ -102,7 +102,11 @@ impl Default for EmulatorDisplay {
 
 impl DapDisplay for EmulatorDisplay {
     async fn init(&mut self) -> Result<(), Self::DriverError> {
-        tracing::debug!(width = DISPLAY_WIDTH, height = DISPLAY_HEIGHT, "Initializing emulator display");
+        tracing::debug!(
+            width = DISPLAY_WIDTH,
+            height = DISPLAY_HEIGHT,
+            "Initializing emulator display"
+        );
 
         // Emulator doesn't need initialization, but we simulate the delay
         tokio::time::sleep(Duration::from_millis(100)).await;

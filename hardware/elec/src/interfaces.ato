@@ -145,13 +145,11 @@ interface AmpSupplyBus:
     Audio module post-regulates to clean ±5.0 V via LT3045 / LT3094 LDOs.
     The 500 mV headroom gives each LDO margin above its dropout voltage.
 
-    pos: +5.5 V switching output (hv) referenced to GND (lv)
-    neg: −5.5 V switching output (lv) referenced to GND (hv)
-    amp_en: MCU GPIO → TPS61023 / TPS63700 enable (active-high, sequenced VS+ first)
+    pos: +5.5 V switching output; hv = +5.5 V, lv = GND
+    neg: −5.5 V switching output; hv = GND,   lv = −5.5 V
     """
-    pos    = new ElectricPower   # +5.5 V rail: hv = +5.5 V, lv = GND
-    neg    = new ElectricPower   # −5.5 V rail: hv = GND,   lv = −5.5 V
-    amp_en = new ElectricLogic   # Sequenced enable from MCU (TPS61023 EN → delay → TPS63700 EN)
+    pos = new ElectricPower  # +5.5 V rail (TPS61023 output, π-filtered)
+    neg = new ElectricPower  # −5.5 V rail (TPS63700 output, π-filtered)
 
 # ── Analog audio output ───────────────────────────────────────────────────────
 interface AnalogAudioOut:

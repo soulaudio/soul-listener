@@ -47,16 +47,24 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // cargo dev sets RUST_LOG=info automatically; override with e.g. RUST_LOG=debug cargo dev.
     tracing_subscriber::fmt()
         .with_env_filter(
-            EnvFilter::try_from_default_env()
-                .unwrap_or_else(|_| EnvFilter::new("info"))
+            EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("info")),
         )
         .with_target(false)
         .with_timer(tracing_subscriber::fmt::time::uptime())
         .compact()
         .init();
 
-    tracing::info!(app = config::APP_NAME, version = "0.1.0", "Display Emulator starting");
-    tracing::info!(display = "GDEM0397T81P", size = "3.97\"", resolution = "800x480", "Display Emulator");
+    tracing::info!(
+        app = config::APP_NAME,
+        version = "0.1.0",
+        "Display Emulator starting"
+    );
+    tracing::info!(
+        display = "GDEM0397T81P",
+        size = "3.97\"",
+        resolution = "800x480",
+        "Display Emulator"
+    );
 
     let rt = tokio::runtime::Runtime::new()?;
 
@@ -84,7 +92,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     #[cfg(feature = "debug")]
     {
-        tracing::debug!("Debug mode enabled — hotkeys: Ctrl+1=panel Ctrl+2=borders Ctrl+3=inspector");
+        tracing::debug!(
+            "Debug mode enabled — hotkeys: Ctrl+1=panel Ctrl+2=borders Ctrl+3=inspector"
+        );
     }
 
     #[cfg(all(feature = "keyboard-input", not(feature = "hot-reload")))]
@@ -103,7 +113,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         use std::time::{Duration, Instant};
 
         tracing::info!("Hot-reload mode active");
-        tracing::info!(path = "crates/firmware-ui/src/render.rs", "Edit to see changes instantly");
+        tracing::info!(
+            path = "crates/firmware-ui/src/render.rs",
+            "Edit to see changes instantly"
+        );
 
         let mut last_version = hot_ui::ui_version();
 
@@ -124,7 +137,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         // Verified: ui_abi_version() == firmware_ui::ABI_VERSION (asserted above).
         unsafe { hot_ui::render_ui(display.emulator_mut() as *mut eink_emulator::Emulator) };
         rt.block_on(async { display.refresh_full().await })?;
-        tracing::info!(path = "crates/firmware-ui/src/render.rs", "Ready — edit to hot-reload");
+        tracing::info!(
+            path = "crates/firmware-ui/src/render.rs",
+            "Ready — edit to hot-reload"
+        );
 
         // Subscribe to reload events and block until each reload completes.
         let observer = hot_ui::subscribe();

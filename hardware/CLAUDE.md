@@ -102,6 +102,17 @@ Current assertions:
 | `audio.ato`   | `power_3v3.voltage within 3.0V to 3.6V`            | ES9038Q2M DVDD range                   |
 | `audio.ato`   | `r_set.resistance within 32kohm to 34kohm`          | LT3042 SET for 3.3 V AVDD              |
 | `audio.ato`   | `r_iref.resistance within 1.19kohm to 1.23kohm`     | ES9038Q2M full-scale output current    |
+| `audio.ato`   | `pvdd.voltage within 4.8V to 5.2V`                 | LT3045 +5 V output ±2%                 |
+| `audio.ato`   | `pvss.voltage within 4.8V to 5.2V`                 | LT3094 −5 V output magnitude ±2%       |
+| `audio.ato`   | `r_pvdd_set/r_pvss_set within 49.4k to 50.4kohm`   | LT3045/LT3094 SET resistors for 5.0 V  |
+| `audio.ato`   | `r_fb_l/r_fb_r within 1.35k to 1.65kohm`           | TPA6120A2 CFA feedback (1.5 kΩ nom)    |
+| `power.ato`   | `r_boost_top within 350k to 364kohm`               | TPS61023 FB divider top (357 kΩ)        |
+| `power.ato`   | `r_boost_bot within 99k to 101kohm`                | TPS61023 FB divider bot (100 kΩ)        |
+| `power.ato`   | `r_inv_top within 449k to 457kohm`                 | TPS63700 FB divider top (453 kΩ)        |
+| `power.ato`   | `r_inv_bot within 99k to 101kohm`                  | TPS63700 FB divider bot (100 kΩ)        |
+| `power.ato`   | `c_inv_comp within 3.5nF to 6nF`                   | TPS63700 COMP cap (mandatory 4.7 nF)    |
+| `power.ato`   | `r_inv_seq within 90k to 110kohm`                  | EN RC delay resistor (100 kΩ, τ=10ms)  |
+| `power.ato`   | `c_inv_seq within 80nF to 120nF`                   | EN RC delay capacitor (100 nF, τ=10ms) |
 | `display.ato` | `power_3v3.voltage within 2.7V to 3.6V`            | GDEM0397T81P VCI range                 |
 | `memory.ato`  | `power_3v3.voltage within 2.7V to 3.6V`            | SDRAM + NOR flash supply range         |
 | `memory.ato`  | `r_io0-3.resistance within 30ohm to 36ohm`          | QSPI series termination                |
@@ -119,7 +130,7 @@ Two layers of automated checks:
 ### Hardware (`.github/workflows/hardware.yml`)
 | Job | What it checks |
 |-----|---------------|
-| `hw-arch` | Module import boundaries; all modules declare `power_3v3`; all imported interfaces exist in `interfaces.ato` |
+| `hw-arch` | Module import boundaries; all modules declare `power_3v3`; all imported interfaces exist in `interfaces.ato`; `amp_rail` wired power↔audio; AmpSupplyBus imported where used |
 | `ato-check` | Full-system ERC: `assert` voltage propagation across all modules |
 | `ato-check-modules` | 7 parallel per-module checks (power/mcu/audio/display/bluetooth/memory/input) |
 | `bom-generate` | BOM generation (main branch only, after all checks pass) |
@@ -136,7 +147,7 @@ Two layers of automated checks:
 
 | Item | File | Notes |
 |------|------|-------|
-| TPA6120A2 ±5 V supply | `audio.ato`, `power.ato` | Needs charge pump (e.g., TPS63700 + ICL7660S) |
+| TPA6120A2 output pin verification | `parts/TPA6120A2/TPA6120A2.ato` | Stub missing OUT1/OUT2 signal definitions; verify against KiCad `Amplifier_Audio:TPA6120A2` symbol before layout |
 | Display FPC pinout | `display.ato` | Request GDEM0397T81P spec from Good Display (buy@e-ink-display.com) |
 | QSPI series resistors in signal path | `memory.ato` | Currently declared but not in signal path (TODO comment) |
 | ESD TVS array on display SPI lines | `display.ato` | PRTR5V0U2X or similar |
@@ -167,6 +178,10 @@ Two layers of automated checks:
 | ES9038Q2M          | ES9038Q2M          | TSSOP-28  | Digi-Key / Mouser |
 | TPA6120A2          | TPA6120A2DGN       | MSOP-8 PP | TME / Digi-Key  |
 | LT3042EMSE#PBF     | LT3042EMSE#PBF     | MSOP-8E   | Digi-Key / Mouser |
+| LT3045EMSE#PBF     | LT3045EMSE#PBF     | MSOP-12E  | Digi-Key / Mouser |
+| LT3094EMSE#PBF     | LT3094EMSE#PBF     | MSOP-12E  | Digi-Key / Mouser |
+| TPS61023DRLR       | TPS61023DRLR       | SOT-563   | TME / Digi-Key    |
+| TPS63700DRCR       | TPS63700DRCR       | VSON-10   | TME / Digi-Key    |
 | BQ25895RTWT        | BQ25895RTWT        | WQFN-24   | TME / Digi-Key  |
 | STM32WB55RGV6      | STM32WB55RGV6TR    | VFQFPN-68 | TME / Mouser    |
 | W25Q128JVSIQ       | W25Q128JVSIQ       | SOIC-8    | TME / Digi-Key  |

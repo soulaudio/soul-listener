@@ -60,6 +60,12 @@
 #![allow(clippy::items_after_statements)]
 #![allow(clippy::needless_pass_by_value)]
 #![allow(clippy::semicolon_if_nothing_returned)]
+// Rust 1.93+ lints (not available locally, triggered on CI):
+#![allow(clippy::unnested_or_patterns)]
+#![allow(clippy::struct_field_names)]
+#![allow(clippy::too_many_lines)]
+#![allow(clippy::if_not_else)]
+#![allow(clippy::single_match_else)]
 
 pub mod alignment;
 pub mod config;
