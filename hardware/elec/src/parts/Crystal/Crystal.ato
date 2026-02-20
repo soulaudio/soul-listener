@@ -1,3 +1,4 @@
+#pragma experiment("TRAITS")
 # Crystal.ato — Generic two-terminal passive crystal resonator
 #
 # Modelled as an atomic component so that importing this file bootstraps the
@@ -5,8 +6,9 @@
 # clock.ato is the only module that imports no other atomic component, so it
 # relies on Crystal.ato loading the stdlib via is_atomic_part.
 #
-# IMPORTANT: is_atomic_part<> must be on a SINGLE LINE — atopile 0.12.5
-# rejects multi-line trait parameter blocks.
+# #pragma experiment("TRAITS") is required for single-line trait parameter
+# syntax (e.g. trait foo<a = 1, b = 2>).  It is a file-scoped directive and
+# does not propagate to importing modules.
 #
 # Usage:
 #   xtal = new Crystal
