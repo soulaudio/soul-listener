@@ -1,5 +1,5 @@
 # BOM sourcing — Digi-Key EU (digikey.de — NL warehouse)
-# Updated: 2026-02-19
+# Updated: 2026-02-20
 # Format: Ref,QtyTotal,MfrPartNo,DKPartNo,Description,Package,UnitPriceEUR,Notes
 #
 # Digi-Key EU stocks items not available at TME — particularly ESS Technology parts.
@@ -7,5 +7,12 @@
 
 Ref,QtyTotal,MfrPartNo,DKPartNo,Description,Package,UnitPriceEUR,Notes
 U2,1,ES9038Q2M,,Hi-Fi DAC 32-bit/768kHz,TSSOP-28,,Primary source for ES9038Q2M in EU
+U3,1,TPA6120A2RGYR,,Headphone Amp ±5V class-AB CFA,VQFN-14,,TI; good DK EU stock
 U4,1,LT3042EMSE#PBF,,Ultra-LN LDO 3.3V 200mA,MSOP-8E,,Good Digi-Key stock
 U8,1,W9825G6KH-6,,SDRAM 256Mbit 16-bit FMC,TSOP-II-54,,If TME is out of stock
+J2,1,FH12-24S-0.5SH(55),,FPC ZIF 24-pin 0.5mm bottom-contact,SMD,,Hirose; DK p/n H11771DKR-ND (verify)
+D1,1,MBR0530T1G,MBR0530T1GOSCT-ND,Schottky rectifier 30V 500mA (display boost D1),SOD-123,,ON Semi
+D2,1,MBR0530T1G,MBR0530T1GOSCT-ND,Schottky rectifier 30V 500mA (display boost D2),SOD-123,,ON Semi; same p/n as D1
+Q1,1,SI1308EDL-T1-GE3,SI1308EDL-T1-GE3CT-ND,N-ch MOSFET 30V 1.5A (display boost),SOT-23,,Vishay
+TVS1,1,PESD5V0L5UY,1727-4048-1-ND,ESD array 5-ch 5V VRWM (SPI/ctrl),SOT-363,,Nexperia
+TVS2,1,PESD5V0L5UY,1727-4048-1-ND,ESD array 5-ch 5V VRWM (BUSY),SOT-363,,Nexperia; same p/n as TVS1

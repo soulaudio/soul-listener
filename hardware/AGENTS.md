@@ -177,7 +177,7 @@ Two layers of automated checks:
 
 | Item | File | Notes |
 |------|------|-------|
-| Display booster circuit | `display.ato` | Add Si1308EDL NMOS + 2× MBR0530 Schottky for SSD2677 GDR/RESE charge pump (see GDEQ0426T82-FL01C reference schematic) |
+| *(none — all TODOs resolved)* | — | — |
 
 ## Sourcing Notes
 
