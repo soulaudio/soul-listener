@@ -162,7 +162,7 @@ Two layers of automated checks:
 |-----|---------------|
 | `hw-arch` | Module import boundaries; all modules declare `power_3v3`; all imported interfaces exist in `interfaces.ato`; `amp_rail` wired power↔audio; AmpSupplyBus imported where used; ClockSource wired mcu↔clock |
 | `ato-check` | Full-system ERC: `assert` voltage propagation across all modules |
-| `ato-check-modules` | 7 parallel per-module checks (power/mcu/audio/display/bluetooth/memory/input) — **clock excluded** (see Known TODOs) |
+| `ato-check-modules` | 8 parallel per-module checks (power/mcu/audio/display/bluetooth/memory/input/clock) |
 | `bom-generate` | BOM generation (main branch only, after all checks pass) |
 
 ### Rust Firmware (`.github/workflows/ci.yml` → `arch` job)
@@ -178,6 +178,8 @@ Two layers of automated checks:
 | Item | File | Notes |
 |------|------|-------|
 | BOM metadata stripped from part stubs | `parts/**/*.ato` | `trait is_atomic_part<>` and `trait has_designator_prefix<>` removed from all 21 component stubs because atopile 0.12.5 fails to parse multi-line trait parameter blocks (Syntax Error), and `atopile/generics` (which provided these traits) is no longer resolvable from the registry. The component `signal` declarations and all ERC asserts are intact; only the KiCad symbol/footprint/BOM metadata is missing. Restore when upgrading to atopile 0.14.x (which has a rewritten trait system). |
+| Crystal load-cap values rounded up to 10 pF | `mcu.ato`, `bluetooth.ato` | Ideal load caps: 6 pF (LSE, 32.768 kHz) and 8 pF (HSE 32 MHz on WB55) per crystal datasheets. atopile 0.12.5's BOM registry does not stock these non-E12 values → Pick Error in CI. Changed to 10 pF ±20% (E12, definitely in registry). **Before taping out: change back to 5.6 pF or 6.8 pF (LSE) and 8.2 pF (HSE) and hand-edit the BOM.** Formula: C_ext = 2 × (C_L − C_stray) where C_stray ≈ 3–5 pF. |
+| Ferrite-bead π-filters modelled as 1 Ω resistors | `power.ato` | `fb_pos` and `fb_neg` are DC-path ferrite beads (Murata BLM31PG601SN1L) between TPS61023/TPS63700 VOUT and the amp_rail ports. atopile 0.12.5 raises a ZeroDivisionError when `resistance = 0ohm +/- 10%` is evaluated during constraint propagation; changed to `1ohm +/- 99%` so the range is non-zero throughout. **Before taping out: replace the BOM line for fb_pos/fb_neg with BLM31PG601SN1L (600 Ω @100 MHz, 500 mA, 0402).** |
 
 ## Sourcing Notes
 
