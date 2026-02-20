@@ -52,3 +52,6 @@ defmt = ["dep:defmt"]
 [dependencies.defmt]
 workspace = true
 optional = true
+
+[lints]
+workspace = true

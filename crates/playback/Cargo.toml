@@ -13,3 +13,6 @@ nanomp3 = { workspace = true, optional = true }
 default = []
 std = []
 mp3 = ["dep:nanomp3"]
+
+[lints]
+workspace = true

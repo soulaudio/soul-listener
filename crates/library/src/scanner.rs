@@ -51,6 +51,7 @@ fn eq_ignore_ascii_case(a: &str, b: &str) -> bool {
 }
 
 #[cfg(test)]
+#[allow(clippy::expect_used)] // Tests use expect() for readable assertions
 mod tests {
     use super::*;
 

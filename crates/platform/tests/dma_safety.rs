@@ -1,6 +1,10 @@
 //! Architecture tests: DMA safety marker traits.
 //! These tests enforce compile-time guarantees about DMA buffer placement.
 
+// Test files legitimately use arithmetic for verification; allow at file level.
+#![allow(clippy::arithmetic_side_effects)]
+#![allow(clippy::indexing_slicing)]
+
 // Test 1: DmaAccessible trait is exported from platform
 #[test]
 fn dma_accessible_trait_is_exported() {

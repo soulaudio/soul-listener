@@ -160,6 +160,7 @@ impl<const N: usize> CircularBuffer<N> {
 
     /// Get available data length
     #[must_use]
+    #[allow(clippy::arithmetic_side_effects)] // Safety: ring buffer arithmetic; write_pos/read_pos always < N
     pub fn available(&self) -> usize {
         if self.write_pos >= self.read_pos {
             self.write_pos - self.read_pos
@@ -170,11 +171,14 @@ impl<const N: usize> CircularBuffer<N> {
 
     /// Get free space
     #[must_use]
+    #[allow(clippy::arithmetic_side_effects)] // Safety: available() < N by ring buffer invariant
     pub fn free_space(&self) -> usize {
         N - self.available() - 1
     }
 
     /// Write data
+    #[allow(clippy::arithmetic_side_effects)] // Safety: write_pos+1 wraps via % N; to_write <= free <= N
+    #[allow(clippy::indexing_slicing)] // Safety: to_write <= free (checked above); write_pos < N invariant
     pub fn write(&mut self, data: &[u8]) -> usize {
         let free = self.free_space();
         let to_write = data.len().min(free);
@@ -188,6 +192,8 @@ impl<const N: usize> CircularBuffer<N> {
     }
 
     /// Read data
+    #[allow(clippy::arithmetic_side_effects)] // Safety: read_pos+1 wraps via % N; to_read <= available
+    #[allow(clippy::indexing_slicing)] // Safety: to_read <= available; buffer sliced to to_read; read_pos < N invariant
     pub fn read(&mut self, buffer: &mut [u8]) -> usize {
         let available = self.available();
         let to_read = buffer.len().min(available);

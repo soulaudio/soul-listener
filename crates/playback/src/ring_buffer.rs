@@ -47,6 +47,8 @@ impl<const N: usize> RingBuffer<N> {
     /// Returns `Err(())` if the slice would not fit in the remaining capacity.
     /// The buffer is left unchanged on error (the write is all-or-nothing).
     #[allow(clippy::result_unit_err)] // overflow is the only error; () is sufficient
+    #[allow(clippy::indexing_slicing)] // Safety: write < N invariant; data.len() <= N - count checked above
+    #[allow(clippy::arithmetic_side_effects)] // Safety: ring buffer wrap via % N; count += data.len() <= N
     pub fn write_slice(&mut self, data: &[i32]) -> Result<(), ()> {
         if data.len() > N - self.count {
             return Err(());
@@ -63,6 +65,8 @@ impl<const N: usize> RingBuffer<N> {
     ///
     /// Returns the number of samples actually read (may be less than
     /// `out.len()` if the buffer contains fewer samples than requested).
+    #[allow(clippy::indexing_slicing)] // Safety: read < N invariant; only reads up to self.count samples
+    #[allow(clippy::arithmetic_side_effects)] // Safety: ring buffer wrap via % N; count -= n where n <= count
     pub fn read_slice(&mut self, out: &mut [i32]) -> usize {
         let n = out.len().min(self.count);
         for slot in out.iter_mut().take(n) {

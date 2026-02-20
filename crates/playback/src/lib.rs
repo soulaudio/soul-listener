@@ -13,6 +13,9 @@ pub mod volume;
 
 // Tests come first — implementations below will make them pass
 #[cfg(test)]
+#[allow(clippy::expect_used)] // Tests use expect() for readable assertions
+#[allow(clippy::indexing_slicing)] // Tests may index safely with known bounds
+#[allow(clippy::arithmetic_side_effects)] // Tests use arithmetic safely
 mod tests {
     /// Decoder abstraction tests
     mod decoder_tests {

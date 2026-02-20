@@ -78,6 +78,9 @@ impl<const N: usize> Default for TrackIndex<N> {
 
 #[cfg(test)]
 #[allow(clippy::unwrap_used)]
+#[allow(clippy::expect_used)] // Tests use expect() for readable assertions
+#[allow(clippy::indexing_slicing)] // Test helpers use direct indexing safely
+#[allow(clippy::arithmetic_side_effects)] // Test helpers use arithmetic safely
 mod tests {
     use super::*;
     use crate::track::{AudioFormat, Track};

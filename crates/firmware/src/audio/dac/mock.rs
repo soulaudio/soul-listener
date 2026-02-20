@@ -108,6 +108,7 @@ impl AudioCodec for MockDac {
         Ok(())
     }
 
+    #[allow(clippy::arithmetic_side_effects)] // Mock counter; overflow not a concern in tests
     async fn write_samples(&mut self, samples: &[i32]) -> Result<(), Self::Error> {
         self.samples_written += samples.len();
         Ok(())

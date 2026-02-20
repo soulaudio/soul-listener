@@ -78,6 +78,7 @@ impl SaiAudioConfig {
     ///
     /// MCLK = `mclk_div` × `sample_rate_hz`.
     /// For 192 kHz / 256 fs: 49 152 000 Hz (49.152 MHz).
+    #[allow(clippy::arithmetic_side_effects)] // Audio config: multiplication fits u32 (max 192k*512=98M < u32::MAX)
     pub fn mclk_hz(&self) -> u32 {
         self.sample_rate_hz * u32::from(self.mclk_div)
     }
@@ -86,6 +87,7 @@ impl SaiAudioConfig {
     ///
     /// BCLK = `bit_depth` × `channels` × `sample_rate_hz`.
     /// For 32-bit / 2ch / 192 kHz: 12 288 000 Hz (12.288 MHz).
+    #[allow(clippy::arithmetic_side_effects)] // Audio config: 32*2*768000=49M < u32::MAX
     pub fn bclk_hz(&self) -> u32 {
         u32::from(self.bit_depth) * u32::from(self.channels) * self.sample_rate_hz
     }

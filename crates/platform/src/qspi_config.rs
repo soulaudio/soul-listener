@@ -148,6 +148,7 @@ pub mod partitions {
 /// let hz = validate_qspi_prescaler(240_000_000, 1).unwrap();
 /// assert_eq!(hz, 120_000_000);
 /// ```
+#[allow(clippy::arithmetic_side_effects)] // Safety: prescaler is u8 (max 255); +1 fits u32; result is a divisor
 pub fn validate_qspi_prescaler(ahb_hz: u32, prescaler: u8) -> Result<u32, &'static str> {
     let qspi_hz = ahb_hz / (u32::from(prescaler) + 1);
     if qspi_hz > QSPI_MAX_FREQ_HZ {
