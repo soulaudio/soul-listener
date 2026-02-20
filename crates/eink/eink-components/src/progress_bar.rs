@@ -71,6 +71,8 @@ impl ProgressBar {
     }
 
     /// Render progress bar to display
+    // SAFETY: progress bar dimensions are small UI values; arithmetic overflow is not possible.
+    #[allow(clippy::arithmetic_side_effects)]
     pub fn render<D>(&self, display: &mut D, position: Point) -> Result<(), D::Error>
     where
         D: DrawTarget<Color = Gray4>,

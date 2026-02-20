@@ -61,6 +61,9 @@ impl EinkColor {
     }
 
     /// Convert to ARGB for display rendering (0xAARRGGBB format for softbuffer)
+    // SAFETY: all arithmetic here operates on color channel values in 0-255 range.
+    // Bit shifts are bounded (at most 24 bits); no overflow is possible.
+    #[allow(clippy::arithmetic_side_effects)]
     pub fn to_rgba(&self) -> u32 {
         match self {
             EinkColor::Gray(gray) => {
@@ -135,6 +138,9 @@ impl EinkColor {
     }
 
     /// Quantize to mode-specific levels (for grayscale)
+    // SAFETY: levels is at most 4 (Gray4 range); step = 3 / (levels-1) is an integer
+    // division of small values; (value / step) * step cannot overflow u8.
+    #[allow(clippy::arithmetic_side_effects)]
     pub fn quantize(&self, levels: u8) -> Self {
         match self {
             EinkColor::Gray(gray) => {

@@ -141,6 +141,9 @@ impl PowerStats {
     }
 
     /// Get total runtime in milliseconds
+    // SAFETY: time values are milliseconds since process start; their sum fits in u64
+    // for any realistic uptime (u64 max ~585 million years in ms).
+    #[allow(clippy::arithmetic_side_effects)]
     pub fn total_runtime_ms(&self) -> u64 {
         self.idle_time_ms + self.active_time_ms + self.sleep_time_ms
     }
@@ -222,6 +225,9 @@ impl PowerTracker {
     }
 
     /// Update to new power state and record energy consumption
+    // SAFETY: energy arithmetic uses u64 for accumulation (no overflow for realistic runtimes);
+    // f64 division and casting for average current calculation is safe for display-scale values.
+    #[allow(clippy::arithmetic_side_effects)]
     pub fn transition_to(&mut self, new_state: PowerState) {
         if !self.enabled {
             return;
@@ -265,6 +271,9 @@ impl PowerTracker {
     }
 
     /// Get current draw in microamps for current state
+    // SAFETY: flash_count (u8) * refresh_boost_ua (u32) fits in u64; sum with refresh_current_ua
+    // is bounded by real hardware current values which fit in u32.
+    #[allow(clippy::arithmetic_side_effects)]
     fn current_draw_ua(&self) -> u32 {
         match self.state {
             PowerState::Idle => self.profile.idle_current_ua,

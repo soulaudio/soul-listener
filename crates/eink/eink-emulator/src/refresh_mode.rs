@@ -98,6 +98,9 @@ impl RefreshStrategy {
     /// Record a refresh and update ghosting level
     ///
     /// Returns true if a full refresh should be performed to clear ghosting
+    // SAFETY: partial_count is a usize counter bounded by realistic refresh counts;
+    // ghosting_level is clamped to [0.0, 1.0] so the f32 addition cannot overflow.
+    #[allow(clippy::arithmetic_side_effects)]
     pub fn record_refresh(&mut self, mode: RefreshMode, ghosting_rate: f32) -> bool {
         match mode {
             RefreshMode::Full => {

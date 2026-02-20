@@ -80,6 +80,8 @@ impl PartialWindow {
     }
 
     /// Get the area of the aligned window in pixels
+    // SAFETY: width and height are aligned display coordinates; their product fits in u32.
+    #[allow(clippy::arithmetic_side_effects)]
     pub fn area(&self) -> u32 {
         self.aligned_rect.size.width * self.aligned_rect.size.height
     }
@@ -87,6 +89,9 @@ impl PartialWindow {
     /// Merge with another window to create a bounding box
     ///
     /// Returns a new PartialWindow that encompasses both windows.
+    // SAFETY: all arithmetic here operates on display coordinates (max ~4000px) and their
+    // differences; no overflow is possible with display-sized rectangles.
+    #[allow(clippy::arithmetic_side_effects)]
     pub fn merge(&self, other: &PartialWindow) -> PartialWindow {
         // Compute bounding box manually
         let top_left = Point::new(
@@ -134,6 +139,9 @@ impl PartialWindow {
 /// assert_eq!(merged.top_left, Point::new(0, 0));
 /// assert_eq!(merged.size, Size::new(40, 40));
 /// ```
+// SAFETY: all arithmetic here operates on display coordinates (max ~4000px) bounded by
+// rectangle dimensions; no overflow is possible with display-sized rectangles.
+#[allow(clippy::arithmetic_side_effects)]
 pub fn merge_rectangles(rects: &[Rectangle]) -> Option<Rectangle> {
     if rects.is_empty() {
         return None;

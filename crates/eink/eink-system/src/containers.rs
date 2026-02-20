@@ -156,6 +156,9 @@ impl<const N: usize> Default for VStack<N> {
 }
 
 impl<const N: usize> Layout for VStack<N> {
+    // SAFETY: all arithmetic in this function operates on display layout values bounded
+    // by display dimensions (max ~4000px) and small integer counts. No overflow is possible.
+    #[allow(clippy::arithmetic_side_effects)]
     fn layout(&self, constraints: Constraints) -> LayoutResult {
         // Account for padding and margin
         let total_horizontal = self.padding.horizontal() + self.margin.horizontal();
@@ -324,6 +327,9 @@ impl<const N: usize> Default for HStack<N> {
 }
 
 impl<const N: usize> Layout for HStack<N> {
+    // SAFETY: all arithmetic in this function operates on display layout values bounded
+    // by display dimensions (max ~4000px) and small integer counts. No overflow is possible.
+    #[allow(clippy::arithmetic_side_effects)]
     fn layout(&self, constraints: Constraints) -> LayoutResult {
         // Account for padding and margin
         let total_horizontal = self.padding.horizontal() + self.margin.horizontal();

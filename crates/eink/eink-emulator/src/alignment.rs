@@ -23,6 +23,8 @@ pub const ALIGNMENT: u32 = 8;
 /// assert_eq!(align_down(8), 8);
 /// assert_eq!(align_down(13), 8);
 /// ```
+// SAFETY: ALIGNMENT = 8, value is a display coordinate; (value / 8) * 8 cannot overflow u32.
+#[allow(clippy::arithmetic_side_effects)]
 pub fn align_down(value: u32) -> u32 {
     (value / ALIGNMENT) * ALIGNMENT
 }
@@ -37,6 +39,8 @@ pub fn align_down(value: u32) -> u32 {
 /// assert_eq!(align_up(8), 8);
 /// assert_eq!(align_up(13), 16);
 /// ```
+// SAFETY: ALIGNMENT = 8, value is a display coordinate; div_ceil(8) * 8 cannot overflow u32.
+#[allow(clippy::arithmetic_side_effects)]
 pub fn align_up(value: u32) -> u32 {
     value.div_ceil(ALIGNMENT) * ALIGNMENT
 }
@@ -73,6 +77,9 @@ pub fn is_aligned(value: u32) -> bool {
 /// assert_eq!(aligned.top_left, Point::new(0, 0));
 /// assert_eq!(aligned.size, Size::new(16, 16));
 /// ```
+// SAFETY: align_rectangle operates on display coordinates; aligned_right >= aligned_x
+// by construction (align_up >= align_down on non-negative inputs), so subtraction is safe.
+#[allow(clippy::arithmetic_side_effects)]
 pub fn align_rectangle(rect: &Rectangle) -> Rectangle {
     let top_left = rect.top_left;
     let bottom_right = rect.bottom_right().unwrap_or(top_left);

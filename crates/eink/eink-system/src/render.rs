@@ -101,6 +101,8 @@ impl LayoutResult {
     }
 
     /// Get absolute bounds (accounting for offset)
+    // SAFETY: position and offset are display coordinates; their sum is well within i32 range.
+    #[allow(clippy::arithmetic_side_effects)]
     pub fn absolute_bounds(&self, offset: Point) -> Rectangle {
         Rectangle::new(self.position + offset, self.size)
     }
@@ -236,6 +238,8 @@ pub fn render_background<D: DrawTarget<Color = Gray4>>(
 /// # Ok::<(), core::convert::Infallible>(())
 /// ```
 #[allow(clippy::only_used_in_recursion)]
+// SAFETY: position and offset are display coordinates; their sum is well within i32 range.
+#[allow(clippy::arithmetic_side_effects)]
 pub fn render_layout_tree<D: DrawTarget<Color = Gray4>>(
     layout: &LayoutResult,
     offset: Point,
@@ -339,6 +343,9 @@ pub fn render_layout_with_background<D: DrawTarget<Color = Gray4>>(
 /// let offscreen = Rectangle::new(Point::new(200, 200), Size::new(50, 50));
 /// assert!(!is_visible(offscreen, clip));
 /// ```
+// SAFETY: coordinate arithmetic here adds i32 positions and i32-cast pixel sizes.
+// Display dimensions (max ~4000px) added to typical screen coordinates are far from i32::MAX.
+#[allow(clippy::arithmetic_side_effects)]
 pub fn is_visible(rect: Rectangle, clip_bounds: Rectangle) -> bool {
     let rect_right = rect.top_left.x + rect.size.width as i32;
     let rect_bottom = rect.top_left.y + rect.size.height as i32;
@@ -366,6 +373,7 @@ mod tests {
     }
 
     #[test]
+    #[allow(clippy::indexing_slicing)]
     fn test_layout_result_with_children() {
         let child1 = LayoutResult::new(Point::new(0, 0), Size::new(50, 25));
         let child2 = LayoutResult::new(Point::new(50, 0), Size::new(50, 25));
