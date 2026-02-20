@@ -4,13 +4,16 @@
 //! display interface for the GDEM0397T81P (Good Display 3.97" 800×480) panel
 //! with SSD1677 controller.
 
-#[cfg(any(feature = "hardware", test))]
 pub mod driver;
 
 #[cfg(feature = "emulator")]
 pub mod emulator;
 
-// Re-export based on feature
+// The driver module is always compiled (no hardware gate) so that
+// `cargo test` can exercise the SSD1677 driver tests on the host.
+pub use driver::{DisplayError, Ssd1677, BYTES_PER_ROW, FRAMEBUFFER_SIZE_1BPP};
+
+// Re-export hardware type alias when building for the embedded target.
 #[cfg(feature = "hardware")]
 pub use driver::Ssd1677Display;
 
@@ -45,5 +48,7 @@ pub const DISPLAY_WIDTH: u32 = 800;
 /// Display height in pixels (GDEM0397T81P)
 pub const DISPLAY_HEIGHT: u32 = 480;
 
-/// Framebuffer size in bytes (800×480 with 2 bits per pixel = 96,000 bytes)
-pub const FRAMEBUFFER_SIZE: usize = (DISPLAY_WIDTH as usize * DISPLAY_HEIGHT as usize) / 4;
+/// Framebuffer size in bytes (800×480 with 1 bit per pixel = 48,000 bytes)
+///
+/// The SSD1677 B/W RAM uses 1bpp: 1=white, 0=black, MSB-first.
+pub const FRAMEBUFFER_SIZE: usize = FRAMEBUFFER_SIZE_1BPP;
