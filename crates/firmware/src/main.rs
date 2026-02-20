@@ -59,7 +59,7 @@ async fn main(spawner: Spawner) {
     //
     // See: firmware::boot::WATCHDOG_TIMEOUT_MS (8 seconds)
     let mut watchdog = embassy_stm32::wdg::IndependentWatchdog::new(
-        p.IWDG,
+        p.IWDG1,
         firmware::boot::init_watchdog_config(),
     );
     watchdog.unleash(); // Start watchdog — cannot be stopped after this point
