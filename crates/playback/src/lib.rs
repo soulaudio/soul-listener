@@ -1,8 +1,6 @@
 //! Audio playback engine — FLAC/MP3/WAV decoding, DMA streaming to SAI I²S
 #![cfg_attr(not(test), no_std)]
-#![deny(clippy::unwrap_used)]
-#![deny(clippy::panic)]
-#![deny(clippy::expect_used)]
+// unwrap_used, expect_used, panic enforced at workspace level (Cargo.toml)
 // TODO: Add rustdoc to all public items (tracked as tech debt)
 #![allow(missing_docs)]
 

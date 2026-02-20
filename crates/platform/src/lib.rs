@@ -48,9 +48,7 @@
 //! ```
 
 // ── Lint policy ─────────────────────────────────────────────────────────────
-#![deny(clippy::unwrap_used)] // no .unwrap() in production code
-#![deny(clippy::expect_used)] // no .expect() in production code
-#![deny(clippy::panic)] // no panic!() in production code
+// unwrap_used, expect_used, panic enforced at workspace level (Cargo.toml)
 #![deny(clippy::unreachable)] // no unreachable!() that isn't documented
 #![deny(unused_must_use)]
 // all Results must be handled
@@ -75,6 +73,8 @@ pub mod asset_store;
 pub mod audio;
 pub mod audio_config;
 pub mod audio_sequencer;
+pub mod es9038q2m;
+pub mod bq25895;
 pub mod audio_types;
 pub mod bluetooth;
 pub mod clock_config;

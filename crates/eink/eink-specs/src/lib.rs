@@ -55,9 +55,7 @@
 //! ```
 
 // ── Lint policy ─────────────────────────────────────────────────────────────
-#![deny(clippy::unwrap_used)] // no .unwrap() in production code
-#![deny(clippy::expect_used)] // no .expect() in production code
-#![deny(clippy::panic)] // no panic!() in production code
+// unwrap_used, expect_used, panic enforced at workspace level (Cargo.toml)
 #![deny(clippy::unreachable)] // no unreachable!() that isn't documented
 #![deny(unused_must_use)]
 // all Results must be handled

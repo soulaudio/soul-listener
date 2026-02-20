@@ -1,5 +1,7 @@
 // Build scripts are exempt from rustdoc requirements.
 #![allow(missing_docs)]
+// Build scripts use unwrap/expect/panic for fatal configuration errors.
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 fn main() {
     // Rerun if linker scripts or this file change

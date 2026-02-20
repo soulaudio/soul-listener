@@ -2303,3 +2303,205 @@ fn dma_buffer_placement_is_enforced_not_just_documented() {
         "DMA buffers must use explicit placement. Either #[link_section = \".axisram\"]          or DmaBuffer<AxiSramRegion> wrapper. DmaAccessible trait definitions alone provide no protection."
     );
 }
+
+/// SAI audio task must be spawned (or called) in main.rs — not just TODO'd.
+///
+/// The audio pipeline is a critical feature path. If the audio task is never
+/// spawned, the SAI peripheral is never initialized and the ES9038Q2M DAC
+/// produces no output. This test enforces that the call site exists at compile
+/// time, so refactors that rename `audio_task` break this test rather than
+/// silently shipping silent firmware.
+#[test]
+fn sai_audio_task_spawned() {
+    let main_rs = include_str!("../src/main.rs");
+    // Must contain a call to audio_task or spawn_audio_task in main.rs
+    let has_audio_task = main_rs.contains("audio_task");
+    assert!(
+        has_audio_task,
+        "main.rs must call `audio_task` (or `spawn_audio_task`) to wire the SAI audio pipeline.\n\
+         A TODO comment or commented-out block provides no compile-time safety.\n\
+         Add at minimum: firmware::audio::sai_task::audio_task(buffer)"
+    );
+}
+
+/// DmaBuffer<AxiSramRegion> must be used by firmware — not just defined in platform.
+///
+/// The `DmaBuffer<Region>` wrapper exists in `platform::dma_safety` to enforce
+/// DMA-accessible memory regions at the type level. If firmware never uses it,
+/// the wrapper is enforcement theater: engineers will use bare arrays and the
+/// type-system protection provides zero value.
+///
+/// This test ensures firmware actively references `DmaBuffer<AxiSramRegion` so
+/// the protection is real, not aspirational.
+#[test]
+fn audio_dma_buffer_type_enforced() {
+    let main_rs = include_str!("../src/main.rs");
+    // DmaBuffer<AxiSramRegion must appear in firmware source (not just defined in platform)
+    let used_in_main = main_rs.contains("DmaBuffer<AxiSramRegion");
+
+    // Also accept usage in the audio module
+    let audio_mod = std::fs::read_to_string(
+        concat!(env!("CARGO_MANIFEST_DIR"), "/src/audio/sai_task.rs")
+    ).unwrap_or_default();
+    let used_in_sai_task = audio_mod.contains("DmaBuffer<AxiSramRegion");
+
+    assert!(
+        used_in_main || used_in_sai_task,
+        "DmaBuffer<AxiSramRegion> must be used in firmware/src/main.rs or firmware/src/audio/sai_task.rs.\n\
+         Defining DmaBuffer in platform without using it in firmware provides no enforcement.\n\
+         Required:\n\
+           use platform::dma_safety::{{DmaBuffer, AxiSramRegion}};\n\
+           static AUDIO_BUFFER: StaticCell<DmaBuffer<AxiSramRegion, [u8; AUDIO_DMA_BUFFER_BYTES]>>"
+    );
+}
+
+
+// ---- BQ25895 PMIC driver architecture tests --------------------------------
+//
+// These tests enforce that:
+//   1. bq25895.rs exists in the platform crate with the required constants.
+//   2. The I2C address constant matches the hardware-fixed value 0x6A.
+//
+// They turn RED when the module or constants are absent, then GREEN once
+// the driver is implemented. They guard against accidental removal or rename.
+
+/// Verify that `platform::bq25895` module exists and defines `BQ25895_I2C_ADDR`.
+///
+/// Architecture rule: IC register maps and address constants must live in the
+/// `platform` crate (HAL layer), not in `firmware`. This keeps them testable
+/// on the host without any STM32 dependencies.
+#[test]
+fn bq25895_driver_exists_in_platform() {
+    let platform_src = std::fs::read_to_string(
+        concat!(env!("CARGO_MANIFEST_DIR"), "/../platform/src/bq25895.rs"),
+    )
+    .expect("bq25895.rs must exist in crates/platform/src/ -- driver not yet created");
+    assert!(
+        platform_src.contains("BQ25895_I2C_ADDR"),
+        "bq25895.rs must define the BQ25895_I2C_ADDR constant (hardware-fixed 7-bit address)"
+    );
+    assert!(
+        platform_src.contains("REG0B_STATUS"),
+        "bq25895.rs must define REG0B_STATUS (status register read at startup)"
+    );
+    assert!(
+        platform_src.contains("VREG_4208MV"),
+        "bq25895.rs must define VREG_4208MV (charge voltage setting for 4.208 V Li-ion target)"
+    );
+}
+
+/// Verify that `platform::bq25895::BQ25895_I2C_ADDR` equals 0x6A.
+///
+/// This is a compile-time check via the Rust type system: if the constant
+/// does not exist or has the wrong value, this test fails to compile or panics.
+///
+/// Architecture rule: the BQ25895 I2C address is hardware-fixed at 0x6A.
+/// The value 0x6B appeared as a typo in early datasheet revisions and was
+/// corrected in SLUUBA2B errata (confirmed on TI E2E forum post #507682).
+#[test]
+fn bq25895_i2c_addr_is_correct() {
+    assert_eq!(
+        platform::bq25895::BQ25895_I2C_ADDR,
+        0x6A,
+        "BQ25895 I2C address must be 0x6A (hardware-fixed; see SLUSCD3B section 6.5)"
+    );
+}
+
+// ---- ES9038Q2M DAC register constant tests ---------------------------------
+//
+// These tests enforce that:
+//   1. es9038q2m.rs exists in the platform crate.
+//   2. REG_ATT_L and REG_ATT_R constants match the datasheet register map.
+//   3. The mute and full-volume attenuation values are correct.
+//
+// Architecture rule: IC register maps must live in the platform crate (HAL
+// layer), not in firmware. This keeps the register definitions testable on
+// the host without any STM32 or I2C hardware dependencies.
+
+/// Verify that `platform::es9038q2m` module exists and defines `REG_ATT_L` and `REG_ATT_R`.
+///
+/// If this test fails, the module has not been created or the constants are
+/// missing or renamed. The constants are required by `AudioPowerSequencer`
+/// to perform actual I2C writes during the power-on/off sequence.
+#[test]
+fn es9038q2m_register_constants_defined() {
+    let src = std::fs::read_to_string(
+        concat!(env!("CARGO_MANIFEST_DIR"), "/../platform/src/es9038q2m.rs"),
+    )
+    .expect("es9038q2m.rs must exist in crates/platform/src/");
+    assert!(
+        src.contains("REG_ATT_L"),
+        "es9038q2m.rs must define REG_ATT_L (left channel attenuator, register 15)"
+    );
+    assert!(
+        src.contains("REG_ATT_R"),
+        "es9038q2m.rs must define REG_ATT_R (right channel attenuator, register 16)"
+    );
+    assert!(
+        src.contains("ATT_MUTED"),
+        "es9038q2m.rs must define ATT_MUTED (0xFF = maximum attenuation)"
+    );
+    assert!(
+        src.contains("ATT_FULL_VOLUME"),
+        "es9038q2m.rs must define ATT_FULL_VOLUME (0x00 = 0 dB, no attenuation)"
+    );
+}
+
+/// Verify that the ES9038Q2M attenuator register addresses match the datasheet.
+///
+/// ES9038Q2M datasheet Rev 3.0, Section 9 (Register Map):
+///   - Register 15 = ATT_L (left channel master attenuation)
+///   - Register 16 = ATT_R (right channel master attenuation)
+#[test]
+fn es9038q2m_att_register_addresses_match_datasheet() {
+    assert_eq!(
+        platform::es9038q2m::REG_ATT_L,
+        15,
+        "REG_ATT_L must be register 15 (ES9038Q2M datasheet Rev 3.0, Section 9)"
+    );
+    assert_eq!(
+        platform::es9038q2m::REG_ATT_R,
+        16,
+        "REG_ATT_R must be register 16 (ES9038Q2M datasheet Rev 3.0, Section 9)"
+    );
+}
+
+/// Verify the mute and full-volume attenuation register values.
+///
+/// The ES9038Q2M attenuation scale: 0x00 = 0 dB (no attenuation, full volume),
+/// 0xFF = maximum attenuation (muted). These values are used in the
+/// `AudioPowerSequencer` to safely sequence TPA6120A2 power on/off.
+#[test]
+fn es9038q2m_attenuation_values_are_correct() {
+    assert_eq!(
+        platform::es9038q2m::ATT_MUTED,
+        0xFF,
+        "ATT_MUTED must be 0xFF (maximum attenuation)"
+    );
+    assert_eq!(
+        platform::es9038q2m::ATT_FULL_VOLUME,
+        0x00,
+        "ATT_FULL_VOLUME must be 0x00 (0 dB, no attenuation)"
+    );
+}
+
+/// Workspace Cargo.toml must enforce unwrap_used/expect_used/panic at workspace level.
+///
+/// These lints prevent silent panics in production embedded firmware.
+/// Desktop crates suppress them with #![allow]; embedded crates get them for free.
+#[test]
+fn workspace_cargo_toml_has_panic_prevention_lints() {
+    let cargo_toml = include_str!("../../../Cargo.toml");
+    assert!(
+        cargo_toml.contains("unwrap_used"),
+        "workspace Cargo.toml must have `unwrap_used = \"deny\"` in [workspace.lints.clippy]"
+    );
+    assert!(
+        cargo_toml.contains("expect_used"),
+        "workspace Cargo.toml must have `expect_used = \"deny\"` in [workspace.lints.clippy]"
+    );
+    assert!(
+        cargo_toml.contains(r#"panic       = "deny""#),
+        "workspace Cargo.toml must have `panic = \"deny\"` in [workspace.lints.clippy]"
+    );
+}

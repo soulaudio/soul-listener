@@ -549,6 +549,9 @@ impl std::ops::DerefMut for TestEmulator {
 
 #[cfg(test)]
 mod tests {
+    // Test helper crate — unwrap/expect acceptable in test code.
+    #![allow(clippy::unwrap_used, clippy::expect_used)]
+
     use super::*;
     use embedded_graphics::{
         pixelcolor::Gray4,
