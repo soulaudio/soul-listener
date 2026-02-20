@@ -241,10 +241,12 @@ module Power:
     inv.OUT ~ c_inv_o1.p1; c_inv_o1.p2 ~ power_sys.lv
     inv.OUT ~ c_inv_o2.p1; c_inv_o2.p2 ~ power_sys.lv
 
-    # FB divider: VREF node → R_inv_top → FB → R_inv_bot → OUT (−5.5 V)
-    # VOUT = −VREF × (R_top/R_bot) = −1.213 × (453/100) = −5.49 V ≈ −5.5 V
+    # FB divider: VREF node → R_inv_top → FB → R_inv_bot → OUT (−5.7 V)
+    # VOUT = −VREF × (R_top/R_bot) = −1.213 × (470/100) = −5.70 V ≈ −5.7 V
+    # LT3094 in audio.ato post-regulates to −5.0 V, so extra headroom is fine.
+    # Note: 453kΩ (E96) not stocked by atopile BOM registry; use 470kΩ (E12).
     r_inv_top = new Resistor
-    r_inv_top.resistance = 453kohm +/- 1%
+    r_inv_top.resistance = 470kohm +/- 1%
     r_inv_top.package    = "0402"
     r_inv_bot = new Resistor
     r_inv_bot.resistance = 100kohm +/- 1%
@@ -286,8 +288,8 @@ module Power:
     assert r_boost_bot.resistance within 99kohm to 101kohm
     # TPS61023 output inductor: 1.5 µH ±20% (boost converter energy storage)
     assert l_boost.value within 1.2uH to 1.8uH
-    # TPS63700 FB divider: R_top=453 kΩ ±1%, R_bot=100 kΩ ±1% → VOUT=−5.50 V
-    assert r_inv_top.resistance within 449kohm to 457kohm
+    # TPS63700 FB divider: R_top=470 kΩ ±1%, R_bot=100 kΩ ±1% → VOUT=−5.70 V
+    assert r_inv_top.resistance within 465kohm to 475kohm
     assert r_inv_bot.resistance within 99kohm to 101kohm
     # TPS63700 inductor: 1.0 µH ±20% (inverting converter)
     assert l_inv.value within 0.8uH to 1.2uH
