@@ -19,7 +19,7 @@ pub fn run(music_dir: &Path, soul_root: &Path) -> Result<()> {
 }
 
 /// Scan `music_dir` and write binary library to `soul_root`.
-pub fn run_scan(music_dir: &Path, soul_root: &Path) -> Result<()> {
+pub(crate) fn run_scan(music_dir: &Path, soul_root: &Path) -> Result<()> {
     let entries = scan_audio_files(music_dir)?;
     println!("Found {} audio files", entries.len());
 
@@ -30,6 +30,8 @@ pub fn run_scan(music_dir: &Path, soul_root: &Path) -> Result<()> {
             // SAFETY: a music library with > 4 billion tracks is not realistic on embedded storage.
             #[allow(clippy::cast_possible_truncation)]
             let soul_id = (i as u32).saturating_add(1);
+            // TODO: derive album_id from artist+album hash once multi-album grouping is needed.
+            // Currently all tracks share album_id=1, making album_count in the manifest always 1.
             let meta = infer_meta_from_path(path, soul_id, 1).ok()?;
             let key = sort_key_for(
                 meta.artist.as_str(),
@@ -62,7 +64,7 @@ pub fn run_scan(music_dir: &Path, soul_root: &Path) -> Result<()> {
 }
 
 /// Recursively collect all audio file paths under `dir`.
-pub fn scan_audio_files(dir: &Path) -> Result<Vec<PathBuf>> {
+pub(crate) fn scan_audio_files(dir: &Path) -> Result<Vec<PathBuf>> {
     let mut files = Vec::new();
     for entry in WalkDir::new(dir).sort_by_file_name() {
         let entry = entry?;
@@ -85,7 +87,7 @@ pub fn scan_audio_files(dir: &Path) -> Result<Vec<PathBuf>> {
 ///
 /// Expected structure: `{Artist}/{Album}/{NN} - {Title}.{ext}`
 /// or fallback to filename as title with empty artist/album.
-pub fn infer_meta_from_path(path: &Path, soul_id: u32, album_id: u32) -> Result<TrackMeta> {
+pub(crate) fn infer_meta_from_path(path: &Path, soul_id: u32, album_id: u32) -> Result<TrackMeta> {
     let components: Vec<&str> = path.iter().filter_map(|c| c.to_str()).collect();
 
     let n = components.len();
@@ -147,9 +149,11 @@ fn parse_filename(filename: &str) -> (u16, &str) {
     if !has_num {
         return (0, filename);
     }
-    // SAFETY: num_end is set to i+1 where i is a char_indices byte offset within
-    // filename, and we only enter this branch when has_num is true (at least one
-    // ASCII digit was seen), so num_end <= filename.len() and the slice is valid.
+    // SAFETY: All matched chars satisfy `is_ascii_digit()`, so each char is
+    // exactly 1 byte wide in UTF-8. `num_end` is set to `i.saturating_add(1)`
+    // where `i` is the byte offset of the last digit — a valid UTF-8 char
+    // boundary and a value <= filename.len(). The `has_num` guard guarantees
+    // at least one digit was seen before we reach these slice operations.
     #[allow(clippy::indexing_slicing)]
     let num: u16 = filename[..num_end].parse().unwrap_or(0);
     #[allow(clippy::indexing_slicing)]
