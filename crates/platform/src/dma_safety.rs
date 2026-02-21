@@ -127,13 +127,6 @@ pub type AudioDmaBufBytes = [u8; AUDIO_DMA_BUFFER_BYTES];
 /// Valid regions: AXI SRAM (D1), SRAM1/2/3 (D2), External SDRAM (via FMC).
 pub unsafe trait DmaAccessible: Sized {}
 
-/// Marker trait: memory region accessible by BDMA (D3 domain).
-///
-/// # Safety
-/// BDMA can only access D3 SRAM4 (0x3800_0000, 64 KB).
-/// DMA1/DMA2 cannot access SRAM4 — mixing them causes bus faults.
-///
-/// Peripherals requiring BDMA: SPI6, SAI4, LPUART1, I2C4, ADC3.
 /// Marker trait: memory region accessible by BDMA only (D3 domain).
 ///
 /// This trait is intentionally separate from [`DmaAccessible`].

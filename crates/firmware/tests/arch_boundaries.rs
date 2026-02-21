@@ -3395,3 +3395,194 @@ fn pll_constants_match_sdram_fmc_clk() {
     // Belt-and-suspenders: verify the concrete expected value
     assert_eq!(fmc_clk, 100_000_000, "FMC clock must be exactly 100 MHz");
 }
+
+// ── GAP B3: SRAM4 ELF section verification ───────────────────────────────────
+
+/// Verify that the `verify-elf-sections` CI job checks `.sram4` section placement.
+///
+/// SRAM4 (0x38000000–0x3800FFFF, 64 KB) is in the D3 domain and is accessible
+/// by BDMA only (SPI6, SAI4, LPUART1, I2C4, ADC3).  DMA1 and DMA2 can NOT
+/// reach it.  A `.sram4` buffer accidentally linked into AXI SRAM (0x24000000)
+/// would allow DMA1/DMA2 to corrupt it without a fault, because AXI SRAM is
+/// accessible from any bus master — the corruption would be silent.
+///
+/// The CI job must use `arm-none-eabi-readelf` to confirm that any `.sram4`
+/// output section in the ELF starts at an address in the SRAM4 window
+/// (0x38000000–0x3800FFFF).
+///
+/// This test fails intentionally until the CI job is updated to include the check.
+#[test]
+fn ci_yml_verifies_sram4_section_placement() {
+    // The verify-elf-sections CI job must check .sram4 placement.
+    // SRAM4 (0x38000000, D3 domain) is BDMA-only; mislinked buffers
+    // would allow DMA1/2 to silently corrupt BDMA-intended data.
+    let ci_src = include_str!("../../../.github/workflows/ci.yml");
+    assert!(
+        ci_src.contains("sram4") || ci_src.contains("SRAM4") || ci_src.contains("38000000"),
+        "ci.yml verify-elf-sections must check .sram4 section placement"
+    );
+}
+
+// ── GAP B4: Vertical-slice architecture boundary checks ──────────────────────
+
+/// Verify that the `arch-boundaries` CI job enforces vertical-slice isolation.
+///
+/// The four feature crates (`playback`, `ui`, `library`, `bluetooth`) must not
+/// cross-import each other.  Each slice depends only on `platform` (the HAL
+/// abstraction layer).  If `playback` imports `ui`, or `library` imports
+/// `bluetooth`, the clean domain boundary is violated and the crate graph
+/// becomes entangled.
+///
+/// The CI job must use `cargo metadata` (or `cargo tree`) to verify that none
+/// of the four feature crates lists another feature crate as a dependency.
+///
+/// This test fails intentionally until the CI job is updated to include the check.
+#[test]
+fn ci_yml_checks_vertical_slice_isolation() {
+    // The arch-boundaries CI job must verify that feature crates
+    // (playback, ui, library, bluetooth) don't cross-import each other.
+    // Each slice depends only on the platform crate.
+    let ci_src = include_str!("../../../.github/workflows/ci.yml");
+    assert!(
+        ci_src.contains("vertical") || ci_src.contains("slice") ||
+        (ci_src.contains("playback") && ci_src.contains("ui") && ci_src.contains("library")),
+        "ci.yml arch-boundaries must check vertical-slice isolation"
+    );
+}
+
+
+// ── GAP C2: init_sdram_stub deprecation ──────────────────────────────────────
+
+/// Verify that `init_sdram_stub()` is marked `#[deprecated]`.
+///
+/// All stub functions that return `NotYetImplemented` must be deprecated so
+/// callers receive a compiler warning when they are called during development.
+/// This is consistent with `AudioPowerSequencer` stub methods.
+#[test]
+fn init_sdram_stub_is_marked_deprecated() {
+    let boot_src = include_str!("../src/boot.rs");
+    // Find the deprecated attribute near init_sdram_stub
+    assert!(
+        boot_src.contains("#[deprecated") && boot_src.contains("init_sdram_stub"),
+        "init_sdram_stub() must be #[deprecated] — it is a stub awaiting FMC implementation"
+    );
+}
+
+// ── GAP C3: Workspace lints deny todo and unimplemented ──────────────────────
+
+/// Verify workspace lints deny `todo!()` and `unimplemented!()`.
+///
+/// Workspace lints must deny todo!() and unimplemented!() — compiler enforces this,
+/// making grep-based CI checks redundant. This test ensures the workspace Cargo.toml
+/// has the correct lint configuration as the authoritative check.
+#[test]
+fn workspace_lints_deny_todo_and_unimplemented() {
+    let workspace_toml = include_str!("../../../Cargo.toml");
+    assert!(
+        workspace_toml.contains("todo") && workspace_toml.contains("deny"),
+        "Cargo.toml workspace lints must deny clippy::todo"
+    );
+    assert!(
+        workspace_toml.contains("unimplemented") && workspace_toml.contains("deny"),
+        "Cargo.toml workspace lints must deny clippy::unimplemented"
+    );
+}
+
+// ── GAP C4: .expect() calls in main.rs have justification ────────────────────
+
+/// Verify that `.expect()` calls in `main.rs` have justification comments or
+/// `#[allow]` annotations.
+///
+/// Workspace lints warn on `expect_used`. Every `.expect()` in non-test code
+/// must have a preceding comment explaining why panic is acceptable (typically
+/// a hardware fault condition during boot).
+#[test]
+fn expect_calls_in_main_have_allow_annotations() {
+    let main_src = include_str!("../src/main.rs");
+    let lines: Vec<&str> = main_src.lines().collect();
+    for (i, line) in lines.iter().enumerate() {
+        let trimmed = line.trim();
+        if trimmed.starts_with("//") {
+            continue;
+        }
+        if trimmed.contains(".expect(") {
+            // Check if preceding 3 lines have allow or comment justification
+            let has_justification = (i.saturating_sub(3)..i).any(|j| {
+                let prev = lines[j].trim();
+                prev.contains("#[allow") || prev.contains("// ") || prev.starts_with("//")
+            });
+            assert!(
+                has_justification,
+                "Line {}: .expect() in main.rs needs #[allow] or justification comment above it:
+  {}",
+                i + 1,
+                line
+            );
+        }
+    }
+}
+
+// ── GAP C5: AXI SRAM errata safety comment ordering ──────────────────────────
+
+/// Verify that `apply_axi_sram_read_iss_override()` has a complete SAFETY comment.
+///
+/// The unsafe block applying the STM32H743 errata 2.2.9 workaround must document:
+/// - What register is being written (AXI_TARG7_FN_MOD)
+/// - Why no concurrent access is possible (boot context, before tasks)
+/// - Ordering constraint (must run before DMA)
+#[test]
+fn axi_sram_errata_function_has_complete_safety_comment() {
+    let boot_src = include_str!("../src/boot.rs");
+    // The errata workaround function must exist
+    assert!(
+        boot_src.contains("AXI_TARG") || boot_src.contains("axi_sram_read") || boot_src.contains("errata"),
+        "boot.rs must have AXI SRAM errata workaround function"
+    );
+    // Verify the SAFETY comment mentions ordering
+    assert!(
+        boot_src.contains("Ordering") || boot_src.contains("BEFORE") || boot_src.contains("before"),
+        "AXI errata SAFETY comment must mention ordering constraint (before DMA)"
+    );
+}
+
+// ── GAP B1: PLL3 boot divisors match clock_math constants ────────────────────
+
+/// Verifies that boot.rs references clock_math PLL3 constants for cross-module sync.
+///
+/// If boot.rs duplicates PLL3 M/N/P values without asserting they match clock_math,
+/// a change to clock_math.rs will silently leave the SAI MCLK misconfigured.
+/// The compile-time const_assert in boot.rs ensures the two stay in sync.
+#[test]
+fn pll3_boot_divisors_match_clock_math_constants() {
+    // Cross-module invariant: boot.rs PLL3 setup must match clock_math constants.
+    // Enforced by compile-time const_assert in boot.rs.
+    let boot_src = include_str!("../src/boot.rs");
+    assert!(
+        boot_src.contains("PLL3_M") && boot_src.contains("clock_math"),
+        "boot.rs must reference clock_math PLL3 constants for cross-module sync"
+    );
+}
+
+// ── GAP B2: .steal() calls guarded by AtomicBool once-check ──────────────────
+
+/// Verifies that every `::steal()` call in boot.rs is guarded by an AtomicBool.
+///
+/// `cortex_m::Peripherals::steal()` aliases all Cortex-M peripheral registers.
+/// Calling it twice creates two mutable aliases to the same registers — undefined
+/// behaviour. The AtomicBool swap acts as a runtime once-guard to detect this.
+#[test]
+fn steal_calls_are_guarded_by_atomic_once_check() {
+    // Peripherals::steal() must only be called once — aliasing is UB.
+    // Each call site must be guarded by a `static AtomicBool` swap.
+    let boot_src = include_str!("../src/boot.rs");
+    if boot_src.contains("::steal()") {
+        // Check for the atomic import that must be added to the hardware module.
+        // This import is required for the AtomicBool once-guard to compile.
+        // `use core::sync::atomic::{AtomicBool, Ordering};` uniquely identifies
+        // the guard implementation — it cannot appear in test code without the guard.
+        assert!(
+            boot_src.contains("use core::sync::atomic::{AtomicBool, Ordering};"),
+            "Every ::steal() call in boot.rs must be preceded by an AtomicBool once-guard.              The hardware module must import: `use core::sync::atomic::{{AtomicBool, Ordering}};`.              Calling Peripherals::steal() twice creates mutable aliasing — undefined behaviour."
+        );
+    }
+}

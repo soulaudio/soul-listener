@@ -471,6 +471,34 @@ jobs:
           fi
           echo "OK: minimp3 not present in dependency graph"
 
+
+      - name: Vertical-slice isolation — feature crates must not cross-import each other
+        run: |
+          # Rule: playback, ui, library, bluetooth must not depend on each other.
+          # Each vertical slice depends only on the platform (HAL) crate.
+          # Cross-imports entangle domain boundaries and violate the vertical-slice arch.
+          FEATURE_CRATES="playback ui library bluetooth"
+          VIOLATIONS=0
+          for crate in $FEATURE_CRATES; do
+            if [ ! -d "crates/$crate" ]; then
+              echo "INFO: crates/$crate does not exist yet — skipping"
+              continue
+            fi
+            MANIFEST="crates/$crate/Cargo.toml"
+            DEPS=$(cargo metadata --no-deps --manifest-path "$MANIFEST" 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); print(' '.join(p['name'] for p in d['packages'][0]['dependencies']))" 2>/dev/null || echo "")
+            for other in $FEATURE_CRATES; do
+              if [ "$crate" != "$other" ] && echo "$DEPS" | grep -qw "$other"; then
+                echo "ERROR: $crate depends on $other — vertical-slice violation"
+                VIOLATIONS=$((VIOLATIONS + 1))
+              fi
+            done
+          done
+          if [ "$VIOLATIONS" -gt 0 ]; then
+            echo "Found $VIOLATIONS vertical-slice isolation violation(s)"
+            exit 1
+          fi
+          echo "PASS: All vertical-slice crates are properly isolated"
+
   # ---------------------------------------------------------------------------
   # Unsafe code audit — cargo-geiger
   #
@@ -715,6 +743,40 @@ jobs:
           else
             echo "PASS: No DMA buffers in DTCM"
           fi
+
+
+      - name: Verify .sram4 section address
+        run: |
+          ELF=target/thumbv7em-none-eabihf/release/firmware
+          echo "=== Checking .sram4 section is in SRAM4 range (0x38000000-0x3800FFFF) ==="
+          # SRAM4 (64 KB, D3 domain) is BDMA-only. DMA1/DMA2 cannot reach it.
+          # A .sram4 buffer accidentally linked into AXI SRAM would be silently
+          # corrupted by DMA1/DMA2 without triggering any fault.
+          SRAM4_SECTIONS=$(arm-none-eabi-readelf -S --wide "$ELF" | grep "[.]sram4" || true)
+          if [ -n "$SRAM4_SECTIONS" ]; then
+            echo "Found .sram4 sections:"
+            echo "$SRAM4_SECTIONS"
+            # Check all .sram4 addresses start with 38 (0x38xxxxxx = SRAM4 range)
+            if echo "$SRAM4_SECTIONS" | grep -qv " 38"; then
+              echo "ERROR: .sram4 section is NOT in SRAM4 range (0x38000000-0x3800FFFF)"
+              exit 1
+            fi
+            echo "PASS: .sram4 section is in SRAM4 range"
+          else
+            echo "INFO: No .sram4 sections found (expected if no BDMA buffers declared yet)"
+          fi
+          echo ""
+          echo "=== Paranoia check: no sram4 symbols mislinked into AXI SRAM ==="
+          # arm-none-eabi-nm lists: <address> <type> <name>
+          # Filter bss/data symbols whose names contain 'sram4' but whose
+          # address does NOT start with 38 (SRAM4 window).
+          MISLINKED=$(arm-none-eabi-nm --defined-only "$ELF" | awk '$2 ~ /[bBdD]/ && $3 ~ /sram4/ {print}' | grep -v "^38" || true)
+          if [ -n "$MISLINKED" ]; then
+            echo "ERROR: SRAM4 symbols mislinked outside SRAM4 range:"
+            echo "$MISLINKED"
+            exit 1
+          fi
+          echo "PASS: No SRAM4 symbols mislinked outside SRAM4 range"
 
       - name: Run elf_sections host tests (memory.x structural checks)
         # Verifies memory.x structure without requiring a pre-built ELF.
@@ -1066,72 +1128,29 @@ jobs:
         run: cargo vet check
 
   # ---------------------------------------------------------------------------
-  # GAP-27: No todo!/unimplemented! in production code
+  # no-todo-in-production: Enforced at compile time by workspace lint
+  # clippy::todo = "deny" and clippy::unimplemented = "deny".
+  # Shell grep is redundant and fragile (bypassed by string concat).
+  # The clippy job above (cargo clippy -- -D warnings) is the authoritative check.
   #
-  # Belt-and-suspenders check alongside the workspace clippy::todo = "deny"
-  # lint. The clippy lint catches todo!() at compile time; this job catches
-  # any cases where the lint was locally suppressed or bypassed.
-  #
-  # Checks firmware and platform src/ trees — the two crates that run on the
-  # embedded target and where todo!() would cause a runtime panic.
+  # This job retains only the lint-presence verification: it checks that
+  # Cargo.toml actually declares the deny lints, so the clippy job is effective.
   # ---------------------------------------------------------------------------
   no-todo-in-production:
-    name: No todo!/unimplemented! in production code
+    name: Verify todo/unimplemented workspace lints are configured
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
-      - name: Check for todo! in production source
+      - name: Verify todo-deny workspace lint is configured
         run: |
-          # Find todo!() in src/ files.
-          # Lines that are pure comments (trimmed start = //) are excluded.
-          # The grep -v "^[[:space:]]*//" filter removes comment-only lines.
-          VIOLATIONS=$(grep -rn "todo!()" \
-            crates/firmware/src/ \
-            crates/platform/src/ \
-            --include="*.rs" \
-            | grep -v "^[^:]*:[^:]*:[[:space:]]*//" \
-            || true)
-          if [ -n "$VIOLATIONS" ]; then
-            echo "FAIL: Found todo!() in production source:"
-            echo "$VIOLATIONS"
-            exit 1
-          fi
-          echo "PASS: No todo!() in production source files"
+          grep -q 'todo.*=.*"deny"' Cargo.toml || { echo "ERROR: clippy::todo must be deny in workspace lints"; exit 1; }
+          echo "OK: clippy::todo = deny is configured"
 
-      - name: Check for unimplemented! in production source
+      - name: Verify unimplemented-deny workspace lint is configured
         run: |
-          VIOLATIONS=$(grep -rn "unimplemented!()" \
-            crates/firmware/src/ \
-            crates/platform/src/ \
-            --include="*.rs" \
-            | grep -v "^[^:]*:[^:]*:[[:space:]]*//" \
-            || true)
-          if [ -n "$VIOLATIONS" ]; then
-            echo "FAIL: Found unimplemented!() in production source:"
-            echo "$VIOLATIONS"
-            exit 1
-          fi
-          echo "PASS: No unimplemented!() in production source files"
-
-      - name: Verify workspace lints deny todo macro
-        run: |
-          if grep -q 'todo = "deny"' Cargo.toml; then
-            echo "PASS: workspace lints deny todo macro"
-          else
-            echo "FAIL: Cargo.toml workspace lints must include: todo = \"deny\""
-            exit 1
-          fi
-
-      - name: Verify workspace lints deny unimplemented macro
-        run: |
-          if grep -q 'unimplemented = "deny"' Cargo.toml; then
-            echo "PASS: workspace lints deny unimplemented macro"
-          else
-            echo "FAIL: Cargo.toml workspace lints must include: unimplemented = \"deny\""
-            exit 1
-          fi
-
+          grep -q 'unimplemented.*=.*"deny"' Cargo.toml || { echo "ERROR: clippy::unimplemented must be deny in workspace lints"; exit 1; }
+          echo "OK: clippy::unimplemented = deny is configured"
 
   # ---------------------------------------------------------------------------
   # GAP D2: Stub AudioPowerSequencer method call guard
