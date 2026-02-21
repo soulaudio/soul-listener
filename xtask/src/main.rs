@@ -8,6 +8,7 @@ mod dev;
 mod doc;
 mod flash;
 mod hardware;
+mod scan_library;
 mod test;
 
 use anyhow::Result;
@@ -63,6 +64,15 @@ enum Commands {
         #[command(subcommand)]
         command: hardware::HwCommand,
     },
+    /// Scan a local music folder and write Soul binary library files
+    ScanLibrary {
+        /// Directory containing music files (Artist/Album/track structure)
+        #[arg(long)]
+        music_dir: std::path::PathBuf,
+        /// Output directory for binary library files
+        #[arg(long)]
+        soul_root: std::path::PathBuf,
+    },
 }
 
 fn main() -> Result<()> {
@@ -78,5 +88,8 @@ fn main() -> Result<()> {
         Commands::Test { unit, integration } => test::run(unit, integration),
         Commands::Doc { open } => doc::run(open),
         Commands::Hardware { command } => hardware::run(command),
+        Commands::ScanLibrary { music_dir, soul_root } => {
+            scan_library::run(&music_dir, &soul_root)
+        }
     }
 }

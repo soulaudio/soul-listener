@@ -11,9 +11,14 @@ notify = "9.0.0-rc.1"
 colored = "3.0"
 platform = { path = "../crates/platform" }
 walkdir = { workspace = true }
+library = { path = "../crates/library", features = ["std"] }
+heapless = { workspace = true }
 
 # Optional: Desktop notifications (cross-platform)
 notify-rust = { version = "4.12", optional = true }
+
+[dev-dependencies]
+tempfile = "3"
 
 [features]
 default = []
