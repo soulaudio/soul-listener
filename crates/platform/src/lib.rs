@@ -93,6 +93,7 @@ pub mod peripheral;
 pub mod power;
 pub mod qspi_config;
 pub mod sdram;
+pub mod soul_library;
 pub mod storage;
 pub mod storage_config;
 
@@ -103,6 +104,7 @@ pub use bluetooth::BluetoothAdapter;
 pub use display::{DisplayDriver, DisplayError, DisplayInfo, EinkDisplay, RefreshMode};
 pub use input::{Button, InputDevice, InputEvent};
 pub use sdram::{ExternalRam, RamRegion};
+pub use soul_library::SOUL_ROOT;
 pub use storage::{File, Storage};
 
 // Re-export GPIO types
