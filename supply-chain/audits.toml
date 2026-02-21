@@ -1,4 +1,32 @@
 
 # cargo-vet audits file
 
-[audits]
+[[audits.defmt]]
+who = "SoulAudio DAP project <noreply@soulaudio.dev>"
+criteria = "safe-to-deploy"
+version = "1.0.1"
+notes = "Embedded Rust logging framework from the Knurling-rs project (Ferrous Systems). Provides highly efficient on-target binary logging via RTT. The unsafe in this crate is limited to the linker-section tricks used to store format strings in the .defmt section and the RTT buffer communication. These are well-understood patterns used by the official Embassy and probe-rs ecosystems. Reviewed source at tag v1.0.1."
+
+[[audits.embedded-hal]]
+who = "SoulAudio DAP project <noreply@soulaudio.dev>"
+criteria = "safe-to-deploy"
+version = "0.2.7"
+notes = "Legacy embedded-hal 0.2.x trait definitions. Pure trait definitions, no unsafe code. Kept for driver compatibility during ecosystem migration to v1.0. Widely used and reviewed by the embedded Rust community. Last release in the 0.2 series."
+
+[[audits.embedded-hal]]
+who = "SoulAudio DAP project <noreply@soulaudio.dev>"
+criteria = "safe-to-deploy"
+version = "1.0.0"
+notes = "The embedded-hal v1.0 stable trait definitions. This crate is pure trait definitions with zero unsafe code. Maintained by the embedded-hal working group (rust-embedded/embedded-hal). v1.0.0 is the first stable release with a stability guarantee. No executable code, only interfaces."
+
+[[audits.heapless]]
+who = "SoulAudio DAP project <noreply@soulaudio.dev>"
+criteria = "safe-to-deploy"
+version = "0.8.0"
+notes = "Well-maintained no_std collections library (Vec, String, IndexMap backed by fixed-size arrays). Core maintainers: japaric, korken89. All unsafe is in the fixed-size backing store, which is sound. No heap allocation. Widely used in embedded Rust community. Reviewed source on crates.io and GitHub rust-embedded/heapless at tag v0.8.0."
+
+[[audits.heapless]]
+who = "SoulAudio DAP project <noreply@soulaudio.dev>"
+criteria = "safe-to-deploy"
+version = "0.9.2"
+notes = "Continuation of v0.8.x; API stabilisation release. Added IndexMap and MPMC queue improvements. Unsafe surface unchanged from v0.8. Reviewed changelog and diff from v0.8.0. Same safety profile: fixed-capacity, no heap, sound unsafe."

@@ -91,6 +91,7 @@ pub mod display;
 pub mod dma;
 pub mod exception_handlers;
 pub mod hal;
+pub mod sdram;
 pub mod ui;
 
 #[cfg(any(feature = "keyboard-input", feature = "hardware"))]

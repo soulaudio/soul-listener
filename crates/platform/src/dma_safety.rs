@@ -13,6 +13,19 @@
 //!
 //! † FMC DMA has higher latency than internal SRAM — do NOT use for real-time audio.
 //!
+//! ## Memory Regions
+//!
+//! | Type | Trait | Description |
+//! |------|-------|-------------|
+//! | [`AxiSramRegion`] | `DmaAccessible` | D1 AXI SRAM — audio SAI, display SPI, SDMMC |
+//! | [`Sram4Region`] | `DmaAccessible + BdmaAccessible` | D3 SRAM4 — SPI6, SAI4, LPUART1 |
+//! | [`DtcmRegion`] | *(none)* | CPU-only DTCM — no DMA access |
+//! | [`SdramRegion`] | `HighLatencyRegion` | External SDRAM via FMC — NOT DMA-safe for real-time audio |
+//!
+//! `SdramRegion` implements [`HighLatencyRegion`] and must never be used as
+//! a DMA buffer for real-time audio. Variable FMC/SDRAM latency (50–200 ns)
+//! causes SAI DMA buffer underruns at 192 kHz. Use [`AxiSramRegion`] instead.
+//!
 //! ## Usage
 //! ```rust
 //! use platform::dma_safety::FRAMEBUFFER_SIZE_BYTES;
@@ -256,6 +269,63 @@ const _: () = assert!(
     "AXI SRAM budget exceeded! Reduce task count, stack size, or DMA buffers."
 );
 
+// ── External SDRAM constants ──────────────────────────────────────────────────
+
+/// External SDRAM base address (FMC Bank 5, W9825G6KH-6 via FMC).
+/// This is the address programmed into FMC_BCR5 SDRAM base address register.
+pub const EXTSDRAM_BASE: u32 = 0xC000_0000;
+
+/// External SDRAM size (32 MB — W9825G6KH-6 is 16M × 16-bit = 32 MB).
+pub const EXTSDRAM_SIZE_BYTES: usize = 32 * 1024 * 1024;
+
+// ── HighLatencyRegion trait ───────────────────────────────────────────────────
+
+/// Marker trait for memory regions with variable or high access latency.
+///
+/// Regions implementing this trait must NOT be used as DMA buffers for
+/// real-time audio streaming. Variable latency (refresh pauses, row/column
+/// address setup) can cause audio DMA underruns at 192 kHz.
+///
+/// # Affected regions
+/// - [`SdramRegion`]: External SDRAM via FMC — 50–200 ns variable latency
+///
+/// # Safe regions (no HighLatencyRegion)
+/// - [`AxiSramRegion`]: AXI SRAM — deterministic ~1 ns (2 AHB cycles)
+/// - [`Sram4Region`]: SRAM4 — deterministic via BDMA
+pub trait HighLatencyRegion {}
+
+// ── SdramRegion ───────────────────────────────────────────────────────────────
+
+/// External SDRAM region (W9825G6KH-6, 32 MB at 0xC0000000 via FMC Bank 5).
+///
+/// # DMA safety
+/// `SdramRegion` does **NOT** implement [`DmaAccessible`]. This is intentional:
+///
+/// External SDRAM has variable access latency:
+/// - Row hit: ~50 ns
+/// - Row miss (precharge + activate): ~100–150 ns
+/// - Refresh pause (tRFC = 63 ns): can stall for multiple bus cycles
+///
+/// For SAI audio DMA at 192 kHz / 2048 samples, the DMA must complete
+/// transfers within a 10.7 ms window. A 150 ns SDRAM latency spike occupies
+/// 14.4 cycles at 96 MHz FMC clock — tolerable for single accesses but
+/// dangerous in burst mode with concurrent refresh.
+///
+/// All audio DMA buffers must use [`AxiSramRegion`] instead.
+///
+/// # Permitted uses
+/// - Library index cache (latency-tolerant)
+/// - Album art thumbnail cache (latency-tolerant)
+/// - FLAC decode scratch buffer (large, non-real-time)
+/// - UI frame history buffer (latency-tolerant)
+#[derive(Debug, Clone, Copy)]
+pub struct SdramRegion;
+
+impl HighLatencyRegion for SdramRegion {}
+// NOTE: SdramRegion intentionally does NOT implement DmaAccessible or BdmaAccessible.
+// Any attempt to create a DmaBuffer<SdramRegion, T> will fail to compile,
+// preventing accidental real-time DMA from external SDRAM.
+
 // ── Tests ─────────────────────────────────────────────────────────────────────
 
 #[cfg(test)]
@@ -299,5 +369,52 @@ mod tests {
             utilization < 90,
             "AXI SRAM utilization {utilization}% exceeds 90% — leave headroom for runtime allocations"
         );
+    }
+
+    #[test]
+    fn sdram_region_base_and_size_are_correct() {
+        assert_eq!(EXTSDRAM_BASE, 0xC000_0000);
+        assert_eq!(EXTSDRAM_SIZE_BYTES, 32 * 1024 * 1024);
+    }
+
+    #[test]
+    fn sdram_region_is_marked_high_latency() {
+        // Type-system check: SdramRegion implements HighLatencyRegion.
+        // This is a compile-time assertion — if SdramRegion didn't implement
+        // HighLatencyRegion, this function wouldn't compile.
+        fn assert_high_latency<T: HighLatencyRegion>() {}
+        assert_high_latency::<SdramRegion>();
+    }
+
+    #[test]
+    fn axi_sram_region_is_not_high_latency() {
+        // AxiSramRegion must NOT implement HighLatencyRegion (it's the fast region).
+        // We check by scanning each line: an `impl HighLatencyRegion for` line must
+        // never name AxiSramRegion as the implementing type.
+        let src = include_str!("dma_safety.rs");
+        let violating_impl = src.lines().any(|line| {
+            let trimmed = line.trim();
+            trimmed.starts_with("impl HighLatencyRegion for")
+                && trimmed.contains("AxiSramRegion")
+        });
+        assert!(!violating_impl,
+            "AxiSramRegion must not implement HighLatencyRegion — it is the correct region for audio DMA");
+    }
+
+    #[test]
+    // Belt-and-suspenders: confirm DtcmRegion and SdramRegion are excluded from DmaAccessible.
+    fn dtcm_region_is_also_not_dma_accessible() {
+        // Check each line: an `impl DmaAccessible for` line must not name DtcmRegion or SdramRegion.
+        let src = include_str!("dma_safety.rs");
+        let dtcm_violation = src.lines().any(|line| {
+            let trimmed = line.trim();
+            trimmed.starts_with("impl DmaAccessible for") && trimmed.contains("DtcmRegion")
+        });
+        let sdram_violation = src.lines().any(|line| {
+            let trimmed = line.trim();
+            trimmed.starts_with("impl DmaAccessible for") && trimmed.contains("SdramRegion")
+        });
+        assert!(!dtcm_violation, "DtcmRegion must not implement DmaAccessible");
+        assert!(!sdram_violation, "SdramRegion must not implement DmaAccessible");
     }
 }
