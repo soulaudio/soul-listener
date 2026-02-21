@@ -52,6 +52,11 @@ pub fn library_meta_path(root: &str) -> String<64> {
 /// 256 entries — well under the FAT32 performance cliff (~50 000 files/dir).
 #[must_use]
 pub fn art_path(root: &str, album_id: u32) -> String<80> {
+    debug_assert!(
+        root.len().saturating_add(20) <= 80,
+        "art_path: root ({} bytes) + art suffix (20 bytes) exceeds String<80>",
+        root.len()
+    );
     // SAFETY: album_id >> 24 gives bits 31..24; casting to u8 keeps only
     // the low 8 bits, which is exactly what we want for the shard byte.
     #[allow(clippy::cast_possible_truncation)]
@@ -71,6 +76,12 @@ pub fn art_path(root: &str, album_id: u32) -> String<80> {
 // ---------------------------------------------------------------------------
 
 fn build_path(root: &str, suffix: &str) -> String<64> {
+    debug_assert!(
+        root.len().saturating_add(suffix.len()) <= 64,
+        "build_path: root ({} bytes) + suffix ({} bytes) exceeds String<64>",
+        root.len(),
+        suffix.len()
+    );
     let mut s = String::<64>::new();
     let _ = s.push_str(root);
     let _ = s.push_str(suffix);
