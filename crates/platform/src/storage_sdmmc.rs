@@ -14,8 +14,17 @@ use crate::storage::{File, Storage};
 pub enum SdmmcError {
     /// This stub operation is not yet implemented.
     NotImplemented,
-    /// Underlying SDMMC I/O error (future use).
+    /// Underlying SDMMC I/O error — will wrap `embassy_stm32::sdmmc::Error` once implemented.
     Io,
+}
+
+impl core::fmt::Display for SdmmcError {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        match self {
+            Self::NotImplemented => f.write_str("SDMMC not yet implemented"),
+            Self::Io => f.write_str("SDMMC I/O error"),
+        }
+    }
 }
 
 /// Placeholder file for SDMMC (stub — always returns `NotImplemented`).
