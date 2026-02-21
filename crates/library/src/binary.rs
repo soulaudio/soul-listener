@@ -78,6 +78,13 @@ impl ManifestBin {
 
     /// Decode a manifest from a 64-byte buffer.
     ///
+    /// # Errors
+    ///
+    /// Returns [`LibraryError::BadMagic`] if bytes `[0..4]` are not `b"SOUL"`.
+    /// Returns [`LibraryError::UnsupportedVersion`] if byte `[4]` is not [`ManifestBin::VERSION`].
+    /// Returns [`LibraryError::DecodeError`] if a fixed-size sub-slice cannot be
+    /// converted (structurally unreachable for a `&[u8; 64]` argument).
+    ///
     /// # Safety (lint allow)
     /// All range indices are compile-time constants within `[0, SIZE)`.
     /// The buffer is `&[u8; Self::SIZE]` so all slices are always valid.
@@ -143,21 +150,30 @@ impl IndexEntry {
 
     /// Decode an entry from a 24-byte buffer.
     ///
+    /// # Errors
+    ///
+    /// Returns [`LibraryError::DecodeError`] if a fixed-size sub-slice cannot be
+    /// converted (structurally unreachable for a `&[u8; 24]` argument).
+    ///
     /// # Safety (lint allow)
     /// All range indices are compile-time constants within `[0, SIZE)`.
     /// The buffer is `&[u8; Self::SIZE]` so all slices are always valid.
-    /// The `unwrap_or` fallback is infallible for fixed-size 4-byte sub-slices
-    /// of a 24-byte buffer, but is retained for lint compliance.
-    #[must_use]
+    /// All sub-slices are exactly 4 bytes and the `try_into()` conversions
+    /// are infallible at this type; `map_err` handles the case should the
+    /// signature ever change.
     #[allow(clippy::indexing_slicing)]
-    pub fn decode(buf: &[u8; Self::SIZE]) -> Self {
+    pub fn decode(buf: &[u8; Self::SIZE]) -> Result<Self, LibraryError> {
         let mut sort_key = [0u8; 16];
         sort_key.copy_from_slice(&buf[0..16]);
-        Self {
+        Ok(Self {
             sort_key,
-            meta_offset: u32::from_le_bytes(buf[16..20].try_into().unwrap_or([0u8; 4])),
-            meta_size: u32::from_le_bytes(buf[20..24].try_into().unwrap_or([0u8; 4])),
-        }
+            meta_offset: u32::from_le_bytes(
+                buf[16..20].try_into().map_err(|_| LibraryError::DecodeError)?,
+            ),
+            meta_size: u32::from_le_bytes(
+                buf[20..24].try_into().map_err(|_| LibraryError::DecodeError)?,
+            ),
+        })
     }
 }
 
@@ -289,7 +305,7 @@ mod tests {
         };
         let bytes = e.encode();
         assert_eq!(bytes.len(), 24);
-        let decoded = IndexEntry::decode(&bytes);
+        let decoded = IndexEntry::decode(&bytes).unwrap();
         assert_eq!(decoded.sort_key, key);
         assert_eq!(decoded.meta_offset, 0x0001_0000);
         assert_eq!(decoded.meta_size, 180);
