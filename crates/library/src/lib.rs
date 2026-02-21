@@ -7,7 +7,7 @@
 //! - [`scanner`] — directory walk and extension filtering
 //! - [`metadata`] — magic-byte format detection
 
-#![cfg_attr(not(test), no_std)]
+#![cfg_attr(not(any(test, feature = "std")), no_std)]
 // unwrap_used, expect_used, panic enforced at workspace level (Cargo.toml)
 // TODO: Add rustdoc to all public items (tracked as tech debt)
 #![allow(missing_docs)]
@@ -17,6 +17,9 @@ pub mod index;
 pub mod metadata;
 pub mod scanner;
 pub mod track;
+
+#[cfg(feature = "std")]
+pub mod writer;
 
 // Top-level re-exports for convenience
 pub use binary::{IndexEntry, LibraryError, ManifestBin, TrackMeta, sort_key_for};
