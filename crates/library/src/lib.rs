@@ -12,12 +12,14 @@
 // TODO: Add rustdoc to all public items (tracked as tech debt)
 #![allow(missing_docs)]
 
+pub mod binary;
 pub mod index;
 pub mod metadata;
 pub mod scanner;
 pub mod track;
 
 // Top-level re-exports for convenience
+pub use binary::{IndexEntry, LibraryError, ManifestBin, TrackMeta, sort_key_for};
 pub use index::{FullIndex, IndexError, SmallIndex, TrackIndex, MAX_TRACKS};
 pub use metadata::detect_format;
 pub use scanner::{ScanEntry, Scanner};
