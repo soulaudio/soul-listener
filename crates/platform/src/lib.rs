@@ -104,7 +104,9 @@ pub use bluetooth::BluetoothAdapter;
 pub use display::{DisplayDriver, DisplayError, DisplayInfo, EinkDisplay, RefreshMode};
 pub use input::{Button, InputDevice, InputEvent};
 pub use sdram::{ExternalRam, RamRegion};
-pub use soul_library::SOUL_ROOT;
+pub use soul_library::{
+    art_path, library_idx_path, library_meta_path, manifest_path, SOUL_ROOT,
+};
 pub use storage::{File, Storage};
 
 // Re-export GPIO types
