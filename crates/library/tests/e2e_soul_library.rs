@@ -97,6 +97,7 @@ async fn e2e_first_page_sorted_by_artist_album_track() {
     assert_eq!(page[1].track_number, 2);
     assert_eq!(page[2].track_number, 3);
     assert_eq!(page[3].artist.as_str(), "Portishead");
+    assert_eq!(page[3].track_number, 1);  // "Mysterons" is first Portishead track
     assert_eq!(page[4].track_number, 2);
 }
 
@@ -194,5 +195,8 @@ async fn e2e_large_library_all_tracks_readable() {
 
     // Read last track — catches off-by-one in offset arithmetic
     let last = reader.track(199).await.unwrap();
-    assert!(last.soul_id > 0);
+    // soul_id = album_id(9) * 20 + track_num(20) = 200
+    assert_eq!(last.soul_id, 200);
+    assert_eq!(last.track_number, 20);
+    assert_eq!(last.album.as_str(), "Album 09");
 }
