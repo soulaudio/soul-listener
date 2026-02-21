@@ -31,6 +31,16 @@ impl core::fmt::Display for WriterError {
     }
 }
 
+impl std::error::Error for WriterError {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        match self {
+            Self::Io(e) => Some(e),
+            // postcard::Error does not implement std::error::Error
+            Self::Postcard(_) => None,
+        }
+    }
+}
+
 impl From<std::io::Error> for WriterError {
     fn from(e: std::io::Error) -> Self {
         Self::Io(e)
@@ -82,12 +92,21 @@ impl LibraryWriter {
     ///
     /// Returns `WriterError::Postcard` if `meta` cannot be serialised.
     pub fn add_track(&mut self, sort_key: [u8; 16], meta: TrackMeta) -> Result<(), WriterError> {
-        // SAFETY: a library with > 4 billion tracks (128 GB in idx alone) is not realistic.
+        // SAFETY: meta_buf.len() as u32 is safe — a library.meta file exceeding
+        // 4 GB (u32::MAX bytes) would require millions of tracks with maximum
+        // string lengths, unrealistic for any music collection on embedded storage.
         #[allow(clippy::cast_possible_truncation)]
         let meta_offset = self.meta_buf.len() as u32;
-        let mut postcard_buf = [0u8; 512];
+        // Use a 600-byte stack buffer: writer.rs is std-only (host tool with MB of stack).
+        // 600 bytes covers the worst-case TrackMeta encoding:
+        //   title(128) + artist(64) + album(64) + file_path(256) = 512 bytes of string data
+        //   + 4 varint length prefixes + scalar fields (≈20 bytes with varints) ≈ 536 bytes max.
+        // postcard workspace dep has default-features=false (no use-std/alloc), so to_stdvec
+        // and to_allocvec are unavailable; a fixed buffer is the correct approach here.
+        #[allow(clippy::large_stack_arrays)]
+        let mut postcard_buf = [0u8; 600];
         let encoded = postcard::to_slice(&meta, &mut postcard_buf)?;
-        // SAFETY: a library with > 4 billion tracks (128 GB in idx alone) is not realistic.
+        // SAFETY: encoded.len() ≤ postcard_buf.len() = 600, which trivially fits in u32.
         #[allow(clippy::cast_possible_truncation)]
         let meta_size = encoded.len() as u32;
 
@@ -217,6 +236,50 @@ mod tests {
 
         let idx = std::fs::read(tmp.path().join("library.idx")).unwrap();
         assert_eq!(idx.len(), 7 * IndexEntry::SIZE);
+    }
+
+    #[test]
+    fn track_meta_worst_case_fits_in_writer_buffer() {
+        // Construct a TrackMeta with maximum-length strings to verify the 600-byte
+        // postcard buffer in add_track covers the actual worst case.
+        // title=128 chars, artist=64 chars, album=64 chars, file_path=256 chars.
+        let title_str = "A".repeat(128);
+        let artist_str = "B".repeat(64);
+        let album_str = "C".repeat(64);
+        let file_path_str = "/".to_string() + &"d".repeat(255); // 256 chars total
+
+        let worst_case = TrackMeta {
+            soul_id: u32::MAX,
+            album_id: u32::MAX,
+            track_number: u16::MAX,
+            disc_number: u16::MAX,
+            year: u16::MAX,
+            format: u8::MAX,
+            channels: u8::MAX,
+            duration_secs: u32::MAX,
+            sample_rate: u32::MAX,
+            title: heapless::String::try_from(title_str.as_str()).unwrap(),
+            artist: heapless::String::try_from(artist_str.as_str()).unwrap(),
+            album: heapless::String::try_from(album_str.as_str()).unwrap(),
+            file_path: heapless::String::try_from(file_path_str.as_str()).unwrap(),
+        };
+
+        let tmp = TempDir::new().unwrap();
+        let root = tmp.path().to_str().unwrap();
+        let mut w = LibraryWriter::new(root).unwrap();
+        let key = sort_key_for(&artist_str, &album_str, u16::MAX, u16::MAX);
+        w.add_track(key, worst_case)
+            .expect("add_track must succeed for worst-case TrackMeta");
+        w.finish(1, 0).unwrap();
+
+        // Verify the meta file was written (non-empty)
+        let meta_bytes = std::fs::read(tmp.path().join("library.meta")).unwrap();
+        assert!(!meta_bytes.is_empty(), "library.meta must not be empty");
+        assert!(
+            meta_bytes.len() <= 600,
+            "worst-case TrackMeta encoded to {} bytes, exceeding 600-byte buffer guarantee",
+            meta_bytes.len()
+        );
     }
 
     #[test]
