@@ -53,7 +53,7 @@
 #![deny(unused_must_use)]
 // all Results must be handled
 // ────────────────────────────────────────────────────────────────────────────
-#![cfg_attr(not(test), no_std)]
+#![cfg_attr(not(any(test, feature = "std")), no_std)]
 #![warn(missing_docs)]
 #![warn(clippy::all)]
 #![warn(clippy::pedantic)]
@@ -97,6 +97,9 @@ pub mod soul_library;
 pub mod storage;
 pub mod storage_config;
 
+#[cfg(feature = "std")]
+pub mod storage_local;
+
 // Re-export main high-level traits
 pub use asset_store::{AssetKey, AssetStore};
 pub use audio::{AudioCodec, AudioConfig, DsdMode, OversamplingFilter};
@@ -108,6 +111,9 @@ pub use soul_library::{
     art_path, library_idx_path, library_meta_path, manifest_path, SOUL_ROOT,
 };
 pub use storage::{File, Storage};
+
+#[cfg(feature = "std")]
+pub use storage_local::LocalFileStorage;
 
 // Re-export GPIO types
 pub use gpio::{
