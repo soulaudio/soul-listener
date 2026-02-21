@@ -95,8 +95,13 @@ dasp = { version = "0.11", default-features = false }
 nanomp3 = "0.1"
 rubato = "0.15"
 
+# Binary serialisation — no_std, postcard v1 stable wire format
+postcard = { version = "1", default-features = false, features = ["heapless"] }
+# CRC32 — both std writer and no_std reader paths
+crc32fast = { version = "1", default-features = false }
+
 # Collections (no_std)
-heapless = "0.9"
+heapless = { version = "0.9", features = ["serde"] }
 
 # Error handling
 thiserror-no-std = "2.0"
@@ -119,6 +124,11 @@ embedded-graphics-simulator = "0.6"
 # Testing
 embedded-test = "0.4"
 tokio = { version = "1.49", features = ["macros", "rt"] }
+
+# Directory walk — xtask scan-library only (std)
+walkdir = "2"
+# Benchmarking
+criterion = { version = "0.5", features = ["async_tokio"] }
 
 # Hot-reload support (desktop emulator development only)
 hot-lib-reloader = "0.8"
