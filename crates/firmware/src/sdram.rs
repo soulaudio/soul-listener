@@ -1,7 +1,7 @@
 //! FMC SDRAM timing constants for W9825G6KH-6 at 100 MHz.
 //!
 //! Target device: W9825G6KH-6 (Winbond) -- 32 MB (16M x 16-bit), 166 MHz, TSOP-54
-//! FMC bank: Bank 5 (SDRAM bank 1, base address 0xC000_0000)
+//! FMC bank: Bank 5 (SDRAM bank 1, base address `0xC000_0000`)
 //! FMC clock: PLL2R = 200 MHz; FMC internal /2 divider -> SDCLK = 100 MHz
 //!
 //! # Clock source
@@ -13,10 +13,10 @@
 //!
 //! # Timing math
 //!
-//! cycles = ceil(t_ns * FMC_CLK_HZ / 1_000_000_000)
-//!        = (t_ns * FMC_CLK_HZ + 999_999_999) / 1_000_000_000
+//! `cycles = ceil(t_ns * FMC_CLK_HZ / 1_000_000_000)`
+//! `       = (t_ns * FMC_CLK_HZ + 999_999_999) / 1_000_000_000`
 //!
-//! FMC_SDTRx stores (cycles - 1) per field.
+//! `FMC_SDTRx` stores (cycles - 1) per field.
 //! All constants here are actual cycle counts (1-based).
 //!
 //! # Refresh count
@@ -29,8 +29,8 @@
 //! - W9825G6KH-6 datasheet Rev I, Table 13 (AC characteristics, 3.3 V)
 //! - STM32H7 RM0433 Rev 9 section 22 (FMC SDRAM controller)
 //! - STM32H7 RM0433 section 22.7.3 (Initialization sequence)
-//! - STM32H7 RM0433 section 22.9.4 (FMC_SDTRx register description)
-//! - STM32H7 RM0433 section 22.7.7 (FMC_SDRTR refresh timer)
+//! - STM32H7 RM0433 section 22.9.4 (`FMC_SDTRx` register description)
+//! - STM32H7 RM0433 section 22.7.7 (`FMC_SDRTR` refresh timer)
 
 // ---- Clock ----------------------------------------------------------------
 
@@ -42,7 +42,7 @@
 ///   SDCLK = PLL2R / 2 (FMC internal fixed divider) = 100 MHz
 ///
 /// SDCLK = 100 MHz is within the W9825G6KH-6 166 MHz max rating.
-/// FMC_SDTRx timing fields count in SDCLK cycles (~10 ns period).
+/// `FMC_SDTRx` timing fields count in SDCLK cycles (~10 ns period).
 pub const FMC_CLK_HZ: u32 = 100_000_000;
 
 // ---- W9825G6KH-6 timing constraints in nanoseconds -----------------------
@@ -72,32 +72,32 @@ pub const T_MRD_CYCLES: u32 = 2;
 /// CAS latency (CL).
 ///
 /// W9825G6KH-6 supports CL=2 (<=133 MHz) or CL=3 (<=166 MHz).
-/// CL=3 used for safety margin; matches platform::sdram convention.
+/// CL=3 used for safety margin; matches `platform::sdram` convention.
 pub const CAS_LATENCY: u32 = 3;
 
 // ---- Cycle counts (ceil of ns * FMC_CLK) ---------------------------------
 
 /// tRCD in SDCLK cycles: ceil(18 ns * 100 MHz) = ceil(1.8) = 2 cycles.
-/// FMC_SDTRx TRCD field (bits 7:4) = TRCD_CYCLES - 1 = 1.
+/// `FMC_SDTRx` TRCD field (bits 7:4) = `TRCD_CYCLES` - 1 = 1.
 pub const TRCD_CYCLES: u32 = ns_to_cycles(T_RCD_NS);
 
 /// tRP in SDCLK cycles: ceil(18 ns * 100 MHz) = ceil(1.8) = 2 cycles.
-/// FMC_SDTRx TRP field (bits 15:12) = TRP_CYCLES - 1 = 1.
+/// `FMC_SDTRx` TRP field (bits 15:12) = `TRP_CYCLES` - 1 = 1.
 pub const TRP_CYCLES: u32 = ns_to_cycles(T_RP_NS);
 
 /// tWR in SDCLK cycles: ceil(12 ns * 100 MHz) = ceil(1.2) = 2 cycles.
-/// FMC_SDTRx TWR field (bits 19:16) = TWR_CYCLES - 1 = 1.
+/// `FMC_SDTRx` TWR field (bits 19:16) = `TWR_CYCLES` - 1 = 1.
 pub const TWR_CYCLES: u32 = ns_to_cycles(T_WR_NS);
 
 /// tRC in SDCLK cycles: ceil(60 ns * 100 MHz) = ceil(6.0) = 6 cycles.
-/// FMC_SDTRx TRC field (bits 23:20) = TRC_CYCLES - 1 = 5.
+/// `FMC_SDTRx` TRC field (bits 23:20) = `TRC_CYCLES` - 1 = 5.
 pub const TRC_CYCLES: u32 = ns_to_cycles(T_RC_NS);
 
 /// tXSR in SDCLK cycles: ceil(70 ns * 100 MHz) = ceil(7.0) = 7 cycles.
-/// FMC_SDTRx TXSR field (bits 11:8) = TXSR_CYCLES - 1 = 6.
+/// `FMC_SDTRx` TXSR field (bits 11:8) = `TXSR_CYCLES` - 1 = 6.
 pub const TXSR_CYCLES: u32 = ns_to_cycles(T_XSR_NS);
 
-/// SDRAM auto-refresh interval in SDCLK cycles (FMC_SDRTR COUNT field).
+/// SDRAM auto-refresh interval in SDCLK cycles (`FMC_SDRTR` COUNT field).
 ///
 /// count = floor(64 ms * 100 MHz / 1000 / 8192) - 20 = 781 - 20 = 761.
 /// Safety margin per RM0433 section 22.7.7. 13-bit field: 0-8191.
@@ -107,26 +107,40 @@ pub const REFRESH_COUNT: u32 = compute_refresh_count(FMC_CLK_HZ);
 
 /// Convert a timing constraint from nanoseconds to SDCLK cycles (ceiling).
 ///
-/// cycles = ceil(ns * FMC_CLK_HZ / 1_000_000_000)  [SDCLK cycles]
-///        = (ns * FMC_CLK_HZ + 999_999_999) / 1_000_000_000
+/// `cycles = ceil(ns * FMC_CLK_HZ / 1_000_000_000)`  [SDCLK cycles]
 ///
 /// Returns at least 1 (FMC minimum per RM0433 section 22.9.4).
+#[must_use]
 pub const fn ns_to_cycles(ns: u32) -> u32 {
-    let cycles = (ns as u64 * FMC_CLK_HZ as u64 + 999_999_999) / 1_000_000_000;
+    // Use div_ceil for the ceiling division; cast from u64 to u32 is safe because
+    // the result is always a small cycle count (<=16 for any realistic SDRAM timing).
+    // Multiplication cannot overflow: u32::MAX * 100_000_000 < u64::MAX.
+    #[allow(clippy::arithmetic_side_effects, clippy::cast_possible_truncation)]
+    let cycles = (ns as u64 * FMC_CLK_HZ as u64).div_ceil(1_000_000_000);
+    #[allow(clippy::cast_possible_truncation)]
     if cycles < 1 { 1 } else { cycles as u32 }
 }
 
-/// Compute the FMC_SDRTR COUNT value for the W9825G6KH-6 refresh timer.
+/// Compute the `FMC_SDRTR` COUNT value for the W9825G6KH-6 refresh timer.
 ///
-/// count = floor(refresh_period_ms * fmc_clk_hz / 1_000 / num_rows) - safety
+/// `count = floor(refresh_period_ms * fmc_clk_hz / 1_000 / num_rows) - safety`
 ///
-/// refresh_period_ms = 64, num_rows = 8192, safety_margin = 20.
+/// `refresh_period_ms` = 64, `num_rows` = 8192, `safety_margin` = 20.
+#[must_use]
 pub const fn compute_refresh_count(fmc_clk_hz: u32) -> u32 {
     const REFRESH_PERIOD_MS: u64 = 64;
     const NUM_ROWS: u64 = 8_192;
     const SAFETY_MARGIN: u64 = 20;
+    // Allow arithmetic lints: values are hardware constants that cannot overflow u64.
+    // fmc_clk_hz is at most ~500 MHz (u32), REFRESH_PERIOD_MS=64; product fits in u64.
+    // The subtraction by SAFETY_MARGIN (20) is always safe as count >> 20 for valid clocks.
+    // The truncation from u64 to u32 is safe because the result (~761) fits in u32.
+    #[allow(clippy::arithmetic_side_effects, clippy::cast_possible_truncation)]
     let count = REFRESH_PERIOD_MS * fmc_clk_hz as u64 / 1_000 / NUM_ROWS;
-    (count - SAFETY_MARGIN) as u32
+    #[allow(clippy::arithmetic_side_effects, clippy::cast_possible_truncation)]
+    {
+        (count - SAFETY_MARGIN) as u32
+    }
 }
 
 #[cfg(test)]
