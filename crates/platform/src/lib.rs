@@ -100,6 +100,7 @@ pub mod storage_config;
 #[cfg(feature = "std")]
 pub mod storage_local;
 
+#[cfg(not(feature = "std"))]
 pub mod storage_sdmmc;
 
 // Re-export main high-level traits
