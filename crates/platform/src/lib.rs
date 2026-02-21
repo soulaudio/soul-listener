@@ -100,6 +100,8 @@ pub mod storage_config;
 #[cfg(feature = "std")]
 pub mod storage_local;
 
+pub mod storage_sdmmc;
+
 // Re-export main high-level traits
 pub use asset_store::{AssetKey, AssetStore};
 pub use audio::{AudioCodec, AudioConfig, DsdMode, OversamplingFilter};
