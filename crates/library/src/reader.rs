@@ -88,7 +88,10 @@ where
         let manifest = ManifestBin::decode(&buf)?;
 
         let mut root = heapless::String::<64>::new();
-        let _ = root.push_str(soul_root);
+        // soul_root > 64 bytes cannot fit in root; no dedicated variant exists,
+        // so reuse DecodeError (path overflow treated as corrupt/unusable input).
+        root.push_str(soul_root)
+            .map_err(|_| ReaderError::Format(LibraryError::DecodeError))?;
 
         Ok(Self { storage, root, manifest })
     }
@@ -262,7 +265,10 @@ where
     E: core::fmt::Debug,
 {
     // index * 24: u64::from(u32::MAX) * 24 = ~103 GB — well within u64 range.
-    let offset = u64::from(index).saturating_mul(IndexEntry::SIZE as u64);
+    // SAFETY: IndexEntry::SIZE = 24, which fits in u64 on all supported targets (32-bit min).
+    #[allow(clippy::cast_possible_truncation)]
+    let idx_size_u64 = IndexEntry::SIZE as u64;
+    let offset = u64::from(index).saturating_mul(idx_size_u64);
     file.seek(offset).await.map_err(ReaderError::Storage)?;
     let mut buf = [0u8; IndexEntry::SIZE];
     read_exact(file, &mut buf).await.map_err(ReaderError::Storage)?;
@@ -299,6 +305,11 @@ where
     // large_stack_arrays fires at 512 B; suppressed here with justification above.
     #[allow(clippy::large_stack_arrays)]
     let mut buf = [0u8; 600];
+
+    // meta_size > 600 means the library was written by a newer writer version — treat as corrupt.
+    if size > buf.len() {
+        return Err(ReaderError::Format(LibraryError::DecodeError));
+    }
 
     let n = read_exact_n(file, &mut buf, size)
         .await
