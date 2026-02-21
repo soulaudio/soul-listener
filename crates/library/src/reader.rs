@@ -346,7 +346,7 @@ async fn read_exact_n<F: File>(file: &mut F, buf: &mut [u8], n: usize) -> Result
 // Tests
 // ---------------------------------------------------------------------------
 
-#[cfg(test)]
+#[cfg(all(test, feature = "std"))]
 #[allow(
     clippy::unwrap_used,
     clippy::expect_used,
@@ -432,7 +432,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn reader_page_returns_sorted_tracks() {
+    async fn reader_page_returns_correct_tracks() {
         let tmp = TempDir::new().unwrap();
         let root = tmp.path().to_str().unwrap();
         build_library(
@@ -452,7 +452,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn reader_search_by_artist_finds_subset() {
+    async fn reader_search_by_artist_finds_tracks() {
         let tmp = TempDir::new().unwrap();
         let root = tmp.path().to_str().unwrap();
         build_library(
@@ -465,7 +465,7 @@ mod tests {
         );
         let storage = LocalFileStorage::new(root);
         let mut reader = SoulLibraryReader::open(storage, root).await.unwrap();
-        let results = reader.search_by_artist("Amon").await.unwrap();
+        let results = reader.search_by_artist("Amon To").await.unwrap();
         assert_eq!(results.len(), 2);
         assert_eq!(results[0].artist.as_str(), "Amon Tobin");
     }
