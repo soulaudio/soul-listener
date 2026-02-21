@@ -1,6 +1,8 @@
 # Rust
 target/
-Cargo.lock
+# Cargo.lock is intentionally committed for reproducible firmware builds.
+# Libraries omit Cargo.lock; binaries/firmware commit it.
+# See: https://doc.rust-lang.org/cargo/faq.html
 **/*.rs.bk
 *.pdb
 

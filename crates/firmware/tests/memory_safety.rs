@@ -10,7 +10,7 @@
     clippy::cast_lossless,
 )]
 //! Tests verify DMA buffer placement invariants at declaration level.
-//! Runtime address verification is done via debug_assert! in main() startup.
+//! Runtime address verification is done via assert! in main() startup.
 
 /// FRAMEBUFFER must use StaticCell with #[link_section = ".axisram"] together.
 /// Having StaticCell alone (in DTCM) or link_section alone (with static mut)
@@ -55,34 +55,34 @@ fn framebuffer_uses_static_cell_with_axisram_link_section() {
     );
 }
 
-/// Firmware must contain a runtime debug_assert! for FRAMEBUFFER address placement.
+/// Firmware must contain a runtime assert! for FRAMEBUFFER address placement.
 /// String-grep tests cannot verify the linker actually placed the buffer correctly.
-/// The runtime debug_assert! provides defense-in-depth for the link_section attribute.
+/// The runtime assert! provides defense-in-depth for the link_section attribute.
 ///
-/// Note: on host (cargo test) the firmware never runs, so the debug_assert! is not
+/// Note: on host (cargo test) the firmware never runs, so the assert! is not
 /// executed — this test checks for its PRESENCE in the source to ensure the assertion
 /// exists for when the firmware boots on actual hardware.
 #[test]
 fn firmware_has_runtime_dma_buffer_address_assertion() {
     let main_rs = include_str!("../src/main.rs");
-    // The assertion must use debug_assert! (not just comments mentioning 0x2400_0000).
-    // It must also reference addr_of or AXI_SRAM_BASE — not just debug_assert! alone,
-    // because debug_assert! may be used for other things too.
-    let has_debug_assert = main_rs.contains("debug_assert");
+    // The assertion must use assert! (not just comments mentioning 0x2400_0000).
+    // It must also reference addr_of or AXI_SRAM_BASE — not just assert! alone,
+    // because assert! is used for other purposes too.
+    let has_assert = main_rs.contains("assert");
     let has_address_check =
         main_rs.contains("addr_of") || main_rs.contains("AXI_SRAM_BASE");
 
     assert!(
-        has_debug_assert && has_address_check,
-        "firmware/src/main.rs must contain a runtime debug_assert! with an address-range check.\n\
-         Expected both 'debug_assert' and either 'addr_of' or 'AXI_SRAM_BASE' in source.\n\
+        has_assert && has_address_check,
+        "firmware/src/main.rs must contain a runtime assert! with an address-range check.\n\
+         Expected 'assert' and either 'addr_of' or 'AXI_SRAM_BASE' in source.\n\
          Use:\n\
-           debug_assert!(\n\
+           assert!(\n\
                core::ptr::addr_of!(*_framebuffer) as u32 >= platform::dma_safety::AXI_SRAM_BASE,\n\
                \"FRAMEBUFFER not in AXI SRAM — missing #[link_section]\"\n\
            );\n\
          This catches linker misconfiguration that #[link_section] alone cannot prevent at compile time.\n\
-         Note: debug_assert! is compiled out in release builds (debug-assertions = false)."
+         Note: Use assert! (not debug_assert!) -- debug_assert! is compiled out in release builds."
     );
 }
 

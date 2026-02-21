@@ -1,15 +1,15 @@
-//! FMC SDRAM timing constants for W9825G6KH-6 at 96 MHz.
+//! FMC SDRAM timing constants for W9825G6KH-6 at 100 MHz.
 //!
 //! Target device: W9825G6KH-6 (Winbond) -- 32 MB (16M x 16-bit), 166 MHz, TSOP-54
 //! FMC bank: Bank 5 (SDRAM bank 1, base address 0xC000_0000)
-//! FMC clock: HCLK3 = 96 MHz (480 MHz / 5)
+//! FMC clock: PLL2R = 200 MHz; FMC internal /2 divider -> SDCLK = 100 MHz
 //!
 //! # Clock source
 //!
-//! HCLK3 is the AHB3 bus clock, which drives the FMC peripheral.
-//! At 480 MHz CPU (PLL1P), AHB3 prescaler /5 gives HCLK3 = 96 MHz.
-//! SDCLK = HCLK3/2 = 48 MHz -- within the W9825G6KH-6 166 MHz max.
-//! FMC timing registers count in HCLK3 cycles (~10.4 ns period).
+//! The FMC SDCLK is the SDRAM timing reference (same as PLL2R/2).
+//! PLL2: HSI (64 MHz) / prediv(8) * mul(100) / divr(4) = 200 MHz (PLL2R).
+//! FMC internal fixed /2 divider: SDCLK = PLL2R / 2 = 100 MHz.
+//! FMC timing registers count in SDCLK cycles (~10 ns period).
 //!
 //! # Timing math
 //!
@@ -22,7 +22,7 @@
 //! # Refresh count
 //!
 //! W9825G6KH-6: 8192 rows refreshed within 64 ms.
-//! Per-row interval = 64 ms / 8192 = 750 HCLK3 cycles - 20 safety = 730.
+//! Per-row interval = 64 ms / 8192 * 100 MHz / 1000 = 781 SDCLK cycles - 20 safety = 761.
 //!
 //! # References
 //!
@@ -34,11 +34,16 @@
 
 // ---- Clock ----------------------------------------------------------------
 
-/// FMC kernel clock (HCLK3) in Hz.
+/// FMC clock (SDCLK) in Hz.
 ///
-/// Must match the RCC configuration in `boot.rs`:
-/// `HCLK3 = PLL1P / AHB3_DIV = 480 MHz / 5 = 96 MHz`.
-pub const FMC_CLK_HZ: u32 = 96_000_000;
+/// Derivation from `boot.rs` PLL configuration:
+///   PLL2: HSI(64 MHz) / prediv(8) * mul(100) = 800 MHz VCO
+///   PLL2R = 800 MHz / divr(4) = 200 MHz (FMC kernel clock from RCC)
+///   SDCLK = PLL2R / 2 (FMC internal fixed divider) = 100 MHz
+///
+/// SDCLK = 100 MHz is within the W9825G6KH-6 166 MHz max rating.
+/// FMC_SDTRx timing fields count in SDCLK cycles (~10 ns period).
+pub const FMC_CLK_HZ: u32 = 100_000_000;
 
 // ---- W9825G6KH-6 timing constraints in nanoseconds -----------------------
 // Source: W9825G6KH-6 datasheet Rev I, Table 13 (CL=3, 3.3 V, -6 speed grade)
@@ -72,37 +77,37 @@ pub const CAS_LATENCY: u32 = 3;
 
 // ---- Cycle counts (ceil of ns * FMC_CLK) ---------------------------------
 
-/// tRCD in HCLK3 cycles: ceil(18 ns * 96 MHz) = ceil(1.728) = 2 cycles.
+/// tRCD in SDCLK cycles: ceil(18 ns * 100 MHz) = ceil(1.8) = 2 cycles.
 /// FMC_SDTRx TRCD field (bits 7:4) = TRCD_CYCLES - 1 = 1.
 pub const TRCD_CYCLES: u32 = ns_to_cycles(T_RCD_NS);
 
-/// tRP in HCLK3 cycles: ceil(18 ns * 96 MHz) = ceil(1.728) = 2 cycles.
+/// tRP in SDCLK cycles: ceil(18 ns * 100 MHz) = ceil(1.8) = 2 cycles.
 /// FMC_SDTRx TRP field (bits 15:12) = TRP_CYCLES - 1 = 1.
 pub const TRP_CYCLES: u32 = ns_to_cycles(T_RP_NS);
 
-/// tWR in HCLK3 cycles: ceil(12 ns * 96 MHz) = ceil(1.152) = 2 cycles.
+/// tWR in SDCLK cycles: ceil(12 ns * 100 MHz) = ceil(1.2) = 2 cycles.
 /// FMC_SDTRx TWR field (bits 19:16) = TWR_CYCLES - 1 = 1.
 pub const TWR_CYCLES: u32 = ns_to_cycles(T_WR_NS);
 
-/// tRC in HCLK3 cycles: ceil(60 ns * 96 MHz) = ceil(5.76) = 6 cycles.
+/// tRC in SDCLK cycles: ceil(60 ns * 100 MHz) = ceil(6.0) = 6 cycles.
 /// FMC_SDTRx TRC field (bits 23:20) = TRC_CYCLES - 1 = 5.
 pub const TRC_CYCLES: u32 = ns_to_cycles(T_RC_NS);
 
-/// tXSR in HCLK3 cycles: ceil(70 ns * 96 MHz) = ceil(6.72) = 7 cycles.
+/// tXSR in SDCLK cycles: ceil(70 ns * 100 MHz) = ceil(7.0) = 7 cycles.
 /// FMC_SDTRx TXSR field (bits 11:8) = TXSR_CYCLES - 1 = 6.
 pub const TXSR_CYCLES: u32 = ns_to_cycles(T_XSR_NS);
 
-/// SDRAM auto-refresh interval in HCLK3 cycles (FMC_SDRTR COUNT field).
+/// SDRAM auto-refresh interval in SDCLK cycles (FMC_SDRTR COUNT field).
 ///
-/// count = floor(64 ms * 96 MHz / 1000 / 8192) - 20 = 750 - 20 = 730.
+/// count = floor(64 ms * 100 MHz / 1000 / 8192) - 20 = 781 - 20 = 761.
 /// Safety margin per RM0433 section 22.7.7. 13-bit field: 0-8191.
 pub const REFRESH_COUNT: u32 = compute_refresh_count(FMC_CLK_HZ);
 
 // ---- Const helper functions -----------------------------------------------
 
-/// Convert a timing constraint from nanoseconds to HCLK3 cycles (ceiling).
+/// Convert a timing constraint from nanoseconds to SDCLK cycles (ceiling).
 ///
-/// cycles = ceil(ns * FMC_CLK_HZ / 1_000_000_000)
+/// cycles = ceil(ns * FMC_CLK_HZ / 1_000_000_000)  [SDCLK cycles]
 ///        = (ns * FMC_CLK_HZ + 999_999_999) / 1_000_000_000
 ///
 /// Returns at least 1 (FMC minimum per RM0433 section 22.9.4).
@@ -132,20 +137,20 @@ mod tests {
 
     #[test]
     fn ns_to_cycles_rounds_up() {
-        // 1 ns * 96 MHz = 0.096 -> ceiling = 1
+        // 1 ns * 100 MHz = 0.1 -> ceiling = 1
         assert_eq!(ns_to_cycles(1), 1);
-        // 10 ns * 96 MHz = 0.96 -> ceiling = 1
-        assert_eq!(ns_to_cycles(10), 1);
-        // 11 ns * 96 MHz = 1.056 -> ceiling = 2
+        // 9 ns * 100 MHz = 0.9 -> ceiling = 1
+        assert_eq!(ns_to_cycles(9), 1);
+        // 11 ns * 100 MHz = 1.1 -> ceiling = 2
         assert_eq!(ns_to_cycles(11), 2);
     }
 
     #[test]
     fn ns_to_cycles_exact_boundary() {
-        // ceil(104 ns * 96 MHz) = ceil(9.984) = 10
-        assert_eq!(ns_to_cycles(104), 10);
-        // ceil(105 ns * 96 MHz) = ceil(10.08) = 11
-        assert_eq!(ns_to_cycles(105), 11);
+        // ceil(100 ns * 100 MHz) = ceil(10.0) = 10 (exact)
+        assert_eq!(ns_to_cycles(100), 10);
+        // ceil(101 ns * 100 MHz) = ceil(10.1) = 11
+        assert_eq!(ns_to_cycles(101), 11);
     }
 
     #[test]
@@ -156,40 +161,41 @@ mod tests {
     // -- Individual timing constants ----------------------------------------
 
     #[test]
-    fn trcd_cycles_correct_for_96mhz() {
-        // 18 * 96 = 1728 MHz*ns = 1.728 cycles -> ceil = 2
+    fn trcd_cycles_correct_for_100mhz() {
+        // ceil(18 ns * 100 MHz) = ceil(1.8) = 2 cycles
         assert_eq!(TRCD_CYCLES, 2);
     }
 
     #[test]
-    fn trp_cycles_correct_for_96mhz() {
+    fn trp_cycles_correct_for_100mhz() {
+        // ceil(18 ns * 100 MHz) = ceil(1.8) = 2 cycles
         assert_eq!(TRP_CYCLES, 2);
     }
 
     #[test]
-    fn twr_cycles_correct_for_96mhz() {
-        // 12 * 96 = 1.152 cycles -> ceil = 2
+    fn twr_cycles_correct_for_100mhz() {
+        // ceil(12 ns * 100 MHz) = ceil(1.2) = 2 cycles
         assert_eq!(TWR_CYCLES, 2);
     }
 
     #[test]
-    fn trc_cycles_correct_for_96mhz() {
-        // 60 * 96 = 5.76 cycles -> ceil = 6
+    fn trc_cycles_correct_for_100mhz() {
+        // ceil(60 ns * 100 MHz) = ceil(6.0) = 6 cycles
         assert_eq!(TRC_CYCLES, 6);
     }
 
     #[test]
-    fn txsr_cycles_correct_for_96mhz() {
-        // 70 * 96 = 6.72 cycles -> ceil = 7
+    fn txsr_cycles_correct_for_100mhz() {
+        // ceil(70 ns * 100 MHz) = ceil(7.0) = 7 cycles
         assert_eq!(TXSR_CYCLES, 7);
     }
 
     // -- Refresh count -------------------------------------------------------
 
     #[test]
-    fn refresh_count_is_730() {
-        // floor(64 * 96_000_000 / 1_000 / 8_192) - 20 = 750 - 20 = 730
-        assert_eq!(REFRESH_COUNT, 730);
+    fn refresh_count_is_761() {
+        // floor(64 * 100_000_000 / 1_000 / 8_192) - 20 = 781 - 20 = 761
+        assert_eq!(REFRESH_COUNT, 761);
     }
 
     #[test]
@@ -200,7 +206,8 @@ mod tests {
 
     #[test]
     fn refresh_count_within_20_percent_of_theoretical() {
-        let theoretical: u32 = (64_u64 * 96_000_000 / 1_000 / 8_192) as u32;
+        // theoretical = floor(64ms * 100MHz / 1000 / 8192) = 781
+        let theoretical: u32 = (64_u64 * 100_000_000 / 1_000 / 8_192) as u32;
         let diff = REFRESH_COUNT.abs_diff(theoretical);
         assert!(diff < 150);
     }
@@ -240,20 +247,23 @@ mod tests {
     // -- Clock constant ------------------------------------------------------
 
     #[test]
-    fn fmc_clk_hz_is_96mhz() {
-        assert_eq!(FMC_CLK_HZ, 96_000_000);
+    fn fmc_clk_hz_is_100mhz() {
+        // PLL2: HSI(64 MHz) / prediv(8) * mul(100) / divr(4) = 200 MHz (PLL2R).
+        // FMC internal /2 divider: SDCLK = PLL2R / 2 = 100 MHz.
+        // See boot.rs: PLL2 prediv=DIV8, mul=MUL100, divr=DIV4.
+        assert_eq!(FMC_CLK_HZ, 100_000_000);
     }
 
     // -- compute_refresh_count helper ----------------------------------------
 
     #[test]
     fn compute_refresh_count_matches_const() {
-        assert_eq!(compute_refresh_count(96_000_000), REFRESH_COUNT);
+        assert_eq!(compute_refresh_count(100_000_000), REFRESH_COUNT);
     }
 
     #[test]
-    fn compute_refresh_count_scales_with_clock() {
-        // At 100 MHz: floor(64 * 100_000_000 / 1_000 / 8_192) - 20 = 761
+    fn compute_refresh_count_at_100mhz_is_761() {
+        // floor(64 * 100_000_000 / 1_000 / 8_192) - 20 = 781 - 20 = 761
         assert_eq!(compute_refresh_count(100_000_000), 761);
     }
 

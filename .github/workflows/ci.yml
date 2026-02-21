@@ -1131,3 +1131,63 @@ jobs:
             echo "FAIL: Cargo.toml workspace lints must include: unimplemented = \"deny\""
             exit 1
           fi
+
+
+  # ---------------------------------------------------------------------------
+  # GAP D2: Stub AudioPowerSequencer method call guard
+  #
+  # Belt-and-suspenders check alongside the #[deprecated] attribute on each
+  # stub method. The #[deprecated] attribute generates a compiler warning (or
+  # error with -D deprecated) at the call site. This CI grep catches the case
+  # where a developer suppresses the warning with #[allow(deprecated)] and
+  # still calls the stub in production code.
+  #
+  # Stub variants (mute_dac, enable_amp, unmute_dac, disable_amp,
+  # mute_dac_for_shutdown) must never be called in crates/firmware/src/main.rs.
+  # Only the _with_i2c and _with_gpio variants write to actual hardware.
+  # ---------------------------------------------------------------------------
+  stub-sequencer-guard:
+    name: Verify no stub AudioPowerSequencer calls in main.rs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      - name: Check main.rs does not call stub sequencer methods
+        run: |
+          # Stub AudioPowerSequencer methods must not be called in main.rs.
+          # Production code must use _with_i2c and _with_gpio variants which
+          # actually write to hardware (ES9038Q2M I2C, TPA6120A2 GPIO).
+          # Calling a stub silently skips hardware configuration.
+                    VIOLATIONS=$(grep -En '\.mute_dac\(\)|\.enable_amp\(\)|\.unmute_dac\(\)|\.disable_amp\(\)|\.mute_dac_for_shutdown\(\)' crates/firmware/src/main.rs | grep -v '^[0-9]*:[[:space:]]*//' || true)
+          if [ -n "$VIOLATIONS" ]; then
+            echo "ERROR: Stub AudioPowerSequencer methods called in main.rs."
+            echo "Use _with_i2c or _with_gpio variants for hardware builds."
+            echo ""
+            echo "$VIOLATIONS"
+            exit 1
+          fi
+          echo "OK: No stub AudioPowerSequencer method calls in main.rs"
+  cargo-lock-committed:
+    name: Verify Cargo.lock is committed
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      - name: Verify Cargo.lock exists (not gitignored)
+        run: |
+          if [ ! -f Cargo.lock ]; then
+            echo "ERROR: Cargo.lock is not committed to the repository."
+            echo "Firmware builds must be reproducible. Commit Cargo.lock and"
+            echo "remove it from .gitignore."
+            exit 1
+          fi
+          echo "OK: Cargo.lock is committed"
+
+      - name: Verify .gitignore does not exclude Cargo.lock
+        run: |
+          if grep -qx "Cargo.lock" .gitignore 2>/dev/null; then
+            echo "ERROR: .gitignore excludes Cargo.lock."
+            echo "Remove 'Cargo.lock' from .gitignore for reproducible builds."
+            exit 1
+          fi
+          echo "OK: .gitignore does not exclude Cargo.lock"

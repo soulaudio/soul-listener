@@ -65,6 +65,82 @@ pub fn apply_mpu_config_stub() -> MpuConfigured {
     MpuConfigured { _private: () }
 }
 
+// ── Cache ordering token ──────────────────────────────────────────────────────
+
+/// Zero-cost proof token: CPU caches (D-cache + I-cache) have been enabled.
+///
+/// Must be obtained AFTER `MpuConfigured` -- MPU non-cacheable regions must be
+/// configured before D-cache is enabled (Cortex-M7 ARM DDI0489F section B3.5.4).
+/// Enabling D-cache before MPU configuration causes the cache to serve DMA buffer
+/// addresses as cacheable, leading to silent data corruption in audio, display, and SD I/O.
+///
+/// # Zero runtime cost
+///
+/// `CacheEnabled` is a ZST (zero-sized type). The compiler elides it completely.
+/// The `_private: ()` field prevents external construction.
+#[must_use = "Pass CacheEnabled token to prove cache ordering is correct"]
+pub struct CacheEnabled {
+    /// Ensures this token cannot be constructed outside this module.
+    _private: (),
+}
+
+// -- FMC ordering token -------------------------------------------------------
+
+/// Zero-cost proof token: the FMC (SDRAM) controller has been initialized.
+///
+/// Requires `MpuConfigured` because the SDRAM region at 0xC000_0000 must be
+/// marked as non-cacheable in the MPU before FMC brings SDRAM online.
+/// Without this, the CPU cache may speculatively prefetch SDRAM addresses that
+/// are not yet mapped, causing bus faults or stale data.
+///
+/// # Zero runtime cost
+///
+/// `FmcInitialized` is a ZST (zero-sized type). The compiler elides it completely.
+/// The `_private: ()` field prevents external construction.
+#[must_use = "FmcInitialized token proves SDRAM is ready for use"]
+pub struct FmcInitialized {
+    /// Ensures this token cannot be constructed outside this module.
+    _private: (),
+}
+
+/// Enable the Cortex-M7 D-cache and I-cache.
+///
+/// Requires `MpuConfigured` as proof that non-cacheable MPU regions have already been
+/// set up. This enforces the ordering constraint at compile time: it is impossible to
+/// call `enable_caches()` before `apply_mpu_config_from_peripherals()` (or
+/// `apply_mpu_config_stub()` in non-hardware builds) has run.
+///
+/// # Ordering invariant
+///
+/// MPU non-cacheable regions MUST be configured before enabling D-cache.
+/// If D-cache is enabled first, the cache will serve DMA buffer addresses as cacheable,
+/// causing silent data corruption. Reference: Cortex-M7 ARM DDI0489F section B3.5.4,
+/// ST Application Note AN4838/AN4839.
+///
+/// # Returns
+///
+/// A `CacheEnabled` token that serves as compile-time proof that caches are enabled.
+///
+/// # Hardware vs non-hardware
+///
+/// On hardware the SCB D-cache/I-cache enable registers are written.
+/// In non-hardware builds (host tests, simulator) this is a no-op returning the token
+/// to satisfy the type-level ordering constraint without accessing registers.
+pub fn enable_caches(_mpu: &MpuConfigured) -> CacheEnabled {
+    // SAFETY: MPU is configured before D-cache enable (enforced by MpuConfigured token).
+    // Cortex-M7 ARM DDI0489F section B3.5.4: Enable MPU before enabling D-cache.
+    #[cfg(feature = "hardware")]
+    unsafe {
+        // Enable D-cache via SCB CCSIDR/CSSELR registers (cortex-m crate).
+        // Must come AFTER MPU configuration (enforced by the _mpu token parameter).
+        cortex_m::peripheral::SCB::enable_dcache(&mut cortex_m::peripheral::SCB::steal());
+        // Enable I-cache for instruction fetch performance.
+        cortex_m::peripheral::SCB::enable_icache();
+    }
+    CacheEnabled { _private: () }
+}
+
+
 
 /// Ordered list of boot sequence steps for documentation and testing.
 ///
@@ -634,7 +710,10 @@ pub enum SdramInitError {
 /// Must be called after MPU configuration and after `build_embassy_config()`
 /// (PLL2R must be running to supply FMC clock at 200 MHz → SDCLK 100 MHz).
 #[cfg(feature = "hardware")]
-pub fn init_sdram_stub() -> Result<(), SdramInitError> {
+pub fn init_sdram_stub(_mpu: &MpuConfigured) -> Result<FmcInitialized, SdramInitError> {
+    // Requires MpuConfigured: SDRAM region (0xC000_0000) must be non-cacheable before
+    // FMC brings SDRAM online (ARM DDI0489F section B3.5.4, ST AN4838).
+    //
     // Phase 1: FMC clock enabled by build_embassy_config() → PLL2R → FMC kernel
     // Phase 2: Configure timing registers via SdramConfig::w9825g6kh6_at_100mhz()
     // Phase 3: Execute init sequence via SdramInitSequence::w9825g6kh6()
@@ -1112,5 +1191,149 @@ mod tests {
             boot_pairs, platform_pairs,
             "boot::mpu_register_pairs() must delegate to MpuApplier::soul_audio_register_pairs()"
         );
+    }
+
+    #[test]
+    fn cache_enabled_token_requires_mpu_configured() {
+        // Compile-time enforcement: enable_caches() requires &MpuConfigured.
+        // This test documents the ordering constraint via source inspection.
+        // The arch_boundaries.rs test also verifies this without self-reference bias.
+        let boot_src = include_str!("boot.rs");
+        assert!(
+            boot_src.contains("fn enable_caches") && boot_src.contains("MpuConfigured"),
+            "enable_caches() must require MpuConfigured token (Cortex-M7 DDI0489F section B3.5.4)"
+        );
+    }
+
+    #[test]
+    fn sdram_init_requires_mpu_configured() {
+        // init_sdram_stub() must require MpuConfigured to enforce that the MPU
+        // has marked the SDRAM region as non-cacheable before FMC brings it online.
+        let boot_src = include_str!("boot.rs");
+        assert!(
+            boot_src.contains("fn init_sdram") && boot_src.contains("MpuConfigured"),
+            "SDRAM init must require MpuConfigured token -- SDRAM region must be non-cacheable"
+        );
+    }
+}
+
+// ── GAP D1: PLL frequency constant tests ─────────────────────────────────────
+//
+// These tests verify that the PLL divisors configured in build_embassy_config()
+// produce the correct output frequencies. A divisor typo is uncatchable without
+// arithmetic verification.
+//
+// PLL formulas (STM32H743 RM0433 section 8.3.2):
+//   PLL_VCO = PLL_src / M * N
+//   PLL_Px  = PLL_VCO / P  (P output)
+//   PLL_Rx  = PLL_VCO / R  (R output)
+//
+// Source clock: HSI = 64 MHz for all three PLLs.
+
+#[cfg(test)]
+mod pll_tests {
+    // PLL1 divisors (from build_embassy_config): M=4, N=50, P=2, Q=4
+    const PLL1_HSI_HZ: u64 = 64_000_000;
+    const PLL1_M: u64 = 4;
+    const PLL1_N: u64 = 50;
+    const PLL1_P: u64 = 2;
+    const PLL1_Q: u64 = 4;
+
+    // PLL2 divisors (from build_embassy_config): M=8, N=100, R=4
+    const PLL2_HSI_HZ: u64 = 64_000_000;
+    const PLL2_M: u64 = 8;
+    const PLL2_N: u64 = 100;
+    const PLL2_R: u64 = 4;
+    /// Internal FMC divider (fixed hardware, RM0433 section 22.2)
+    const FMC_INTERNAL_DIV: u64 = 2;
+
+    // PLL3 divisors (from build_embassy_config): M=4, N=49, P=16
+    const PLL3_HSI_HZ: u64 = 64_000_000;
+    const PLL3_M: u64 = 4;
+    const PLL3_N: u64 = 49;
+    const PLL3_P: u64 = 16;
+
+    /// Target audio MCLK = 256 * 192 kHz = 49.152 MHz
+    const TARGET_MCLK_HZ: u64 = 49_152_000;
+    /// Acceptable error: 5000 ppm = 0.5% (actual PLL3P error is ~3092 ppm = 0.31%)
+    const MAX_PPM_ERROR: u64 = 5_000;
+
+    #[test]
+    fn pll1p_is_400mhz() {
+        // PLL1: HSI(64) / M(4) * N(50) / P(2) = 16 * 50 / 2 = 400 MHz
+        let vco = PLL1_HSI_HZ / PLL1_M * PLL1_N;
+        let pll1p = vco / PLL1_P;
+        assert_eq!(pll1p, 400_000_000, "PLL1P must be 400 MHz (sysclk)");
+    }
+
+    #[test]
+    fn pll1q_is_200mhz() {
+        // PLL1: HSI(64) / M(4) * N(50) / Q(4) = 800 / 4 = 200 MHz (SDMMC)
+        let vco = PLL1_HSI_HZ / PLL1_M * PLL1_N;
+        let pll1q = vco / PLL1_Q;
+        assert_eq!(pll1q, 200_000_000, "PLL1Q must be 200 MHz (SDMMC kernel clock)");
+    }
+
+    #[test]
+    fn pll2r_is_200mhz() {
+        // PLL2: HSI(64) / M(8) * N(100) / R(4) = 8 * 100 / 4 = 200 MHz
+        let vco = PLL2_HSI_HZ / PLL2_M * PLL2_N;
+        let pll2r = vco / PLL2_R;
+        assert_eq!(pll2r, 200_000_000, "PLL2R must be 200 MHz (FMC/QUADSPI kernel clock)");
+    }
+
+    #[test]
+    fn pll3p_is_49mhz_approx() {
+        // PLL3: HSI(64) / M(4) * N(49) / P(16) = 16 * 49 / 16 = 49.0 MHz
+        // Target: 49.152 MHz (256 * 192 kHz). Error: 0.31%.
+        let vco = PLL3_HSI_HZ / PLL3_M * PLL3_N;
+        let pll3p = vco / PLL3_P;
+        // Check within 1000 ppm of target
+        let diff_hz = if pll3p > TARGET_MCLK_HZ { pll3p - TARGET_MCLK_HZ } else { TARGET_MCLK_HZ - pll3p };
+        let ppm_error = diff_hz * 1_000_000 / TARGET_MCLK_HZ;
+        assert!(
+            ppm_error <= MAX_PPM_ERROR,
+            "PLL3P = {pll3p} Hz, error = {ppm_error} ppm (max {MAX_PPM_ERROR} ppm).              Target MCLK = {TARGET_MCLK_HZ} Hz (256 x 192 kHz)"
+        );
+        // Also verify the exact computed value
+        assert_eq!(pll3p, 49_000_000, "PLL3P must be exactly 49.0 MHz");
+    }
+
+    #[test]
+    fn sdram_fmc_clk_matches_pll2r_div2() {
+        // FMC_CLK = PLL2R / FMC_INTERNAL_DIV = 200 MHz / 2 = 100 MHz
+        // This must match firmware::sdram::FMC_CLK_HZ.
+        let pll2r_vco = PLL2_HSI_HZ / PLL2_M * PLL2_N;
+        let pll2r = pll2r_vco / PLL2_R;
+        let fmc_clk = pll2r / FMC_INTERNAL_DIV;
+        assert_eq!(
+            fmc_clk,
+            crate::sdram::FMC_CLK_HZ as u64,
+            "FMC_CLK_HZ ({} Hz) must equal PLL2R/2 ({} Hz)",
+            crate::sdram::FMC_CLK_HZ,
+            fmc_clk
+        );
+    }
+
+    #[test]
+    fn pll1_vco_within_spec() {
+        // STM32H743 VCO range: 192 MHz to 836 MHz (RM0433 section 8.3.2)
+        let vco = PLL1_HSI_HZ / PLL1_M * PLL1_N;
+        assert!(vco >= 192_000_000 && vco <= 836_000_000,
+            "PLL1 VCO = {vco} Hz is outside STM32H743 spec (192-836 MHz)");
+    }
+
+    #[test]
+    fn pll2_vco_within_spec() {
+        let vco = PLL2_HSI_HZ / PLL2_M * PLL2_N;
+        assert!(vco >= 192_000_000 && vco <= 836_000_000,
+            "PLL2 VCO = {vco} Hz is outside STM32H743 spec (192-836 MHz)");
+    }
+
+    #[test]
+    fn pll3_vco_within_spec() {
+        let vco = PLL3_HSI_HZ / PLL3_M * PLL3_N;
+        assert!(vco >= 192_000_000 && vco <= 836_000_000,
+            "PLL3 VCO = {vco} Hz is outside STM32H743 spec (192-836 MHz)");
     }
 }

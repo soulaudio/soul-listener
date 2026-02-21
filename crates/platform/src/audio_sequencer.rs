@@ -37,6 +37,10 @@ impl AudioPowerSequencer<DacOutputting> {
     /// Mute the DAC (set ATT registers to 0xFF) before enabling the amplifier.
     ///
     /// Stub variant: no I2C write. Use `mute_dac_with_i2c` in production firmware.
+    #[deprecated(
+        since = "0.1.0",
+        note = "Use mute_dac_with_i2c() for hardware builds. This stub does nothing."
+    )]
     #[must_use]
     pub fn mute_dac(self) -> AudioPowerSequencer<DacMuted> {
         AudioPowerSequencer { _state: PhantomData }
@@ -65,6 +69,10 @@ impl AudioPowerSequencer<DacMuted> {
     /// Enable the headphone amplifier (raise TPA6120A2 SHUTDOWN pin).
     ///
     /// Stub variant: no GPIO write. Use `enable_amp_with_gpio` in production firmware.
+    #[deprecated(
+        since = "0.1.0",
+        note = "Use enable_amp_with_gpio() for hardware builds. This stub does nothing."
+    )]
     #[must_use]
     pub fn enable_amp(self) -> AudioPowerSequencer<AmpEnabled> {
         AudioPowerSequencer { _state: PhantomData }
@@ -89,6 +97,10 @@ impl AudioPowerSequencer<DacMuted> {
     /// Disable amplifier during power-down (returns to initial state).
     ///
     /// Stub variant: no GPIO write. Use `disable_amp_with_gpio` in production firmware.
+    #[deprecated(
+        since = "0.1.0",
+        note = "Use disable_amp_with_gpio() for hardware builds. This stub does nothing."
+    )]
     #[must_use]
     pub fn disable_amp(self) -> AudioPowerSequencer<DacOutputting> {
         AudioPowerSequencer { _state: PhantomData }
@@ -115,6 +127,10 @@ impl AudioPowerSequencer<AmpEnabled> {
     /// Unmute the DAC (restore ATT registers to desired volume level).
     ///
     /// Stub variant: no I2C write. Use `unmute_dac_with_i2c` in production firmware.
+    #[deprecated(
+        since = "0.1.0",
+        note = "Use unmute_dac_with_i2c() for hardware builds. This stub does nothing."
+    )]
     #[must_use]
     pub fn unmute_dac(self) -> AudioPowerSequencer<FullyOn> {
         AudioPowerSequencer { _state: PhantomData }
@@ -143,6 +159,10 @@ impl AudioPowerSequencer<FullyOn> {
     /// Mute the DAC as the first step of power-down.
     ///
     /// Stub variant: no I2C write. Use `mute_dac_for_shutdown_with_i2c` in production firmware.
+    #[deprecated(
+        since = "0.1.0",
+        note = "Use mute_dac_for_shutdown_with_i2c() for hardware builds. This stub does nothing."
+    )]
     #[must_use]
     pub fn mute_dac_for_shutdown(self) -> AudioPowerSequencer<DacMuted> {
         AudioPowerSequencer { _state: PhantomData }
@@ -172,6 +192,7 @@ impl Default for AudioPowerSequencer<DacOutputting> {
 }
 
 #[cfg(test)]
+#[allow(deprecated)] // Tests legitimately exercise stub methods to verify typestate transitions
 mod tests {
     use super::*;
     use crate::es9038q2m::{ATT_FULL_VOLUME, ATT_MUTED, REG_ATT_L, REG_ATT_R};

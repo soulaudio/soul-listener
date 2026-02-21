@@ -8,6 +8,9 @@
 //!   1. Mute DAC (Es9038q2m)
 //!   2. Enable amp (Tpa6120a2)  — ONLY callable after step 1
 //!   3. Unmute DAC              — ONLY callable after step 2
+// These tests deliberately call stub methods to verify typestate transitions.
+// Stubs are #[deprecated] in production but valid for testing sequencing logic.
+#![allow(deprecated)]
 
 use platform::audio_sequencer::{AmpEnabled, AudioPowerSequencer, DacMuted, FullyOn};
 
