@@ -2985,3 +2985,112 @@ fn builder_rs_has_no_debug_format_in_production_paths() {
         violations.iter().map(|(i, _)| i + 1).collect::<Vec<_>>()
     );
 }
+
+// ── SdramRegion / HighLatencyRegion boundary tests ───────────────────────────
+
+#[test]
+fn sdram_region_is_not_dma_accessible() {
+    // SdramRegion must NOT implement DmaAccessible — external SDRAM has variable
+    // latency that violates real-time audio DMA timing constraints.
+    let dma_safety_src = std::fs::read_to_string(
+        concat!(env!("CARGO_MANIFEST_DIR"), "/../platform/src/dma_safety.rs")
+    ).unwrap();
+    assert!(dma_safety_src.contains("SdramRegion"),
+        "dma_safety.rs must define SdramRegion");
+    // Must explicitly NOT implement DmaAccessible for SdramRegion
+    // (absence of impl DmaAccessible for SdramRegion enforces this)
+    assert!(!dma_safety_src.contains("impl DmaAccessible for SdramRegion"),
+        "SdramRegion must NOT implement DmaAccessible — SDRAM latency violates real-time DMA");
+}
+
+#[test]
+fn high_latency_region_trait_exists() {
+    let dma_safety_src = std::fs::read_to_string(
+        concat!(env!("CARGO_MANIFEST_DIR"), "/../platform/src/dma_safety.rs")
+    ).unwrap();
+    assert!(dma_safety_src.contains("HighLatencyRegion"),
+        "dma_safety.rs must define HighLatencyRegion marker trait");
+    assert!(dma_safety_src.contains("impl HighLatencyRegion for SdramRegion"),
+        "SdramRegion must implement HighLatencyRegion to mark it as unsuitable for real-time DMA");
+}
+
+#[test]
+fn sdram_region_constants_are_correct() {
+    assert_eq!(platform::dma_safety::EXTSDRAM_BASE, 0xC000_0000u32,
+        "External SDRAM must be at FMC bank 5 base address 0xC0000000");
+    assert_eq!(platform::dma_safety::EXTSDRAM_SIZE_BYTES, 32 * 1024 * 1024,
+        "External SDRAM is 32 MB (W9825G6KH-6)");
+}
+
+// ---- firmware::sdram 96 MHz timing boundary tests -------------------------
+
+#[test]
+fn sdram_timing_module_exists() {
+    let path = std::path::Path::new(
+        concat!(env!("CARGO_MANIFEST_DIR"), "/src/sdram.rs")
+    );
+    assert!(path.exists(), "sdram.rs must exist with FMC timing constants");
+}
+
+#[test]
+fn sdram_fmc_clk_matches_rcc_config() {
+    // FMC clock must match what boot.rs configures for HCLK3.
+    assert_eq!(
+        firmware::sdram::FMC_CLK_HZ,
+        96_000_000,
+        "FMC clock must be 96 MHz (HCLK3 = 480 MHz / 5)"
+    );
+}
+
+#[test]
+fn sdram_refresh_count_is_correct() {
+    // 64 ms * 96 MHz / 1000 / 8192 - 20 = 730
+    let count = firmware::sdram::REFRESH_COUNT;
+    assert!(
+        count >= 700 && count <= 760,
+        "SDRAM refresh count must be 700-760 at 96 MHz FMC clock, got {count}"
+    );
+}
+
+#[test]
+fn sdram_cas_latency_documented() {
+    assert!(
+        firmware::sdram::CAS_LATENCY >= 2 && firmware::sdram::CAS_LATENCY <= 3,
+        "CAS latency must be 2 or 3 for W9825G6KH-6"
+    );
+}
+
+#[test]
+fn sdram_timing_trcd_is_two_cycles_at_96mhz() {
+    // 18 ns * 96 MHz = 1.728 -> ceil = 2
+    assert_eq!(firmware::sdram::TRCD_CYCLES, 2);
+}
+
+#[test]
+fn sdram_timing_trc_is_six_cycles_at_96mhz() {
+    // 60 ns * 96 MHz = 5.76 -> ceil = 6
+    assert_eq!(firmware::sdram::TRC_CYCLES, 6);
+}
+
+#[test]
+fn sdram_timing_txsr_is_seven_cycles_at_96mhz() {
+    // 70 ns * 96 MHz = 6.72 -> ceil = 7
+    assert_eq!(firmware::sdram::TXSR_CYCLES, 7);
+}
+
+#[test]
+fn integration_boot_sequence_test_exists() {
+    // Verify the integration_boot_sequence.rs test file exists.
+    // This file contains 20 tests that cover the complete boot sequence
+    // using mock I2C (MockI2cBus) and mock GPIO (MockOutputPin).
+    //
+    // If this test fails, the integration_boot_sequence.rs file has been
+    // deleted or moved -- restore it before merging.
+    let path = std::path::Path::new(
+        concat!(env!("CARGO_MANIFEST_DIR"), "/tests/integration_boot_sequence.rs")
+    );
+    assert!(
+        path.exists(),
+        "integration_boot_sequence.rs must exist -- verifies full boot sequence with mock peripherals"
+    );
+}

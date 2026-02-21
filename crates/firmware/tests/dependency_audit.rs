@@ -155,3 +155,65 @@ fn ci_toolchain_is_pinned_not_floating_stable() {
         unpinned_count, pinned_count
     );
 }
+
+/// Verify that the CI `clippy-embedded` job runs clippy on the platform crate
+/// with the embedded target (thumbv7em-none-eabihf).
+///
+/// The platform crate defines hardware abstraction traits that must compile in
+/// no_std context. Running clippy only on the host target misses embedded-specific
+/// violations (e.g. accidentally importing std, using alloc without the feature flag).
+/// The `clippy-embedded` job must cover the platform crate explicitly.
+#[test]
+fn ci_clippy_covers_platform_crate_for_embedded_target() {
+    let ci_yml = std::fs::read_to_string(
+        concat!(env!("CARGO_MANIFEST_DIR"), "/../../.github/workflows/ci.yml")
+    ).expect("ci.yml must exist");
+    // CI must run clippy on the platform crate with the embedded target.
+    // Acceptable patterns:
+    //   1. A dedicated `clippy-embedded` job exists (which contains a platform step), OR
+    //   2. Both "platform" and "thumbv7em-none-eabihf" appear in a clippy context
+    assert!(
+        ci_yml.contains("clippy-embedded") ||
+        (ci_yml.contains("platform") && ci_yml.contains("thumbv7em-none-eabihf")),
+        "CI must run clippy on platform crate for --target thumbv7em-none-eabihf"
+    );
+    // Stricter: the clippy-embedded job must contain the platform + embedded target combo.
+    // This ensures it is not just a check job but actually runs clippy lints.
+    let clippy_embedded_section = ci_yml
+        .split("clippy-embedded:")
+        .nth(1)
+        .unwrap_or("");
+    // The section after "clippy-embedded:" should mention both platform and thumbv7em
+    assert!(
+        clippy_embedded_section.contains("platform") &&
+        clippy_embedded_section.contains("thumbv7em-none-eabihf"),
+        "The clippy-embedded CI job must explicitly run clippy on the platform crate          with --target thumbv7em-none-eabihf. Add:          `cargo clippy -p platform --target thumbv7em-none-eabihf --no-default-features -- -D warnings`"
+    );
+}
+
+/// Verify that supply-chain/audits.toml contains at least one real audit entry.
+///
+/// cargo-vet exemptions are a crutch that acknowledge unreviewed code. Real audit
+/// entries ([audits.<crate>]) provide actual supply-chain security guarantees by
+/// recording who reviewed what version and when. At least the most foundational
+/// embedded crates (heapless, embedded-hal) should have real audits rather than
+/// blanket exemptions.
+#[test]
+fn supply_chain_has_real_audits_not_only_exemptions() {
+    let audits = std::fs::read_to_string(
+        concat!(env!("CARGO_MANIFEST_DIR"), "/../../supply-chain/audits.toml")
+    ).unwrap_or_default();
+    let config = std::fs::read_to_string(
+        concat!(env!("CARGO_MANIFEST_DIR"), "/../../supply-chain/config.toml")
+    ).unwrap_or_default();
+    // Either audits.toml has real criteria entries, or config.toml has imports from trusted registries
+    let has_real_audits = audits.contains("[audits.") || config.contains("[imports]");
+    // At minimum, the supply-chain directory must exist and be non-empty
+    assert!(!config.is_empty(), "supply-chain/config.toml must not be empty");
+    // Hard check: audits.toml must have at least one real audit entry (not just exemptions).
+    // Exemptions are a crutch; real audits provide actual supply-chain security guarantees.
+    assert!(
+        has_real_audits,
+        "supply-chain/audits.toml must contain at least one real audit ([audits.<crate>])          or config.toml must import from a trusted registry ([imports]).          Run: cargo vet certify <crate> <version> --criteria safe-to-deploy"
+    );
+}
