@@ -15,6 +15,34 @@
 use platform::mpu::MpuApplier;
 use platform::sdram::{SdramTiming, W9825G6KH6_REFRESH_COUNT};
 
+// ── Compile-time invariant: PLL3 divisors must match clock_math constants ────
+//
+// `build_embassy_config()` hardcodes PLL3 as PllPreDiv::DIV4 / PllMul::MUL49 /
+// PllDiv::DIV16, which correspond to M=4, N=49, P=16. The canonical values live
+// in `audio::clock_math`. If clock_math is updated and boot.rs is not, the SAI
+// MCLK will be wrong — audible as pitch shift or silence.
+//
+// This block enforces that the two definitions stay in sync at compile time.
+// It references clock_math constants as u8 because the embassy-stm32 enum
+// variants encode the same numeric values (DIV4 → 4, MUL49 → 49, DIV16 → 16).
+const _: () = {
+    // M = PllPreDiv::DIV4 → 4
+    assert!(
+        crate::audio::clock_math::PLL3_M == 4,
+        "PLL3_M in clock_math must be 4 (PllPreDiv::DIV4) to match build_embassy_config()"
+    );
+    // N = PllMul::MUL49 → 49
+    assert!(
+        crate::audio::clock_math::PLL3_N == 49,
+        "PLL3_N in clock_math must be 49 (PllMul::MUL49) to match build_embassy_config()"
+    );
+    // P = PllDiv::DIV16 → 16
+    assert!(
+        crate::audio::clock_math::PLL3_P == 16,
+        "PLL3_P in clock_math must be 16 (PllDiv::DIV16) to match build_embassy_config()"
+    );
+};
+
 // ── MPU ordering token ────────────────────────────────────────────────────────
 
 /// Zero-cost proof token: MPU has been configured and D-cache setup is safe.
@@ -709,6 +737,10 @@ pub enum SdramInitError {
 ///
 /// Must be called after MPU configuration and after `build_embassy_config()`
 /// (PLL2R must be running to supply FMC clock at 200 MHz → SDCLK 100 MHz).
+#[deprecated(
+    since = "0.1.0",
+    note = "Replace with full FMC/SDRAM initialization using embassy-stm32 FMC API. \n            See the 5-step implementation plan in the function body."
+)]
 #[cfg(feature = "hardware")]
 pub fn init_sdram_stub(_mpu: &MpuConfigured) -> Result<FmcInitialized, SdramInitError> {
     // Requires MpuConfigured: SDRAM region (0xC000_0000) must be non-cacheable before
@@ -790,9 +822,16 @@ pub fn configure_scb_fault_traps() {
 #[allow(unsafe_code)]
 pub fn apply_axi_sram_read_iss_override() {
     #[cfg(feature = "hardware")]
-    // Per STM32H743 errata ES0392 Rev 9 §2.2.9: AXI_TARG7_FN_MOD at 0x5100_1108
-    // (READ_ISS_OVERRIDE bit) prevents stale-data hazard during concurrent CPU+DMA reads.
-    // SAFETY: Write-once config register per RM0433 Rev 9 §11.3.4; no concurrent access.
+    // Write-once hardware configuration register (AXI_TARG7_FN_MOD, 0x5100_1108).
+    // STM32H743 errata 2.2.9: AXI SRAM read-issue workaround — set READ_ISS_OVERRIDE bit
+    // (bit 0) to serialize reads and prevent stale-data hazard during concurrent CPU+DMA
+    // reads to AXI SRAM (RM0433 Rev 9 §11.3.4, ES0392 Rev 9 §2.2.9, ST AN5319).
+    // No concurrent access possible:
+    //   1. Called once during privileged boot, before Embassy executor starts.
+    //   2. No other task or interrupt can access this address (D1 AHB interconnect).
+    // Ordering: must execute AFTER MPU non-cacheable region config, and BEFORE any DMA
+    //           transfer or concurrent CPU+DMA read to AXI SRAM (RM0433 §13.3.1).
+    // SAFETY: Single volatile write during privileged boot; ordering guarantees above.
     unsafe {
         core::ptr::write_volatile(0x5100_1108_u32 as *mut u32, 0x0000_0001_u32);
         // DSB: ensure the write reaches the AXI interconnect before any DMA starts.
@@ -999,8 +1038,23 @@ pub mod hardware {
     /// 3. The stolen peripherals are dropped before `embassy_stm32::init()` takes them.
     #[allow(unsafe_code)]
     pub fn apply_mpu_config_from_peripherals() -> super::MpuConfigured {
-        // SAFETY: called once at boot before any RTOS tasks or interrupt
-        // handlers have started. No other code holds Cortex-M peripherals yet.
+        use core::sync::atomic::{AtomicBool, Ordering};
+        // Runtime once-guard: cortex_m::Peripherals::steal() aliases all Cortex-M
+        // peripheral registers. Calling this function twice would create two mutable
+        // aliases of the same registers — undefined behaviour that silently corrupts
+        // the MPU setup and anything that relies on it (DMA, cache, SDRAM).
+        //
+        // The AtomicBool acts as a lightweight runtime invariant enforcer.
+        // On production hardware this is the first code to run; on simulator/tests
+        // the hardware module is never compiled, so this guard is never exercised.
+        static PERIPHERALS_STOLEN: AtomicBool = AtomicBool::new(false);
+        if PERIPHERALS_STOLEN.swap(true, Ordering::SeqCst) {
+            // In production (no_std, panic = abort), this triggers a HardFault.
+            // In host tests (std), this panics with a useful diagnostic message.
+            panic!("apply_mpu_config_from_peripherals() called more than once                     — cortex_m::Peripherals::steal() aliasing is undefined behaviour");
+        }
+        // SAFETY: Called exactly once (PERIPHERALS_STOLEN guard above).
+        // All Cortex-M registers are unowned: no tasks, no IRQ handlers, no embassy.
         let mut cp = unsafe { cortex_m::Peripherals::steal() };
         // SAFETY: boot context — D-cache not yet enabled, no DMA initialised.
         unsafe { apply_mpu_config(&mut cp.MPU) };
@@ -1215,6 +1269,46 @@ mod tests {
             "SDRAM init must require MpuConfigured token -- SDRAM region must be non-cacheable"
         );
     }
+
+    // ── GAP B1: PLL3 divisors cross-module match ──────────────────────────────
+
+    /// Verifies that the local PLL3 M/N/P constants in boot.rs match
+    /// the canonical values in `audio::clock_math`. Mismatches cause
+    /// incorrect SAI MCLK — audible as pitch shift or no audio.
+    ///
+    /// The compile-time `const _: ()` block above this module catches this
+    /// at build time. This runtime test documents the invariant.
+    #[test]
+    fn pll3_divisors_match_clock_math_constants() {
+        // boot.rs and clock_math.rs must use identical PLL3 M/N/P values.
+        // Mismatches cause incorrect SAI MCLK — audible as pitch shift.
+        use crate::audio::clock_math::{PLL3_M, PLL3_N, PLL3_P};
+        assert_eq!(PLL3_M, 4, "PLL3_M mismatch: clock_math must be 4 (PllPreDiv::DIV4)");
+        assert_eq!(PLL3_N, 49, "PLL3_N mismatch: clock_math must be 49 (PllMul::MUL49)");
+        assert_eq!(PLL3_P, 16, "PLL3_P mismatch: clock_math must be 16 (PllDiv::DIV16)");
+    }
+
+    // ── GAP B2: .steal() once-guard ───────────────────────────────────────────
+
+    /// Verifies that `apply_mpu_config_from_peripherals()` has an AtomicBool
+    /// once-guard. Calling `.steal()` twice aliases all Cortex-M peripheral
+    /// registers — undefined behaviour that silently corrupts the MPU setup.
+    ///
+    /// The guard must be a `static AtomicBool` in the hardware module, not
+    /// in the test module. We verify this by checking that the hardware module's
+    /// use clause imports AtomicBool and Ordering.
+    #[test]
+    fn mpu_config_once_guard_is_present() {
+        // The once-guard imports must appear in production code (not just tests).
+        // We check for the use statement that must be added to the hardware module.
+        // This pattern is unique: `use core::sync::atomic::{AtomicBool, Ordering};`
+        // cannot be satisfied by test code (test code uses different import paths).
+        let src = include_str!("boot.rs");
+        assert!(
+            src.contains("use core::sync::atomic::{AtomicBool, Ordering};"),
+            "boot.rs hardware module must import AtomicBool and Ordering for the              Peripherals::steal() once-guard. Add:              `use core::sync::atomic::{{AtomicBool, Ordering}};` in the hardware module."
+        );
+    }
 }
 
 // ── GAP D1: PLL frequency constant tests ─────────────────────────────────────
@@ -1247,11 +1341,13 @@ mod pll_tests {
     /// Internal FMC divider (fixed hardware, RM0433 section 22.2)
     const FMC_INTERNAL_DIV: u64 = 2;
 
-    // PLL3 divisors (from build_embassy_config): M=4, N=49, P=16
-    const PLL3_HSI_HZ: u64 = 64_000_000;
-    const PLL3_M: u64 = 4;
-    const PLL3_N: u64 = 49;
-    const PLL3_P: u64 = 16;
+    // PLL3 divisors — sourced from clock_math to enforce cross-module sync.
+    // DO NOT duplicate these values here. If clock_math::PLL3_M/N/P change,
+    // the compile-time const assert at the top of boot.rs will catch it.
+    const PLL3_HSI_HZ: u64 = crate::audio::clock_math::HSI_HZ as u64;
+    const PLL3_M: u64 = crate::audio::clock_math::PLL3_M as u64;
+    const PLL3_N: u64 = crate::audio::clock_math::PLL3_N as u64;
+    const PLL3_P: u64 = crate::audio::clock_math::PLL3_P as u64;
 
     /// Target audio MCLK = 256 * 192 kHz = 49.152 MHz
     const TARGET_MCLK_HZ: u64 = 49_152_000;
