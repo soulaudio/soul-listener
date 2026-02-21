@@ -21,6 +21,9 @@ pub mod track;
 #[cfg(feature = "std")]
 pub mod writer;
 
+pub mod reader;
+pub use reader::{ReaderError, SoulLibraryReader};
+
 // Top-level re-exports for convenience
 pub use binary::{IndexEntry, LibraryError, ManifestBin, TrackMeta, sort_key_for};
 pub use index::{FullIndex, IndexError, SmallIndex, TrackIndex, MAX_TRACKS};
