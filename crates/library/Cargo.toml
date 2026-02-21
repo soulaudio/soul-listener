@@ -8,6 +8,13 @@ license.workspace = true
 [dependencies]
 platform = { path = "../platform" }
 heapless = { workspace = true }
+postcard  = { workspace = true }
+crc32fast = { workspace = true }
+serde     = { version = "1", default-features = false, features = ["derive"] }
+
+[dev-dependencies]
+tempfile = "3"
+tokio = { workspace = true }
 
 [features]
 default = []

@@ -10,6 +10,7 @@ anyhow = "1.0.100"
 notify = "9.0.0-rc.1"
 colored = "3.0"
 platform = { path = "../crates/platform" }
+walkdir = { workspace = true }
 
 # Optional: Desktop notifications (cross-platform)
 notify-rust = { version = "4.12", optional = true }
