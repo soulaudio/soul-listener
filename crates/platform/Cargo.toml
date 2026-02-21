@@ -33,6 +33,7 @@ thiserror-no-std.workspace = true
 
 [dev-dependencies]
 tokio = { workspace = true, features = ["macros", "rt", "time"] }
+tempfile = "3"
 proptest = "1"
 # Provides the embassy-time std time-driver + software timer queue so that
 # `cargo test -p platform` links without an embedded HAL driver.
