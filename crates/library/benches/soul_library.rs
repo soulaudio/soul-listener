@@ -52,10 +52,10 @@ fn make_meta(n: u32) -> TrackMeta {
         channels: 2,
         duration_secs: 240,
         sample_rate: 44_100,
-        title: heapless::String::try_from(title.as_str()).unwrap_or_default(),
-        artist: heapless::String::try_from(artist.as_str()).unwrap_or_default(),
-        album: heapless::String::try_from(album.as_str()).unwrap_or_default(),
-        file_path: heapless::String::try_from(file_path.as_str()).unwrap_or_default(),
+        title: heapless::String::try_from(title.as_str()).unwrap(),
+        artist: heapless::String::try_from(artist.as_str()).unwrap(),
+        album: heapless::String::try_from(album.as_str()).unwrap(),
+        file_path: heapless::String::try_from(file_path.as_str()).unwrap(),
     }
 }
 
@@ -82,9 +82,10 @@ fn build_temp_library(track_count: u32) -> TempDir {
 // Benchmarks
 // ---------------------------------------------------------------------------
 
-fn bench_binary_search(c: &mut Criterion) {
+fn bench_open_and_search(c: &mut Criterion) {
+    // Each iteration includes manifest open + binary search seek
     let rt = Builder::new_current_thread().enable_all().build().unwrap();
-    let mut group = c.benchmark_group("binary_search");
+    let mut group = c.benchmark_group("open_and_search");
     group.measurement_time(Duration::from_secs(10));
 
     for track_count in [1_000u32, 10_000, 100_000] {
@@ -98,7 +99,8 @@ fn bench_binary_search(c: &mut Criterion) {
                 b.to_async(&rt).iter(|| async {
                     let storage = LocalFileStorage::new(root);
                     let mut reader = SoulLibraryReader::open(storage, root).await.unwrap();
-                    // "Artist 05" is middle of alphabet — exercises binary search fully
+                    // "Artist 05" → 6-byte prefix "artist" matches all entries; binary search
+                    // finds lower bound at 0, then scans 64 results (cap). Tests O(log N) seek work.
                     let _ = reader.search_by_artist("Artist 05").await.unwrap();
                 });
             },
@@ -125,6 +127,7 @@ fn bench_scan_write(c: &mut Criterion) {
     let mut group = c.benchmark_group("scan_write");
     group.measurement_time(Duration::from_secs(15));
 
+    // 100k excluded: write time per iteration would produce too few samples in a 15s window
     for track_count in [1_000u32, 10_000] {
         group.bench_with_input(
             BenchmarkId::new("tracks", track_count),
@@ -159,5 +162,5 @@ fn bench_scan_write(c: &mut Criterion) {
     group.finish();
 }
 
-criterion_group!(benches, bench_binary_search, bench_page_load, bench_scan_write);
+criterion_group!(benches, bench_open_and_search, bench_page_load, bench_scan_write);
 criterion_main!(benches);
