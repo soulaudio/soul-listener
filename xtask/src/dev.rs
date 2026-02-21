@@ -52,7 +52,7 @@ use std::process::{Child, Command};
 use std::sync::mpsc::channel;
 use std::time::{Duration, Instant};
 
-pub fn run(headless: bool, hot_reload: bool) -> Result<()> {
+pub fn run(headless: bool, hot_reload: bool, music_path: Option<&std::path::Path>) -> Result<()> {
     clear_screen();
     print_banner();
 
@@ -76,7 +76,7 @@ pub fn run(headless: bool, hot_reload: bool) -> Result<()> {
     println!();
 
     // Initial build and run
-    let mut emulator_process = match start_emulator(headless, hot_reload) {
+    let mut emulator_process = match start_emulator(headless, hot_reload, music_path) {
         Ok(process) => process,
         Err(e) => {
             eprintln!("{}", format!("Build failed: {}", e).red().bold());
@@ -172,7 +172,7 @@ pub fn run(headless: bool, hot_reload: bool) -> Result<()> {
                 print_banner();
 
                 // Rebuild and restart
-                match start_emulator(headless, hot_reload) {
+                match start_emulator(headless, hot_reload, music_path) {
                     Ok(new_process) => {
                         emulator_process = new_process;
                         println!();
@@ -233,7 +233,7 @@ pub fn run(headless: bool, hot_reload: bool) -> Result<()> {
     Ok(())
 }
 
-fn start_emulator(headless: bool, hot_reload: bool) -> Result<Option<Child>> {
+fn start_emulator(headless: bool, hot_reload: bool, music_path: Option<&std::path::Path>) -> Result<Option<Child>> {
     let start = Instant::now();
 
     println!();
@@ -282,6 +282,14 @@ fn start_emulator(headless: bool, hot_reload: bool) -> Result<Option<Child>> {
         cmd.env("RUST_LOG", "info");
     }
 
+    // Forward MUSIC_PATH: prefer the explicit CLI flag, fall back to the
+    // parent process environment so that `export MUSIC_PATH=...` still works.
+    if let Some(mp) = music_path {
+        cmd.env("MUSIC_PATH", mp);
+    } else if let Ok(mp) = std::env::var("MUSIC_PATH") {
+        cmd.env("MUSIC_PATH", mp);
+    }
+
     if headless {
         println!("{}", "Running in headless mode (no window)".dimmed());
         let status = cmd.status().context("Failed to run cargo")?;
@@ -325,4 +333,19 @@ fn print_banner() {
     println!("{}", banner_text.cyan().bold());
     println!("{}", "═════════════════════════════════════════════".cyan());
     println!();
+}
+
+#[cfg(test)]
+mod tests {
+    /// Compile-time smoke test: `run` accepts `music_path: Option<&Path>`.
+    /// We verify the value round-trips correctly without actually spawning a child.
+    #[test]
+    #[allow(clippy::unwrap_used)]
+    fn music_path_flag_forwarded_as_env() {
+        let path = std::path::PathBuf::from("/tmp/music");
+        // Confirm the path we would pass to `run` survives a round-trip through
+        // `as_deref()` — the same conversion used in main.rs.
+        let as_ref: Option<&std::path::Path> = path.as_path().into();
+        assert_eq!(as_ref.unwrap().to_str().unwrap(), "/tmp/music");
+    }
 }

@@ -40,6 +40,10 @@ enum Commands {
         /// Requires: cargo build --package firmware-ui --features hot-reload
         #[arg(long)]
         hot_reload: bool,
+        /// Local music directory — passed as MUSIC_PATH env var to the emulator.
+        /// The emulator's LocalFileStorage reads this to locate Soul library files.
+        #[arg(long)]
+        music_path: Option<std::path::PathBuf>,
     },
     /// Check firmware builds for both hardware and emulator targets
     Check,
@@ -83,7 +87,8 @@ fn main() -> Result<()> {
         Commands::Dev {
             headless,
             hot_reload,
-        } => dev::run(headless, hot_reload),
+            music_path,
+        } => dev::run(headless, hot_reload, music_path.as_deref()),
         Commands::Check => check::run(),
         Commands::Test { unit, integration } => test::run(unit, integration),
         Commands::Doc { open } => doc::run(open),
