@@ -52,7 +52,7 @@ use std::process::{Child, Command};
 use std::sync::mpsc::channel;
 use std::time::{Duration, Instant};
 
-pub fn run(headless: bool, hot_reload: bool, music_path: Option<&std::path::Path>) -> Result<()> {
+pub fn run(headless: bool, hot_reload: bool, music_path: Option<&Path>) -> Result<()> {
     clear_screen();
     print_banner();
 
@@ -233,7 +233,7 @@ pub fn run(headless: bool, hot_reload: bool, music_path: Option<&std::path::Path
     Ok(())
 }
 
-fn start_emulator(headless: bool, hot_reload: bool, music_path: Option<&std::path::Path>) -> Result<Option<Child>> {
+fn start_emulator(headless: bool, hot_reload: bool, music_path: Option<&Path>) -> Result<Option<Child>> {
     let start = Instant::now();
 
     println!();
@@ -337,15 +337,14 @@ fn print_banner() {
 
 #[cfg(test)]
 mod tests {
-    /// Compile-time smoke test: `run` accepts `music_path: Option<&Path>`.
-    /// We verify the value round-trips correctly without actually spawning a child.
+    /// Smoke test: verifies the PathBuf → &Path conversion used at the call site
+    /// in main.rs (`music_path.as_deref()`). Does NOT test cmd.env() forwarding
+    /// (that logic runs in start_emulator which requires a live cargo process).
     #[test]
     #[allow(clippy::unwrap_used)]
-    fn music_path_flag_forwarded_as_env() {
-        let path = std::path::PathBuf::from("/tmp/music");
-        // Confirm the path we would pass to `run` survives a round-trip through
-        // `as_deref()` — the same conversion used in main.rs.
-        let as_ref: Option<&std::path::Path> = path.as_path().into();
-        assert_eq!(as_ref.unwrap().to_str().unwrap(), "/tmp/music");
+    fn music_path_as_deref_smoke_test() {
+        let path: Option<std::path::PathBuf> = Some(std::path::PathBuf::from("/tmp/music"));
+        let as_path_ref: Option<&std::path::Path> = path.as_deref();
+        assert_eq!(as_path_ref.unwrap().to_str().unwrap(), "/tmp/music");
     }
 }
