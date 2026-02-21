@@ -14,7 +14,7 @@ use embassy_stm32::time::Hertz;
 use embassy_time::{Delay, Duration, Timer};
 use embedded_hal_bus::spi::ExclusiveDevice;
 use platform::DisplayDriver;
-use platform::dma_safety::{AxiSramRegion, DmaBuffer};
+use platform::dma_safety::{AudioDmaBufBytes, AxiSramRegion, DmaBuffer};
 use static_cell::StaticCell;
 
 use firmware::dma::Align32;
@@ -22,7 +22,6 @@ use firmware::input::builder::InputBuilder;
 use firmware::input::hardware::spawn_input_task;
 use firmware::ui::{SplashScreen, TestPattern};
 use firmware::{Ssd1677Display, DISPLAY_HEIGHT, DISPLAY_WIDTH, FRAMEBUFFER_SIZE};
-use platform::dma_safety::AUDIO_DMA_BUFFER_BYTES;
 
 // Panic handler
 use panic_probe as _;
@@ -52,7 +51,7 @@ static FRAMEBUFFER: StaticCell<Align32<[u8; FRAMEBUFFER_SIZE]>> = StaticCell::ne
 // Size: 2048 samples x 2ch x 4 bytes/sample = 16384 bytes (ping-pong half-buffer).
 // Full DMA ring = 2 x 16384 = 32768 bytes; AUDIO_DMA_BUFFER_BYTES is one half.
 #[link_section = ".axisram"]
-static AUDIO_BUFFER: StaticCell<DmaBuffer<AxiSramRegion, [u8; AUDIO_DMA_BUFFER_BYTES]>>
+static AUDIO_BUFFER: StaticCell<DmaBuffer<AxiSramRegion, AudioDmaBufBytes>>
     = StaticCell::new();
 
 // Per-task heartbeat flags.
@@ -130,13 +129,15 @@ async fn main(spawner: Spawner) {
     // AXI SRAM: 0x2400_0000 to 0x247F_FFFF (512 KB, DMA1/2/MDMA accessible, D1 domain).
     // DTCM:     0x2000_0000 to 0x2001_FFFF (128 KB, CPU-only — NO DMA).
     //
-    // debug_assert! is compiled out in release builds (overflow-checks/debug-assertions=false),
-    // so there is zero runtime cost in production firmware.
-    debug_assert!(
+    // assert! is used here (not debug_assert!) so this guard fires in RELEASE builds.
+    // debug_assert! is stripped when debug-assertions=false (the default for --release),
+    // which would allow a mislinked framebuffer to cause silent DMA corruption.
+    // assert! with panic="abort" (set in Cargo.toml) has zero stack overhead.
+    assert!(
         core::ptr::addr_of!(*_framebuffer) as u32 >= platform::dma_safety::AXI_SRAM_BASE,
         "FRAMEBUFFER not in AXI SRAM — missing or wrong #[link_section = ".axisram"]"
     );
-    debug_assert!(
+    assert!(
         (core::ptr::addr_of!(*_framebuffer) as u32)
             < platform::dma_safety::AXI_SRAM_BASE
                 + platform::dma_safety::AXI_SRAM_SIZE_BYTES as u32,
@@ -250,7 +251,8 @@ async fn main(spawner: Spawner) {
     let dc = Output::new(p.PB0, Level::Low, Speed::VeryHigh); // Data/Command
     let cs = Output::new(p.PB1, Level::High, Speed::VeryHigh); // Chip Select (active low)
     let rst = Output::new(p.PB2, Level::High, Speed::VeryHigh); // Reset (active low)
-    let busy = Input::new(p.PE3, Pull::None); // Busy status
+    // BUSY is active-low (SSD1677 datasheet section 8.1); pull-up prevents float when display is powered off
+    let busy = Input::new(p.PE3, Pull::Up); // Busy status (active-low, pulled high for safe idle)
 
     // Wrap raw SPI bus + CS pin into an SpiDevice (manages CS assertion/deassert).
     // Ssd1677 takes SpiDevice (not SpiBus) so it controls transactions atomically.
@@ -367,18 +369,24 @@ async fn main(spawner: Spawner) {
     //
     // Stub (active until SAI + I2C3 + amp GPIO peripheral init is complete):
     // The typestate machine is the proof of correct ordering — do not bypass it.
-    use platform::audio_sequencer::AudioPowerSequencer;
-    defmt::info!("Audio power-on sequence (stub — mute_dac_with_i2c/enable_amp_with_gpio pending SAI init)");
-    let _audio_seq = AudioPowerSequencer::new()
-        .mute_dac()      // stub: mute_dac_with_i2c(&mut i2c3, _dac_i2c3_addr) when I2C3 is ready
-        .enable_amp()    // stub: enable_amp_with_gpio(&mut amp_shutdown_pin) when GPIO is wired
-        .unmute_dac();   // stub: unmute_dac_with_i2c(&mut i2c3, _dac_i2c3_addr) when I2C3 is ready
-    // _audio_seq is now AudioPowerSequencer<FullyOn> — audio chain is live
-    defmt::info!("Audio power-on sequence complete (typestate: FullyOn)");
+    // Audio power-on sequence pending I2C3 + amp GPIO peripheral initialization.
+    //
+    // When SAI1, I2C3 (ES9038Q2M), and amp GPIO (TPA6120A2 SHUTDOWN) are wired,
+    // replace this block with the real hardware sequence:
+    //
+    //   use platform::audio_sequencer::AudioPowerSequencer;
+    //   let seq = AudioPowerSequencer::new();
+    //   let seq = seq.mute_dac_with_i2c(&mut i2c3, _dac_i2c3_addr).unwrap_or_else(|_| panic!());
+    //   let seq = seq.enable_amp_with_gpio(&mut amp_shutdown_pin).unwrap_or_else(|_| panic!());
+    //   let _seq = seq.unmute_dac_with_i2c(&mut i2c3, _dac_i2c3_addr).unwrap_or_else(|_| panic!());
+    //
+    // Do NOT use the stub variants (mute_dac, enable_amp, unmute_dac) in production code.
+    // Stubs are marked #[deprecated] and do not write to hardware.
+    defmt::info!("Audio power-on sequence skipped (I2C3 + amp GPIO not yet initialized)");
 
     // Initialize audio DMA buffer and wire the SAI audio task.
     //
-    // AUDIO_BUFFER is declared as DmaBuffer<AxiSramRegion, [u8; AUDIO_DMA_BUFFER_BYTES]>
+    // AUDIO_BUFFER is declared as DmaBuffer<AxiSramRegion, AudioDmaBufBytes>
     // ensuring at the type level that the buffer is DMA1-accessible (AXI SRAM, D1 domain).
     // StaticCell::init() provides the unique &'static mut reference required by the task.
     //
@@ -455,16 +463,22 @@ async fn main(spawner: Spawner) {
 /// let _seq = seq.disable_amp_with_gpio(&mut amp_shutdown_pin).unwrap();
 /// ```
 ///
-/// Until I2C3 is initialized, calls stub variants (typestate only).
+/// Until I2C3 is initialized, the body is a no-op (see inline comments).
 #[allow(dead_code)] // Used in power-off path; not yet triggered in v0 firmware
 fn audio_power_down(
     seq: platform::audio_sequencer::AudioPowerSequencer<platform::audio_sequencer::FullyOn>,
 ) {
-    // Step 1: mute_dac_for_shutdown — prevent DAC output click on amp disable.
-    // Production: seq.mute_dac_for_shutdown_with_i2c(&mut i2c3, _dac_i2c3_addr).unwrap()
-    let seq = seq.mute_dac_for_shutdown();
-    // Step 2: disable_amp — drive TPA6120A2 SHUTDOWN low, stops current draw.
-    // Production: seq.disable_amp_with_gpio(&mut amp_shutdown_pin).unwrap()
-    let _seq = seq.disable_amp();
-    defmt::info!("Audio power-down complete (stub — mute_dac_for_shutdown + disable_amp)");
+    // Step 1: mute_dac_for_shutdown_with_i2c -- prevent DAC output click on amp disable.
+    // Step 2: disable_amp_with_gpio -- drive TPA6120A2 SHUTDOWN low, stops current draw.
+    //
+    // When I2C3 and amp GPIO are initialized, implement as:
+    //   let seq = seq.mute_dac_for_shutdown_with_i2c(&mut i2c3, _dac_i2c3_addr).unwrap();
+    //   let _seq = seq.disable_amp_with_gpio(&mut amp_shutdown_pin).unwrap();
+    //
+    // Do NOT use stub variants (mute_dac_for_shutdown, disable_amp) -- they are
+    // #[deprecated] and do not write to hardware.
+    //
+    // This function is dead code until the power-off path is wired in the main loop.
+    let _ = seq; // consume seq to satisfy typestate; replace with real impl above
+    defmt::info!("Audio power-down sequence skipped (I2C3 + amp GPIO not yet initialized)");
 }

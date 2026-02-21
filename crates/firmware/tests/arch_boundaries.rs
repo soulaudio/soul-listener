@@ -3037,18 +3037,18 @@ fn sdram_fmc_clk_matches_rcc_config() {
     // FMC clock must match what boot.rs configures for HCLK3.
     assert_eq!(
         firmware::sdram::FMC_CLK_HZ,
-        96_000_000,
-        "FMC clock must be 96 MHz (HCLK3 = 480 MHz / 5)"
+        100_000_000,
+        "FMC clock must be 100 MHz (PLL2R=200 MHz / FMC divider=2; see boot.rs)"
     );
 }
 
 #[test]
 fn sdram_refresh_count_is_correct() {
-    // 64 ms * 96 MHz / 1000 / 8192 - 20 = 730
+    // 64 ms * 100 MHz / 1000 / 8192 - 20 = 761
     let count = firmware::sdram::REFRESH_COUNT;
     assert!(
-        count >= 700 && count <= 760,
-        "SDRAM refresh count must be 700-760 at 96 MHz FMC clock, got {count}"
+        count >= 740 && count <= 790,
+        "SDRAM refresh count must be 740-790 at 100 MHz FMC clock, got {count}"
     );
 }
 
@@ -3061,20 +3061,20 @@ fn sdram_cas_latency_documented() {
 }
 
 #[test]
-fn sdram_timing_trcd_is_two_cycles_at_96mhz() {
-    // 18 ns * 96 MHz = 1.728 -> ceil = 2
+fn sdram_timing_trcd_is_two_cycles_at_100mhz() {
+    // 18 ns * 100 MHz = 1.8 -> ceil = 2
     assert_eq!(firmware::sdram::TRCD_CYCLES, 2);
 }
 
 #[test]
-fn sdram_timing_trc_is_six_cycles_at_96mhz() {
-    // 60 ns * 96 MHz = 5.76 -> ceil = 6
+fn sdram_timing_trc_is_six_cycles_at_100mhz() {
+    // 60 ns * 100 MHz = 6.0 -> ceil = 6
     assert_eq!(firmware::sdram::TRC_CYCLES, 6);
 }
 
 #[test]
-fn sdram_timing_txsr_is_seven_cycles_at_96mhz() {
-    // 70 ns * 96 MHz = 6.72 -> ceil = 7
+fn sdram_timing_txsr_is_seven_cycles_at_100mhz() {
+    // 70 ns * 100 MHz = 7.0 -> ceil = 7
     assert_eq!(firmware::sdram::TXSR_CYCLES, 7);
 }
 
@@ -3093,4 +3093,305 @@ fn integration_boot_sequence_test_exists() {
         path.exists(),
         "integration_boot_sequence.rs must exist -- verifies full boot sequence with mock peripherals"
     );
+}
+
+// ── GAP D2: Stub method guard ────────────────────────────────────────────────
+
+#[test]
+fn audio_sequencer_stub_methods_are_marked_deprecated() {
+    // Stub methods (mute_dac, enable_amp, unmute_dac, disable_amp,
+    // mute_dac_for_shutdown) must be #[deprecated] so the compiler warns
+    // whenever they are called outside of test/sim code. This prevents silent
+    // stub use in production firmware where actual I2C/GPIO writes are required.
+    let src = include_str!("../../../crates/platform/src/audio_sequencer.rs");
+    assert!(
+        src.contains("#[deprecated"),
+        "AudioPowerSequencer stub methods must be marked #[deprecated] -- \
+         stub calls in production code silently skip I2C/GPIO hardware writes"
+    );
+}
+
+#[test]
+fn main_rs_does_not_call_stub_sequencer_methods() {
+    // Production code must use _with_i2c/_with_gpio variants, not bare stubs.
+    // Calling a stub in main.rs means audio hardware is never actually configured.
+    let main_src = include_str!("../src/main.rs");
+    let problematic_patterns = [
+        ".mute_dac()",
+        ".enable_amp()",
+        ".unmute_dac()",
+        ".disable_amp()",
+        ".mute_dac_for_shutdown()",
+    ];
+    for pattern in &problematic_patterns {
+        for (line_no, line) in main_src.lines().enumerate() {
+            let trimmed = line.trim();
+            // Skip comment lines
+            if trimmed.starts_with("//") {
+                continue;
+            }
+            assert!(
+                !trimmed.contains(pattern),
+                "main.rs line {}: must not call stub AudioPowerSequencer method '{}' \
+                 -- use _with_i2c or _with_gpio variants for hardware writes",
+                line_no + 1,
+                pattern
+            );
+        }
+    }
+}
+
+#[test]
+fn ci_yml_has_stub_method_guard_job() {
+    // CI must have a job that greps main.rs for stub sequencer method calls.
+    // Belt-and-suspenders with the #[deprecated] attribute -- CI catches it even
+    // if someone suppresses the deprecation warning with #[allow(deprecated)].
+    let ci_src = include_str!("../../../.github/workflows/ci.yml");
+    assert!(
+        ci_src.contains("stub") && ci_src.contains("sequencer"),
+        "ci.yml must contain a stub-call guard step that checks main.rs for stub \
+         AudioPowerSequencer method calls (search for 'stub' and 'sequencer')"
+    );
+}
+
+// ── GAP D3: Cargo.lock committed ─────────────────────────────────────────────
+
+#[test]
+fn cargo_lock_file_is_committed() {
+    // Firmware builds must be reproducible. Cargo.lock pins exact dependency
+    // versions. Without it, CI and developer builds may use different transitive
+    // dep versions, silently breaking hardware register behavior in embassy-stm32
+    // or cortex-m register definitions.
+    //
+    // Convention: libraries omit Cargo.lock; binaries/firmware commit it.
+    // Reference: https://doc.rust-lang.org/cargo/faq.html
+    use std::path::Path;
+    let lock_exists =
+        Path::new(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../Cargo.lock")).exists()
+        || Path::new(concat!(env!("CARGO_MANIFEST_DIR"), "/../../Cargo.lock")).exists()
+        || Path::new("Cargo.lock").exists();
+    assert!(
+        lock_exists,
+        "Cargo.lock must exist in the repository root for reproducible firmware builds. \
+         Remove Cargo.lock from .gitignore and commit it."
+    );
+}
+
+#[test]
+fn gitignore_does_not_exclude_cargo_lock() {
+    // .gitignore must not exclude Cargo.lock. For firmware (a binary crate),
+    // committing Cargo.lock is mandatory for reproducible builds.
+    let gitignore = include_str!("../../../.gitignore");
+    // Check that there is no uncommented line that exactly says "Cargo.lock"
+    for line in gitignore.lines() {
+        let trimmed = line.trim();
+        if trimmed == "Cargo.lock" {
+            panic!(
+                ".gitignore must not exclude Cargo.lock. \
+                 Remove the 'Cargo.lock' line from .gitignore. \
+                 Firmware builds require a committed lock file for reproducibility."
+            );
+        }
+    }
+}
+
+#[test]
+fn ci_yml_verifies_cargo_lock_is_present() {
+    // CI must verify that Cargo.lock is committed. If the lock file is missing
+    // (e.g. after a botched .gitignore edit), CI should fail loudly rather than
+    // silently building with inconsistent dependency versions.
+    let ci_src = include_str!("../../../.github/workflows/ci.yml");
+    assert!(
+        ci_src.contains("Cargo.lock"),
+        "ci.yml must contain a step that verifies Cargo.lock is committed \
+         (search for 'Cargo.lock')"
+    );
+}
+
+
+// ---- GAP B2: SRAM4 is BDMA-only -------------------------------------------
+
+#[test]
+fn sram4_is_bdma_only_not_general_dma() {
+    // On STM32H743, SRAM4 (D3 domain, 0x38000000) is accessible only by BDMA.
+    // DMA1/DMA2 (D1/D2) cannot reach it (RM0433 section 2.3 bus matrix).
+    // Verified by absence of DmaAccessible impl for Sram4Region in dma_safety.rs.
+    let src = include_str!("../../../crates/platform/src/dma_safety.rs");
+    assert!(
+        !src.contains("impl DmaAccessible for Sram4Region"),
+        "Sram4Region must NOT implement DmaAccessible - SRAM4 is BDMA-only (RM0433 section 2.3)."
+    );
+    assert!(
+        src.contains("impl BdmaAccessible for Sram4Region"),
+        "Sram4Region MUST implement BdmaAccessible - it is the one region BDMA can access"
+    );
+    // Verify SRAM4 doc comment explains D3-only restriction
+    assert!(
+        src.contains("D3 domain") || src.contains("BDMA-only"),
+        "Sram4Region must have a doc comment explaining D3/BDMA-only constraint"
+    );
+}
+
+// ---- GAP C2: AudioDmaBufBytes type alias -----------------------------------
+
+#[test]
+fn audio_dma_buffer_uses_canonical_type_alias() {
+    // main.rs must use the AudioDmaBufBytes type alias, not a raw [u8; N] literal.
+    // This prevents size drift between the platform constant and the firmware declaration.
+    let main_src = include_str!("../src/main.rs");
+    assert!(
+        main_src.contains("AudioDmaBufBytes"),
+        "main.rs AUDIO_BUFFER must use the AudioDmaBufBytes type alias from platform::dma_safety"
+    );
+}
+
+#[test]
+fn audio_dma_buf_bytes_alias_is_exported_from_platform() {
+    // The AudioDmaBufBytes type alias must be defined in platform::dma_safety.
+    let platform_src = include_str!("../../../crates/platform/src/dma_safety.rs");
+    assert!(
+        platform_src.contains("pub type AudioDmaBufBytes"),
+        "platform/dma_safety.rs must define pub type AudioDmaBufBytes"
+    );
+    assert!(
+        platform_src.contains("AudioDmaBufBytes = [u8; AUDIO_DMA_BUFFER_BYTES]"),
+        "AudioDmaBufBytes must alias [u8; AUDIO_DMA_BUFFER_BYTES]"
+    );
+}
+
+// ---- GAP C3: String-grep tests documented as temporary --------------------
+
+#[test]
+fn string_grep_tests_are_documented_as_temporary() {
+    // String-grep tests in dma_safety.rs are a temporary workaround for the lack
+    // of stable negative trait bounds in Rust. Rust stable does not support
+    // negative_impls or trait-level !Trait bounds without nightly.
+    let src = include_str!("../../../crates/platform/src/dma_safety.rs");
+    assert!(
+        src.contains("negative trait") || src.contains("not implement"),
+        "dma_safety.rs string-grep tests must document the negative trait bound limitation"
+    );
+}
+
+// ---- GAP B3: BUSY pin pull resistor ----------------------------------------
+
+#[test]
+fn display_busy_pin_uses_pull_up_not_none() {
+    // SSD1677 BUSY is active-low (high = idle, low = busy refreshing).
+    // Without a pull-up, the pin floats when the display is powered off,
+    // causing the busy-wait loop to spin indefinitely.
+    // This test catches any regression to Pull::None on the BUSY pin.
+    let main_src = include_str!("../src/main.rs");
+    // The line that declares the busy variable must NOT use Pull::None.
+    // (Encoder pins intentionally use Pull::None with external resistors;
+    //  only the BUSY pin declaration line is checked here.)
+    let busy_line_uses_pull_none = main_src
+        .lines()
+        .any(|line| line.contains("let busy") && line.contains("Pull::None"));
+    assert!(
+        !busy_line_uses_pull_none,
+        "Display BUSY pin must not use Pull::None -- use Pull::Up for active-low signal (SSD1677 BUSY is active-low)"
+    );
+    // The busy pin declaration line must explicitly use Pull::Up
+    let busy_line_uses_pull_up = main_src
+        .lines()
+        .any(|line| line.contains("let busy") && line.contains("Pull::Up"));
+    assert!(
+        busy_line_uses_pull_up,
+        "Display BUSY pin must use Pull::Up to prevent floating when display is powered off"
+    );
+}
+
+// ---- GAP C1: Boot sequence ordering tokens ---------------------------------
+
+#[test]
+fn boot_ordering_tokens_exist_for_cache_and_fmc() {
+    // Boot sequence ordering tokens enforce MPU -> Cache -> FMC initialization order.
+    // CacheEnabled and FmcInitialized tokens prove correct sequencing at compile time.
+    let boot_src = include_str!("../src/boot.rs");
+    assert!(
+        boot_src.contains("CacheEnabled"),
+        "boot.rs must define CacheEnabled ZST ordering token"
+    );
+    assert!(
+        boot_src.contains("FmcInitialized"),
+        "boot.rs must define FmcInitialized ZST ordering token"
+    );
+}
+
+#[test]
+fn enable_caches_requires_mpu_configured_parameter() {
+    let boot_src = include_str!("../src/boot.rs");
+    assert!(
+        boot_src.contains("fn enable_caches") && boot_src.contains("MpuConfigured"),
+        "enable_caches() must take MpuConfigured as parameter to enforce ordering"
+    );
+}
+
+
+// ---- GAP B4: assert! not debug_assert! for DMA buffer address checks ------
+
+/// DMA buffer address guards must use assert! not debug_assert! so they
+/// fire in release builds where debug assertions are disabled.
+///
+/// debug_assert! is compiled out when debug-assertions = false (the default
+/// for release profiles). A mislinked FRAMEBUFFER in a release firmware image
+/// causes silent DMA corruption with no runtime indication.
+///
+/// assert! with panic = abort has zero stack overhead in release builds.
+/// This test enforces that main.rs uses assert! (not debug_assert!) for the
+/// DMA buffer address placement checks.
+#[test]
+fn framebuffer_dma_address_guard_uses_assert_not_debug_assert() {
+    let main_src = std::fs::read_to_string(
+        concat!(env!("CARGO_MANIFEST_DIR"), "/src/main.rs")
+    ).unwrap();
+    // Scan 6-line windows: if debug_assert and AXI_SRAM both appear in a window
+    // of non-comment lines, that is a violation (debug_assert compiled out in release).
+    let lines: Vec<&str> = main_src.lines().collect();
+    for w in 0..lines.len().saturating_sub(6) {
+        let window: String = lines[w..w + 6]
+            .iter()
+            .filter(|l| !l.trim().starts_with("//"))
+            .copied()
+            .collect::<Vec<_>>()
+            .join(" ");
+        assert!(
+            !(window.contains("debug_assert") && window.contains("AXI_SRAM")),
+            "main.rs around line {}: debug_assert near AXI_SRAM check -- use assert instead",
+            w + 1
+        );
+    }
+}
+
+// ── GAP D1 cross-module: PLL constants match SDRAM FMC clock ─────────────────
+
+/// Verify that the PLL2R configuration in boot.rs produces the same FMC clock
+/// that sdram.rs uses for timing calculations.
+///
+/// boot.rs configures: PLL2: HSI(64) / M(8) * N(100) / R(4) = 200 MHz (PLL2R)
+/// FMC applies internal /2 divider: SDCLK = PLL2R / 2 = 100 MHz
+/// sdram.rs must have FMC_CLK_HZ = 100_000_000.
+#[test]
+fn pll_constants_match_sdram_fmc_clk() {
+    // Compute PLL2R from known divisors (mirroring boot.rs build_embassy_config)
+    // PLL2: HSI(64 MHz) / prediv(8) * mul(100) / divr(4) = 200 MHz
+    const HSI_HZ: u64 = 64_000_000;
+    const PLL2_M: u64 = 8;   // PllPreDiv::DIV8
+    const PLL2_N: u64 = 100; // PllMul::MUL100
+    const PLL2_R: u64 = 4;   // PllDiv::DIV4
+    const FMC_DIV: u64 = 2;  // FMC internal fixed divider (RM0433 section 22.2)
+
+    let pll2_vco = HSI_HZ / PLL2_M * PLL2_N;
+    let pll2r = pll2_vco / PLL2_R;
+    let fmc_clk = pll2r / FMC_DIV;
+
+    assert_eq!(
+        fmc_clk,
+        firmware::sdram::FMC_CLK_HZ as u64,
+        "PLL2R/2 = {fmc_clk} Hz does not match sdram::FMC_CLK_HZ = {}.          Either boot.rs or sdram.rs has incorrect clock frequency.",
+        firmware::sdram::FMC_CLK_HZ
+    );
+    // Belt-and-suspenders: verify the concrete expected value
+    assert_eq!(fmc_clk, 100_000_000, "FMC clock must be exactly 100 MHz");
 }

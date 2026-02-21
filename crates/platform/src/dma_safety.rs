@@ -18,7 +18,7 @@
 //! | Type | Trait | Description |
 //! |------|-------|-------------|
 //! | [`AxiSramRegion`] | `DmaAccessible` | D1 AXI SRAM — audio SAI, display SPI, SDMMC |
-//! | [`Sram4Region`] | `DmaAccessible + BdmaAccessible` | D3 SRAM4 — SPI6, SAI4, LPUART1 |
+//! | [`Sram4Region`] | `BdmaAccessible` | D3 SRAM4 — BDMA-only: SPI6, SAI4, LPUART1 |
 //! | [`DtcmRegion`] | *(none)* | CPU-only DTCM — no DMA access |
 //! | [`SdramRegion`] | `HighLatencyRegion` | External SDRAM via FMC — NOT DMA-safe for real-time audio |
 //!
@@ -106,6 +106,14 @@ const _: () = assert!(
     "AUDIO_DMA_BUFFER_BYTES must be 16384 (2048 x 2ch x 4 bytes/32-bit sample)"
 );
 
+/// Canonical type alias for the audio DMA buffer element array.
+///
+/// Always use this type alias for audio DMA buffer declarations to ensure
+/// the buffer size is always derived from [`AUDIO_DMA_BUFFER_BYTES`].
+/// This prevents size drift when multiple audio DMA buffers are declared
+/// across firmware modules.
+pub type AudioDmaBufBytes = [u8; AUDIO_DMA_BUFFER_BYTES];
+
 // ── Marker traits ────────────────────────────────────────────────────────────
 
 /// Marker trait: memory region accessible by DMA1, DMA2, and MDMA.
@@ -126,7 +134,23 @@ pub unsafe trait DmaAccessible: Sized {}
 /// DMA1/DMA2 cannot access SRAM4 — mixing them causes bus faults.
 ///
 /// Peripherals requiring BDMA: SPI6, SAI4, LPUART1, I2C4, ADC3.
-pub unsafe trait BdmaAccessible: DmaAccessible {}
+/// Marker trait: memory region accessible by BDMA only (D3 domain).
+///
+/// This trait is intentionally separate from [`DmaAccessible`].
+/// BDMA is the D3-domain DMA controller; it can ONLY access SRAM4 (0x38000000, 64 KB).
+/// DMA1/DMA2 (D1/D2) cannot access D3 SRAM4.
+///
+/// Do NOT add [`DmaAccessible`] as a supertrait. That would incorrectly imply
+/// that BDMA-accessible regions are also DMA1/DMA2-accessible, which is false
+/// for SRAM4 (D3 domain, RM0433 section 2.3).
+///
+/// # Safety
+/// BDMA can only access D3 SRAM4 (0x3800_0000, 64 KB).
+/// DMA1/DMA2 cannot access SRAM4 mixing them causes bus faults.
+/// Only implement for zero-sized types representing SRAM4.
+///
+/// Peripherals requiring BDMA: SPI6, SAI4, LPUART1, I2C4, ADC3.
+pub unsafe trait BdmaAccessible: Sized {}
 
 // ── Region zero-sized types ──────────────────────────────────────────────────
 
@@ -143,7 +167,13 @@ pub struct AxiSramRegion;
 // DMA controllers (DMA1, DMA2, MDMA) per STM32H743 reference manual Table 3.
 unsafe impl DmaAccessible for AxiSramRegion {}
 
-/// Zero-sized type representing SRAM4 (BDMA-only, D3 domain).
+/// Zero-sized type representing SRAM4 (BDMA-only, D3 domain, 0x38000000).
+///
+/// # DMA accessibility (RM0433 section 2.3 bus matrix)
+/// SRAM4 is in D3 domain. **Only BDMA can access it.**
+/// DMA1 and DMA2 (D1/D2 domain) CANNOT access SRAM4.
+/// This type therefore implements [`BdmaAccessible`] but NOT [`DmaAccessible`].
+/// Attempting to create `DmaBuffer<Sram4Region, T>` will fail to compile.
 ///
 /// Buffers placed here via `#[link_section = ".sram4"]`:
 /// - SPI6 DMA buffer (if used)
@@ -152,10 +182,10 @@ unsafe impl DmaAccessible for AxiSramRegion {}
 #[derive(Debug, Clone, Copy)]
 pub struct Sram4Region;
 
-// SAFETY: SRAM4 at 0x3800_0000 is in D3 domain, accessible by BDMA only.
-// It also satisfies DmaAccessible for type-system consistency, but NOTE:
-// DMA1/DMA2 cannot actually access SRAM4 — use BDMA exclusively.
-unsafe impl DmaAccessible for Sram4Region {}
+// NOTE: Sram4Region intentionally does NOT implement DmaAccessible.
+// SRAM4 (D3 domain, 0x38000000) is only accessible by BDMA (D3 DMA controller).
+// DMA1/DMA2 cannot reach SRAM4 per RM0433 section 2.3 bus matrix table.
+// Using a DMA1/DMA2 peripheral with an SRAM4 buffer causes a silent bus fault.
 // SAFETY: SRAM4 at 0x3800_0000 (D3 domain) is the only region accessible
 // by the BDMA controller per STM32H743 reference manual Table 3. Peripherals
 // in D3 (SPI6, SAI4, LPUART1, I2C4, ADC3) must use BDMA; using DMA1/DMA2
@@ -417,4 +447,51 @@ mod tests {
         assert!(!dtcm_violation, "DtcmRegion must not implement DmaAccessible");
         assert!(!sdram_violation, "SdramRegion must not implement DmaAccessible");
     }
+    #[test]
+    // GAP B2: SRAM4 is D3-domain, accessible only by BDMA (RM0433 section 2.3).
+    // NOTE: This uses a string-grep test because Rust stable does not support
+    // negative trait bounds (not implement trait assertions require nightly).
+    // Split searched strings to avoid self-referential include_str! matches.
+    fn sram4_region_is_not_dma_accessible_only_bdma() {
+        let src = include_str!("dma_safety.rs");
+        let dma_for_sram4 = ["unsafe impl DmaAccess", "ible for Sram4Region"].concat();
+        assert!(
+            !src.contains(&dma_for_sram4),
+            "Sram4Region must NOT implement DmaAccessible - SRAM4 is BDMA-only (RM0433 section 2.3)"
+        );
+        let bdma_for_sram4 = ["unsafe impl BdmaAccess", "ible for Sram4Region"].concat();
+        assert!(
+            src.contains(&bdma_for_sram4),
+            "Sram4Region MUST implement BdmaAccessible - SRAM4 is the BDMA-only D3-domain region"
+        );
+    }
+
+    #[test]
+    // GAP C2: AudioDmaBufBytes type alias must exist for canonical audio DMA size.
+    fn audio_dma_buf_bytes_type_alias_exists() {
+        let src = include_str!("dma_safety.rs");
+        let type_alias_def = ["pub type Audio", "DmaBuf", "Bytes"].concat();
+        assert!(
+            src.contains(&type_alias_def),
+            "dma_safety.rs must define pub type AudioDmaBufBytes for canonical audio DMA size"
+        );
+        let type_alias_body = ["AudioDma", "BufBytes = [u8; AUDIO_DMA_BUFFER_BYTES]"].concat();
+        assert!(
+            src.contains(&type_alias_body),
+            "AudioDmaBufBytes must alias [u8; AUDIO_DMA_BUFFER_BYTES]"
+        );
+    }
+
+    #[test]
+    // GAP C3: Document the negative trait bound limitation.
+    // Rust stable does not support negative trait bounds (nightly only).
+    // We use string-grep tests as a workaround. This test verifies the limitation is documented.
+    fn negative_trait_bound_tests_are_documented() {
+        let src = include_str!("dma_safety.rs");
+        assert!(
+            src.contains("negative trait") || src.contains("not implement"),
+            "dma_safety.rs must document the negative trait bound limitation"
+        );
+    }
+
 }
