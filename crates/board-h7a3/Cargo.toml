@@ -14,9 +14,16 @@ edition = "2021"
 # comment for the full explanation.
 [workspace]
 
+# soul-audio-core decodes far too slowly unoptimized (same rationale as its own
+# workspace's override): keep this crate at -O3 even in a dev build so the
+# hardware target still decodes faster than real time.
+[profile.dev.package.soul-audio-core]
+opt-level = 3
+
 [features]
 hardware = ["dep:embassy-executor", "dep:embassy-time", "dep:embassy-stm32",
-            "dep:cortex-m-rt", "dep:cortex-m", "dep:defmt", "dep:defmt-rtt", "dep:panic-probe"]
+            "dep:cortex-m-rt", "dep:cortex-m", "dep:defmt", "dep:defmt-rtt", "dep:panic-probe",
+            "dep:soul-audio-core"]
 
 [[bin]]
 name = "board-h7a3"
@@ -36,3 +43,8 @@ cortex-m    = { version = "0.7", features = ["critical-section-single-core"], op
 defmt       = { version = "1", optional = true }
 defmt-rtt   = { version = "1", optional = true }
 panic-probe = { version = "1", features = ["print-defmt"], optional = true }
+# Phase-1 de-risking spike (migration/phase-1): prove soul-audio-core compiles
+# and links for thumbv7em-none-eabihf inside this standalone workspace.
+# default-features = false is mandatory -- the default/`playback` feature
+# pulls std+cpal, which must never be enabled on the target.
+soul-audio-core = { path = "../../../soul-audio-core/crates/soul-audio-core", default-features = false, optional = true }
