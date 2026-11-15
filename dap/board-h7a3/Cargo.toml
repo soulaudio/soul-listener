@@ -3,22 +3,18 @@ name = "board-h7a3"
 version = "0.1.0"
 edition = "2021"
 
-# Standalone workspace (own Cargo.lock), deliberately NOT a member of the
-# repo-root workspace. embassy-stm32 0.6 pulls embassy-time-driver 0.2.2,
-# which declares `links = "embassy-time"` -- the same links value that
-# embassy-executor "=0.6.3" (used by the old `firmware` crate, Embassy 0.1
-# line) pulls in via embassy-time-driver ^0.1.0. Cargo enforces
-# link-uniqueness across the whole resolve graph of a single Cargo.lock,
-# regardless of feature gating, so the two Embassy major lines cannot share
-# one workspace lock file. See the root Cargo.toml's `workspace.exclude`
-# comment for the full explanation.
-[workspace]
-
-# soul-audio-core decodes far too slowly unoptimized (same rationale as its own
-# workspace's override): keep this crate at -O3 even in a dev build so the
-# hardware target still decodes faster than real time.
-[profile.dev.package.soul-audio-core]
-opt-level = 3
+# Member of the dap/ workspace (dap/Cargo.toml), not a standalone workspace.
+# The dap/ workspace as a whole is excluded from the repo-root workspace:
+# embassy-stm32 0.6 pulls embassy-time-driver 0.2.2, which declares
+# `links = "embassy-time"` -- the same links value that embassy-executor
+# "=0.6.3" (used by the old `firmware` crate, Embassy 0.1 line) pulls in via
+# embassy-time-driver ^0.1.0. Cargo enforces link-uniqueness across the whole
+# resolve graph of a single Cargo.lock, regardless of feature gating, so the
+# two Embassy major lines cannot share one workspace lock file. See the root
+# Cargo.toml's `workspace.exclude` comment for the full explanation. The
+# dap/Cargo.toml workspace root carries the opt-level=3 soul-audio-core
+# profile override for this crate (non-root member profile tables are
+# ignored by Cargo).
 
 [features]
 hardware = ["dep:embassy-executor", "dep:embassy-time", "dep:embassy-stm32",
@@ -44,7 +40,8 @@ defmt       = { version = "1", optional = true }
 defmt-rtt   = { version = "1", optional = true }
 panic-probe = { version = "1", features = ["print-defmt"], optional = true }
 # Phase-1 de-risking spike (migration/phase-1): prove soul-audio-core compiles
-# and links for thumbv7em-none-eabihf inside this standalone workspace.
-# default-features = false is mandatory -- the default/`playback` feature
-# pulls std+cpal, which must never be enabled on the target.
-soul-audio-core = { path = "../../../soul-audio-core/crates/soul-audio-core", default-features = false, optional = true }
+# and links for thumbv7em-none-eabihf inside the dap/ workspace.
+# default-features = false (set on the workspace dependency in dap/Cargo.toml)
+# is mandatory -- the default/`playback` feature pulls std+cpal, which must
+# never be enabled on the target.
+soul-audio-core = { workspace = true, optional = true }

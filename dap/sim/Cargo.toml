@@ -1,0 +1,9 @@
+[package]
+name = "dap-sim"
+version = "0.1.0"
+edition = "2021"
+description = "Host-side (std) simulation adapters implementing dap-core's ports, for desktop development and testing."
+
+[dependencies]
+dap-core = { path = "../core" }
+soul-audio-core = { workspace = true }

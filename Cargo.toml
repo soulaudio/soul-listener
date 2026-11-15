@@ -18,18 +18,19 @@ members = [
     # "crates/simulator",
 ]
 
-# board-h7a3 (Embassy 0.6 / STM32H7A3) is intentionally NOT a member of this
-# workspace: it is a standalone workspace with its own Cargo.lock. The old
-# firmware crate pins embassy-executor "=0.6.3" -> embassy-time-driver ^0.1.0,
-# while embassy-stm32 "0.6" (needed for the H7A3) pulls embassy-time-driver
-# 0.2.2. Both versions declare `links = "embassy-time"`, and Cargo enforces
-# link-uniqueness across an ENTIRE workspace resolve graph regardless of
-# feature gating -- so having both in one Cargo.lock is a hard resolver
-# error ("Only one package in the dependency graph may specify the same
-# links value"), not a feature-flag issue. Keeping board-h7a3 as its own
-# workspace (see crates/board-h7a3/Cargo.toml's `[workspace]` table) is the
-# only way for the two Embassy major lines to coexist as separate binaries.
-exclude = ["crates/board-h7a3"]
+# dap/ (Embassy 0.6 / STM32H7A3 world: dap-core, dap-sim, board-h7a3) is
+# intentionally NOT a member of this workspace: it is its own standalone
+# workspace with its own Cargo.lock (dap/Cargo.toml). The old firmware crate
+# pins embassy-executor "=0.6.3" -> embassy-time-driver ^0.1.0, while
+# embassy-stm32 "0.6" (needed for the H7A3, used by dap/board-h7a3) pulls
+# embassy-time-driver 0.2.2. Both versions declare `links = "embassy-time"`,
+# and Cargo enforces link-uniqueness across an ENTIRE workspace resolve
+# graph regardless of feature gating -- so having both in one Cargo.lock is
+# a hard resolver error ("Only one package in the dependency graph may
+# specify the same links value"), not a feature-flag issue. Keeping dap/ as
+# its own workspace (see dap/Cargo.toml) is the only way for the two
+# Embassy major lines to coexist as separate binaries.
+exclude = ["dap"]
 
 
 # ---------------------------------------------------------------------------

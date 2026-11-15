@@ -1,0 +1,9 @@
+[package]
+name = "dap-core"
+version = "0.1.0"
+edition = "2021"
+description = "Board-agnostic DAP logic and ports (no_std, no embassy; usable from host and target)."
+
+[dependencies]
+# default-features = false set at the workspace level (dap/Cargo.toml).
+soul-audio-core = { workspace = true }

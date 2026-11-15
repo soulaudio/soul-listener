@@ -1,0 +1,16 @@
+[workspace]
+resolver = "2"
+members = ["core", "sim", "board-h7a3"]
+
+[workspace.dependencies]
+# Sibling repo D:/dev/soulaudio/soul-audio-core, two levels up from this file
+# (dap/Cargo.toml -> dap/ -> soul-listener-gh/ -> soulaudio/).
+soul-audio-core   = { path = "../../soul-audio-core/crates/soul-audio-core", default-features = false }
+soul-audio-engine = { path = "../../soul-audio-core/crates/soul-audio-engine" }
+
+# soul-audio-core decodes far too slowly unoptimized: keep it at -O3 even in
+# dev/test builds so the hardware target still decodes faster than real time.
+[profile.dev.package.soul-audio-core]
+opt-level = 3
+[profile.test.package.soul-audio-core]
+opt-level = 3
