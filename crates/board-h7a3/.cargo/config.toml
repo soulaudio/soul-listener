@@ -1,0 +1,10 @@
+# board-h7a3 is a standalone workspace (excluded from the root workspace because
+# Embassy 0.1 and Embassy 0.6 both pull an `embassy-time-driver` that declares
+# the same `links = "embassy-time"` — cargo forbids that in one Cargo.lock).
+#
+# Config resolution walks up the directory tree, so builds here still inherit the
+# root .cargo/config's `linker = "flip-link"`, the `-Tlink.x`/`-Tdefmt.x` rustflags,
+# and DEFMT_LOG. Only the probe-rs chip differs: this board is the STM32H7A3; the
+# root config stays on the old H743 firmware's chip.
+[target.thumbv7em-none-eabihf]
+runner = "probe-rs run --chip STM32H7A3ZITxQ"
