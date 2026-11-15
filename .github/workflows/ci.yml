@@ -689,6 +689,57 @@ jobs:
           echo "OK: firmware ELF size $SIZE bytes is within limits"
 
   # ---------------------------------------------------------------------------
+  # board-h7a3 cross-build (Embassy 0.6, STM32H7A3)
+  #
+  # board-h7a3 is a new firmware binary targeting the STM32H7A3 on the
+  # Embassy 0.6 line. It is intentionally excluded from the root workspace
+  # (see the root Cargo.toml's `workspace.exclude` comment): Embassy 0.1
+  # (embassy-executor "=0.6.3", used by the old `firmware` crate above) and
+  # Embassy 0.6 (embassy-stm32 "0.6", used here) both pull an
+  # `embassy-time-driver` that declares `links = "embassy-time"` — Cargo
+  # forbids two packages with the same `links` value in one resolve graph,
+  # so the two Embassy major lines cannot share a single Cargo.lock.
+  #
+  # board-h7a3 therefore has its own `[workspace]` table and Cargo.lock
+  # (crates/board-h7a3/Cargo.toml) and must be built from inside that
+  # directory — `cargo build -p board-h7a3 --target ... --features
+  # hardware` from the repo root fails with "cannot specify features for
+  # packages outside of workspace" because it is excluded above.
+  #
+  # This job is independent of the Embassy-0.1 `firmware` jobs above — it
+  # only proves board-h7a3 itself still cross-compiles for
+  # thumbv7em-none-eabihf. `targets: thumbv7em-none-eabihf` on the
+  # toolchain action below does the equivalent of `rustup target add`,
+  # matching how check-embedded/build-embedded/clippy-embedded above
+  # install the target.
+  # ---------------------------------------------------------------------------
+  build-board-h7a3:
+    name: board-h7a3 Cross-Build (STM32H7A3, Embassy 0.6)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: crates/board-h7a3
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      - uses: dtolnay/rust-toolchain@1.87
+        with:
+          targets: thumbv7em-none-eabihf
+
+      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
+        with:
+          workspaces: "crates/board-h7a3 -> target"
+
+      - name: Install flip-link (stack overflow protection linker)
+        # board-h7a3/.cargo/config.toml inherits the root config's
+        # `linker = "flip-link"` (Cargo config resolution walks up the
+        # directory tree), so flip-link must be on PATH here too.
+        run: cargo install flip-link
+
+      - name: cargo build board-h7a3 (hardware, ARM target)
+        run: cargo build --target thumbv7em-none-eabihf --features hardware
+
+  # ---------------------------------------------------------------------------
   # ELF section address verification (STM32H743)
   #
   # Builds the firmware ELF and verifies that the linker script (memory.x)
