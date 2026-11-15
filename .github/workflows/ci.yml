@@ -700,11 +700,11 @@ jobs:
   # forbids two packages with the same `links` value in one resolve graph,
   # so the two Embassy major lines cannot share a single Cargo.lock.
   #
-  # board-h7a3 therefore has its own `[workspace]` table and Cargo.lock
-  # (crates/board-h7a3/Cargo.toml) and must be built from inside that
-  # directory — `cargo build -p board-h7a3 --target ... --features
-  # hardware` from the repo root fails with "cannot specify features for
-  # packages outside of workspace" because it is excluded above.
+  # board-h7a3 therefore lives in the separate `dap/` workspace (dap/board-h7a3,
+  # a member of dap/Cargo.toml) — excluded from the Embassy-0.1 root workspace.
+  # This job builds it from dap/board-h7a3; `cargo build -p board-h7a3 ...
+  # --features hardware` from the repo root fails with "cannot specify features
+  # for packages outside of workspace" because dap is excluded above.
   #
   # This job is independent of the Embassy-0.1 `firmware` jobs above — it
   # only proves board-h7a3 itself still cross-compiles for
@@ -730,7 +730,7 @@ jobs:
 
       - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
         with:
-          workspaces: "crates/board-h7a3 -> target"
+          workspaces: "dap -> target"
 
       - name: Install flip-link (stack overflow protection linker)
         # board-h7a3/.cargo/config.toml inherits the root config's
