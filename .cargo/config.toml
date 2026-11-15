@@ -4,7 +4,7 @@
 # silently corrupting DMA buffers in AXI SRAM.
 # Install: cargo install flip-link
 linker = "flip-link"
-runner = "probe-rs run --chip STM32H743ZITx"
+runner = "probe-rs run --chip STM32H7A3ZITxQ"
 rustflags = [
   "-C", "link-arg=-Tlink.x",
   "-C", "link-arg=-Tdefmt.x",
