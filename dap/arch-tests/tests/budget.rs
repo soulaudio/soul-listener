@@ -2,11 +2,12 @@
 //! `dap-core` types against the STM32H7A3's actual memory map (see
 //! [`memory_map`]) and this DAP's split of it into per-region SRAM budgets.
 //!
-//! Two of the five size guards below are `#[ignore]`d — expected, documented
-//! failures, not flaky tests. Each prints its measured size vs. budget
-//! before asserting, so a failing (or `--ignored`) run is itself the
-//! committed, precise statement of how far over budget that type is. See
-//! `src/lib.rs` for the roster and `MEMORY.md`/the spec doc for the fixes.
+//! All five size guards below are GREEN at the DAP's real `PRELOAD = 1`
+//! (gapless needs only the immediate next track preloaded; `PRELOAD = 2` was
+//! a leftover desktop value). Each prints its measured size vs. budget
+//! before asserting, so a run's output is itself the committed, precise
+//! statement of how much headroom each type has. See `src/lib.rs` for the
+//! roster and `MEMORY.md`/the spec doc for history.
 
 use core::mem::size_of;
 
@@ -60,8 +61,12 @@ pub mod memory_map {
 
 /// Budget for the whole live audio path: a `Deck` holding one playing
 /// decoder + its resampler + the output ring, at the DAP's real
-/// `PRELOAD = 2`.
-const AUDIO_PATH_BUDGET: usize = 512 * 1024;
+/// `PRELOAD = 1` (the standard gapless depth — one preloaded next track).
+/// Measured at 664,072 B (`Deck`) / 664,152 B (`AudioPlayer`); 704 KB gives
+/// modest headroom. A future JIT-preload change (building the next track's
+/// decoder lazily instead of holding it fully-built) would let this shrink
+/// back to 512 KB, but isn't needed to fit today.
+const AUDIO_PATH_BUDGET: usize = 704 * 1024;
 
 /// e-ink framebuffer budget: the 800x480 panel at Gray4 — **2 bits per
 /// pixel**, packed — so `800 * 480 * 2 / 8 = 96,000 B`. (Previously
@@ -70,7 +75,9 @@ const AUDIO_PATH_BUDGET: usize = 512 * 1024;
 const FRAMEBUFFER_BUDGET: usize = 800 * 480 * 2 / 8;
 
 /// Budget for the `.soulidx` catalog index reader + SD/catalog scan scratch.
-const CATALOG_INDEX_BUDGET: usize = 128 * 1024;
+/// `IndexReader` itself measures 96 B (a no-alloc header cache); 32 KB is
+/// already generous headroom for the paged reader + scan scratch on top.
+const CATALOG_INDEX_BUDGET: usize = 32 * 1024;
 
 /// Budget for DMA descriptor / staging buffers.
 const DMA_BUFFERS_BUDGET: usize = 64 * 1024;
@@ -148,8 +155,10 @@ impl Storage for StubStorage {
 }
 
 /// The DAP's real preload depth (`dap_core::audio::AudioPlayer`'s const —
-/// see `dap/sim/tests/audio_headless.rs`).
-const PRELOAD: usize = 2;
+/// see `dap/sim/tests/audio_headless.rs`). 1 = gapless (one preloaded next
+/// track, all gapless playback needs); `PRELOAD = 2` was a leftover desktop
+/// value.
+const PRELOAD: usize = 1;
 
 /// Print `name`'s measured size against `budget` before the caller asserts,
 /// so a failing test's output is a precise, self-contained report.
@@ -230,22 +239,19 @@ fn any_decoder_fits_the_h7a3_decoder_budget() {
 }
 
 #[test]
-#[ignore = "RED until JIT-preload (hardware phase): Deck holds a fully-built decoder per preload \
-            slot; un-ignore once the Deck fits the budget"]
 fn deck_fits_the_h7a3_audio_path_budget() {
     let actual = size_of::<Deck<StubSink, AnyDecoder<Src>, PRELOAD>>();
     report(
-        "Deck<StubSink, AnyDecoder<SliceSource>, 2>",
+        "Deck<StubSink, AnyDecoder<SliceSource>, 1>",
         actual,
         AUDIO_PATH_BUDGET,
     );
     assert!(
         actual <= AUDIO_PATH_BUDGET,
         "Deck<_, AnyDecoder<SliceSource<'_>>, {PRELOAD}> is {actual} B, over the \
-         {AUDIO_PATH_BUDGET} B H7A3 audio-path budget by {over} B. Each preload slot holds a \
-         fully-built AnyDecoder + resampler (~343 KB apiece) on top of the live decoder — fix via \
-         JIT preload (stop holding built decoders per slot), on top of the DECODER_BUDGET fix \
-         above.",
+         {AUDIO_PATH_BUDGET} B H7A3 audio-path budget by {over} B. At PRELOAD=1 this should fit \
+         with headroom to spare — an overage here means the live decoder + resampler + ring, or \
+         the single preload slot, grew.",
         over = actual.saturating_sub(AUDIO_PATH_BUDGET),
     );
 }
@@ -262,7 +268,7 @@ fn engine_overhead_is_tiny_on_top_of_the_deck_it_wraps() {
     let deck = size_of::<Deck<StubSink, AnyDecoder<Src>, PRELOAD>>();
     let overhead = engine.saturating_sub(deck);
     report(
-        "Engine overhead (Engine<..,LinearSequencer,2> - Deck<..,2> it wraps)",
+        "Engine overhead (Engine<..,LinearSequencer,1> - Deck<..,1> it wraps)",
         overhead,
         ENGINE_OVERHEAD_BUDGET,
     );
@@ -291,13 +297,10 @@ fn index_reader_fits_the_catalog_index_budget() {
 }
 
 #[test]
-#[ignore = "tied to the Deck/JIT-preload guard above: AudioPlayer wraps an Engine which wraps a \
-            Deck, so it inherits the same per-PRELOAD-slot full-decoder overage; un-ignore \
-            alongside deck_fits_the_h7a3_audio_path_budget"]
 fn audio_player_fits_the_h7a3_audio_path_budget() {
     let actual = size_of::<AudioPlayer<StubSink, StubStorage, PRELOAD>>();
     report(
-        "AudioPlayer<StubSink, StubStorage, 2>",
+        "AudioPlayer<StubSink, StubStorage, 1>",
         actual,
         AUDIO_PATH_BUDGET,
     );
@@ -305,9 +308,9 @@ fn audio_player_fits_the_h7a3_audio_path_budget() {
         actual <= AUDIO_PATH_BUDGET,
         "AudioPlayer<StubSink, StubStorage, {PRELOAD}> is {actual} B, over the \
          {AUDIO_PATH_BUDGET} B H7A3 audio-path budget by {over} B. AudioPlayer wraps an Engine \
-         wrapping a Deck<_, AnyDecoder<_>, {PRELOAD}> by value, so it inherits exactly the \
-         per-preload-slot full-decoder overage `deck_fits_the_h7a3_audio_path_budget` already \
-         pins — the same JIT-preload fix resolves both.",
+         wrapping a Deck<_, AnyDecoder<_>, {PRELOAD}> by value, so it inherits exactly \
+         `deck_fits_the_h7a3_audio_path_budget`'s footprint — an overage here means that guard \
+         is failing too.",
         over = actual.saturating_sub(AUDIO_PATH_BUDGET),
     );
 }

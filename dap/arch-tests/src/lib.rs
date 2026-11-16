@@ -11,22 +11,23 @@
 //!   `memory_budget_fits_user_sram` test that prints the whole split as a
 //!   running-total/margin report and asserts it actually fits.
 //! - Size guards pinning real `soul-audio-core` / `soul-audio-engine` /
-//!   `soul-audio-index` / `dap-core` types against those budgets:
+//!   `soul-audio-index` / `dap-core` types against those budgets, all GREEN
+//!   at the DAP's real `PRELOAD = 1`:
 //!   - `any_decoder_fits_the_h7a3_decoder_budget` — GREEN (the
 //!     `embedded-profile` feature drops the dead surround-Opus variant).
-//!   - `deck_fits_the_h7a3_audio_path_budget` — `#[ignore]`d RED: each
-//!     `PRELOAD` slot still holds a fully-built decoder; needs JIT preload.
+//!   - `deck_fits_the_h7a3_audio_path_budget` — GREEN: at `PRELOAD = 1` (one
+//!     preloaded next track — all gapless needs), `Deck` fits the 704 KB
+//!     audio-path budget with headroom.
 //!   - `engine_overhead_is_tiny_on_top_of_the_deck_it_wraps` — GREEN: the
 //!     `Engine`'s own bookkeeping (cursor + repeat queue + preload handles)
-//!     adds negligible overhead on top of whatever `Deck` it wraps — the
-//!     Deck/decoder overage above is not the sequencing layer's fault.
+//!     adds negligible overhead on top of whatever `Deck` it wraps.
 //!   - `index_reader_fits_the_catalog_index_budget` — GREEN: the `.soulidx`
-//!     reader is a no-alloc header cache, nowhere near its 128 KiB budget.
-//!   - `audio_player_fits_the_h7a3_audio_path_budget` — `#[ignore]`d RED for
-//!     the same reason as `deck_fits_...`: `AudioPlayer` wraps an `Engine`
-//!     which wraps a `Deck`, inheriting the same per-slot overage.
+//!     reader is a no-alloc header cache, nowhere near its 32 KiB budget.
+//!   - `audio_player_fits_the_h7a3_audio_path_budget` — GREEN for the same
+//!     reason as `deck_fits_...`: `AudioPlayer` wraps an `Engine` which wraps
+//!     a `Deck`, inheriting the same (now-fitting) footprint.
 //!
-//! A failing (non-ignored) run here means: the DAP's real-code footprint, as
-//! shaped today, will not fit the H7A3 board. An `#[ignore]`d failure is not
-//! a regression — it is this crate pinning the *exact* overage so the fix is
-//! driven by a number. See each ignored test's reason string for the fix.
+//! A failing run here means: the DAP's real-code footprint, as shaped today,
+//! will not fit the H7A3 board. A future JIT-preload change (building the
+//! next track's decoder lazily instead of holding it fully-built) would let
+//! `AUDIO_PATH_BUDGET` shrink further, but isn't needed to pass today.

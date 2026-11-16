@@ -798,14 +798,17 @@ jobs:
         run: cargo clippy -p board-h7a3 --target thumbv7em-none-eabihf --features hardware -- -D warnings
 
   # ---------------------------------------------------------------------------
-  # dap/ workspace host tests (headless logic + audio simulation)
+  # dap/ workspace host tests (headless logic + audio simulation + arch budgets)
   #
-  # The dap/ workspace (dap-core logic + dap-sim host sim adapters) runs entirely
-  # on the host, no hardware — this gates the headless tests (decode -> resample
-  # -> gapless -> volume -> SimSink, etc.). It pulls soul-audio-core, so it needs
-  # the stable toolchain (let-chains, Rust 1.88+) like the board-h7a3 job above.
-  # board-h7a3's bin is skipped on host (its `hardware` feature is off), so this
-  # only builds+tests dap-core and dap-sim.
+  # The dap/ workspace (dap-core logic + dap-sim host sim adapters + the
+  # dap-arch-tests memory-budget guards) runs entirely on the host, no
+  # hardware — this gates the headless tests (decode -> resample -> gapless ->
+  # volume -> SimSink, etc.) AND the H7A3 SRAM budget guards (dap/arch-tests),
+  # since `cargo test` with no `-p`/`--workspace` filter tests every member of
+  # dap/Cargo.toml by default — core, sim, arch-tests (board-h7a3's bin is
+  # skipped on host: its `hardware` feature is off). It pulls soul-audio-core,
+  # so it needs the stable toolchain (let-chains, Rust 1.88+) like the
+  # board-h7a3 job above.
   # ---------------------------------------------------------------------------
   test-dap:
     name: dap Workspace Tests (headless)
@@ -822,7 +825,7 @@ jobs:
         with:
           workspaces: "dap -> target"
 
-      - name: cargo test (dap-core + dap-sim, host)
+      - name: cargo test (dap-core + dap-sim + dap-arch-tests, host)
         run: cargo test
 
   # ---------------------------------------------------------------------------

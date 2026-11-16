@@ -16,7 +16,9 @@ use dap_core::audio::AudioPlayer;
 use dap_sim::{SimSink, SimStorage};
 use soul_audio_core::{Progress, Quality};
 
-const PRELOAD: usize = 2;
+// 1 = gapless (one preloaded next track, all gapless playback needs);
+// PRELOAD = 2 was a leftover desktop value.
+const PRELOAD: usize = 1;
 
 fn tone_path() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("../../../soul-audio-core/testdata/tone.wav")

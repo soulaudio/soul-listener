@@ -33,7 +33,9 @@ use dap_core::power::PowerProfile;
 use dap_sim::{BatteryKeyframe, SimBattery, SimControls, SimDisplay, SimSink, SimStorage};
 use soul_audio_core::{DeckState, Progress};
 
-const PRELOAD: usize = 2;
+// 1 = gapless (one preloaded next track, all gapless playback needs);
+// PRELOAD = 2 was a leftover desktop value.
+const PRELOAD: usize = 1;
 
 fn tone_path() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("../../../soul-audio-core/testdata/tone.wav")
