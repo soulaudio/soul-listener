@@ -89,8 +89,6 @@ fn report(name: &str, actual: usize, budget: usize) {
 }
 
 #[test]
-#[ignore = "RED until soul-audio-core's embedded-profile drops surround Opus (zero format loss); \
-            un-ignore and add to the CI gate once green"]
 fn any_decoder_fits_the_h7a3_decoder_budget() {
     let actual = size_of::<AnyDecoder<Src>>();
     report("AnyDecoder<SliceSource>", actual, DECODER_BUDGET);

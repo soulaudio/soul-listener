@@ -5,7 +5,11 @@ members = ["core", "sim", "board-h7a3", "arch-tests"]
 [workspace.dependencies]
 # Sibling repo D:/dev/soulaudio/soul-audio-core, two levels up from this file
 # (dap/Cargo.toml -> dap/ -> soul-listener-gh/ -> soulaudio/).
-soul-audio-core   = { path = "../../soul-audio-core/crates/soul-audio-core", default-features = false }
+# embedded-profile: stereo-only DAP target — drops the surround/multichannel
+# decoders (dead code on a stereo DAC) to fit the H7A3 SRAM budget. Surround
+# source files are downmixed to stereo at DAP import (see soul-audio-core's
+# dap-index doc). All stereo/mono formats are unaffected.
+soul-audio-core   = { path = "../../soul-audio-core/crates/soul-audio-core", default-features = false, features = ["embedded-profile"] }
 soul-audio-engine = { path = "../../soul-audio-core/crates/soul-audio-engine" }
 
 # The e-ink drawing toolkit lives in THIS repo's root workspace
