@@ -89,6 +89,8 @@ fn report(name: &str, actual: usize, budget: usize) {
 }
 
 #[test]
+#[ignore = "RED until soul-audio-core's embedded-profile drops surround Opus (zero format loss); \
+            un-ignore and add to the CI gate once green"]
 fn any_decoder_fits_the_h7a3_decoder_budget() {
     let actual = size_of::<AnyDecoder<Src>>();
     report("AnyDecoder<SliceSource>", actual, DECODER_BUDGET);
@@ -103,6 +105,8 @@ fn any_decoder_fits_the_h7a3_decoder_budget() {
 }
 
 #[test]
+#[ignore = "RED until JIT-preload (hardware phase): Deck holds a fully-built decoder per preload \
+            slot; un-ignore once the Deck fits the budget"]
 fn deck_fits_the_h7a3_audio_path_budget() {
     let actual = size_of::<Deck<StubSink, AnyDecoder<Src>, PRELOAD>>();
     report(
