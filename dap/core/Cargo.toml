@@ -12,3 +12,15 @@ soul-audio-engine = { workspace = true }
 # no_std-first by design; already resolved in this workspace's Cargo.lock as
 # a transitive dep of board-h7a3's embassy-stm32 (hardware feature).
 heapless = { version = "0.9", default-features = false }
+
+# E-ink drawing toolkit (crates/eink/* in the root workspace, consumed in
+# place via the path deps in dap/Cargo.toml's [workspace.dependencies] — see
+# that file's comment). Default features only: no "std" (keeps the no_std
+# build path exercised on host too) and no "examples" (pulls eink-emulator).
+eink-system = { workspace = true }
+eink-components = { workspace = true }
+eink-specs = { workspace = true }
+# Must match the version eink-system/eink-components are built against
+# (crates/eink/*/Cargo.toml both pin "0.8.1") so `Gray4`/`DrawTarget`/
+# `Rectangle` in this crate's `display` port are the exact same types.
+embedded-graphics = "0.8.1"

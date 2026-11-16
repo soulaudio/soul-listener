@@ -10,5 +10,6 @@
 
 pub mod app;
 pub mod audio;
+pub mod display;
 pub mod ports;
 pub mod power;
