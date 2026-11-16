@@ -7,8 +7,17 @@ description = "Host-side (std) simulation adapters implementing dap-core's ports
 [dependencies]
 dap-core = { path = "../core" }
 soul-audio-core = { workspace = true }
+# `dap_core::display`'s `Display` port is `DrawTarget<Color = Gray4> +
+# EinkRefresh` -- `SimDisplay` (src/display.rs) implements both directly
+# over embedded-graphics' own traits/types, the same as dap-core itself.
+embedded-graphics = "0.8.1"
 
 # Host-only bridge from `std::fs::File` (+ `std::io::BufReader`, which owns
 # its scratch buffer) to soul-audio-core's `embedded_io` capability ladder —
 # see `src/storage.rs`'s `FileSource`.
 embedded-io-adapters = { version = "0.6", features = ["std"] }
+
+# `SimDisplay::save_png` -- dumps the framebuffer for eyeballing in tests.
+# Matches the version/feature set the root workspace's eink-testing crate
+# already pins (crates/eink/eink-testing/Cargo.toml) for consistency.
+image = { version = "0.25", features = ["png"] }

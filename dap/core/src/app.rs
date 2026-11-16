@@ -18,11 +18,16 @@
 //!   by `n * AppConfig::volume_step`, clamped to `0.0..=1.0`.
 //! - [`InputEvent::LongPress`] → skip to the next track.
 
+use core::fmt::Write as _;
+
+use heapless::String;
 use soul_audio_core::{DeckState, Progress, Quality, Sink};
 
 use crate::audio::AudioPlayer;
+use crate::display::{Display, DisplayError};
 use crate::ports::{Controls, InputEvent, Power, Storage};
 use crate::power::{PowerConfig, PowerEvent, PowerService};
+use crate::screens::now_playing::{self, NowPlayingView};
 
 /// Tuning knobs for [`App::new`]: the deck's resample quality, the owned
 /// [`PowerService`]'s thresholds, and the provisional volume-per-detent
@@ -84,30 +89,35 @@ pub struct TickOutcome {
 }
 
 /// The board-agnostic input/power/audio coordinator: owns an
-/// [`AudioPlayer`], a [`PowerService`], and the board's [`Power`]/
-/// [`Controls`] adapters, and drives all three from one
-/// [`tick`](Self::tick) call per scheduler period.
-pub struct App<S: Sink, St: Storage, P: Power, C: Controls, const PRELOAD: usize> {
+/// [`AudioPlayer`], a [`PowerService`], the board's [`Power`]/[`Controls`]
+/// adapters, and a [`Display`], and drives the first three from one
+/// [`tick`](Self::tick) call per scheduler period (rendering is separate —
+/// see [`render`](Self::render)).
+pub struct App<S: Sink, St: Storage, P: Power, C: Controls, D: Display, const PRELOAD: usize> {
     player: AudioPlayer<S, St, PRELOAD>,
     power_svc: PowerService,
     power: P,
     controls: C,
+    display: D,
     volume: f32,
     volume_step: f32,
 }
 
-impl<S: Sink, St: Storage, P: Power, C: Controls, const PRELOAD: usize> App<S, St, P, C, PRELOAD> {
+impl<S: Sink, St: Storage, P: Power, C: Controls, D: Display, const PRELOAD: usize>
+    App<S, St, P, C, D, PRELOAD>
+{
     /// Build a coordinator over `sink`/`storage` (→ an [`AudioPlayer`]),
-    /// `power` (→ a [`PowerService`]), and `controls`. The queue starts
-    /// empty — call [`set_queue`](Self::set_queue) before the first
+    /// `power` (→ a [`PowerService`]), `controls`, and `display`. The queue
+    /// starts empty — call [`set_queue`](Self::set_queue) before the first
     /// [`tick`](Self::tick) that should produce sound. Starting volume is
     /// full scale (`1.0`).
-    pub fn new(sink: S, storage: St, power: P, controls: C, config: AppConfig) -> Self {
+    pub fn new(sink: S, storage: St, power: P, controls: C, display: D, config: AppConfig) -> Self {
         Self {
             player: AudioPlayer::new(sink, storage, config.quality),
             power_svc: PowerService::new(config.power),
             power,
             controls,
+            display,
             volume: 1.0,
             volume_step: config.volume_step,
         }
@@ -209,6 +219,14 @@ impl<S: Sink, St: Storage, P: Power, C: Controls, const PRELOAD: usize> App<S, S
         &mut self.player
     }
 
+    /// Borrow the owned [`Display`] — e.g. for a test double's own
+    /// assertions/dump helpers (a driver has no comparable need: the real
+    /// panel has no readback), after a [`render`](Self::render) call.
+    #[must_use]
+    pub fn display(&self) -> &D {
+        &self.display
+    }
+
     /// Smoothed battery state of charge, per-mille (0..=1000) — see
     /// [`PowerService::soc_permille`].
     #[must_use]
@@ -229,6 +247,74 @@ impl<S: Sink, St: Storage, P: Power, C: Controls, const PRELOAD: usize> App<S, S
     #[must_use]
     pub fn state(&self) -> DeckState {
         self.player.state()
+    }
+
+    /// Render the Now-Playing screen — the only screen Phase 2a has — to
+    /// the owned [`Display`]: build a [`NowPlayingView`] from the player's
+    /// and power service's current state, draw it via
+    /// [`now_playing::render`], then commit the frame with
+    /// [`EinkRefresh::full_refresh`](crate::display::EinkRefresh::full_refresh).
+    ///
+    /// Not called from [`tick`](Self::tick) and not on any schedule of its
+    /// own: a full e-ink refresh is comparatively slow (hundreds of ms to a
+    /// few seconds — see `DisplaySpec::full_refresh_duration`), so *when* to
+    /// pay for one is a UI-scheduler decision a later phase will drive, not
+    /// something every scheduler period should do unconditionally. A caller
+    /// invokes this explicitly whenever the screen should reflect new
+    /// state.
+    ///
+    /// The track title has no real metadata source yet (no tag reading
+    /// exists above [`Storage`] today) — it's a placeholder `"Track N"`
+    /// (1-based queue position), or `"No Track"` with nothing loaded.
+    ///
+    /// # Errors
+    /// Whatever [`now_playing::render`] or
+    /// [`full_refresh`](crate::display::EinkRefresh::full_refresh) returns
+    /// — see [`DisplayError`].
+    pub fn render(&mut self) -> Result<(), DisplayError> {
+        let mut title: String<24> = String::new();
+        match self.player.current() {
+            Some(pos) => {
+                let _ = write!(title, "Track {}", pos.saturating_add(1));
+            }
+            None => {
+                let _ = title.push_str("No Track");
+            }
+        }
+
+        let sample_rate = self
+            .player
+            .decode_info()
+            .map(|info| info.decoded.sample_rate);
+        let elapsed_s = frames_to_secs(self.player.position_frames(), sample_rate);
+        let total_s = self
+            .player
+            .duration_frames()
+            .map_or(0, |frames| frames_to_secs(frames, sample_rate));
+
+        let view = NowPlayingView {
+            title: &title,
+            elapsed_s,
+            total_s,
+            volume: self.volume,
+            battery_permille: self.power_soc(),
+            playing: self.player.state() == DeckState::Playing,
+        };
+
+        now_playing::render(&mut self.display, &view)?;
+        self.display.full_refresh()
+    }
+}
+
+/// Convert a per-channel source-frame count to whole seconds at
+/// `sample_rate`, for [`App::render`]'s elapsed/total readout. `None` or a
+/// `0` rate (nothing decoded yet) maps to `0`; a frame count that would
+/// overflow `u32` seconds saturates to [`u32::MAX`] rather than wrapping or
+/// panicking (display-only value — no track is ever actually this long).
+fn frames_to_secs(frames: u64, sample_rate: Option<u32>) -> u32 {
+    match sample_rate {
+        Some(rate) if rate > 0 => u32::try_from(frames / u64::from(rate)).unwrap_or(u32::MAX),
+        _ => 0,
     }
 }
 
@@ -326,6 +412,43 @@ mod tests {
     /// Hands back the same in-memory WAV bytes for every track index — the
     /// test only needs `AudioPlayer::pump` to succeed enough to exercise
     /// transport/volume/power wiring, not distinct per-track content.
+    /// A no-op [`Display`]: discards every pixel, never fails, records
+    /// nothing. `App`'s own unit tests exercise transport/volume/power
+    /// wiring, not rendering (that's `screens::now_playing`'s and
+    /// `dap-sim`'s `ui_headless` test's job) — this is just the minimal
+    /// stand-in `App::new`'s `D: Display` parameter requires.
+    struct MockDisplay;
+
+    impl embedded_graphics::draw_target::DrawTarget for MockDisplay {
+        type Color = crate::display::Gray4;
+        type Error = core::convert::Infallible;
+
+        fn draw_iter<I>(&mut self, _pixels: I) -> Result<(), Self::Error>
+        where
+            I: IntoIterator<Item = embedded_graphics::Pixel<Self::Color>>,
+        {
+            Ok(())
+        }
+    }
+
+    impl embedded_graphics::geometry::OriginDimensions for MockDisplay {
+        fn size(&self) -> embedded_graphics::geometry::Size {
+            embedded_graphics::geometry::Size::new(800, 480)
+        }
+    }
+
+    impl crate::display::EinkRefresh for MockDisplay {
+        fn full_refresh(&mut self) -> Result<(), crate::display::DisplayError> {
+            Ok(())
+        }
+        fn partial_refresh(
+            &mut self,
+            _area: crate::display::Rectangle,
+        ) -> Result<(), crate::display::DisplayError> {
+            Ok(())
+        }
+    }
+
     struct MockStorage {
         bytes: &'static [u8],
     }
@@ -381,7 +504,7 @@ mod tests {
     /// behind an unrelated `Progress::Ended`.
     const FRAMES: u32 = 200_000;
 
-    type TestApp = App<MockSink, MockStorage, MockPower, MockControls, 1>;
+    type TestApp = App<MockSink, MockStorage, MockPower, MockControls, MockDisplay, 1>;
 
     fn healthy_reading(soc_permille: u16) -> BatteryReading {
         BatteryReading {
@@ -413,7 +536,14 @@ mod tests {
         let power = MockPower {
             reading: reading.clone(),
         };
-        let mut app = App::new(sink, storage, power, controls, AppConfig::default());
+        let mut app = App::new(
+            sink,
+            storage,
+            power,
+            controls,
+            MockDisplay,
+            AppConfig::default(),
+        );
         app.set_queue(queue_len, 0);
         (app, queue, reading)
     }
@@ -580,6 +710,23 @@ mod tests {
                 DeckState::Stopped,
                 "CriticalShutdown must stop an already-playing deck"
             );
+        });
+    }
+
+    #[test]
+    fn render_succeeds_with_or_without_a_loaded_track() {
+        run_on_big_stack(|| {
+            let (mut app, _queue, _reading) = build_app(1);
+
+            // Nothing pumped yet this run -- `render` must still succeed
+            // (title falls back to "No Track" per its docs) rather than
+            // panicking on an absent `current()`/`decode_info()`.
+            assert!(app.render().is_ok());
+
+            // After a tick the engine has auto-loaded track 0; `render` must
+            // still succeed with a real decode chain behind it.
+            app.tick(0);
+            assert!(app.render().is_ok());
         });
     }
 }
