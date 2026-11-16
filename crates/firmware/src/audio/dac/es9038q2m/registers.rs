@@ -33,9 +33,9 @@
 //! Bit 4 (0x10) selects 32-bit word length within the I²S format.
 
 #![allow(clippy::doc_markdown)] // ES9038Q2M register docs use chip-specific names (REG_VOLUME_LEFT etc.) that are documentation terms, not code
-// ---------------------------------------------------------------------------
-// Register addresses
-// ---------------------------------------------------------------------------
+                                // ---------------------------------------------------------------------------
+                                // Register addresses
+                                // ---------------------------------------------------------------------------
 
 /// System register — bit 0 = soft reset (self-clearing after reset)
 pub const REG_SYSTEM: u8 = 0x00;

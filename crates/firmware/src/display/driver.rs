@@ -31,7 +31,8 @@
 //! and logical row `y = 479` maps to RAM row `0`.  Every method that sets RAM
 //! Y counters / ranges must apply `y_ram = HEIGHT - 1 - y`.
 
-#![allow(clippy::doc_markdown)] // SSD1677 driver docs use hardware signal names and register names that read better without backticks
+#![allow(clippy::doc_markdown)]
+// SSD1677 driver docs use hardware signal names and register names that read better without backticks
 // Display geometry constants are u32 (matching embedded-graphics) but SSD1677
 // registers are u16/u8.  These narrowing casts are safe because DISPLAY_WIDTH=800
 // and DISPLAY_HEIGHT=480 both fit in u16, and BYTES_PER_ROW=100 fits in u8.
@@ -41,7 +42,7 @@
     clippy::cast_possible_truncation,
     clippy::cast_possible_wrap,
     clippy::cast_sign_loss,
-    clippy::arithmetic_side_effects,
+    clippy::arithmetic_side_effects
 )]
 
 use embedded_hal::digital::{InputPin, OutputPin};
@@ -360,7 +361,7 @@ where
                                                                   // Both inputs are compile-time constants within valid range; the
                                                                   // `ok_or` guard satisfies the bounds-checked API without runtime cost.
         let y_start_ram = Self::y_to_ram(0).ok_or(DisplayError::InvalidCoordinate)?; // 479 = 0x01DF
-        // DISPLAY_HEIGHT as u16 - 1 = 479; DISPLAY_HEIGHT = 480 >= 1, no underflow.
+                                                                                     // DISPLAY_HEIGHT as u16 - 1 = 479; DISPLAY_HEIGHT = 480 >= 1, no underflow.
         #[allow(clippy::arithmetic_side_effects)]
         let y_end_ram =
             Self::y_to_ram(DISPLAY_HEIGHT as u16 - 1).ok_or(DisplayError::InvalidCoordinate)?; // 0
@@ -601,12 +602,16 @@ where
                     // byte_index = pixel_index / 8 <= (DISPLAY_WIDTH*DISPLAY_HEIGHT - 1) / 8
                     //   = (800*480 - 1) / 8 = 47999, which is < FRAMEBUFFER_SIZE_1BPP (48000).
                     #[allow(clippy::indexing_slicing)]
-                    { self.framebuffer[byte_index] |= 1 << bit_shift; }
+                    {
+                        self.framebuffer[byte_index] |= 1 << bit_shift;
+                    }
                 }
                 BinaryColor::On => {
                     // black → clear bit (same bound as above).
                     #[allow(clippy::indexing_slicing)]
-                    { self.framebuffer[byte_index] &= !(1 << bit_shift); }
+                    {
+                        self.framebuffer[byte_index] &= !(1 << bit_shift);
+                    }
                 }
             }
         }

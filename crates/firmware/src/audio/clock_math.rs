@@ -106,8 +106,7 @@ pub const PLL3_FRACN: u32 = 1245;
 /// Must stay within +/-MCLK_MAX_ERROR_HZ of MCLK_TARGET_HZ.
 // The intermediate u128 arithmetic prevents overflow; the final value (≈49 MHz) fits in u32.
 #[allow(clippy::cast_possible_truncation)]
-pub const PLL3P_HZ_APPROX: u32 = (HSI_HZ as u128
-    * (PLL3_N as u128 * 8192 + PLL3_FRACN as u128)
+pub const PLL3P_HZ_APPROX: u32 = (HSI_HZ as u128 * (PLL3_N as u128 * 8192 + PLL3_FRACN as u128)
     / (PLL3_M as u128 * 8192 * PLL3_P as u128)) as u32;
 
 /// Maximum allowed MCLK error (Hz).
@@ -209,15 +208,27 @@ mod tests {
     /// Changing to HSE (25 MHz) requires recalculating all PLL3 divisors.
     #[test]
     fn hsi_is_64mhz() {
-        assert_eq!(HSI_HZ, 64_000_000, "HSI must be 64 MHz (STM32H743 internal oscillator)");
+        assert_eq!(
+            HSI_HZ, 64_000_000,
+            "HSI must be 64 MHz (STM32H743 internal oscillator)"
+        );
     }
 
     /// PLL3 M/N/P must match build_embassy_config() in boot.rs:
     /// PllPreDiv::DIV4 (M=4), PllMul::MUL49 (N=49), PllDiv::DIV16 (P=16).
     #[test]
     fn pll3_divisors_match_embassy_boot_config() {
-        assert_eq!(PLL3_M, 4, "PLL3_M must match PllPreDiv::DIV4 in build_embassy_config()");
-        assert_eq!(PLL3_N, 49, "PLL3_N must match PllMul::MUL49 in build_embassy_config()");
-        assert_eq!(PLL3_P, 16, "PLL3_P must match PllDiv::DIV16 in build_embassy_config()");
+        assert_eq!(
+            PLL3_M, 4,
+            "PLL3_M must match PllPreDiv::DIV4 in build_embassy_config()"
+        );
+        assert_eq!(
+            PLL3_N, 49,
+            "PLL3_N must match PllMul::MUL49 in build_embassy_config()"
+        );
+        assert_eq!(
+            PLL3_P, 16,
+            "PLL3_P must match PllDiv::DIV16 in build_embassy_config()"
+        );
     }
 }

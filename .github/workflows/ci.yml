@@ -735,6 +735,69 @@ jobs:
         run: cargo build --target thumbv7em-none-eabihf --features hardware
 
   # ---------------------------------------------------------------------------
+  # dap/ workspace format check
+  #
+  # The dap/ workspace (Embassy 0.6 line) is its own standalone workspace,
+  # excluded from the root workspace (see the root Cargo.toml's
+  # `workspace.exclude` comment), so it gets its own fmt job rather than being
+  # folded into the root `fmt` job above. Cheap and tree-wide, same shape as
+  # xtask's `precommit`/`verify` dap fmt-check.
+  # ---------------------------------------------------------------------------
+  fmt-dap:
+    name: dap Workspace Format
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: dap
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+
+      - name: cargo fmt --all --check (dap)
+        run: cargo fmt --all --check
+
+  # ---------------------------------------------------------------------------
+  # dap/ workspace clippy — host + thumbv7em (board-h7a3, hardware feature)
+  #
+  # Mirrors test-dap / build-board-h7a3 below: stable toolchain (dap's
+  # Embassy 0.6 stack uses let-chains, which need Rust 1.88+, newer than the
+  # root's 1.87 MSRV jobs), `workspaces: "dap -> target"` cache scoping.
+  # Lints the host-only dap-core/dap-sim code (board-h7a3's bin is
+  # required-features-gated off on host builds) and separately lints the
+  # thumbv7em cross-build of board-h7a3 under its `hardware` feature, which
+  # needs flip-link on PATH to resolve the linker.
+  # ---------------------------------------------------------------------------
+  clippy-dap:
+    name: dap Workspace Clippy
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: dap
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: thumbv7em-none-eabihf
+          components: clippy
+
+      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
+        with:
+          workspaces: "dap -> target"
+
+      - name: Install flip-link (stack overflow protection linker)
+        run: cargo install flip-link
+
+      - name: cargo clippy --workspace --all-targets (host)
+        run: cargo clippy --workspace --all-targets -- -D warnings
+
+      - name: cargo clippy -p board-h7a3 (thumbv7em, hardware feature)
+        run: cargo clippy -p board-h7a3 --target thumbv7em-none-eabihf --features hardware -- -D warnings
+
+  # ---------------------------------------------------------------------------
   # dap/ workspace host tests (headless logic + audio simulation)
   #
   # The dap/ workspace (dap-core logic + dap-sim host sim adapters) runs entirely

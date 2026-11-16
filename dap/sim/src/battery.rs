@@ -164,7 +164,11 @@ impl SimBattery {
     fn sample_at(&self, at_ms: u64) -> (u16, i16, bool) {
         let first = self.keyframes.first().expect("non-empty by construction");
         if at_ms <= first.at_ms {
-            return (first.soc_permille, first.temp_centi_c, first.charger_present);
+            return (
+                first.soc_permille,
+                first.temp_centi_c,
+                first.charger_present,
+            );
         }
         let last = self.keyframes.last().expect("non-empty by construction");
         if at_ms >= last.at_ms {
@@ -209,8 +213,8 @@ fn current_ma_from_state(charging: bool, charger_present: bool, soc_permille: u1
         } else {
             let span = 1000 - TAPER_START_SOC_PERMILLE;
             let pos = (soc_permille - TAPER_START_SOC_PERMILLE).min(span);
-            let drop = i32::from(pos) * i32::from(NOMINAL_CHARGE_MA - TRICKLE_CHARGE_MA)
-                / i32::from(span);
+            let drop =
+                i32::from(pos) * i32::from(NOMINAL_CHARGE_MA - TRICKLE_CHARGE_MA) / i32::from(span);
             (i32::from(NOMINAL_CHARGE_MA) - drop) as i16
         }
     } else if charger_present {
@@ -223,8 +227,10 @@ fn current_ma_from_state(charging: bool, charger_present: bool, soc_permille: u1
 impl Power for SimBattery {
     fn read(&mut self) -> BatteryReading {
         let (soc_permille, temp_centi_c, charger_present) = self.sample_at(self.now_ms);
-        let charging =
-            charger_present && self.last_soc_permille.is_some_and(|prev| soc_permille > prev);
+        let charging = charger_present
+            && self
+                .last_soc_permille
+                .is_some_and(|prev| soc_permille > prev);
         self.last_soc_permille = Some(soc_permille);
 
         BatteryReading {

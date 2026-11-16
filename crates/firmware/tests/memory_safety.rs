@@ -7,7 +7,7 @@
     clippy::cast_possible_truncation,
     clippy::cast_possible_wrap,
     clippy::cast_sign_loss,
-    clippy::cast_lossless,
+    clippy::cast_lossless
 )]
 //! Tests verify DMA buffer placement invariants at declaration level.
 //! Runtime address verification is done via assert! in main() startup.
@@ -69,8 +69,7 @@ fn firmware_has_runtime_dma_buffer_address_assertion() {
     // It must also reference addr_of or AXI_SRAM_BASE — not just assert! alone,
     // because assert! is used for other purposes too.
     let has_assert = main_rs.contains("assert");
-    let has_address_check =
-        main_rs.contains("addr_of") || main_rs.contains("AXI_SRAM_BASE");
+    let has_address_check = main_rs.contains("addr_of") || main_rs.contains("AXI_SRAM_BASE");
 
     assert!(
         has_assert && has_address_check,
@@ -259,7 +258,10 @@ fn large_static_cell_byte_arrays_use_align32_or_dma_buffer() {
     let main_rs = include_str!("../src/main.rs");
 
     for (i, line) in main_rs.lines().enumerate() {
-        if line.contains("StaticCell<[u8;") && !line.contains("Align32") && !line.contains("DmaBuffer") {
+        if line.contains("StaticCell<[u8;")
+            && !line.contains("Align32")
+            && !line.contains("DmaBuffer")
+        {
             // Try to extract the array size
             // Pattern: StaticCell<[u8; 12345]>
             let size_hint = line

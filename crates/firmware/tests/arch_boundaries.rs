@@ -2151,8 +2151,10 @@ fn boot_mpu_function_returns_token() {
     // Check that boot.rs defines an MpuConfigured token or similar proof type
     let boot_src = include_str!("../src/boot.rs");
     assert!(
-        boot_src.contains("MpuConfigured") || boot_src.contains("MpuToken")
-            || boot_src.contains("CacheConfigured") || boot_src.contains("BootToken"),
+        boot_src.contains("MpuConfigured")
+            || boot_src.contains("MpuToken")
+            || boot_src.contains("CacheConfigured")
+            || boot_src.contains("BootToken"),
         "apply_mpu_config_from_peripherals() must return a zero-cost token type \
          (e.g., MpuConfigured) that build_embassy_config() requires as a parameter. \
          This makes it a compile error to call Embassy init without MPU config. \
@@ -2165,8 +2167,10 @@ fn main_rs_passes_mpu_token_to_embassy_init() {
     let main_src = include_str!("../src/main.rs");
     // The token returned by apply_mpu_config must be used in the Embassy init call
     assert!(
-        main_src.contains("MpuConfigured") || main_src.contains("mpu_token")
-            || main_src.contains("cache_configured") || main_src.contains("boot_token"),
+        main_src.contains("MpuConfigured")
+            || main_src.contains("mpu_token")
+            || main_src.contains("cache_configured")
+            || main_src.contains("boot_token"),
         "main.rs must use the MPU configuration token when calling embassy_stm32::init(). \
          The token proves MPU was configured before D-cache was enabled."
     );
@@ -2182,8 +2186,10 @@ fn static_memory_budget_has_compile_time_assertion() {
     // Check that dma_safety.rs has a const assertion on memory budget
     let dma_safety = include_str!("../../../crates/platform/src/dma_safety.rs");
     assert!(
-        dma_safety.contains("const _:") || dma_safety.contains("const_assert")
-            || dma_safety.contains("MEMORY_BUDGET") || dma_safety.contains("TOTAL_DMA"),
+        dma_safety.contains("const _:")
+            || dma_safety.contains("const_assert")
+            || dma_safety.contains("MEMORY_BUDGET")
+            || dma_safety.contains("TOTAL_DMA"),
         "dma_safety.rs must have a compile-time assertion on total static DMA memory budget. \
          Two framebuffers (2×96KB) + two audio buffers (2×16KB) = 224KB of 512KB AXI SRAM. \
          Add: const _: () = assert!(TOTAL_STATIC_DMA_BYTES <= AXI_SRAM_SIZE_BYTES * 3 / 4)"
@@ -2220,8 +2226,8 @@ fn audio_power_sequencer_is_used_in_firmware() {
 
     // Also check boot.rs for audio init
     let boot_rs = include_str!("../src/boot.rs");
-    let found_in_boot = boot_rs.contains("AudioPowerSequencer")
-        || boot_rs.contains("audio_sequencer");
+    let found_in_boot =
+        boot_rs.contains("AudioPowerSequencer") || boot_rs.contains("audio_sequencer");
 
     assert!(
         found_in_main || found_in_boot,
@@ -2281,9 +2287,11 @@ fn audio_dma_buffer_type_enforced() {
     let used_in_main = main_rs.contains("DmaBuffer<AxiSramRegion");
 
     // Also accept usage in the audio module
-    let audio_mod = std::fs::read_to_string(
-        concat!(env!("CARGO_MANIFEST_DIR"), "/src/audio/sai_task.rs")
-    ).unwrap_or_default();
+    let audio_mod = std::fs::read_to_string(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/src/audio/sai_task.rs"
+    ))
+    .unwrap_or_default();
     let used_in_sai_task = audio_mod.contains("DmaBuffer<AxiSramRegion");
 
     assert!(
@@ -2295,7 +2303,6 @@ fn audio_dma_buffer_type_enforced() {
            static AUDIO_BUFFER: StaticCell<DmaBuffer<AxiSramRegion, [u8; AUDIO_DMA_BUFFER_BYTES]>>"
     );
 }
-
 
 // ---- BQ25895 PMIC driver architecture tests --------------------------------
 //
@@ -2313,9 +2320,10 @@ fn audio_dma_buffer_type_enforced() {
 /// on the host without any STM32 dependencies.
 #[test]
 fn bq25895_driver_exists_in_platform() {
-    let platform_src = std::fs::read_to_string(
-        concat!(env!("CARGO_MANIFEST_DIR"), "/../platform/src/bq25895.rs"),
-    )
+    let platform_src = std::fs::read_to_string(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../platform/src/bq25895.rs"
+    ))
     .expect("bq25895.rs must exist in crates/platform/src/ -- driver not yet created");
     assert!(
         platform_src.contains("BQ25895_I2C_ADDR"),
@@ -2366,9 +2374,10 @@ fn bq25895_i2c_addr_is_correct() {
 /// to perform actual I2C writes during the power-on/off sequence.
 #[test]
 fn es9038q2m_register_constants_defined() {
-    let src = std::fs::read_to_string(
-        concat!(env!("CARGO_MANIFEST_DIR"), "/../platform/src/es9038q2m.rs"),
-    )
+    let src = std::fs::read_to_string(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../platform/src/es9038q2m.rs"
+    ))
     .expect("es9038q2m.rs must exist in crates/platform/src/");
     assert!(
         src.contains("REG_ATT_L"),
@@ -2454,9 +2463,8 @@ fn workspace_cargo_toml_has_panic_prevention_lints() {
 /// so reviewers and CI can confirm the wiring intent is documented at the call site.
 #[test]
 fn audio_sequencer_with_i2c_called_in_main() {
-    let main_rs = std::fs::read_to_string(
-        concat!(env!("CARGO_MANIFEST_DIR"), "/src/main.rs")
-    ).unwrap();
+    let main_rs =
+        std::fs::read_to_string(concat!(env!("CARGO_MANIFEST_DIR"), "/src/main.rs")).unwrap();
     assert!(
         main_rs.contains("mute_dac_with_i2c") || main_rs.contains("with_i2c"),
         "main.rs must call AudioPowerSequencer::mute_dac_with_i2c() at the I2C init call site"
@@ -2470,9 +2478,8 @@ fn audio_sequencer_with_i2c_called_in_main() {
 /// in main.rs to prove the wiring is planned at the call site, not silently deferred.
 #[test]
 fn i2c3_dac_init_not_commented_out() {
-    let main_rs = std::fs::read_to_string(
-        concat!(env!("CARGO_MANIFEST_DIR"), "/src/main.rs")
-    ).unwrap();
+    let main_rs =
+        std::fs::read_to_string(concat!(env!("CARGO_MANIFEST_DIR"), "/src/main.rs")).unwrap();
     // Must NOT be a pure TODO comment block — must have some real I2C code
     assert!(
         main_rs.contains("I2c3") || main_rs.contains("i2c3") || main_rs.contains("ES9038"),
@@ -2487,11 +2494,13 @@ fn i2c3_dac_init_not_commented_out() {
 /// in main.rs to prove the wiring is planned at the call site, not silently deferred.
 #[test]
 fn i2c2_pmic_init_not_commented_out() {
-    let main_rs = std::fs::read_to_string(
-        concat!(env!("CARGO_MANIFEST_DIR"), "/src/main.rs")
-    ).unwrap();
+    let main_rs =
+        std::fs::read_to_string(concat!(env!("CARGO_MANIFEST_DIR"), "/src/main.rs")).unwrap();
     assert!(
-        main_rs.contains("I2c2") || main_rs.contains("i2c2") || main_rs.contains("BQ25895") || main_rs.contains("bq25895"),
+        main_rs.contains("I2c2")
+            || main_rs.contains("i2c2")
+            || main_rs.contains("BQ25895")
+            || main_rs.contains("bq25895"),
         "main.rs must reference I2C2 or BQ25895 — PMIC I2C init must not be just a TODO comment"
     );
 }
@@ -2503,9 +2512,8 @@ fn i2c2_pmic_init_not_commented_out() {
 /// full power-on sequence (mute → amp → unmute) is wired at the call site.
 #[test]
 fn audio_power_sequencer_fully_on_path_exists_in_main() {
-    let main_rs = std::fs::read_to_string(
-        concat!(env!("CARGO_MANIFEST_DIR"), "/src/main.rs")
-    ).unwrap();
+    let main_rs =
+        std::fs::read_to_string(concat!(env!("CARGO_MANIFEST_DIR"), "/src/main.rs")).unwrap();
     assert!(
         main_rs.contains("AudioPowerSequencer"),
         "main.rs must use AudioPowerSequencer"
@@ -2533,8 +2541,10 @@ fn task_stack_budget_exported_from_platform() {
 fn axi_sram_budget_within_bounds() {
     let budget = platform::dma_safety::TOTAL_AXI_SRAM_BUDGET_BYTES;
     let capacity = platform::dma_safety::AXI_SRAM_SIZE_BYTES;
-    assert!(budget <= capacity,
-        "Budget {budget} bytes exceeds AXI SRAM capacity {capacity} bytes");
+    assert!(
+        budget <= capacity,
+        "Budget {budget} bytes exceeds AXI SRAM capacity {capacity} bytes"
+    );
 }
 
 /// After reserving DMA buffers and task stacks, at least 64 KB must remain as headroom.
@@ -2544,8 +2554,10 @@ fn static_dma_plus_tasks_leaves_64kb_headroom() {
     let tasks = platform::dma_safety::TOTAL_TASK_STACK_BYTES;
     let total = platform::dma_safety::AXI_SRAM_SIZE_BYTES;
     let headroom = total - dma - tasks;
-    assert!(headroom >= 64 * 1024,
-        "Only {headroom} bytes headroom after DMA ({dma}) + tasks ({tasks}); need 64 KB minimum");
+    assert!(
+        headroom >= 64 * 1024,
+        "Only {headroom} bytes headroom after DMA ({dma}) + tasks ({tasks}); need 64 KB minimum"
+    );
 }
 
 // ── HIL test skeleton existence tests (Step 6) ───────────────────────────────
@@ -2553,9 +2565,8 @@ fn static_dma_plus_tasks_leaves_64kb_headroom() {
 /// The tests/hardware/ directory must exist as part of the required HIL skeleton.
 #[test]
 fn hil_test_directory_exists() {
-    let hil_dir = std::path::Path::new(
-        concat!(env!("CARGO_MANIFEST_DIR"), "/../../tests/hardware")
-    );
+    let hil_dir =
+        std::path::Path::new(concat!(env!("CARGO_MANIFEST_DIR"), "/../../tests/hardware"));
     assert!(hil_dir.exists(),
         "tests/hardware/ directory must exist — HIL test skeleton required for A-grade architecture");
 }
@@ -2563,13 +2574,20 @@ fn hil_test_directory_exists() {
 /// The HIL README must document the probe-rs setup and how to run tests.
 #[test]
 fn hil_readme_documents_test_procedure() {
-    let readme = std::path::Path::new(
-        concat!(env!("CARGO_MANIFEST_DIR"), "/../../tests/hardware/README.md")
-    );
+    let readme = std::path::Path::new(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../../tests/hardware/README.md"
+    ));
     if readme.exists() {
         let content = std::fs::read_to_string(readme).unwrap();
-        assert!(content.contains("probe-rs"), "HIL README must document probe-rs setup");
-        assert!(content.contains("cargo test"), "HIL README must show how to run tests");
+        assert!(
+            content.contains("probe-rs"),
+            "HIL README must document probe-rs setup"
+        );
+        assert!(
+            content.contains("cargo test"),
+            "HIL README must show how to run tests"
+        );
     }
 }
 
@@ -2585,9 +2603,10 @@ fn hil_readme_documents_test_procedure() {
 /// the constants that boot.rs depends on become unverifiable.
 #[test]
 fn pll3_clock_math_module_exists() {
-    let path = std::path::Path::new(
-        concat!(env!("CARGO_MANIFEST_DIR"), "/src/audio/clock_math.rs"),
-    );
+    let path = std::path::Path::new(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/src/audio/clock_math.rs"
+    ));
     assert!(
         path.exists(),
         "audio/clock_math.rs must exist with PLL3 divider constants and derivation"
@@ -2643,9 +2662,10 @@ fn pll3_mclk_error_within_tolerance() {
 /// If sai_task.rs no longer imports from clock_math, the two can drift.
 #[test]
 fn sai_task_references_clock_math() {
-    let sai_task = std::fs::read_to_string(
-        concat!(env!("CARGO_MANIFEST_DIR"), "/src/audio/sai_task.rs"),
-    )
+    let sai_task = std::fs::read_to_string(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/src/audio/sai_task.rs"
+    ))
     .unwrap();
     assert!(
         sai_task.contains("clock_math"),
@@ -2655,9 +2675,10 @@ fn sai_task_references_clock_math() {
 
 #[test]
 fn bq25895_init_function_exists_in_platform() {
-    let src = std::fs::read_to_string(
-        concat!(env!("CARGO_MANIFEST_DIR"), "/../platform/src/bq25895.rs"),
-    )
+    let src = std::fs::read_to_string(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../platform/src/bq25895.rs"
+    ))
     .expect("bq25895.rs must exist in crates/platform/src/");
     assert!(
         src.contains("pub fn bq25895_init"),
@@ -2671,9 +2692,10 @@ fn bq25895_init_function_exists_in_platform() {
 
 #[test]
 fn es9038q2m_init_function_exists_in_platform() {
-    let src = std::fs::read_to_string(
-        concat!(env!("CARGO_MANIFEST_DIR"), "/../platform/src/es9038q2m.rs"),
-    )
+    let src = std::fs::read_to_string(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../platform/src/es9038q2m.rs"
+    ))
     .expect("es9038q2m.rs must exist in crates/platform/src/");
     assert!(
         src.contains("pub fn es9038q2m_init"),
@@ -2713,11 +2735,11 @@ fn clippy_toml_has_array_size_threshold_512() {
 
 #[test]
 fn firmware_lib_has_no_module_level_allows() {
-    let lib_rs = std::fs::read_to_string(
-        concat!(env!("CARGO_MANIFEST_DIR"), "/src/lib.rs")
-    ).unwrap();
+    let lib_rs =
+        std::fs::read_to_string(concat!(env!("CARGO_MANIFEST_DIR"), "/src/lib.rs")).unwrap();
     // Count #![allow( (module-level, not #[allow( which is per-item))
-    let module_allows: Vec<&str> = lib_rs.lines()
+    let module_allows: Vec<&str> = lib_rs
+        .lines()
         .filter(|l| l.trim_start().starts_with("#![allow("))
         .collect();
     assert!(
@@ -2730,9 +2752,8 @@ fn firmware_lib_has_no_module_level_allows() {
 
 #[test]
 fn boot_rs_unsafe_blocks_have_safety_comments() {
-    let boot_rs = std::fs::read_to_string(
-        concat!(env!("CARGO_MANIFEST_DIR"), "/src/boot.rs")
-    ).unwrap();
+    let boot_rs =
+        std::fs::read_to_string(concat!(env!("CARGO_MANIFEST_DIR"), "/src/boot.rs")).unwrap();
     let lines: Vec<&str> = boot_rs.lines().collect();
     let mut violations = Vec::new();
     for (i, line) in lines.iter().enumerate() {
@@ -2740,9 +2761,15 @@ fn boot_rs_unsafe_blocks_have_safety_comments() {
             // Check the 3 lines before this unsafe block for a SAFETY comment
             let start = i.saturating_sub(3);
             let preceding = &lines[start..i];
-            let has_safety = preceding.iter().any(|l| l.contains("// SAFETY:") || l.contains("SAFETY:"));
+            let has_safety = preceding
+                .iter()
+                .any(|l| l.contains("// SAFETY:") || l.contains("SAFETY:"));
             if !has_safety {
-                violations.push(format!("  line {}: `{}` (no SAFETY comment in preceding 3 lines)", i + 1, line.trim()));
+                violations.push(format!(
+                    "  line {}: `{}` (no SAFETY comment in preceding 3 lines)",
+                    i + 1,
+                    line.trim()
+                ));
             }
         }
     }
@@ -2761,17 +2788,21 @@ fn display_spi_uses_d1_domain_dma_not_bdma() {
     // SPI2 DMA channels must be from DMA1 or DMA2 (D1-domain, AXI SRAM-accessible).
     // BDMA is in D3 domain and can only access SRAM4 — NOT AXI SRAM.
     // If SPI2 used BDMA with an AXI SRAM buffer, it would silently produce garbage.
-    let main_rs = std::fs::read_to_string(
-        concat!(env!("CARGO_MANIFEST_DIR"), "/src/main.rs")
-    ).unwrap();
+    let main_rs =
+        std::fs::read_to_string(concat!(env!("CARGO_MANIFEST_DIR"), "/src/main.rs")).unwrap();
     // Must NOT use BDMA for display SPI
-    assert!(!main_rs.contains("p.BDMA"),
-        "Display SPI must not use BDMA (D3-domain) — BDMA cannot access AXI SRAM framebuffer");
+    assert!(
+        !main_rs.contains("p.BDMA"),
+        "Display SPI must not use BDMA (D3-domain) — BDMA cannot access AXI SRAM framebuffer"
+    );
     // Must document that SPI uses DMA1/DMA2
     assert!(
-        main_rs.contains("DMA1") || main_rs.contains("DMA2") ||
-        main_rs.contains("dma1") || main_rs.contains("dma2") ||
-        main_rs.contains("// D1-domain DMA") || main_rs.contains("DMA channel"),
+        main_rs.contains("DMA1")
+            || main_rs.contains("DMA2")
+            || main_rs.contains("dma1")
+            || main_rs.contains("dma2")
+            || main_rs.contains("// D1-domain DMA")
+            || main_rs.contains("DMA channel"),
         "Display SPI DMA must be documented as using D1-domain DMA (DMA1 or DMA2)"
     );
 }
@@ -2780,27 +2811,29 @@ fn display_spi_uses_d1_domain_dma_not_bdma() {
 fn audio_power_down_function_exists() {
     // A power-down sequence must exist to mute the DAC and disable the amp on shutdown.
     // Without this, the device draws continuous current from the amp on battery.
-    let main_rs = std::fs::read_to_string(
-        concat!(env!("CARGO_MANIFEST_DIR"), "/src/main.rs")
-    ).unwrap();
+    let main_rs =
+        std::fs::read_to_string(concat!(env!("CARGO_MANIFEST_DIR"), "/src/main.rs")).unwrap();
     assert!(
-        main_rs.contains("mute_dac_for_shutdown") || main_rs.contains("power_down") ||
-        main_rs.contains("audio_power_down") || main_rs.contains("disable_amp"),
+        main_rs.contains("mute_dac_for_shutdown")
+            || main_rs.contains("power_down")
+            || main_rs.contains("audio_power_down")
+            || main_rs.contains("disable_amp"),
         "main.rs must reference audio power-down sequence (mute_dac_for_shutdown or disable_amp)"
     );
 }
 
 #[test]
 fn audio_sequencer_has_power_down_path() {
-    let sequencer_src = std::fs::read_to_string(
-        concat!(env!("CARGO_MANIFEST_DIR"), "/../platform/src/audio_sequencer.rs")
-    ).unwrap();
+    let sequencer_src = std::fs::read_to_string(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../platform/src/audio_sequencer.rs"
+    ))
+    .unwrap();
     assert!(
         sequencer_src.contains("mute_dac_for_shutdown") || sequencer_src.contains("disable_amp"),
         "audio_sequencer.rs must have a power-down path (mute_dac_for_shutdown + disable_amp)"
     );
 }
-
 
 #[test]
 fn no_todo_macro_in_production_source_paths() {
@@ -2847,9 +2880,7 @@ fn input_hardware_ok_discards_are_justified() {
     // .ok() on channel operations discards errors silently.
     // Each .ok() in input hardware code must have a justification comment on the
     // same line or an explicit justification marker on the preceding line.
-    let input_dir = std::path::Path::new(
-        concat!(env!("CARGO_MANIFEST_DIR"), "/src/input")
-    );
+    let input_dir = std::path::Path::new(concat!(env!("CARGO_MANIFEST_DIR"), "/src/input"));
     if !input_dir.exists() {
         return; // No input module -- skip
     }
@@ -2908,44 +2939,63 @@ fn builder_rs_has_no_debug_format_in_production_paths() {
 fn sdram_region_is_not_dma_accessible() {
     // SdramRegion must NOT implement DmaAccessible — external SDRAM has variable
     // latency that violates real-time audio DMA timing constraints.
-    let dma_safety_src = std::fs::read_to_string(
-        concat!(env!("CARGO_MANIFEST_DIR"), "/../platform/src/dma_safety.rs")
-    ).unwrap();
-    assert!(dma_safety_src.contains("SdramRegion"),
-        "dma_safety.rs must define SdramRegion");
+    let dma_safety_src = std::fs::read_to_string(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../platform/src/dma_safety.rs"
+    ))
+    .unwrap();
+    assert!(
+        dma_safety_src.contains("SdramRegion"),
+        "dma_safety.rs must define SdramRegion"
+    );
     // Must explicitly NOT implement DmaAccessible for SdramRegion
     // (absence of impl DmaAccessible for SdramRegion enforces this)
-    assert!(!dma_safety_src.contains("impl DmaAccessible for SdramRegion"),
-        "SdramRegion must NOT implement DmaAccessible — SDRAM latency violates real-time DMA");
+    assert!(
+        !dma_safety_src.contains("impl DmaAccessible for SdramRegion"),
+        "SdramRegion must NOT implement DmaAccessible — SDRAM latency violates real-time DMA"
+    );
 }
 
 #[test]
 fn high_latency_region_trait_exists() {
-    let dma_safety_src = std::fs::read_to_string(
-        concat!(env!("CARGO_MANIFEST_DIR"), "/../platform/src/dma_safety.rs")
-    ).unwrap();
-    assert!(dma_safety_src.contains("HighLatencyRegion"),
-        "dma_safety.rs must define HighLatencyRegion marker trait");
-    assert!(dma_safety_src.contains("impl HighLatencyRegion for SdramRegion"),
-        "SdramRegion must implement HighLatencyRegion to mark it as unsuitable for real-time DMA");
+    let dma_safety_src = std::fs::read_to_string(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../platform/src/dma_safety.rs"
+    ))
+    .unwrap();
+    assert!(
+        dma_safety_src.contains("HighLatencyRegion"),
+        "dma_safety.rs must define HighLatencyRegion marker trait"
+    );
+    assert!(
+        dma_safety_src.contains("impl HighLatencyRegion for SdramRegion"),
+        "SdramRegion must implement HighLatencyRegion to mark it as unsuitable for real-time DMA"
+    );
 }
 
 #[test]
 fn sdram_region_constants_are_correct() {
-    assert_eq!(platform::dma_safety::EXTSDRAM_BASE, 0xC000_0000u32,
-        "External SDRAM must be at FMC bank 5 base address 0xC0000000");
-    assert_eq!(platform::dma_safety::EXTSDRAM_SIZE_BYTES, 32 * 1024 * 1024,
-        "External SDRAM is 32 MB (W9825G6KH-6)");
+    assert_eq!(
+        platform::dma_safety::EXTSDRAM_BASE,
+        0xC000_0000u32,
+        "External SDRAM must be at FMC bank 5 base address 0xC0000000"
+    );
+    assert_eq!(
+        platform::dma_safety::EXTSDRAM_SIZE_BYTES,
+        32 * 1024 * 1024,
+        "External SDRAM is 32 MB (W9825G6KH-6)"
+    );
 }
 
 // ---- firmware::sdram 96 MHz timing boundary tests -------------------------
 
 #[test]
 fn sdram_timing_module_exists() {
-    let path = std::path::Path::new(
-        concat!(env!("CARGO_MANIFEST_DIR"), "/src/sdram.rs")
+    let path = std::path::Path::new(concat!(env!("CARGO_MANIFEST_DIR"), "/src/sdram.rs"));
+    assert!(
+        path.exists(),
+        "sdram.rs must exist with FMC timing constants"
     );
-    assert!(path.exists(), "sdram.rs must exist with FMC timing constants");
 }
 
 #[test]
@@ -3002,9 +3052,10 @@ fn integration_boot_sequence_test_exists() {
     //
     // If this test fails, the integration_boot_sequence.rs file has been
     // deleted or moved -- restore it before merging.
-    let path = std::path::Path::new(
-        concat!(env!("CARGO_MANIFEST_DIR"), "/tests/integration_boot_sequence.rs")
-    );
+    let path = std::path::Path::new(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/tests/integration_boot_sequence.rs"
+    ));
     assert!(
         path.exists(),
         "integration_boot_sequence.rs must exist -- verifies full boot sequence with mock peripherals"
@@ -3082,8 +3133,8 @@ fn cargo_lock_file_is_committed() {
     // Convention: libraries omit Cargo.lock; binaries/firmware commit it.
     // Reference: https://doc.rust-lang.org/cargo/faq.html
     use std::path::Path;
-    let lock_exists =
-        Path::new(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../Cargo.lock")).exists()
+    let lock_exists = Path::new(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../Cargo.lock"))
+        .exists()
         || Path::new(concat!(env!("CARGO_MANIFEST_DIR"), "/../../Cargo.lock")).exists()
         || Path::new("Cargo.lock").exists();
     assert!(
@@ -3123,7 +3174,6 @@ fn ci_yml_verifies_cargo_lock_is_present() {
          (search for 'Cargo.lock')"
     );
 }
-
 
 // ---- GAP B2: SRAM4 is BDMA-only -------------------------------------------
 
@@ -3244,7 +3294,6 @@ fn enable_caches_requires_mpu_configured_parameter() {
     );
 }
 
-
 // ---- GAP B4: assert! not debug_assert! for DMA buffer address checks ------
 
 /// DMA buffer address guards must use assert! not debug_assert! so they
@@ -3259,9 +3308,8 @@ fn enable_caches_requires_mpu_configured_parameter() {
 /// DMA buffer address placement checks.
 #[test]
 fn framebuffer_dma_address_guard_uses_assert_not_debug_assert() {
-    let main_src = std::fs::read_to_string(
-        concat!(env!("CARGO_MANIFEST_DIR"), "/src/main.rs")
-    ).unwrap();
+    let main_src =
+        std::fs::read_to_string(concat!(env!("CARGO_MANIFEST_DIR"), "/src/main.rs")).unwrap();
     // Scan 6-line windows: if debug_assert and AXI_SRAM both appear in a window
     // of non-comment lines, that is a violation (debug_assert compiled out in release).
     let lines: Vec<&str> = main_src.lines().collect();
@@ -3293,10 +3341,10 @@ fn pll_constants_match_sdram_fmc_clk() {
     // Compute PLL2R from known divisors (mirroring boot.rs build_embassy_config)
     // PLL2: HSI(64 MHz) / prediv(8) * mul(100) / divr(4) = 200 MHz
     const HSI_HZ: u64 = 64_000_000;
-    const PLL2_M: u64 = 8;   // PllPreDiv::DIV8
+    const PLL2_M: u64 = 8; // PllPreDiv::DIV8
     const PLL2_N: u64 = 100; // PllMul::MUL100
-    const PLL2_R: u64 = 4;   // PllDiv::DIV4
-    const FMC_DIV: u64 = 2;  // FMC internal fixed divider (RM0433 section 22.2)
+    const PLL2_R: u64 = 4; // PllDiv::DIV4
+    const FMC_DIV: u64 = 2; // FMC internal fixed divider (RM0433 section 22.2)
 
     let pll2_vco = HSI_HZ / PLL2_M * PLL2_N;
     let pll2r = pll2_vco / PLL2_R;
@@ -3360,12 +3408,12 @@ fn ci_yml_checks_vertical_slice_isolation() {
     // Each slice depends only on the platform crate.
     let ci_src = include_str!("../../../.github/workflows/ci.yml");
     assert!(
-        ci_src.contains("vertical") || ci_src.contains("slice") ||
-        (ci_src.contains("playback") && ci_src.contains("ui") && ci_src.contains("library")),
+        ci_src.contains("vertical")
+            || ci_src.contains("slice")
+            || (ci_src.contains("playback") && ci_src.contains("ui") && ci_src.contains("library")),
         "ci.yml arch-boundaries must check vertical-slice isolation"
     );
 }
-
 
 // ── GAP C2: init_sdram_stub deprecation ──────────────────────────────────────
 
@@ -3451,7 +3499,9 @@ fn axi_sram_errata_function_has_complete_safety_comment() {
     let boot_src = include_str!("../src/boot.rs");
     // The errata workaround function must exist
     assert!(
-        boot_src.contains("AXI_TARG") || boot_src.contains("axi_sram_read") || boot_src.contains("errata"),
+        boot_src.contains("AXI_TARG")
+            || boot_src.contains("axi_sram_read")
+            || boot_src.contains("errata"),
         "boot.rs must have AXI SRAM errata workaround function"
     );
     // Verify the SAFETY comment mentions ordering

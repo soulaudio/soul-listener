@@ -19,6 +19,10 @@ rustflags = [
 DEFMT_LOG = "info"
 
 [alias]
+# Generic xtask entry point (lefthook.yml's pre-commit/commit-msg/pre-push
+# hooks call `cargo xtask precommit|verify|check-commit-msg`).
+xtask = "run -p xtask --"
+
 # xtask commands (primary development workflow)
 flash = "run -p xtask -- flash"
 dev   = "run -p xtask -- dev"

@@ -51,7 +51,8 @@
 #![deny(unsafe_op_in_unsafe_fn)]
 // unsafe fn body is not implicitly unsafe block
 // Logging discipline (allow println in tests via clippy.toml)
-#![warn(clippy::print_stdout)] // prefer tracing/defmt over println! in lib code
+#![warn(clippy::print_stdout)]
+// prefer tracing/defmt over println! in lib code
 // embedded_graphics::mock_display::MockDisplay has a large internal pixel buffer
 // (> 512 bytes) that we cannot annotate (external crate). Only suppress in test
 // builds — production embedded code still sees the lint.

@@ -4,9 +4,11 @@
 #![allow(missing_docs)]
 
 mod check;
+mod commit_msg;
 mod dev;
 mod doc;
 mod flash;
+mod gate;
 mod hardware;
 mod test;
 
@@ -67,6 +69,18 @@ enum Commands {
         #[command(subcommand)]
         command: hardware::HwCommand,
     },
+    /// Fast pre-commit gate (lefthook `pre-commit`): fmt-check both
+    /// workspaces, clippy only the active dap/ workspace.
+    Precommit,
+    /// Full pre-push / CI gate (lefthook `pre-push`): precommit, plus the
+    /// dap/ board-h7a3 thumbv7em clippy + build, and `cargo test` in dap/.
+    Verify,
+    /// Validate a commit-message file against the Conventional Commits +
+    /// no-AI-attribution policy (lefthook `commit-msg`).
+    CheckCommitMsg {
+        /// Path to the commit-message file (lefthook passes this as `{1}`).
+        path: String,
+    },
 }
 
 fn main() -> Result<()> {
@@ -83,5 +97,8 @@ fn main() -> Result<()> {
         Commands::Test { unit, integration } => test::run(unit, integration),
         Commands::Doc { open } => doc::run(open),
         Commands::Hardware { command } => hardware::run(command),
+        Commands::Precommit => gate::precommit(),
+        Commands::Verify => gate::verify(),
+        Commands::CheckCommitMsg { path } => commit_msg::check(&path),
     }
 }

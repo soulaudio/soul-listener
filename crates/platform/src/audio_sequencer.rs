@@ -32,7 +32,11 @@ pub struct AudioPowerSequencer<State> {
 impl AudioPowerSequencer<DacOutputting> {
     /// Create sequencer in initial state (DAC running, amp off).
     #[must_use]
-    pub fn new() -> Self { Self { _state: PhantomData } }
+    pub fn new() -> Self {
+        Self {
+            _state: PhantomData,
+        }
+    }
 
     /// Mute the DAC (set ATT registers to 0xFF) before enabling the amplifier.
     ///
@@ -43,7 +47,9 @@ impl AudioPowerSequencer<DacOutputting> {
     )]
     #[must_use]
     pub fn mute_dac(self) -> AudioPowerSequencer<DacMuted> {
-        AudioPowerSequencer { _state: PhantomData }
+        AudioPowerSequencer {
+            _state: PhantomData,
+        }
     }
 
     /// Mute the ES9038Q2M DAC by writing 0xFF to ATT_L (reg 15) and ATT_R (reg 16).
@@ -59,9 +65,17 @@ impl AudioPowerSequencer<DacOutputting> {
     where
         I2C: embedded_hal::i2c::I2c<Error = E>,
     {
-        i2c.write(addr, &[crate::es9038q2m::REG_ATT_L, crate::es9038q2m::ATT_MUTED])?;
-        i2c.write(addr, &[crate::es9038q2m::REG_ATT_R, crate::es9038q2m::ATT_MUTED])?;
-        Ok(AudioPowerSequencer { _state: PhantomData })
+        i2c.write(
+            addr,
+            &[crate::es9038q2m::REG_ATT_L, crate::es9038q2m::ATT_MUTED],
+        )?;
+        i2c.write(
+            addr,
+            &[crate::es9038q2m::REG_ATT_R, crate::es9038q2m::ATT_MUTED],
+        )?;
+        Ok(AudioPowerSequencer {
+            _state: PhantomData,
+        })
     }
 }
 
@@ -75,7 +89,9 @@ impl AudioPowerSequencer<DacMuted> {
     )]
     #[must_use]
     pub fn enable_amp(self) -> AudioPowerSequencer<AmpEnabled> {
-        AudioPowerSequencer { _state: PhantomData }
+        AudioPowerSequencer {
+            _state: PhantomData,
+        }
     }
 
     /// Enable the TPA6120A2 headphone amplifier by driving SHUTDOWN high.
@@ -91,7 +107,9 @@ impl AudioPowerSequencer<DacMuted> {
         GPIO: embedded_hal::digital::OutputPin<Error = E>,
     {
         gpio.set_high()?;
-        Ok(AudioPowerSequencer { _state: PhantomData })
+        Ok(AudioPowerSequencer {
+            _state: PhantomData,
+        })
     }
 
     /// Disable amplifier during power-down (returns to initial state).
@@ -103,7 +121,9 @@ impl AudioPowerSequencer<DacMuted> {
     )]
     #[must_use]
     pub fn disable_amp(self) -> AudioPowerSequencer<DacOutputting> {
-        AudioPowerSequencer { _state: PhantomData }
+        AudioPowerSequencer {
+            _state: PhantomData,
+        }
     }
 
     /// Disable the TPA6120A2 headphone amplifier by driving SHUTDOWN low.
@@ -119,7 +139,9 @@ impl AudioPowerSequencer<DacMuted> {
         GPIO: embedded_hal::digital::OutputPin<Error = E>,
     {
         gpio.set_low()?;
-        Ok(AudioPowerSequencer { _state: PhantomData })
+        Ok(AudioPowerSequencer {
+            _state: PhantomData,
+        })
     }
 }
 
@@ -133,7 +155,9 @@ impl AudioPowerSequencer<AmpEnabled> {
     )]
     #[must_use]
     pub fn unmute_dac(self) -> AudioPowerSequencer<FullyOn> {
-        AudioPowerSequencer { _state: PhantomData }
+        AudioPowerSequencer {
+            _state: PhantomData,
+        }
     }
 
     /// Unmute the ES9038Q2M DAC by writing 0x00 to ATT_L (reg 15) and ATT_R (reg 16).
@@ -149,9 +173,23 @@ impl AudioPowerSequencer<AmpEnabled> {
     where
         I2C: embedded_hal::i2c::I2c<Error = E>,
     {
-        i2c.write(addr, &[crate::es9038q2m::REG_ATT_L, crate::es9038q2m::ATT_FULL_VOLUME])?;
-        i2c.write(addr, &[crate::es9038q2m::REG_ATT_R, crate::es9038q2m::ATT_FULL_VOLUME])?;
-        Ok(AudioPowerSequencer { _state: PhantomData })
+        i2c.write(
+            addr,
+            &[
+                crate::es9038q2m::REG_ATT_L,
+                crate::es9038q2m::ATT_FULL_VOLUME,
+            ],
+        )?;
+        i2c.write(
+            addr,
+            &[
+                crate::es9038q2m::REG_ATT_R,
+                crate::es9038q2m::ATT_FULL_VOLUME,
+            ],
+        )?;
+        Ok(AudioPowerSequencer {
+            _state: PhantomData,
+        })
     }
 }
 
@@ -165,7 +203,9 @@ impl AudioPowerSequencer<FullyOn> {
     )]
     #[must_use]
     pub fn mute_dac_for_shutdown(self) -> AudioPowerSequencer<DacMuted> {
-        AudioPowerSequencer { _state: PhantomData }
+        AudioPowerSequencer {
+            _state: PhantomData,
+        }
     }
 
     /// Mute the ES9038Q2M DAC as the first step of power-down via I2C.
@@ -181,14 +221,24 @@ impl AudioPowerSequencer<FullyOn> {
     where
         I2C: embedded_hal::i2c::I2c<Error = E>,
     {
-        i2c.write(addr, &[crate::es9038q2m::REG_ATT_L, crate::es9038q2m::ATT_MUTED])?;
-        i2c.write(addr, &[crate::es9038q2m::REG_ATT_R, crate::es9038q2m::ATT_MUTED])?;
-        Ok(AudioPowerSequencer { _state: PhantomData })
+        i2c.write(
+            addr,
+            &[crate::es9038q2m::REG_ATT_L, crate::es9038q2m::ATT_MUTED],
+        )?;
+        i2c.write(
+            addr,
+            &[crate::es9038q2m::REG_ATT_R, crate::es9038q2m::ATT_MUTED],
+        )?;
+        Ok(AudioPowerSequencer {
+            _state: PhantomData,
+        })
     }
 }
 
 impl Default for AudioPowerSequencer<DacOutputting> {
-    fn default() -> Self { Self::new() }
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 #[cfg(test)]
@@ -197,10 +247,16 @@ mod tests {
     use super::*;
     use crate::es9038q2m::{ATT_FULL_VOLUME, ATT_MUTED, REG_ATT_L, REG_ATT_R};
 
-    struct MockI2c { writes: std::vec::Vec<(u8, u8, u8)> }
+    struct MockI2c {
+        writes: std::vec::Vec<(u8, u8, u8)>,
+    }
 
     impl MockI2c {
-        fn new() -> Self { Self { writes: std::vec::Vec::new() } }
+        fn new() -> Self {
+            Self {
+                writes: std::vec::Vec::new(),
+            }
+        }
     }
 
     impl embedded_hal::i2c::ErrorType for MockI2c {
@@ -226,10 +282,14 @@ mod tests {
         }
     }
 
-    struct MockGpio { high: bool }
+    struct MockGpio {
+        high: bool,
+    }
 
     impl MockGpio {
-        fn new() -> Self { Self { high: false } }
+        fn new() -> Self {
+            Self { high: false }
+        }
     }
 
     impl embedded_hal::digital::ErrorType for MockGpio {
@@ -237,8 +297,14 @@ mod tests {
     }
 
     impl embedded_hal::digital::OutputPin for MockGpio {
-        fn set_high(&mut self) -> Result<(), Self::Error> { self.high = true; Ok(()) }
-        fn set_low(&mut self) -> Result<(), Self::Error> { self.high = false; Ok(()) }
+        fn set_high(&mut self) -> Result<(), Self::Error> {
+            self.high = true;
+            Ok(())
+        }
+        fn set_low(&mut self) -> Result<(), Self::Error> {
+            self.high = false;
+            Ok(())
+        }
     }
     /// Muting the DAC must write 0xFF to both ATT_L (reg 15) and ATT_R (reg 16).
     #[test]
@@ -289,7 +355,8 @@ mod tests {
         let mut i2c = MockI2c::new();
         let addr = crate::es9038q2m::ES9038Q2M_I2C_ADDR_LOW;
         let muted = AudioPowerSequencer::<DacOutputting>::new()
-            .mute_dac_with_i2c(&mut i2c, addr).expect("mute");
+            .mute_dac_with_i2c(&mut i2c, addr)
+            .expect("mute");
         let mut gpio = MockGpio::new();
         assert!(!gpio.high, "GPIO must start low");
         let _amp = muted.enable_amp_with_gpio(&mut gpio).expect("amp");
@@ -308,13 +375,17 @@ mod tests {
         let mut gpio = MockGpio::new();
         // Power-on sequence to reach FullyOn
         let fully_on: AudioPowerSequencer<FullyOn> = AudioPowerSequencer::new()
-            .mute_dac_with_i2c(&mut i2c, addr).expect("mute")
-            .enable_amp_with_gpio(&mut gpio).expect("enable amp")
-            .unmute_dac_with_i2c(&mut i2c, addr).expect("unmute");
+            .mute_dac_with_i2c(&mut i2c, addr)
+            .expect("mute")
+            .enable_amp_with_gpio(&mut gpio)
+            .expect("enable amp")
+            .unmute_dac_with_i2c(&mut i2c, addr)
+            .expect("unmute");
         assert!(gpio.high, "GPIO should be high after enable");
         // Power-down: mute DAC first, then disable amp
-        let muted: AudioPowerSequencer<DacMuted> =
-            fully_on.mute_dac_for_shutdown_with_i2c(&mut i2c, addr).expect("mute shutdown");
+        let muted: AudioPowerSequencer<DacMuted> = fully_on
+            .mute_dac_for_shutdown_with_i2c(&mut i2c, addr)
+            .expect("mute shutdown");
         let _off: AudioPowerSequencer<DacOutputting> =
             muted.disable_amp_with_gpio(&mut gpio).expect("disable amp");
         assert!(!gpio.high, "disable_amp_with_gpio must drive SHUTDOWN low");
@@ -329,12 +400,19 @@ mod tests {
         let mut i2c = MockI2c::new();
         let mut gpio = MockGpio::new();
         let fully_on: AudioPowerSequencer<FullyOn> = AudioPowerSequencer::new()
-            .mute_dac_with_i2c(&mut i2c, addr).expect("mute")
-            .enable_amp_with_gpio(&mut gpio).expect("amp")
-            .unmute_dac_with_i2c(&mut i2c, addr).expect("unmute");
+            .mute_dac_with_i2c(&mut i2c, addr)
+            .expect("mute")
+            .enable_amp_with_gpio(&mut gpio)
+            .expect("amp")
+            .unmute_dac_with_i2c(&mut i2c, addr)
+            .expect("unmute");
         assert!(gpio.high, "amp should be enabled in FullyOn state");
-        assert_eq!(i2c.writes.len(), 4,
-            "Expected 4 I2C writes (mute L+R, unmute L+R); got: {:?}", i2c.writes);
+        assert_eq!(
+            i2c.writes.len(),
+            4,
+            "Expected 4 I2C writes (mute L+R, unmute L+R); got: {:?}",
+            i2c.writes
+        );
         assert_eq!(i2c.writes[0], (addr, REG_ATT_L, ATT_MUTED));
         assert_eq!(i2c.writes[1], (addr, REG_ATT_R, ATT_MUTED));
         assert_eq!(i2c.writes[2], (addr, REG_ATT_L, ATT_FULL_VOLUME));
@@ -349,12 +427,16 @@ mod tests {
         let mut i2c = MockI2c::new();
         let mut gpio = MockGpio::new();
         let fully_on: AudioPowerSequencer<FullyOn> = AudioPowerSequencer::new()
-            .mute_dac_with_i2c(&mut i2c, addr).expect("mute")
-            .enable_amp_with_gpio(&mut gpio).expect("amp on")
-            .unmute_dac_with_i2c(&mut i2c, addr).expect("unmute");
+            .mute_dac_with_i2c(&mut i2c, addr)
+            .expect("mute")
+            .enable_amp_with_gpio(&mut gpio)
+            .expect("amp on")
+            .unmute_dac_with_i2c(&mut i2c, addr)
+            .expect("unmute");
         assert!(gpio.high, "amp enabled before shutdown");
-        let muted: AudioPowerSequencer<DacMuted> =
-            fully_on.mute_dac_for_shutdown_with_i2c(&mut i2c, addr).expect("mute shutdown");
+        let muted: AudioPowerSequencer<DacMuted> = fully_on
+            .mute_dac_for_shutdown_with_i2c(&mut i2c, addr)
+            .expect("mute shutdown");
         let _off: AudioPowerSequencer<DacOutputting> =
             muted.disable_amp_with_gpio(&mut gpio).expect("amp off");
         assert!(!gpio.high, "amp must be disabled after power-down sequence");

@@ -233,7 +233,11 @@ pub fn run(headless: bool, hot_reload: bool, music_path: Option<&Path>) -> Resul
     Ok(())
 }
 
-fn start_emulator(headless: bool, hot_reload: bool, music_path: Option<&Path>) -> Result<Option<Child>> {
+fn start_emulator(
+    headless: bool,
+    hot_reload: bool,
+    music_path: Option<&Path>,
+) -> Result<Option<Child>> {
     let start = Instant::now();
 
     println!();

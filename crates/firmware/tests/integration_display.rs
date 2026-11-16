@@ -7,7 +7,7 @@
     clippy::cast_possible_truncation,
     clippy::cast_possible_wrap,
     clippy::cast_sign_loss,
-    clippy::cast_lossless,
+    clippy::cast_lossless
 )]
 //!
 //! Verifies public constants and driver behaviour accessible from outside

@@ -12,7 +12,7 @@
     clippy::unwrap_used,
     clippy::expect_used,
     clippy::panic,
-    clippy::indexing_slicing,
+    clippy::indexing_slicing
 )]
 
 use eink_emulator::{DisplayDriver, Emulator};

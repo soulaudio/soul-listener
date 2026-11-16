@@ -168,8 +168,6 @@ pub fn enable_caches(_mpu: &MpuConfigured) -> CacheEnabled {
     CacheEnabled { _private: () }
 }
 
-
-
 /// Ordered list of boot sequence steps for documentation and testing.
 ///
 /// The ordering of these strings encodes the required hardware initialization
@@ -868,8 +866,7 @@ pub fn apply_axi_sram_read_iss_override() {
 ///
 /// In debug builds, `assert_bor_configured()` reads `FLASH.OPTSR_CUR.BOR_LEV` and
 /// emits a defmt warning if BOR is still at the factory default.
-pub const BOR_PROVISIONING_REQUIRED: &str =
-    "Set BOR_LEV=0b001 in option bytes before deployment. \
+pub const BOR_PROVISIONING_REQUIRED: &str = "Set BOR_LEV=0b001 in option bytes before deployment. \
      Factory default 1.7V threshold is insufficient for 3.3V LiPo PMIC systems. \
      See boot.rs::BOR_PROVISIONING_REQUIRED for the full provisioning checklist.";
 
@@ -1283,9 +1280,18 @@ mod tests {
         // boot.rs and clock_math.rs must use identical PLL3 M/N/P values.
         // Mismatches cause incorrect SAI MCLK — audible as pitch shift.
         use crate::audio::clock_math::{PLL3_M, PLL3_N, PLL3_P};
-        assert_eq!(PLL3_M, 4, "PLL3_M mismatch: clock_math must be 4 (PllPreDiv::DIV4)");
-        assert_eq!(PLL3_N, 49, "PLL3_N mismatch: clock_math must be 49 (PllMul::MUL49)");
-        assert_eq!(PLL3_P, 16, "PLL3_P mismatch: clock_math must be 16 (PllDiv::DIV16)");
+        assert_eq!(
+            PLL3_M, 4,
+            "PLL3_M mismatch: clock_math must be 4 (PllPreDiv::DIV4)"
+        );
+        assert_eq!(
+            PLL3_N, 49,
+            "PLL3_N mismatch: clock_math must be 49 (PllMul::MUL49)"
+        );
+        assert_eq!(
+            PLL3_P, 16,
+            "PLL3_P mismatch: clock_math must be 16 (PllDiv::DIV16)"
+        );
     }
 
     // ── GAP B2: .steal() once-guard ───────────────────────────────────────────
@@ -1367,7 +1373,10 @@ mod pll_tests {
         // PLL1: HSI(64) / M(4) * N(50) / Q(4) = 800 / 4 = 200 MHz (SDMMC)
         let vco = PLL1_HSI_HZ / PLL1_M * PLL1_N;
         let pll1q = vco / PLL1_Q;
-        assert_eq!(pll1q, 200_000_000, "PLL1Q must be 200 MHz (SDMMC kernel clock)");
+        assert_eq!(
+            pll1q, 200_000_000,
+            "PLL1Q must be 200 MHz (SDMMC kernel clock)"
+        );
     }
 
     #[test]
@@ -1375,7 +1384,10 @@ mod pll_tests {
         // PLL2: HSI(64) / M(8) * N(100) / R(4) = 8 * 100 / 4 = 200 MHz
         let vco = PLL2_HSI_HZ / PLL2_M * PLL2_N;
         let pll2r = vco / PLL2_R;
-        assert_eq!(pll2r, 200_000_000, "PLL2R must be 200 MHz (FMC/QUADSPI kernel clock)");
+        assert_eq!(
+            pll2r, 200_000_000,
+            "PLL2R must be 200 MHz (FMC/QUADSPI kernel clock)"
+        );
     }
 
     #[test]
@@ -1385,7 +1397,11 @@ mod pll_tests {
         let vco = PLL3_HSI_HZ / PLL3_M * PLL3_N;
         let pll3p = vco / PLL3_P;
         // Check within 1000 ppm of target
-        let diff_hz = if pll3p > TARGET_MCLK_HZ { pll3p - TARGET_MCLK_HZ } else { TARGET_MCLK_HZ - pll3p };
+        let diff_hz = if pll3p > TARGET_MCLK_HZ {
+            pll3p - TARGET_MCLK_HZ
+        } else {
+            TARGET_MCLK_HZ - pll3p
+        };
         let ppm_error = diff_hz * 1_000_000 / TARGET_MCLK_HZ;
         assert!(
             ppm_error <= MAX_PPM_ERROR,
@@ -1415,21 +1431,27 @@ mod pll_tests {
     fn pll1_vco_within_spec() {
         // STM32H743 VCO range: 192 MHz to 836 MHz (RM0433 section 8.3.2)
         let vco = PLL1_HSI_HZ / PLL1_M * PLL1_N;
-        assert!(vco >= 192_000_000 && vco <= 836_000_000,
-            "PLL1 VCO = {vco} Hz is outside STM32H743 spec (192-836 MHz)");
+        assert!(
+            vco >= 192_000_000 && vco <= 836_000_000,
+            "PLL1 VCO = {vco} Hz is outside STM32H743 spec (192-836 MHz)"
+        );
     }
 
     #[test]
     fn pll2_vco_within_spec() {
         let vco = PLL2_HSI_HZ / PLL2_M * PLL2_N;
-        assert!(vco >= 192_000_000 && vco <= 836_000_000,
-            "PLL2 VCO = {vco} Hz is outside STM32H743 spec (192-836 MHz)");
+        assert!(
+            vco >= 192_000_000 && vco <= 836_000_000,
+            "PLL2 VCO = {vco} Hz is outside STM32H743 spec (192-836 MHz)"
+        );
     }
 
     #[test]
     fn pll3_vco_within_spec() {
         let vco = PLL3_HSI_HZ / PLL3_M * PLL3_N;
-        assert!(vco >= 192_000_000 && vco <= 836_000_000,
-            "PLL3 VCO = {vco} Hz is outside STM32H743 spec (192-836 MHz)");
+        assert!(
+            vco >= 192_000_000 && vco <= 836_000_000,
+            "PLL3 VCO = {vco} Hz is outside STM32H743 spec (192-836 MHz)"
+        );
     }
 }

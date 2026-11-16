@@ -142,7 +142,9 @@ mod tests {
     }
 
     #[test]
-    fn bq25895_i2c_addr_is_0x6a() { assert_eq!(BQ25895_I2C_ADDR, 0x6A); }
+    fn bq25895_i2c_addr_is_0x6a() {
+        assert_eq!(BQ25895_I2C_ADDR, 0x6A);
+    }
     #[test]
     fn charge_voltage_4208mv_encoding_correct() {
         let vreg_field = u32::from(VREG_4208MV >> 2);
@@ -161,11 +163,23 @@ mod tests {
         assert_eq!(STATUS_PG_MASK & STATUS_VBUS_MASK, 0);
         assert_eq!(STATUS_CHRG_MASK & STATUS_VBUS_MASK, 0);
     }
-    #[test] #[allow(clippy::indexing_slicing)]
+    #[test]
+    #[allow(clippy::indexing_slicing)]
     fn vbus_stat_values_are_distinct() {
-        let v = [VBUS_STAT_NO_INPUT, VBUS_STAT_SDP, VBUS_STAT_CDP,
-            VBUS_STAT_DCP, VBUS_STAT_HVDCP, VBUS_STAT_ADAPTER, VBUS_STAT_OTG];
-        for i in 0..v.len() { for j in (i+1)..v.len() { assert_ne!(v[i], v[j]); } }
+        let v = [
+            VBUS_STAT_NO_INPUT,
+            VBUS_STAT_SDP,
+            VBUS_STAT_CDP,
+            VBUS_STAT_DCP,
+            VBUS_STAT_HVDCP,
+            VBUS_STAT_ADAPTER,
+            VBUS_STAT_OTG,
+        ];
+        for i in 0..v.len() {
+            for j in (i + 1)..v.len() {
+                assert_ne!(v[i], v[j]);
+            }
+        }
     }
     #[test]
     fn register_addresses_are_correct_per_datasheet() {
@@ -185,7 +199,10 @@ mod tests {
     #[test]
     fn battery_voltage_adc_decode_formula() {
         assert_eq!(decode_battery_voltage_mv(42), 3144);
-        assert_eq!(decode_battery_voltage_mv(0b1010_1010), decode_battery_voltage_mv(0b0010_1010));
+        assert_eq!(
+            decode_battery_voltage_mv(0b1010_1010),
+            decode_battery_voltage_mv(0b0010_1010)
+        );
         assert_eq!(decode_battery_voltage_mv(35), 3004);
     }
     #[test]
@@ -193,24 +210,49 @@ mod tests {
         assert_eq!(decode_vbus_voltage_mv(24), 5000);
         assert_eq!(decode_vbus_voltage_mv(64), 9000);
     }
-    #[allow(clippy::unwrap_used)] #[allow(clippy::indexing_slicing)] #[test]
+    #[allow(clippy::unwrap_used)]
+    #[allow(clippy::indexing_slicing)]
+    #[test]
     fn bq25895_mock_init_sequence_writes_correct_registers() {
         use embedded_hal::i2c::I2c as _;
-        struct MockI2c { writes: std::vec::Vec<(u8, std::vec::Vec<u8>)>, }
-        impl embedded_hal::i2c::ErrorType for MockI2c { type Error = core::convert::Infallible; }
+        struct MockI2c {
+            writes: std::vec::Vec<(u8, std::vec::Vec<u8>)>,
+        }
+        impl embedded_hal::i2c::ErrorType for MockI2c {
+            type Error = core::convert::Infallible;
+        }
         impl embedded_hal::i2c::I2c for MockI2c {
-            fn transaction(&mut self, address: u8, operations: &mut [embedded_hal::i2c::Operation<'_>]) -> Result<(), Self::Error> {
+            fn transaction(
+                &mut self,
+                address: u8,
+                operations: &mut [embedded_hal::i2c::Operation<'_>],
+            ) -> Result<(), Self::Error> {
                 for op in operations.iter() {
                     if let embedded_hal::i2c::Operation::Write(data) = op {
-                        self.writes.push((address, data.to_vec())); } }
-                Ok(()) } }
-        let mut mock = MockI2c { writes: std::vec::Vec::new() };
-        mock.write(BQ25895_I2C_ADDR, &[REG00_INPUT_SOURCE, IINLIM_3250MA]).unwrap();
-        mock.write(BQ25895_I2C_ADDR, &[REG02_CHARGE_CURRENT, ICHG_1500MA]).unwrap();
-        mock.write(BQ25895_I2C_ADDR, &[REG04_CHARGE_VOLTAGE, VREG_4208MV]).unwrap();
-        mock.write(BQ25895_I2C_ADDR, &[REG01_POWER_ON_CONFIG, REG01_ENABLE_CHARGING]).unwrap();
+                        self.writes.push((address, data.to_vec()));
+                    }
+                }
+                Ok(())
+            }
+        }
+        let mut mock = MockI2c {
+            writes: std::vec::Vec::new(),
+        };
+        mock.write(BQ25895_I2C_ADDR, &[REG00_INPUT_SOURCE, IINLIM_3250MA])
+            .unwrap();
+        mock.write(BQ25895_I2C_ADDR, &[REG02_CHARGE_CURRENT, ICHG_1500MA])
+            .unwrap();
+        mock.write(BQ25895_I2C_ADDR, &[REG04_CHARGE_VOLTAGE, VREG_4208MV])
+            .unwrap();
+        mock.write(
+            BQ25895_I2C_ADDR,
+            &[REG01_POWER_ON_CONFIG, REG01_ENABLE_CHARGING],
+        )
+        .unwrap();
         assert_eq!(mock.writes.len(), 4);
-        for (addr, _) in &mock.writes { assert_eq!(*addr, BQ25895_I2C_ADDR); }
+        for (addr, _) in &mock.writes {
+            assert_eq!(*addr, BQ25895_I2C_ADDR);
+        }
         assert_eq!(mock.writes[0].1[0], REG00_INPUT_SOURCE);
         assert_eq!(mock.writes[1].1[0], REG02_CHARGE_CURRENT);
         assert_eq!(mock.writes[2].1[0], REG04_CHARGE_VOLTAGE);
@@ -220,30 +262,47 @@ mod tests {
         assert_eq!(mock.writes[2].1[1], VREG_4208MV);
         assert_eq!(mock.writes[3].1[1], REG01_ENABLE_CHARGING);
     }
-    #[allow(clippy::assertions_on_constants)] #[test]
-    fn iinlim_3250ma_within_register_field_range() { assert!(IINLIM_3250MA <= 0x3F); }
-    #[allow(clippy::assertions_on_constants)] #[test]
-    fn vreg_4208mv_within_register_field_range() { assert!(VREG_4208MV >> 2 <= 63); }
+    #[allow(clippy::assertions_on_constants)]
+    #[test]
+    fn iinlim_3250ma_within_register_field_range() {
+        assert!(IINLIM_3250MA <= 0x3F);
+    }
+    #[allow(clippy::assertions_on_constants)]
+    #[test]
+    fn vreg_4208mv_within_register_field_range() {
+        assert!(VREG_4208MV >> 2 <= 63);
+    }
 
     // -- TDD tests for bq25895_init() --
     #[test]
     fn bq25895_init_writes_four_config_registers() {
         let mut mock = SharedMockI2c::default();
         bq25895_init(&mut mock, BQ25895_I2C_ADDR).unwrap();
-        assert!(mock.writes.len() >= 3, "must write >= 3 regs, wrote {}", mock.writes.len());
+        assert!(
+            mock.writes.len() >= 3,
+            "must write >= 3 regs, wrote {}",
+            mock.writes.len()
+        );
     }
     #[test]
     fn bq25895_init_sets_input_current_limit() {
         let mut mock = SharedMockI2c::default();
         bq25895_init(&mut mock, BQ25895_I2C_ADDR).unwrap();
-        let w = mock.writes.iter().find(|(_, d)| d.first() == Some(&REG00_INPUT_SOURCE));
+        let w = mock
+            .writes
+            .iter()
+            .find(|(_, d)| d.first() == Some(&REG00_INPUT_SOURCE));
         assert!(w.is_some(), "init() must write REG00");
     }
-    #[allow(clippy::unwrap_used)] #[test]
+    #[allow(clippy::unwrap_used)]
+    #[test]
     fn bq25895_init_sets_charge_voltage() {
         let mut mock = SharedMockI2c::default();
         bq25895_init(&mut mock, BQ25895_I2C_ADDR).unwrap();
-        let w = mock.writes.iter().find(|(_, d)| d.first() == Some(&REG04_CHARGE_VOLTAGE));
+        let w = mock
+            .writes
+            .iter()
+            .find(|(_, d)| d.first() == Some(&REG04_CHARGE_VOLTAGE));
         assert!(w.is_some(), "init() must write REG04");
         // SAFETY: w is Some (asserted above); data[1] is the register value byte.
         #[allow(clippy::indexing_slicing)]
@@ -255,6 +314,8 @@ mod tests {
     fn bq25895_init_correct_i2c_address() {
         let mut mock = SharedMockI2c::default();
         bq25895_init(&mut mock, BQ25895_I2C_ADDR).unwrap();
-        for (addr, _) in &mock.writes { assert_eq!(*addr, BQ25895_I2C_ADDR); }
+        for (addr, _) in &mock.writes {
+            assert_eq!(*addr, BQ25895_I2C_ADDR);
+        }
     }
 }

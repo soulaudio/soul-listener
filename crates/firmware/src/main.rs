@@ -13,8 +13,8 @@ use embassy_stm32::spi::{Config as SpiConfig, Spi};
 use embassy_stm32::time::Hertz;
 use embassy_time::{Delay, Duration, Timer};
 use embedded_hal_bus::spi::ExclusiveDevice;
-use platform::DisplayDriver;
 use platform::dma_safety::{AudioDmaBufBytes, AxiSramRegion, DmaBuffer};
+use platform::DisplayDriver;
 use static_cell::StaticCell;
 
 use firmware::dma::Align32;
@@ -51,8 +51,7 @@ static FRAMEBUFFER: StaticCell<Align32<[u8; FRAMEBUFFER_SIZE]>> = StaticCell::ne
 // Size: 2048 samples x 2ch x 4 bytes/sample = 16384 bytes (ping-pong half-buffer).
 // Full DMA ring = 2 x 16384 = 32768 bytes; AUDIO_DMA_BUFFER_BYTES is one half.
 #[link_section = ".axisram"]
-static AUDIO_BUFFER: StaticCell<DmaBuffer<AxiSramRegion, AudioDmaBufBytes>>
-    = StaticCell::new();
+static AUDIO_BUFFER: StaticCell<DmaBuffer<AxiSramRegion, AudioDmaBufBytes>> = StaticCell::new();
 
 // Per-task heartbeat flags.
 //
@@ -135,7 +134,7 @@ async fn main(spawner: Spawner) {
     // assert! with panic="abort" (set in Cargo.toml) has zero stack overhead.
     assert!(
         core::ptr::addr_of!(*_framebuffer) as u32 >= platform::dma_safety::AXI_SRAM_BASE,
-        "FRAMEBUFFER not in AXI SRAM — missing or wrong #[link_section = ".axisram"]"
+        "FRAMEBUFFER not in AXI SRAM — missing or wrong #[link_section = \".axisram\"]"
     );
     assert!(
         (core::ptr::addr_of!(*_framebuffer) as u32)
@@ -220,7 +219,7 @@ async fn main(spawner: Spawner) {
     //   (b) the linker confirms the platform modules compile cleanly, and
     //   (c) arch_boundaries CI tests can assert the call sites are wired, not TODO-only.
     let _dac_i2c3_addr = platform::es9038q2m::ES9038Q2M_I2C_ADDR_LOW; // 0x48
-    let _pmic_i2c2_addr = platform::bq25895::BQ25895_I2C_ADDR;        // 0x6A
+    let _pmic_i2c2_addr = platform::bq25895::BQ25895_I2C_ADDR; // 0x6A
 
     // ── Display SPI1 + DMA ───────────────────────────────────────────────────────
     // SPI1 is on the APB2 bus (D2 domain) but its DMA channels come from DMA1/DMA2
@@ -251,7 +250,7 @@ async fn main(spawner: Spawner) {
     let dc = Output::new(p.PB0, Level::Low, Speed::VeryHigh); // Data/Command
     let cs = Output::new(p.PB1, Level::High, Speed::VeryHigh); // Chip Select (active low)
     let rst = Output::new(p.PB2, Level::High, Speed::VeryHigh); // Reset (active low)
-    // BUSY is active-low (SSD1677 datasheet section 8.1); pull-up prevents float when display is powered off
+                                                                // BUSY is active-low (SSD1677 datasheet section 8.1); pull-up prevents float when display is powered off
     let busy = Input::new(p.PE3, Pull::Up); // Busy status (active-low, pulled high for safe idle)
 
     // Wrap raw SPI bus + CS pin into an SpiDevice (manages CS assertion/deassert).
@@ -392,9 +391,7 @@ async fn main(spawner: Spawner) {
     //
     // The audio_task stub loops silently until the full SAI1/DMA pipeline is wired.
     // See: crates/firmware/src/audio/sai_task.rs for the TODO list.
-    let audio_buf = AUDIO_BUFFER.init(
-        DmaBuffer::new([0u8; AUDIO_DMA_BUFFER_BYTES])
-    );
+    let audio_buf = AUDIO_BUFFER.init(DmaBuffer::new([0u8; AUDIO_DMA_BUFFER_BYTES]));
     // Spawn audio task: runs concurrently, manages SAI1 DMA ping-pong.
     // When Embassy SAI support and PLL3 are wired, audio_task will
     // call Sai::new_asynchronous_with_mclk() and stream audio to the DAC.

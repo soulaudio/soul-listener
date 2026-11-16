@@ -8,7 +8,7 @@
     clippy::cast_possible_truncation,
     clippy::cast_possible_wrap,
     clippy::cast_sign_loss,
-    clippy::cast_lossless,
+    clippy::cast_lossless
 )]
 //!
 //! These tests verify that the linker script (memory.x) places DMA-critical
@@ -130,7 +130,8 @@ fn no_dma_buffers_in_dtcm() {
                     if name.contains("AUDIO_BUFFER") || name.contains("FRAMEBUFFER") {
                         if let Ok(addr) = u64::from_str_radix(addr_str, 16) {
                             assert!(
-                                !(0x20000000..=0x0002_0000_u64.wrapping_add(0x2000_0000)).contains(&addr),
+                                !(0x20000000..=0x0002_0000_u64.wrapping_add(0x2000_0000))
+                                    .contains(&addr),
                                 "{name} at 0x{addr:08X} is in DTCM — DMA will silently fail!"
                             );
                         }
@@ -147,11 +148,8 @@ fn no_dma_buffers_in_dtcm() {
 #[test]
 fn memory_x_axisram_section_defined() {
     // Structural test: verify memory.x defines SECTIONS block with .axisram
-    let memory_x = std::fs::read_to_string(concat!(
-        env!("CARGO_MANIFEST_DIR"),
-        "/../../memory.x"
-    ))
-    .expect("memory.x must exist at workspace root");
+    let memory_x = std::fs::read_to_string(concat!(env!("CARGO_MANIFEST_DIR"), "/../../memory.x"))
+        .expect("memory.x must exist at workspace root");
 
     assert!(
         memory_x.contains(".axisram"),
@@ -169,11 +167,8 @@ fn memory_x_axisram_section_defined() {
 
 #[test]
 fn memory_x_dtcm_not_dma_accessible_documented() {
-    let memory_x = std::fs::read_to_string(concat!(
-        env!("CARGO_MANIFEST_DIR"),
-        "/../../memory.x"
-    ))
-    .expect("memory.x must exist at workspace root");
+    let memory_x = std::fs::read_to_string(concat!(env!("CARGO_MANIFEST_DIR"), "/../../memory.x"))
+        .expect("memory.x must exist at workspace root");
 
     // The DTCM region comment must warn about DMA inaccessibility
     assert!(
@@ -186,11 +181,8 @@ fn memory_x_dtcm_not_dma_accessible_documented() {
 
 #[test]
 fn memory_x_sram1_sram2_sram3_sections_defined() {
-    let memory_x = std::fs::read_to_string(concat!(
-        env!("CARGO_MANIFEST_DIR"),
-        "/../../memory.x"
-    ))
-    .expect("memory.x must exist at workspace root");
+    let memory_x = std::fs::read_to_string(concat!(env!("CARGO_MANIFEST_DIR"), "/../../memory.x"))
+        .expect("memory.x must exist at workspace root");
 
     assert!(
         memory_x.contains(".sram1"),

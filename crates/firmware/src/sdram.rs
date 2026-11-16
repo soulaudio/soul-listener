@@ -118,7 +118,11 @@ pub const fn ns_to_cycles(ns: u32) -> u32 {
     #[allow(clippy::arithmetic_side_effects, clippy::cast_possible_truncation)]
     let cycles = (ns as u64 * FMC_CLK_HZ as u64).div_ceil(1_000_000_000);
     #[allow(clippy::cast_possible_truncation)]
-    if cycles < 1 { 1 } else { cycles as u32 }
+    if cycles < 1 {
+        1
+    } else {
+        cycles as u32
+    }
 }
 
 /// Compute the `FMC_SDRTR` COUNT value for the W9825G6KH-6 refresh timer.
@@ -243,18 +247,18 @@ mod tests {
     #[test]
     fn all_timing_values_fit_in_4bit_fmc_fields() {
         assert!(TRCD_CYCLES <= 16);
-        assert!(TRP_CYCLES  <= 16);
-        assert!(TWR_CYCLES  <= 16);
-        assert!(TRC_CYCLES  <= 16);
+        assert!(TRP_CYCLES <= 16);
+        assert!(TWR_CYCLES <= 16);
+        assert!(TRC_CYCLES <= 16);
         assert!(TXSR_CYCLES <= 16);
     }
 
     #[test]
     fn fmc_register_values_minus_one_are_nonzero() {
         assert!(TRCD_CYCLES >= 1);
-        assert!(TRP_CYCLES  >= 1);
-        assert!(TWR_CYCLES  >= 1);
-        assert!(TRC_CYCLES  >= 1);
+        assert!(TRP_CYCLES >= 1);
+        assert!(TWR_CYCLES >= 1);
+        assert!(TRC_CYCLES >= 1);
         assert!(TXSR_CYCLES >= 1);
     }
 

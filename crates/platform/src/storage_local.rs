@@ -70,7 +70,9 @@ impl LocalFileStorage {
     /// Create a new storage rooted at `soul_root`.
     #[must_use]
     pub fn new(soul_root: &str) -> Self {
-        Self { root: PathBuf::from(soul_root) }
+        Self {
+            root: PathBuf::from(soul_root),
+        }
     }
 
     /// Create from the `MUSIC_PATH` environment variable.
@@ -94,7 +96,10 @@ impl Storage for LocalFileStorage {
         let full = self.resolve(path);
         let file = fs::File::open(&full).map_err(LocalStorageError)?;
         let meta = file.metadata().map_err(LocalStorageError)?;
-        Ok(LocalFile { inner: file, size: meta.len() })
+        Ok(LocalFile {
+            inner: file,
+            size: meta.len(),
+        })
     }
 
     async fn exists(&mut self, path: &str) -> Result<bool, Self::Error> {

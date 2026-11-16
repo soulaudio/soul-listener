@@ -28,12 +28,12 @@
 //! Reference: STM32H7 RM0433 Rev 9, section 52 (SAI), section 16 (DMA).
 
 #![allow(clippy::doc_markdown)] // SAI task docs use hardware signal names (e.g. SAI1_SD_A) that are clearer as plain text
-use platform::dma_safety::{AxiSramRegion, DmaBuffer, AUDIO_DMA_BUFFER_BYTES};
 #[allow(unused_imports)]
 use crate::audio::clock_math::{
-    MCLK_TARGET_HZ, SAMPLE_RATE_HZ, MCLK_FS_RATIO,
-    PLL3_M, PLL3_N, PLL3_P, PLL3_FRACN, PLL3P_HZ_APPROX,
+    MCLK_FS_RATIO, MCLK_TARGET_HZ, PLL3P_HZ_APPROX, PLL3_FRACN, PLL3_M, PLL3_N, PLL3_P,
+    SAMPLE_RATE_HZ,
 };
+use platform::dma_safety::{AxiSramRegion, DmaBuffer, AUDIO_DMA_BUFFER_BYTES};
 
 /// Embassy task wrapper for the SAI audio output — hardware target only.
 ///

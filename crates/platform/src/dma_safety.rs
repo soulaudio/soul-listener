@@ -97,8 +97,7 @@ const BYTES_PER_SAMPLE_32BIT: usize = 4;
 /// stuttering artifact repeating at ~188 Hz (audible, hardware-reproducible).
 ///
 /// Reference: ES9038Q2M datasheet section 6.1, STM32H743 SAI section 41.4.5
-pub const AUDIO_DMA_BUFFER_BYTES: usize =
-    AUDIO_DMA_BUFFER_SAMPLES * 2 * BYTES_PER_SAMPLE_32BIT;
+pub const AUDIO_DMA_BUFFER_BYTES: usize = AUDIO_DMA_BUFFER_SAMPLES * 2 * BYTES_PER_SAMPLE_32BIT;
 
 // Compile-time verification: must equal 16384 (2048 x 2ch x 4 bytes/32-bit sample)
 const _: () = assert!(
@@ -243,8 +242,7 @@ impl<Region: DmaAccessible, T> DmaBuffer<Region, T> {
 /// The display actually uses a single framebuffer (96,000 bytes) in the current
 /// firmware. The second slot is reserved for future double-buffered rendering.
 /// The audio DMA uses two half-buffers (ping-pong) in a single 32,768-byte ring.
-pub const TOTAL_STATIC_DMA_BYTES: usize =
-    FRAMEBUFFER_SIZE_BYTES * 2 + AUDIO_DMA_BUFFER_BYTES * 2;
+pub const TOTAL_STATIC_DMA_BYTES: usize = FRAMEBUFFER_SIZE_BYTES * 2 + AUDIO_DMA_BUFFER_BYTES * 2;
 
 /// Compile-time assertion: static DMA buffers fit in AXI SRAM with 25% headroom.
 ///
@@ -381,8 +379,14 @@ mod tests {
     fn per_task_stack_is_reasonable() {
         // Tasks should have at least 4 KB (too small = stack overflow)
         // and at most 32 KB (too large = wastes precious SRAM)
-        assert!(TASK_STACK_BYTES >= 4 * 1024, "Per-task stack must be >= 4 KB");
-        assert!(TASK_STACK_BYTES <= 32 * 1024, "Per-task stack must be <= 32 KB");
+        assert!(
+            TASK_STACK_BYTES >= 4 * 1024,
+            "Per-task stack must be >= 4 KB"
+        );
+        assert!(
+            TASK_STACK_BYTES <= 32 * 1024,
+            "Per-task stack must be <= 32 KB"
+        );
     }
 
     #[test]
@@ -417,8 +421,7 @@ mod tests {
         let src = include_str!("dma_safety.rs");
         let violating_impl = src.lines().any(|line| {
             let trimmed = line.trim();
-            trimmed.starts_with("impl HighLatencyRegion for")
-                && trimmed.contains("AxiSramRegion")
+            trimmed.starts_with("impl HighLatencyRegion for") && trimmed.contains("AxiSramRegion")
         });
         assert!(!violating_impl,
             "AxiSramRegion must not implement HighLatencyRegion — it is the correct region for audio DMA");
@@ -437,8 +440,14 @@ mod tests {
             let trimmed = line.trim();
             trimmed.starts_with("impl DmaAccessible for") && trimmed.contains("SdramRegion")
         });
-        assert!(!dtcm_violation, "DtcmRegion must not implement DmaAccessible");
-        assert!(!sdram_violation, "SdramRegion must not implement DmaAccessible");
+        assert!(
+            !dtcm_violation,
+            "DtcmRegion must not implement DmaAccessible"
+        );
+        assert!(
+            !sdram_violation,
+            "SdramRegion must not implement DmaAccessible"
+        );
     }
     #[test]
     // GAP B2: SRAM4 is D3-domain, accessible only by BDMA (RM0433 section 2.3).
@@ -486,5 +495,4 @@ mod tests {
             "dma_safety.rs must document the negative trait bound limitation"
         );
     }
-
 }

@@ -7,7 +7,7 @@
     clippy::expect_used,
     clippy::panic,
     clippy::cast_possible_wrap,
-    clippy::arithmetic_side_effects,
+    clippy::arithmetic_side_effects
 )]
 
 use eink_testing::TestEmulator;

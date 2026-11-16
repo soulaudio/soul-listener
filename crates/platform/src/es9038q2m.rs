@@ -81,29 +81,53 @@ mod tests {
     }
 
     #[test]
-    fn i2c_addr_low_matches_datasheet() { assert_eq!(ES9038Q2M_I2C_ADDR_LOW, 0x48); }
+    fn i2c_addr_low_matches_datasheet() {
+        assert_eq!(ES9038Q2M_I2C_ADDR_LOW, 0x48);
+    }
     #[test]
-    fn i2c_addr_high_matches_datasheet() { assert_eq!(ES9038Q2M_I2C_ADDR_HIGH, 0x49); }
+    fn i2c_addr_high_matches_datasheet() {
+        assert_eq!(ES9038Q2M_I2C_ADDR_HIGH, 0x49);
+    }
     #[test]
-    fn reg_att_l_matches_datasheet() { assert_eq!(REG_ATT_L, 15); }
+    fn reg_att_l_matches_datasheet() {
+        assert_eq!(REG_ATT_L, 15);
+    }
     #[test]
-    fn reg_att_r_matches_datasheet() { assert_eq!(REG_ATT_R, 16); }
+    fn reg_att_r_matches_datasheet() {
+        assert_eq!(REG_ATT_R, 16);
+    }
     #[test]
-    fn att_muted_is_max_value() { assert_eq!(ATT_MUTED, 0xFF); }
+    fn att_muted_is_max_value() {
+        assert_eq!(ATT_MUTED, 0xFF);
+    }
     #[test]
-    fn att_full_volume_is_zero() { assert_eq!(ATT_FULL_VOLUME, 0x00); }
+    fn att_full_volume_is_zero() {
+        assert_eq!(ATT_FULL_VOLUME, 0x00);
+    }
     #[test]
-    fn reg_system_is_register_zero() { assert_eq!(REG_SYSTEM, 0); }
+    fn reg_system_is_register_zero() {
+        assert_eq!(REG_SYSTEM, 0);
+    }
     #[test]
-    fn reg_filter_is_register_seven() { assert_eq!(REG_FILTER, 7); }
+    fn reg_filter_is_register_seven() {
+        assert_eq!(REG_FILTER, 7);
+    }
     #[test]
-    fn reg_control_is_register_eleven() { assert_eq!(REG_CONTROL, 11); }
+    fn reg_control_is_register_eleven() {
+        assert_eq!(REG_CONTROL, 11);
+    }
     #[test]
-    fn reg_gpio_is_register_fourteen() { assert_eq!(REG_GPIO, 14); }
+    fn reg_gpio_is_register_fourteen() {
+        assert_eq!(REG_GPIO, 14);
+    }
     #[test]
-    fn att_muted_and_full_volume_are_distinct() { assert_ne!(ATT_MUTED, ATT_FULL_VOLUME); }
+    fn att_muted_and_full_volume_are_distinct() {
+        assert_ne!(ATT_MUTED, ATT_FULL_VOLUME);
+    }
     #[test]
-    fn i2c_addresses_are_adjacent() { assert_eq!(ES9038Q2M_I2C_ADDR_HIGH, ES9038Q2M_I2C_ADDR_LOW + 1); }
+    fn i2c_addresses_are_adjacent() {
+        assert_eq!(ES9038Q2M_I2C_ADDR_HIGH, ES9038Q2M_I2C_ADDR_LOW + 1);
+    }
 
     // -- TDD tests for es9038q2m_init() --
     #[test]
@@ -112,12 +136,19 @@ mod tests {
         es9038q2m_init(&mut mock, ES9038Q2M_I2C_ADDR_LOW).unwrap();
         assert!(!mock.writes.is_empty());
     }
-    #[allow(clippy::unwrap_used)] #[test]
+    #[allow(clippy::unwrap_used)]
+    #[test]
     fn es9038q2m_init_starts_muted() {
         let mut mock = MockI2c::default();
         es9038q2m_init(&mut mock, ES9038Q2M_I2C_ADDR_LOW).unwrap();
-        let att_l = mock.writes.iter().find(|(_, d)| d.first() == Some(&REG_ATT_L));
-        let att_r = mock.writes.iter().find(|(_, d)| d.first() == Some(&REG_ATT_R));
+        let att_l = mock
+            .writes
+            .iter()
+            .find(|(_, d)| d.first() == Some(&REG_ATT_L));
+        let att_r = mock
+            .writes
+            .iter()
+            .find(|(_, d)| d.first() == Some(&REG_ATT_R));
         assert!(att_l.is_some(), "init() must write REG_ATT_L");
         assert!(att_r.is_some(), "init() must write REG_ATT_R");
         // SAFETY: att_l/att_r are Some (asserted above); data[1] is the register value byte.

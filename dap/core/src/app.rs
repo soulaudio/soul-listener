@@ -482,7 +482,10 @@ mod tests {
 
             queue.push(InputEvent::Rotate(4));
             let outcome = app.tick(2_000);
-            assert!(outcome.volume_delta > 0.0, "positive rotate must raise volume");
+            assert!(
+                outcome.volume_delta > 0.0,
+                "positive rotate must raise volume"
+            );
             assert!(
                 app.volume() > lowered,
                 "volume must have gone back up from the lowered level"

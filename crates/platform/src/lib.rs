@@ -67,7 +67,8 @@
 #![allow(clippy::match_same_arms)] // intentional for readability in DMA access tables
 #![allow(clippy::module_name_repetitions)]
 #![allow(clippy::missing_errors_doc)]
-#![allow(async_fn_in_trait)] // Embassy no_std: single-threaded, Send bounds not needed
+#![allow(async_fn_in_trait)]
+// Embassy no_std: single-threaded, Send bounds not needed
 // embedded_graphics::mock_display::MockDisplay has a 64×64 internal pixel
 // buffer (> 512 bytes) that we cannot annotate (external crate). Only suppress
 // in test builds — production embedded code still sees the lint.
@@ -77,15 +78,15 @@ pub mod asset_store;
 pub mod audio;
 pub mod audio_config;
 pub mod audio_sequencer;
-pub mod es9038q2m;
-pub mod bq25895;
 pub mod audio_types;
 pub mod bluetooth;
+pub mod bq25895;
 pub mod clock_config;
 pub mod config;
 pub mod display;
 pub mod dma;
 pub mod dma_safety;
+pub mod es9038q2m;
 pub mod gpio;
 pub mod input;
 pub mod mpu;
@@ -110,9 +111,7 @@ pub use bluetooth::BluetoothAdapter;
 pub use display::{DisplayDriver, DisplayError, DisplayInfo, EinkDisplay, RefreshMode};
 pub use input::{Button, InputDevice, InputEvent};
 pub use sdram::{ExternalRam, RamRegion};
-pub use soul_library::{
-    art_path, library_idx_path, library_meta_path, manifest_path, SOUL_ROOT,
-};
+pub use soul_library::{art_path, library_idx_path, library_meta_path, manifest_path, SOUL_ROOT};
 pub use storage::{File, Storage};
 
 #[cfg(feature = "std")]

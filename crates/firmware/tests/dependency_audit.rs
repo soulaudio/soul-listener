@@ -7,7 +7,7 @@
     clippy::cast_possible_truncation,
     clippy::cast_possible_wrap,
     clippy::cast_sign_loss,
-    clippy::cast_lossless,
+    clippy::cast_lossless
 )]
 //! Real enforcement is via cargo-deny in CI. These tests verify the deny.toml
 //! configuration exists and contains the required bans.
@@ -110,9 +110,11 @@ fn supply_chain_config_exists() {
 
 #[test]
 fn ci_cargo_vet_does_not_swallow_exit_code() {
-    let ci_yml = std::fs::read_to_string(
-        concat!(env!("CARGO_MANIFEST_DIR"), "/../../.github/workflows/ci.yml")
-    ).expect("ci.yml must exist");
+    let ci_yml = std::fs::read_to_string(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../../.github/workflows/ci.yml"
+    ))
+    .expect("ci.yml must exist");
     // Must NOT have "cargo vet check || echo" pattern (this swallows failures)
     assert!(
         !ci_yml.contains("cargo vet check || echo"),
@@ -127,9 +129,11 @@ fn ci_cargo_vet_does_not_swallow_exit_code() {
 
 #[test]
 fn ci_has_embedded_target_check_job() {
-    let ci_yml = std::fs::read_to_string(
-        concat!(env!("CARGO_MANIFEST_DIR"), "/../../.github/workflows/ci.yml")
-    ).expect("ci.yml must exist");
+    let ci_yml = std::fs::read_to_string(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../../.github/workflows/ci.yml"
+    ))
+    .expect("ci.yml must exist");
     // CI must have a job that checks the embedded target
     assert!(
         ci_yml.contains("thumbv7em-none-eabihf"),
@@ -139,16 +143,18 @@ fn ci_has_embedded_target_check_job() {
 
 #[test]
 fn ci_toolchain_is_pinned_not_floating_stable() {
-    let ci_yml = std::fs::read_to_string(
-        concat!(env!("CARGO_MANIFEST_DIR"), "/../../.github/workflows/ci.yml")
-    ).expect("ci.yml must exist");
+    let ci_yml = std::fs::read_to_string(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../../.github/workflows/ci.yml"
+    ))
+    .expect("ci.yml must exist");
     // Count occurrences of @stable (unpinned)
     let unpinned_count = ci_yml.matches("rust-toolchain@stable").count()
         + ci_yml.matches("dtolnay/rust-toolchain@stable").count();
     // Allow at most 1 use of @stable (some jobs might intentionally test on latest)
     // But the main lint/build jobs should use a pinned version
-    let pinned_count = ci_yml.matches("rust-toolchain@1.").count()
-        + ci_yml.matches("rust-toolchain@\"1.").count();
+    let pinned_count =
+        ci_yml.matches("rust-toolchain@1.").count() + ci_yml.matches("rust-toolchain@\"1.").count();
     assert!(
         pinned_count >= 1 || unpinned_count <= 2,
         "CI should pin the Rust toolchain to a specific version (e.g., @1.75) for reproducible builds.         Found {} unpinned @stable and {} pinned uses",
@@ -165,24 +171,23 @@ fn ci_toolchain_is_pinned_not_floating_stable() {
 /// The `clippy-embedded` job must cover the platform crate explicitly.
 #[test]
 fn ci_clippy_covers_platform_crate_for_embedded_target() {
-    let ci_yml = std::fs::read_to_string(
-        concat!(env!("CARGO_MANIFEST_DIR"), "/../../.github/workflows/ci.yml")
-    ).expect("ci.yml must exist");
+    let ci_yml = std::fs::read_to_string(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../../.github/workflows/ci.yml"
+    ))
+    .expect("ci.yml must exist");
     // CI must run clippy on the platform crate with the embedded target.
     // Acceptable patterns:
     //   1. A dedicated `clippy-embedded` job exists (which contains a platform step), OR
     //   2. Both "platform" and "thumbv7em-none-eabihf" appear in a clippy context
     assert!(
-        ci_yml.contains("clippy-embedded") ||
-        (ci_yml.contains("platform") && ci_yml.contains("thumbv7em-none-eabihf")),
+        ci_yml.contains("clippy-embedded")
+            || (ci_yml.contains("platform") && ci_yml.contains("thumbv7em-none-eabihf")),
         "CI must run clippy on platform crate for --target thumbv7em-none-eabihf"
     );
     // Stricter: the clippy-embedded job must contain the platform + embedded target combo.
     // This ensures it is not just a check job but actually runs clippy lints.
-    let clippy_embedded_section = ci_yml
-        .split("clippy-embedded:")
-        .nth(1)
-        .unwrap_or("");
+    let clippy_embedded_section = ci_yml.split("clippy-embedded:").nth(1).unwrap_or("");
     // The section after "clippy-embedded:" should mention both platform and thumbv7em
     assert!(
         clippy_embedded_section.contains("platform") &&
@@ -200,16 +205,23 @@ fn ci_clippy_covers_platform_crate_for_embedded_target() {
 /// blanket exemptions.
 #[test]
 fn supply_chain_has_real_audits_not_only_exemptions() {
-    let audits = std::fs::read_to_string(
-        concat!(env!("CARGO_MANIFEST_DIR"), "/../../supply-chain/audits.toml")
-    ).unwrap_or_default();
-    let config = std::fs::read_to_string(
-        concat!(env!("CARGO_MANIFEST_DIR"), "/../../supply-chain/config.toml")
-    ).unwrap_or_default();
+    let audits = std::fs::read_to_string(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../../supply-chain/audits.toml"
+    ))
+    .unwrap_or_default();
+    let config = std::fs::read_to_string(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../../supply-chain/config.toml"
+    ))
+    .unwrap_or_default();
     // Either audits.toml has real criteria entries, or config.toml has imports from trusted registries
     let has_real_audits = audits.contains("[audits.") || config.contains("[imports]");
     // At minimum, the supply-chain directory must exist and be non-empty
-    assert!(!config.is_empty(), "supply-chain/config.toml must not be empty");
+    assert!(
+        !config.is_empty(),
+        "supply-chain/config.toml must not be empty"
+    );
     // Hard check: audits.toml must have at least one real audit entry (not just exemptions).
     // Exemptions are a crutch; real audits provide actual supply-chain security guarantees.
     assert!(

@@ -9,8 +9,8 @@
 //! drives.
 
 use soul_audio_core::{
-    AnyDecoder, Deck, DeckError, DeckState, DecodeError, DecodeInfo, Progress, Quality, Sink,
-    open_seekable,
+    open_seekable, AnyDecoder, Deck, DeckError, DeckState, DecodeError, DecodeInfo, Progress,
+    Quality, Sink,
 };
 use soul_audio_engine::{Engine, LinearSequencer, RepeatMode};
 

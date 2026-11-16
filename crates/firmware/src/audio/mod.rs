@@ -22,9 +22,9 @@
 //! ```
 
 pub mod amp;
+pub mod clock_math;
 pub mod dac;
 pub mod sai_recovery;
-pub mod clock_math;
 pub mod sai_task;
 
 // Re-export the primary DAC type for each build target.

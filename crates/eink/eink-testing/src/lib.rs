@@ -59,7 +59,7 @@
     clippy::cast_possible_wrap,
     clippy::cast_sign_loss,
     clippy::arithmetic_side_effects,
-    clippy::indexing_slicing,
+    clippy::indexing_slicing
 )]
 
 use std::path::Path;

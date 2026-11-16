@@ -197,7 +197,11 @@ fn run() {
     for _ in 0..30 {
         tick(&mut app, &controls, &battery, &mut t, step_ms);
     }
-    assert_eq!(app.player().current(), Some(0), "queue must start on track 0");
+    assert_eq!(
+        app.player().current(),
+        Some(0),
+        "queue must start on track 0"
+    );
     assert_eq!(app.state(), DeckState::Playing, "Press must start playback");
     assert!(
         !app.player().sink().recorded().is_empty(),
@@ -294,11 +298,13 @@ fn run() {
         }
     }
 
-    let low_fired_at =
-        low_fired_at.expect("LowBattery must fire within the discharge loop budget");
+    let low_fired_at = low_fired_at.expect("LowBattery must fire within the discharge loop budget");
     let critical_fired_at =
         critical_fired_at.expect("CriticalShutdown must fire within the discharge loop budget");
-    assert!(low_fired_at < critical_fired_at, "warn must precede critical");
+    assert!(
+        low_fired_at < critical_fired_at,
+        "warn must precede critical"
+    );
     assert_eq!(
         battery.lock().power_off_calls(),
         1,

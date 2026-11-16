@@ -142,8 +142,7 @@ fn audio_dma_buffer_bytes_equals_16384() {
     use platform::dma_safety::AUDIO_DMA_BUFFER_BYTES;
     // 2048 samples x 2 channels x 4 bytes/sample = 16384
     assert_eq!(
-        AUDIO_DMA_BUFFER_BYTES,
-        16384,
+        AUDIO_DMA_BUFFER_BYTES, 16384,
         "AUDIO_DMA_BUFFER_BYTES must be 16384 (2048 x 2ch x 32-bit). Got {}.",
         AUDIO_DMA_BUFFER_BYTES
     );
@@ -151,7 +150,9 @@ fn audio_dma_buffer_bytes_equals_16384() {
 
 #[test]
 fn audio_dma_buffer_fits_in_axisram() {
-    use platform::dma_safety::{AXI_SRAM_SIZE_BYTES, AUDIO_DMA_BUFFER_BYTES, FRAMEBUFFER_SIZE_BYTES};
+    use platform::dma_safety::{
+        AUDIO_DMA_BUFFER_BYTES, AXI_SRAM_SIZE_BYTES, FRAMEBUFFER_SIZE_BYTES,
+    };
     // Two audio buffers (ping-pong) + two framebuffers + 64KB margin
     let audio_total = AUDIO_DMA_BUFFER_BYTES * 2;
     let display_total = FRAMEBUFFER_SIZE_BYTES * 2;
@@ -160,6 +161,10 @@ fn audio_dma_buffer_fits_in_axisram() {
     assert!(
         total <= AXI_SRAM_SIZE_BYTES,
         "AXI SRAM budget exceeded: 2xaudio ({}) + 2xframebuffer ({}) + margin ({}) = {} > {} bytes",
-        audio_total, display_total, margin, total, AXI_SRAM_SIZE_BYTES
+        audio_total,
+        display_total,
+        margin,
+        total,
+        AXI_SRAM_SIZE_BYTES
     );
 }

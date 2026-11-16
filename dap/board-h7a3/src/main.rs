@@ -14,7 +14,7 @@ use embassy_time::{Duration, Timer};
 // fail on this empty/bogus buffer; the point is that the call compiles,
 // links, and runs.
 fn probe_soul_audio_core() {
-    use soul_audio_core::{SliceSource, open};
+    use soul_audio_core::{open, SliceSource};
 
     let bogus: &[u8] = &[0u8; 16];
     let src = SliceSource::new(bogus);

@@ -57,7 +57,10 @@ impl SimStorage {
         P: AsRef<Path>,
     {
         Self {
-            paths: paths.into_iter().map(|p| p.as_ref().to_path_buf()).collect(),
+            paths: paths
+                .into_iter()
+                .map(|p| p.as_ref().to_path_buf())
+                .collect(),
         }
     }
 }

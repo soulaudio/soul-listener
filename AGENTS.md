@@ -375,6 +375,7 @@ static PLAYBACK_CMD: Channel<CriticalSectionRawMutex, PlaybackCommand, 4> = Chan
 
 ## Contributing
 
+0. Run `lefthook install` once after cloning to enable the git hooks (fmt/clippy pre-commit, commit-message policy, pre-push gate — see `lefthook.yml`).
 1. Check existing abstractions before adding hardware-specific code
 2. Write tests for all new functionality
 3. Ensure simulator still works after changes

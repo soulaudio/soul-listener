@@ -108,8 +108,7 @@ fn discharge_to_critical_while_playing_pauses_then_stops_inner() {
                         // that `pause()` was called once.
                         assert_eq!(
                             player.position_frames(),
-                            frames_at_pause
-                                .expect("LowBattery must fire before CriticalShutdown"),
+                            frames_at_pause.expect("LowBattery must fire before CriticalShutdown"),
                             "player must not have advanced while paused"
                         );
                     }
@@ -128,7 +127,11 @@ fn discharge_to_critical_while_playing_pauses_then_stops_inner() {
     let paused_at = paused_at.expect("LowBattery never fired across the discharge");
     let stopped_at = stopped_at.expect("CriticalShutdown never fired across the discharge");
     assert!(paused_at < stopped_at, "warn must precede critical");
-    assert_eq!(player.state(), DeckState::Stopped, "critical must stop the deck");
+    assert_eq!(
+        player.state(),
+        DeckState::Stopped,
+        "critical must stop the deck"
+    );
     assert_eq!(
         battery.power_off_calls(),
         1,
@@ -153,7 +156,8 @@ fn overheat_throttles_then_restores_charge_current() {
     battery.set_now_ms(0);
     let ev = svc.poll(&mut battery, 0, true);
     assert!(
-        !ev.iter().any(|e| matches!(e, PowerEvent::ThermalThrottle { .. })),
+        !ev.iter()
+            .any(|e| matches!(e, PowerEvent::ThermalThrottle { .. })),
         "must not throttle while in the safe band"
     );
     assert!(battery.charge_current_calls().is_empty());
@@ -175,7 +179,8 @@ fn overheat_throttles_then_restores_charge_current() {
     battery.set_now_ms(3_001);
     let ev = svc.poll(&mut battery, 3_001, true);
     assert!(
-        !ev.iter().any(|e| matches!(e, PowerEvent::ThermalThrottle { .. })),
+        !ev.iter()
+            .any(|e| matches!(e, PowerEvent::ThermalThrottle { .. })),
         "cooling back into the safe band must not re-fire the event"
     );
     assert_eq!(
@@ -257,7 +262,10 @@ fn time_to_empty_is_finite_and_decreases_as_soc_drops() {
     let first = svc
         .time_to_empty_s()
         .expect("discharging with current must estimate a runtime");
-    assert!(first > 0, "sanity: runtime estimate must be positive while discharging");
+    assert!(
+        first > 0,
+        "sanity: runtime estimate must be positive while discharging"
+    );
 
     let step_ms = 250u64;
     let mut t = step_ms;

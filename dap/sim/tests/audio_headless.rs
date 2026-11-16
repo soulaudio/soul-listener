@@ -121,12 +121,18 @@ fn run() {
     let info0 = player.decode_info().expect("track 0 loaded");
     assert_eq!(info0.decoded.sample_rate, 44_100, "tone.wav is 44.1 kHz");
     assert_eq!(info0.device_rate, 48_000, "sink declares 48 kHz");
-    assert!(info0.resampling, "44.1 kHz source into a 48 kHz sink must resample");
+    assert!(
+        info0.resampling,
+        "44.1 kHz source into a 48 kHz sink must resample"
+    );
 
     pump_until_current(&mut player, 1);
     let info1 = player.decode_info().expect("track 1 loaded");
     assert_eq!(info1.decoded.sample_rate, 48_000, "antiphase.wav is 48 kHz");
-    assert!(!info1.resampling, "48 kHz source into a 48 kHz sink is passthrough");
+    assert!(
+        !info1.resampling,
+        "48 kHz source into a 48 kHz sink is passthrough"
+    );
 
     run_to_end(&mut player);
 
