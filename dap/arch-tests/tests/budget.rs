@@ -1,18 +1,26 @@
 //! Pins real `soul-audio-core` / `soul-audio-engine` / `soul-audio-index` /
 //! `dap-core` types against the STM32H7A3's actual memory map (see
-//! [`memory_map`]) and this DAP's split of it into per-region SRAM budgets.
+//! [`memory_map`]) and this DAP's split of it into per-region SRAM budgets
+//! (see `docs/plans/2026-11-16-memory-and-battery-optimization-design.md`
+//! §3 for the full rationale behind the 7-region split below).
 //!
-//! All five size guards below are GREEN at the DAP's real `PRELOAD = 1`
-//! (gapless needs only the immediate next track preloaded; `PRELOAD = 2` was
-//! a leftover desktop value). Each prints its measured size vs. budget
-//! before asserting, so a run's output is itself the committed, precise
-//! statement of how much headroom each type has. See `src/lib.rs` for the
-//! roster and `MEMORY.md`/the spec doc for history.
+//! Every size guard below is GREEN at the DAP's real `PRELOAD = 1` (gapless
+//! needs only the immediate next track preloaded; `PRELOAD = 2` was a
+//! leftover desktop value). Each prints its measured size vs. budget before
+//! asserting, so a run's output is itself the committed, precise statement
+//! of how much headroom each type has. See `src/lib.rs` for the roster and
+//! `MEMORY.md`/the spec doc for history.
 
 use core::mem::size_of;
 
+use dap_core::app::App;
 use dap_core::audio::AudioPlayer;
-use dap_core::ports::Storage;
+use dap_core::display::{DisplayError, EinkRefresh, Gray4, Rectangle};
+use dap_core::ports::{BatteryReading, Controls, InputEvent, Power, Storage};
+use dap_core::power::{PowerProfile, PowerService};
+use embedded_graphics::draw_target::DrawTarget;
+use embedded_graphics::geometry::{OriginDimensions, Size};
+use embedded_graphics::Pixel;
 use soul_audio_core::{AnyDecoder, Deck, SampleFormat, Sink, SinkError, SliceSource, StreamInfo};
 use soul_audio_engine::{Engine, LinearSequencer};
 use soul_audio_index::IndexReader;
@@ -58,25 +66,65 @@ pub mod memory_map {
 }
 
 // --- This DAP's split of `memory_map::USER_SRAM` into per-region budgets ---
+//
+// Seven regions (spec §3): audio, two visual lines (live framebuffer + the
+// optional partial-refresh shadow), UI scratch, the library-listing working
+// set, the catalog index, and DMA staging. Total ≈1,083.5 KB of 1,208 KB —
+// see `memory_budget_fits_user_sram` below for the precise, printed total
+// and margin.
 
 /// Budget for the whole live audio path: a `Deck` holding one playing
 /// decoder + its resampler + the output ring, at the DAP's real
 /// `PRELOAD = 1` (the standard gapless depth — one preloaded next track).
 /// Measured at 664,072 B (`Deck`) / 664,152 B (`AudioPlayer`); 704 KB gives
-/// modest headroom. A future JIT-preload change (building the next track's
+/// modest headroom — the spare ~40 KB is the **battery-ring tunable** (spec
+/// §0/§4.1): grow the decode-ahead ring into it for fewer SD wakeups and
+/// longer CPU sleep. A future JIT-preload change (building the next track's
 /// decoder lazily instead of holding it fully-built) would let this shrink
 /// back to 512 KB, but isn't needed to fit today.
 const AUDIO_PATH_BUDGET: usize = 704 * 1024;
 
-/// e-ink framebuffer budget: the 800x480 panel at Gray4 — **2 bits per
-/// pixel**, packed — so `800 * 480 * 2 / 8 = 96,000 B`. (Previously
-/// mis-budgeted here at ~190 KiB, as if Gray4 were 4 bpp; corrected to the
-/// real 2-bpp packed size.)
+/// Visual — **live framebuffer**: the 800x480 panel at Gray4 — **2 bits per
+/// pixel**, packed — so `800 * 480 * 2 / 8 = 96,000 B`. This is the frame
+/// actively being drawn/composed, committed to the panel on the next
+/// refresh. (Previously mis-budgeted here at ~190 KiB, as if Gray4 were 4
+/// bpp; corrected to the real 2-bpp packed size.)
 const FRAMEBUFFER_BUDGET: usize = 800 * 480 * 2 / 8;
+
+/// Visual — **partial-refresh shadow**: a second 800x480 Gray4 buffer
+/// holding the *last-flushed* frame, so a new frame can be diffed
+/// pixel-for-pixel against it to find the dirty region and issue a cheap
+/// [`EinkRefresh::partial_refresh`] instead of a slow, flashy full refresh —
+/// the single biggest UI-side battery/latency win on e-ink (spec §1.2/§4.3).
+///
+/// This is the **one genuinely optional line** in the whole budget (spec
+/// §3's note): if eink-ui's layout pass tracks dirty rectangles directly
+/// (from what changed in the widget tree) instead of diffing pixels after
+/// the fact, this buffer is never allocated and the margin below rises by
+/// its ~93.75 KB. Budgeted in for now so the plan is safe either way; drop
+/// it only once eink-ui ui-3 actually commits to draw-time dirty tracking.
+const FRAMEBUFFER_SHADOW_BUDGET: usize = 800 * 480 * 2 / 8;
+
+/// Visual — **eink-ui scratch**: bounded, no-alloc immediate-mode scratch
+/// for glyph rasterization, layout, and compose passes (eink-system/
+/// eink-components' own working buffers) — distinct from the framebuffers
+/// above, which hold committed pixels, not in-progress layout state.
+const UI_SCRATCH_BUDGET: usize = 32 * 1024;
+
+/// **Library listing** working set: the visible browse page's records +
+/// its order/index table + a string buffer for titles/artists (~8–15 rows
+/// held for the browse screen at once). Distinct from [`CATALOG_INDEX_BUDGET`]
+/// below — that's the paged `.soulidx` *reader*, which never holds more than
+/// one page's worth of raw bytes; this is the *decoded* row data the browse
+/// UI actually renders.
+const LIBRARY_LISTING_BUDGET: usize = 64 * 1024;
 
 /// Budget for the `.soulidx` catalog index reader + SD/catalog scan scratch.
 /// `IndexReader` itself measures 96 B (a no-alloc header cache); 32 KB is
-/// already generous headroom for the paged reader + scan scratch on top.
+/// already generous headroom for the paged reader + scan scratch on top. It
+/// must never scale with catalog size — see
+/// `index_reader_size_is_a_small_constant_independent_of_catalog_size` below,
+/// which pins that independently of this budget.
 const CATALOG_INDEX_BUDGET: usize = 32 * 1024;
 
 /// Budget for DMA descriptor / staging buffers.
@@ -99,11 +147,24 @@ const DECODER_BUDGET: usize = 288 * 1024;
 /// layer does not multiply that further.
 const ENGINE_OVERHEAD_BUDGET: usize = 1024;
 
+/// Generous budget for [`PowerService`]'s own state: a smoothed-SoC EMA,
+/// charge/profile/thermal flags, an `Option<u64>` idle timestamp, and a
+/// couple of `u32` counters — no heap, no arrays that scale with anything.
+/// Guards against accidental growth (e.g. a history buffer) independent of
+/// every audio/visual budget above, which this type has nothing to do with.
+const POWER_SERVICE_BUDGET: usize = 256;
+
 // The documented split above must actually fit inside the SRAM it's a split
 // of — a static sanity check on the budget itself, independent of whatever
 // `soul-audio-core`/`soul-audio-engine`/`soul-audio-index` measure at.
 const _: () = assert!(
-    AUDIO_PATH_BUDGET + FRAMEBUFFER_BUDGET + CATALOG_INDEX_BUDGET + DMA_BUFFERS_BUDGET
+    AUDIO_PATH_BUDGET
+        + FRAMEBUFFER_BUDGET
+        + FRAMEBUFFER_SHADOW_BUDGET
+        + UI_SCRATCH_BUDGET
+        + LIBRARY_LISTING_BUDGET
+        + CATALOG_INDEX_BUDGET
+        + DMA_BUFFERS_BUDGET
         <= memory_map::USER_SRAM
 );
 const _: () = assert!(DECODER_BUDGET <= AUDIO_PATH_BUDGET);
@@ -154,6 +215,74 @@ impl Storage for StubStorage {
     }
 }
 
+/// A zero-size [`Power`] stand-in for the [`App`] size guard: never actually
+/// polled (this guard only calls `size_of`), so `App<_, _, StubPower, _, _,
+/// _>`'s size is dominated by the `AudioPlayer`/`PowerService` it wraps, not
+/// by the power port.
+struct StubPower;
+
+impl Power for StubPower {
+    fn read(&mut self) -> BatteryReading {
+        BatteryReading {
+            soc_permille: 0,
+            voltage_mv: 0,
+            current_ma: 0,
+            temp_centi_c: 0,
+            charger_present: false,
+            charging: false,
+        }
+    }
+
+    fn set_charge_current_ma(&mut self, _ma: u16) {}
+    fn set_clock_profile(&mut self, _profile: PowerProfile) {}
+    fn request_power_off(&mut self) {}
+}
+
+/// A zero-size [`Controls`] stand-in for the [`App`] size guard, matching
+/// [`StubPower`]'s role.
+struct StubControls;
+
+impl Controls for StubControls {
+    fn poll(&mut self) -> Option<InputEvent> {
+        None
+    }
+}
+
+/// A zero-size [`dap_core::display::Display`] stand-in for the [`App`] size
+/// guard: discards every pixel, declares the real panel's 800x480 geometry,
+/// never fails. Mirrors `dap_core::app`'s own `MockDisplay` test double (see
+/// `core/src/app.rs`'s unit tests) — duplicated here rather than imported
+/// since that one is `#[cfg(test)]`-private to `dap-core`.
+struct StubDisplay;
+
+impl DrawTarget for StubDisplay {
+    type Color = Gray4;
+    type Error = core::convert::Infallible;
+
+    fn draw_iter<I>(&mut self, _pixels: I) -> Result<(), Self::Error>
+    where
+        I: IntoIterator<Item = Pixel<Self::Color>>,
+    {
+        Ok(())
+    }
+}
+
+impl OriginDimensions for StubDisplay {
+    fn size(&self) -> Size {
+        Size::new(800, 480)
+    }
+}
+
+impl EinkRefresh for StubDisplay {
+    fn full_refresh(&mut self) -> Result<(), DisplayError> {
+        Ok(())
+    }
+
+    fn partial_refresh(&mut self, _area: Rectangle) -> Result<(), DisplayError> {
+        Ok(())
+    }
+}
+
 /// The DAP's real preload depth (`dap_core::audio::AudioPlayer`'s const —
 /// see `dap/sim/tests/audio_headless.rs`). 1 = gapless (one preloaded next
 /// track, all gapless playback needs); `PRELOAD = 2` was a leftover desktop
@@ -185,14 +314,26 @@ fn memory_budget_fits_user_sram() {
         memory_map::USER_SRAM,
         memory_map::USER_SRAM / 1024
     );
-    let regions: [(&str, usize); 4] = [
+    let regions: [(&str, usize); 7] = [
         (
             "audio path (Deck: decoder + resampler + ring)",
             AUDIO_PATH_BUDGET,
         ),
         (
-            "e-ink framebuffer (800x480 Gray4, 2 bpp)",
+            "visual: framebuffer, live (800x480 Gray4, 2 bpp)",
             FRAMEBUFFER_BUDGET,
+        ),
+        (
+            "visual: framebuffer shadow (partial-refresh dirty-diff; optional)",
+            FRAMEBUFFER_SHADOW_BUDGET,
+        ),
+        (
+            "visual: eink-ui scratch (glyph/layout/compose)",
+            UI_SCRATCH_BUDGET,
+        ),
+        (
+            "library listing (browse page + order table + strings)",
+            LIBRARY_LISTING_BUDGET,
         ),
         (
             "catalog index (.soulidx IndexReader + scan scratch)",
@@ -313,4 +454,141 @@ fn audio_player_fits_the_h7a3_audio_path_budget() {
          is failing too.",
         over = actual.saturating_sub(AUDIO_PATH_BUDGET),
     );
+}
+
+/// Catches ANY growth of [`IndexReader`] — not just a budget-busting one.
+/// [`index_reader_fits_the_catalog_index_budget`] above checks it against the
+/// generous 32 KB [`CATALOG_INDEX_BUDGET`] (which also covers paged-scan
+/// scratch on top); this is the tight, no-slack check: `IndexReader` is
+/// architecturally a no-alloc header cache (a `RefCell<Src>` + the parsed
+/// ~64 B fixed header) that re-seeks and re-reads the source on every field
+/// access, so it must stay a small CONSTANT regardless of how large the
+/// catalog it indexes gets — it never caches a record, a string, or
+/// anything else that would scale with library size. 256 B is generous
+/// headroom over the measured 96 B while still catching essentially any
+/// real growth (e.g. an accidentally-added cache field).
+const INDEX_READER_CONST_SIZE_CEILING: usize = 256;
+
+#[test]
+fn index_reader_size_is_a_small_constant_independent_of_catalog_size() {
+    let actual = size_of::<IndexReader<Src>>();
+    report(
+        "IndexReader<SliceSource> (constant-size check)",
+        actual,
+        INDEX_READER_CONST_SIZE_CEILING,
+    );
+    assert!(
+        actual <= INDEX_READER_CONST_SIZE_CEILING,
+        "IndexReader<SliceSource<'_>> is {actual} B, over the {INDEX_READER_CONST_SIZE_CEILING} B \
+         constant-size ceiling by {over} B. This is tighter than \
+         `index_reader_fits_the_catalog_index_budget`'s 32 KB budget on purpose: IndexReader must \
+         never scale with catalog size (it re-seeks/re-reads the source per field access instead \
+         of caching records), so ANY growth here — even one still well under the 32 KB budget — \
+         means something that should be a re-seek turned into cached state instead.",
+        over = actual.saturating_sub(INDEX_READER_CONST_SIZE_CEILING),
+    );
+}
+
+/// Single-glance footprint roster + regression guard for every main-stack
+/// type this crate's budgets care about, in one table: each type's measured
+/// `size_of` against the SRAM budget it actually has to fit (the same
+/// budgets the dedicated guards above already enforce one at a time — this
+/// test re-checks them together so a reviewer can see the whole picture in
+/// one `cargo test -- --nocapture` run). `App` and `PowerService` are the
+/// two `dap_core` types from the spec's §5.1 roster not already covered by a
+/// dedicated test above.
+///
+/// No type here was skipped — every type the spec's roster names
+/// (`AnyDecoder`, `Deck`, `Engine`, `AudioPlayer`, `IndexReader`, `App`,
+/// `PowerService`) is public and constructible with the stub ports already
+/// defined in this file. `soul-audio-core`'s individual decoder variants
+/// (`WavDecoder`, `FlacDecoder`, …) and `Resampler` are deliberately NOT
+/// listed: they aren't re-exported from `soul_audio_core`'s public surface
+/// (see that crate's `lib.rs`), so sizing them here would mean reaching into
+/// a module path this DAP doesn't otherwise depend on, for marginal value
+/// over `AnyDecoder`'s own (already-guarded) ceiling.
+#[test]
+fn component_footprint_roster() {
+    println!("\nComponent footprint roster (size_of vs. its relevant SRAM budget):");
+
+    let any_decoder = size_of::<AnyDecoder<Src>>();
+    report("AnyDecoder<SliceSource>", any_decoder, DECODER_BUDGET);
+    assert!(
+        any_decoder <= DECODER_BUDGET,
+        "see any_decoder_fits_the_h7a3_decoder_budget"
+    );
+
+    let deck = size_of::<Deck<StubSink, AnyDecoder<Src>, PRELOAD>>();
+    report(
+        "Deck<StubSink, AnyDecoder<SliceSource>, 1>",
+        deck,
+        AUDIO_PATH_BUDGET,
+    );
+    assert!(
+        deck <= AUDIO_PATH_BUDGET,
+        "see deck_fits_the_h7a3_audio_path_budget"
+    );
+
+    let engine = size_of::<Engine<StubSink, AnyDecoder<Src>, LinearSequencer, PRELOAD>>();
+    report(
+        "Engine<StubSink, AnyDecoder<SliceSource>, LinearSequencer, 1>",
+        engine,
+        AUDIO_PATH_BUDGET,
+    );
+    assert!(
+        engine <= AUDIO_PATH_BUDGET,
+        "Engine wraps a Deck by value plus tiny bookkeeping — see \
+         engine_overhead_is_tiny_on_top_of_the_deck_it_wraps for the overhead-only guard"
+    );
+
+    let audio_player = size_of::<AudioPlayer<StubSink, StubStorage, PRELOAD>>();
+    report(
+        "AudioPlayer<StubSink, StubStorage, 1>",
+        audio_player,
+        AUDIO_PATH_BUDGET,
+    );
+    assert!(
+        audio_player <= AUDIO_PATH_BUDGET,
+        "see audio_player_fits_the_h7a3_audio_path_budget"
+    );
+
+    let index_reader = size_of::<IndexReader<Src>>();
+    report(
+        "IndexReader<SliceSource>",
+        index_reader,
+        CATALOG_INDEX_BUDGET,
+    );
+    assert!(
+        index_reader <= CATALOG_INDEX_BUDGET,
+        "see index_reader_fits_the_catalog_index_budget / the constant-size guard"
+    );
+
+    let app =
+        size_of::<App<StubSink, StubStorage, StubPower, StubControls, StubDisplay, PRELOAD>>();
+    report(
+        "App<StubSink, StubStorage, StubPower, StubControls, StubDisplay, 1>",
+        app,
+        AUDIO_PATH_BUDGET,
+    );
+    assert!(
+        app <= AUDIO_PATH_BUDGET,
+        "App<_> is {app} B, over the {AUDIO_PATH_BUDGET} B audio-path budget by {over} B. App \
+         wraps an AudioPlayer by value plus a PowerService + zero-size ports, so its footprint \
+         should track AudioPlayer's almost exactly — an overage here that AudioPlayer's own guard \
+         doesn't also show means the App-level wiring (PowerService, ports) grew, not the audio \
+         path itself.",
+        over = app.saturating_sub(AUDIO_PATH_BUDGET),
+    );
+
+    let power_service = size_of::<PowerService>();
+    report("PowerService", power_service, POWER_SERVICE_BUDGET);
+    assert!(
+        power_service <= POWER_SERVICE_BUDGET,
+        "PowerService is {power_service} B, over the {POWER_SERVICE_BUDGET} B budget by {over} B \
+         — it's meant to be fixed-size state (an SoC EMA, flags, counters), so growth here likely \
+         means an unbounded field (e.g. a history buffer) snuck in.",
+        over = power_service.saturating_sub(POWER_SERVICE_BUDGET),
+    );
+
+    println!();
 }

@@ -461,6 +461,7 @@ name = "dap-arch-tests"
 version = "0.1.0"
 dependencies = [
  "dap-core",
+ "embedded-graphics",
  "soul-audio-core",
  "soul-audio-engine",
  "soul-audio-index",
