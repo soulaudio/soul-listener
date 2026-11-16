@@ -28,6 +28,13 @@ image = { version = "0.25", features = ["png"] }
 # doc). Matches the root workspace's pinned criterion version
 # (soul-listener-gh/Cargo.toml's `[workspace.dependencies]`).
 criterion = "0.5"
+# `tests/static_placement.rs` -- proves the board pattern (constructing the
+# ~664 KB `AudioPlayer` directly into a `static` via `StaticCell::init`)
+# actually works, not just type-checks. Matches the version the root
+# workspace already pins (soul-listener-gh/Cargo.toml's
+# `[workspace.dependencies]`, used by `crates/firmware`) and the embassy
+# ecosystem's current major line.
+static_cell = "2"
 
 [[bench]]
 name = "decode_rtf"
