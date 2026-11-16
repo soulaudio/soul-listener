@@ -21,3 +21,14 @@ embedded-io-adapters = { version = "0.6", features = ["std"] }
 # Matches the version/feature set the root workspace's eink-testing crate
 # already pins (crates/eink/eink-testing/Cargo.toml) for consistency.
 image = { version = "0.25", features = ["png"] }
+
+[dev-dependencies]
+# Decode real-time-factor benchmarks (`benches/decode_rtf.rs`) -- a HOST
+# regression baseline, not an on-target measurement (see that file's module
+# doc). Matches the root workspace's pinned criterion version
+# (soul-listener-gh/Cargo.toml's `[workspace.dependencies]`).
+criterion = "0.5"
+
+[[bench]]
+name = "decode_rtf"
+harness = false
