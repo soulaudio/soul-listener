@@ -354,7 +354,10 @@ checksum = "460fbee9c2c2f33933d720630a6a0bac33ba7053db5344fac858d4b8952d77d5"
 name = "dap-arch-tests"
 version = "0.1.0"
 dependencies = [
+ "dap-core",
  "soul-audio-core",
+ "soul-audio-engine",
+ "soul-audio-index",
 ]
 
 [[package]]
@@ -1714,6 +1717,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "149309498a5f7334b12ddae0cad8aba81ce785fe91755068867e017cf98fee46"
 
 [[package]]
+name = "soul-audio-catalog"
+version = "0.1.0"
+dependencies = [
+ "embedded-io 0.6.1",
+ "soul-audio-core",
+]
+
+[[package]]
 name = "soul-audio-core"
 version = "0.1.0"
 dependencies = [
@@ -1724,6 +1735,15 @@ dependencies = [
 name = "soul-audio-engine"
 version = "0.1.0"
 dependencies = [
+ "soul-audio-core",
+]
+
+[[package]]
+name = "soul-audio-index"
+version = "0.1.0"
+dependencies = [
+ "embedded-io 0.6.1",
+ "soul-audio-catalog",
  "soul-audio-core",
 ]
 

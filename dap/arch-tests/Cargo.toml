@@ -7,3 +7,7 @@ publish = false
 
 [dev-dependencies]
 soul-audio-core = { workspace = true }
+soul-audio-engine = { workspace = true }
+soul-audio-index = { workspace = true }
+# This workspace member (dap-core), for the `AudioPlayer` size guard.
+dap-core = { path = "../core" }

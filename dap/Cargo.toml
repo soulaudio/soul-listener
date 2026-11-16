@@ -11,6 +11,9 @@ members = ["core", "sim", "board-h7a3", "arch-tests"]
 # dap-index doc). All stereo/mono formats are unaffected.
 soul-audio-core   = { path = "../../soul-audio-core/crates/soul-audio-core", default-features = false, features = ["embedded-profile"] }
 soul-audio-engine = { path = "../../soul-audio-core/crates/soul-audio-engine" }
+# The on-SD `.soulidx` catalog reader (no_std, no-alloc default surface) —
+# dap-arch-tests pins `IndexReader<Src>` to the catalog-index SRAM budget.
+soul-audio-index  = { path = "../../soul-audio-core/crates/soul-audio-index" }
 
 # The e-ink drawing toolkit lives in THIS repo's root workspace
 # (soul-listener-gh/Cargo.toml), not dap/'s. It's embassy-free and already
