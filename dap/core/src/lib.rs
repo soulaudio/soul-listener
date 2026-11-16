@@ -8,6 +8,7 @@
 #![cfg_attr(not(test), no_std)]
 #![forbid(unsafe_code)]
 
+pub mod app;
 pub mod audio;
 pub mod ports;
 pub mod power;

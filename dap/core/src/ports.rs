@@ -81,6 +81,41 @@ pub struct BatteryReading {
     pub charging: bool,
 }
 
+/// One input event polled off the board's wheel/button controls.
+///
+/// Deliberately coarse and hardware-agnostic: a board driver (or host
+/// simulator) owns debouncing, detent quantization, and the long-press
+/// timing threshold, and only ever hands [`crate::app::App`] the
+/// already-decided event. Direction/sign of [`Rotate`](Self::Rotate) is a
+/// board convention (e.g. "clockwise = positive"), not specified here.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum InputEvent {
+    /// The wheel moved `n` detents (sign = direction, magnitude = detent
+    /// count since the last poll).
+    Rotate(i8),
+    /// A short press-and-release of the wheel's push button.
+    Press,
+    /// A press held past the board's long-press threshold.
+    LongPress,
+}
+
+/// The board's wheel/button input capability: [`crate::app::App::tick`]
+/// drains [`poll`](Controls::poll) once per tick and maps every event it
+/// returns to a transport/volume action — it never touches a GPIO/encoder
+/// register directly, so the same mapping logic runs over a real
+/// PEC11R/EC11 driver on-target and a scripted test double on the host.
+///
+/// Deliberately `dyn`-free and alloc-free, matching [`Storage`] and
+/// [`Power`]: a concrete, monomorphized implementor, no trait objects.
+pub trait Controls {
+    /// Poll for the next pending input event, if any. Non-blocking: `None`
+    /// means no event is pending right now. A board driver that debounces
+    /// multiple raw edges into one logical event (e.g. several quadrature
+    /// steps into one [`InputEvent::Rotate`]) does that coalescing here, not
+    /// in the caller.
+    fn poll(&mut self) -> Option<InputEvent>;
+}
+
 /// The board's battery/charger capability: [`crate::power::PowerService`]
 /// polls [`read`](Power::read) and drives the actuator methods in response —
 /// it never touches hardware registers directly, so the same state machine
