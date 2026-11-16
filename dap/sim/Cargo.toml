@@ -7,3 +7,8 @@ description = "Host-side (std) simulation adapters implementing dap-core's ports
 [dependencies]
 dap-core = { path = "../core" }
 soul-audio-core = { workspace = true }
+
+# Host-only bridge from `std::fs::File` (+ `std::io::BufReader`, which owns
+# its scratch buffer) to soul-audio-core's `embedded_io` capability ladder —
+# see `src/storage.rs`'s `FileSource`.
+embedded-io-adapters = { version = "0.6", features = ["std"] }
