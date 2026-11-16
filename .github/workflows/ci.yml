@@ -742,6 +742,34 @@ jobs:
         run: cargo build --target thumbv7em-none-eabihf --features hardware
 
   # ---------------------------------------------------------------------------
+  # dap/ workspace host tests (headless logic + audio simulation)
+  #
+  # The dap/ workspace (dap-core logic + dap-sim host sim adapters) runs entirely
+  # on the host, no hardware — this gates the headless tests (decode -> resample
+  # -> gapless -> volume -> SimSink, etc.). It pulls soul-audio-core, so it needs
+  # the stable toolchain (let-chains, Rust 1.88+) like the board-h7a3 job above.
+  # board-h7a3's bin is skipped on host (its `hardware` feature is off), so this
+  # only builds+tests dap-core and dap-sim.
+  # ---------------------------------------------------------------------------
+  test-dap:
+    name: dap Workspace Tests (headless)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: dap
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
+        with:
+          workspaces: "dap -> target"
+
+      - name: cargo test (dap-core + dap-sim, host)
+        run: cargo test
+
+  # ---------------------------------------------------------------------------
   # ELF section address verification (STM32H743)
   #
   # Builds the firmware ELF and verifies that the linker script (memory.x)
