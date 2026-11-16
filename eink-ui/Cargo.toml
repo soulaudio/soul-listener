@@ -1,0 +1,33 @@
+[workspace]
+resolver = "2"
+members = ["."]
+
+[package]
+name = "eink-ui"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.75"
+license = "MIT OR Apache-2.0"
+description = "A no_std, embedded-graphics-native, immediate-mode UI toolkit specialized for e-ink displays."
+repository = "https://github.com/yourusername/soulaudio-dap"
+publish = false
+
+# ---------------------------------------------------------------------------
+# Hard-separation guarantee (see docs/plans/2026-11-16-eink-ui-toolkit-design.md
+# §8): this crate depends on ONLY embedded-graphics + heapless, plus an
+# optional `image` crate behind the `std` feature (golden-test PNG export).
+# Nothing soul/dap-specific, ever — this crate is designed to `git mv` out
+# to its own repo + crates.io with no changes.
+# ---------------------------------------------------------------------------
+[dependencies]
+embedded-graphics = "0.8"
+heapless = "0.9"
+image = { version = "0.25", default-features = false, features = ["png"], optional = true }
+
+[features]
+default = []
+# Pulls in `alloc` for unbounded children (Vec) + owned/dynamic String text.
+alloc = []
+# Host-only testing support: the in-memory Framebuffer + PNG export used by
+# the golden-test harness. Implies `alloc`.
+std = ["alloc", "dep:image"]

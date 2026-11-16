@@ -28,7 +28,14 @@ members = [
 # specify the same links value"), not a feature-flag issue. Keeping dap/ as
 # its own workspace (see dap/Cargo.toml) is the only way for the two
 # Embassy major lines to coexist as separate binaries.
-exclude = ["dap"]
+#
+# eink-ui/ (the new standalone e-ink UI toolkit, see
+# docs/plans/2026-11-16-eink-ui-toolkit-design.md) is likewise excluded: it
+# is deliberately its own workspace with its own Cargo.lock and a dependency
+# set limited to `embedded-graphics` + `heapless` (+ optional `image`), so
+# it can be `git mv`'d out to its own repo later with zero changes. It must
+# never gain a dependency on anything else in this workspace.
+exclude = ["dap", "eink-ui"]
 
 
 # ---------------------------------------------------------------------------
