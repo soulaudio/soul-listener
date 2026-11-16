@@ -52,3 +52,57 @@ pub trait Storage {
     /// `track`.
     fn open(&mut self, track: usize) -> Result<Self::Source, Self::Error>;
 }
+
+/// One battery/charger sample: everything [`crate::power::PowerService`]
+/// needs to drive its state machine for a single [`Power::read`] poll.
+///
+/// Units are fixed-point/integer throughout (no floats): `soc_permille` is
+/// state of charge out of 1000 (so `150` = 15.0%), `current_ma` is signed
+/// with the convention "positive = current flowing *into* the battery
+/// (charging), negative = current flowing *out* (discharging)" — mirroring
+/// how fuel-gauge ICs (e.g. MAX17048-style coulomb counters) typically report
+/// it, so a board implementation can usually pass the raw register value
+/// straight through.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct BatteryReading {
+    /// State of charge, per-mille (0..=1000).
+    pub soc_permille: u16,
+    /// Terminal voltage, millivolts.
+    pub voltage_mv: u16,
+    /// Battery current, milliamps. Positive = charging, negative =
+    /// discharging (see struct docs).
+    pub current_ma: i16,
+    /// Battery pack temperature, centi-°C (e.g. `2550` = 25.50°C).
+    pub temp_centi_c: i16,
+    /// Whether a charger is physically connected (independent of whether
+    /// it's actively delivering current right now).
+    pub charger_present: bool,
+    /// Whether the charge IC currently reports actively charging.
+    pub charging: bool,
+}
+
+/// The board's battery/charger capability: [`crate::power::PowerService`]
+/// polls [`read`](Power::read) and drives the actuator methods in response —
+/// it never touches hardware registers directly, so the same state machine
+/// runs over real fuel-gauge/charger ICs on-target and over a scripted
+/// `SimBattery` on the host.
+///
+/// Deliberately `dyn`-free and alloc-free, matching [`Storage`]: a concrete,
+/// monomorphized implementor (board driver or host simulator), no trait
+/// objects.
+pub trait Power {
+    /// Sample the current battery/charger state.
+    fn read(&mut self) -> BatteryReading;
+
+    /// Set the charge IC's target charge current, in milliamps (e.g. to
+    /// taper or halt charging under [`crate::power::PowerEvent::ThermalThrottle`]).
+    fn set_charge_current_ma(&mut self, ma: u16);
+
+    /// Set the system clock/performance profile (e.g. to engage
+    /// [`crate::power::PowerProfile::BatterySaver`] at low battery).
+    fn set_clock_profile(&mut self, profile: crate::power::PowerProfile);
+
+    /// Request an orderly power-off (called once on
+    /// [`crate::power::PowerEvent::CriticalShutdown`]).
+    fn request_power_off(&mut self);
+}

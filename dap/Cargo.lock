@@ -180,6 +180,7 @@ checksum = "790eea4361631c5e7d22598ecd5723ff611904e3344ce8720784c93e3d83d40b"
 name = "dap-core"
 version = "0.1.0"
 dependencies = [
+ "heapless",
  "soul-audio-core",
  "soul-audio-engine",
 ]

@@ -8,3 +8,7 @@ description = "Board-agnostic DAP logic and ports (no_std, no embassy; usable fr
 # default-features = false set at the workspace level (dap/Cargo.toml).
 soul-audio-core = { workspace = true }
 soul-audio-engine = { workspace = true }
+# Bounded (no-alloc) collections for PowerService::poll's returned event set.
+# no_std-first by design; already resolved in this workspace's Cargo.lock as
+# a transitive dep of board-h7a3's embassy-stm32 (hardware feature).
+heapless = { version = "0.9", default-features = false }

@@ -5,8 +5,9 @@
 //! in any async runtime or hardware-specific dependency. Board crates
 //! (e.g. `board-h7a3`) and host simulation adapters (`dap-sim`) implement
 //! the ports defined here.
-#![no_std]
+#![cfg_attr(not(test), no_std)]
 #![forbid(unsafe_code)]
 
 pub mod audio;
 pub mod ports;
+pub mod power;
