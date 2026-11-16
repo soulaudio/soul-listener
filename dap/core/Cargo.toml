@@ -7,3 +7,4 @@ description = "Board-agnostic DAP logic and ports (no_std, no embassy; usable fr
 [dependencies]
 # default-features = false set at the workspace level (dap/Cargo.toml).
 soul-audio-core = { workspace = true }
+soul-audio-engine = { workspace = true }

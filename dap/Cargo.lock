@@ -181,6 +181,7 @@ name = "dap-core"
 version = "0.1.0"
 dependencies = [
  "soul-audio-core",
+ "soul-audio-engine",
 ]
 
 [[package]]
@@ -890,6 +891,13 @@ name = "soul-audio-core"
 version = "0.1.0"
 dependencies = [
  "embedded-io 0.6.1",
+]
+
+[[package]]
+name = "soul-audio-engine"
+version = "0.1.0"
+dependencies = [
+ "soul-audio-core",
 ]
 
 [[package]]

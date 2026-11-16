@@ -8,4 +8,5 @@
 #![no_std]
 #![forbid(unsafe_code)]
 
-pub mod ports {}
+pub mod audio;
+pub mod ports;
