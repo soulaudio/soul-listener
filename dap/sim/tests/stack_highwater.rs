@@ -67,11 +67,22 @@
 //!   `tests/static_placement.rs`, which also documents why `StaticCell`
 //!   alone does not eliminate the construction-time stack cost this test
 //!   measures (it only relocates the steady-state, at-rest storage).
-//! - A *release* (`opt-level = "z"`/`"s"`/`3`) firmware build will very
-//!   likely RVO/NRVO away most of these debug-mode copies — but this test
-//!   deliberately measures the WORSE unoptimized case, so the stack region
-//!   reserved on-target should be sized for it, not assume the optimizer
-//!   saves it.
+//! - A *release* build does NOT rescue this — measured, not assumed. Bisecting
+//!   `examples/stackprobe.rs` (`--release`) gives a ~2.1 MB ceiling with the
+//!   player on-stack and **~1.44 MB with the player off-stack** (boxed ≈ the
+//!   board's `StaticCell` — the board-representative figure). Both exceed the
+//!   H7A3's entire 1.18 MB AXI SRAM. The earlier assumption that release would
+//!   "RVO these copies away" is empirically false: the open chain moves the
+//!   262 KB `AnyDecoder` by value ~5× through `open_seekable` → `provide` →
+//!   `load` → `build_track`, and the optimizer does not elide them. The exact
+//!   Cortex-M7 number needs QEMU/on-target confirmation (different ABI/`-Os`),
+//!   but even a handful of un-elided 262 KB copies blows DTCM and stresses AXI
+//!   SRAM. This is a LATENT BOARD-BLOCKER, fixed by shrinking `AnyDecoder` so
+//!   moving it is cheap — see soul-audio-core's
+//!   `docs/superpowers/specs/2026-11-17-decoder-memory-externalization.md`.
+//!   The `size_of` budget guards measure only the at-rest footprint (664 KB,
+//!   which fits) and by construction cannot see this transient — this test is
+//!   what surfaces it.
 
 use dap_core::audio::AudioPlayer;
 use dap_core::ports::Storage;
