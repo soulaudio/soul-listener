@@ -5,6 +5,7 @@
 //! Fixtures (`soul-audio-core/testdata`, the shared-tone playback set):
 //! - `tone.wav`      -- 44.1 kHz, 2 ch, 16-bit, 88_200 frames (2.0 s)
 //! - `antiphase.wav` -- 48.0 kHz, 2 ch, 16-bit, 96_000 frames (2.0 s)
+//!
 //! queued in that order into a sink declaring a 48 kHz device rate, so track
 //! 0 is resampled and track 1 is rate-matched passthrough -- exercising both
 //! paths and the boundary between them.
