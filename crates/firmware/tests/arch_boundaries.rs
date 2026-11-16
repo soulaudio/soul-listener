@@ -103,58 +103,6 @@ fn bluetooth_hci_reset_packet_correct() {
     assert_eq!(&pkt[..], &[0x01_u8, 0x03, 0x0C, 0x00]);
 }
 
-/// Verify that `library::TrackIndex` (using the test-safe `SmallIndex` alias)
-/// starts empty and reports the correct capacity constant.
-///
-/// Compilation of this test confirms that `library` does not accidentally
-/// depend on `firmware` or embassy types — if it did, the integration test
-/// binary would fail to link.
-#[test]
-fn library_track_index_has_correct_capacity() {
-    use library::index::{IndexError, SmallIndex};
-
-    let mut idx = SmallIndex::new();
-    assert!(idx.is_empty());
-    assert_eq!(idx.len(), 0);
-
-    // MAX_TRACKS must equal 8192 per the SDRAM layout specification.
-    assert_eq!(library::index::MAX_TRACKS, 8192);
-
-    // Smoke-test insert + error path using the SmallIndex (capacity 64).
-    let track = library::Track::new("/arch_test.flac", library::AudioFormat::Flac);
-    idx.insert(track).expect("insert into empty SmallIndex");
-    assert_eq!(idx.len(), 1);
-
-    // Verify that a truly full index returns IndexError::Full.
-    let mut tiny = library::index::TrackIndex::<1>::new();
-    tiny.insert(library::Track::new("/a.flac", library::AudioFormat::Flac))
-        .expect("first insert");
-    let err = tiny
-        .insert(library::Track::new("/b.flac", library::AudioFormat::Flac))
-        .unwrap_err();
-    assert!(matches!(err, IndexError::Full));
-}
-
-/// Verify that magic-byte format detection works correctly from the
-/// architecture boundary integration test context.
-///
-/// This confirms `library::metadata` is accessible and `AudioFormat` is
-/// correctly re-exported from the crate root.
-#[test]
-fn library_format_detection_by_magic_bytes() {
-    use library::metadata::detect_format;
-    use library::track::AudioFormat;
-
-    assert_eq!(detect_format(b"fLaC"), Some(AudioFormat::Flac));
-    assert_eq!(detect_format(b"ID3\x03"), Some(AudioFormat::Mp3));
-    assert_eq!(
-        detect_format(&[0xFF, 0xFB, 0x00, 0x00]),
-        Some(AudioFormat::Mp3)
-    );
-    assert_eq!(detect_format(b"RIFF"), Some(AudioFormat::Wav));
-    assert_eq!(detect_format(&[]), None);
-}
-
 /// Verify that SDMMC1 is documented as requiring HSI48.
 ///
 /// Embassy issue #3049: SDMMC on STM32H743 silently hangs during init_card()
@@ -250,38 +198,6 @@ fn test_rasr_values_encode_non_cacheable() {
         // ENABLE = bit 0 -- must be 1 (region active)
         assert_ne!(rasr & 1, 0, "Region {idx}: RASR bit 0 (ENABLE) must be SET");
     }
-}
-
-/// Verify that the `playback` crate's state machine compiles cleanly and that
-/// `PlaybackEngine` starts in the `Stopped` state.
-///
-/// This test enforces two boundaries simultaneously:
-///   1. `playback` must not depend on `firmware` (no circular dep).
-///   2. The playback engine's pure-logic layer must be `no_std`-compatible and
-///      testable on the host without any hardware abstractions.
-#[test]
-fn playback_crate_has_no_std_core() {
-    // Verify the playback engine state machine logic compiles and behaves
-    // correctly when accessed from the firmware integration test suite.
-    use playback::engine::{PlaybackEngine, PlaybackState};
-    let engine = PlaybackEngine::new();
-    assert_eq!(engine.state(), PlaybackState::Stopped);
-}
-
-/// Verify that `NanoMp3Decoder` is default-constructible and exposes the
-/// correct initial state.
-///
-/// The `mp3` feature is NOT required here — `NanoMp3Decoder::new()` must
-/// compile and return zero metadata regardless of whether nanomp3 is linked.
-/// This enforces that the optional `mp3` feature doesn't break the crate's
-/// unconditional public API surface.
-#[test]
-fn playback_mp3_decoder_is_default_constructible() {
-    use playback::decoder::FrameDecoder;
-    use playback::mp3_decoder::NanoMp3Decoder;
-    let d = NanoMp3Decoder::new();
-    assert_eq!(d.sample_rate(), 0);
-    assert_eq!(d.channels(), 0);
 }
 
 // ─── MPU boot wiring tests ────────────────────────────────────────────────────

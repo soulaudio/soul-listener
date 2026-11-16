@@ -10,9 +10,7 @@ members = [
     "crates/firmware",
     "crates/firmware-ui",
     "xtask",
-    "crates/playback",
     "crates/ui",
-    "crates/library",
     "crates/bluetooth",
     # TODO: Add when created
     # "crates/simulator",
@@ -106,8 +104,6 @@ embedded-sdmmc = "0.8"
 # Audio
 biquad = "0.4"
 dasp = { version = "0.11", default-features = false }
-nanomp3 = "0.1"
-rubato = "0.15"
 
 # Binary serialisation — no_std, postcard v1 stable wire format
 postcard = { version = "1", default-features = false, features = ["heapless"] }
@@ -139,8 +135,6 @@ embedded-graphics-simulator = "0.6"
 embedded-test = "0.4"
 tokio = { version = "1.49", features = ["macros", "rt"] }
 
-# Directory walk — xtask scan-library only (std)
-walkdir = "2"
 # Benchmarking
 criterion = { version = "0.5", features = ["async_tokio"] }
 

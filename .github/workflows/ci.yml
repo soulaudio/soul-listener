@@ -474,10 +474,11 @@ jobs:
 
       - name: Vertical-slice isolation — feature crates must not cross-import each other
         run: |
-          # Rule: playback, ui, library, bluetooth must not depend on each other.
+          # Rule: ui, bluetooth must not depend on each other.
+          # (playback, library removed: v1 audio ripped out in favor of dap/)
           # Each vertical slice depends only on the platform (HAL) crate.
           # Cross-imports entangle domain boundaries and violate the vertical-slice arch.
-          FEATURE_CRATES="playback ui library bluetooth"
+          FEATURE_CRATES="ui bluetooth"
           VIOLATIONS=0
           for crate in $FEATURE_CRATES; do
             if [ ! -d "crates/$crate" ]; then
@@ -567,8 +568,6 @@ jobs:
   #   eink-components  — UI components, no_std by design (uses heapless)
   #   platform         — HAL trait definitions, no_std (Embassy + embedded-hal)
   #   ui               — application UI state, #![cfg_attr(not(test), no_std)]
-  #   playback         — audio engine, #![cfg_attr(not(test), no_std)]
-  #   library          — music library, no_std (heapless collections)
   #   bluetooth        — BLE HCI, #![cfg_attr(not(test), no_std)]
   #   firmware-ui      — uses --features no-std (cdylib requires std on host by
   #                       default; the `no-std` feature activates #![no_std])
@@ -599,12 +598,6 @@ jobs:
 
       - name: ui — no_std
         run: cargo check -p ui --target thumbv7em-none-eabihf --no-default-features
-
-      - name: playback — no_std
-        run: cargo check -p playback --target thumbv7em-none-eabihf --no-default-features
-
-      - name: library — no_std
-        run: cargo check -p library --target thumbv7em-none-eabihf --no-default-features
 
       - name: bluetooth — no_std
         run: cargo check -p bluetooth --target thumbv7em-none-eabihf --no-default-features

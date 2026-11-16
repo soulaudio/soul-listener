@@ -62,11 +62,10 @@ tokio = { workspace = true, features = ["full"] }
 # embedded-hal-mock 0.11 supports embedded-hal 1.x via the `eh1` module.
 # The `embedded-hal-async` feature enables async mocks (needed for SpiDevice tests).
 embedded-hal-mock = { version = "0.11", default-features = false, features = ["eh1", "embedded-hal-async"] }
-# Architecture boundary tests — ui, bluetooth, library, and playback slices
+# Architecture boundary tests — ui and bluetooth slices
+# (library/playback slices removed: v1 audio ripped out in favor of dap/)
 ui = { path = "../ui" }
 bluetooth = { path = "../bluetooth" }
-library = { path = "../library" }
-playback = { path = "../playback" }
 
 [features]
 default = []
