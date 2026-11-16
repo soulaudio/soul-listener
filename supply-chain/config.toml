@@ -908,10 +908,6 @@ criteria = "safe-to-deploy"
 version = "0.7.11"
 criteria = "safe-to-deploy"
 
-[[exemptions.nanomp3]]
-version = "0.1.1"
-criteria = "safe-to-deploy"
-
 [[exemptions.nb]]
 version = "0.1.3"
 criteria = "safe-to-deploy"

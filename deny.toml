@@ -28,10 +28,11 @@ wildcards = "deny"          # warn on wildcard version specs (path deps are inte
 # Crates that must NEVER appear in the dependency graph
 deny = [
     # minimp3 family: deprecated and unsound (UB on ARM shift ops).
-    # Use nanomp3 (pure-Rust c2rust port with soundness fixes) instead.
-    { crate = "minimp3", reason = "Deprecated and unsound — use nanomp3 instead" },
-    { crate = "minimp3-rs", reason = "Deprecated and unsound — use nanomp3 instead" },
-    { crate = "minimp3-sys", reason = "Deprecated and unsound — use nanomp3 instead" },
+    # soul-audio-core (dap/) decodes MP3 with its own in-house no_std/no-alloc
+    # decoder — no external MP3 crate is needed.
+    { crate = "minimp3", reason = "Deprecated and unsound" },
+    { crate = "minimp3-rs", reason = "Deprecated and unsound" },
+    { crate = "minimp3-sys", reason = "Deprecated and unsound" },
     # epd-waveshare: does not support SSD1677 — we use a custom driver
     { crate = "epd-waveshare", reason = "Does not support SSD1677/SSD2677 — custom driver in crates/firmware/src/display/driver.rs" },
     # No heap allocation — project uses heapless collections only.

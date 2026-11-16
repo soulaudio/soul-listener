@@ -1,5 +1,14 @@
 # Digital Audio Player (DAP) - Embedded Rust Project
 
+> **Repo layout note:** this repo is now two workspaces. `dap/` (STM32H7A3,
+> Embassy 0.6, `dap-core`/`dap-sim`/`board-h7a3`) is the active v2 firmware
+> and consumes `soul-audio-core` (sibling repo) for decode/resample/playback
+> — see `dap/Cargo.toml`. The root workspace (`crates/*`: `eink`, `platform`,
+> `firmware`, `firmware-ui`, `ui`, `bluetooth`) is v1 salvage kept for parts,
+> not the live firmware. Sections below describing a `playback`/`library`
+> crate split, FFI MP3/FLAC decoders, or `rubato` resampling describe that
+> retired v1 design, not the current one — kept for historical reference.
+
 ## Project Overview
 
 This is a professional-grade Digital Audio Player firmware written in Rust using the Embassy async framework. The project demonstrates industry-standard embedded Rust patterns with complete hardware abstraction, enabling development and testing without physical hardware.
@@ -82,12 +91,14 @@ All hardware interactions go through trait-based abstractions:
 - `SpeakerAmp` trait for TAS5805M vs mock (mute, volume, init/PEQ)
 
 ### 2. Vertical Slice Organization
-Features organized by domain, not technical layer:
+Features organized by domain, not technical layer. This was v1's split
+(`playback`/`library` crates have since been removed; decode/playback now
+lives in `soul-audio-core`, driven from `dap/`):
 ```
 crates/
-├── playback/          # Complete playback feature
+├── playback/          # (removed) — now soul-audio-core, consumed via dap/
 ├── ui/                # Display and UI management
-├── library/           # Music library management
+├── library/           # (removed) — scanning/indexing now soul-audio-import
 ├── bluetooth/         # Bluetooth audio/control
 └── platform/          # Hardware abstraction layer
 ```
@@ -151,18 +162,21 @@ eink-emulator/
 ├── memory.x                # Linker script for target
 ├── .cargo/
 │   └── config.toml         # Target and runner configuration
-├── crates/
+├── crates/                 # v1 salvage (root workspace; not the live firmware)
 │   ├── platform/           # HAL abstractions
 │   │   ├── display/        # Display traits and drivers
 │   │   ├── input/          # Input abstractions
 │   │   ├── bluetooth/      # BT abstractions
 │   │   ├── storage/        # Storage abstractions
 │   │   └── audio/          # Audio codec drivers
-│   ├── playback/           # Audio playback engine
+│   ├── playback/           # (removed) — see dap/ + soul-audio-core
 │   ├── ui/                 # UI framework and widgets
-│   ├── library/            # Music library management
-│   ├── simulator/          # Desktop simulator
+│   ├── library/            # (removed) — see soul-audio-import (soul-audio-core)
 │   └── firmware/           # Main firmware application
+├── dap/                    # Active v2 firmware workspace (own Cargo.lock)
+│   ├── core/               # dap-core: app/screens/power logic (host-testable)
+│   ├── sim/                # dap-sim: desktop simulator harness
+│   └── board-h7a3/         # Embassy/STM32H7A3 hardware target
 ├── docs/
 │   ├── ARCHITECTURE.md     # System architecture
 │   ├── ABSTRACTIONS.md     # HAL abstraction guide
@@ -194,10 +208,10 @@ eink-emulator/
 - `embedded-graphics-simulator` - Desktop testing
 
 ### Audio
-- `biquad` - IIR filters for DSP
-- `rubato` - Sample rate conversion
-- `dasp` - Digital audio signal processing (no_std)
-- FFI to C decoders (minimp3, libfoxenflac)
+- v1 used `biquad`/`rubato`/`dasp` + FFI to C decoders (minimp3, libfoxenflac).
+  v2 (`dap/`) instead depends on `soul-audio-core`: an in-house, no_std/
+  no-alloc decode + resample + playback core (WAV/FLAC/MP3/DSD/ALAC/AAC/
+  Vorbis/Opus) with no external codec crates.
 
 ### Storage
 - `embedded-sdmmc` - FAT16/FAT32 filesystem
