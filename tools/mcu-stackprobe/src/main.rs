@@ -101,6 +101,19 @@ impl Sink for DiscardSink {
 /// `unsafe` (the same pattern `dap/board-h7a3/src/main.rs` uses).
 static SCRATCH: StaticCell<[i32; decoder_scratch_len()]> = StaticCell::new();
 
+type ProbeDecoder = AnyDecoder<SliceSource<'static>, &'static mut [i32]>;
+type ProbeDeck = Deck<DiscardSink, ProbeDecoder, 0>;
+
+/// The `Deck` itself (~199 KB — it embeds a full `AnyDecoder` by value inside
+/// its `Track`), board-representative: the real board-h7a3 firmware holds its
+/// player in a `StaticCell`, off the calling task's stack (see
+/// `dap/board-h7a3/src/main.rs`'s own `SCRATCH` doc comment for the same
+/// pattern). Measuring `main`'s frame with `Deck` as a `main`-local (as the
+/// first iteration of this harness did) over-counts the real transient by
+/// `Deck`'s own static size, since a real caller never carries that weight on
+/// its own stack.
+static DECK: StaticCell<ProbeDeck> = StaticCell::new();
+
 #[entry]
 fn main() -> ! {
     let sink = DiscardSink {
@@ -114,8 +127,7 @@ fn main() -> ! {
     // PRELOAD = 0: only the single-resident-decoder path matters for this
     // measurement (gapless preload is a separate, non-transient-critical
     // slot — see dap/sim/examples/stackprobe.rs's own PRELOAD=0 comment).
-    let mut deck: Deck<DiscardSink, AnyDecoder<SliceSource<'static>, &'static mut [i32]>, 0> =
-        Deck::new(sink, Quality::Fast);
+    let deck: &'static mut ProbeDeck = DECK.init(Deck::new(sink, Quality::Fast));
 
     let scratch: &'static mut [i32] = SCRATCH.init([0; decoder_scratch_len()]);
     let src = SliceSource::new(FIXTURE);
