@@ -182,7 +182,10 @@ impl Storage for FixtureStorage {
     }
 }
 
-const PRELOAD: usize = 1;
+// 0 = single resident decoder; gapless via the output ring at track reopen
+// (Rockbox model) — the board's SAI DMA ring must be deep enough to cover
+// the reopen's wall-clock latency.
+const PRELOAD: usize = 0;
 
 /// Run a FULL open→decode→pump of `bytes` to completion (`Progress::Ended`),
 /// on the CURRENT thread — the caller is responsible for running this inside

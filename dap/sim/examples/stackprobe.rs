@@ -41,7 +41,10 @@ impl Storage for FixtureStorage {
     }
 }
 
-const PRELOAD: usize = 1;
+// 0 = single resident decoder; gapless via the output ring at track reopen
+// (Rockbox model) — the board's SAI DMA ring must be deep enough to cover
+// the reopen's wall-clock latency.
+const PRELOAD: usize = 0;
 
 fn open_decode_pump_to_end(bytes: &'static [u8]) {
     let sink = DiscardSink {

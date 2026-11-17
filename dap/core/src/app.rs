@@ -536,7 +536,7 @@ mod tests {
         vec![0i32; soul_audio_core::decoder_scratch_len()].into_boxed_slice()
     }
 
-    type TestApp = App<MockSink, MockStorage, Box<[i32]>, MockPower, MockControls, MockDisplay, 1>;
+    type TestApp = App<MockSink, MockStorage, Box<[i32]>, MockPower, MockControls, MockDisplay, 0>;
 
     fn healthy_reading(soc_permille: u16) -> BatteryReading {
         BatteryReading {

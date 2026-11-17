@@ -91,6 +91,18 @@ pub mod memory_map {
 /// so the battery-ring margin isn't squeezed to zero.
 const AUDIO_PATH_BUDGET: usize = 384 * 1024;
 
+/// Board-static **decoder scratch pool** the externalized decoders carve their
+/// working buffers from — the actual memory `AnyDecoder<S, P>`'s pointer-sized
+/// `P` points at, which [`AUDIO_PATH_BUDGET`] (the struct's `size_of` only) does
+/// NOT count. This region is the honest cost the first externalization re-budget
+/// silently omitted. One scratch per simultaneously-live decoder: at
+/// `PRELOAD = 0` (single resident decoder, the Rockbox output-ring gapless
+/// model) that is exactly ONE `decoder_scratch_len()` (65,536 i32 = 256 KB),
+/// versus TWO (512 KB) at the old PRELOAD=1 — halving this pool is the whole
+/// reason the DAP moved to one resident decoder.
+const DECODER_SCRATCH_POOL_BUDGET: usize =
+    (1 + PRELOAD) * soul_audio_core::decoder_scratch_len() * core::mem::size_of::<i32>();
+
 /// Visual — **live framebuffer**: the 800x480 panel at Gray4 — **2 bits per
 /// pixel**, packed — so `800 * 480 * 2 / 8 = 96,000 B`. This is the frame
 /// actively being drawn/composed, committed to the panel on the next
@@ -179,6 +191,7 @@ const POWER_SERVICE_BUDGET: usize = 256;
 // `soul-audio-core`/`soul-audio-engine`/`soul-audio-index` measure at.
 const _: () = assert!(
     AUDIO_PATH_BUDGET
+        + DECODER_SCRATCH_POOL_BUDGET
         + FRAMEBUFFER_BUDGET
         + FRAMEBUFFER_SHADOW_BUDGET
         + UI_SCRATCH_BUDGET
@@ -313,10 +326,12 @@ impl EinkRefresh for StubDisplay {
 }
 
 /// The DAP's real preload depth (`dap_core::audio::AudioPlayer`'s const —
-/// see `dap/sim/tests/audio_headless.rs`). 1 = gapless (one preloaded next
-/// track, all gapless playback needs); `PRELOAD = 2` was a leftover desktop
-/// value.
-const PRELOAD: usize = 1;
+/// see `dap/sim/tests/audio_headless.rs`). **0 = single resident decoder**:
+/// gapless comes from the output ring at track reopen (the Rockbox model —
+/// verified by `audio_headless.rs`'s `longest_silent_run` staying ~zero), not
+/// from a second preloaded decoder. This is what makes
+/// [`DECODER_SCRATCH_POOL_BUDGET`] exactly ONE scratch (256 KB) instead of two.
+const PRELOAD: usize = 0;
 
 /// Print `name`'s measured size against `budget` before the caller asserts,
 /// so a failing test's output is a precise, self-contained report.
@@ -343,10 +358,14 @@ fn memory_budget_fits_user_sram() {
         memory_map::USER_SRAM,
         memory_map::USER_SRAM / 1024
     );
-    let regions: [(&str, usize); 7] = [
+    let regions: [(&str, usize); 8] = [
         (
-            "audio path (Deck: decoder + resampler + ring)",
+            "audio path (Deck struct: decoder slot + resampler + ring)",
             AUDIO_PATH_BUDGET,
+        ),
+        (
+            "decoder scratch pool ((1+PRELOAD) x decoder_scratch_len i32)",
+            DECODER_SCRATCH_POOL_BUDGET,
         ),
         (
             "visual: framebuffer, live (800x480 Gray4, 2 bpp)",

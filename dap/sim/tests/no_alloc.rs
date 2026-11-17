@@ -119,10 +119,12 @@ impl Sink for CountingSink {
     }
 }
 
-/// Gapless preload depth — matches the DAP's real `PRELOAD = 1`, though this
-/// test never preloads a second track (one loaded track, pumped repeatedly,
-/// is enough to exercise steady-state decode).
-const PRELOAD: usize = 1;
+/// Gapless preload depth — matches the DAP's real `PRELOAD = 0` (single
+/// resident decoder; gapless via the output ring at track reopen, the
+/// Rockbox model). This test never preloads a second track anyway (one
+/// loaded track, pumped repeatedly, is enough to exercise steady-state
+/// decode).
+const PRELOAD: usize = 0;
 
 /// Un-armed pumps before measurement starts, letting any one-time lazy
 /// construction inside the decoder (format-specific table init, etc.)

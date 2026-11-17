@@ -35,9 +35,10 @@ use dap_sim::{
 };
 use soul_audio_core::{DeckState, Progress};
 
-// 1 = gapless (one preloaded next track, all gapless playback needs);
-// PRELOAD = 2 was a leftover desktop value.
-const PRELOAD: usize = 1;
+// 0 = single resident decoder; gapless via the output ring at track reopen
+// (Rockbox model) — the board's SAI DMA ring must be deep enough to cover
+// the reopen's wall-clock latency.
+const PRELOAD: usize = 0;
 
 fn tone_path() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("../../../soul-audio-core/testdata/tone.wav")

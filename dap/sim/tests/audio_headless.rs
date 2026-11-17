@@ -16,9 +16,10 @@ use dap_core::audio::AudioPlayer;
 use dap_sim::{sac_scratch, SimSink, SimStorage};
 use soul_audio_core::{Progress, Quality};
 
-// 1 = gapless (one preloaded next track, all gapless playback needs);
-// PRELOAD = 2 was a leftover desktop value.
-const PRELOAD: usize = 1;
+// 0 = single resident decoder; gapless via the output ring at track reopen
+// (Rockbox model) — the board's SAI DMA ring must be deep enough to cover
+// the reopen's wall-clock latency.
+const PRELOAD: usize = 0;
 
 fn tone_path() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("../../../soul-audio-core/testdata/tone.wav")
@@ -42,12 +43,21 @@ fn build_player(volume: Option<f32>) -> Player {
     player
 }
 
-/// Pump until the sequencer's cursor reaches `target` (i.e. the gapless swap
-/// into that track has happened), bounded so a stuck pipeline fails loudly
-/// instead of hanging.
+/// Pump until `target` is actually LOADED, not just the sequencer cursor.
+///
+/// At `PRELOAD = 0` (single resident decoder), `Engine::pump` advances the
+/// sequencer's cursor to the next track the *same pump* it reports the
+/// current one `Ended` — `player.current()` already reads `Some(target)` one
+/// full pump before `poll_open`/`provide` actually reopens and decodes it.
+/// `Deck::pump` sets its own `current` to `None` at `Ended` (see
+/// `soul_audio_core::deck::Deck::pump`), so `decode_info()` reliably reads
+/// `None` across that gap and only becomes `Some` again once `Deck::load`
+/// has run for `target` — checking both together is what proves the track
+/// is actually loaded, not merely "next in the queue". Bounded so a stuck
+/// pipeline fails loudly instead of hanging.
 fn pump_until_current(player: &mut Player, target: usize) {
     for _ in 0..1_000_000 {
-        if player.current() == Some(target) {
+        if player.current() == Some(target) && player.decode_info().is_some() {
             return;
         }
         match player.pump().expect("pump") {

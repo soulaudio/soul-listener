@@ -50,9 +50,11 @@ use dap_sim::{sac_scratch, SimSink, SimStorage};
 use soul_audio_core::{Progress, Quality};
 use static_cell::StaticCell;
 
-// 1 = gapless (one preloaded next track) -- the DAP's real preload depth,
-// matching every other fixture-backed test in this crate.
-const PRELOAD: usize = 1;
+// 0 = single resident decoder; gapless via the output ring at track reopen
+// (Rockbox model) -- the board's SAI DMA ring must be deep enough to cover
+// the reopen's wall-clock latency. Matches every other fixture-backed test
+// in this crate.
+const PRELOAD: usize = 0;
 
 type Player = AudioPlayer<SimSink, SimStorage, Box<[i32]>, PRELOAD>;
 
@@ -102,24 +104,28 @@ fn run() {
     // types line up: pump real decode/output through it and observe real
     // progress and the expected gapless track swap.
     let mut saw_played = false;
+    let mut reached_track1 = false;
     for _ in 0..200_000 {
         match player.pump().expect("pump") {
-            Progress::Played => saw_played = true,
-            Progress::TrackChanged => {
-                saw_played = true;
-                break;
-            }
+            Progress::Played | Progress::TrackChanged => saw_played = true,
             Progress::Idle | Progress::Ended => {}
+        }
+        // At PRELOAD = 0 (single resident decoder) the move into track 1 is a
+        // reopen, not a preload swap: `current()` advances to the sequencer
+        // cursor first, then the next `poll_open`/`provide` actually loads the
+        // decoder. Wait for it to be loaded (not merely cursor-advanced).
+        if player.current() == Some(1) && player.decode_info().is_some() {
+            reached_track1 = true;
+            break;
         }
     }
     assert!(
         saw_played,
         "static-celled AudioPlayer never produced output (Progress::Played/TrackChanged)"
     );
-    assert_eq!(
-        player.current(),
-        Some(1),
-        "expected the gapless swap into track 1 to have happened by now"
+    assert!(
+        reached_track1,
+        "expected the reopen into track 1 (single-decoder, output-ring gapless) to have loaded"
     );
 
     // Same reference, read again later -- proving it's a stable `&'static
