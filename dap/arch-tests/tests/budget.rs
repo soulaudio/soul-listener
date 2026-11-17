@@ -76,13 +76,20 @@ pub mod memory_map {
 /// Budget for the whole live audio path: a `Deck` holding one playing
 /// decoder + its resampler + the output ring, at the DAP's real
 /// `PRELOAD = 1` (the standard gapless depth — one preloaded next track).
-/// Measured at 664,072 B (`Deck`) / 664,152 B (`AudioPlayer`); 704 KB gives
-/// modest headroom — the spare ~40 KB is the **battery-ring tunable** (spec
+///
+/// **Post-externalization** (soul-audio-core's
+/// `docs/superpowers/specs/2026-11-17-decoder-memory-externalization.md`):
+/// `AnyDecoder`'s big block-staging buffers now live in a caller-owned
+/// scratch (`P = &'static mut [i32]` here — a 16 B fat pointer, not an
+/// inline array), so `Deck`/`Engine`/`AudioPlayer`/`App` all dropped from
+/// ~664 KB to ~332 KB. Measured at 331,992 B (`Deck`) / 332,072 B
+/// (`Engine`) / 332,080 B (`AudioPlayer`) / 332,168 B (`App`); 384 KB gives
+/// ~61 KB (~18%) headroom — the spare is the **battery-ring tunable** (spec
 /// §0/§4.1): grow the decode-ahead ring into it for fewer SD wakeups and
-/// longer CPU sleep. A future JIT-preload change (building the next track's
-/// decoder lazily instead of holding it fully-built) would let this shrink
-/// back to 512 KB, but isn't needed to fit today.
-const AUDIO_PATH_BUDGET: usize = 704 * 1024;
+/// longer CPU sleep. Old budget: 704 KB (720,896 B), sized for the
+/// pre-externalization ~664 KB ceiling — halved here, not shrunk further,
+/// so the battery-ring margin isn't squeezed to zero.
+const AUDIO_PATH_BUDGET: usize = 384 * 1024;
 
 /// Visual — **live framebuffer**: the 800x480 panel at Gray4 — **2 bits per
 /// pixel**, packed — so `800 * 480 * 2 / 8 = 96,000 B`. This is the frame
@@ -130,12 +137,25 @@ const CATALOG_INDEX_BUDGET: usize = 32 * 1024;
 /// Budget for DMA descriptor / staging buffers.
 const DMA_BUFFERS_BUDGET: usize = 64 * 1024;
 
-/// Budget for a single [`AnyDecoder`] value. This is below the size of
-/// `MultistreamOpusDecoder` (surround Opus), today's ceiling variant, so
-/// meeting it forces dropping that variant from the dispatch enum. Zero-loss
-/// on this DAP: it is stereo-only, and `Deck` already rejects any decoder
-/// that doesn't resolve to mono/stereo.
-const DECODER_BUDGET: usize = 288 * 1024;
+/// Budget for a single [`AnyDecoder`] value.
+///
+/// **Post-externalization.** `AnyDecoder<S, P>`'s big block-staging buffers
+/// (WavPack/FLAC/ALAC/Caf/AAC/Matroska's top-level codec) were externalized
+/// into a caller-owned scratch `P` (here pinned to `&'static mut [i32]`, a
+/// 16 B fat pointer — see soul-audio-core's
+/// `docs/superpowers/specs/2026-11-17-decoder-memory-externalization.md`),
+/// so meeting this budget no longer means dropping a dispatch variant (that
+/// was the OLD mechanism, via `embedded-profile` dropping
+/// `MultistreamOpusDecoder` — still gone, surround Opus is still a graceful
+/// `Unsupported`, but no longer the thing that made this budget fit).
+///
+/// Measured ceiling: 96,184 B, pinned by `MatroskaDecoder`'s **inline**
+/// Opus-in-WebM path (`MatroskaOpus`'s own packet/PCM buffers don't yet
+/// route through `P` — flagged in the spec as the remaining Phase-4 slice,
+/// out of scope here). 128 KB gives ~34.9 KB (~36%) headroom over that.
+/// Old budget: 288 KB (294,912 B), sized for the pre-externalization
+/// 262,224 B WavPack-ceiling `AnyDecoder` — more than halved here.
+const DECODER_BUDGET: usize = 128 * 1024;
 
 /// Generous budget for [`Engine`]'s *own* bookkeeping — on top of whatever
 /// `Deck<K, D, PRELOAD>` it wraps by value: a [`LinearSequencer`] (an index
@@ -199,9 +219,18 @@ impl Sink for StubSink {
 /// mean to measure.
 type Src = SliceSource<'static>;
 
+/// `AnyDecoder<S, P>`'s externalized decoder-scratch storage type, pinned
+/// here to a concrete, pointer-sized type so `size_of` reflects what the
+/// externalization actually bought: a `&'static mut [i32]` is a fat pointer
+/// (ptr + len, 16 B on a 64-bit host) regardless of how large the backing
+/// buffer it points to is — exactly the board's real on-target shape (a
+/// `StaticCell`-backed static, not an inline array). See soul-audio-core's
+/// `docs/superpowers/specs/2026-11-17-decoder-memory-externalization.md`.
+type P = &'static mut [i32];
+
 /// A zero-size [`Storage`] stand-in for the [`AudioPlayer`] size guard: hands
 /// back an empty [`SliceSource`] (never actually opened — this guard only
-/// calls `size_of`, never `pump`), so `AudioPlayer<StubSink, StubStorage,
+/// calls `size_of`, never `pump`), so `AudioPlayer<StubSink, StubStorage, P,
 /// PRELOAD>`'s size is dominated by the `Engine`/`Deck`/decoder it wraps, not
 /// by the storage port.
 struct StubStorage;
@@ -216,9 +245,9 @@ impl Storage for StubStorage {
 }
 
 /// A zero-size [`Power`] stand-in for the [`App`] size guard: never actually
-/// polled (this guard only calls `size_of`), so `App<_, _, StubPower, _, _,
-/// _>`'s size is dominated by the `AudioPlayer`/`PowerService` it wraps, not
-/// by the power port.
+/// polled (this guard only calls `size_of`), so `App<_, _, _, StubPower, _,
+/// _, _>`'s size is dominated by the `AudioPlayer`/`PowerService` it wraps,
+/// not by the power port.
 struct StubPower;
 
 impl Power for StubPower {
@@ -367,29 +396,30 @@ fn memory_budget_fits_user_sram() {
 
 #[test]
 fn any_decoder_fits_the_h7a3_decoder_budget() {
-    let actual = size_of::<AnyDecoder<Src>>();
-    report("AnyDecoder<SliceSource>", actual, DECODER_BUDGET);
+    let actual = size_of::<AnyDecoder<Src, P>>();
+    report("AnyDecoder<SliceSource, P>", actual, DECODER_BUDGET);
     assert!(
         actual <= DECODER_BUDGET,
-        "AnyDecoder<SliceSource<'_>> is {actual} B, over the {DECODER_BUDGET} B H7A3 decoder \
-         budget by {over} B. The ceiling variant is MultistreamOpusDecoder (surround Opus); drop \
-         it via soul-audio-core's embedded-profile — this DAP is stereo-only and Deck already \
-         rejects non-stereo decoders, so this is zero-loss. Every other format is retained.",
+        "AnyDecoder<SliceSource<'_>, P> is {actual} B, over the {DECODER_BUDGET} B H7A3 decoder \
+         budget by {over} B. The ceiling is MatroskaDecoder's inline Opus-in-WebM path (its \
+         packet/PCM buffers don't yet route through the externalized `P` scratch — see \
+         soul-audio-core's decoder-memory-externalization spec, Phase 4); every other large \
+         variant (WavPack/FLAC/ALAC/Caf/AAC/top-level Opus) already externalizes into `P`.",
         over = actual.saturating_sub(DECODER_BUDGET),
     );
 }
 
 #[test]
 fn deck_fits_the_h7a3_audio_path_budget() {
-    let actual = size_of::<Deck<StubSink, AnyDecoder<Src>, PRELOAD>>();
+    let actual = size_of::<Deck<StubSink, AnyDecoder<Src, P>, PRELOAD>>();
     report(
-        "Deck<StubSink, AnyDecoder<SliceSource>, 1>",
+        "Deck<StubSink, AnyDecoder<SliceSource, P>, 1>",
         actual,
         AUDIO_PATH_BUDGET,
     );
     assert!(
         actual <= AUDIO_PATH_BUDGET,
-        "Deck<_, AnyDecoder<SliceSource<'_>>, {PRELOAD}> is {actual} B, over the \
+        "Deck<_, AnyDecoder<SliceSource<'_>, P>, {PRELOAD}> is {actual} B, over the \
          {AUDIO_PATH_BUDGET} B H7A3 audio-path budget by {over} B. At PRELOAD=1 this should fit \
          with headroom to spare — an overage here means the live decoder + resampler + ring, or \
          the single preload slot, grew.",
@@ -405,8 +435,8 @@ fn deck_fits_the_h7a3_audio_path_budget() {
 /// above, which is where any Deck-sized overage belongs).
 #[test]
 fn engine_overhead_is_tiny_on_top_of_the_deck_it_wraps() {
-    let engine = size_of::<Engine<StubSink, AnyDecoder<Src>, LinearSequencer, PRELOAD>>();
-    let deck = size_of::<Deck<StubSink, AnyDecoder<Src>, PRELOAD>>();
+    let engine = size_of::<Engine<StubSink, AnyDecoder<Src, P>, LinearSequencer, PRELOAD>>();
+    let deck = size_of::<Deck<StubSink, AnyDecoder<Src, P>, PRELOAD>>();
     let overhead = engine.saturating_sub(deck);
     report(
         "Engine overhead (Engine<..,LinearSequencer,1> - Deck<..,1> it wraps)",
@@ -415,7 +445,7 @@ fn engine_overhead_is_tiny_on_top_of_the_deck_it_wraps() {
     );
     assert!(
         overhead <= ENGINE_OVERHEAD_BUDGET,
-        "Engine<_, AnyDecoder<SliceSource<'_>>, LinearSequencer, {PRELOAD}> is {overhead} B \
+        "Engine<_, AnyDecoder<SliceSource<'_>, P>, LinearSequencer, {PRELOAD}> is {overhead} B \
          bigger than the Deck<_, _, {PRELOAD}> it wraps, over the {ENGINE_OVERHEAD_BUDGET} B \
          bookkeeping budget — the queue/sequencer layer itself grew, which is a different (and \
          more concerning) problem than the already-tracked Deck/decoder overage above.",
@@ -439,17 +469,17 @@ fn index_reader_fits_the_catalog_index_budget() {
 
 #[test]
 fn audio_player_fits_the_h7a3_audio_path_budget() {
-    let actual = size_of::<AudioPlayer<StubSink, StubStorage, PRELOAD>>();
+    let actual = size_of::<AudioPlayer<StubSink, StubStorage, P, PRELOAD>>();
     report(
-        "AudioPlayer<StubSink, StubStorage, 1>",
+        "AudioPlayer<StubSink, StubStorage, P, 1>",
         actual,
         AUDIO_PATH_BUDGET,
     );
     assert!(
         actual <= AUDIO_PATH_BUDGET,
-        "AudioPlayer<StubSink, StubStorage, {PRELOAD}> is {actual} B, over the \
+        "AudioPlayer<StubSink, StubStorage, P, {PRELOAD}> is {actual} B, over the \
          {AUDIO_PATH_BUDGET} B H7A3 audio-path budget by {over} B. AudioPlayer wraps an Engine \
-         wrapping a Deck<_, AnyDecoder<_>, {PRELOAD}> by value, so it inherits exactly \
+         wrapping a Deck<_, AnyDecoder<_, _>, {PRELOAD}> by value, so it inherits exactly \
          `deck_fits_the_h7a3_audio_path_budget`'s footprint — an overage here means that guard \
          is failing too.",
         over = actual.saturating_sub(AUDIO_PATH_BUDGET),
@@ -511,16 +541,16 @@ fn index_reader_size_is_a_small_constant_independent_of_catalog_size() {
 fn component_footprint_roster() {
     println!("\nComponent footprint roster (size_of vs. its relevant SRAM budget):");
 
-    let any_decoder = size_of::<AnyDecoder<Src>>();
-    report("AnyDecoder<SliceSource>", any_decoder, DECODER_BUDGET);
+    let any_decoder = size_of::<AnyDecoder<Src, P>>();
+    report("AnyDecoder<SliceSource, P>", any_decoder, DECODER_BUDGET);
     assert!(
         any_decoder <= DECODER_BUDGET,
         "see any_decoder_fits_the_h7a3_decoder_budget"
     );
 
-    let deck = size_of::<Deck<StubSink, AnyDecoder<Src>, PRELOAD>>();
+    let deck = size_of::<Deck<StubSink, AnyDecoder<Src, P>, PRELOAD>>();
     report(
-        "Deck<StubSink, AnyDecoder<SliceSource>, 1>",
+        "Deck<StubSink, AnyDecoder<SliceSource, P>, 1>",
         deck,
         AUDIO_PATH_BUDGET,
     );
@@ -529,9 +559,9 @@ fn component_footprint_roster() {
         "see deck_fits_the_h7a3_audio_path_budget"
     );
 
-    let engine = size_of::<Engine<StubSink, AnyDecoder<Src>, LinearSequencer, PRELOAD>>();
+    let engine = size_of::<Engine<StubSink, AnyDecoder<Src, P>, LinearSequencer, PRELOAD>>();
     report(
-        "Engine<StubSink, AnyDecoder<SliceSource>, LinearSequencer, 1>",
+        "Engine<StubSink, AnyDecoder<SliceSource, P>, LinearSequencer, 1>",
         engine,
         AUDIO_PATH_BUDGET,
     );
@@ -541,9 +571,9 @@ fn component_footprint_roster() {
          engine_overhead_is_tiny_on_top_of_the_deck_it_wraps for the overhead-only guard"
     );
 
-    let audio_player = size_of::<AudioPlayer<StubSink, StubStorage, PRELOAD>>();
+    let audio_player = size_of::<AudioPlayer<StubSink, StubStorage, P, PRELOAD>>();
     report(
-        "AudioPlayer<StubSink, StubStorage, 1>",
+        "AudioPlayer<StubSink, StubStorage, P, 1>",
         audio_player,
         AUDIO_PATH_BUDGET,
     );
@@ -564,9 +594,9 @@ fn component_footprint_roster() {
     );
 
     let app =
-        size_of::<App<StubSink, StubStorage, StubPower, StubControls, StubDisplay, PRELOAD>>();
+        size_of::<App<StubSink, StubStorage, P, StubPower, StubControls, StubDisplay, PRELOAD>>();
     report(
-        "App<StubSink, StubStorage, StubPower, StubControls, StubDisplay, 1>",
+        "App<StubSink, StubStorage, P, StubPower, StubControls, StubDisplay, 1>",
         app,
         AUDIO_PATH_BUDGET,
     );
