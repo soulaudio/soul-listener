@@ -1,0 +1,70 @@
+[package]
+name = "mcu-stackprobe"
+version = "0.1.0"
+edition = "2021"
+build = "build.rs"
+publish = false
+
+# A standalone workspace of one — like dap/Cargo.toml and eink-ui/Cargo.toml —
+# so this crate has its OWN Cargo.lock and never becomes a member of the
+# soul-listener-gh root workspace. (It still inherits the root's
+# .cargo/config.toml via directory-walk discovery, which is a separate
+# mechanism from workspace membership — see .cargo/config.toml's comment for
+# why `linker` is explicitly overridden there.)
+[workspace]
+
+[[bin]]
+name = "mcu-stackprobe"
+test = false
+bench = false
+
+[dependencies]
+# Sibling repo D:/dev/soulaudio/soul-audio-core, three levels up from this
+# file (tools/mcu-stackprobe/Cargo.toml -> tools/ -> soul-listener-gh/ ->
+# soulaudio/). embedded-profile: the stereo DAP target profile (drops the
+# surround-Opus AnyDecoder variant) — see dap/Cargo.toml's workspace.dependencies
+# comment for the full rationale; mirrored here since this harness measures
+# the same decode path the DAP board will run.
+soul-audio-core = { path = "../../../soul-audio-core/crates/soul-audio-core", default-features = false, features = ["embedded-profile"] }
+cortex-m-rt = "0.7"
+cortex-m = "0.7"
+panic-halt = "0.2"
+static_cell = "2"
+
+[profile.release]
+# Cargo's release defaults already give opt-level = 3; spelled out here so
+# this is unambiguously the "release / opt-3" build the measurement is about.
+opt-level = 3
+# No unwind runtime on this bare-metal target; panic-halt is the handler.
+panic = "abort"
+# Keep symbol names (and thus -Z emit-stack-sizes' per-function table)
+# readable in the final ELF.
+debug = true
+strip = false
+# NOTE on LTO: dap/board-h7a3 (the real firmware this harness stands in for)
+# is its OWN standalone workspace with no [profile.release] override, so it
+# gets cargo's plain release defaults — opt-level 3, lto = false,
+# codegen-units = 16 — which is what this profile intentionally mirrors
+# (NOT the repo ROOT's unrelated [profile.release], which is a different
+# workspace's old-firmware profile using fat LTO + codegen-units = 1).
+# Measured empirically: turning fat LTO + codegen-units=1 ON here does NOT
+# shrink the worst frames — it grows several of them sharply (e.g.
+# `dispatch::open`'s own frame goes from invisible/tiny to ~259 KB), because
+# aggressive cross-function inlining merges many mutually-exclusive decoder
+# constructors into one function faster than LLVM's stack-slot coloring can
+# prove their lifetimes don't overlap. The no-LTO default is both the
+# faithful match for the real firmware AND the more conservative (larger)
+# per-callee numbers are avoided — see the measurement notes for the
+# sensitivity comparison.
+
+[profile.dev]
+panic = "abort"
+
+# Mirrors dap/Cargo.toml's `[profile.dev.package.soul-audio-core]` /
+# `[profile.test.package.soul-audio-core]` overrides: keep soul-audio-core at
+# -O3 regardless of this crate's own profile, so the measured decode path is
+# always the realistic release build the board will actually run.
+[profile.dev.package.soul-audio-core]
+opt-level = 3
+[profile.release.package.soul-audio-core]
+opt-level = 3

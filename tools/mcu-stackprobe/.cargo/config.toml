@@ -1,0 +1,29 @@
+# Standalone build config for the mcu-stackprobe harness.
+#
+# This directory is still physically under soul-listener-gh/, so cargo's
+# .cargo/config.toml discovery (a directory walk, independent of workspace
+# boundaries) still finds and merges the repo root's .cargo/config.toml. Two
+# of its settings for this target are inherited and must be dealt with:
+#
+#   - `linker = "flip-link"` — a SCALAR key, so the closer (this) config's
+#     `linker` value below overrides it outright. flip-link wants a
+#     board-shaped memory.x and, in this environment, can't even locate
+#     rust-lld on its own (`flip-link --version` prints "Could not find the
+#     default linker (rust-lld) in your path"); this harness just needs a
+#     plain link, so it's overridden back to rust-lld.
+#   - `rustflags = ["-C", "link-arg=-Tlink.x", "-C", "link-arg=-Tdefmt.x"]` —
+#     an ARRAY key, which cargo MERGES (appends) across config files rather
+#     than overriding. That `-Tlink.x` already satisfies this crate's own
+#     linking needs (it's the same cortex-m-rt link.x every thumbv7em crate
+#     uses), so this file deliberately does NOT add another `-Tlink.x`
+#     rustflag — a second occurrence double-INCLUDEs memory.x and fails with
+#     "region 'FLASH' already defined". The inherited `-Tdefmt.x` is handled
+#     by build.rs instead (it stubs out an empty OUT_DIR/defmt.x — this crate
+#     has no `defmt` dependency, so no real one is ever generated, and
+#     without a stand-in the link fails with "cannot find linker script
+#     defmt.x").
+[build]
+target = "thumbv7em-none-eabihf"
+
+[target.thumbv7em-none-eabihf]
+linker = "rust-lld"
