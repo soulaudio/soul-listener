@@ -4,18 +4,29 @@
 //! `soul_audio_core::open_seekable` → `Deck::load`/`Deck::pump` → the
 //! decoder itself — and proves it fits a committed [`STACK_BUDGET`].
 //!
-//! # Why this matters (spec §3.1)
-//! `AnyDecoder` is ~262 KB and is returned **by value** from `open`/
-//! `open_seekable`, then moved again into `Deck::load`'s `Track`. In an
-//! *unoptimized* build (`dev`/`test` profile — what every `cargo test` run
-//! on this workspace actually is; see `dap/Cargo.toml`'s
+//! # Why this matters (spec §3.1) — UPDATED post-externalization
+//! `AnyDecoder` **was** ~262 KB (the inline WavPack `pcm: [i32; 65536]`
+//! ceiling) and was returned **by value** from `open`/`open_seekable`, then
+//! moved again into `Deck::load`'s `Track` — that was the original board
+//! blocker this test exists to surface. soul-audio-core's
+//! `docs/superpowers/specs/2026-11-17-decoder-memory-externalization.md`
+//! fixed it: the big block-staging buffers (WavPack/FLAC/ALAC/Caf/AAC/the
+//! top-level Opus variant) now live in a caller-owned scratch `P` (a 16 B
+//! fat pointer the decoder owns and drops with it — `Box<[i32]>` on the
+//! host, a `&'static mut [i32]` from a board `StaticCell` on-target), so
+//! `AnyDecoder<S, P>` dropped from 262,224 B to **96,184 B** (now pinned by
+//! `MatroskaDecoder`'s still-inline Opus-in-WebM path — see
+//! `dap-arch-tests/tests/budget.rs`'s `DECODER_BUDGET`/`any_decoder_fits_the_h7a3_decoder_budget`
+//! for the live measurement). This test re-measures what that ~2.7×
+//! shrink actually bought the open-path TRANSIENT (as opposed to the
+//! at-rest `size_of` the arch-tests budgets cover) — in an *unoptimized*
+//! build (`dev`/`test` profile — what every `cargo test` run on this
+//! workspace actually is; see `dap/Cargo.toml`'s
 //! `profile.dev.package.soul-audio-core` / `profile.test.package.soul-audio-core`
 //! `opt-level = 3` override, which pins the DECODER's own crate to -O3 even
 //! here, but does **not** touch `dap-core`'s/`dap-sim`'s own call frames),
-//! each of those moves is a real, non-elided stack copy, not just a
-//! bookkeeping abstraction cost. The STM32H7A3's fast DTCM is only 128 KB —
-//! nowhere near enough for even one 262 KB temporary, let alone several
-//! stacked across call frames.
+//! each move through the open chain is still a real, non-elided stack copy,
+//! not just a bookkeeping abstraction cost.
 //!
 //! # Method — and its caveat
 //! A thread stack overflow **aborts the whole process**; it is not a
@@ -30,35 +41,42 @@
 //!    the committed test always completes cleanly — proving "the real
 //!    high-water mark is ≤ `STACK_BUDGET`" without ever running at the edge.
 //!
-//! ## Measured ceiling (step 1, done for this commit)
+//! ## Measured ceiling, RE-BISECTED post-externalization
 //! Bisected on this change's host (Windows x86_64, `dev`/`test` unoptimized
-//! profile — the same profile `cargo test` uses) with the exact
-//! `AudioPlayer`-driven open→decode→pump loop below, one candidate stack
-//! size per child process, 3 repeats per boundary value to rule out
+//! profile — the same profile `cargo test` uses, via `examples/stackprobe.rs`'s
+//! `local` mode, which is the exact `open_decode_pump_to_end` body below) with
+//! the exact `AudioPlayer`-driven open→decode→pump loop below, one candidate
+//! stack size per child process, 3 repeats per boundary value to rule out
 //! run-to-run noise:
 //!
-//! | Stack size   | Result (WAV / FLAC / MP3) |
-//! |--------------|----------------------------|
-//! | 6,000,000 B  | overflow, all 3 formats, 3/3 runs |
-//! | 6,050,000 B  | OK, all 3 formats, 3/3 runs |
+//! | Stack size    | Result (WAV / FLAC / MP3) |
+//! |---------------|----------------------------|
+//! | 2,752,000 B   | overflow, all 3 formats, 3/3 runs |
+//! | 2,754,000 B   | OK, all 3 formats, 3/3 runs |
 //!
-//! All three formats hit essentially the **same** ceiling (~6.0–6.05 MB) —
-//! confirming the dominant cost is the repeated `AnyDecoder`/`Track`
-//! stack-to-stack moves through `open_seekable`/`Deck::load`'s unoptimized
-//! call frames, not any format-specific decode scratch (which lives inside
-//! the already-budgeted 262 KB `AnyDecoder` itself either way).
+//! (Previously: 6,000,000 B overflow / 6,050,000 B OK, pre-externalization —
+//! ~2.75 MB is a **~2.2× drop** from the old ~6.05 MB ceiling.) All three
+//! formats again hit essentially the **same** ceiling — confirming the
+//! dominant cost is still the repeated `AnyDecoder`/`Track` stack-to-stack
+//! moves through `open_seekable`/`Deck::load`'s unoptimized call frames, now
+//! moving a 96,184 B enum instead of a 262,224 B one (Rust enums are sized to
+//! their largest variant regardless of which one is actually live, so the
+//! WAV/FLAC/MP3 fixtures already move the full Matroska-sized ceiling even
+//! though none of them decode Matroska — see the note on the Matroska
+//! worst-case below).
 //!
-//! [`STACK_BUDGET`] below is set to **8 MiB** (8,388,608 B) — about 33 %
-//! above the measured ~6.05 MB ceiling, independently reconfirmed passing
-//! multiple times at this exact value during bisection.
+//! [`STACK_BUDGET`] below is set to **3.5 MiB** (3,670,016 B) — about 33 %
+//! above the measured ~2.754 MB ceiling (the same ~33 % margin convention as
+//! the old 8 MiB/~6.05 MB budget), independently reconfirmed passing
+//! multiple times at this exact value during bisection. Down from the old
+//! **8 MiB**.
 //!
 //! ## The on-target implication (this is the actual point of this test)
 //! A *host* ceiling (x86_64, unoptimized, a totally different calling
 //! convention/register set than Cortex-M7) is not the Cortex-M7's real
-//! number — but it is decisive on one question regardless of ISA: **a
-//! multi-megabyte transient, or even a `DECODER_BUDGET`-sized (288 KB) one,
-//! categorically does not fit the H7A3's 128 KB DTCM.** Implication for
-//! `board-h7a3` (spec §3.1):
+//! number — but it is decisive on one question regardless of ISA, even after
+//! the externalization: **a multi-megabyte transient categorically does not
+//! fit the H7A3's 128 KB DTCM.** Implication for `board-h7a3` (spec §3.1):
 //! - The **main stack must live in AXI SRAM**, not DTCM — DTCM is fast but
 //!   simply too small for this call chain's transients, in ANY build
 //!   profile.
@@ -67,37 +85,63 @@
 //!   `tests/static_placement.rs`, which also documents why `StaticCell`
 //!   alone does not eliminate the construction-time stack cost this test
 //!   measures (it only relocates the steady-state, at-rest storage).
-//! - A *release* build does NOT rescue this — measured, not assumed. Bisecting
-//!   `examples/stackprobe.rs` (`--release`) gives a ~2.1 MB ceiling with the
-//!   player on-stack and **~1.44 MB with the player off-stack** (boxed ≈ the
-//!   board's `StaticCell` — the board-representative figure). Both exceed the
-//!   H7A3's entire 1.18 MB AXI SRAM. The earlier assumption that release would
-//!   "RVO these copies away" is empirically false: the open chain moves the
-//!   262 KB `AnyDecoder` by value ~5× through `open_seekable` → `provide` →
-//!   `load` → `build_track`, and the optimizer does not elide them. The exact
-//!   Cortex-M7 number needs QEMU/on-target confirmation (different ABI/`-Os`),
-//!   but even a handful of un-elided 262 KB copies blows DTCM and stresses AXI
-//!   SRAM. This is a LATENT BOARD-BLOCKER, fixed by shrinking `AnyDecoder` so
-//!   moving it is cheap — see soul-audio-core's
-//!   `docs/superpowers/specs/2026-11-17-decoder-memory-externalization.md`.
-//!   The `size_of` budget guards measure only the at-rest footprint (664 KB,
-//!   which fits) and by construction cannot see this transient — this test is
-//!   what surfaces it.
+//! - A *release* build is dramatically better post-externalization, but still
+//!   does NOT reach the ≤256 KB target on its own — measured, not assumed.
+//!   RE-BISECTING `examples/stackprobe.rs` (`--release`) post-externalization
+//!   gives a **~920 KB** ceiling with the player on-stack (down from ~2.1 MB)
+//!   and **~590 KB with the player off-stack** (boxed ≈ the board's
+//!   `StaticCell` — the board-representative figure; down from **~1.44 MB**).
+//!   That boxed figure is the headline result: a **~60 % drop** (1.44 MB →
+//!   ~0.59 MB), but still ~2.3× OVER the spec's ≤256 KB open-transient target
+//!   — the win is real, just not sufficient on its own. Root cause
+//!   (unchanged in kind, smaller in magnitude): the open chain still moves
+//!   `AnyDecoder` by value ~5× through `open_seekable` → `provide` → `load`
+//!   → `build_track` (5 × 96,184 B ≈ 481 KB, plus `Deck`'s own fixed
+//!   resampler/ring overhead on top ≈ accounts for the ~590 KB measured) —
+//!   the optimizer still does not elide these moves. Lever C from the
+//!   externalization spec (collapsing the move count itself, not shrinking
+//!   what's moved) is the next lever if ≤256 KB is still required; out of
+//!   scope for this change. The H7A3's AXI SRAM is 1.18 MB, so ~590 KB now
+//!   fits comfortably inside it (unlike the old ~1.44 MB, which didn't) —
+//!   this is no longer a hard board-blocker, just a budget that still wants
+//!   tightening.
+//! - **The Matroska-Opus caveat.** This probe only decodes WAV/FLAC/MP3, and
+//!   soul-audio-core's `embedded-profile` `AnyDecoder` worst-case variant is
+//!   actually `MatroskaDecoder`'s inline Opus-in-WebM path (~96 KB — see
+//!   soul-audio-core's externalization spec §8's "Finding" section) — NOT one
+//!   of the three formats measured here. This sounds like a gap, but isn't a
+//!   hidden worse number: a Rust enum's `size_of` is fixed at its largest
+//!   variant's size regardless of which variant is constructed, so every
+//!   measurement above (WAV/FLAC/MP3 alike) already moves the FULL
+//!   96,184 B-sized `AnyDecoder` enum, Matroska-ceiling included — opening a
+//!   real `.webm`/Opus file would not move anything bigger. The real
+//!   watch-item is the other direction: `MatroskaOpus`'s packet/PCM buffers
+//!   are flagged in the spec as Phase 4 (not done here) — externalizing them
+//!   would shrink `AnyDecoder` (and so this transient) further, below
+//!   today's 96,184 B ceiling toward Mp3's 44,240 B.
+//!   The `size_of` budget guards (`dap-arch-tests`) measure only the at-rest
+//!   footprint (now ~332 KB, which fits comfortably — see `budget.rs`'s
+//!   `AUDIO_PATH_BUDGET`) and by construction cannot see this transient —
+//!   this test is what surfaces it.
 
 use dap_core::audio::AudioPlayer;
 use dap_core::ports::Storage;
+use dap_sim::sac_scratch;
 use soul_audio_core::{Progress, Quality, SampleFormat, Sink, SinkError, SliceSource, StreamInfo};
 
 /// Committed stack-region size this test proves the real open→decode→pump
-/// high-water mark fits inside — see the module doc's "Measured ceiling"
-/// section for how this number was chosen (ceiling ~6.05 MB + ~33% margin).
+/// high-water mark fits inside — see the module doc's "Measured ceiling,
+/// RE-BISECTED post-externalization" section for how this number was chosen
+/// (ceiling ~2.754 MB + ~33% margin). Down from the pre-externalization
+/// 8 MiB (ceiling was then ~6.05 MB) — see the module doc for the full
+/// before/after.
 ///
 /// `println!`ed below so a test run's own output restates it, per the task
-/// brief: this number exceeds the H7A3's 128 KB DTCM by ~64x, so on-target
-/// the main stack must live in AXI SRAM (not DTCM), and/or the decoder must
-/// be built directly into a static rather than returned by value — see the
-/// module doc.
-const STACK_BUDGET: usize = 8 * 1024 * 1024;
+/// brief: this number still exceeds the H7A3's 128 KB DTCM by ~28x, so
+/// on-target the main stack must live in AXI SRAM (not DTCM), and/or the
+/// decoder must be built directly into a static rather than returned by
+/// value — see the module doc.
+const STACK_BUDGET: usize = 3 * 1024 * 1024 + 512 * 1024; // 3.5 MiB
 
 /// A sink that discards every frame — this test cares about stack depth,
 /// not output, so no recording (keeps the call chain as close to the real
@@ -152,8 +196,8 @@ fn open_decode_pump_to_end(bytes: &'static [u8]) {
         },
     };
     let storage = FixtureStorage { bytes };
-    let mut player: AudioPlayer<DiscardSink, FixtureStorage, PRELOAD> =
-        AudioPlayer::new(sink, storage, Quality::Fast);
+    let mut player: AudioPlayer<DiscardSink, FixtureStorage, Box<[i32]>, PRELOAD> =
+        AudioPlayer::new(sink, storage, Quality::Fast, sac_scratch);
     player.set_queue(1, 0);
     player.play();
     loop {
