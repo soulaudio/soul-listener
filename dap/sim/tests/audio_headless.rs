@@ -13,7 +13,7 @@
 use std::path::{Path, PathBuf};
 
 use dap_core::audio::AudioPlayer;
-use dap_sim::{SimSink, SimStorage};
+use dap_sim::{sac_scratch, SimSink, SimStorage};
 use soul_audio_core::{Progress, Quality};
 
 // 1 = gapless (one preloaded next track, all gapless playback needs);
@@ -28,12 +28,12 @@ fn antiphase_path() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("../../../soul-audio-core/testdata/antiphase.wav")
 }
 
-type Player = AudioPlayer<SimSink, SimStorage, PRELOAD>;
+type Player = AudioPlayer<SimSink, SimStorage, Box<[i32]>, PRELOAD>;
 
 fn build_player(volume: Option<f32>) -> Player {
     let sink = SimSink::new();
     let storage = SimStorage::new([tone_path(), antiphase_path()]);
-    let mut player = AudioPlayer::new(sink, storage, Quality::Fast);
+    let mut player = AudioPlayer::new(sink, storage, Quality::Fast, sac_scratch);
     player.set_queue(2, 0);
     if let Some(v) = volume {
         player.set_volume(v);

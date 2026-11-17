@@ -10,6 +10,7 @@
 
 use dap_core::audio::AudioPlayer;
 use dap_core::ports::Storage;
+use dap_sim::sac_scratch;
 use soul_audio_core::{Progress, Quality, SampleFormat, Sink, SinkError, SliceSource, StreamInfo};
 
 struct DiscardSink {
@@ -51,8 +52,8 @@ fn open_decode_pump_to_end(bytes: &'static [u8]) {
         },
     };
     let storage = FixtureStorage { bytes };
-    let mut player: AudioPlayer<DiscardSink, FixtureStorage, PRELOAD> =
-        AudioPlayer::new(sink, storage, Quality::Fast);
+    let mut player: AudioPlayer<DiscardSink, FixtureStorage, Box<[i32]>, PRELOAD> =
+        AudioPlayer::new(sink, storage, Quality::Fast, sac_scratch);
     player.set_queue(1, 0);
     player.play();
     loop {
@@ -67,8 +68,8 @@ fn open_decode_pump_to_end(bytes: &'static [u8]) {
 /// for the board's `StaticCell`, i.e. off the pump caller's stack), so the
 /// worker thread's stack bears only the steady-state open->decode->pump
 /// transient (the `AnyDecoder`-by-value moves through `open_seekable`/
-/// `Deck::load`), NOT the 664 KB player object itself.
-fn pump_only_boxed(player: &mut AudioPlayer<DiscardSink, FixtureStorage, PRELOAD>) {
+/// `Deck::load`), NOT the player object itself.
+fn pump_only_boxed(player: &mut AudioPlayer<DiscardSink, FixtureStorage, Box<[i32]>, PRELOAD>) {
     player.set_queue(1, 0);
     player.play();
     loop {
@@ -88,7 +89,8 @@ fn main() {
         .expect("stack_bytes usize");
     let fmt = args.next().unwrap_or_else(|| "wav".to_string());
     // "boxed" => player on heap (board StaticCell stand-in); else player is a
-    // stack local (counts its own 664 KB against the measured stack).
+    // stack local (counts its own ~332 KB against the measured stack --
+    // post decoder-memory-externalization; was ~664 KB).
     let mode = args.next().unwrap_or_else(|| "local".to_string());
     let bytes: &'static [u8] = match fmt.as_str() {
         "wav" => include_bytes!("../../../../soul-audio-core/testdata/realmusic.wav"),
@@ -98,7 +100,7 @@ fn main() {
     };
     if mode == "boxed" {
         // Construct the player on the heap on the MAIN thread, then move the Box
-        // into the worker: the worker stack never holds the 664 KB player.
+        // into the worker: the worker stack never holds the ~332 KB player.
         let sink = DiscardSink {
             info: StreamInfo {
                 sample_rate: 48_000,
@@ -106,9 +108,13 @@ fn main() {
                 format: SampleFormat::Int { bits: 24 },
             },
         };
-        let mut player: Box<AudioPlayer<DiscardSink, FixtureStorage, PRELOAD>> = Box::new(
-            AudioPlayer::new(sink, FixtureStorage { bytes }, Quality::Fast),
-        );
+        let mut player: Box<AudioPlayer<DiscardSink, FixtureStorage, Box<[i32]>, PRELOAD>> =
+            Box::new(AudioPlayer::new(
+                sink,
+                FixtureStorage { bytes },
+                Quality::Fast,
+                sac_scratch,
+            ));
         std::thread::Builder::new()
             .stack_size(stack_bytes)
             .spawn(move || pump_only_boxed(&mut player))

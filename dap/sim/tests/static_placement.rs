@@ -1,13 +1,15 @@
-//! Proves the board pattern — holding the ~664 KB [`AudioPlayer`] in a
-//! `static` via [`StaticCell`] (the same pattern `crates/firmware/src/main.rs`
-//! already uses for its framebuffer/audio-DMA buffers) — actually WORKS end
-//! to end: the player built this way opens real fixtures, decodes, and
-//! produces output, not just "the types line up".
+//! Proves the board pattern — holding the ~332 KB [`AudioPlayer`] (post
+//! decoder-memory-externalization; was ~664 KB — see `tests/stack_highwater.rs`'s
+//! module doc for the full before/after) in a `static` via [`StaticCell`]
+//! (the same pattern `crates/firmware/src/main.rs` already uses for its
+//! framebuffer/audio-DMA buffers) — actually WORKS end to end: the player
+//! built this way opens real fixtures, decodes, and produces output, not
+//! just "the types line up".
 //!
 //! # The honest caveat — read before assuming `StaticCell` is free
 //! [`StaticCell::init`] takes its argument **by value**:
 //! `fn init(&'static self, val: T) -> &'static mut T`. That means the
-//! 664 KB `AudioPlayer` this test builds is **constructed on the calling
+//! ~332 KB `AudioPlayer` this test builds is **constructed on the calling
 //! thread's stack first** (`AudioPlayer::new(..)` below), and only THEN
 //! moved into the cell's backing storage.
 //!
@@ -29,10 +31,11 @@
 //!   nothing to shrink it — it only relocates where the value lives
 //!   *after* construction succeeds. This ties directly to
 //!   `tests/stack_highwater.rs`'s `STACK_BUDGET`: that test's measured
-//!   ceiling (~6.05 MB, unoptimized) is exactly the cost of constructing
-//!   this same `AudioPlayer` (plus the open/decode/pump call chain on top)
-//!   — building it "into a static" doesn't change that number, it only
-//!   determines where the value ends up once built.
+//!   ceiling (~2.75 MB, unoptimized — down from ~6.05 MB pre-externalization)
+//!   is exactly the cost of constructing this same `AudioPlayer` (plus the
+//!   open/decode/pump call chain on top) — building it "into a static"
+//!   doesn't change that number, it only determines where the value ends up
+//!   once built.
 //!
 //! Do not cite this test as proof that `StaticCell` avoids a large stack
 //! temporary. It doesn't. What it proves is narrower and still useful: the
@@ -43,7 +46,7 @@
 use std::path::{Path, PathBuf};
 
 use dap_core::audio::AudioPlayer;
-use dap_sim::{SimSink, SimStorage};
+use dap_sim::{sac_scratch, SimSink, SimStorage};
 use soul_audio_core::{Progress, Quality};
 use static_cell::StaticCell;
 
@@ -51,7 +54,7 @@ use static_cell::StaticCell;
 // matching every other fixture-backed test in this crate.
 const PRELOAD: usize = 1;
 
-type Player = AudioPlayer<SimSink, SimStorage, PRELOAD>;
+type Player = AudioPlayer<SimSink, SimStorage, Box<[i32]>, PRELOAD>;
 
 fn tone_path() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("../../../soul-audio-core/testdata/tone.wav")
@@ -86,7 +89,7 @@ fn run() {
 
     // Construction happens HERE, on this thread's stack (see module doc) --
     // `StaticCell::init` below only relocates the already-built value.
-    let mut player = AudioPlayer::new(sink, storage, Quality::Fast);
+    let mut player = AudioPlayer::new(sink, storage, Quality::Fast, sac_scratch);
     player.set_queue(2, 0);
     player.play();
 

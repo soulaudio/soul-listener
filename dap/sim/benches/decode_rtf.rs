@@ -57,7 +57,11 @@ const MIN_WALL: Duration = Duration::from_millis(300);
 /// Decode `bytes` fully through `soul_audio_core::open`'s format dispatch.
 /// Returns (per-channel frames decoded, sample rate, channels).
 fn decode_fully(bytes: &'static [u8]) -> (u64, u32, u16) {
-    let mut d = open(SliceSource::new(bytes)).expect("open");
+    let mut d = open(
+        SliceSource::new(bytes),
+        vec![0i32; soul_audio_core::decoder_scratch_len()],
+    )
+    .expect("open");
     let si = d.stream_info();
     let mut total = 0u64;
     let mut buf = [0i32; 8192];

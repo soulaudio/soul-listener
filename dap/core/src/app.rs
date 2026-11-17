@@ -93,27 +93,51 @@ pub struct TickOutcome {
 /// adapters, and a [`Display`], and drives the first three from one
 /// [`tick`](Self::tick) call per scheduler period (rendering is separate —
 /// see [`render`](Self::render)).
-pub struct App<S: Sink, St: Storage, P: Power, C: Controls, D: Display, const PRELOAD: usize> {
-    player: AudioPlayer<S, St, PRELOAD>,
+pub struct App<
+    S: Sink,
+    St: Storage,
+    Pcm: AsRef<[i32]> + AsMut<[i32]>,
+    Pw: Power,
+    C: Controls,
+    D: Display,
+    const PRELOAD: usize,
+> {
+    player: AudioPlayer<S, St, Pcm, PRELOAD>,
     power_svc: PowerService,
-    power: P,
+    power: Pw,
     controls: C,
     display: D,
     volume: f32,
     volume_step: f32,
 }
 
-impl<S: Sink, St: Storage, P: Power, C: Controls, D: Display, const PRELOAD: usize>
-    App<S, St, P, C, D, PRELOAD>
+impl<
+        S: Sink,
+        St: Storage,
+        Pcm: AsRef<[i32]> + AsMut<[i32]>,
+        Pw: Power,
+        C: Controls,
+        D: Display,
+        const PRELOAD: usize,
+    > App<S, St, Pcm, Pw, C, D, PRELOAD>
 {
     /// Build a coordinator over `sink`/`storage` (→ an [`AudioPlayer`]),
-    /// `power` (→ a [`PowerService`]), `controls`, and `display`. The queue
-    /// starts empty — call [`set_queue`](Self::set_queue) before the first
-    /// [`tick`](Self::tick) that should produce sound. Starting volume is
-    /// full scale (`1.0`).
-    pub fn new(sink: S, storage: St, power: P, controls: C, display: D, config: AppConfig) -> Self {
+    /// `power` (→ a [`PowerService`]), `controls`, and `display`. `scratch_fn`
+    /// is forwarded to `AudioPlayer::new` — see its doc comment for what it
+    /// produces and when it's called. The queue starts empty — call
+    /// [`set_queue`](Self::set_queue) before the first [`tick`](Self::tick)
+    /// that should produce sound. Starting volume is full scale (`1.0`).
+    pub fn new(
+        sink: S,
+        storage: St,
+        power: Pw,
+        controls: C,
+        display: D,
+        config: AppConfig,
+        scratch_fn: fn() -> Pcm,
+    ) -> Self {
         Self {
-            player: AudioPlayer::new(sink, storage, config.quality),
+            player: AudioPlayer::new(sink, storage, config.quality, scratch_fn),
             power_svc: PowerService::new(config.power),
             power,
             controls,
@@ -209,13 +233,13 @@ impl<S: Sink, St: Storage, P: Power, C: Controls, D: Display, const PRELOAD: usi
     /// Borrow the owned [`AudioPlayer`] (transport/queue queries, sink
     /// access).
     #[must_use]
-    pub fn player(&self) -> &AudioPlayer<S, St, PRELOAD> {
+    pub fn player(&self) -> &AudioPlayer<S, St, Pcm, PRELOAD> {
         &self.player
     }
 
     /// Mutably borrow the owned [`AudioPlayer`] (e.g. for a driver's own
     /// sink-side controls).
-    pub fn player_mut(&mut self) -> &mut AudioPlayer<S, St, PRELOAD> {
+    pub fn player_mut(&mut self) -> &mut AudioPlayer<S, St, Pcm, PRELOAD> {
         &mut self.player
     }
 
@@ -504,7 +528,15 @@ mod tests {
     /// behind an unrelated `Progress::Ended`.
     const FRAMES: u32 = 200_000;
 
-    type TestApp = App<MockSink, MockStorage, MockPower, MockControls, MockDisplay, 1>;
+    /// Host scratch-storage factory for the tests below — the real on-target
+    /// factory (a board `StaticCell` pool) is out of scope here; a fresh
+    /// `Box<[i32]>` per open is all `App`'s own transport/volume/power
+    /// wiring tests need.
+    fn test_scratch() -> Box<[i32]> {
+        vec![0i32; soul_audio_core::decoder_scratch_len()].into_boxed_slice()
+    }
+
+    type TestApp = App<MockSink, MockStorage, Box<[i32]>, MockPower, MockControls, MockDisplay, 1>;
 
     fn healthy_reading(soc_permille: u16) -> BatteryReading {
         BatteryReading {
@@ -543,6 +575,7 @@ mod tests {
             controls,
             MockDisplay,
             AppConfig::default(),
+            test_scratch,
         );
         app.set_queue(queue_len, 0);
         (app, queue, reading)

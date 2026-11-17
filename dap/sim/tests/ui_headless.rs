@@ -11,7 +11,9 @@ use std::path::{Path, PathBuf};
 
 use dap_core::app::{App, AppConfig};
 use dap_core::ports::InputEvent;
-use dap_sim::{BatteryKeyframe, SimBattery, SimControls, SimDisplay, SimSink, SimStorage};
+use dap_sim::{
+    sac_scratch, BatteryKeyframe, SimBattery, SimControls, SimDisplay, SimSink, SimStorage,
+};
 use soul_audio_core::DeckState;
 
 // 1 = gapless (one preloaded next track, all gapless playback needs);
@@ -26,7 +28,7 @@ fn antiphase_path() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("../../../soul-audio-core/testdata/antiphase.wav")
 }
 
-type Dap = App<SimSink, SimStorage, SimBattery, SimControls, SimDisplay, PRELOAD>;
+type Dap = App<SimSink, SimStorage, Box<[i32]>, SimBattery, SimControls, SimDisplay, PRELOAD>;
 
 #[test]
 fn now_playing_renders_a_non_blank_frame_headless() {
@@ -64,6 +66,7 @@ fn run() {
         controls,
         display,
         AppConfig::default(),
+        sac_scratch,
     );
     app.set_queue(2, 0);
 

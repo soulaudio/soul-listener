@@ -143,7 +143,10 @@ const STEADY_STATE_PUMPS: usize = 200;
 /// [`STEADY_STATE_PUMPS`] armed blocks and assert zero allocations occurred
 /// during that window.
 fn assert_steady_state_decode_allocates_nothing(label: &str, bytes: &'static [u8]) {
-    let decoder = open_seekable(SliceSource::new(bytes)).expect("open fixture");
+    // The scratch allocation happens here, before WARMUP/ARMED -- see the
+    // module doc's method: only the steady-state pump window is measured.
+    let scratch = vec![0i32; soul_audio_core::decoder_scratch_len()];
+    let decoder = open_seekable(SliceSource::new(bytes), scratch).expect("open fixture");
     let si = decoder.stream_info();
     let sink = CountingSink::new(si.sample_rate, si.channels);
     let mut deck: Deck<CountingSink, _, PRELOAD> = Deck::new(sink, Quality::Fast);
@@ -179,8 +182,9 @@ fn assert_steady_state_decode_allocates_nothing(label: &str, bytes: &'static [u8
 /// state check for each of the WAV/FLAC/MP3 bench fixtures
 /// (`dap-sim/benches/decode_rtf.rs`'s "same ~4 s CC0 real-music clip,
 /// encoded three ways" set), inside one big-stack worker thread. The large
-/// stack mirrors `audio_headless.rs`/`decode_rtf.rs`: `AnyDecoder` is ~262 KB
-/// and moves through several unoptimized (debug) call frames on its way
+/// stack mirrors `audio_headless.rs`/`decode_rtf.rs`: `AnyDecoder` is ~96 KB
+/// (post decoder-memory-externalization; was ~262 KB) and moves through
+/// several unoptimized (debug) call frames on its way
 /// through `open_seekable`/`Deck::load` — a default thread stack isn't
 /// generous enough to hold that reliably (see `tests/stack_highwater.rs` for
 /// exactly how large that really needs to be).

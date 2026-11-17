@@ -30,7 +30,9 @@ use std::sync::{Arc, Mutex, MutexGuard};
 use dap_core::app::{App, AppConfig, TickOutcome};
 use dap_core::ports::{BatteryReading, Controls, InputEvent, Power};
 use dap_core::power::PowerProfile;
-use dap_sim::{BatteryKeyframe, SimBattery, SimControls, SimDisplay, SimSink, SimStorage};
+use dap_sim::{
+    sac_scratch, BatteryKeyframe, SimBattery, SimControls, SimDisplay, SimSink, SimStorage,
+};
 use soul_audio_core::{DeckState, Progress};
 
 // 1 = gapless (one preloaded next track, all gapless playback needs);
@@ -86,7 +88,15 @@ impl Power for Shared<SimBattery> {
     }
 }
 
-type Dap = App<SimSink, SimStorage, Shared<SimBattery>, Shared<SimControls>, SimDisplay, PRELOAD>;
+type Dap = App<
+    SimSink,
+    SimStorage,
+    Box<[i32]>,
+    Shared<SimBattery>,
+    Shared<SimControls>,
+    SimDisplay,
+    PRELOAD,
+>;
 
 /// Mean absolute sample value -- a level proxy, same helper as
 /// `audio_headless.rs`'s volume check.
@@ -187,6 +197,7 @@ fn run() {
         controls.clone(),
         SimDisplay::new(),
         AppConfig::default(),
+        sac_scratch,
     );
     app.set_queue(2, 0);
 

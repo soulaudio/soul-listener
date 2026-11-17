@@ -204,6 +204,7 @@ dependencies = [
  "embassy-time",
  "panic-probe",
  "soul-audio-core",
+ "static_cell",
 ]
 
 [[package]]
