@@ -15,7 +15,11 @@
 #                     adapters, board-h7a3 bin). Fully gated: fmt-dap, clippy-dap
 #                     (host + board-h7a3 thumbv7em), test-dap, build-board-h7a3,
 #                     mcu-stack-budget. These check out soul-audio-core as a repo
-#                     sibling (.github/actions/checkout-soul-audio-core).
+#                     sibling (.github/actions/checkout-soul-audio-core) at the
+#                     PINNED rev in .github/soul-audio-core.pin — reproducible CI,
+#                     not a floating @main. Bump deliberately via
+#                     tools/soul-audio-core-pin.sh; the soul-audio-core-pin-drift
+#                     job warns (non-blocking) when the pin falls behind main.
 #   eink-ui/        — the standalone no_std/no-alloc e-ink UI toolkit. Fully gated:
 #                     fmt-eink-ui, clippy-eink-ui, build-eink-ui (host + thumbv7em),
 #                     test-eink-ui.
@@ -900,3 +904,36 @@ jobs:
             exit 1
           fi
           echo "OK: eink-ui depends only on its standalone toolkit deps"
+
+  # ---------------------------------------------------------------------------
+  # soul-audio-core pin drift (informational, never fails)
+  #
+  # The dap jobs build against the soul-audio-core commit pinned in
+  # .github/soul-audio-core.pin (reproducible CI; see that file + the
+  # checkout-soul-audio-core composite action). This job surfaces the OTHER
+  # failure mode of a pin — going silently stale — by warning when the pin is
+  # behind soul-audio-core main, without blocking the PR. Bumping is deliberate:
+  # tools/soul-audio-core-pin.sh --latest, then re-verify the dap build.
+  # ---------------------------------------------------------------------------
+  soul-audio-core-pin-drift:
+    name: soul-audio-core pin drift (informational)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      - name: Report pin vs soul-audio-core main
+        run: |
+          PIN=$(grep -vE '^[[:space:]]*#|^[[:space:]]*$' .github/soul-audio-core.pin | head -1 | tr -d '[:space:]')
+          MAIN=$(git ls-remote https://github.com/soulaudio/soul-audio-core refs/heads/main | cut -f1)
+          {
+            echo "### soul-audio-core pin"
+            echo "- pinned (CI builds against): \`$PIN\`"
+            echo "- soul-audio-core main tip:   \`$MAIN\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+          if [ "$PIN" = "$MAIN" ]; then
+            echo "- status: up to date ✅" >> "$GITHUB_STEP_SUMMARY"
+            echo "soul-audio-core pin is up to date with main."
+          else
+            echo "- status: **behind main** — compare https://github.com/soulaudio/soul-audio-core/compare/$PIN...$MAIN" >> "$GITHUB_STEP_SUMMARY"
+            echo "::warning title=soul-audio-core pin is behind main::Pinned $PIN; main is $MAIN. Bump deliberately via tools/soul-audio-core-pin.sh --latest after re-verifying the dap build. Informational only — does not fail CI."
+          fi
