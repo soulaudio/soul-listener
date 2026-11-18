@@ -388,12 +388,18 @@ jobs:
         with:
           workspaces: "dap -> target"
 
-      - name: Install flip-link (stack overflow protection linker)
-        # board-h7a3/.cargo/config.toml inherits the root config's
-        # `linker = "flip-link"` (Cargo config resolution walks up the
-        # directory tree), so flip-link must be on PATH here too.
-        run: cargo install flip-link
-
+      # No flip-link install needed. board-h7a3/.cargo/config.toml OVERRIDES
+      # `linker = "rust-lld"` (the root config's flip-link can't find
+      # board-h7a3/memory.x when its linker-script scan runs from the workspace
+      # root -- see that config's header). Cargo config resolution picks the
+      # closest file to the CWD, and this job builds from dap/board-h7a3/, so the
+      # board's rust-lld override wins over the root's flip-link -- verified by
+      # llvm-nm on the linked ELF (normal layout: _stack_start at the top of
+      # RAM). flip-link's stack-overflow protection is provided statically
+      # instead: mcu-stack-budget gates the open-path frame sizes, and
+      # dap-arch-tests' board_static_footprint_leaves_stack_room_in_linked_axi_sram
+      # guards the board's static footprint (App + decoder scratch) plus a stack
+      # reserve against the 1 MB AXI SRAM memory.x actually links.
       - name: cargo build board-h7a3 (hardware, ARM target)
         run: cargo build --target thumbv7em-none-eabihf --features hardware
 
