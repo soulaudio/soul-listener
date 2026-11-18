@@ -6,6 +6,7 @@
 mod button;
 mod container;
 mod flex;
+mod icon;
 mod list;
 mod progress;
 mod spacer;
@@ -15,6 +16,7 @@ mod text;
 pub use button::Button;
 pub use container::Container;
 pub use flex::{col, row, Flex};
+pub use icon::{Glyph, Icon};
 pub use list::List;
 pub use progress::ProgressBar;
 pub use spacer::Spacer;
