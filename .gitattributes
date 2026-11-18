@@ -11,3 +11,6 @@ tools/mcu-stackprobe/*.py text eol=lf
 # directly by bash the same way -- force LF for the same cross-platform
 # reason as above.
 tools/check-forbid-unsafe.sh text eol=lf
+
+# Linker scripts must be LF — CR breaks rust-lld/flip-link parsing.
+*.x text eol=lf
