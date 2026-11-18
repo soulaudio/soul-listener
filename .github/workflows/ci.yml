@@ -230,7 +230,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
-      - uses: EmbarkStudios/cargo-deny-action@d8395c1c8c9df74d968a3bcbba5533e396ff43cf  # v2.0.9
+      # v2.1.2 bundles a newer cargo-deny that parses current RustSec advisory
+      # files (v2.0.9's parser choked on a newer advisory: "failed to load
+      # advisory database ... RUSTSEC-2026-0480.md: TOML parse error").
+      - uses: EmbarkStudios/cargo-deny-action@995303aa121612dcd7bbd5b92550ed2d6fc70af9  # v2.1.2
         with:
           command: check advisories bans licenses sources
 
@@ -572,12 +575,13 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
-      - uses: dtolnay/rust-toolchain@1.87
+      # @stable, not @1.87: cargo-machete's recent releases need rustc >= 1.88.
+      - uses: dtolnay/rust-toolchain@stable
 
       - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
 
       - name: Install cargo-machete
-        run: cargo install cargo-machete
+        run: cargo install cargo-machete --locked
 
       # Scope to the ACTIVE workspaces — the dap/ shipped firmware and the
       # eink-ui/ toolkit. The root workspace is the bit-rotted v1 salvage
@@ -606,11 +610,14 @@ jobs:
         run: |
           # Every crate Cargo.toml must have [lints] workspace = true.
           # grep -L prints files that do NOT match.
+          # `|| true`: the step shell is `bash -e`, and when nothing is missing
+          # the trailing `grep -v` gets empty input and exits 1 — which under
+          # `set -e` would fail the step on the HEALTHY (nothing-missing) path.
           MISSING=$(grep -rL "workspace = true" \
             crates/*/Cargo.toml \
             crates/*/*/Cargo.toml \
             xtask/Cargo.toml \
-            2>/dev/null | grep -v "target/")
+            2>/dev/null | grep -v "target/" || true)
           if [ -n "$MISSING" ]; then
             echo "ERROR: The following Cargo.toml files are missing [lints] workspace = true:"
             echo "$MISSING"
@@ -653,7 +660,8 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
-      - uses: dtolnay/rust-toolchain@1.87
+      # @stable, not @1.87: cargo-audit's recent releases need rustc >= 1.88.
+      - uses: dtolnay/rust-toolchain@stable
 
       - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
 
