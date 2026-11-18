@@ -1,6 +1,7 @@
 //! Host (std) simulation adapters implementing `dap-core`'s ports, for
 //! desktop development and the headless host tests (`tests/audio_headless.rs`,
 //! `tests/power_headless.rs`, `tests/device_headless.rs`, `tests/ui_headless.rs`).
+#![forbid(unsafe_code)]
 
 mod battery;
 mod controls;

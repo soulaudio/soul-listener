@@ -20,6 +20,7 @@
 //! ```
 
 #![cfg_attr(not(feature = "std"), no_std)]
+#![forbid(unsafe_code)]
 // TODO: Add rustdoc to all public items (tracked as tech debt)
 #![allow(missing_docs)]
 // Graphics math routinely casts between integer types and from float to u32 for

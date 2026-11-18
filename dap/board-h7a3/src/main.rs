@@ -1,3 +1,10 @@
+//! `board-h7a3` is deliberately **exempt** from the repo's
+//! `#![forbid(unsafe_code)]` architecture gate (see the documented allowlist
+//! in `tools/check-forbid-unsafe.sh`): `main()` below has one real `unsafe`
+//! block (`HEAP.init(...)`), the one-time-init precondition
+//! `embedded_alloc::LlffHeap::init` documents and this file's own SAFETY
+//! comment on that call explains. No other crate on the embedded path needs
+//! `unsafe`; this is the single genuine, narrowly-scoped exception.
 #![no_std]
 #![no_main]
 

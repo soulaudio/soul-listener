@@ -29,6 +29,14 @@
 //! emulator.run();
 //! # }
 //! ```
+//!
+//! # Unsafe-code policy
+//!
+//! This crate is deliberately **exempt** from the repo's
+//! `#![forbid(unsafe_code)]` architecture gate (see the documented allowlist
+//! in `tools/check-forbid-unsafe.sh`): it is host/winit-only, never built for
+//! the embedded target, and `window.rs` needs real `unsafe` for Win32 WndProc
+//! subclassing (the WM_DPICHANGED fix).
 
 #![warn(clippy::all)]
 #![warn(clippy::pedantic)]

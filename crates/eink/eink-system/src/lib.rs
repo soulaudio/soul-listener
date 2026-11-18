@@ -22,6 +22,7 @@
 //! ```
 
 #![cfg_attr(not(feature = "std"), no_std)]
+#![forbid(unsafe_code)]
 #![warn(clippy::all)]
 #![warn(clippy::pedantic)]
 #![allow(clippy::module_name_repetitions)]

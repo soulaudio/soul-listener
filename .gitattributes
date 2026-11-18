@@ -6,3 +6,8 @@
 # pure Rust for the same reason.
 tools/mcu-stackprobe/*.sh text eol=lf
 tools/mcu-stackprobe/*.py text eol=lf
+
+# tools/check-forbid-unsafe.sh (the forbid-unsafe-coverage CI gate) is run
+# directly by bash the same way -- force LF for the same cross-platform
+# reason as above.
+tools/check-forbid-unsafe.sh text eol=lf
