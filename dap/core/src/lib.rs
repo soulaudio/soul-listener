@@ -11,6 +11,9 @@
 pub mod app;
 pub mod audio;
 pub mod display;
+pub mod firmware;
 pub mod ports;
 pub mod power;
 pub mod screens;
+#[cfg(feature = "stub")]
+pub mod stub;
