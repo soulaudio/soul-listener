@@ -79,3 +79,10 @@ static_cell = { version = "2", optional = true }
 # this is purely to satisfy an eink-system transitive requirement this
 # board's binary target must link against.
 embedded-alloc = { version = "0.6", optional = true }
+
+# cortex-m and cortex-m-rt are link-time dependencies (the reset vector / entry
+# point via #[cortex_m_rt::entry], and the critical-section-single-core impl) —
+# they have no `use` statement, so cargo-machete reports them as unused. They are
+# required to link; tell machete to ignore them.
+[package.metadata.cargo-machete]
+ignored = ["cortex-m", "cortex-m-rt"]
