@@ -1,11 +1,18 @@
 //! Decode **real-time-factor** (RTF) benchmarks: RTF = (decoded audio
 //! seconds) / (wall-clock seconds), measured decoding real fixtures from
 //! `../../../soul-audio-core/testdata/` end-to-end through
-//! `soul_audio_core::open`'s format dispatch — plus one resampler throughput
-//! bench. Criterion drives the statistics/regression tracking (HTML report
-//! under `target/criterion/`); a hand-rolled, criterion-independent timer
-//! alongside it prints the actual RTF number straight to stdout, so reading
-//! one doesn't require opening the HTML report.
+//! `soul_audio_core::open`'s format dispatch, across **all seven** formats
+//! the DAP ships (WAV, FLAC, MP3, AAC, ALAC, Opus, WavPack) — plus one
+//! resampler-only throughput bench and one full decode+resample **pipeline**
+//! throughput bench (the shape `dap_core::audio::AudioPlayer` actually runs:
+//! decode → resample → volume → sink-write). These RTFs are exactly the
+//! `rtf_at_ref_clock` inputs `dap-core`'s `power::model` (battery energy
+//! model) hardcodes for its clock-headroom/runtime tests — see that module's
+//! doc for the measured numbers and how they're derated host→target.
+//! Criterion drives the statistics/regression tracking (HTML report under
+//! `target/criterion/`); a hand-rolled, criterion-independent timer alongside
+//! it prints the actual RTF number straight to stdout, so reading one
+//! doesn't require opening the HTML report.
 //!
 //! # Caveat — read this before trusting a number printed here
 //!
@@ -41,10 +48,13 @@
 //! specifically so that thread spawn can wrap the whole criterion run.
 
 use std::hint::black_box;
+use std::path::{Path, PathBuf};
 use std::time::{Duration, Instant};
 
 use criterion::Criterion;
-use soul_audio_core::{open, Decoder, Quality, Resampler, SliceSource};
+use dap_core::audio::AudioPlayer;
+use dap_sim::{sac_scratch, SimSink, SimStorage};
+use soul_audio_core::{open, Decoder, Progress, Quality, Resampler, SliceSource};
 
 /// Matches `audio_headless.rs`'s worker-thread stack size (see module doc).
 const STACK: usize = 64 * 1024 * 1024;
@@ -74,6 +84,47 @@ fn decode_fully(bytes: &'static [u8]) -> (u64, u32, u16) {
     }
     let channels = u64::from(si.channels.max(1));
     (total / channels, si.sample_rate, si.channels)
+}
+
+/// Path to `realmusic.wav` (44.1 kHz/16-bit/stereo — see
+/// `soul-audio-core/tests/decode.rs`'s "REAL MUSIC" fixture note), for the
+/// pipeline bench below. A real path, not `include_bytes!`, because
+/// [`SimStorage`] (the real `dap_core::ports::Storage` impl `AudioPlayer`
+/// drives in production) opens a file by path, matching
+/// `sim/tests/audio_headless.rs`'s own fixture-path convention.
+fn realmusic_wav_path() -> PathBuf {
+    Path::new(env!("CARGO_MANIFEST_DIR")).join("../../../soul-audio-core/testdata/realmusic.wav")
+}
+
+/// Full **pipeline** throughput: the same `dap_core::audio::AudioPlayer`
+/// (`Engine` + `Deck`) the board runs in production, decoding
+/// `realmusic.wav` (44.1 kHz) into a [`SimSink`] declaring [`SimSink`]'s
+/// fixed 48 kHz device rate — so this exercises decode *and* resample *and*
+/// the volume/sink-write stage together, unlike [`decode_fully`] (decode
+/// only, passthrough rate) or [`resample_run`] (resampler only, synthetic
+/// input). `PRELOAD = 0` matches the DAP's real gapless depth (single
+/// resident decoder; see `sim/tests/no_alloc.rs`'s module doc). Returns
+/// (per-channel frames written, device sample rate, device channels) so
+/// [`print_decode_rtf`] can report this as an RTF exactly like a decode-only
+/// run — "pipeline RTF", the number that actually matters for
+/// `power::model`'s duty-cycle math (the CPU-active window is decode +
+/// resample, not decode alone).
+fn pipeline_run(path: &Path) -> (u64, u32, u16) {
+    let sink = SimSink::new();
+    let storage = SimStorage::new([path]);
+    let mut player: AudioPlayer<SimSink, SimStorage, Box<[i32]>, 0> =
+        AudioPlayer::new(sink, storage, Quality::Fast, sac_scratch);
+    player.set_queue(1, 0);
+    player.play();
+    loop {
+        if player.pump().expect("pump") == Progress::Ended {
+            break;
+        }
+    }
+    let sink = player.sink();
+    let channels = sink.channels();
+    let frames = (sink.recorded().len() / channels.max(1)) as u64;
+    (frames, sink.sample_rate(), channels as u16)
 }
 
 /// Resample a fixed stereo block 44.1 kHz -> 48 kHz for `blocks` output
@@ -166,22 +217,62 @@ fn bench_decode(c: &mut Criterion) {
     let wav: &'static [u8] = include_bytes!("../../../../soul-audio-core/testdata/realmusic.wav");
     let flac: &'static [u8] = include_bytes!("../../../../soul-audio-core/testdata/realmusic.flac");
     let mp3: &'static [u8] = include_bytes!("../../../../soul-audio-core/testdata/realmusic.mp3");
+    let aac: &'static [u8] =
+        include_bytes!("../../../../soul-audio-core/testdata/realmusic-aac.m4a");
+    let alac: &'static [u8] =
+        include_bytes!("../../../../soul-audio-core/testdata/realmusic-alac.m4a");
+    let opus: &'static [u8] = include_bytes!("../../../../soul-audio-core/testdata/realmusic.opus");
+    let wavpack: &'static [u8] =
+        include_bytes!("../../../../soul-audio-core/testdata/realmusic.wv");
 
     // The same ~4 s CC0 real-music clip (see soul-audio-core's
-    // `tests/decode.rs` "REAL MUSIC" fixture note), encoded three ways, so
-    // the three RTFs are directly comparable to each other.
+    // `tests/decode.rs` "REAL MUSIC" fixture note), encoded seven ways, so
+    // the seven RTFs are directly comparable to each other -- this is the
+    // DAP's full shipped format set (`soul-audio-core`'s `embedded-profile`
+    // dispatch; see `dap/Cargo.toml`'s workspace-dependency comment). AAC/
+    // ALAC/Opus/WavPack all route through the same `open()` dispatch as
+    // WAV/FLAC/MP3 (confirmed against `soul-audio-core/benches/throughput.rs`
+    // and `tests/matrix.rs`'s own realmusic-* fixture cases) -- no decoder
+    // variant is dropped by `embedded-profile` for any of these (only the
+    // surround-Opus `MultistreamOpusDecoder` and AAC's HE-AAC/SBR extension
+    // are gated off, neither of which this stereo AAC-LC/Opus-mono-family-0
+    // fixture pair touches).
     println!(
         "\ndecode RTF — HOST baseline (~10-50x faster than the 280 MHz H7A3; see module doc):"
     );
     print_decode_rtf("wav", || decode_fully(wav));
     print_decode_rtf("flac", || decode_fully(flac));
     print_decode_rtf("mp3", || decode_fully(mp3));
+    print_decode_rtf("aac", || decode_fully(aac));
+    print_decode_rtf("alac", || decode_fully(alac));
+    print_decode_rtf("opus", || decode_fully(opus));
+    print_decode_rtf("wavpack", || decode_fully(wavpack));
     println!();
 
     let mut group = c.benchmark_group("decode_rtf");
     group.bench_function("wav", |b| b.iter(|| decode_fully(black_box(wav))));
     group.bench_function("flac", |b| b.iter(|| decode_fully(black_box(flac))));
     group.bench_function("mp3", |b| b.iter(|| decode_fully(black_box(mp3))));
+    group.bench_function("aac", |b| b.iter(|| decode_fully(black_box(aac))));
+    group.bench_function("alac", |b| b.iter(|| decode_fully(black_box(alac))));
+    group.bench_function("opus", |b| b.iter(|| decode_fully(black_box(opus))));
+    group.bench_function("wavpack", |b| b.iter(|| decode_fully(black_box(wavpack))));
+    group.finish();
+}
+
+fn bench_pipeline(c: &mut Criterion) {
+    let path = realmusic_wav_path();
+
+    println!(
+        "pipeline RTF (decode+resample+sink, 44.1kHz->48kHz) — HOST baseline (see module doc):"
+    );
+    print_decode_rtf("wav->48k", || pipeline_run(&path));
+    println!();
+
+    let mut group = c.benchmark_group("pipeline_throughput");
+    group.bench_function("wav_44k1_to_48k", |b| {
+        b.iter(|| pipeline_run(black_box(&path)))
+    });
     group.finish();
 }
 
@@ -208,6 +299,7 @@ fn main() {
             let mut criterion: Criterion<_> = Criterion::default().configure_from_args();
             bench_decode(&mut criterion);
             bench_resample(&mut criterion);
+            bench_pipeline(&mut criterion);
             Criterion::default().configure_from_args().final_summary();
         })
         .expect("spawn bench worker thread")

@@ -7,11 +7,12 @@
 //! # Method
 //! A global allocator wraps `std::alloc::System`, counting every
 //! `alloc`/`realloc` call while a process-wide `ARMED` flag is set. For each
-//! of the WAV/FLAC/MP3 bench fixtures (`dap-sim/benches/decode_rtf.rs`'s
-//! fixture set): open the file through `soul_audio_core::open_seekable` into
-//! a `Deck` (passthrough-rate, so no resampler is engaged — isolating the
-//! decoder's own allocation behaviour, which is this test's actual target),
-//! run an un-armed WARMUP batch of pumps (letting any one-time lazy
+//! of the seven format bench fixtures (`dap-sim/benches/decode_rtf.rs`'s
+//! full WAV/FLAC/MP3/AAC/ALAC/Opus/WavPack fixture set — the DAP's whole
+//! shipped format range): open the file through `soul_audio_core::open_seekable`
+//! into a `Deck` (passthrough-rate, so no resampler is engaged — isolating
+//! the decoder's own allocation behaviour, which is this test's actual
+//! target), run an un-armed WARMUP batch of pumps (letting any one-time lazy
 //! construction inside `open`/`load` happen off the clock), then arm the
 //! counter, run a tight STEADY-STATE batch of pumps, disarm, and assert
 //! exactly zero allocations happened during the armed window.
@@ -181,15 +182,16 @@ fn assert_steady_state_decode_allocates_nothing(label: &str, bytes: &'static [u8
 }
 
 /// Single `#[test]` (see module doc for why): runs the zero-alloc steady-
-/// state check for each of the WAV/FLAC/MP3 bench fixtures
+/// state check for each of the seven format bench fixtures
 /// (`dap-sim/benches/decode_rtf.rs`'s "same ~4 s CC0 real-music clip,
-/// encoded three ways" set), inside one big-stack worker thread. The large
-/// stack mirrors `audio_headless.rs`/`decode_rtf.rs`: `AnyDecoder` is ~96 KB
-/// (post decoder-memory-externalization; was ~262 KB) and moves through
-/// several unoptimized (debug) call frames on its way
-/// through `open_seekable`/`Deck::load` — a default thread stack isn't
-/// generous enough to hold that reliably (see `tests/stack_highwater.rs` for
-/// exactly how large that really needs to be).
+/// encoded seven ways" set — the DAP's full shipped format range), inside
+/// one big-stack worker thread. The large stack mirrors
+/// `audio_headless.rs`/`decode_rtf.rs`: `AnyDecoder` is ~96 KB (post
+/// decoder-memory-externalization; was ~262 KB) and moves through several
+/// unoptimized (debug) call frames on its way through
+/// `open_seekable`/`Deck::load` — a default thread stack isn't generous
+/// enough to hold that reliably (see `tests/stack_highwater.rs` for exactly
+/// how large that really needs to be).
 #[test]
 fn audio_path_steady_state_pump_allocates_zero_heap_bytes() {
     std::thread::Builder::new()
@@ -201,11 +203,23 @@ fn audio_path_steady_state_pump_allocates_zero_heap_bytes() {
                 include_bytes!("../../../../soul-audio-core/testdata/realmusic.flac");
             let mp3: &'static [u8] =
                 include_bytes!("../../../../soul-audio-core/testdata/realmusic.mp3");
+            let aac: &'static [u8] =
+                include_bytes!("../../../../soul-audio-core/testdata/realmusic-aac.m4a");
+            let alac: &'static [u8] =
+                include_bytes!("../../../../soul-audio-core/testdata/realmusic-alac.m4a");
+            let opus: &'static [u8] =
+                include_bytes!("../../../../soul-audio-core/testdata/realmusic.opus");
+            let wavpack: &'static [u8] =
+                include_bytes!("../../../../soul-audio-core/testdata/realmusic.wv");
 
             println!("\nno-alloc steady-state decode/pump check:");
             assert_steady_state_decode_allocates_nothing("wav", wav);
             assert_steady_state_decode_allocates_nothing("flac", flac);
             assert_steady_state_decode_allocates_nothing("mp3", mp3);
+            assert_steady_state_decode_allocates_nothing("aac", aac);
+            assert_steady_state_decode_allocates_nothing("alac", alac);
+            assert_steady_state_decode_allocates_nothing("opus", opus);
+            assert_steady_state_decode_allocates_nothing("wavpack", wavpack);
         })
         .expect("spawn worker thread")
         .join()
