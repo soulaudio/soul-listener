@@ -13,15 +13,19 @@
 //!
 //! [`PowerService`] itself only ever decides *which* [`PowerProfile`] is
 //! active (via [`PowerService::profile`]/[`Power::set_clock_profile`]) —
-//! it has no notion of clock speed or decode cost. [`model`] is a
-//! separate, pure battery energy model (datasheet run-mode currents x
-//! measured decode cost) a board driver can combine with the active
-//! profile to decide how aggressively to throttle the clock.
+//! it has no notion of clock speed or decode cost. [`model`] is the pure
+//! battery energy model (datasheet currents x measured decode cost), and
+//! [`dvfs`] is the policy layer built on top of it: [`dvfs::clock_mhz_for_profile`]
+//! takes the active [`PowerProfile`] plus the current track's measured/
+//! estimated RTF and returns the target clock (MHz) to apply — model-only
+//! (no VOS/PLL register writes happen here; the board applies those once
+//! it exists).
 
 use heapless::Vec;
 
 use crate::ports::{BatteryReading, Power};
 
+pub mod dvfs;
 pub mod model;
 
 /// Max events a single [`PowerService::poll`] can return. Eight distinct
