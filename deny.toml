@@ -34,7 +34,10 @@ ignore = [
 # control. We surface them without failing CI; the hard gates below (banned
 # crates, wildcard specs) are what actually block a bad dependency.
 multiple-versions = "warn"
-wildcards = "deny"          # no `foo = "*"` version specs (path deps are intentional in-workspace)
+wildcards = "deny"          # no `foo = "*"` registry version specs...
+allow-wildcard-paths = true # ...but the workspace's own path/workspace deps
+                            # (dap-core, soul-audio-core, eink-ui — versionless by
+                            # design) are intentional, not accidental wildcards.
 
 # Crates that must NEVER appear in the dependency graph
 deny = [
