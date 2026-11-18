@@ -873,3 +873,30 @@ jobs:
 
       - name: cargo test --features std (golden-test harness)
         run: cargo test --features std
+
+  # ---------------------------------------------------------------------------
+  # eink-ui dependency boundary
+  #
+  # eink-ui is a standalone, extractable toolkit (`git mv eink-ui <new-repo>` +
+  # publish). It may depend ONLY on embedded-graphics + heapless (+ image behind
+  # the `std` test feature). Any dap-/soul-/product dependency would couple it to
+  # this repo and break the extraction path — fail CI if one ever appears.
+  # (The eink-ui CI jobs already build it with no soul-audio-core sibling, so a
+  # product dep would also fail those; this is the explicit, fast declaration.)
+  # ---------------------------------------------------------------------------
+  eink-ui-boundary:
+    name: eink-ui dependency boundary
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      - name: eink-ui must not depend on any product crate
+        run: |
+          FORBIDDEN=$(grep -nE '^(dap-|soul-|eink-system|eink-components|eink-specs|eink-emulator|eink-testing|platform|firmware|bluetooth)[[:alnum:]_-]*[[:space:]]*=' eink-ui/Cargo.toml || true)
+          if [ -n "$FORBIDDEN" ]; then
+            echo "ERROR: eink-ui gained a product dependency — it must stay a standalone,"
+            echo "extractable toolkit (embedded-graphics + heapless + image only):"
+            echo "$FORBIDDEN"
+            exit 1
+          fi
+          echo "OK: eink-ui depends only on its standalone toolkit deps"

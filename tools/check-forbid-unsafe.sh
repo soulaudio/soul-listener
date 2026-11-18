@@ -14,19 +14,15 @@
 # Scope: soul-audio-core itself is a path dependency into the SIBLING
 # soul-audio-core repo (its own CI already gates it -- see that repo's
 # `crates/*/src/lib.rs`). This script only enumerates crates that physically
-# live in THIS repo's embedded path: dap-core, dap-sim, and the no_std eink
-# toolkit (eink-system/eink-components/eink-specs).
+# live in THIS repo's embedded path: dap-core, dap-sim, board-h7a3, the
+# standalone eink-ui toolkit, and the (legacy) no_std eink crates
+# (eink-system/eink-components/eink-specs).
 #
-# Two crates are DOCUMENTED EXCEPTIONS -- allowlisted rather than forbidden
-# -- because they genuinely need `unsafe` and either never ship on the
-# embedded target, or need exactly one narrowly-scoped unsafe block:
+# ONE crate is a DOCUMENTED EXCEPTION -- allowlisted rather than forbidden --
+# because it genuinely needs `unsafe` and never ships on the embedded target:
 #   - eink-emulator: host/winit desktop emulator, never built for the
 #     embedded target; window.rs needs real `unsafe` for Win32 WndProc
 #     subclassing (the WM_DPICHANGED fix). Documented in its own lib.rs.
-#   - board-h7a3: the H7A3 firmware binary; main.rs has one real `unsafe`
-#     block for `embedded_alloc::LlffHeap::init`'s documented
-#     one-time-init precondition (see that call's own SAFETY comment).
-#     Documented at the top of main.rs.
 #
 # This script does NOT try to compile anything -- it is a fast, static grep
 # over known crate-root files. The actual enforcement is the `#![forbid]`
@@ -44,6 +40,12 @@ cd "$REPO_ROOT"
 ENFORCED_CRATES=(
   "dap-core:dap/core/src/lib.rs"
   "dap-sim:dap/sim/src/lib.rs"
+  # board-h7a3 became forbid(unsafe) once ui-4 moved the DAP onto the no-alloc
+  # eink-ui toolkit and it dropped its embedded_alloc heap (the heap init was its
+  # only unsafe block). Now enforced, not allowlisted.
+  "board-h7a3:dap/board-h7a3/src/main.rs"
+  # eink-ui: the standalone no_std/no-alloc UI toolkit the DAP now draws with.
+  "eink-ui:eink-ui/src/lib.rs"
   "eink-system:crates/eink/eink-system/src/lib.rs"
   "eink-components:crates/eink/eink-components/src/lib.rs"
   "eink-specs:crates/eink/eink-specs/src/lib.rs"
@@ -53,7 +55,6 @@ ENFORCED_CRATES=(
 # at the crate root (grepped for below), not just asserted in this script.
 ALLOWLISTED_CRATES=(
   "eink-emulator:crates/eink/eink-emulator/src/lib.rs"
-  "board-h7a3:dap/board-h7a3/src/main.rs"
 )
 
 echo "== forbid(unsafe_code) coverage gate =="

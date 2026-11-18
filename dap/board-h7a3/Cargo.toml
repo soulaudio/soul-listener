@@ -22,7 +22,7 @@ publish = false
 [features]
 hardware = ["dep:embassy-executor", "dep:embassy-time", "dep:embassy-stm32",
             "dep:cortex-m-rt", "dep:cortex-m", "dep:defmt", "dep:defmt-rtt", "dep:panic-probe",
-            "dep:soul-audio-core", "dep:static_cell", "dep:dap-core", "dep:embedded-alloc"]
+            "dep:soul-audio-core", "dep:static_cell", "dep:dap-core"]
 
 [[bin]]
 name = "board-h7a3"
@@ -66,22 +66,6 @@ dap-core = { path = "../core", features = ["stub"], optional = true }
 # way to get a sound `&'static mut` out of a `static`. Version matches
 # `dap/sim`'s dev-dependency (already resolved in this workspace's Cargo.lock).
 static_cell = { version = "2", optional = true }
-# `dap-core`'s `display` port re-exports `eink-system`'s container/layout
-# toolkit (`HStack`/`VStack`/`render_layout_tree`, for screens later than
-# today's Now-Playing one) -- see `dap-core/src/display.rs`'s re-export
-# list. `eink-system`'s non-`std` build (crates/eink/eink-system/src/{containers,render}.rs)
-# unconditionally pulls in `extern crate alloc` (`Box`, and a
-# `heapless::Vec<Box<LayoutResult>, N>` child list) for that toolkit, so
-# ANY no_std binary that links `dap-core` -- regardless of whether the
-# screen it actually renders (today, just `now_playing`, which draws with
-# raw embedded-graphics primitives and never reaches that code) touches it
-# at runtime -- needs a `#[global_allocator]` to satisfy rustc's alloc-crate
-# requirement at LINK time. `embedded-alloc`'s `Heap` is the standard
-# cortex-m `GlobalAlloc` impl for exactly this; see `main.rs`'s tiny static
-# arena. dap-core itself stays `forbid(unsafe_code)`/no-alloc-by-design --
-# this is purely to satisfy an eink-system transitive requirement this
-# board's binary target must link against.
-embedded-alloc = { version = "0.6", optional = true }
 
 # cortex-m and cortex-m-rt are link-time dependencies (the reset vector / entry
 # point via #[cortex_m_rt::entry], and the critical-section-single-core impl) —

@@ -15,16 +15,15 @@ soul-audio-engine = { path = "../../soul-audio-core/crates/soul-audio-engine" }
 # dap-arch-tests pins `IndexReader<Src>` to the catalog-index SRAM budget.
 soul-audio-index  = { path = "../../soul-audio-core/crates/soul-audio-index" }
 
-# The e-ink drawing toolkit lives in THIS repo's root workspace
-# (soul-listener-gh/Cargo.toml), not dap/'s. It's embassy-free and already
-# no_std/embedded-graphics-based, so dap/ consumes it in place via path deps
-# rather than moving or duplicating it. Each crate still resolves its own
-# `workspace.dependencies`/`workspace.lints` against the ROOT workspace (via
-# normal ancestor-directory discovery from its own manifest path) even
-# though it's being pulled in from dap/'s separate workspace here.
-eink-system     = { path = "../crates/eink/eink-system" }
-eink-components = { path = "../crates/eink/eink-components" }
-eink-specs      = { path = "../crates/eink/eink-specs" }
+# The e-ink UI toolkit is the standalone `eink-ui` crate at the repo root (its
+# own workspace, excluded from both this one and the root). dap/ consumes it via
+# a path dep; it is no_std/no-alloc by default — exactly what dap-core needs, and
+# why board-h7a3 needs no heap allocator.
+eink-ui = { path = "../eink-ui" }
+# eink-specs carries the panel hardware specs (controller timing/quirks/
+# dimensions) the board's real display driver needs — kept from the retired v1
+# eink crates.
+eink-specs = { path = "../crates/eink/eink-specs" }
 
 # soul-audio-core decodes far too slowly unoptimized: keep it at -O3 even in
 # dev/test builds so the hardware target still decodes faster than real time.

@@ -1,19 +1,14 @@
 //! Display port: the capability a board (`board-h7a3`) or a host simulator
 //! must supply to draw UI onto the physical e-ink panel.
 //!
-//! The actual drawing toolkit — flexbox layout, widgets, panel timing specs
-//! — is *not* reinvented here. It already exists, embassy-free and
-//! `no_std`/`embedded-graphics`-based, in this repo's root workspace
-//! (`crates/eink/eink-system`, `crates/eink/eink-components`,
-//! `crates/eink/eink-specs`) and is consumed in place via the path deps in
-//! `dap/Cargo.toml`'s `[workspace.dependencies]`. This module's own
-//! contribution is narrow: [`Display`] (the bound screen code writes
-//! against) and [`EinkRefresh`]/[`DisplayError`] (the one capability the
-//! toolkit — which only knows how to compute a layout and draw pixels into
-//! a `DrawTarget` — doesn't model: telling the physical panel to actually
-//! show what was drawn). The rest of this module is a curated re-export
-//! surface so screen code (a later task) can pull everything it needs from
-//! `dap_core::display` alone, without its own path deps into `crates/eink`.
+//! The drawing toolkit — flexbox layout + widgets — is the standalone,
+//! no_std/no-alloc `eink-ui` crate, which `crate::screens` depends on directly.
+//! This module's own contribution is narrow: [`Display`] (the bound screen code
+//! writes against) and [`EinkRefresh`]/[`DisplayError`] — the one capability the
+//! toolkit, which only draws pixels into a `DrawTarget`, doesn't model: telling
+//! the physical panel to actually show what was drawn. It also re-exports the
+//! panel *hardware* specs from `eink-specs` (controller timing/quirks), which a
+//! board's real driver needs.
 
 use embedded_graphics::draw_target::DrawTarget;
 pub use embedded_graphics::pixelcolor::Gray4;
@@ -92,31 +87,13 @@ pub trait Display: DrawTarget<Color = Gray4> + EinkRefresh {}
 
 impl<T> Display for T where T: DrawTarget<Color = Gray4> + EinkRefresh {}
 
-// ── Toolkit re-exports ──────────────────────────────────────────────────
+// ── Panel hardware specs ────────────────────────────────────────────────
 //
-// Named (not glob) re-exports, so this surface only changes when this file
-// changes, and so eink-system's `render::LayoutResult` (an older,
-// `Box`-based tree type the layout/container code below doesn't actually
-// use) doesn't collide with `layout::LayoutResult` (the one `Layout::layout`
-// — and every `Layout` impl: `VStack`/`HStack`/`Spacer`/`FlexLayout` —
-// actually returns).
-pub use eink_components::{
-    button::{Button, ButtonStyle},
-    icon::{Icon, IconType},
-    label::{Label, LabelBuilder, TextSize},
-    progress_bar::ProgressBar,
-};
+// The drawing *toolkit* (flexbox layout + widgets) is `eink-ui`, which screen
+// code (`crate::screens`) depends on directly. This module re-exports only the
+// panel *hardware data* — controller timing/quirks/dimension specs — which a
+// board's real display driver needs and which is not UI-toolkit concern.
 pub use eink_specs::{
     displays, quirks_for_controller, ColorMode, Controller, ControllerQuirks, DisplaySpec,
     PanelType, Quirk,
-};
-pub use eink_system::{
-    containers::{HStack, Spacer, VStack},
-    flex::{ChildLayout, FlexLayout},
-    layout::{Constraints, Layout, LayoutResult},
-    render::{
-        is_visible, render_background, render_layout_tree, render_layout_with_background,
-        Renderable,
-    },
-    style::{Align, Dimension, Edges, FlexDirection, Justify, Style},
 };
