@@ -23,6 +23,14 @@ embedded-io-adapters = { version = "0.6", features = ["std"] }
 image = { version = "0.25", features = ["png"] }
 
 [dev-dependencies]
+# `tests/firmware_step.rs` drives `dap_core::stub`'s no_std placeholder port
+# adapters (StubSink/StubStorage/StubControls/StubPower/StubDisplay) -- the
+# literal types `board-h7a3` wires up (see `dap-core/src/stub.rs`) -- through
+# `dap_core::firmware::step`, the exact run-loop function the board's embassy
+# task calls. Resolver v2 (`dap/Cargo.toml`'s `resolver = "2"`) keeps this
+# dev-dependency-only feature request from leaking `stub` into this crate's
+# own (non-test) library build.
+dap-core = { path = "../core", features = ["stub"] }
 # Decode real-time-factor benchmarks (`benches/decode_rtf.rs`) -- a HOST
 # regression baseline, not an on-target measurement (see that file's module
 # doc). Matches the root workspace's pinned criterion version
