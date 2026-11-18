@@ -11,10 +11,15 @@ use std::path::{Path, PathBuf};
 
 use dap_core::app::{App, AppConfig};
 use dap_core::ports::InputEvent;
-use dap_sim::{BatteryKeyframe, SimBattery, SimControls, SimDisplay, SimSink, SimStorage};
+use dap_sim::{
+    sac_scratch, BatteryKeyframe, SimBattery, SimControls, SimDisplay, SimSink, SimStorage,
+};
 use soul_audio_core::DeckState;
 
-const PRELOAD: usize = 2;
+// 0 = single resident decoder; gapless via the output ring at track reopen
+// (Rockbox model) — the board's SAI DMA ring must be deep enough to cover
+// the reopen's wall-clock latency.
+const PRELOAD: usize = 0;
 
 fn tone_path() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("../../../soul-audio-core/testdata/tone.wav")
@@ -24,7 +29,7 @@ fn antiphase_path() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("../../../soul-audio-core/testdata/antiphase.wav")
 }
 
-type Dap = App<SimSink, SimStorage, SimBattery, SimControls, SimDisplay, PRELOAD>;
+type Dap = App<SimSink, SimStorage, Box<[i32]>, SimBattery, SimControls, SimDisplay, PRELOAD>;
 
 #[test]
 fn now_playing_renders_a_non_blank_frame_headless() {
@@ -62,6 +67,7 @@ fn run() {
         controls,
         display,
         AppConfig::default(),
+        sac_scratch,
     );
     app.set_queue(2, 0);
 

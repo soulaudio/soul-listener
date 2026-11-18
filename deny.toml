@@ -13,7 +13,14 @@ targets = [
 version = 2
 db-urls = ["https://github.com/rustsec/advisory-db"]
 yanked = "deny"
-unmaintained = "deny"
+# `unmaintained` is a SCOPE in current cargo-deny (all/workspace/transitive/none),
+# not the old deny/warn/allow severity (that key was removed in #611/#681).
+# "workspace" = flag unmaintained advisories only for our own direct dependencies,
+# not transitive ones: the embassy/cortex-m stack pulls unmaintained transitive
+# crates (e.g. bare-metal, RUSTSEC-2026-0110) we can't fix and shouldn't gate the
+# shipped firmware on. Vulnerabilities and unsound advisories are still denied for
+# the whole graph (the v2 default).
+unmaintained = "workspace"
 ignore = [
     # paste v1.0.15 is unmaintained (transitive via num-derive → paste).
     # No replacement available yet; low severity.

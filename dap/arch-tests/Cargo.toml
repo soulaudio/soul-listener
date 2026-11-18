@@ -1,0 +1,17 @@
+[package]
+name = "dap-arch-tests"
+version = "0.1.0"
+edition = "2021"
+description = "Architecture tests pinning the DAP audio-decode path to the STM32H7A3 AXI-SRAM budget (test-only; see src/lib.rs)."
+publish = false
+
+[dev-dependencies]
+soul-audio-core = { workspace = true }
+soul-audio-engine = { workspace = true }
+soul-audio-index = { workspace = true }
+# This workspace member (dap-core), for the `AudioPlayer`/`App` size guards.
+dap-core = { path = "../core" }
+# For the `App` size guard's `StubDisplay` test double (`dap_core::display`'s
+# `Display` port is `DrawTarget<Color = Gray4> + EinkRefresh`). Same version
+# dap-sim already pins (dap/sim/Cargo.toml).
+embedded-graphics = "0.8.1"

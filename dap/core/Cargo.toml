@@ -2,7 +2,19 @@
 name = "dap-core"
 version = "0.1.0"
 edition = "2021"
+# Internal firmware crate, never published — marks it private so cargo-deny's
+# `[licenses] private.ignore` skips it (the repo is MIT OR Apache-2.0; see LICENSE).
+publish = false
 description = "Board-agnostic DAP logic and ports (no_std, no embassy; usable from host and target)."
+
+# `stub`: compiles in `src/stub.rs`'s no_std, no-alloc placeholder port
+# adapters (StubSink/StubStorage/StubControls/StubPower/StubDisplay) — the
+# board's "no hardware yet" stand-ins, real hardware adapters (Phase E)
+# replace them one at a time. Off by default: nothing outside `board-h7a3`
+# (and the host tests that exercise exactly the same wiring) needs these
+# types, so they don't pollute the default build/doc surface.
+[features]
+stub = []
 
 [dependencies]
 # default-features = false set at the workspace level (dap/Cargo.toml).

@@ -44,8 +44,10 @@ where
 }
 
 /// The decoder type the deck plays: whatever format `open_seekable` dispatches
-/// to, over the byte source `St::Source` the storage port hands back.
-type TrackDecoder<St> = AnyDecoder<<St as Storage>::Source>;
+/// to, over the byte source `St::Source` the storage port hands back, carving
+/// its block-staging working buffer from the caller-owned `Pcm` scratch (see
+/// [`AudioPlayer`]'s doc comment).
+type TrackDecoder<St, Pcm> = AnyDecoder<<St as Storage>::Source, Pcm>;
 
 /// A generic, board-agnostic audio player: `soul-audio-engine`'s `Engine`
 /// (queue cursor + repeat modes + gapless preload policy) driving a
@@ -53,22 +55,46 @@ type TrackDecoder<St> = AnyDecoder<<St as Storage>::Source>;
 /// channel-map → write) into a caller-supplied [`Sink`], opening tracks
 /// through a caller-supplied [`Storage`].
 ///
+/// `Pcm` is the decoder's externalized scratch storage type — the big
+/// block-staging buffer `soul_audio_core::open_seekable` used to embed inline
+/// (the board-blocking ~1.44 MB open-path transient); it now lives in a
+/// caller-owned `Pcm` (`AsRef<[i32]> + AsMut<[i32]>`) that the decoder owns
+/// outright and drops with it. `AudioPlayer` never allocates one itself (this
+/// crate is no-alloc) — it only calls the caller-supplied `scratch_fn`
+/// factory each time a track is opened. On the host, `scratch_fn` typically
+/// allocates a fresh `Box<[i32]>` per open (see `dap-sim`'s callers); the
+/// board's (future, PCB-blocked) factory will hand out a `&'static mut [i32]`
+/// slice from a static pool instead. A plain `fn() -> Pcm` factory (not a
+/// closure/trait object) keeps this crate free of extra generics and
+/// allocator assumptions.
+///
 /// `PRELOAD` is the deck's gapless preload depth (tracks kept pre-opened and
 /// pre-built for a zero-gap swap at a track boundary) — see
 /// `soul_audio_core::Deck`.
-pub struct AudioPlayer<S: Sink, St: Storage, const PRELOAD: usize> {
-    engine: Engine<S, TrackDecoder<St>, LinearSequencer, PRELOAD>,
+pub struct AudioPlayer<S: Sink, St: Storage, Pcm: AsRef<[i32]> + AsMut<[i32]>, const PRELOAD: usize>
+{
+    engine: Engine<S, TrackDecoder<St, Pcm>, LinearSequencer, PRELOAD>,
     storage: St,
+    /// Factory for a fresh decoder scratch buffer, called once per track
+    /// open (see the struct's doc comment).
+    scratch_fn: fn() -> Pcm,
 }
 
-impl<S: Sink, St: Storage, const PRELOAD: usize> AudioPlayer<S, St, PRELOAD> {
+impl<S: Sink, St: Storage, Pcm: AsRef<[i32]> + AsMut<[i32]>, const PRELOAD: usize>
+    AudioPlayer<S, St, Pcm, PRELOAD>
+{
     /// Build a player over `sink`, opening tracks through `storage`.
-    /// `quality` selects the deck's resampler tier. The queue starts empty —
-    /// call [`set_queue`](Self::set_queue) before [`play`](Self::play).
-    pub fn new(sink: S, storage: St, quality: Quality) -> Self {
+    /// `quality` selects the deck's resampler tier. `scratch_fn` is called
+    /// once per track open to produce that decoder's externalized scratch
+    /// storage (see the struct's doc comment) — e.g.
+    /// `|| vec![0i32; soul_audio_core::decoder_scratch_len()].into_boxed_slice()`
+    /// on the host. The queue starts empty — call
+    /// [`set_queue`](Self::set_queue) before [`play`](Self::play).
+    pub fn new(sink: S, storage: St, quality: Quality, scratch_fn: fn() -> Pcm) -> Self {
         Self {
             engine: Engine::new(Deck::new(sink, quality), LinearSequencer::new()),
             storage,
+            scratch_fn,
         }
     }
 
@@ -145,7 +171,8 @@ impl<S: Sink, St: Storage, const PRELOAD: usize> AudioPlayer<S, St, PRELOAD> {
                 .storage
                 .open(track)
                 .map_err(AudioPlayerError::Storage)?;
-            let decoder = open_seekable(source).map_err(AudioPlayerError::Open)?;
+            let decoder =
+                open_seekable(source, (self.scratch_fn)()).map_err(AudioPlayerError::Open)?;
             self.engine
                 .provide(track, decoder)
                 .map_err(AudioPlayerError::Deck)?;

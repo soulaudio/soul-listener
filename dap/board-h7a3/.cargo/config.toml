@@ -1,10 +1,13 @@
-# board-h7a3 is a standalone workspace (excluded from the root workspace because
-# Embassy 0.1 and Embassy 0.6 both pull an `embassy-time-driver` that declares
-# the same `links = "embassy-time"` — cargo forbids that in one Cargo.lock).
-#
-# Config resolution walks up the directory tree, so builds here still inherit the
-# root .cargo/config's `linker = "flip-link"`, the `-Tlink.x`/`-Tdefmt.x` rustflags,
-# and DEFMT_LOG. Only the probe-rs chip differs: this board is the STM32H7A3; the
-# root config stays on the old H743 firmware's chip.
+# board-h7a3 builds inside the dap/ workspace. The root .cargo/config forces
+# `linker = "flip-link"`, but in a workspace flip-link's own linker-script search
+# (CWD = workspace root) can't find board-h7a3/memory.x and fails CI with
+# "MEMORY.RAM not found" — even though rust-lld resolves memory.x fine via the
+# -L path build.rs emits. So override ONLY the linker here to plain rust-lld
+# (flip-link just wraps it); do NOT re-list -Tlink.x/-Tdefmt.x, since cargo JOINS
+# target.rustflags across config files and a second -Tlink.x double-includes
+# memory.x ("region FLASH already defined"). flip-link's stack-overflow
+# protection is covered statically by the mcu-stack-budget CI gate; restoring
+# flip-link here is tracked once there is hardware to validate on.
 [target.thumbv7em-none-eabihf]
 runner = "probe-rs run --chip STM32H7A3ZITxQ"
+linker = "rust-lld"

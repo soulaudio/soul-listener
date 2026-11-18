@@ -17,10 +17,13 @@ use std::path::{Path, PathBuf};
 
 use dap_core::audio::AudioPlayer;
 use dap_core::power::{PowerConfig, PowerEvent, PowerProfile, PowerService};
-use dap_sim::{BatteryKeyframe, SimBattery, SimSink, SimStorage};
+use dap_sim::{sac_scratch, BatteryKeyframe, SimBattery, SimSink, SimStorage};
 use soul_audio_core::{DeckState, Progress, Quality};
 
-const PRELOAD: usize = 2;
+// 0 = single resident decoder; gapless via the output ring at track reopen
+// (Rockbox model) — the board's SAI DMA ring must be deep enough to cover
+// the reopen's wall-clock latency.
+const PRELOAD: usize = 0;
 
 fn tone_path() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("../../../soul-audio-core/testdata/tone.wav")
@@ -30,12 +33,12 @@ fn antiphase_path() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("../../../soul-audio-core/testdata/antiphase.wav")
 }
 
-type Player = AudioPlayer<SimSink, SimStorage, PRELOAD>;
+type Player = AudioPlayer<SimSink, SimStorage, Box<[i32]>, PRELOAD>;
 
 fn build_player() -> Player {
     let sink = SimSink::new();
     let storage = SimStorage::new([tone_path(), antiphase_path()]);
-    let mut player = AudioPlayer::new(sink, storage, Quality::Fast);
+    let mut player = AudioPlayer::new(sink, storage, Quality::Fast, sac_scratch);
     player.set_queue(2, 0);
     player.play();
     player

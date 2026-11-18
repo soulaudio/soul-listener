@@ -7,10 +7,14 @@
 //! the ports defined here.
 #![cfg_attr(not(test), no_std)]
 #![forbid(unsafe_code)]
+#![deny(unconditional_recursion)]
 
 pub mod app;
 pub mod audio;
 pub mod display;
+pub mod firmware;
 pub mod ports;
 pub mod power;
 pub mod screens;
+#[cfg(feature = "stub")]
+pub mod stub;

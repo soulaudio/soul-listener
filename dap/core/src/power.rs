@@ -10,10 +10,23 @@
 //! playback). Time is passed in (`now_ms`); this crate has no clock of its
 //! own, so the same logic runs identically on-target and in a headless host
 //! test.
+//!
+//! [`PowerService`] itself only ever decides *which* [`PowerProfile`] is
+//! active (via [`PowerService::profile`]/[`Power::set_clock_profile`]) —
+//! it has no notion of clock speed or decode cost. [`model`] is the pure
+//! battery energy model (datasheet currents x measured decode cost), and
+//! [`dvfs`] is the policy layer built on top of it: [`dvfs::clock_mhz_for_profile`]
+//! takes the active [`PowerProfile`] plus the current track's measured/
+//! estimated RTF and returns the target clock (MHz) to apply — model-only
+//! (no VOS/PLL register writes happen here; the board applies those once
+//! it exists).
 
 use heapless::Vec;
 
 use crate::ports::{BatteryReading, Power};
+
+pub mod dvfs;
+pub mod model;
 
 /// Max events a single [`PowerService::poll`] can return. Eight distinct
 /// [`PowerEvent`] kinds exist; this bound is generous enough that every kind

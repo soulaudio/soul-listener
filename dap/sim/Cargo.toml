@@ -2,6 +2,9 @@
 name = "dap-sim"
 version = "0.1.0"
 edition = "2021"
+# Internal firmware crate, never published — marks it private so cargo-deny's
+# `[licenses] private.ignore` skips it (the repo is MIT OR Apache-2.0; see LICENSE).
+publish = false
 description = "Host-side (std) simulation adapters implementing dap-core's ports, for desktop development and testing."
 
 [dependencies]
@@ -21,3 +24,33 @@ embedded-io-adapters = { version = "0.6", features = ["std"] }
 # Matches the version/feature set the root workspace's eink-testing crate
 # already pins (crates/eink/eink-testing/Cargo.toml) for consistency.
 image = { version = "0.25", features = ["png"] }
+
+[dev-dependencies]
+# `tests/firmware_step.rs` drives `dap_core::stub`'s no_std placeholder port
+# adapters (StubSink/StubStorage/StubControls/StubPower/StubDisplay) -- the
+# literal types `board-h7a3` wires up (see `dap-core/src/stub.rs`) -- through
+# `dap_core::firmware::step`, the exact run-loop function the board's embassy
+# task calls. Resolver v2 (`dap/Cargo.toml`'s `resolver = "2"`) keeps this
+# dev-dependency-only feature request from leaking `stub` into this crate's
+# own (non-test) library build.
+dap-core = { path = "../core", features = ["stub"] }
+# Decode real-time-factor benchmarks (`benches/decode_rtf.rs`) -- a HOST
+# regression baseline, not an on-target measurement (see that file's module
+# doc). Matches the root workspace's pinned criterion version
+# (soul-listener-gh/Cargo.toml's `[workspace.dependencies]`).
+criterion = "0.5"
+# `tests/static_placement.rs` -- proves the board pattern (constructing the
+# ~664 KB `AudioPlayer` directly into a `static` via `StaticCell::init`)
+# actually works, not just type-checks. Matches the version the root
+# workspace already pins (soul-listener-gh/Cargo.toml's
+# `[workspace.dependencies]`, used by `crates/firmware`) and the embassy
+# ecosystem's current major line.
+static_cell = "2"
+# `tests/alloc_policy.rs` -- the Rule 1 display-path alloc-gap tracking
+# marker exercises eink-system's `VStack`/`Box<dyn Layout>` API directly
+# (not just via dap-core's re-export) to count heap allocations.
+eink-system = { workspace = true }
+
+[[bench]]
+name = "decode_rtf"
+harness = false
