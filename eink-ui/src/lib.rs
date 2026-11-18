@@ -31,6 +31,7 @@ extern crate alloc;
 #[cfg(feature = "std")]
 extern crate std;
 
+pub mod layout;
 pub mod theme;
 pub mod widget;
 pub mod widgets;
@@ -38,6 +39,7 @@ pub mod widgets;
 #[cfg(feature = "std")]
 pub mod testing;
 
+pub use layout::{Align, Axis, Children, Justify};
 pub use theme::{Role, Space, TextScale, Theme};
 pub use widget::{Constraints, DrawError, Size, Widget};
-pub use widgets::{Container, Text};
+pub use widgets::{col, row, Container, Flex, Spacer, Stack, Text};

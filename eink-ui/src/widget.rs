@@ -136,4 +136,18 @@ pub trait Widget {
         rect: Rectangle,
         theme: &Theme,
     ) -> Result<(), DrawError<D::Error>>;
+
+    /// This widget's flex *grow factor* along a flex container's main axis.
+    ///
+    /// `0` (the default) means **inflexible**: the widget takes exactly its
+    /// measured main-axis size. A value `> 0` means the widget absorbs a share
+    /// of the container's leftover main-axis space proportional to its factor
+    /// (so two `grow == 1` children split the slack evenly; a `grow == 2` child
+    /// takes twice as much as a `grow == 1` one). This is how [`Spacer`] pushes
+    /// siblings apart. A standalone leaf (`Text`, `Container`…) is inflexible.
+    ///
+    /// [`Spacer`]: crate::widgets::Spacer
+    fn flex(&self) -> u32 {
+        0
+    }
 }
