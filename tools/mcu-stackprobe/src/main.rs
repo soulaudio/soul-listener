@@ -12,11 +12,31 @@
 //! function's REAL on-target frame size (see the repo's measurement notes for
 //! how the top frames are summed into a worst-case transient).
 //!
+//! Two episodes run back to back in the same `main`, so BOTH are genuinely
+//! *exercised* (open()'d and decoded, not just type-reachable by a `match`
+//! arm the fixture never actually takes):
+//!
+//!   1. A 44.1 kHz WAV (the sink is fixed at 48 kHz), forcing `Deck::build_track`
+//!      to also construct a real `Resampler` — the bit-perfect-pass-through
+//!      path alone wouldn't exercise `make_resampler`.
+//!   2. A Matroska/WebM-wrapped FLAC track — the worst-case open-path frame
+//!      (`FlacDecoder<MatroskaFlacReader<S>, P>::new_in`, `check-stack.sh`'s
+//!      "largest other frame"). Before this harness exercised it, that
+//!      function's frame only showed up in `.stack_sizes` because every
+//!      `MatroskaDecoder::from_demuxer_in` codec arm gets monomorphized and
+//!      linked in regardless of which arm the fixture's bytes actually take
+//!      (the compiler can't prove a `match` on runtime-read bytes dead) — so
+//!      the *function's own* frame was always measured, but `main`'s own
+//!      frame (the number actually gated) reflected only the WAV episode's
+//!      locals/inlining. Actually opening+decoding this fixture closes that
+//!      gap.
+//!
 //! It is deliberately a throwaway measurement rig, not product firmware: the
-//! fixture WAV need not even decode successfully (though it does) — the point
-//! is to get every function on the path compiled into the binary so its frame
-//! size lands in the `.stack_sizes` ELF section. Runs in a plain `loop {
-//! pump() }`; nothing reads the "output" (a `DiscardSink`).
+//! fixtures need not even decode cleanly (though they do) — the point is to
+//! get every function on the path compiled into the binary so its frame size
+//! lands in the `.stack_sizes` ELF section. After both episodes load, it runs
+//! a plain `loop { pump() }` on the second (worst-case) track; nothing reads
+//! the "output" (a `DiscardSink`).
 #![no_std]
 #![no_main]
 
@@ -44,7 +64,7 @@ use soul_audio_core::{
 ///         | byteRate=176400 | blockAlign=4 | bitsPerSample=16
 ///   "data" | dataSize=16 | 8 × i16 samples: 1000,-1000, 2000,-2000, 3000,-3000, 4000,-4000
 #[rustfmt::skip]
-const FIXTURE: &[u8] = &[
+const WAV_FIXTURE: &[u8] = &[
     // "RIFF"
     0x52, 0x49, 0x46, 0x46,
     // chunkSize = 52
@@ -76,6 +96,22 @@ const FIXTURE: &[u8] = &[
     0xB8, 0x0B, 0x48, 0xF4, 0xA0, 0x0F, 0x60, 0xF0,
 ];
 
+/// A tiny Matroska/WebM-wrapped FLAC (`A_FLAC`) track — the worst-case
+/// open-path format this harness exists to measure (see the module doc
+/// comment's episode 2, and `check-stack.sh`'s "largest other frame":
+/// `FlacDecoder<MatroskaFlacReader<S>, P>::new_in`). Reused byte-for-byte from
+/// soul-audio-core's own test corpus (a short stereo tone) rather than
+/// hand-built: a real FLAC-in-Matroska bitstream needs correct EBML framing
+/// *and* real FLAC frame headers/CRCs, which isn't worth hand-rolling here
+/// when a tiny, already-exercised fixture exists next door. Path is relative
+/// to this source file (`include_bytes!`'s own rule), not the crate root —
+/// four `../` from `src/` reaches the `soulaudio/` directory both repos are
+/// checked out under, matching this crate's `soul-audio-core` path
+/// dependency in `Cargo.toml` (three `../` from *that* file's directory, the
+/// crate root one level up from `src/`).
+const MKA_FLAC_FIXTURE: &[u8] =
+    include_bytes!("../../../../soul-audio-core/testdata/tone-flac.mka");
+
 /// A no-op output: write/flush succeed and discard. Fixed at 48 kHz/stereo/
 /// 24-bit so the deck always has a concrete target to pipe decoded PCM into.
 struct DiscardSink {
@@ -98,8 +134,16 @@ impl Sink for DiscardSink {
 /// `decoder_scratch_len`'s doc comment) — a static, `StaticCell`-backed
 /// array, so the ~256 KB buffer lives in `.bss`, not on this function's
 /// stack, and `open_seekable` gets a sound `&'static mut [i32]` with no
-/// `unsafe` (the same pattern `dap/board-h7a3/src/main.rs` uses).
+/// `unsafe` (the same pattern `dap/board-h7a3/src/main.rs` uses). One per
+/// episode: `scratch: P` is taken *by value* and moved into the constructed
+/// `AnyDecoder`, so episode 1's `&'static mut [i32]` can't be recovered (not
+/// even once episode 1's decoder is dropped by episode 2's `deck.load`) —
+/// there is no safe "give me that borrow back" operation, only a second,
+/// independent `StaticCell`. This harness isn't board-RAM-constrained (see
+/// `memory.x`'s own doc comment — it's a generic, oversized region, not the
+/// real H7A3 map), so two 256 KB statics cost nothing here.
 static SCRATCH: StaticCell<[i32; decoder_scratch_len()]> = StaticCell::new();
+static SCRATCH2: StaticCell<[i32; decoder_scratch_len()]> = StaticCell::new();
 
 type ProbeDecoder = AnyDecoder<SliceSource<'static>, &'static mut [i32]>;
 type ProbeDeck = Deck<DiscardSink, ProbeDecoder, 0>;
@@ -129,17 +173,28 @@ fn main() -> ! {
     // slot — see dap/sim/examples/stackprobe.rs's own PRELOAD=0 comment).
     let deck: &'static mut ProbeDeck = DECK.init(Deck::new(sink, Quality::Fast));
 
-    let scratch: &'static mut [i32] = SCRATCH.init([0; decoder_scratch_len()]);
-    let src = SliceSource::new(FIXTURE);
-
-    // The real open->decode->pump chain this harness exists to force into
-    // the ELF. `unwrap()` is fine here even on failure: a panic just halts
+    // Episode 1: WAV (forces `make_resampler` too — see the module doc
+    // comment). `unwrap()` is fine here even on failure: a panic just halts
     // (`panic_halt`) rather than corrupting anything, and either way every
     // function on this path has already been monomorphized into the binary
     // by the time the call executes, which is all `-Z emit-stack-sizes` cares
     // about.
+    let scratch: &'static mut [i32] = SCRATCH.init([0; decoder_scratch_len()]);
+    let src = SliceSource::new(WAV_FIXTURE);
     let decoder = open_seekable(src, scratch).unwrap();
     deck.load(decoder).unwrap();
+    for _ in 0..4 {
+        let _ = deck.pump();
+    }
+
+    // Episode 2: Matroska/WebM-wrapped FLAC — the worst-case open-path format
+    // (see the module doc comment). `deck.load` discards episode 1's track
+    // (and, with it, episode 1's scratch borrow — see `SCRATCH2`'s doc
+    // comment on why this needs its own static rather than reusing `scratch`).
+    let scratch2: &'static mut [i32] = SCRATCH2.init([0; decoder_scratch_len()]);
+    let src2 = SliceSource::new(MKA_FLAC_FIXTURE);
+    let decoder2 = open_seekable(src2, scratch2).unwrap();
+    deck.load(decoder2).unwrap();
 
     loop {
         let _ = deck.pump();

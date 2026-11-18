@@ -6,19 +6,35 @@
 # docs/plans/2026-11-17-firmware-selfimproving-loop-roadmap.md Phase A4.
 #
 # Builds the mcu-stackprobe harness (src/main.rs: open_seekable ->
-# Deck::load -> Deck::pump, with the Deck in a `static` so it's off main's
-# own stack -- board-representative) on nightly with `-Z emit-stack-sizes`,
-# reads the linked ELF's `.stack_sizes` section via
-# `llvm-readobj --stack-sizes`, and asserts two budgets:
+# Deck::load -> Deck::pump, run TWICE back to back -- a 44.1 kHz WAV episode
+# (forces a real Resampler construction too), then a Matroska/WebM-wrapped
+# FLAC episode, the worst-case open-path format -- with the Deck in a
+# `static` so it's off main's own stack -- board-representative) on nightly
+# with `-Z emit-stack-sizes`, reads the linked ELF's `.stack_sizes` section
+# via `llvm-readobj --stack-sizes`, and asserts two budgets:
 #
 #   1. main-frame budget -- the `__cortex_m_rt_main` entry frame, i.e. the
 #      REAL open-path stack transient this whole harness exists to measure.
-#      Baseline measured 2026-11-17 (commit d97c820): 326,096 B.
-#   2. largest-other-frame budget -- the single largest OTHER function
-#      frame on the path (today: FlacDecoder<MatroskaFlacReader<..>>::new_in,
-#      which builds the Matroska-wrapped-FLAC decoder's residual/warmup
-#      scratch in-place -- the "one edge" tracked as Phase A3). Baseline
-#      measured 2026-11-17: 152,024 B.
+#      Baseline measured 2026-11-17 (commit d97c820), WAV-only: 326,096 B.
+#      Re-measured 2026-11-18 once the probe actually exercises the
+#      Matroska-FLAC worst case too (src/main.rs's episode 2) AND after
+#      soul-audio-core shrank MatroskaFlacReader's embedded-profile
+#      SimpleBlock cap 48 KiB -> 28 KiB (soul-audio-core commit 7f01902):
+#      179,096 B -- SMALLER than the stale WAV-only baseline, not larger:
+#      with two episodes in one `main` body, LLVM's inliner pulls several
+#      calls (open_seekable/Deck::load) back out of `main` into their own
+#      frames rather than inlining them twice, shifting weight onto those
+#      functions instead -- see point 2.
+#   2. largest-other-frame budget -- the single largest OTHER function frame
+#      on the path (today:
+#      MatroskaDecoder<SliceSource,..>::new_in, which now has
+#      from_demuxer_in's A_FLAC arm AND the nested
+#      FlacDecoder<MatroskaFlacReader<..>,..>::new_in inlined into it --
+#      the Phase A3 "one edge" this gate previously tracked as a separate,
+#      smaller-looking frame purely because it was reachable but unexercised).
+#      Baseline measured 2026-11-17 (WAV-only, Matroska-FLAC type-reachable
+#      but never actually decoded): 152,024 B. Re-measured 2026-11-18 (both
+#      episodes actually exercised + the 28 KiB cap): 124,560 B.
 #
 # A future decoder/format addition that inflates either number past budget
 # fails this script (and CI) immediately, with the real measured numbers
@@ -51,10 +67,9 @@ ELF="target/${TARGET}/release/mcu-stackprobe"
 # ~25-35% headroom above the measured baselines cited above (the task's
 # "~20% above" guidance, rounded to clean KiB numbers). Bump these -- with a
 # comment updating the cited baseline -- if a legitimate feature addition
-# (e.g. closing the Phase A3 Matroska-FLAC edge with a real byte-arena
-# seam) grows the open path for a good reason.
-MAIN_FRAME_BUDGET=$((400 * 1024))     # 400 KiB; baseline 326,096 B (~318.6 KiB)
-LARGEST_FRAME_BUDGET=$((200 * 1024))  # 200 KiB; baseline 152,024 B (~148.5 KiB)
+# grows the open path for a good reason.
+MAIN_FRAME_BUDGET=$((224 * 1024))     # 224 KiB; baseline 179,096 B (~174.9 KiB)
+LARGEST_FRAME_BUDGET=$((160 * 1024))  # 160 KiB; baseline 124,560 B (~121.6 KiB)
 
 echo "== mcu-stackprobe stack-budget gate =="
 echo "target:              $TARGET"

@@ -13,9 +13,13 @@ variable assignments, meant to be `eval`'d by check-stack.sh:
                                    on the path. main's own entry frame is
                                    excluded here since it is tracked
                                    separately above; today this is
-                                   FlacDecoder<MatroskaFlacReader<..>>::new_in,
-                                   which builds the Matroska-wrapped-FLAC
-                                   decoder's residual/warmup scratch in-place.
+                                   MatroskaDecoder<SliceSource,..>::new_in,
+                                   which (now that src/main.rs actually opens
+                                   and decodes a Matroska-wrapped-FLAC
+                                   fixture, not just WAV) has the nested
+                                   FlacDecoder<MatroskaFlacReader<..>,..>::new_in
+                                   inlined into it -- see check-stack.sh's
+                                   own comment for the 2026-11-18 re-measurement.
 
 Not a Rust/xtask helper because this is pure text/JSON munging with no
 interesting logic worth compiling -- see check-stack.sh for why a plain
