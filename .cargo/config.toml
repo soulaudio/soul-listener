@@ -23,24 +23,20 @@ DEFMT_LOG = "info"
 # hooks call `cargo xtask precommit|verify|check-commit-msg`).
 xtask = "run -p xtask --"
 
-# xtask commands (primary development workflow)
-flash = "run -p xtask -- flash"
-dev   = "run -p xtask -- dev"
-
 # Hardware design (Atopile) — cargo hw <check|build|sync|bom>
 hw = "run -p xtask -- hardware"
 
 # Quick commands
 rb = "build --release"
 rr = "run --release"
-size = "size --release --bin firmware -- -A"
 
 # Testing
 test-unit = "test --lib"
-test-integration = "test --test integration"
 test-all = "test --workspace --all-features"
 
 # Analysis
-bloat = "bloat --release --bin firmware"
 expand = "expand --lib"
-check-embedded = "check --target thumbv7em-none-eabihf --no-default-features"
+# NOTE: the old firmware-bin aliases (flash/dev/size/bloat, which targeted the
+# retired v1 `--bin firmware`) were removed with the v1 stack. The active board
+# binary lives in the `dap/` workspace — flash/size it from there (e.g.
+# `cd dap && cargo build -p board-h7a3 --target thumbv7em-none-eabihf --features hardware`).

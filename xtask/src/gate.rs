@@ -3,11 +3,11 @@
 //! soul-listener has three workspaces (see the root `Cargo.toml`'s
 //! `workspace.exclude` comment for why they can't share one `Cargo.lock`):
 //!
-//! - the ROOT workspace (`crates/*`): v1 Embassy-0.1 salvage code. It is
-//!   currently bit-rotted — its `clippy`/`test` are red — so it is only ever
-//!   `fmt --check`'d here. Gating it with clippy/test would block every
-//!   commit on pre-existing breakage unrelated to whatever change is being
-//!   made; that cleanup is tracked separately.
+//! - the ROOT workspace: after the v1 Embassy-0.1 firmware stack was retired it
+//!   holds just two crates — `eink-specs` (pure panel-spec data the dap board
+//!   consumes cross-workspace) and `xtask` (this tooling). It is only
+//!   `fmt --check`'d here; clippy/test for those two is cheap and could be wired
+//!   up as a follow-up now that the bit-rotted v1 code is gone.
 //! - the `dap/` workspace (`dap/core` = dap-core, `dap/sim` = dap-sim,
 //!   `dap/board-h7a3`): the active code. It is fully gated here: fmt,
 //!   clippy (host + the `board-h7a3` thumbv7em cross-build), and

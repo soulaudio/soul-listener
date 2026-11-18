@@ -7,10 +7,10 @@
 # eink-ui/ — see its comment for why they can't share one Cargo.lock). CI mirrors
 # the authoritative `cargo xtask verify` gate (xtask/src/gate.rs):
 #
-#   ROOT (crates/*) — v1 Embassy-0.1 salvage, being replaced by the migration.
-#                     Bit-rotted, so it is fmt-checked ONLY (`fmt`). Gating it with
-#                     clippy/test/build would block every PR on pre-existing
-#                     breakage; that cleanup is tracked separately (task 11).
+#   ROOT            — holds only eink-specs (panel-spec data) + xtask (tooling)
+#                     after the v1 Embassy-0.1 firmware stack was retired. It is
+#                     fmt-checked ONLY (`fmt`); clippy/test for those two could be
+#                     added now that the bit-rotted v1 code is gone.
 #   dap/            — the active STM32H7A3 firmware (dap-core logic, dap-sim host
 #                     adapters, board-h7a3 bin). Fully gated: fmt-dap, clippy-dap
 #                     (host + board-h7a3 thumbv7em), test-dap, build-board-h7a3,
@@ -73,148 +73,6 @@ jobs:
         run: cargo fmt --all --check
 
   # ---------------------------------------------------------------------------
-  # Architecture Check
-  #
-  # Enforces dependency boundary rules for the vertical slice architecture:
-  #
-  #   Layer 1 (specs/primitives):
-  #     eink-specs     — pure data, no display logic, no alloc
-  #
-  #   Layer 2 (engine):
-  #     eink-system    — layout/styling; MUST NOT depend on eink-emulator
-  #     eink-components — UI components; MUST NOT depend on eink-emulator
-  #
-  #   Layer 3 (simulation, std only):
-  #     eink-emulator  — desktop emulator; MUST NOT depend on firmware
-  #
-  #   HAL layer (platform crate):
-  #     platform       — hardware abstractions (traits); MUST NOT depend on firmware
-  #                      (platform defines traits, firmware implements them)
-  #
-  # Rules enforced:
-  #   1. eink-system + eink-components must not require eink-emulator
-  #   2. eink-specs must not depend on eink-system, eink-emulator, or eink-components
-  #   3. platform must not depend on firmware (HAL must not depend on app layer)
-  #   4. eink-emulator must not depend on firmware (simulator is independent of app)
-  # ---------------------------------------------------------------------------
-  arch:
-    name: Architecture
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
-
-      - uses: dtolnay/rust-toolchain@1.87
-
-      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
-
-      - name: Rule 1 — eink-system and eink-components must not require eink-emulator
-        run: |
-          # Violation: eink-emulator appears as a dev dep OR as a required
-          # (non-optional) normal dep of eink-system or eink-components.
-          # Allowed: optional dep behind the `examples` feature.
-          VIOLATIONS=$(cargo metadata --format-version 1 | jq -r '
-            .packages[] |
-            select(.name == "eink-system" or .name == "eink-components") |
-            .name as $pkg |
-            .dependencies[] |
-            select(.name == "eink-emulator") |
-            select(.kind == "dev" or (.optional == false and .kind == null)) |
-            "\($pkg) has forbidden dependency on eink-emulator (kind: \(.kind // "normal"), optional: \(.optional))"
-          ')
-          if [ -n "$VIOLATIONS" ]; then
-            echo "Architecture violations (Rule 1):"
-            echo "$VIOLATIONS"
-            exit 1
-          fi
-          echo "OK (Rule 1): eink-system and eink-components have no required dependency on eink-emulator"
-
-      - name: Rule 2 — eink-specs must not depend on higher-layer eink crates
-        run: |
-          # eink-specs is a pure data crate (no_std, no display logic).
-          # It must not pull in eink-system, eink-emulator, or eink-components.
-          VIOLATIONS=$(cargo metadata --format-version 1 | jq -r '
-            .packages[] |
-            select(.name == "eink-specs") |
-            .name as $pkg |
-            .dependencies[] |
-            select(
-              .name == "eink-system" or
-              .name == "eink-emulator" or
-              .name == "eink-components" or
-              .name == "firmware"
-            ) |
-            "\($pkg) must not depend on \(.name) (layer boundary violation)"
-          ')
-          if [ -n "$VIOLATIONS" ]; then
-            echo "Architecture violations (Rule 2):"
-            echo "$VIOLATIONS"
-            exit 1
-          fi
-          echo "OK (Rule 2): eink-specs has no upward dependencies"
-
-      - name: Rule 3 — platform (HAL) must not depend on firmware (app)
-        run: |
-          # The platform crate defines hardware abstraction traits.
-          # Firmware implements those traits. Platform must never depend on firmware
-          # (that would be a circular dependency in the HAL layer).
-          VIOLATIONS=$(cargo metadata --format-version 1 | jq -r '
-            .packages[] |
-            select(.name == "platform") |
-            .name as $pkg |
-            .dependencies[] |
-            select(.name == "firmware") |
-            "\($pkg) must not depend on firmware (HAL must not depend on app layer)"
-          ')
-          if [ -n "$VIOLATIONS" ]; then
-            echo "Architecture violations (Rule 3):"
-            echo "$VIOLATIONS"
-            exit 1
-          fi
-          echo "OK (Rule 3): platform crate does not depend on firmware"
-
-      - name: Rule 4 — eink-emulator must not depend on firmware
-        run: |
-          # The desktop emulator simulates display hardware — it is independent
-          # of the DAP application firmware. If it depended on firmware, the
-          # simulator could not be used as a standalone display dev tool.
-          VIOLATIONS=$(cargo metadata --format-version 1 | jq -r '
-            .packages[] |
-            select(.name == "eink-emulator") |
-            .name as $pkg |
-            .dependencies[] |
-            select(.name == "firmware") |
-            "\($pkg) must not depend on firmware (emulator must be firmware-agnostic)"
-          ')
-          if [ -n "$VIOLATIONS" ]; then
-            echo "Architecture violations (Rule 4):"
-            echo "$VIOLATIONS"
-            exit 1
-          fi
-          echo "OK (Rule 4): eink-emulator does not depend on firmware"
-
-      - name: Verify vertical slice crate dependency graph
-        run: |
-          # Print the complete dependency summary for audit purposes.
-          # This is informational; non-zero exit if workspace metadata fails.
-          echo "=== Crate dependency summary ==="
-          cargo metadata --format-version 1 | jq -r '
-            .packages[] |
-            select(
-              .name == "eink-specs" or
-              .name == "eink-system" or
-              .name == "eink-components" or
-              .name == "eink-emulator" or
-              .name == "eink-testing" or
-              .name == "platform" or
-              .name == "firmware" or
-              .name == "firmware-ui"
-            ) |
-            .name + " depends on: [" +
-              ([.dependencies[] | select(.kind == null) | .name] | join(", ")) +
-            "]"
-          ' | sort
-
-  # ---------------------------------------------------------------------------
   # cargo-deny — License, advisory, ban, and source checks
   #
   # Runs cargo-deny against the deny.toml at the repo root.
@@ -264,12 +122,9 @@ jobs:
   # ---------------------------------------------------------------------------
   # Architecture boundary enforcement via cargo tree
   #
-  # Verifies that banned crates (minimp3, epd-waveshare) are not in the
-  # transitive dependency graph, and enforces layering rules from CLAUDE.md.
-  #
-  # These checks complement the metadata-based arch job above by catching
-  # issues that appear only in the resolved dependency tree (not just the
-  # declared [dependencies] in Cargo.toml).
+  # Verifies that banned crates (minimp3, epd-waveshare) are not in the root
+  # workspace's dependency graph. (The DAP's own graph is covered more
+  # thoroughly by the cargo-deny job above; this is a cheap root-level guard.)
   # ---------------------------------------------------------------------------
   arch-boundaries:
     name: Architecture boundaries
@@ -280,22 +135,6 @@ jobs:
       - uses: dtolnay/rust-toolchain@1.87
 
       - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
-
-      - name: eink-specs must not depend on firmware
-        run: |
-          if cargo tree -p eink-specs 2>&1 | grep -q "firmware"; then
-            echo "FAIL: eink-specs depends on firmware"
-            exit 1
-          fi
-          echo "OK: eink-specs does not depend on firmware"
-
-      - name: platform must not depend on firmware
-        run: |
-          if cargo tree -p platform 2>&1 | grep -q "^firmware\b"; then
-            echo "FAIL: platform depends on firmware"
-            exit 1
-          fi
-          echo "OK: platform does not depend on firmware"
 
       - name: epd-waveshare must not be in dependency graph
         run: |
@@ -312,34 +151,6 @@ jobs:
             exit 1
           fi
           echo "OK: minimp3 not present in dependency graph"
-
-      - name: Vertical-slice isolation — feature crates must not cross-import each other
-        run: |
-          # Rule: ui, bluetooth must not depend on each other.
-          # (playback, library removed: v1 audio ripped out in favor of dap/)
-          # Each vertical slice depends only on the platform (HAL) crate.
-          # Cross-imports entangle domain boundaries and violate the vertical-slice arch.
-          FEATURE_CRATES="ui bluetooth"
-          VIOLATIONS=0
-          for crate in $FEATURE_CRATES; do
-            if [ ! -d "crates/$crate" ]; then
-              echo "INFO: crates/$crate does not exist yet — skipping"
-              continue
-            fi
-            MANIFEST="crates/$crate/Cargo.toml"
-            DEPS=$(cargo metadata --no-deps --manifest-path "$MANIFEST" 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); print(' '.join(p['name'] for p in d['packages'][0]['dependencies']))" 2>/dev/null || echo "")
-            for other in $FEATURE_CRATES; do
-              if [ "$crate" != "$other" ] && echo "$DEPS" | grep -qw "$other"; then
-                echo "ERROR: $crate depends on $other — vertical-slice violation"
-                VIOLATIONS=$((VIOLATIONS + 1))
-              fi
-            done
-          done
-          if [ "$VIOLATIONS" -gt 0 ]; then
-            echo "Found $VIOLATIONS vertical-slice isolation violation(s)"
-            exit 1
-          fi
-          echo "PASS: All vertical-slice crates are properly isolated"
 
   # ---------------------------------------------------------------------------
   # board-h7a3 cross-build (Embassy 0.6, STM32H7A3)
@@ -511,15 +322,14 @@ jobs:
   # forbid-unsafe-coverage — Rule 2 (no `unsafe`) coverage gate
   #
   # tools/check-forbid-unsafe.sh greps every embedded-path crate's crate-root
-  # file (dap-core, dap-sim, eink-system, eink-components, eink-specs) for
+  # file (dap-core, dap-sim, board-h7a3, eink-ui, eink-ssd1677, eink-specs) for
   # `#![forbid(unsafe_code)]` and fails, naming the offender, the instant one
   # is missing it (a new crate added without the attribute, or an existing
-  # `forbid` weakened during a refactor). It also checks that the two
-  # documented exceptions (eink-emulator: host/winit; board-h7a3: one
-  # `embedded_alloc::LlffHeap::init` unsafe block) still carry their written
-  # justification. See docs/plans/2026-11-17-architecture-enforcement-fitness-
-  # functions.md, Rule 2 — soul-audio-core itself is gated in its own repo's
-  # CI (consumed here only via path dependency).
+  # `forbid` weakened during a refactor). There are no longer any allowlisted
+  # unsafe exceptions: the v1 host-only eink-emulator (the one that needed Win32
+  # unsafe) was retired with the rest of the v1 stack. See docs/plans/2026-11-17-
+  # architecture-enforcement-fitness-functions.md, Rule 2 — soul-audio-core
+  # itself is gated in its own repo's CI (consumed here only via path dependency).
   #
   # No toolchain/build needed — this is a fast, static grep over known
   # files, so there's no checkout-then-build step beyond actions/checkout.
@@ -737,40 +547,6 @@ jobs:
           grep -q 'unimplemented.*=.*"deny"' Cargo.toml || { echo "ERROR: clippy::unimplemented must be deny in workspace lints"; exit 1; }
           echo "OK: clippy::unimplemented = deny is configured"
 
-  # ---------------------------------------------------------------------------
-  # GAP D2: Stub AudioPowerSequencer method call guard
-  #
-  # Belt-and-suspenders check alongside the #[deprecated] attribute on each
-  # stub method. The #[deprecated] attribute generates a compiler warning (or
-  # error with -D deprecated) at the call site. This CI grep catches the case
-  # where a developer suppresses the warning with #[allow(deprecated)] and
-  # still calls the stub in production code.
-  #
-  # Stub variants (mute_dac, enable_amp, unmute_dac, disable_amp,
-  # mute_dac_for_shutdown) must never be called in crates/firmware/src/main.rs.
-  # Only the _with_i2c and _with_gpio variants write to actual hardware.
-  # ---------------------------------------------------------------------------
-  stub-sequencer-guard:
-    name: Verify no stub AudioPowerSequencer calls in main.rs
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
-
-      - name: Check main.rs does not call stub sequencer methods
-        run: |
-          # Stub AudioPowerSequencer methods must not be called in main.rs.
-          # Production code must use _with_i2c and _with_gpio variants which
-          # actually write to hardware (ES9038Q2M I2C, TPA6120A2 GPIO).
-          # Calling a stub silently skips hardware configuration.
-                    VIOLATIONS=$(grep -En '\.mute_dac\(\)|\.enable_amp\(\)|\.unmute_dac\(\)|\.disable_amp\(\)|\.mute_dac_for_shutdown\(\)' crates/firmware/src/main.rs | grep -v '^[0-9]*:[[:space:]]*//' || true)
-          if [ -n "$VIOLATIONS" ]; then
-            echo "ERROR: Stub AudioPowerSequencer methods called in main.rs."
-            echo "Use _with_i2c or _with_gpio variants for hardware builds."
-            echo ""
-            echo "$VIOLATIONS"
-            exit 1
-          fi
-          echo "OK: No stub AudioPowerSequencer method calls in main.rs"
   cargo-lock-committed:
     name: Verify Cargo.lock is committed
     runs-on: ubuntu-latest

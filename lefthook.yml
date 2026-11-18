@@ -8,10 +8,10 @@
 # (If you use a global `core.hooksPath` dispatcher that delegates to lefthook,
 #  don't run `lefthook install` — it would target the global dir.)
 
-# Fast checks — keep commits quick. `xtask precommit` fmt-checks BOTH
-# workspaces (root `crates/*` + `dap/`) and clippies only the active `dap/`
-# workspace: the root's v1 Embassy-0.1 salvage code is bit-rotted (red
-# clippy/tests, tracked separately), so it is never clippy/test-gated here.
+# Fast checks — keep commits quick. `xtask precommit` fmt-checks all three
+# workspaces (root, `dap/`, `eink-ui/`) and clippies the active `dap/` and
+# `eink-ui/` ones. The root now holds only `eink-specs` + `xtask` (the v1
+# Embassy-0.1 firmware stack was retired); it stays fmt-only here.
 pre-commit:
   commands:
     checks:
