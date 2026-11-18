@@ -4,9 +4,10 @@
 //! (see `docs/plans/2026-11-16-memory-and-battery-optimization-design.md`
 //! §3 for the full rationale behind the 7-region split below).
 //!
-//! Every size guard below is GREEN at the DAP's real `PRELOAD = 1` (gapless
-//! needs only the immediate next track preloaded; `PRELOAD = 2` was a
-//! leftover desktop value). Each prints its measured size vs. budget before
+//! Every size guard below is GREEN at the DAP's real `PRELOAD = 0` (one
+//! resident decoder — gapless comes from the output ring at a track reopen, not
+//! a preloaded next decoder; `PRELOAD = 1`/`2` were earlier/desktop values).
+//! Each prints its measured size vs. budget before
 //! asserting, so a run's output is itself the committed, precise statement
 //! of how much headroom each type has. See `src/lib.rs` for the roster and
 //! `MEMORY.md`/the spec doc for history.
@@ -75,20 +76,21 @@ pub mod memory_map {
 
 /// Budget for the whole live audio path: a `Deck` holding one playing
 /// decoder + its resampler + the output ring, at the DAP's real
-/// `PRELOAD = 1` (the standard gapless depth — one preloaded next track).
+/// `PRELOAD = 0` (one resident decoder; gapless comes from the output ring at a
+/// track reopen — the Rockbox model — not a second preloaded decoder).
 ///
 /// **Post-externalization** (soul-audio-core's
 /// `docs/superpowers/specs/2026-11-17-decoder-memory-externalization.md`):
 /// `AnyDecoder`'s big block-staging buffers now live in a caller-owned
-/// scratch (`P = &'static mut [i32]` here — a 16 B fat pointer, not an
-/// inline array), so `Deck`/`Engine`/`AudioPlayer`/`App` all dropped from
-/// ~664 KB to ~332 KB. Measured at 331,992 B (`Deck`) / 332,072 B
-/// (`Engine`) / 332,080 B (`AudioPlayer`) / 332,168 B (`App`); 384 KB gives
-/// ~61 KB (~18%) headroom — the spare is the **battery-ring tunable** (spec
-/// §0/§4.1): grow the decode-ahead ring into it for fewer SD wakeups and
-/// longer CPU sleep. Old budget: 704 KB (720,896 B), sized for the
-/// pre-externalization ~664 KB ceiling — halved here, not shrunk further,
-/// so the battery-ring margin isn't squeezed to zero.
+/// scratch (`P = &'static mut [i32]` here — a 16 B fat pointer, not an inline
+/// array), and at `PRELOAD = 0` the path holds ONE decoder slot, so
+/// `Deck`/`Engine`/`AudioPlayer`/`App` sit at ~174 KB. Measured at 178,744 B
+/// (`Deck`) / 178,808 B (`Engine`) / 178,816 B (`AudioPlayer`) / 178,904 B
+/// (`App`); 384 KB leaves ~209 KB (~55%) headroom — the spare is the
+/// **battery-ring tunable** (spec §0/§4.1): grow the decode-ahead ring into it
+/// for fewer SD wakeups and longer CPU sleep. The budget stays 384 KB (not
+/// shrunk to the measurement) so that ring has room to grow; the old 704 KB
+/// budget was sized for the pre-externalization ~664 KB / PRELOAD=1 ceiling.
 const AUDIO_PATH_BUDGET: usize = 384 * 1024;
 
 /// Board-static **decoder scratch pool** the externalized decoders carve their
@@ -432,16 +434,16 @@ fn any_decoder_fits_the_h7a3_decoder_budget() {
 fn deck_fits_the_h7a3_audio_path_budget() {
     let actual = size_of::<Deck<StubSink, AnyDecoder<Src, P>, PRELOAD>>();
     report(
-        "Deck<StubSink, AnyDecoder<SliceSource, P>, 1>",
+        "Deck<StubSink, AnyDecoder<SliceSource, P>, 0>",
         actual,
         AUDIO_PATH_BUDGET,
     );
     assert!(
         actual <= AUDIO_PATH_BUDGET,
         "Deck<_, AnyDecoder<SliceSource<'_>, P>, {PRELOAD}> is {actual} B, over the \
-         {AUDIO_PATH_BUDGET} B H7A3 audio-path budget by {over} B. At PRELOAD=1 this should fit \
-         with headroom to spare — an overage here means the live decoder + resampler + ring, or \
-         the single preload slot, grew.",
+         {AUDIO_PATH_BUDGET} B H7A3 audio-path budget by {over} B. At PRELOAD=0 this should fit \
+         with ample headroom — an overage here means the live decoder + resampler + output ring \
+         grew.",
         over = actual.saturating_sub(AUDIO_PATH_BUDGET),
     );
 }
@@ -458,7 +460,7 @@ fn engine_overhead_is_tiny_on_top_of_the_deck_it_wraps() {
     let deck = size_of::<Deck<StubSink, AnyDecoder<Src, P>, PRELOAD>>();
     let overhead = engine.saturating_sub(deck);
     report(
-        "Engine overhead (Engine<..,LinearSequencer,1> - Deck<..,1> it wraps)",
+        "Engine overhead (Engine<..,LinearSequencer,0> - Deck<..,0> it wraps)",
         overhead,
         ENGINE_OVERHEAD_BUDGET,
     );
@@ -490,7 +492,7 @@ fn index_reader_fits_the_catalog_index_budget() {
 fn audio_player_fits_the_h7a3_audio_path_budget() {
     let actual = size_of::<AudioPlayer<StubSink, StubStorage, P, PRELOAD>>();
     report(
-        "AudioPlayer<StubSink, StubStorage, P, 1>",
+        "AudioPlayer<StubSink, StubStorage, P, 0>",
         actual,
         AUDIO_PATH_BUDGET,
     );
@@ -569,7 +571,7 @@ fn component_footprint_roster() {
 
     let deck = size_of::<Deck<StubSink, AnyDecoder<Src, P>, PRELOAD>>();
     report(
-        "Deck<StubSink, AnyDecoder<SliceSource, P>, 1>",
+        "Deck<StubSink, AnyDecoder<SliceSource, P>, 0>",
         deck,
         AUDIO_PATH_BUDGET,
     );
@@ -580,7 +582,7 @@ fn component_footprint_roster() {
 
     let engine = size_of::<Engine<StubSink, AnyDecoder<Src, P>, LinearSequencer, PRELOAD>>();
     report(
-        "Engine<StubSink, AnyDecoder<SliceSource, P>, LinearSequencer, 1>",
+        "Engine<StubSink, AnyDecoder<SliceSource, P>, LinearSequencer, 0>",
         engine,
         AUDIO_PATH_BUDGET,
     );
@@ -592,7 +594,7 @@ fn component_footprint_roster() {
 
     let audio_player = size_of::<AudioPlayer<StubSink, StubStorage, P, PRELOAD>>();
     report(
-        "AudioPlayer<StubSink, StubStorage, P, 1>",
+        "AudioPlayer<StubSink, StubStorage, P, 0>",
         audio_player,
         AUDIO_PATH_BUDGET,
     );
@@ -615,7 +617,7 @@ fn component_footprint_roster() {
     let app =
         size_of::<App<StubSink, StubStorage, P, StubPower, StubControls, StubDisplay, PRELOAD>>();
     report(
-        "App<StubSink, StubStorage, P, StubPower, StubControls, StubDisplay, 1>",
+        "App<StubSink, StubStorage, P, StubPower, StubControls, StubDisplay, 0>",
         app,
         AUDIO_PATH_BUDGET,
     );
@@ -640,4 +642,61 @@ fn component_footprint_roster() {
     );
 
     println!();
+}
+
+/// The board (`dap/board-h7a3`) LINKS a single RAM region: the 1 MB AXI SRAM
+/// (`memory.x` maps only `RAM : 0x2400_0000, 1024K`; the +184 KB of AHB
+/// SRAM1/2/3 @ `0x3000_0000` that [`memory_map::USER_SRAM`] also counts is NOT
+/// in the linker script). So unlike the per-region split above -- which checks
+/// against the full 1208 KB `USER_SRAM` -- every static the board actually
+/// places AND its whole call stack must fit THIS 1 MB.
+///
+/// This guards the board's two dominant AXI-SRAM statics -- the `App` moved into
+/// `APP_CELL`, and the one `decoder_scratch_len()` pool `SCRATCH` holds at
+/// `PRELOAD = 0` -- plus `BOARD_STACK_RESERVE` of stack headroom, measured on the
+/// board's EXACT instantiation (`P = &'static mut [i32]`, `PRELOAD = 0`). It is
+/// the linker-agnostic companion to board-h7a3's `APP_CELL` note: the on-chip
+/// `build-board-h7a3` link is rust-lld without flip-link, so nothing there stops
+/// static storage from silently starving the stack -- this catches it at the
+/// Rust level, in the host `test-dap` job. (A linker `ASSERT` was tried first but
+/// can't be made robust: the board is linked rust-lld from `dap/board-h7a3/` yet
+/// flip-link from `dap/`, and flip-link's two-pass relink defeats a headroom
+/// check on `_stack_start`/`__sheap`.)
+///
+/// Reserve = 256 KiB: the memory/battery design doc's open-transient budget (the
+/// open -> decode -> pump stack peak sits inside it; `mcu-stack-budget` gates the
+/// per-frame sizes). When Phase E adds real-port statics (an e-ink framebuffer,
+/// DMA rings) to AXI SRAM, add them to the `statics` total below -- or place them
+/// in the as-yet-unlinked AHB SRAM1/2/3 (extend `memory.x` + `#[link_section]`).
+#[test]
+fn board_static_footprint_leaves_stack_room_in_linked_axi_sram() {
+    // memory.x's only linked RAM region: AXI SRAM @ 0x2400_0000.
+    const AXI_SRAM_LINKED: usize = 1024 * 1024;
+    // Stack headroom to keep clear above all board statics (design open-transient
+    // budget). Keep in lockstep with board-h7a3/src/main.rs's APP_CELL note.
+    const BOARD_STACK_RESERVE: usize = 256 * 1024;
+
+    // The board's exact App (PRELOAD = 0, Pcm = &'static mut [i32]) and the one
+    // decoder-scratch pool it hands out -- the two statics that dominate its RAM.
+    let app =
+        size_of::<App<StubSink, StubStorage, P, StubPower, StubControls, StubDisplay, PRELOAD>>();
+    let scratch = DECODER_SCRATCH_POOL_BUDGET;
+    let statics = app + scratch;
+    let total = statics + BOARD_STACK_RESERVE;
+
+    report(
+        "board AXI-SRAM statics (App + decoder scratch) + 256 KiB stack reserve",
+        total,
+        AXI_SRAM_LINKED,
+    );
+    assert!(
+        total <= AXI_SRAM_LINKED,
+        "board statics ({statics} B: App {app} B + decoder scratch {scratch} B) plus the \
+         {BOARD_STACK_RESERVE} B stack reserve total {total} B, over the {AXI_SRAM_LINKED} B the \
+         board actually links (AXI SRAM only -- memory.x doesn't map AHB SRAM1/2/3) by {over} B. \
+         Move a large AXI-SRAM static into AHB SRAM1/2/3 (extend memory.x + #[link_section]) or \
+         shrink statics; do NOT just raise the USER_SRAM-based budgets, which count 184 KB this \
+         link can't reach.",
+        over = total.saturating_sub(AXI_SRAM_LINKED),
+    );
 }

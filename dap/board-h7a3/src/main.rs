@@ -70,25 +70,40 @@ type Dap =
     App<StubSink, StubStorage, &'static mut [i32], StubPower, StubControls, StubDisplay, PRELOAD>;
 
 /// `App` is large -- it holds an `AudioPlayer` holding a full `AnyDecoder`
-/// by value (`dap-arch-tests`' `component_footprint_roster` test measures
-/// the exact current byte count) -- so it is built once at boot and moved
-/// into static storage via `StaticCell`, the same pattern as `SCRATCH`
-/// above and `dap-sim`'s `tests/static_placement.rs`'s `PLAYER_CELL`.
+/// by value -- so it is built once at boot and moved into static storage via
+/// `StaticCell`, the same pattern as `SCRATCH` above and `dap-sim`'s
+/// `tests/static_placement.rs`'s `PLAYER_CELL`.
 ///
-/// Read that test's doc comment before assuming this is free: `App::new`'s
-/// return value is constructed on `main`'s own stack FIRST, and only then
-/// moved into `APP_CELL`'s backing storage by `StaticCell::init` (there is
-/// no stable placement-new in Rust). The optimizer usually elides that move
-/// via RVO/NRVO, but the language gives no guarantee of it. This board's
-/// real on-target stack headroom for that construction-time transient is
-/// NOT verified by this change -- it needs QEMU stack-painting (deferred,
-/// no admin rights on this dev machine -- see the roadmap's Phase A1) or a
-/// flashed board. See this crate's own task report for the concrete known
-/// risk: `App`'s measured size is well beyond the H7A3's 128 KB DTCM (where
-/// the main stack lives), so this transient likely needs a non-stack
-/// construction path (e.g. piecewise field-init directly into AXI SRAM)
-/// before it's safe to run for real, even though it links and is expected
-/// to behave correctly once past this one construction call.
+/// Read that test's doc comment before assuming the move is free: `App::new`'s
+/// return value is constructed on `main`'s own stack FIRST, and only then moved
+/// into `APP_CELL`'s backing storage by `StaticCell::init` (Rust has no stable
+/// placement-new). The optimizer usually elides that move via RVO/NRVO, but the
+/// language gives no guarantee of it.
+///
+/// Where the stack lives, MEASURED (rust-lld, `--features hardware`, `llvm-nm`
+/// on the linked ELF -- not the 128 KB DTCM an earlier note here assumed):
+/// `memory.x` maps a single RAM region, the 1 MB AXI SRAM, and cortex-m-rt puts
+/// the stack at the top of it. So the "put the main stack in AXI SRAM, not DTCM"
+/// recommendation (`dap-sim/tests/stack_highwater.rs`) is already in force here.
+/// This board's real `App` -- `App<stubs, &'static mut [i32], PRELOAD = 0>` --
+/// is 174.7 KiB (`dap-arch-tests`' `component_footprint_roster` measures the
+/// same from the same instantiation; a stale comment there still cites 332 KiB
+/// from the old PRELOAD=1 / pre-externalization era), `SCRATCH` is 256 KiB, and
+/// total static storage ~432 KiB leaves ~592 KiB of stack headroom. So even a
+/// non-elided ~175 KiB App-by-value transient fits with ~3.4x margin -- this
+/// construction is NOT the overflow risk an earlier revision of this note feared.
+///
+/// Two honest caveats remain. (1) On-target runtime stack high-water is still
+/// unverified -- that wants QEMU stack-painting (deferred, no admin rights on
+/// this dev machine -- see the roadmap's Phase A1) or a flashed board. (2) As
+/// Phase E swaps the zero-size stub ports for real drivers (an e-ink
+/// framebuffer, DMA audio rings), their statics eat into that 592 KiB headroom.
+/// `dap-arch-tests`' `board_static_footprint_leaves_stack_room_in_linked_axi_sram`
+/// guards that the board's dominant statics (this `App` + the decoder scratch)
+/// plus a 256 KiB stack reserve still fit the 1 MB AXI SRAM `memory.x` actually
+/// links (NOT the wider 1208 KB `USER_SRAM` the region budgets use) -- add any
+/// new large AXI-SRAM static to that accounting, or place it in the as-yet-
+/// unlinked AHB SRAM1/2/3 instead.
 static APP_CELL: StaticCell<Dap> = StaticCell::new();
 
 #[embassy_executor::main]
