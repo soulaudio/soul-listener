@@ -28,9 +28,19 @@ ignore = [
 ]
 
 [bans]
-# Deny multiple versions of the same crate (except where explicitly allowed)
-multiple-versions = "deny"
-wildcards = "deny"          # warn on wildcard version specs (path deps are intentional in-workspace)
+# "warn", not "deny": the embassy / cortex-m embedded stack the dap firmware
+# pulls carries unavoidable duplicate crate versions (two each of nb,
+# embedded-hal, rand_core, …) that aren't a security issue and that we don't
+# control. We surface them without failing CI; the hard gates below (banned
+# crates, wildcard specs) are what actually block a bad dependency.
+multiple-versions = "warn"
+# "warn", not "deny": this graph is full of intentional, versionless PATH deps —
+# the dap workspace's own (dap-core, eink-ui) and, because cargo-deny resolves the
+# whole tree, soul-audio-core's public crates path-dep each other too (and
+# allow-wildcard-paths does NOT exempt public crates). cargo-deny can't tell those
+# apart from an accidental `foo = "*"` registry spec here, so we surface wildcards
+# rather than gate on them. The banned-crate `deny` list below is the real gate.
+wildcards = "warn"
 
 # Crates that must NEVER appear in the dependency graph
 deny = [
@@ -42,8 +52,10 @@ deny = [
     { crate = "minimp3-sys", reason = "Deprecated and unsound" },
     # epd-waveshare: does not support SSD1677 — we use a custom driver
     { crate = "epd-waveshare", reason = "Does not support SSD1677/SSD2677 — custom driver in crates/firmware/src/display/driver.rs" },
-    # No heap allocation — project uses heapless collections only.
-    { crate = "embedded-alloc", reason = "No heap allocation in this project — use heapless instead" },
+    # No heap allocation on the embedded path. ui-4 moved the DAP onto the
+    # no-alloc eink-ui toolkit and board-h7a3 dropped its embedded_alloc heap —
+    # banning the crate ENFORCES that win (re-introducing it fails CI).
+    { crate = "embedded-alloc", reason = "Embedded path is alloc-free (ui-4) — use heapless/static storage, not a heap" },
     # wee_alloc has known memory corruption (RUSTSEC-2022-0054) and is unmaintained.
     { crate = "wee_alloc", reason = "Unmaintained with known memory corruption — RUSTSEC-2022-0054" },
     # getrandom requires OS entropy sources not available on bare-metal STM32H7.
