@@ -133,6 +133,22 @@ impl Theme {
             TextScale::Display => self.font_display,
         }
     }
+
+    /// A copy of this theme with foreground/background roles swapped —
+    /// [`Role::Ink`]↔[`Role::Paper`] and [`Role::Muted`]↔[`Role::Faint`] — for
+    /// drawing a selected/highlighted element against an inverted fill (e.g. a
+    /// [`List`](crate::widgets::List)'s selected row, or inverted [`Button`]
+    /// text). Spacing and fonts are unchanged.
+    #[must_use]
+    pub fn inverted(&self) -> Theme {
+        Theme {
+            ink: self.paper,
+            muted: self.faint,
+            faint: self.muted,
+            paper: self.ink,
+            ..*self
+        }
+    }
 }
 
 impl Default for Theme {
