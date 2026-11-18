@@ -32,6 +32,7 @@ extern crate alloc;
 extern crate std;
 
 pub mod layout;
+pub mod refresh;
 pub mod theme;
 pub mod widget;
 pub mod widgets;
@@ -40,6 +41,7 @@ pub mod widgets;
 pub mod testing;
 
 pub use layout::{Align, Axis, Children, Justify};
+pub use refresh::{DirtyRegion, DirtyTracker, RefreshKind, RefreshPolicy};
 pub use theme::{Role, Space, TextScale, Theme};
 pub use widget::{Constraints, DrawError, Size, Widget};
 pub use widgets::{col, row, Button, Container, Flex, List, ProgressBar, Spacer, Stack, Text};
