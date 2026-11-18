@@ -231,31 +231,33 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
-      # dap/ path-deps soul-audio-core as a repo sibling — needed to resolve the graph.
+      # dap/ path-deps soul-audio-core as a repo sibling. Run cargo-deny NATIVELY
+      # (not EmbarkStudios/cargo-deny-action, which runs in a Docker container that
+      # mounts only $GITHUB_WORKSPACE — the sibling checkout lives OUTSIDE it, at
+      # /github/soul-audio-core, so the action can't read it: "failed to read
+      # .../soul-audio-core/.../Cargo.toml"). A native run sees the sibling.
       - uses: ./.github/actions/checkout-soul-audio-core
 
+      # @stable: recent cargo-deny needs rustc >= 1.88.
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
+
+      - name: Install cargo-deny
+        run: cargo install cargo-deny --locked
+
       # Audit the SHIPPED workspaces (dap/ + eink-ui/), not the v1 root. Only
-      # advisories/licenses/sources here: the deny.toml `bans` were written for the
-      # v1 no-alloc profile — they ban embedded-alloc (which board-h7a3 legitimately
+      # advisories/licenses/sources: the deny.toml `bans` were written for the v1
+      # no-alloc profile — they ban embedded-alloc (which board-h7a3 legitimately
       # links) and forbid the duplicate crate versions the embassy stack
       # unavoidably pulls. A dap-appropriate bans ruleset is a follow-up (task 11);
       # banned-crate enforcement (minimp3/epd-waveshare) stays covered by the
       # arch-boundaries job's cargo-tree checks.
-      # v2.1.2 bundles a newer cargo-deny that parses current RustSec advisories
-      # (v2.0.9 choked on RUSTSEC-2026-0480.md with a TOML parse error).
       - name: cargo-deny (dap/ shipped firmware)
-        uses: EmbarkStudios/cargo-deny-action@995303aa121612dcd7bbd5b92550ed2d6fc70af9  # v2.1.2
-        with:
-          manifest-path: dap/Cargo.toml
-          arguments: --config deny.toml
-          command: check advisories licenses sources
+        run: cargo deny --manifest-path dap/Cargo.toml --config deny.toml check advisories licenses sources
 
       - name: cargo-deny (eink-ui/ toolkit)
-        uses: EmbarkStudios/cargo-deny-action@995303aa121612dcd7bbd5b92550ed2d6fc70af9  # v2.1.2
-        with:
-          manifest-path: eink-ui/Cargo.toml
-          arguments: --config deny.toml
-          command: check advisories licenses sources
+        run: cargo deny --manifest-path eink-ui/Cargo.toml --config deny.toml check advisories licenses sources
 
   # ---------------------------------------------------------------------------
   # Architecture boundary enforcement via cargo tree

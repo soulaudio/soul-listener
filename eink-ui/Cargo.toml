@@ -31,3 +31,10 @@ alloc = []
 # Host-only testing support: the in-memory Framebuffer + PNG export used by
 # the golden-test harness. Implies `alloc`.
 std = ["alloc", "dep:image"]
+
+# heapless is a declared core dependency of this toolkit (no-alloc fixed-capacity
+# collections for the layout container children — see the crate docs), but the
+# code that uses it lands with the widget/layout work (task 12). Until then
+# cargo-machete sees it as unused; ignore it rather than churn the dependency.
+[package.metadata.cargo-machete]
+ignored = ["heapless"]
