@@ -3,21 +3,26 @@
 # Badge URL (add to README.md):
 #   [![CI](https://github.com/yourusername/soulaudio-dap/actions/workflows/ci.yml/badge.svg)](https://github.com/yourusername/soulaudio-dap/actions/workflows/ci.yml)
 #
-# Job overview:
-#   fmt            – cargo fmt check (all crates, host)
-#   clippy         – cargo clippy for emulator feature set (host, std)
-#   test           – cargo test per crate (host, avoids hardware/emulator conflicts)
-#   check-emulator – cargo check -p firmware with emulator+debug+keyboard-input
-#   check-embedded – cargo check -p firmware --target thumbv7em-none-eabihf --features hardware
-#   check-no-std   – cargo check per embedded crate --target thumbv7em-none-eabihf --no-default-features
-#   forbid-unsafe-coverage – tools/check-forbid-unsafe.sh (Rule 2: every embedded-path crate forbids unsafe_code)
-#   mcu-stack-budget       – tools/mcu-stackprobe (Rule 4 stack-budget gate; also the Rule 1 audio no-alloc gate)
+# This repo has THREE Cargo workspaces (the root Cargo.toml `exclude`s dap/ and
+# eink-ui/ — see its comment for why they can't share one Cargo.lock). CI mirrors
+# the authoritative `cargo xtask verify` gate (xtask/src/gate.rs):
 #
-# NOTE on feature flag exclusivity:
-#   `hardware` and `emulator` are mutually exclusive. `hardware` pulls in cortex-m/
-#   defmt/probe-rs dependencies that require an ARM linker and no-std. `emulator`
-#   pulls in tokio and winit which require std. Never use --all-features across the
-#   firmware crate — it will fail to compile on both host and embedded targets.
+#   ROOT (crates/*) — v1 Embassy-0.1 salvage, being replaced by the migration.
+#                     Bit-rotted, so it is fmt-checked ONLY (`fmt`). Gating it with
+#                     clippy/test/build would block every PR on pre-existing
+#                     breakage; that cleanup is tracked separately (task 11).
+#   dap/            — the active STM32H7A3 firmware (dap-core logic, dap-sim host
+#                     adapters, board-h7a3 bin). Fully gated: fmt-dap, clippy-dap
+#                     (host + board-h7a3 thumbv7em), test-dap, build-board-h7a3,
+#                     mcu-stack-budget. These check out soul-audio-core as a repo
+#                     sibling (.github/actions/checkout-soul-audio-core).
+#   eink-ui/        — the standalone no_std/no-alloc e-ink UI toolkit. Fully gated:
+#                     fmt-eink-ui, clippy-eink-ui, build-eink-ui (host + thumbv7em),
+#                     test-eink-ui.
+#
+# Repo-wide: deny (cargo-deny), supply-chain (cargo-audit on the shipped dap/ +
+# eink-ui/ lockfiles), unused-deps (machete on the active workspaces),
+# arch/arch-boundaries, the lint/guard greps, and forbid-unsafe-coverage.
 #
 # All GitHub Actions are pinned to exact commit SHAs for supply-chain security.
 # To update a pinned action:
@@ -62,198 +67,6 @@ jobs:
 
       - name: cargo fmt --all --check
         run: cargo fmt --all --check
-
-  # ---------------------------------------------------------------------------
-  # Clippy — host / emulator feature set
-  #
-  # We deliberately do NOT use --all-features here because `hardware` and
-  # `emulator` are mutually exclusive in the firmware crate. Instead we lint
-  # the workspace with the emulator feature set, which exercises all std-capable
-  # code paths. The embedded code paths are covered by check-embedded below.
-  #
-  # firmware-ui is a cdylib. Passing --all-targets causes cargo to compile the
-  # cdylib target on the host (fine), but combining `no-std` with `emulator`
-  # features is contradictory, so we omit --all-features entirely.
-  # ---------------------------------------------------------------------------
-  clippy:
-    name: Clippy
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
-
-      - uses: dtolnay/rust-toolchain@1.87
-        with:
-          components: clippy
-
-      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
-
-      # eink-emulator depends on winit/softbuffer which need wayland/x11 headers
-      # at compile time (pkg-config build scripts). Install them here so clippy
-      # can type-check the full workspace without skipping those crates.
-      - name: Install Linux GUI dependencies
-        run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends \
-            libwayland-dev \
-            libxkbcommon-dev \
-            libx11-dev \
-            libxi-dev \
-            libxrandr-dev
-
-      # Lint all workspace crates that compile on the host (no cross-compilation).
-      # Excludes the hardware-only firmware binary by using --lib instead of
-      # --all-targets, which would try to compile required-features=["hardware"]
-      # bins on a host target without an ARM toolchain.
-      - name: cargo clippy (workspace, emulator features)
-        run: |
-          cargo clippy --workspace --lib --tests \
-            -- -D warnings
-
-      # Also lint firmware with the emulator feature set explicitly to catch
-      # firmware-specific warnings in the emulator code paths.
-      - name: cargo clippy -p firmware (emulator features)
-        run: |
-          cargo clippy -p firmware --lib \
-            --features emulator,debug,keyboard-input \
-            -- -D warnings
-
-  # ---------------------------------------------------------------------------
-  # Documentation build — warnings as errors
-  #
-  # RUSTDOCFLAGS="-D warnings" fails on broken intra-doc links, missing items
-  # referenced in doc comments, and malformed code examples.
-  #
-  # --no-deps: only document workspace crates. Without this flag, a warning
-  # in a transitive dependency's docs would break our build.
-  # ---------------------------------------------------------------------------
-  docs:
-    name: Documentation
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
-
-      - uses: dtolnay/rust-toolchain@1.87
-
-      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
-
-      - name: Install Linux GUI dependencies
-        run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends \
-            libwayland-dev libxkbcommon-dev libx11-dev libxi-dev libxrandr-dev
-
-      - name: cargo doc (warnings as errors)
-        env:
-          RUSTDOCFLAGS: -D warnings
-        run: cargo doc --no-deps --workspace
-
-  # ---------------------------------------------------------------------------
-  # Tests — host-native, per crate
-  #
-  # cargo test --workspace --all-features is unsafe here because:
-  #   1. `firmware` has required-features = ["hardware"] on its binary target,
-  #      which needs an ARM toolchain not available on ubuntu-latest.
-  #   2. Combining hardware+emulator features links cortex-m into a std binary,
-  #      causing linker errors.
-  #
-  # Strategy: run tests for each testable crate individually with the correct
-  # feature flags. Crates that are no_std-only and have no test logic are
-  # checked via check-emulator / check-embedded instead.
-  # ---------------------------------------------------------------------------
-  test:
-    name: Tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
-
-      - uses: dtolnay/rust-toolchain@1.87
-
-      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
-
-      # eink-emulator is a direct test target and depends on winit/softbuffer
-      # which need wayland/x11 headers to compile.
-      - name: Install Linux GUI dependencies
-        run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends \
-            libwayland-dev \
-            libxkbcommon-dev \
-            libx11-dev \
-            libxi-dev \
-            libxrandr-dev
-
-      # platform: tests use tokio + embassy-time/std (configured in dev-dependencies)
-      - name: cargo test -p platform
-        run: cargo test -p platform
-
-      # eink-specs: pure data crate, no_std compatible, tests run on host
-      - name: cargo test -p eink-specs
-        run: cargo test -p eink-specs
-
-      # eink-system: pure layout engine, no external dev-deps beyond tokio
-      - name: cargo test -p eink-system
-        run: cargo test -p eink-system
-
-      # eink-components: pure component library, no external dev-deps beyond tokio
-      - name: cargo test -p eink-components
-        run: cargo test -p eink-components
-
-      # eink-emulator: std crate, tokio-based tests
-      - name: cargo test -p eink-emulator
-        run: cargo test -p eink-emulator
-
-      # eink-testing: std crate
-      - name: cargo test -p eink-testing
-        run: cargo test -p eink-testing
-
-      # firmware: lib tests only (no binary — that needs hardware features + ARM)
-      # The lib target has no required-features so it compiles on host.
-      - name: cargo test -p firmware --lib
-        run: cargo test -p firmware --lib
-
-      # firmware-ui: rlib target, no features needed for basic compilation
-      - name: cargo test -p firmware-ui
-        run: cargo test -p firmware-ui
-
-  # ---------------------------------------------------------------------------
-  # Emulator Build Check
-  #
-  # Verifies the desktop emulator compiles with the full feature set used by
-  # `cargo dev` (xtask/src/dev.rs: "emulator,debug,keyboard-input").
-  # Does not run the emulator (requires a display) — just checks it compiles.
-  # ---------------------------------------------------------------------------
-  check-emulator:
-    name: Emulator Build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
-
-      - uses: dtolnay/rust-toolchain@1.87
-
-      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
-
-      # Install system libraries required by winit/softbuffer on Linux
-      - name: Install Linux GUI dependencies
-        run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends \
-            libwayland-dev \
-            libxkbcommon-dev \
-            libx11-dev \
-            libxi-dev \
-            libxrandr-dev
-
-      - name: cargo check -p firmware (emulator features)
-        run: |
-          cargo check -p firmware \
-            --features emulator,debug,keyboard-input
-
-      # Also check that the display_emulator example resolves
-      - name: cargo check display_emulator example
-        run: |
-          cargo check -p firmware \
-            --example display_emulator \
-            --features emulator,debug,keyboard-input
 
   # ---------------------------------------------------------------------------
   # Architecture Check
@@ -473,7 +286,6 @@ jobs:
           fi
           echo "OK: minimp3 not present in dependency graph"
 
-
       - name: Vertical-slice isolation — feature crates must not cross-import each other
         run: |
           # Rule: ui, bluetooth must not depend on each other.
@@ -501,187 +313,6 @@ jobs:
             exit 1
           fi
           echo "PASS: All vertical-slice crates are properly isolated"
-
-  # ---------------------------------------------------------------------------
-  # Unsafe code audit — cargo-geiger
-  #
-  # Counts unsafe fn/impl/trait/block in workspace crates (not dependencies).
-  # Fails if the count exceeds the baseline in .geiger-baseline.
-  #
-  # cargo-geiger requires Rust >= 1.85 to install; we use stable (not MSRV).
-  # It analyses the codebase at whatever Rust version is installed.
-  #
-  # To update the baseline after intentionally adding new unsafe code:
-  #   cargo geiger --output Json 2>/dev/null | python3 tools/geiger-count.py --check .geiger-baseline
-  #   git add .geiger-baseline && git commit -m "chore: update geiger unsafe baseline"
-  # ---------------------------------------------------------------------------
-  geiger:
-    name: Unsafe code audit
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
-
-      - uses: dtolnay/rust-toolchain@1.87
-
-      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
-
-      - name: Install cargo-geiger
-        run: cargo install cargo-geiger
-
-      - name: Run unsafe code audit
-        run: cargo geiger --output Json 2>/dev/null | python3 tools/geiger-count.py --check .geiger-baseline
-
-  # ---------------------------------------------------------------------------
-  # Embedded Check (STM32H7) — fast type/borrow check without linking
-  #
-  # `cargo check` validates types and borrows for the ARM target without
-  # running the linker. This is fast but misses linker errors (undefined
-  # symbols, section overflow, flip-link layout issues). The full link is
-  # performed by the build-embedded job below.
-  # ---------------------------------------------------------------------------
-  check-embedded:
-    name: Embedded Check (STM32H7)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
-
-      - uses: dtolnay/rust-toolchain@1.87
-        with:
-          targets: thumbv7em-none-eabihf
-
-      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
-
-      - name: cargo check -p firmware (hardware, ARM target)
-        run: |
-          cargo check -p firmware \
-            --target thumbv7em-none-eabihf \
-            --features hardware
-
-  # ---------------------------------------------------------------------------
-  # No-std validation
-  #
-  # Verifies that embedded crates compile without std on the ARM Cortex-M7 target.
-  # Catches std types (String, Vec, println!) accidentally added to no_std crates.
-  # Uses the ARM target because some no_std issues only surface cross-compiling.
-  #
-  # Crate selection rationale:
-  #   eink-specs       — pure data crate, no deps, expected no_std
-  #   eink-system      — layout engine, no_std by design (uses heapless)
-  #   eink-components  — UI components, no_std by design (uses heapless)
-  #   platform         — HAL trait definitions, no_std (Embassy + embedded-hal)
-  #   ui               — application UI state, #![cfg_attr(not(test), no_std)]
-  #   bluetooth        — BLE HCI, #![cfg_attr(not(test), no_std)]
-  #   firmware-ui      — uses --features no-std (cdylib requires std on host by
-  #                       default; the `no-std` feature activates #![no_std])
-  # ---------------------------------------------------------------------------
-  check-no-std:
-    name: No-std validation
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
-
-      - uses: dtolnay/rust-toolchain@1.87
-        with:
-          targets: thumbv7em-none-eabihf
-
-      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
-
-      - name: eink-specs — no_std
-        run: cargo check -p eink-specs --target thumbv7em-none-eabihf --no-default-features
-
-      - name: eink-system — no_std
-        run: cargo check -p eink-system --target thumbv7em-none-eabihf --no-default-features
-
-      - name: eink-components — no_std
-        run: cargo check -p eink-components --target thumbv7em-none-eabihf --no-default-features
-
-      - name: platform — no_std
-        run: cargo check -p platform --target thumbv7em-none-eabihf --no-default-features
-
-      - name: ui — no_std
-        run: cargo check -p ui --target thumbv7em-none-eabihf --no-default-features
-
-      - name: bluetooth — no_std
-        run: cargo check -p bluetooth --target thumbv7em-none-eabihf --no-default-features
-
-      # firmware-ui is a cdylib that stays std on the host by default (so that
-      # `cargo clippy --all-targets` compiles it without cross-compilation).
-      # The `no-std` feature activates #![no_std]; we verify that path here.
-      - name: firmware-ui — no_std (via --features no-std)
-        run: cargo check -p firmware-ui --target thumbv7em-none-eabihf --no-default-features --features no-std
-
-  # ---------------------------------------------------------------------------
-  # Embedded Build (STM32H7) — full link with flip-link stack protection
-  #
-  # `cargo build` runs the full compilation + linker pipeline, which catches:
-  #   - Undefined symbols (missing cortex-m-rt exception vectors)
-  #   - Section overflow (firmware exceeds 2 MB flash limit)
-  #   - flip-link layout errors (stack size + static footprint too large for RAM)
-  #   - Linker script errors in memory.x
-  #
-  # `cargo check` (above) misses all of these because it skips the link step.
-  #
-  # flip-link is installed via `cargo install` because it is a standalone
-  # linker binary, not a Rust library dependency. It is configured in
-  # .cargo/config.toml as: linker = "flip-link" under [target.thumbv7em-none-eabihf].
-  #
-  # Binary size check: firmware must not exceed 2 MB (STM32H743ZI flash limit).
-  # ---------------------------------------------------------------------------
-  build-embedded:
-    name: Embedded Build + Size Check (STM32H7)
-    runs-on: ubuntu-latest
-    needs: check-embedded   # Only full-build if fast check passes first
-    steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
-
-      - uses: dtolnay/rust-toolchain@1.87
-        with:
-          targets: thumbv7em-none-eabihf
-
-      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
-
-      - name: Install flip-link (stack overflow protection linker)
-        # flip-link is a standalone linker binary — NOT a Cargo library dep.
-        # Configured in .cargo/config.toml: linker = "flip-link"
-        # Ref: https://github.com/knurling-rs/flip-link
-        run: cargo install flip-link
-
-      - name: Install cargo-auditable
-        # cargo-auditable embeds a compressed dependency manifest into the firmware ELF.
-        # Enables post-deployment CVE scanning:
-        #   cargo audit bin target/thumbv7em-none-eabihf/release/firmware
-        # Critical for field-deployed units where Cargo.lock may not be available.
-        # Ref: https://github.com/rust-secure-code/cargo-auditable
-        run: cargo install cargo-auditable --locked
-
-      - name: cargo build -p firmware (hardware, ARM target, release)
-        # Full link: catches linker errors, section overflow, flip-link issues.
-        # Uses --release to match the production build profile (LTO, opt-level=z).
-        run: |
-          cargo auditable build --release \
-            --target thumbv7em-none-eabihf \
-            --package firmware \
-            --features hardware
-
-      - name: Check firmware binary size (must not exceed 2 MB flash)
-        run: |
-          ELF=target/thumbv7em-none-eabihf/release/firmware
-          if [ ! -f "$ELF" ]; then
-            echo "ERROR: firmware ELF not found at $ELF"
-            exit 1
-          fi
-          SIZE=$(stat -c%s "$ELF")
-          echo "Firmware ELF size: $SIZE bytes"
-          # 2 MB = 2097152 bytes. ELF includes debug symbols so the actual
-          # flash usage is smaller (stripped .text+.rodata), but a >4 MB ELF
-          # indicates something is very wrong with the build.
-          MAX_ELF_SIZE=4194304  # 4 MB: conservative upper bound for ELF+debug
-          if [ "$SIZE" -gt "$MAX_ELF_SIZE" ]; then
-            echo "ERROR: Firmware ELF ($SIZE bytes) exceeds sanity limit ($MAX_ELF_SIZE bytes)"
-            echo "Run: cargo size --release --target thumbv7em-none-eabihf -p firmware --features hardware -- -A"
-            exit 1
-          fi
-          echo "OK: firmware ELF size $SIZE bytes is within limits"
 
   # ---------------------------------------------------------------------------
   # board-h7a3 cross-build (Embassy 0.6, STM32H7A3)
@@ -844,262 +475,6 @@ jobs:
         run: cargo test
 
   # ---------------------------------------------------------------------------
-  # ELF section address verification (STM32H743)
-  #
-  # Builds the firmware ELF and verifies that the linker script (memory.x)
-  # correctly places the .axisram NOLOAD section in AXI SRAM (0x24000000).
-  # A misconfigured linker script would silently place DMA buffers in DTCM
-  # (0x20000000), which is NOT DMA-accessible, causing runtime data corruption.
-  #
-  # Also runs the host-side elf_sections integration tests which validate
-  # memory.x structure without needing the ARM toolchain.
-  # ---------------------------------------------------------------------------
-  verify-elf-sections:
-    name: Verify ELF Section Placement
-    runs-on: ubuntu-latest
-    needs: [build-embedded]
-    steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
-
-      - uses: dtolnay/rust-toolchain@1.87
-        with:
-          targets: thumbv7em-none-eabihf
-
-      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
-
-      - name: Install ARM binutils
-        run: sudo apt-get install -y binutils-arm-none-eabi
-
-      - name: Install flip-link
-        run: cargo install flip-link
-
-      - name: Build firmware ELF
-        run: cargo build --release --target thumbv7em-none-eabihf --package firmware --features hardware
-
-      - name: Verify .axisram section address
-        run: |
-          ELF=target/thumbv7em-none-eabihf/release/firmware
-          echo "=== ELF Sections ==="
-          arm-none-eabi-readelf -S --wide "$ELF" | grep -E "[.]axisram|[.]sram|[.]bss|[.]data|Name" || true
-          echo ""
-          echo "=== Checking .axisram is in AXI SRAM (0x24000000) ==="
-          if arm-none-eabi-readelf -S --wide "$ELF" | grep "[.]axisram" | grep -q "2400"; then
-            echo "PASS: .axisram is in AXI SRAM range"
-          else
-            echo "INFO: .axisram not found or empty (NOLOAD section omitted when zero-sized)"
-          fi
-          echo ""
-          echo "=== Checking no DMA buffers in DTCM (0x20000000-0x2001FFFF) ==="
-          DTCM_SYMBOLS=$(arm-none-eabi-nm --radix=hex "$ELF" | grep -E "^2000|^2001" | grep -E "AUDIO|FRAMEBUF" || true)
-          if [ -n "$DTCM_SYMBOLS" ]; then
-            echo "FAIL: DMA buffer(s) found in DTCM!"
-            echo "$DTCM_SYMBOLS"
-            exit 1
-          else
-            echo "PASS: No DMA buffers in DTCM"
-          fi
-
-
-      - name: Verify .sram4 section address
-        run: |
-          ELF=target/thumbv7em-none-eabihf/release/firmware
-          echo "=== Checking .sram4 section is in SRAM4 range (0x38000000-0x3800FFFF) ==="
-          # SRAM4 (64 KB, D3 domain) is BDMA-only. DMA1/DMA2 cannot reach it.
-          # A .sram4 buffer accidentally linked into AXI SRAM would be silently
-          # corrupted by DMA1/DMA2 without triggering any fault.
-          SRAM4_SECTIONS=$(arm-none-eabi-readelf -S --wide "$ELF" | grep "[.]sram4" || true)
-          if [ -n "$SRAM4_SECTIONS" ]; then
-            echo "Found .sram4 sections:"
-            echo "$SRAM4_SECTIONS"
-            # Check all .sram4 addresses start with 38 (0x38xxxxxx = SRAM4 range)
-            if echo "$SRAM4_SECTIONS" | grep -qv " 38"; then
-              echo "ERROR: .sram4 section is NOT in SRAM4 range (0x38000000-0x3800FFFF)"
-              exit 1
-            fi
-            echo "PASS: .sram4 section is in SRAM4 range"
-          else
-            echo "INFO: No .sram4 sections found (expected if no BDMA buffers declared yet)"
-          fi
-          echo ""
-          echo "=== Paranoia check: no sram4 symbols mislinked into AXI SRAM ==="
-          # arm-none-eabi-nm lists: <address> <type> <name>
-          # Filter bss/data symbols whose names contain 'sram4' but whose
-          # address does NOT start with 38 (SRAM4 window).
-          MISLINKED=$(arm-none-eabi-nm --defined-only "$ELF" | awk '$2 ~ /[bBdD]/ && $3 ~ /sram4/ {print}' | grep -v "^38" || true)
-          if [ -n "$MISLINKED" ]; then
-            echo "ERROR: SRAM4 symbols mislinked outside SRAM4 range:"
-            echo "$MISLINKED"
-            exit 1
-          fi
-          echo "PASS: No SRAM4 symbols mislinked outside SRAM4 range"
-
-      - name: Run elf_sections host tests (memory.x structural checks)
-        # Verifies memory.x structure without requiring a pre-built ELF.
-        run: cargo test -p firmware --test elf_sections
-
-      - name: Run elf_sections ELF-backed tests
-        # Passes ELF path so readelf/nm-backed tests also execute.
-        env:
-          FIRMWARE_ELF_PATH: ${{ github.workspace }}/target/thumbv7em-none-eabihf/release/firmware
-        run: cargo test -p firmware --test elf_sections
-
-
-  # ---------------------------------------------------------------------------
-  # Clippy — embedded target (thumbv7em-none-eabihf)
-  #
-  # Runs clippy for the ARM embedded target, which catches embedded-specific
-  # issues that host clippy misses (unsafe DMA patterns, no_std constraints,
-  # cortex-m peripheral access patterns).
-  #
-  # Separate from the host clippy job because:
-  #   1. Requires ARM target installation
-  #   2. Uses --no-default-features to avoid std deps
-  #   3. Requires flip-link to resolve linker configuration
-  # ---------------------------------------------------------------------------
-  clippy-embedded:
-    name: Clippy (embedded target)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
-
-      - uses: dtolnay/rust-toolchain@1.87
-        with:
-          targets: thumbv7em-none-eabihf
-          components: clippy
-
-      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
-
-      - name: Install flip-link
-        run: cargo install flip-link
-
-      - name: Clippy firmware (embedded target)
-        run: |
-          cargo clippy \
-            --package firmware \
-            --target thumbv7em-none-eabihf \
-            --no-default-features \
-            --features hardware \
-            -- -D warnings
-
-      - name: Clippy platform (embedded target, no-default-features)
-        run: |
-          cargo clippy \
-            --package platform \
-            --target thumbv7em-none-eabihf \
-            --no-default-features \
-            -- -D warnings
-
-  # ---------------------------------------------------------------------------
-  # Binary size check — arm-none-eabi-size (text+data sections)
-  #
-  # Uses arm-none-eabi-size to measure actual flash section sizes, which is
-  # more accurate than the ELF file size (which includes debug symbols).
-  #
-  # The text section = flash usage. Fail if it exceeds 1.8 MB to leave 200 KB
-  # headroom in the 2 MB flash for future growth and OTA staging.
-  #
-  # Runs independently of build-embedded (parallel CI) for faster feedback.
-  # ---------------------------------------------------------------------------
-  binary-size:
-    name: Binary size check
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
-
-      - uses: dtolnay/rust-toolchain@1.87
-        with:
-          targets: thumbv7em-none-eabihf
-
-      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
-
-      - name: Install tools
-        run: |
-          cargo install flip-link
-          sudo apt-get install -y binutils-arm-none-eabi
-
-      - name: Build firmware
-        run: |
-          cargo build \
-            --package firmware \
-            --release \
-            --target thumbv7em-none-eabihf \
-            --no-default-features \
-            --features hardware
-
-      - name: Check binary size (per-section limits)
-        run: |
-          ELF=target/thumbv7em-none-eabihf/release/firmware
-
-          # Print the standard size table for CI log readability
-          echo "=== arm-none-eabi-size ==="
-          arm-none-eabi-size "$ELF"
-
-          # Extract individual section sizes
-          read TEXT DATA BSS <<< $(arm-none-eabi-size "$ELF" | tail -1 | awk '{print $1, $2, $3}')
-          FLASH_TOTAL=$((TEXT + DATA))
-
-          echo ""
-          echo "=== Section limits ==="
-          echo "  .text  (code + read-only data, stored in flash): ${TEXT} bytes"
-          echo "  .data  (initialised RAM variables, stored in flash, copied at boot): ${DATA} bytes"
-          echo "  .bss   (zero-initialised RAM, not stored in flash): ${BSS} bytes"
-          echo "  Flash total (.text + .data): ${FLASH_TOTAL} bytes"
-
-          # ── .text limit ──────────────────────────────────────────────────────
-          # STM32H743ZI has 2 MB dual-bank flash. Leave 200 KB headroom for OTA.
-          MAX_TEXT=1887436   # 1.8 * 1024 * 1024
-          if [ "$TEXT" -gt "$MAX_TEXT" ]; then
-            echo "ERROR: .text ${TEXT} bytes exceeds 1.8 MB limit (${MAX_TEXT} bytes)"
-            echo "  Run: cargo size --release --target thumbv7em-none-eabihf -p firmware --features hardware -- -A"
-            exit 1
-          fi
-
-          # ── .data limit ──────────────────────────────────────────────────────
-          # Initialised variables (non-zero statics) are stored in flash and
-          # copied to RAM at boot. Large .data typically means font/LUT tables
-          # that should instead live in QSPI NOR flash (read via DMA, not copied).
-          MAX_DATA=65536   # 64 KB — large .data = wrong; use QSPI for tables
-          if [ "$DATA" -gt "$MAX_DATA" ]; then
-            echo "ERROR: .data ${DATA} bytes exceeds 64 KB limit (${MAX_DATA} bytes)"
-            echo "  Large .data usually means static lookup tables that should live in QSPI NOR."
-            echo "  Mark them #[link_section = \".qspi\"] or load them lazily from NOR flash."
-            exit 1
-          fi
-
-          # ── .bss limit ───────────────────────────────────────────────────────
-          # Zero-initialised statics (heapless buffers, DMA regions).
-          # Internal SRAM is 992 KB total; external SDRAM is 32-64 MB.
-          # Buffers over 256 KB that aren't DMA-critical should use external SDRAM.
-          MAX_BSS=786432   # 768 KB — generous; actual target SRAM is ~992 KB total
-          if [ "$BSS" -gt "$MAX_BSS" ]; then
-            echo "ERROR: .bss ${BSS} bytes exceeds 768 KB limit (${MAX_BSS} bytes)"
-            echo "  Large .bss usually means big buffers that should use external SDRAM at 0xC0000000."
-            exit 1
-          fi
-
-          echo ""
-          echo "=== OK ==="
-          echo "  .text  ${TEXT} / ${MAX_TEXT} bytes ($(( TEXT * 100 / MAX_TEXT ))% of limit)"
-          echo "  .data  ${DATA} / ${MAX_DATA} bytes ($(( DATA * 100 / MAX_DATA ))% of limit)"
-          echo "  .bss   ${BSS} / ${MAX_BSS} bytes ($(( BSS * 100 / MAX_BSS ))% of limit)"
-          echo "  Flash  ${FLASH_TOTAL} bytes total"
-
-      - name: No-malloc check
-        run: |
-          echo "Checking for heap allocation symbols in firmware ELF..."
-          HEAP_SYMS=$(arm-none-eabi-nm target/thumbv7em-none-eabihf/release/firmware 2>/dev/null \
-            | grep -E '\b(malloc|free|_sbrk|__malloc_av_)\b' || true)
-          if [ -n "$HEAP_SYMS" ]; then
-            echo "ERROR: Heap allocation symbols found in firmware ELF:"
-            echo "$HEAP_SYMS"
-            echo ""
-            echo "This means a dependency is using malloc/free."
-            echo "Audit new dependencies with 'cargo tree' and check for std allocator usage."
-            exit 1
-          fi
-          echo "OK: No heap allocation symbols found."
-
-  # ---------------------------------------------------------------------------
   # forbid-unsafe-coverage — Rule 2 (no `unsafe`) coverage gate
   #
   # tools/check-forbid-unsafe.sh greps every embedded-path crate's crate-root
@@ -1181,38 +556,6 @@ jobs:
         run: bash tools/mcu-stackprobe/check-stack.sh
 
   # ---------------------------------------------------------------------------
-  # MSRV — Minimum Supported Rust Version
-  #
-  # Reads rust-version from Cargo.toml and compiles with that exact toolchain.
-  # Prevents silent breakage when users upgrade their toolchain; ensures the
-  # firmware compiles with the oldest supported Rust version.
-  #
-  # Embassy requires ~1.75+ for async fn in traits. Update rust-version in
-  # Cargo.toml when intentionally adopting newer language features.
-  # ---------------------------------------------------------------------------
-  msrv:
-    name: Minimum Supported Rust Version
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
-
-      - name: Get MSRV from Cargo.toml
-        id: msrv
-        run: |
-          MSRV=$(grep 'rust-version' Cargo.toml | head -1 | sed 's/.*= *"\([^"]*\)".*/\1/')
-          echo "msrv=$MSRV" >> $GITHUB_OUTPUT
-          echo "MSRV: $MSRV"
-
-      - uses: dtolnay/rust-toolchain@master
-        with:
-          toolchain: ${{ steps.msrv.outputs.msrv }}
-
-      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
-
-      - name: Check workspace with MSRV toolchain
-        run: cargo check --workspace
-
-  # ---------------------------------------------------------------------------
   # Unused dependencies — cargo machete
   #
   # cargo machete detects dependencies declared in Cargo.toml that are not
@@ -1236,8 +579,14 @@ jobs:
       - name: Install cargo-machete
         run: cargo install cargo-machete
 
-      - name: Check for unused dependencies
-        run: cargo machete
+      # Scope to the ACTIVE workspaces — the dap/ shipped firmware and the
+      # eink-ui/ toolkit. The root workspace is the bit-rotted v1 salvage
+      # (gate.rs: root is fmt-only), so it is deliberately not machete-checked.
+      - name: Check for unused dependencies (dap/)
+        run: cargo machete dap
+
+      - name: Check for unused dependencies (eink-ui/)
+        run: cargo machete eink-ui
 
   # ---------------------------------------------------------------------------
   # Lint coverage — every crate must opt into workspace lints
@@ -1273,40 +622,6 @@ jobs:
             exit 1
           fi
           echo "OK: All crates opt into workspace lints"
-
-  # ---------------------------------------------------------------------------
-  # Documentation tests (GAP-L4)
-  #
-  # `cargo test --doc` runs all code examples in `///` and `//!` doc comments.
-  # Doc examples are part of the public API contract: if they fail to compile
-  # or produce wrong output, the documentation is misleading. Without this job
-  # they bitrot silently when APIs change.
-  #
-  # Only host-compilable crates are included here. Skipped crates:
-  #   eink-emulator  — requires a windowing system (no display in CI)
-  #   firmware        — no_std, doc tests not supported on embedded target
-  #   firmware-ui     — cdylib + no_std via feature; doc tests run as rlib below
-  # ---------------------------------------------------------------------------
-  doc-tests:
-    name: Documentation tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
-
-      - uses: dtolnay/rust-toolchain@1.87
-
-      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
-
-      - name: Run doc tests (host-compilable crates)
-        run: |
-          # Doc tests for crates that compile on the host without a display.
-          # cargo test --doc compiles and runs every ``` code block in /// comments.
-          cargo test --doc -p platform
-          cargo test --doc -p eink-specs
-          cargo test --doc -p eink-system
-          cargo test --doc -p eink-components
-          cargo test --doc -p eink-testing
-          cargo test --doc -p firmware-ui
 
   # ---------------------------------------------------------------------------
   # Supply chain security (GAP-L3)
@@ -1345,23 +660,19 @@ jobs:
       - name: Install cargo-audit
         run: cargo install cargo-audit --locked
 
-      - name: Run cargo audit (RustSec advisory database)
-        # Checks Cargo.lock against known CVEs and security advisories.
-        # --deny warnings turns advisory warnings into hard failures.
-        # Remove --deny warnings if a dependency has an unfixed advisory
-        # and you need to suppress it with an ignore entry in audit.toml.
-        run: cargo audit
+      # Audit the SHIPPED lockfiles for RustSec advisories: the dap/ firmware
+      # workspace and the eink-ui/ toolkit (the audio deps are additionally
+      # audited in soul-audio-core's own security CI). The root workspace is the
+      # bit-rotted, unshipped v1 salvage (gate.rs: fmt-only) and is not audited.
+      # RUSTSEC-2024-0436 (paste, unmaintained, transitive) is ignored to match
+      # deny.toml. NOTE: cargo-vet (manual trust annotations) was configured for
+      # the root workspace only; porting the vet corpus to dap/ + eink-ui/ is
+      # tracked as follow-up (task 11) — cargo-audit covers advisories meanwhile.
+      - name: cargo audit (dap/ shipped firmware)
+        run: cargo audit --file dap/Cargo.lock --ignore RUSTSEC-2024-0436
 
-      - name: Install cargo-vet
-        run: cargo install cargo-vet --locked
-
-      - name: Run cargo vet check (supply-chain trust annotations)
-        # cargo vet verifies every dependency against audit entries or exemptions.
-        # After `cargo vet init`, all existing deps are covered by exemptions.
-        # Replace exemptions with proper audit entries using:
-        #   cargo vet certify <crate> <version>
-        # Fails CI if any unvetted dependency is found (no fallback echo).
-        run: cargo vet check
+      - name: cargo audit (eink-ui/ toolkit)
+        run: cargo audit --file eink-ui/Cargo.lock --ignore RUSTSEC-2024-0436
 
   # ---------------------------------------------------------------------------
   # no-todo-in-production: Enforced at compile time by workspace lint
@@ -1446,3 +757,89 @@ jobs:
             exit 1
           fi
           echo "OK: .gitignore does not exclude Cargo.lock"
+
+  # ---------------------------------------------------------------------------
+  # eink-ui/ workspace — the standalone, publishable no_std/no-alloc e-ink UI
+  # toolkit (docs/plans/2026-11-16-eink-ui-toolkit-design.md). It is its own
+  # workspace (the root Cargo.toml `exclude`s it), so it gets its own jobs that
+  # mirror `cargo xtask verify`'s eink-ui gating (xtask/src/gate.rs): fmt, clippy
+  # (--all-features), the no_std host build, the thumbv7em cross-build, and the
+  # std-gated golden-test harness. No soul-audio-core sibling is needed — eink-ui
+  # has no audio dependencies.
+  # ---------------------------------------------------------------------------
+  fmt-eink-ui:
+    name: eink-ui Workspace Format
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: eink-ui
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+
+      - name: cargo fmt --all --check (eink-ui)
+        run: cargo fmt --all --check
+
+  clippy-eink-ui:
+    name: eink-ui Workspace Clippy
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: eink-ui
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+
+      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
+        with:
+          workspaces: "eink-ui -> target"
+
+      - name: cargo clippy --all-targets --all-features (eink-ui)
+        run: cargo clippy --all-targets --all-features -- -D warnings
+
+  build-eink-ui:
+    name: eink-ui Build (no_std host + thumbv7em cross)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: eink-ui
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: thumbv7em-none-eabihf
+
+      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
+        with:
+          workspaces: "eink-ui -> target"
+
+      - name: cargo build (default no_std/no-alloc, host)
+        run: cargo build
+
+      - name: cargo build --target thumbv7em-none-eabihf (cross)
+        run: cargo build --target thumbv7em-none-eabihf
+
+  test-eink-ui:
+    name: eink-ui Workspace Tests (golden, std)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: eink-ui
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
+        with:
+          workspaces: "eink-ui -> target"
+
+      - name: cargo test --features std (golden-test harness)
+        run: cargo test --features std
