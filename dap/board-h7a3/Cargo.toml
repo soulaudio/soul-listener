@@ -2,6 +2,9 @@
 name = "board-h7a3"
 version = "0.1.0"
 edition = "2021"
+# Internal firmware binary, never published — marks it private so cargo-deny's
+# `[licenses] private.ignore` skips it (the repo is MIT OR Apache-2.0; see LICENSE).
+publish = false
 
 # Member of the dap/ workspace (dap/Cargo.toml), not a standalone workspace.
 # The dap/ workspace as a whole is excluded from the repo-root workspace:

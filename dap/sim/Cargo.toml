@@ -2,6 +2,9 @@
 name = "dap-sim"
 version = "0.1.0"
 edition = "2021"
+# Internal firmware crate, never published — marks it private so cargo-deny's
+# `[licenses] private.ignore` skips it (the repo is MIT OR Apache-2.0; see LICENSE).
+publish = false
 description = "Host-side (std) simulation adapters implementing dap-core's ports, for desktop development and testing."
 
 [dependencies]

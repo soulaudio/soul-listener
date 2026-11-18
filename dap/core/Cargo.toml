@@ -2,6 +2,9 @@
 name = "dap-core"
 version = "0.1.0"
 edition = "2021"
+# Internal firmware crate, never published — marks it private so cargo-deny's
+# `[licenses] private.ignore` skips it (the repo is MIT OR Apache-2.0; see LICENSE).
+publish = false
 description = "Board-agnostic DAP logic and ports (no_std, no embassy; usable from host and target)."
 
 # `stub`: compiles in `src/stub.rs`'s no_std, no-alloc placeholder port
