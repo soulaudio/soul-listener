@@ -10,6 +10,8 @@
 #   check-emulator – cargo check -p firmware with emulator+debug+keyboard-input
 #   check-embedded – cargo check -p firmware --target thumbv7em-none-eabihf --features hardware
 #   check-no-std   – cargo check per embedded crate --target thumbv7em-none-eabihf --no-default-features
+#   forbid-unsafe-coverage – tools/check-forbid-unsafe.sh (Rule 2: every embedded-path crate forbids unsafe_code)
+#   mcu-stack-budget       – tools/mcu-stackprobe (Rule 4 stack-budget gate; also the Rule 1 audio no-alloc gate)
 #
 # NOTE on feature flag exclusivity:
 #   `hardware` and `emulator` are mutually exclusive. `hardware` pulls in cortex-m/
@@ -1085,6 +1087,32 @@ jobs:
           echo "OK: No heap allocation symbols found."
 
   # ---------------------------------------------------------------------------
+  # forbid-unsafe-coverage — Rule 2 (no `unsafe`) coverage gate
+  #
+  # tools/check-forbid-unsafe.sh greps every embedded-path crate's crate-root
+  # file (dap-core, dap-sim, eink-system, eink-components, eink-specs) for
+  # `#![forbid(unsafe_code)]` and fails, naming the offender, the instant one
+  # is missing it (a new crate added without the attribute, or an existing
+  # `forbid` weakened during a refactor). It also checks that the two
+  # documented exceptions (eink-emulator: host/winit; board-h7a3: one
+  # `embedded_alloc::LlffHeap::init` unsafe block) still carry their written
+  # justification. See docs/plans/2026-11-17-architecture-enforcement-fitness-
+  # functions.md, Rule 2 — soul-audio-core itself is gated in its own repo's
+  # CI (consumed here only via path dependency).
+  #
+  # No toolchain/build needed — this is a fast, static grep over known
+  # files, so there's no checkout-then-build step beyond actions/checkout.
+  # ---------------------------------------------------------------------------
+  forbid-unsafe-coverage:
+    name: forbid(unsafe_code) coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      - name: Run the forbid-unsafe coverage gate
+        run: bash tools/check-forbid-unsafe.sh
+
+  # ---------------------------------------------------------------------------
   # mcu-stack-budget — static on-target (Cortex-M7) open-path stack gate
   #
   # tools/mcu-stackprobe is a bare-metal thumbv7em-none-eabihf harness that
@@ -1104,6 +1132,14 @@ jobs:
   # A future decoder/format that inflates either number past budget fails
   # CI here, before it ever reaches real hardware. This is purely STATIC
   # (no QEMU — needs admin rights, deferred; see the roadmap's Phase A1/A2).
+  #
+  # This job ALSO doubles as Rule 1's audio no-alloc gate (MISRA Dir 4.12):
+  # mcu-stackprobe deliberately declares no `#[global_allocator]`, so the
+  # build step below would fail to LINK ("no global memory allocator
+  # found") the instant any crate on soul-audio-core's open/decode path
+  # ever pulled in `alloc` — before the stack-size assertions even run. See
+  # tools/mcu-stackprobe/README.md for the full writeup and the display-
+  # path's separate, still-open alloc gap (dap/sim/tests/alloc_policy.rs).
   #
   # mcu-stackprobe is its own standalone single-crate `[workspace]`, outside
   # the root workspace (own Cargo.lock, nightly-only `-Z` flag), hence the
