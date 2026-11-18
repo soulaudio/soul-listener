@@ -13,7 +13,12 @@ targets = [
 version = 2
 db-urls = ["https://github.com/rustsec/advisory-db"]
 yanked = "deny"
-unmaintained = "deny"
+# NOTE: `unmaintained` is no longer a severity toggle. In cargo-deny's advisories
+# v2 schema the `vulnerability`/`unmaintained`/`unsound`/`notice` severity keys
+# were removed (EmbarkStudios/cargo-deny#611, enforced as errors in #681) — every
+# advisory class is now `deny` by default. So dropping `unmaintained = "deny"`
+# preserves the prior strict intent (all unmaintained advisories still fail),
+# with the `ignore` list below carving out accepted transitive exceptions.
 ignore = [
     # paste v1.0.15 is unmaintained (transitive via num-derive → paste).
     # No replacement available yet; low severity.
