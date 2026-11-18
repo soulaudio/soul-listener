@@ -250,18 +250,16 @@ jobs:
       - name: Install cargo-deny
         run: cargo install cargo-deny --locked
 
-      # Audit the SHIPPED workspaces (dap/ + eink-ui/), not the v1 root. Only
-      # advisories/licenses/sources: the deny.toml `bans` were written for the v1
-      # no-alloc profile — they ban embedded-alloc (which board-h7a3 legitimately
-      # links) and forbid the duplicate crate versions the embassy stack
-      # unavoidably pulls. A dap-appropriate bans ruleset is a follow-up (task 11);
-      # banned-crate enforcement (minimp3/epd-waveshare) stays covered by the
-      # arch-boundaries job's cargo-tree checks.
+      # Audit the SHIPPED workspaces (dap/ + eink-ui/), not the v1 root — full
+      # advisories/bans/licenses/sources. `bans` is back on now that ui-4 made the
+      # DAP alloc-free: the deny.toml ban on embedded-alloc no longer conflicts and
+      # instead ENFORCES the no-alloc win (plus no minimp3/getrandom/wee_alloc in
+      # the firmware). multiple-versions is "warn" (embassy's unavoidable dups).
       - name: cargo-deny (dap/ shipped firmware)
-        run: cargo deny --manifest-path dap/Cargo.toml --config deny.toml check advisories licenses sources
+        run: cargo deny --manifest-path dap/Cargo.toml --config deny.toml check advisories bans licenses sources
 
       - name: cargo-deny (eink-ui/ toolkit)
-        run: cargo deny --manifest-path eink-ui/Cargo.toml --config deny.toml check advisories licenses sources
+        run: cargo deny --manifest-path eink-ui/Cargo.toml --config deny.toml check advisories bans licenses sources
 
   # ---------------------------------------------------------------------------
   # Architecture boundary enforcement via cargo tree
