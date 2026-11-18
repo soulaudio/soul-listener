@@ -9,20 +9,47 @@ description: >
   and move it up to the sibling path. soul-audio-core is PUBLIC, so no token is
   needed — the default unauthenticated clone works.
 
+  By default the ref is the PINNED revision in .github/soul-audio-core.pin (not a
+  floating branch), so CI is reproducible: a DAP build always sees one known
+  soul-audio-core commit, and picking up soul-audio-core changes is a deliberate,
+  reviewed pin bump (tools/soul-audio-core-pin.sh). Pass `ref` to override (e.g. a
+  drift check against `main`).
+
 inputs:
   ref:
-    description: git ref of soul-audio-core to check out (branch, tag, or SHA)
+    description: >
+      git ref of soul-audio-core to check out (branch, tag, or SHA). Empty (the
+      default) means "read the pinned SHA from .github/soul-audio-core.pin".
     required: false
-    default: main
+    default: ""
 
 runs:
   using: composite
   steps:
+    - name: Resolve soul-audio-core ref (pin file unless overridden)
+      id: resolve
+      shell: bash
+      run: |
+        set -euo pipefail
+        ref="${{ inputs.ref }}"
+        if [ -z "$ref" ]; then
+          pin="$GITHUB_WORKSPACE/.github/soul-audio-core.pin"
+          ref="$(grep -vE '^[[:space:]]*#|^[[:space:]]*$' "$pin" | head -1 | tr -d '[:space:]')"
+          echo "resolved ref from pin file: $ref"
+        else
+          echo "ref overridden by input: $ref"
+        fi
+        if [ -z "$ref" ]; then
+          echo "::error::no soul-audio-core ref resolved (is .github/soul-audio-core.pin empty?)"
+          exit 1
+        fi
+        echo "ref=$ref" >> "$GITHUB_OUTPUT"
+
     - name: Check out soul-audio-core into a workspace subdir
       uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       with:
         repository: soulaudio/soul-audio-core
-        ref: ${{ inputs.ref }}
+        ref: ${{ steps.resolve.outputs.ref }}
         path: .soul-audio-core-sibling
 
     - name: Move soul-audio-core to the sibling path the path-deps expect
@@ -32,4 +59,4 @@ runs:
         dest="$GITHUB_WORKSPACE/../soul-audio-core"
         rm -rf "$dest"
         mv "$GITHUB_WORKSPACE/.soul-audio-core-sibling" "$dest"
-        echo "soul-audio-core (${{ inputs.ref }}) positioned at: $(cd "$dest" && pwd)"
+        echo "soul-audio-core (${{ steps.resolve.outputs.ref }}) positioned at: $(cd "$dest" && pwd)"

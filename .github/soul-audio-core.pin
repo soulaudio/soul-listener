@@ -1,0 +1,13 @@
+# soul-audio-core commit the DAP CI builds against (the `soul-audio-core` /
+# soul-audio-engine / soul-audio-index path deps resolve to THIS revision in CI).
+#
+# Why a pin, not a floating branch: building CI against soul-audio-core@main makes
+# every DAP PR's result depend on when it runs — an unrelated soul-audio-core merge
+# can turn a green PR red on re-run (non-reproducible). Pinning a rev makes CI
+# deterministic and makes picking up soul-audio-core changes a DELIBERATE, reviewed
+# bump (tools/soul-audio-core-pin.sh). Local dev is unaffected: dap/ keeps the
+# sibling PATH dep, so your working copy of ../../soul-audio-core is what builds
+# locally — this pin only governs CI.
+#
+# One line, the full 40-char SHA. Update with: tools/soul-audio-core-pin.sh --set <sha>
+8d8e4e0777287b6d3ffa62697aff75b3ab7caad4

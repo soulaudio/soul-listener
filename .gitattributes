@@ -14,3 +14,5 @@ tools/check-forbid-unsafe.sh text eol=lf
 
 # Linker scripts must be LF — CR breaks rust-lld/flip-link parsing.
 *.x text eol=lf
+tools/soul-audio-core-pin.sh text eol=lf
+.github/soul-audio-core.pin text eol=lf
