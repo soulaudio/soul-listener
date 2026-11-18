@@ -42,4 +42,4 @@ pub mod testing;
 pub use layout::{Align, Axis, Children, Justify};
 pub use theme::{Role, Space, TextScale, Theme};
 pub use widget::{Constraints, DrawError, Size, Widget};
-pub use widgets::{col, row, Container, Flex, Spacer, Stack, Text};
+pub use widgets::{col, row, Button, Container, Flex, List, ProgressBar, Spacer, Stack, Text};
