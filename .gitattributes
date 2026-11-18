@@ -1,0 +1,8 @@
+# tools/mcu-stackprobe/check-stack.sh is run directly by bash (both the
+# mcu-stack-budget CI job on ubuntu-latest and locally via Git Bash on
+# Windows, where core.autocrlf=true would otherwise rewrite its shebang
+# line with a trailing \r on the next checkout). Force LF so the script
+# behaves identically cross-platform, same spirit as xtask's gate.rs being
+# pure Rust for the same reason.
+tools/mcu-stackprobe/*.sh text eol=lf
+tools/mcu-stackprobe/*.py text eol=lf

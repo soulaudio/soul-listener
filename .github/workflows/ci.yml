@@ -1085,6 +1085,50 @@ jobs:
           echo "OK: No heap allocation symbols found."
 
   # ---------------------------------------------------------------------------
+  # mcu-stack-budget — static on-target (Cortex-M7) open-path stack gate
+  #
+  # tools/mcu-stackprobe is a bare-metal thumbv7em-none-eabihf harness that
+  # forces soul-audio-core's REAL open_seekable -> Deck::load -> Deck::pump
+  # call chain into a linked ELF (the `Deck` lives in a `static`, board-
+  # representative — see src/main.rs). tools/mcu-stackprobe/check-stack.sh
+  # builds it on nightly with `-Z emit-stack-sizes`, reads the ELF's
+  # `.stack_sizes` section via `llvm-readobj --stack-sizes`, and asserts:
+  #   - the `__cortex_m_rt_main` entry frame (the open-path stack transient
+  #     itself) stays under budget (measured baseline 326,096 B)
+  #   - the single largest OTHER function frame on the path stays under
+  #     budget (measured baseline 152,024 B —
+  #     FlacDecoder<MatroskaFlacReader<..>>::new_in, the Matroska-wrapped-
+  #     FLAC edge tracked as Phase A3 in the firmware self-improving-loop
+  #     roadmap)
+  #
+  # A future decoder/format that inflates either number past budget fails
+  # CI here, before it ever reaches real hardware. This is purely STATIC
+  # (no QEMU — needs admin rights, deferred; see the roadmap's Phase A1/A2).
+  #
+  # mcu-stackprobe is its own standalone single-crate `[workspace]`, outside
+  # the root workspace (own Cargo.lock, nightly-only `-Z` flag), hence the
+  # separate toolchain (nightly, not the repo's pinned 1.87) and its own
+  # rust-cache workspace scope below.
+  # ---------------------------------------------------------------------------
+  mcu-stack-budget:
+    name: MCU stack budget (Cortex-M7, static)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      - uses: dtolnay/rust-toolchain@nightly
+        with:
+          targets: thumbv7em-none-eabihf
+          components: llvm-tools-preview
+
+      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
+        with:
+          workspaces: "tools/mcu-stackprobe -> target"
+
+      - name: Run the stack-budget gate
+        run: bash tools/mcu-stackprobe/check-stack.sh
+
+  # ---------------------------------------------------------------------------
   # MSRV — Minimum Supported Rust Version
   #
   # Reads rust-version from Cargo.toml and compiles with that exact toolchain.
