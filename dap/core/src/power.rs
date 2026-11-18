@@ -10,10 +10,19 @@
 //! playback). Time is passed in (`now_ms`); this crate has no clock of its
 //! own, so the same logic runs identically on-target and in a headless host
 //! test.
+//!
+//! [`PowerService`] itself only ever decides *which* [`PowerProfile`] is
+//! active (via [`PowerService::profile`]/[`Power::set_clock_profile`]) —
+//! it has no notion of clock speed or decode cost. [`model`] is a
+//! separate, pure battery energy model (datasheet run-mode currents x
+//! measured decode cost) a board driver can combine with the active
+//! profile to decide how aggressively to throttle the clock.
 
 use heapless::Vec;
 
 use crate::ports::{BatteryReading, Power};
+
+pub mod model;
 
 /// Max events a single [`PowerService::poll`] can return. Eight distinct
 /// [`PowerEvent`] kinds exist; this bound is generous enough that every kind
