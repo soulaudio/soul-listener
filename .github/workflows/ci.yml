@@ -717,6 +717,9 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
+      # The dap workspace path-deps soul-audio-core as a repo sibling.
+      - uses: ./.github/actions/checkout-soul-audio-core
+
       # Embassy 0.6's dependency stack uses let-chains (stabilized in Rust 1.88),
       # so board-h7a3 needs a newer toolchain than the repo's 1.87 MSRV jobs.
       - uses: dtolnay/rust-toolchain@stable
@@ -754,6 +757,10 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
+      # `cargo fmt --all` loads the workspace manifest, which path-deps
+      # soul-audio-core — it must exist on disk even for a format-only job.
+      - uses: ./.github/actions/checkout-soul-audio-core
+
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt
@@ -780,6 +787,9 @@ jobs:
         working-directory: dap
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      # The dap workspace path-deps soul-audio-core as a repo sibling.
+      - uses: ./.github/actions/checkout-soul-audio-core
 
       - uses: dtolnay/rust-toolchain@stable
         with:
@@ -820,6 +830,9 @@ jobs:
         working-directory: dap
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      # The dap workspace path-deps soul-audio-core as a repo sibling.
+      - uses: ./.github/actions/checkout-soul-audio-core
 
       - uses: dtolnay/rust-toolchain@stable
 
@@ -1151,6 +1164,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      # tools/mcu-stackprobe path-deps soul-audio-core as a repo sibling.
+      - uses: ./.github/actions/checkout-soul-audio-core
 
       - uses: dtolnay/rust-toolchain@nightly
         with:

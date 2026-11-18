@@ -1,0 +1,35 @@
+name: Checkout soul-audio-core sibling
+description: >
+  Check out the public soulaudio/soul-audio-core repo at the on-disk location
+  the dap workspace (and tools/mcu-stackprobe) path-deps point at. Those
+  manifests use `path = "../../soul-audio-core/..."` relative to dap/, i.e. a
+  SIBLING of the checked-out repo ($GITHUB_WORKSPACE/../soul-audio-core), which
+  mirrors the local dev layout (both repos cloned side by side). actions/checkout
+  cannot write outside $GITHUB_WORKSPACE, so we check out into a workspace subdir
+  and move it up to the sibling path. soul-audio-core is PUBLIC, so no token is
+  needed — the default unauthenticated clone works.
+
+inputs:
+  ref:
+    description: git ref of soul-audio-core to check out (branch, tag, or SHA)
+    required: false
+    default: main
+
+runs:
+  using: composite
+  steps:
+    - name: Check out soul-audio-core into a workspace subdir
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      with:
+        repository: soulaudio/soul-audio-core
+        ref: ${{ inputs.ref }}
+        path: .soul-audio-core-sibling
+
+    - name: Move soul-audio-core to the sibling path the path-deps expect
+      shell: bash
+      run: |
+        set -euo pipefail
+        dest="$GITHUB_WORKSPACE/../soul-audio-core"
+        rm -rf "$dest"
+        mv "$GITHUB_WORKSPACE/.soul-audio-core-sibling" "$dest"
+        echo "soul-audio-core (${{ inputs.ref }}) positioned at: $(cd "$dest" && pwd)"
