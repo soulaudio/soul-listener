@@ -30,7 +30,10 @@ bench = false
 [dependencies]
 embassy-executor = { version = "0.10", features = ["platform-cortex-m", "executor-thread"], optional = true }
 embassy-time     = { version = "0.5", optional = true }
-embassy-stm32    = { version = "0.6", features = ["stm32h7a3zi", "memory-x", "time-driver-any"], optional = true }
+# NOTE: `memory-x` is deliberately OFF — board-h7a3 ships its own crate-root
+# memory.x (see that file's header) so flip-link can find the RAM region. Enabling
+# memory-x here would put a second memory.x on the linker search path.
+embassy-stm32    = { version = "0.6", features = ["stm32h7a3zi", "time-driver-any"], optional = true }
 cortex-m-rt = { version = "0.7", optional = true }
 # Provides the critical-section implementation embassy-sync/embassy-stm32 link against
 # (critical_section_1_0_acquire/_release). Not in the brief's dependency list but
