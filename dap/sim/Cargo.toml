@@ -46,10 +46,6 @@ criterion = "0.5"
 # `[workspace.dependencies]`, used by `crates/firmware`) and the embassy
 # ecosystem's current major line.
 static_cell = "2"
-# `tests/alloc_policy.rs` -- the Rule 1 display-path alloc-gap tracking
-# marker exercises eink-system's `VStack`/`Box<dyn Layout>` API directly
-# (not just via dap-core's re-export) to count heap allocations.
-eink-system = { workspace = true }
 
 [[bench]]
 name = "decode_rtf"

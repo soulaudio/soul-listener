@@ -3,7 +3,8 @@
 
 use eink_ui::testing::Framebuffer;
 use eink_ui::{
-    Button, Constraints, List, ProgressBar, Role, Size, Space, Text, TextScale, Theme, Widget,
+    Button, Constraints, Glyph, Icon, List, ProgressBar, Role, Size, Space, Text, TextScale, Theme,
+    Widget,
 };
 use embedded_graphics::geometry::Point;
 use embedded_graphics::pixelcolor::GrayColor;
@@ -163,4 +164,26 @@ fn list_highlights_only_the_selected_row() {
         "/target/golden/list_selected.png"
     ))
     .expect("save list_selected.png");
+}
+
+#[test]
+fn icon_measures_square_and_draws_ink() {
+    let theme = Theme::default();
+    let size = Icon::new(Glyph::Play, 40).measure(Constraints::loose(Size::new(200, 200)), &theme);
+    assert_eq!(
+        size,
+        Size::new(40, 40),
+        "icon measures to a square of its size"
+    );
+
+    for glyph in [
+        Glyph::Play,
+        Glyph::Pause,
+        Glyph::Stop,
+        Glyph::Next,
+        Glyph::Prev,
+    ] {
+        let fb = render_in(&Icon::new(glyph, 24), &theme, 24, 24);
+        assert!(fb.coverage() > 0.0, "{glyph:?} draws ink");
+    }
 }

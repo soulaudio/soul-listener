@@ -25,14 +25,12 @@ soul-audio-engine = { workspace = true }
 # a transitive dep of board-h7a3's embassy-stm32 (hardware feature).
 heapless = { version = "0.9", default-features = false }
 
-# E-ink drawing toolkit (crates/eink/* in the root workspace, consumed in
-# place via the path deps in dap/Cargo.toml's [workspace.dependencies] — see
-# that file's comment). Default features only: no "std" (keeps the no_std
-# build path exercised on host too) and no "examples" (pulls eink-emulator).
-eink-system = { workspace = true }
-eink-components = { workspace = true }
+# The e-ink UI toolkit (standalone eink-ui crate; no_std/no-alloc by default, so
+# this crate — and board-h7a3 — stays alloc-free). Screens draw with its widgets.
+eink-ui = { workspace = true }
+# Panel hardware specs (controller timing/quirks) for the board's display driver.
 eink-specs = { workspace = true }
-# Must match the version eink-system/eink-components are built against
-# (crates/eink/*/Cargo.toml both pin "0.8.1") so `Gray4`/`DrawTarget`/
-# `Rectangle` in this crate's `display` port are the exact same types.
+# Must match the version eink-ui + eink-specs are built against (both "0.8") so
+# `Gray4`/`DrawTarget`/`Rectangle` in this crate's `display` port are the exact
+# same types.
 embedded-graphics = "0.8.1"

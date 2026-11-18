@@ -1,12 +1,14 @@
-//! `board-h7a3` is deliberately **exempt** from the repo's
-//! `#![forbid(unsafe_code)]` architecture gate (see the documented allowlist
-//! in `tools/check-forbid-unsafe.sh`): `main()` below has one real `unsafe`
-//! block (`HEAP.init(...)`), the one-time-init precondition
-//! `embedded_alloc::LlffHeap::init` documents and this file's own SAFETY
-//! comment on that call explains. No other crate on the embedded path needs
-//! `unsafe`; this is the single genuine, narrowly-scoped exception.
+//! `board-h7a3` — the STM32H7A3 firmware entry point.
+//!
+//! Now `#![forbid(unsafe_code)]`. The one `unsafe` block this file used to carry
+//! (`HEAP.init`, for a 4 KB `embedded_alloc` arena) is gone: that heap existed
+//! ONLY to satisfy a link-time `alloc` requirement leaked by the v1 `eink-system`
+//! display toolkit. ui-4 moved the DAP onto the no-alloc `eink-ui` toolkit
+//! (proven by `dap-sim`'s `alloc_policy` test), so the whole embedded path is
+//! alloc-free and this crate needs neither an allocator nor `unsafe`.
 #![no_std]
 #![no_main]
+#![forbid(unsafe_code)]
 
 use defmt::info;
 use defmt_rtt as _;
@@ -19,22 +21,6 @@ use static_cell::StaticCell;
 use dap_core::app::{App, AppConfig};
 use dap_core::firmware;
 use dap_core::stub::{StubControls, StubDisplay, StubPower, StubSink, StubStorage};
-use embedded_alloc::LlffHeap as Heap;
-
-// `dap-core`'s `display` port re-exports `eink-system`'s container/layout
-// toolkit (unused by the current Now-Playing screen, but always compiled in
-// as part of `eink-system` itself), which unconditionally needs `extern
-// crate alloc` (`Box`/a boxed-child `heapless::Vec`) in its non-`std` build
-// -- see `Cargo.toml`'s comment on the `embedded-alloc` dependency. This
-// tiny static arena is ONLY here to satisfy that link-time requirement; no
-// code reachable from this binary today actually allocates from it (the
-// Now-Playing screen draws with raw embedded-graphics primitives). Sized
-// generously above zero, far below any real SRAM budget.
-#[global_allocator]
-static HEAP: Heap = Heap::empty();
-const HEAP_SIZE_BYTES: usize = 4 * 1024;
-static mut HEAP_MEM: [core::mem::MaybeUninit<u8>; HEAP_SIZE_BYTES] =
-    [core::mem::MaybeUninit::uninit(); HEAP_SIZE_BYTES];
 
 // Phase B (see docs/plans/2026-11-17-firmware-selfimproving-loop-roadmap.md):
 // this board now constructs the REAL `App` -- audio + power + controls +
@@ -109,15 +95,6 @@ static APP_CELL: StaticCell<Dap> = StaticCell::new();
 async fn main(_spawner: Spawner) {
     let _p = embassy_stm32::init(Default::default());
     info!("board-h7a3: boot");
-
-    // SAFETY: `HEAP_MEM`'s address/length are handed to `Heap::init` exactly
-    // once, here, before any allocation can occur (nothing above this line
-    // allocates) -- the one-time-init precondition `embedded_alloc::LlffHeap::init`
-    // documents.
-    #[allow(static_mut_refs)]
-    unsafe {
-        HEAP.init(HEAP_MEM.as_ptr() as usize, HEAP_SIZE_BYTES);
-    }
 
     let app = App::new(
         StubSink,
