@@ -1,0 +1,31 @@
+[package]
+name = "eink-ssd1677"
+version = "0.1.0"
+edition = "2021"
+# Internal firmware crate, never published — marks it private so cargo-deny's
+# `[licenses] private.ignore` skips it (the repo is MIT OR Apache-2.0; see LICENSE).
+publish = false
+description = "no_std async driver for the SSD1677/SSD2677 e-ink controller (Good Display GDEM0397T81P, 800x480), salvaged from the retired v1 firmware for board-h7a3's Phase-E display port."
+
+[dependencies]
+# Generic over embedded-hal 1.0 / embedded-hal-async 1.0 — no embassy, no HAL.
+embedded-hal = "1.0"
+embedded-hal-async = "1.0"
+# Must match the version eink-ui + eink-specs + dap-core build against ("0.8").
+embedded-graphics = "0.8.1"
+# Optional: defmt::Format derives on the public types (for defmt logging on target).
+defmt = { version = "1", optional = true }
+
+[dev-dependencies]
+# `#[tokio::test]` drives the async init/refresh/BUSY-polling tests on the host.
+tokio = { version = "1", features = ["macros", "rt"] }
+# embedded-hal-mock 0.11 mocks embedded-hal 1.x via `eh1`; the `embedded-hal-async`
+# feature enables the async SpiDevice/Delay mocks the driver's tests need.
+embedded-hal-mock = { version = "0.11", default-features = false, features = ["eh1", "embedded-hal-async"] }
+
+[features]
+default = []
+# defmt::Format derives on DisplayError/DisplayInfo/RefreshMode.
+defmt = ["dep:defmt"]
+# std error impls (std::error::Error for DisplayError) for desktop use.
+std = []

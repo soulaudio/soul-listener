@@ -1,19 +1,14 @@
 [workspace]
 resolver = "2"
 members = [
+    # The v1 Embassy-0.1 firmware stack (firmware, firmware-ui, platform, ui,
+    # bluetooth, and the eink-system/components/emulator/testing crates) was
+    # retired — the active firmware lives in the excluded `dap/` workspace. Only
+    # two members remain here: `eink-specs` (pure panel-spec data the dap board's
+    # display driver consumes cross-workspace) and `xtask` (the dev/gate tooling).
+    # The salvageable SSD1677 driver moved to `dap/eink-ssd1677`.
     "crates/eink/eink-specs",
-    "crates/eink/eink-emulator",
-    "crates/eink/eink-system",
-    "crates/eink/eink-components",
-    "crates/eink/eink-testing",
-    "crates/platform",
-    "crates/firmware",
-    "crates/firmware-ui",
     "xtask",
-    "crates/ui",
-    "crates/bluetooth",
-    # TODO: Add when created
-    # "crates/simulator",
 ]
 
 # dap/ (Embassy 0.6 / STM32H7A3 world: dap-core, dap-sim, board-h7a3) is

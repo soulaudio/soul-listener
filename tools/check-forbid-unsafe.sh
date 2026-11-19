@@ -15,21 +15,16 @@
 # soul-audio-core repo (its own CI already gates it -- see that repo's
 # `crates/*/src/lib.rs`). This script only enumerates crates that physically
 # live in THIS repo's embedded path: dap-core, dap-sim, board-h7a3, the
-# standalone eink-ui toolkit, and the (legacy) no_std eink crates
-# (eink-system/eink-components/eink-specs).
-#
-# ONE crate is a DOCUMENTED EXCEPTION -- allowlisted rather than forbidden --
-# because it genuinely needs `unsafe` and never ships on the embedded target:
-#   - eink-emulator: host/winit desktop emulator, never built for the
-#     embedded target; window.rs needs real `unsafe` for Win32 WndProc
-#     subclassing (the WM_DPICHANGED fix). Documented in its own lib.rs.
+# standalone eink-ui toolkit, the salvaged eink-ssd1677 e-ink driver, and
+# eink-specs (pure panel-spec data). The v1 firmware stack that used to be
+# listed here (eink-system/eink-components, and the allowlisted host-only
+# eink-emulator that needed Win32 unsafe) was retired, so there are no longer
+# any allowlisted unsafe exceptions -- every listed crate must forbid it.
 #
 # This script does NOT try to compile anything -- it is a fast, static grep
 # over known crate-root files. The actual enforcement is the `#![forbid]`
 # attribute itself (a hard compile error on any `unsafe` in that crate);
-# this script's only job is making sure every crate on the list still HAS
-# the attribute, and that the two exceptions still carry their written
-# justification.
+# this script's only job is making sure every crate on the list still HAS it.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
@@ -46,15 +41,10 @@ ENFORCED_CRATES=(
   "board-h7a3:dap/board-h7a3/src/main.rs"
   # eink-ui: the standalone no_std/no-alloc UI toolkit the DAP now draws with.
   "eink-ui:eink-ui/src/lib.rs"
-  "eink-system:crates/eink/eink-system/src/lib.rs"
-  "eink-components:crates/eink/eink-components/src/lib.rs"
+  # eink-ssd1677: the SSD1677 e-ink driver salvaged from the retired v1 firmware
+  # (its one keepable piece); no_std, unsafe-free, forbid(unsafe) at its root.
+  "eink-ssd1677:dap/eink-ssd1677/src/lib.rs"
   "eink-specs:crates/eink/eink-specs/src/lib.rs"
-)
-
-# Allowlisted: genuinely need `unsafe`; the exemption must stay documented
-# at the crate root (grepped for below), not just asserted in this script.
-ALLOWLISTED_CRATES=(
-  "eink-emulator:crates/eink/eink-emulator/src/lib.rs"
 )
 
 echo "== forbid(unsafe_code) coverage gate =="
@@ -76,24 +66,6 @@ for entry in "${ENFORCED_CRATES[@]}"; do
     echo "OK:   $name ($path)"
   else
     echo "FAIL: $name ($path) is MISSING #![forbid(unsafe_code)]" >&2
-    FAIL=1
-  fi
-done
-
-echo
-echo "-- allowlisted (documented unsafe exception; forbid NOT required) --"
-for entry in "${ALLOWLISTED_CRATES[@]}"; do
-  name="${entry%%:*}"
-  path="${entry#*:}"
-  if [ ! -f "$path" ]; then
-    echo "FAIL: $name -- expected crate-root file not found at $path" >&2
-    FAIL=1
-    continue
-  fi
-  if grep -Fq 'exempt' "$path"; then
-    echo "OK:   $name ($path) -- exemption documented"
-  else
-    echo "FAIL: $name ($path) is allowlisted but has no documented exemption (expected the word 'exempt' in its crate-root doc comment)" >&2
     FAIL=1
   fi
 done

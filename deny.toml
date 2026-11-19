@@ -51,7 +51,7 @@ deny = [
     { crate = "minimp3-rs", reason = "Deprecated and unsound" },
     { crate = "minimp3-sys", reason = "Deprecated and unsound" },
     # epd-waveshare: does not support SSD1677 — we use a custom driver
-    { crate = "epd-waveshare", reason = "Does not support SSD1677/SSD2677 — custom driver in crates/firmware/src/display/driver.rs" },
+    { crate = "epd-waveshare", reason = "Does not support SSD1677/SSD2677 — custom driver in dap/eink-ssd1677/src/driver.rs" },
     # No heap allocation on the embedded path. ui-4 moved the DAP onto the
     # no-alloc eink-ui toolkit and board-h7a3 dropped its embedded_alloc heap —
     # banning the crate ENFORCES that win (re-introducing it fails CI).

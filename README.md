@@ -3,7 +3,7 @@
 [![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-blue.svg)](LICENSE)
 [![Rust](https://img.shields.io/badge/rust-2021-orange.svg)](https://www.rust-lang.org)
 
-A Digital Audio Player (DAP) firmware written in Rust, targeting STM32H7 with an e-ink display. Includes a full desktop emulator for developing and testing without hardware.
+A Digital Audio Player (DAP) firmware written in Rust, targeting the STM32H7A3 with an e-ink display. Developed and validated hardware-free via host simulation (`dap-sim`) and on-target memory/stack fitness tests, so the CI-green artifact is the artifact the board flashes.
 
 ## Hardware
 
@@ -30,54 +30,42 @@ The STM32WB55 is the correct choice for BLE on this hardware — it runs on the 
 
 **Classic BT A2DP (pairing with existing Bluetooth headphones) is explicitly out of scope.** It requires a chip from a separate vendor ecosystem (CSR/Qualcomm) and a separate BT stack — that complexity belongs in a different hardware revision, not in v1.
 
-## Crates
+## Workspaces
+
+The firmware is split across three Cargo workspaces (the abandoned v1 Embassy-0.1
+stack was retired; its one keepable piece, the SSD1677 driver, moved into `dap/`):
 
 ```
-crates/
-├── eink/
-│   ├── eink-emulator/   # Desktop e-ink emulator (winit + softbuffer)
-│   ├── eink-specs/      # Display specifications (pure data)
-│   ├── eink-system/     # Layout / styling engine
-│   ├── eink-components/ # Standard UI components
-│   └── eink-testing/    # Testing utilities
-├── platform/            # Hardware abstraction layer (HAL traits)
-├── firmware/            # Main firmware + display_emulator example
-├── firmware-ui/         # Hot-reloadable UI rendering dylib
-└── playback/            # Audio playback engine
+dap/                 # ACTIVE STM32H7A3 firmware (its own workspace)
+├── core/            # dap-core: board-agnostic logic + ports (no_std, no embassy)
+├── sim/             # dap-sim: host simulation adapters + RTF benches
+├── board-h7a3/      # the embassy 0.6 / HAL entry point (thumbv7em binary)
+├── arch-tests/      # H7A3 memory-map + per-region SRAM budget fitness tests
+└── eink-ssd1677/    # SSD1677/SSD2677 e-ink panel driver (salvaged from v1)
+eink-ui/             # standalone no_std/no-alloc e-ink UI toolkit (own workspace)
+crates/eink/eink-specs/   # pure panel-spec data (dap consumes it cross-workspace)
+xtask/               # dev + gate tooling (cargo xtask precommit|verify)
 ```
+
+`dap/` path-depends the sibling `soul-audio-core` repo (checked out next to this
+one) for decoding.
 
 ## Quick start
 
-### Desktop emulator
-
 ```bash
-# Run the emulator (no hardware required)
-cargo run --example display_emulator --features emulator -p firmware
+# Host checks for the active firmware (needs ../soul-audio-core checked out):
+cd dap && cargo test               # dap-core / dap-sim / arch-tests / eink-ssd1677
+cd dap && cargo clippy --workspace --all-targets -- -D warnings
 
-# With debug inspector (Chrome DevTools-style overlay)
-cargo run --example display_emulator --features emulator,debug -p firmware
+# Cross-build the board binary for the STM32H7A3:
+cd dap && cargo build -p board-h7a3 --target thumbv7em-none-eabihf --features hardware
+
+# The e-ink UI toolkit:
+cd eink-ui && cargo test --features std
+
+# The full pre-push gate (fmt + clippy + build + test across all workspaces):
+cargo xtask verify
 ```
-
-### Firmware
-
-```bash
-# Build for STM32H743
-cargo build --release --target thumbv7em-none-eabihf -p firmware
-
-# Flash with probe-rs
-cargo embed --release -p firmware
-```
-
-### Tests
-
-```bash
-cargo test --workspace
-cargo test -p eink-emulator --features debug
-```
-
-## Debug inspector
-
-Press **Ctrl+3** inside the emulator to open the inspector panel. Hover components to inspect layout, box model, and attributes. **Tab** cycles inspector tabs (LYT → BOX → CMP). **Ctrl+1/2** toggle borders and panel visibility.
 
 ## License
 
