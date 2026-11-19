@@ -1,0 +1,27 @@
+[package]
+name = "storage-fat32"
+version = "0.1.0"
+edition = "2021"
+# Internal firmware crate, never published — marks it private so cargo-deny's
+# `[licenses] private.ignore` skips it (the repo is MIT OR Apache-2.0; see LICENSE).
+publish = false
+description = "FAT32 SD-card Storage adapter for the dap Storage port: embedded-sdmmc over a generic BlockDevice, presenting each opened file as the no_std BufSource+SeekSource ladder soul-audio-core decodes. Host-testable against a RAM-backed FAT32 image; the board supplies the real SDMMC BlockDevice (Phase E)."
+
+[dependencies]
+# FAT16/FAT32, no_std, no alloc. Chosen over exFAT deliberately: exFAT carries a
+# Microsoft embedded patent license (~$300k/manufacturer); FAT32's patents have
+# expired, its 4 GiB/file limit is irrelevant for audio, and embedded-sdmmc is
+# FAT-only anyway. See AGENTS.md / the storage decision.
+embedded-sdmmc = { version = "0.10", default-features = false }
+# The Read/BufRead/Seek ladder soul-audio-core's Source/BufSource/SeekSource
+# blanket-impl over (so impl'ing these on SdSource makes it a decodable source).
+embedded-io = "0.6"
+# The Storage port this adapter implements.
+dap-core = { path = "../core" }
+
+[dev-dependencies]
+# Independent FAT implementation — used ONLY in tests to GENERATE a partitioned
+# FAT32 image in RAM, which embedded-sdmmc then reads back, cross-validating the
+# read path with no SD hardware.
+fatfs = "0.3"
+fscommon = "0.1"
