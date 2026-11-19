@@ -30,6 +30,16 @@ cortex-m-rt = "0.7"
 cortex-m = "0.7"
 panic-halt = "0.2"
 static_cell = "2"
+# Only used by the `qemu` feature: semihosting stdout + SYS_EXIT so a QEMU run
+# can print the measured stack high-water and terminate the emulator cleanly.
+cortex-m-semihosting = { version = "0.5", optional = true }
+
+[features]
+# Build the DYNAMIC measurement variant: paint the stack, run the real decode
+# workload under QEMU mps2-an500, scan for the high-water, print it + exit.
+# Without this feature the crate is the original STATIC `-Z emit-stack-sizes`
+# target (check-stack.sh) and is never actually executed.
+qemu = ["dep:cortex-m-semihosting"]
 
 [profile.release]
 # Cargo's release defaults already give opt-level = 3; spelled out here so

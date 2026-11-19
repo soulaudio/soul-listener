@@ -27,3 +27,11 @@ target = "thumbv7em-none-eabihf"
 
 [target.thumbv7em-none-eabihf]
 linker = "rust-lld"
+# Runner for the `qemu` feature's dynamic measurement (`cargo run --release
+# --features qemu`). Only invoked by `cargo run`; the static `cargo build` that
+# check-stack.sh does ignores it. QEMU is installed separately (not in this repo)
+# — see check-stack-qemu.sh, which locates qemu-system-arm and runs this itself.
+# String (not array) form so it OVERRIDES the repo-root config's scalar `runner`
+# (`probe-rs ...`) rather than trying to array-merge with it. Cargo splits this on
+# whitespace and appends the built ELF path as the final arg.
+runner = "qemu-system-arm -cpu cortex-m7 -machine mps2-an500 -nographic -semihosting-config enable=on,target=native -kernel"

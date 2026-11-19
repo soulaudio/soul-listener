@@ -12,6 +12,16 @@
 //! function's REAL on-target frame size (see the repo's measurement notes for
 //! how the top frames are summed into a worst-case transient).
 //!
+//! The `qemu` feature turns the SAME binary into a DYNAMIC measurement: built
+//! for QEMU's `mps2-an500` (Cortex-M7), it paints the free stack with a
+//! sentinel, runs the workload for real, and scans for the high-water (see
+//! `check-stack-qemu.sh` and the `stackmeasure` module below). That dynamic
+//! number is the ground truth the static `MAIN_FRAME + LARGEST_FRAME` heuristic
+//! only approximates — and it is MUCH larger (first measured: ~1081 KiB for the
+//! Matroska-FLAC open vs the ~304 KB the two-frame heuristic reports), because
+//! the decoder-construction call chain stacks MANY large frames the heuristic
+//! ignores. Reducing that transient is tracked under the roadmap's A2/A3.
+//!
 //! Two episodes run back to back in the same `main`, so BOTH are genuinely
 //! *exercised* (open()'d and decoded, not just type-reachable by a `match`
 //! arm the fixture never actually takes):
@@ -45,9 +55,71 @@ use panic_halt as _;
 use static_cell::StaticCell;
 
 use soul_audio_core::{
-    AnyDecoder, Deck, Quality, SampleFormat, Sink, SinkError, SliceSource, StreamInfo,
-    decoder_scratch_len, open_seekable,
+    decoder_scratch_len, open_seekable, AnyDecoder, Deck, Quality, SampleFormat, Sink, SinkError,
+    SliceSource, StreamInfo,
 };
+
+/// Dynamic stack-painting measurement — compiled only for the `qemu` feature.
+/// Paint the free stack with a sentinel, run the real decode workload, then scan
+/// for the deepest word that was overwritten = the stack high-water. Validated
+/// against a known-depth recursion before being wired to the decode path. This
+/// `unsafe` is confined to the throwaway measurement rig (the shipped `dap/`
+/// crates are `forbid(unsafe_code)`; this tool crate is not on that list).
+#[cfg(feature = "qemu")]
+mod stackmeasure {
+    // cortex-m-rt's link.x provides these: `_stack_start` = top of RAM (the stack
+    // grows down from it); `__sheap` = top of all static storage = the lowest the
+    // stack can reach. Free stack is [__sheap .. _stack_start).
+    extern "C" {
+        static _stack_start: u8;
+        static __sheap: u8;
+    }
+
+    const SENTINEL: u32 = 0xAAAA_AAAA;
+
+    fn sheap() -> usize {
+        (core::ptr::addr_of!(__sheap) as usize + 3) & !3
+    }
+    fn stack_start() -> usize {
+        core::ptr::addr_of!(_stack_start) as usize
+    }
+
+    #[inline(always)]
+    fn sp_now() -> usize {
+        let sp: usize;
+        unsafe { core::arch::asm!("mov {}, sp", out(reg) sp, options(nomem, nostack)) };
+        sp
+    }
+
+    /// Fill [__sheap .. sp) with SENTINEL; returns the sp it painted up to.
+    pub fn paint() -> usize {
+        let lo = sheap();
+        let hi = sp_now() - 64; // small margin below the current frame
+        let mut p = lo;
+        while p + 4 <= hi {
+            unsafe { core::ptr::write_volatile(p as *mut u32, SENTINEL) };
+            p += 4;
+        }
+        hi
+    }
+
+    /// Scan [__sheap .. painted_hi) from the bottom for the first overwritten
+    /// word (the deepest the stack reached). Returns (used, available) bytes.
+    pub fn measure(painted_hi: usize) -> (usize, usize) {
+        let lo = sheap();
+        let top = stack_start();
+        let mut deepest = painted_hi;
+        let mut p = lo;
+        while p + 4 <= painted_hi {
+            if unsafe { core::ptr::read_volatile(p as *const u32) } != SENTINEL {
+                deepest = p;
+                break;
+            }
+            p += 4;
+        }
+        (top - deepest, top - lo)
+    }
+}
 
 /// A minimal valid RIFF/WAVE fixture: the standard 44-byte canonical header
 /// (no extra `fmt` chunk padding/extensions) followed by 8 interleaved 16-bit
@@ -160,6 +232,12 @@ static DECK: StaticCell<ProbeDeck> = StaticCell::new();
 
 #[entry]
 fn main() -> ! {
+    // Paint the free stack BEFORE any deep work. `main`'s own frame is already
+    // reserved by its prologue, so painting from here down captures everything
+    // the open->decode->pump calls below will touch.
+    #[cfg(feature = "qemu")]
+    let painted_hi = stackmeasure::paint();
+
     let sink = DiscardSink {
         info: StreamInfo {
             sample_rate: 48_000,
@@ -195,6 +273,33 @@ fn main() -> ! {
     let src2 = SliceSource::new(MKA_FLAC_FIXTURE);
     let decoder2 = open_seekable(src2, scratch2).unwrap();
     deck.load(decoder2).unwrap();
+
+    // qemu: snapshot the OPEN-path peak (both episodes' decoder construction) now,
+    // BEFORE any pump, to separate it from steady-state decode.
+    #[cfg(feature = "qemu")]
+    let open_peak = stackmeasure::measure(painted_hi).0;
+
+    // A few pumps so the steady-state produce_block/decode_into frames are
+    // exercised too.
+    for _ in 0..8 {
+        let _ = deck.pump();
+    }
+
+    // qemu: measure again (now the max of open + pump), report both so we can see
+    // which dominates, then exit QEMU.
+    #[cfg(feature = "qemu")]
+    {
+        let (total_peak, avail) = stackmeasure::measure(painted_hi);
+        let _ = cortex_m_semihosting::hprintln!(
+            "mcu-stackprobe-qemu: open-path peak = {} KiB ({} B); open+pump peak = {} KiB ({} B); of {} KiB paintable",
+            open_peak / 1024,
+            open_peak,
+            total_peak / 1024,
+            total_peak,
+            avail / 1024
+        );
+        cortex_m_semihosting::debug::exit(cortex_m_semihosting::debug::EXIT_SUCCESS);
+    }
 
     loop {
         let _ = deck.pump();

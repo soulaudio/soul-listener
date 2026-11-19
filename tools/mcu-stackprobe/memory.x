@@ -1,18 +1,22 @@
-/* Generic Cortex-M7 memory map for the stack-probe harness.
+/* Memory map for the stack-probe harness, laid out for QEMU's `mps2-an500`
+ * (Cortex-M7) machine so the SAME binary that `-Z emit-stack-sizes` reads
+ * statically can also be RUN under QEMU for a dynamic stack high-water
+ * measurement (the `qemu` feature + tools/mcu-stackprobe/check-stack-qemu.sh).
  *
- * This is NOT the real H7A3 memory.x (see the repo root's memory.x for that
- * one, used by the old H743 `firmware` crate and inherited by dap/board-h7a3
- * via embassy-stm32's `memory-x` feature). This harness only needs to LINK
- * and run far enough for -Z emit-stack-sizes to record every function's
- * frame size in the ELF; it never touches real hardware. cortex-m-rt's
- * link.x hardcodes the region names FLASH/RAM, so those names are required
- * here regardless of the real target MCU's actual SRAM layout.
+ * This is NOT the real H7A3 map (the dap/board-h7a3 crate carries that). Frame
+ * sizes in `.stack_sizes` are codegen-determined and address-INDEPENDENT, so
+ * using the mps2 addresses here does not change the static measurement at all;
+ * it just makes the binary bootable on QEMU's mps2-an500 (code/ZBT-SSRAM at
+ * 0x00000000, data SRAM at 0x20000000, 4 MB each in QEMU's model). cortex-m-rt's
+ * link.x hardcodes the region names FLASH/RAM, so those names are required.
  */
 MEMORY
 {
-    FLASH : ORIGIN = 0x08000000, LENGTH = 2M
-    RAM   : ORIGIN = 0x24000000, LENGTH = 1M
+    FLASH : ORIGIN = 0x00000000, LENGTH = 4M
+    RAM   : ORIGIN = 0x20000000, LENGTH = 4M
 }
 
 /* cortex-m-rt's link.x sets _stack_start = ORIGIN(RAM) + LENGTH(RAM) by
- * default when this isn't overridden; left implicit here. */
+ * default when this isn't overridden; left implicit here. The 4 MB RAM gives
+ * the dynamic QEMU run megabytes of paintable stack — far more than the
+ * hundreds of KB the open->decode->pump transient needs. */
