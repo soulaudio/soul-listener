@@ -97,6 +97,38 @@ pub const SLEEP_CURRENT_MA: f32 = 5.0;
 /// size for a DAP-class device.
 pub const DEFAULT_BATTERY_MAH: f32 = 2000.0;
 
+// --- Output-path (non-CPU) playback current ---------------------------------
+// The functions above model the *CPU* (run/sleep) current, which is what drives
+// the DVFS clock choice. But a DAP's battery also feeds the DAC/amp, SD reads,
+// and the display the whole time it plays — omitting them makes `runtime_hours`
+// above optimistic (most so for the cheap formats, where the CPU current is
+// lowest and the near-constant output path dominates). These three constants let
+// `system_current_ma` fold that always-on draw in. Like `SLEEP_CURRENT_MA`, they
+// are datasheet-grounded *estimates* at a ~3.7 V single-cell nominal, to replace
+// with bench-measured figures once `board-h7a3` + the analog section exist.
+
+/// Cirrus **CS43131** (the selected integrated DAC + ground-centered Class-H amp —
+/// see soul-listener `docs/research/2026-11-18-dac-amp-selection.md` §1–2) playback
+/// current at the battery rail. The part draws **~23 mW total playback power**
+/// (Class-H, no separate HV rail; Cirrus DS1155F2); at ~3.7 V that's ~6.2 mA,
+/// rounded to **7 mA** to cover regulator loss. Notably efficient — it does NOT
+/// dwarf the CPU here, but it is a real always-on draw the CPU model omits.
+pub const DAC_AMP_PLAYBACK_MA: f32 = 7.0;
+
+/// SD-card current averaged over playback. Reads are bursty (decode-ahead ring
+/// refills, then idle), so the time-averaged draw is small; a conservative
+/// **~2 mA** average (active read bursts ~30–50 mA at a very low duty).
+pub const SD_AVG_MA: f32 = 2.0;
+
+/// E-ink display current averaged over playback. The panel is bistable — ~0 mA
+/// holding a static image; only the brief refresh on a now-playing/progress
+/// change draws, averaging to a negligible **~0.5 mA**.
+pub const DISPLAY_AVG_MA: f32 = 0.5;
+
+/// Total non-CPU output-path current during playback (DAC/amp + SD + display) at
+/// the battery rail — the always-on draw `system_current_ma` adds to the CPU blend.
+pub const PERIPHERAL_PLAYBACK_MA: f32 = DAC_AMP_PLAYBACK_MA + SD_AVG_MA + DISPLAY_AVG_MA;
+
 /// How much faster the HOST this crate's tests/benches run on is than the
 /// 280 MHz Cortex-M7 target, per `dap-sim/benches/decode_rtf.rs`'s own
 /// module doc ("roughly 10-50x faster"). This module takes the
@@ -230,6 +262,16 @@ pub fn runtime_hours(capacity_mah: f32, avg_ma: f32) -> f32 {
         return f32::INFINITY;
     }
     capacity_mah / avg_ma
+}
+
+/// Full-system average playback current, mA: the CPU blend ([`avg_current_ma`])
+/// plus the always-on output path ([`PERIPHERAL_PLAYBACK_MA`]). This is the
+/// realistic total a DAP draws while playing — `runtime_hours(capacity, this)`
+/// gives a total-system runtime, where `runtime_hours(capacity,
+/// avg_current_ma(..))` alone gives only the (optimistic) CPU-only figure.
+#[must_use]
+pub fn system_current_ma(cpu_avg_ma: f32) -> f32 {
+    cpu_avg_ma + PERIPHERAL_PLAYBACK_MA
 }
 
 /// DMA half-transfer + transfer-complete interrupt rate, Hz: a circular
@@ -376,6 +418,48 @@ mod tests {
                 "{label}: duty cycle {duty:.3} leaves no sleep time"
             );
         }
+    }
+
+    /// The REALISTIC total-system runtime — the CPU blend plus the always-on
+    /// output path (DAC/amp + SD + display, [`system_current_ma`]). Two claims:
+    /// (a) it still clears a sane floor at [`DEFAULT_BATTERY_MAH`], and (b) it is
+    /// strictly LOWER than the CPU-only estimate for every format — i.e. the
+    /// output path is really being counted (a dropped peripheral term regresses
+    /// this). The gap is largest for the cheap formats (WAV), where the CPU
+    /// current is lowest and the ~9.5 mA output path dominates: WAV's optimistic
+    /// CPU-only ~371h becomes a realistic ~130h once the DAC/amp is in.
+    #[test]
+    fn system_runtime_is_realistic_and_below_cpu_only() {
+        const MIN_SYSTEM_RUNTIME_HOURS: f32 = 30.0;
+        for (label, host_rtf) in ALL_DECODE_FORMATS {
+            let target_rtf = estimate_target_rtf(host_rtf);
+            let clock =
+                min_clock_mhz_for_rtf(target_rtf, H7A3_MAX_CLOCK_MHZ, TEST_TIGHT_SAFETY_MARGIN)
+                    .clamp(IDLE_CLOCK_MHZ, H7A3_MAX_CLOCK_MHZ);
+            let cost = decode_cost_cycles_per_sec(target_rtf, H7A3_MAX_CLOCK_MHZ);
+            let duty = duty_cycle(cost, f64::from(clock) * 1.0e6);
+            let cpu_ma = avg_current_ma(duty, active_current_ma_for_clock(clock), SLEEP_CURRENT_MA);
+            let sys_ma = system_current_ma(cpu_ma);
+            let cpu_hours = runtime_hours(DEFAULT_BATTERY_MAH, cpu_ma);
+            let sys_hours = runtime_hours(DEFAULT_BATTERY_MAH, sys_ma);
+            assert!(
+                sys_hours >= MIN_SYSTEM_RUNTIME_HOURS,
+                "{label}: total-system runtime {sys_hours:.1}h (sys {sys_ma:.1} mA) below the \
+                 {MIN_SYSTEM_RUNTIME_HOURS}h floor"
+            );
+            assert!(
+                sys_hours < cpu_hours,
+                "{label}: system runtime {sys_hours:.1}h should be below the CPU-only \
+                 {cpu_hours:.1}h (the output path must be counted)"
+            );
+        }
+    }
+
+    #[test]
+    fn system_current_adds_the_output_path() {
+        // 7 (CS43131) + 2 (SD) + 0.5 (display) = 9.5 mA.
+        assert!((PERIPHERAL_PLAYBACK_MA - 9.5).abs() < 1e-6);
+        assert!((system_current_ma(10.0) - 19.5).abs() < 1e-6);
     }
 
     // --- sleep-ratio / wakeup-rate (decode-ahead ring sizing) ---------

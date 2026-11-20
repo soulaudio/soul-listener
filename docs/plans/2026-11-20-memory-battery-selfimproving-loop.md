@@ -83,6 +83,18 @@ Infra / gates:
 ## Loop log
 
 - **L0 (this doc)** — research + measured baseline + backlog. Committed.
+- **L1 — realistic battery model (output path).** Found the mature
+  `dap-core::power::model` was **CPU-only** — its `runtime_hours` omitted the
+  always-on DAC/amp + SD + display draw, making the estimates optimistic (WAV
+  ~371h). Added `DAC_AMP_PLAYBACK_MA` (7 mA — CS43131 ~23 mW playback / 3.7 V,
+  from the project's DAC decision), `SD_AVG_MA` (2), `DISPLAY_AVG_MA` (0.5),
+  `PERIPHERAL_PLAYBACK_MA` (9.5), and `system_current_ma(cpu_avg)`. New gate
+  `system_runtime_is_realistic_and_below_cpu_only` asserts the total-system
+  runtime clears 30h AND is strictly below the CPU-only figure for all 7 formats
+  (so a dropped peripheral term regresses). WAV ~371h → realistic ~130h. 11/11
+  model tests + 36/36 dap-core green. *Finding: the CS43131 is efficient enough
+  (~7 mA) that CPU and DAC are comparable — neither dominates — so both CPU DVFS
+  AND decode efficiency matter for battery, validating the race-to-sleep focus.*
 
 ## Sources
 
