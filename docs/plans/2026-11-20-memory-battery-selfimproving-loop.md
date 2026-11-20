@@ -109,6 +109,31 @@ Infra / gates:
   Updated the dvfs doc to mark the refinement analyzed + answered. 25/25 power
   tests green. *The L1 DAC model (constant output path) is exactly what made this
   analyzable — it turned a hand-wavy "maybe race-to-sleep" into a gated answer.*
+- **L3 — datasheet cross-checks (SLEEP placeholder + Run floor + Stop pause).**
+  Web-researched the STM32H7A3 datasheet (DS13677): it gives **120 µA/MHz**
+  best-case Run (periph-off, SMPS) and **Stop = 32 µA**, but NO Sleep-with-SAI-DMA
+  row — so `SLEEP_CURRENT_MA`'s placeholder is confirmed as the honest state (not
+  faked). Turned the data into a gate `run_currents_stay_above_datasheet_best_case_floor`:
+  the model's (conservative, periph-on) Run figures must stay ABOVE the 120 µA/MHz
+  physical floor, so nobody "optimizes" them into under-estimating current /
+  over-estimating runtime. Added `STOP_MODE_CURRENT_MA` (32 µA) — paused drain is
+  ~7-year shelf-life, confirming pause→Stop is the right pause policy. 13/13 model
+  green.
+
+## Status (end of session)
+
+Loop infrastructure + backlog established; **L0–L3 landed** (4 commits, all gated).
+Finding: the memory/battery subsystem is already **mature** — no-alloc gates,
+footprint roster, stack measurement, battery model + DVFS all pre-existed; the
+genuine value was filling flagged gaps (realistic output-path current, the
+race-to-sleep answer, datasheet floors), not reinventing. Remaining high-value
+loops are **gated on decisions/pushes/hardware**, not effort:
+- **Scratch right-size** (#1, ~64 KiB): needs the WavPack large-block tradeoff
+  decision + the soul-audio-core push (blocked on creds).
+- **Per-format stack transients** (extend the probe): doable; needs per-format
+  fixtures — next safe loop.
+- **RTF hot-loop / decode-ahead ring**: soul-audio-core, correctness-sensitive.
+- **Real battery numbers / Sleep current / clock+VOS apply**: need silicon.
 
 ## Sources
 

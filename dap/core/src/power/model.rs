@@ -89,8 +89,28 @@ pub const IDLE_CLOCK_MHZ: u32 = 60;
 
 /// Estimated Sleep-mode (WFI, SAI DMA still streaming) current, mA — see the
 /// module doc's dedicated section: this is a conservative placeholder, not a
-/// pinned datasheet row.
+/// pinned datasheet row. (The STM32H7A3 datasheet gives Run and Stop figures
+/// but no Sleep-with-SAI-DMA row — see [`DATASHEET_RUN_UA_PER_MHZ_BEST`] /
+/// [`STOP_MODE_CURRENT_MA`] for the two it does give, used as cross-checks.)
 pub const SLEEP_CURRENT_MA: f32 = 5.0;
+
+/// Stop-mode current (CPU + most clocks stopped, SRAM retained), mA — the DAP's
+/// PAUSE target: STM32H7A3 datasheet DS13677 gives **32 µA typical**. At
+/// [`DEFAULT_BATTERY_MAH`] that's ~7 years, so paused drain is effectively
+/// battery shelf-life, not a playback concern (pause → Stop, don't keep
+/// decoding). Resuming repaints the ring and restarts the SAI DMA.
+pub const STOP_MODE_CURRENT_MA: f32 = 0.032;
+// Compile-time invariant: paused (Stop) drain is negligible vs even the Sleep
+// estimate — a floor the two constants must keep relative to each other.
+const _: () = assert!(STOP_MODE_CURRENT_MA < SLEEP_CURRENT_MA / 100.0);
+
+/// STM32H7A3 datasheet **best-case** Run slope, µA/MHz (VDD 3.3 V, 25 °C,
+/// peripherals OFF, SMPS) — 120 µA/MHz per DS13677. Used only as a *physical
+/// floor* cross-check (see `run_currents_stay_above_datasheet_best_case_floor`):
+/// [`RUN_CURRENT_TABLE_MHZ`]'s figures are deliberately higher (peripherals on,
+/// conservative) and must stay at/above this line so the model never
+/// *under*-estimates current / *over*-estimates runtime. Not the model's own curve.
+pub const DATASHEET_RUN_UA_PER_MHZ_BEST: f32 = 120.0;
 
 /// Default single-cell battery capacity, mAh — the one `const` to change for
 /// a different pack. 2000 mAh is a typical single-cell Li-ion/Li-Po pouch
@@ -562,6 +582,24 @@ mod tests {
     }
 
     // --- pure-function unit sanity -------------------------------------
+
+    /// The model's run-current table is deliberately CONSERVATIVE (peripherals
+    /// on): every point must sit at/above the STM32H7A3 datasheet best-case
+    /// peripherals-off-SMPS line (120 µA/MHz, DS13677), so the model never
+    /// under-estimates current / over-estimates runtime. Guards against anyone
+    /// "optimizing" the table below the physical floor. Also pins that the
+    /// Stop-mode pause current is negligible vs even the Sleep estimate.
+    #[test]
+    fn run_currents_stay_above_datasheet_best_case_floor() {
+        for (mhz, ma) in RUN_CURRENT_TABLE_MHZ {
+            let floor_ma = DATASHEET_RUN_UA_PER_MHZ_BEST * mhz as f32 / 1000.0;
+            assert!(
+                ma >= floor_ma,
+                "{mhz} MHz: model {ma} mA is below the datasheet best-case floor {floor_ma:.1} mA \
+                 — the model would under-estimate current"
+            );
+        }
+    }
 
     #[test]
     fn min_clock_mhz_for_rtf_scales_as_expected() {
