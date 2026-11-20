@@ -357,9 +357,11 @@ mod tests {
     /// Full pipeline (decode + resample 44.1kHz->48kHz + sink-write) for the
     /// cheapest format (WAV) -- the worst-case RTF across the whole
     /// benchmark set, because resampling costs far more than any of the
-    /// seven decoders' own entropy/predict stage on this host. This is the
-    /// number that should drive a real device's clock choice whenever the
-    /// source rate doesn't match the DAC's fixed output rate.
+    /// seven decoders' own entropy/predict stage on this host. On THIS board the
+    /// resampler is the FALLBACK path, not the default: the CS43131's dual MCLK
+    /// oscillator plays 44.1k and 48k families natively, so standard content
+    /// decodes without resampling (see `native_rate_clocking_needs_lower_clock_than_resampling`).
+    /// This number drives the clock choice only for the uncommon off-family rate.
     const HOST_RTF_PIPELINE_RESAMPLED: f32 = 115.5;
 
     const ALL_DECODE_FORMATS: [(&str, f32); 7] = [
@@ -419,6 +421,43 @@ mod tests {
             min_clock <= VOS3_TARGET_MHZ,
             "resampled pipeline: derated target RTF {target_rtf:.2}x needs {min_clock} MHz, \
              expected <= {VOS3_TARGET_MHZ} MHz (VOS3 ceiling)"
+        );
+    }
+
+    /// Native-rate clocking beats resample-to-fixed-rate, on clock and so on
+    /// power. The board's CS43131 DAC takes BOTH sample-rate families via a dual
+    /// MCLK oscillator (22.5792 MHz→44.1k, 24.576 MHz→48k — see the DAC-selection
+    /// research), so the firmware can clock the SAI at the source's native rate
+    /// and SKIP the resampler for all standard content (44.1/48k + multiples) —
+    /// resampling being the single heaviest pipeline stage (see
+    /// [`HOST_RTF_PIPELINE_RESAMPLED`]). This gate pins that the worst-case *raw
+    /// decode* (no resample) needs a strictly LOWER CPU clock than resampling, so
+    /// native-rate clocking is a real power win and the firmware should prefer it
+    /// over a fixed-DAC-rate + always-resample path. (If a future resampler
+    /// speedup ever inverts this, revisit the clocking strategy — that's the gate
+    /// doing its job.)
+    #[test]
+    fn native_rate_clocking_needs_lower_clock_than_resampling() {
+        // Heaviest raw decoder = the lowest RTF of the seven.
+        let worst_decode_rtf = ALL_DECODE_FORMATS
+            .iter()
+            .map(|&(_, r)| r)
+            .fold(f32::INFINITY, f32::min);
+        let native_clock = min_clock_mhz_for_rtf(
+            estimate_target_rtf(worst_decode_rtf),
+            H7A3_MAX_CLOCK_MHZ,
+            TEST_SAFETY_MARGIN,
+        );
+        let resampled_clock = min_clock_mhz_for_rtf(
+            estimate_target_rtf(HOST_RTF_PIPELINE_RESAMPLED),
+            H7A3_MAX_CLOCK_MHZ,
+            TEST_SAFETY_MARGIN,
+        );
+        assert!(
+            native_clock < resampled_clock,
+            "native-rate worst-case decode needs {native_clock} MHz but resampling needs \
+             {resampled_clock} MHz — native-rate clocking should need the lower clock (it avoids \
+             the resampler, the heaviest stage). If this inverts, revisit the clocking strategy."
         );
     }
 

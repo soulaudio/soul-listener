@@ -130,6 +130,16 @@ Infra / gates:
   still keys on the worst case (which = the max), now with the full breakdown
   printed. QEMU green.
 
+- **L5 — native-rate clocking avoids the resampler** (ties the DAC research to
+  the power model). The CS43131 takes both rate families via a dual MCLK
+  oscillator (22.5792 MHz→44.1k, 24.576 MHz→48k), so the firmware clocks the SAI
+  at the source's native rate and skips the resampler for all standard content —
+  and resampling is the heaviest pipeline stage. Gate
+  `native_rate_clocking_needs_lower_clock_than_resampling`: worst-case raw decode
+  needs ~102 MHz vs ~158 MHz for resample-to-fixed-rate → native-rate is a real
+  power win, so the firmware should prefer it over a fixed-DAC-rate path.
+  Corrected the stale "DAC's fixed output rate" comment. 14/14 model green.
+
 ## Status (end of session)
 
 Loop infrastructure + backlog established; **L0–L3 landed** (4 commits, all gated).
