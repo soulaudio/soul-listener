@@ -1,0 +1,92 @@
+# Memory & battery optimization — self-improving loop
+
+**Status:** active. Running loop. Each entry: measure → change → verify (build/test/
+gate) → commit. Gates accumulate so a regression fails CI, not review.
+
+Board: STM32H7A3 (1 MB AXI-SRAM linked as the single RAM region; 280 MHz max;
+VOS0–3). Battery: Akyga LP623255 (see [[soul-listener-sourcing-licensing]]).
+Ports are still `dap_core::stub` — so *battery* numbers are analytical/design at
+this stage, while *memory* footprint is concretely measurable today.
+
+## Research thesis (web-researched 2026-11-20 — see sources at end)
+
+- **Race-to-sleep is the master battery lever.** Faster decode (better real-time
+  factor) → CPU idles longer → less energy. Embassy already parks the core in WFI
+  between `Timer::after` ticks, so decode efficiency (RTF) *is* battery life.
+- **VOS voltage scaling**: run the lowest frequency + VOS that sustains real-time
+  decode. STM32H7A3: VOS0 (280 MHz) … VOS3 (lower); Stop mode = 32 µA, RAM
+  retained — the pause/idle target.
+- **DMA audio (SAI/I²S) + WFI** lets the core sleep ~70 % during playback;
+  interrupt only per DMA block, not per sample. (Phase E, when the real Sink lands.)
+- **Memory**: fixed/static buffers, zero heap (already enforced), right-size
+  scratch, compile-time footprint gates (`heapless`, `static`, no `Vec`/`String`).
+
+## Measured baseline (2026-11-20)
+
+- Decoder scratch (`decoder_scratch_len` = `wavpack::MAX_BLOCK_PCM`) = **65536 i32
+  = 256 KiB**, `StaticCell`-backed on the board. **It is sized entirely by
+  WavPack.** Per-format scratch carves (embedded-profile, interleaved i32):
+
+  | format | scratch i32 | note |
+  |---|---|---|
+  | WavPack | 65536 | `MAX_BLOCK_PCM`; sets the shared size |
+  | ALAC | 28 672 | `MAX_FRAME*3 + MAX_FRAME*2ch*2` |
+  | Opus | 11 520 | `MAX_PACKET_SAMPLES` = 5760*2 |
+  | FLAC | 9 216 | `2ch * MAX_BLOCK(4608)` |
+  | AAC | 2 048 | `1024 * 2ch` |
+
+- Static footprint: App 174.7 KiB + scratch 256 KiB ≈ 432 KiB; ~592 KiB stack
+  headroom. Worst-case decode-open stack transient 315 KiB (fits — see the
+  stack-measurement correction doc).
+
+## Backlog (prioritized; value = static-RAM or battery, risk = correctness/scope)
+
+Memory (concrete, measurable now):
+1. **Right-size embedded decoder scratch.** WavPack sets 256 KiB; a standard
+   WavPack stereo block (ffmpeg: 22050*2 = 44100 i32) needs < 48 K. Cap
+   `MAX_BLOCK_PCM` under `embedded-profile` to ~49152 → scratch ~192 KiB (**−64
+   KiB**); large-block WavPack declines gracefully (same tradeoff class as the
+   capped `MAX_FLAC_FRAME` / dropped surround). *Format-support tradeoff — needs a
+   call. Risk: med (shared scratch; full decode matrix must stay green).*
+2. **Footprint gate for the scratch** (`dap-arch-tests`): assert
+   `decoder_scratch_len()` ≤ budget + print the per-format breakdown, so #1's win
+   locks in and any format enlarging the shared scratch fails CI. *Risk: none.*
+3. **Second-scratch audit.** Board uses one scratch (PRELOAD=0); confirm no
+   `SCRATCH2` equivalent is linked on the board. *Risk: none.*
+4. **Alloc-count gate** — assert zero heap allocations across open→decode→pump
+   (dap is `forbid(unsafe)` + no allocator, so this is near-free to assert). *none.*
+5. **ALAC/Opus/AAC buffer audit** — are any inline buffers oversized for the
+   stereo embedded target? *Risk: low.*
+
+Battery (analytical / config / design):
+6. **Power-budget model** — doc + a host test computing expected playback hours
+   from battery capacity, H7A3 RUN/Stop current (datasheet), and an RTF-derived
+   sleep fraction; makes the race-to-sleep target quantitative. *Risk: none.*
+7. **Board clock/VOS recommendation** — pick the lowest freq+VOS that sustains
+   real-time decode once RTF is known; documented now, applied when measurable.
+   *(Blind RCC changes risk no-boot with no hardware to verify — design-only now.)*
+8. **Stop-mode-on-pause design** — enter Stop (32 µA, RAM retained) when paused;
+   wake on the scroll-wheel/button EXTI. *Phase E.*
+9. **DMA SAI sink design** — double-buffered DMA so the core sleeps between
+   blocks. *Phase E.*
+10. **E-ink partial-refresh policy** — minimize full refreshes (power + ghosting);
+    the UI already tracks dirty regions — gate "no full refresh on a 1-field
+    change". *Risk: low.*
+
+Infra / gates:
+11. RTF-regression gate (desktop proxy, scaled) — guard decode efficiency.
+12. Wire footprint/alloc/stack gates into CI (QEMU stack gate needs a runner).
+13–20. Per-format RTF profiling, resampler throughput, EQ cost, index-read
+    footprint, buffer-reuse audits, const-assert budgets, etc. (expanded as the
+    loop surfaces them — self-improving.)
+
+## Loop log
+
+- **L0 (this doc)** — research + measured baseline + backlog. Committed.
+
+## Sources
+
+Memfault *Measuring Stack Usage*; ST *STM32H7 System Power Control (PWR)* &
+*AN5307 (H7A3/7B3 HW dev)* & VOS/SVOS scaling; TI *SPRAAW6* (DMA audio race-to-
+sleep); IEEE *perception-aware low-power audio decoder*; `static_cell`,
+`heapless`, rust-embedded book *Memory management in no_std*.
