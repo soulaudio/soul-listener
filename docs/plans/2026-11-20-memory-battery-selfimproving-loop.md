@@ -145,6 +145,17 @@ Infra / gates:
   CPU *and* its memory. The only remaining piece is the board (Phase E) setting
   the SAI/sink rate to the source's native family + switching the MCLK oscillator
   — the actionable Phase-E clocking recommendation this loop produces.
+- **L6 — datasheet calibration (real figures, not placeholders).** Web-researched
+  the authoritative sources and replaced estimates: **battery capacity 2000 →
+  1100 mAh** (the actual sourced pack is the Akyga LP623255 / AKY0646, 3.7 V,
+  1100 mAh / 4.07 Wh — the 2000 mAh default had over-estimated runtime by ~82 %).
+  Grounded the CS43131 draw against its datasheet (DS1155F2: 6.25–40.2 mW
+  operational, 576 µA standby → ~6–11 mA battery depending on volume/32 Ω load;
+  7 mA moderate stands) and the microSD draw (20–100 mA read / 250 µA sleep →
+  ~2 mA average). Realistic runtime at the real pack: **~41 h (opus) to ~74 h
+  (wav)** total-system; paused ≈ 4 years (Stop mode). 14/14 model tests still
+  green (floors hold at the lower capacity). *The single highest-impact accuracy
+  fix in the battery model — it was silently ~2× optimistic on the real pack.*
 
 ## Status (end of session)
 

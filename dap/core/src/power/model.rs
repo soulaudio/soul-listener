@@ -96,9 +96,9 @@ pub const SLEEP_CURRENT_MA: f32 = 5.0;
 
 /// Stop-mode current (CPU + most clocks stopped, SRAM retained), mA — the DAP's
 /// PAUSE target: STM32H7A3 datasheet DS13677 gives **32 µA typical**. At
-/// [`DEFAULT_BATTERY_MAH`] that's ~7 years, so paused drain is effectively
-/// battery shelf-life, not a playback concern (pause → Stop, don't keep
-/// decoding). Resuming repaints the ring and restarts the SAI DMA.
+/// [`DEFAULT_BATTERY_MAH`] (1100 mAh) that's ~4 years, so paused drain is
+/// effectively battery shelf-life, not a playback concern (pause → Stop, don't
+/// keep decoding). Resuming repaints the ring and restarts the SAI DMA.
 pub const STOP_MODE_CURRENT_MA: f32 = 0.032;
 // Compile-time invariant: paused (Stop) drain is negligible vs even the Sleep
 // estimate — a floor the two constants must keep relative to each other.
@@ -112,10 +112,12 @@ const _: () = assert!(STOP_MODE_CURRENT_MA < SLEEP_CURRENT_MA / 100.0);
 /// *under*-estimates current / *over*-estimates runtime. Not the model's own curve.
 pub const DATASHEET_RUN_UA_PER_MHZ_BEST: f32 = 120.0;
 
-/// Default single-cell battery capacity, mAh — the one `const` to change for
-/// a different pack. 2000 mAh is a typical single-cell Li-ion/Li-Po pouch
-/// size for a DAP-class device.
-pub const DEFAULT_BATTERY_MAH: f32 = 2000.0;
+/// Single-cell battery capacity, mAh — the actual pack this DAP sources: the
+/// **Akyga LP623255** (AKY0646), a 3.7 V Li-Po pouch, **1100 mAh / 4.07 Wh**,
+/// 6.2 × 32 × 55 mm (akyga.com; see soul-listener `sourcing/`). Earlier revisions
+/// of this model used a generic 2000 mAh placeholder, which over-estimated runtime
+/// by ~82 %; this is the real pack. Change this one `const` for a different cell.
+pub const DEFAULT_BATTERY_MAH: f32 = 1100.0;
 
 // --- Output-path (non-CPU) playback current ---------------------------------
 // The functions above model the *CPU* (run/sleep) current, which is what drives
@@ -129,15 +131,21 @@ pub const DEFAULT_BATTERY_MAH: f32 = 2000.0;
 
 /// Cirrus **CS43131** (the selected integrated DAC + ground-centered Class-H amp —
 /// see soul-listener `docs/research/2026-11-18-dac-amp-selection.md` §1–2) playback
-/// current at the battery rail. The part draws **~23 mW total playback power**
-/// (Class-H, no separate HV rail; Cirrus DS1155F2); at ~3.7 V that's ~6.2 mA,
-/// rounded to **7 mA** to cover regulator loss. Notably efficient — it does NOT
-/// dwarf the CPU here, but it is a real always-on draw the CPU model omits.
+/// current at the battery rail. Cirrus DS1155F2: operational power **6.25–40.2 mW**
+/// (Class-H, no separate HV rail), **576 µA** standby, and a 32 Ω-load playback
+/// condition summing ~26 mA across its internal rails. For the integrated
+/// single-supply board design the battery-input draw is the chip's total power /
+/// ~3.7 V ≈ **6 mA at moderate listening, up to ~11 mA near full 32 Ω output**.
+/// Modeled at **7 mA** (moderate — the realistic average); it does NOT dwarf the
+/// CPU but is a real always-on draw. Replace with a bench measurement at the
+/// target volume/impedance once the analog section exists.
 pub const DAC_AMP_PLAYBACK_MA: f32 = 7.0;
 
-/// SD-card current averaged over playback. Reads are bursty (decode-ahead ring
-/// refills, then idle), so the time-averaged draw is small; a conservative
-/// **~2 mA** average (active read bursts ~30–50 mA at a very low duty).
+/// microSD current averaged over playback. Reads are bursty (decode-ahead ring
+/// refills, then idle): active read is ~20–25 mA (SPI low-power) up to ~100 mA
+/// (25 MHz SD mode), sleep ~250 µA (measured ranges, multiple cards). At a low
+/// read duty (seconds of audio buffered per refill) the time-average is small —
+/// modeled at a conservative **~2 mA**.
 pub const SD_AVG_MA: f32 = 2.0;
 
 /// E-ink display current averaged over playback. The panel is bistable — ~0 mA
@@ -469,13 +477,14 @@ mod tests {
     /// `BatterySaver` policy, reproduced locally so this module's tests
     /// don't depend on that one), @ [`DEFAULT_BATTERY_MAH`]. This is a
     /// model/guard (datasheet currents x measured decode cost), not a
-    /// measurement -- see the module doc. Measured outputs today range
-    /// ~113h (opus, the worst case -- highest clock/duty of the seven) to
-    /// ~371h (wav, clamped to the idle clock floor); the 50h bound leaves
-    /// more than 2x margin under the worst case while still catching a
-    /// real regression (e.g. `SLEEP_CURRENT_MA` or a duty-cycle bug blowing
-    /// up), not asserting a specific battery-life number this model has no
-    /// authority to promise.
+    /// measurement -- see the module doc. Measured outputs at the real 1100 mAh
+    /// pack range ~65h (opus, the worst case -- highest clock/duty of the seven)
+    /// to ~200h (wav, clamped to the idle clock floor); the 50h bound leaves
+    /// ~1.3x margin under the worst case while still catching a real regression
+    /// (e.g. `SLEEP_CURRENT_MA` or a duty-cycle bug blowing up), not asserting a
+    /// specific battery-life number this model has no authority to promise.
+    /// (CPU-only; the realistic figure folds the output path in -- see
+    /// `system_runtime_is_realistic_and_below_cpu_only`.)
     #[test]
     fn runtime_hours_per_format_meets_sane_target() {
         const MIN_SANE_RUNTIME_HOURS: f32 = 50.0;
@@ -509,8 +518,9 @@ mod tests {
     /// strictly LOWER than the CPU-only estimate for every format — i.e. the
     /// output path is really being counted (a dropped peripheral term regresses
     /// this). The gap is largest for the cheap formats (WAV), where the CPU
-    /// current is lowest and the ~9.5 mA output path dominates: WAV's optimistic
-    /// CPU-only ~371h becomes a realistic ~130h once the DAC/amp is in.
+    /// current is lowest and the ~9.5 mA output path dominates: at the real
+    /// 1100 mAh pack, WAV's optimistic CPU-only ~200h becomes a realistic ~74h
+    /// once the DAC/amp is in; the worst case (opus) is ~41h.
     #[test]
     fn system_runtime_is_realistic_and_below_cpu_only() {
         const MIN_SYSTEM_RUNTIME_HOURS: f32 = 30.0;
