@@ -74,11 +74,10 @@ type Dap =
 /// `StaticCell`, the same pattern as `SCRATCH` above and `dap-sim`'s
 /// `tests/static_placement.rs`'s `PLAYER_CELL`.
 ///
-/// Read that test's doc comment before assuming the move is free: `App::new`'s
-/// return value is constructed on `main`'s own stack FIRST, and only then moved
-/// into `APP_CELL`'s backing storage by `StaticCell::init` (Rust has no stable
-/// placement-new). The optimizer usually elides that move via RVO/NRVO, but the
-/// language gives no guarantee of it.
+/// `main` builds it with `StaticCell::init_with` (below), which constructs `App`
+/// in-place inside `APP_CELL`'s storage — the documented guidance for a big `T`
+/// (plain `init` would construct on `main`'s stack and move, relying on RVO/NRVO
+/// the language does not guarantee; `init_with`'s closure removes that dependence).
 ///
 /// Where the stack lives, MEASURED (rust-lld, `--features hardware`, `llvm-nm`
 /// on the linked ELF -- not the 128 KB DTCM an earlier note here assumed):
@@ -89,14 +88,18 @@ type Dap =
 /// is 174.7 KiB (`dap-arch-tests`' `component_footprint_roster` measures the
 /// same from the same instantiation; a stale comment there still cites 332 KiB
 /// from the old PRELOAD=1 / pre-externalization era), `SCRATCH` is 256 KiB, and
-/// total static storage ~432 KiB leaves ~592 KiB of stack headroom. So even a
-/// non-elided ~175 KiB App-by-value transient fits with ~3.4x margin -- this
-/// construction is NOT the overflow risk an earlier revision of this note feared.
+/// total static storage ~432 KiB leaves ~592 KiB of stack headroom.
 ///
-/// Two honest caveats remain. (1) On-target runtime stack high-water is still
-/// unverified -- that wants QEMU stack-painting (deferred, no admin rights on
-/// this dev machine -- see the roadmap's Phase A1) or a flashed board. (2) As
-/// Phase E swaps the zero-size stub ports for real drivers (an e-ink
+/// On-target runtime stack high-water is now MEASURED, not just reasoned about:
+/// `tools/mcu-stackprobe` runs the real open->decode->pump path under QEMU
+/// (`mps2-an500`, Cortex-M7) with stack-painting. The worst-case track-open
+/// transient (Matroska-FLAC) is ~315 KiB of stack growth below the call site --
+/// it fits the 592 KiB headroom with ~277 KiB to spare. (An earlier revision of
+/// this note cited a ~1 MB figure from that harness; that was a measurement bug --
+/// it counted the probe's own `main` frame by measuring depth from the top of RAM
+/// instead of growth below the call site -- fixed 2026-11-19, see
+/// `docs/plans/2026-11-19-flac-stack-externalization.md`.) The remaining caveat:
+/// as Phase E swaps the zero-size stub ports for real drivers (an e-ink
 /// framebuffer, DMA audio rings), their statics eat into that 592 KiB headroom.
 /// `dap-arch-tests`' `board_static_footprint_leaves_stack_room_in_linked_axi_sram`
 /// guards that the board's dominant statics (this `App` + the decoder scratch)
@@ -111,16 +114,23 @@ async fn main(_spawner: Spawner) {
     let _p = embassy_stm32::init(Default::default());
     info!("board-h7a3: boot");
 
-    let app = App::new(
-        StubSink,
-        StubStorage,
-        StubPower,
-        StubControls,
-        StubDisplay,
-        AppConfig::default(),
-        board_scratch,
-    );
-    let app: &'static mut Dap = APP_CELL.init(app);
+    // `init_with` (not `init`) so the large `App` is constructed in-place inside
+    // `APP_CELL`'s storage rather than built on `main`'s stack and moved — the
+    // documented `StaticCell` guidance for big `T` ("If T is big, [init] is likely
+    // to cause stack overflows. Consider init_with instead"). This makes the
+    // construction robust instead of depending on the optimizer's RVO/NRVO to
+    // elide the move (Rust has no stable placement-new). See the `APP_CELL` note.
+    let app: &'static mut Dap = APP_CELL.init_with(|| {
+        App::new(
+            StubSink,
+            StubStorage,
+            StubPower,
+            StubControls,
+            StubDisplay,
+            AppConfig::default(),
+            board_scratch,
+        )
+    });
     info!("board-h7a3: App constructed (audio + power + controls + display wired)");
 
     // One track "queued" against storage that always reports NoMedia -- see

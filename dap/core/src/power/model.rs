@@ -89,13 +89,65 @@ pub const IDLE_CLOCK_MHZ: u32 = 60;
 
 /// Estimated Sleep-mode (WFI, SAI DMA still streaming) current, mA — see the
 /// module doc's dedicated section: this is a conservative placeholder, not a
-/// pinned datasheet row.
+/// pinned datasheet row. (The STM32H7A3 datasheet gives Run and Stop figures
+/// but no Sleep-with-SAI-DMA row — see [`DATASHEET_RUN_UA_PER_MHZ_BEST`] /
+/// [`STOP_MODE_CURRENT_MA`] for the two it does give, used as cross-checks.)
 pub const SLEEP_CURRENT_MA: f32 = 5.0;
+
+/// Stop-mode current (CPU + most clocks stopped, SRAM retained), mA — the DAP's
+/// PAUSE target: STM32H7A3 datasheet DS13677 gives **32 µA typical**. At
+/// [`DEFAULT_BATTERY_MAH`] that's ~7 years, so paused drain is effectively
+/// battery shelf-life, not a playback concern (pause → Stop, don't keep
+/// decoding). Resuming repaints the ring and restarts the SAI DMA.
+pub const STOP_MODE_CURRENT_MA: f32 = 0.032;
+// Compile-time invariant: paused (Stop) drain is negligible vs even the Sleep
+// estimate — a floor the two constants must keep relative to each other.
+const _: () = assert!(STOP_MODE_CURRENT_MA < SLEEP_CURRENT_MA / 100.0);
+
+/// STM32H7A3 datasheet **best-case** Run slope, µA/MHz (VDD 3.3 V, 25 °C,
+/// peripherals OFF, SMPS) — 120 µA/MHz per DS13677. Used only as a *physical
+/// floor* cross-check (see `run_currents_stay_above_datasheet_best_case_floor`):
+/// [`RUN_CURRENT_TABLE_MHZ`]'s figures are deliberately higher (peripherals on,
+/// conservative) and must stay at/above this line so the model never
+/// *under*-estimates current / *over*-estimates runtime. Not the model's own curve.
+pub const DATASHEET_RUN_UA_PER_MHZ_BEST: f32 = 120.0;
 
 /// Default single-cell battery capacity, mAh — the one `const` to change for
 /// a different pack. 2000 mAh is a typical single-cell Li-ion/Li-Po pouch
 /// size for a DAP-class device.
 pub const DEFAULT_BATTERY_MAH: f32 = 2000.0;
+
+// --- Output-path (non-CPU) playback current ---------------------------------
+// The functions above model the *CPU* (run/sleep) current, which is what drives
+// the DVFS clock choice. But a DAP's battery also feeds the DAC/amp, SD reads,
+// and the display the whole time it plays — omitting them makes `runtime_hours`
+// above optimistic (most so for the cheap formats, where the CPU current is
+// lowest and the near-constant output path dominates). These three constants let
+// `system_current_ma` fold that always-on draw in. Like `SLEEP_CURRENT_MA`, they
+// are datasheet-grounded *estimates* at a ~3.7 V single-cell nominal, to replace
+// with bench-measured figures once `board-h7a3` + the analog section exist.
+
+/// Cirrus **CS43131** (the selected integrated DAC + ground-centered Class-H amp —
+/// see soul-listener `docs/research/2026-11-18-dac-amp-selection.md` §1–2) playback
+/// current at the battery rail. The part draws **~23 mW total playback power**
+/// (Class-H, no separate HV rail; Cirrus DS1155F2); at ~3.7 V that's ~6.2 mA,
+/// rounded to **7 mA** to cover regulator loss. Notably efficient — it does NOT
+/// dwarf the CPU here, but it is a real always-on draw the CPU model omits.
+pub const DAC_AMP_PLAYBACK_MA: f32 = 7.0;
+
+/// SD-card current averaged over playback. Reads are bursty (decode-ahead ring
+/// refills, then idle), so the time-averaged draw is small; a conservative
+/// **~2 mA** average (active read bursts ~30–50 mA at a very low duty).
+pub const SD_AVG_MA: f32 = 2.0;
+
+/// E-ink display current averaged over playback. The panel is bistable — ~0 mA
+/// holding a static image; only the brief refresh on a now-playing/progress
+/// change draws, averaging to a negligible **~0.5 mA**.
+pub const DISPLAY_AVG_MA: f32 = 0.5;
+
+/// Total non-CPU output-path current during playback (DAC/amp + SD + display) at
+/// the battery rail — the always-on draw `system_current_ma` adds to the CPU blend.
+pub const PERIPHERAL_PLAYBACK_MA: f32 = DAC_AMP_PLAYBACK_MA + SD_AVG_MA + DISPLAY_AVG_MA;
 
 /// How much faster the HOST this crate's tests/benches run on is than the
 /// 280 MHz Cortex-M7 target, per `dap-sim/benches/decode_rtf.rs`'s own
@@ -232,6 +284,40 @@ pub fn runtime_hours(capacity_mah: f32, avg_ma: f32) -> f32 {
     capacity_mah / avg_ma
 }
 
+/// Full-system average playback current, mA: the CPU blend ([`avg_current_ma`])
+/// plus the always-on output path ([`PERIPHERAL_PLAYBACK_MA`]). This is the
+/// realistic total a DAP draws while playing — `runtime_hours(capacity, this)`
+/// gives a total-system runtime, where `runtime_hours(capacity,
+/// avg_current_ma(..))` alone gives only the (optimistic) CPU-only figure.
+#[must_use]
+pub fn system_current_ma(cpu_avg_ma: f32) -> f32 {
+    cpu_avg_ma + PERIPHERAL_PLAYBACK_MA
+}
+
+/// Full-system average playback current, mA, **if the decode runs at
+/// `clock_mhz`**: derive the duty cycle from the codec's `rtf_at_ref_clock`,
+/// blend the CPU run/sleep current, and add the always-on output path. Average
+/// current over a fixed playback time is the charge drawn (energy proxy), so
+/// comparing this across clocks for one codec *is* the
+/// race-to-sleep-vs-minimum-clock question (`power::dvfs`'s flagged, previously
+/// out-of-scope refinement). Finding (see
+/// `min_clock_not_beaten_by_race_to_sleep`): for this DAP's ~linear
+/// current-vs-clock curve, running at max clock then sleeping (race-to-sleep)
+/// does NOT draw less than the minimum sustaining clock — so `BatterySaver`'s
+/// minimize-clock policy is already near energy-optimal, no high-clock burst
+/// strategy beats it here.
+#[must_use]
+pub fn system_avg_current_at_clock(rtf_at_ref_clock: f32, ref_mhz: u32, clock_mhz: u32) -> f32 {
+    let cost = decode_cost_cycles_per_sec(rtf_at_ref_clock, ref_mhz);
+    let duty = duty_cycle(cost, f64::from(clock_mhz) * 1.0e6);
+    let cpu = avg_current_ma(
+        duty,
+        active_current_ma_for_clock(clock_mhz),
+        SLEEP_CURRENT_MA,
+    );
+    system_current_ma(cpu)
+}
+
 /// DMA half-transfer + transfer-complete interrupt rate, Hz: a circular
 /// double-buffered DMA ring fires **two** IRQs (half + complete) per full
 /// ring drain, and the ring drains at `sample_rate` frames/s, so
@@ -271,9 +357,11 @@ mod tests {
     /// Full pipeline (decode + resample 44.1kHz->48kHz + sink-write) for the
     /// cheapest format (WAV) -- the worst-case RTF across the whole
     /// benchmark set, because resampling costs far more than any of the
-    /// seven decoders' own entropy/predict stage on this host. This is the
-    /// number that should drive a real device's clock choice whenever the
-    /// source rate doesn't match the DAC's fixed output rate.
+    /// seven decoders' own entropy/predict stage on this host. On THIS board the
+    /// resampler is the FALLBACK path, not the default: the CS43131's dual MCLK
+    /// oscillator plays 44.1k and 48k families natively, so standard content
+    /// decodes without resampling (see `native_rate_clocking_needs_lower_clock_than_resampling`).
+    /// This number drives the clock choice only for the uncommon off-family rate.
     const HOST_RTF_PIPELINE_RESAMPLED: f32 = 115.5;
 
     const ALL_DECODE_FORMATS: [(&str, f32); 7] = [
@@ -336,6 +424,43 @@ mod tests {
         );
     }
 
+    /// Native-rate clocking beats resample-to-fixed-rate, on clock and so on
+    /// power. The board's CS43131 DAC takes BOTH sample-rate families via a dual
+    /// MCLK oscillator (22.5792 MHz→44.1k, 24.576 MHz→48k — see the DAC-selection
+    /// research), so the firmware can clock the SAI at the source's native rate
+    /// and SKIP the resampler for all standard content (44.1/48k + multiples) —
+    /// resampling being the single heaviest pipeline stage (see
+    /// [`HOST_RTF_PIPELINE_RESAMPLED`]). This gate pins that the worst-case *raw
+    /// decode* (no resample) needs a strictly LOWER CPU clock than resampling, so
+    /// native-rate clocking is a real power win and the firmware should prefer it
+    /// over a fixed-DAC-rate + always-resample path. (If a future resampler
+    /// speedup ever inverts this, revisit the clocking strategy — that's the gate
+    /// doing its job.)
+    #[test]
+    fn native_rate_clocking_needs_lower_clock_than_resampling() {
+        // Heaviest raw decoder = the lowest RTF of the seven.
+        let worst_decode_rtf = ALL_DECODE_FORMATS
+            .iter()
+            .map(|&(_, r)| r)
+            .fold(f32::INFINITY, f32::min);
+        let native_clock = min_clock_mhz_for_rtf(
+            estimate_target_rtf(worst_decode_rtf),
+            H7A3_MAX_CLOCK_MHZ,
+            TEST_SAFETY_MARGIN,
+        );
+        let resampled_clock = min_clock_mhz_for_rtf(
+            estimate_target_rtf(HOST_RTF_PIPELINE_RESAMPLED),
+            H7A3_MAX_CLOCK_MHZ,
+            TEST_SAFETY_MARGIN,
+        );
+        assert!(
+            native_clock < resampled_clock,
+            "native-rate worst-case decode needs {native_clock} MHz but resampling needs \
+             {resampled_clock} MHz — native-rate clocking should need the lower clock (it avoids \
+             the resampler, the heaviest stage). If this inverts, revisit the clocking strategy."
+        );
+    }
+
     // --- runtime estimate per format ----------------------------------
 
     /// Runtime estimate per format at a bare-minimum-clock policy (tight
@@ -374,6 +499,78 @@ mod tests {
             assert!(
                 duty < 1.0,
                 "{label}: duty cycle {duty:.3} leaves no sleep time"
+            );
+        }
+    }
+
+    /// The REALISTIC total-system runtime — the CPU blend plus the always-on
+    /// output path (DAC/amp + SD + display, [`system_current_ma`]). Two claims:
+    /// (a) it still clears a sane floor at [`DEFAULT_BATTERY_MAH`], and (b) it is
+    /// strictly LOWER than the CPU-only estimate for every format — i.e. the
+    /// output path is really being counted (a dropped peripheral term regresses
+    /// this). The gap is largest for the cheap formats (WAV), where the CPU
+    /// current is lowest and the ~9.5 mA output path dominates: WAV's optimistic
+    /// CPU-only ~371h becomes a realistic ~130h once the DAC/amp is in.
+    #[test]
+    fn system_runtime_is_realistic_and_below_cpu_only() {
+        const MIN_SYSTEM_RUNTIME_HOURS: f32 = 30.0;
+        for (label, host_rtf) in ALL_DECODE_FORMATS {
+            let target_rtf = estimate_target_rtf(host_rtf);
+            let clock =
+                min_clock_mhz_for_rtf(target_rtf, H7A3_MAX_CLOCK_MHZ, TEST_TIGHT_SAFETY_MARGIN)
+                    .clamp(IDLE_CLOCK_MHZ, H7A3_MAX_CLOCK_MHZ);
+            let cost = decode_cost_cycles_per_sec(target_rtf, H7A3_MAX_CLOCK_MHZ);
+            let duty = duty_cycle(cost, f64::from(clock) * 1.0e6);
+            let cpu_ma = avg_current_ma(duty, active_current_ma_for_clock(clock), SLEEP_CURRENT_MA);
+            let sys_ma = system_current_ma(cpu_ma);
+            let cpu_hours = runtime_hours(DEFAULT_BATTERY_MAH, cpu_ma);
+            let sys_hours = runtime_hours(DEFAULT_BATTERY_MAH, sys_ma);
+            assert!(
+                sys_hours >= MIN_SYSTEM_RUNTIME_HOURS,
+                "{label}: total-system runtime {sys_hours:.1}h (sys {sys_ma:.1} mA) below the \
+                 {MIN_SYSTEM_RUNTIME_HOURS}h floor"
+            );
+            assert!(
+                sys_hours < cpu_hours,
+                "{label}: system runtime {sys_hours:.1}h should be below the CPU-only \
+                 {cpu_hours:.1}h (the output path must be counted)"
+            );
+        }
+    }
+
+    #[test]
+    fn system_current_adds_the_output_path() {
+        // 7 (CS43131) + 2 (SD) + 0.5 (display) = 9.5 mA.
+        assert!((PERIPHERAL_PLAYBACK_MA - 9.5).abs() < 1e-6);
+        assert!((system_current_ma(10.0) - 19.5).abs() < 1e-6);
+    }
+
+    /// Resolves `power::dvfs`'s flagged, previously-out-of-scope refinement:
+    /// is "race to sleep" (burst at max clock, then WFI) more energy-efficient
+    /// than `BatterySaver`'s minimum sustaining clock? For this DAP: **no.**
+    /// For every format, total-system current at the minimum sustaining clock is
+    /// `<=` current at max clock — so racing to sleep never wins. Why: the H7A3
+    /// current-vs-clock curve is ~linear (energy per cycle ~constant, no
+    /// super-linear high-clock penalty to exploit by racing), low-clock active
+    /// current is cheap, and the ~9.5 mA output path is on either way. So
+    /// minimize-clock IS near energy-optimal; a high-clock-burst DVFS policy
+    /// would not improve battery here. (Model-dependent on the 4-point current
+    /// curve + `SLEEP_CURRENT_MA`; confirm on silicon — the direction is the
+    /// finding.)
+    #[test]
+    fn min_clock_not_beaten_by_race_to_sleep() {
+        for (label, host_rtf) in ALL_DECODE_FORMATS {
+            let rtf = estimate_target_rtf(host_rtf);
+            let min_clock =
+                min_clock_mhz_for_rtf(rtf, H7A3_MAX_CLOCK_MHZ, TEST_TIGHT_SAFETY_MARGIN)
+                    .clamp(IDLE_CLOCK_MHZ, H7A3_MAX_CLOCK_MHZ);
+            let at_min = system_avg_current_at_clock(rtf, H7A3_MAX_CLOCK_MHZ, min_clock);
+            let at_max = system_avg_current_at_clock(rtf, H7A3_MAX_CLOCK_MHZ, H7A3_MAX_CLOCK_MHZ);
+            assert!(
+                at_min <= at_max + 1e-3,
+                "{label}: min-clock {min_clock} MHz draws {at_min:.2} mA but race-to-sleep \
+                 (max clock) draws {at_max:.2} mA — race-to-sleep unexpectedly wins; \
+                 the dvfs minimize-clock policy may no longer be energy-optimal"
             );
         }
     }
@@ -424,6 +621,24 @@ mod tests {
     }
 
     // --- pure-function unit sanity -------------------------------------
+
+    /// The model's run-current table is deliberately CONSERVATIVE (peripherals
+    /// on): every point must sit at/above the STM32H7A3 datasheet best-case
+    /// peripherals-off-SMPS line (120 µA/MHz, DS13677), so the model never
+    /// under-estimates current / over-estimates runtime. Guards against anyone
+    /// "optimizing" the table below the physical floor. Also pins that the
+    /// Stop-mode pause current is negligible vs even the Sleep estimate.
+    #[test]
+    fn run_currents_stay_above_datasheet_best_case_floor() {
+        for (mhz, ma) in RUN_CURRENT_TABLE_MHZ {
+            let floor_ma = DATASHEET_RUN_UA_PER_MHZ_BEST * mhz as f32 / 1000.0;
+            assert!(
+                ma >= floor_ma,
+                "{mhz} MHz: model {ma} mA is below the datasheet best-case floor {floor_ma:.1} mA \
+                 — the model would under-estimate current"
+            );
+        }
+    }
 
     #[test]
     fn min_clock_mhz_for_rtf_scales_as_expected() {

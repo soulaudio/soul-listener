@@ -69,7 +69,16 @@ ELF="target/${TARGET}/release/mcu-stackprobe"
 # comment updating the cited baseline -- if a legitimate feature addition
 # grows the open path for a good reason.
 MAIN_FRAME_BUDGET=$((224 * 1024))     # 224 KiB; baseline 179,096 B (~174.9 KiB)
-LARGEST_FRAME_BUDGET=$((160 * 1024))  # 160 KiB; baseline 124,560 B (~121.6 KiB)
+# 208 KiB; baseline 185,048 B (~180.7 KiB). Re-based 2026-11-20: the largest
+# other frame is now `dispatch::open_seekable` itself, which inlines every
+# decoder constructor into one frame (previously the gate caught the un-inlined
+# `MatroskaDecoder::new_in` at 124,560 B; the stack-metric-correction + per-format
+# measurement-harness changes shifted the inlining so the whole open_seekable
+# frame is the measured peak). This is a STATIC per-function number only — the
+# DYNAMIC on-target open transient (QEMU, `check-stack-qemu.sh`) is ~297 KiB
+# worst-case and fits the board's 592 KiB headroom with ~295 KiB to spare, so
+# this larger static frame is well within budget on real hardware.
+LARGEST_FRAME_BUDGET=$((208 * 1024))  # 208 KiB; baseline 185,048 B (~180.7 KiB)
 
 echo "== mcu-stackprobe stack-budget gate =="
 echo "target:              $TARGET"

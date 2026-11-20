@@ -15,12 +15,16 @@
 //! The `qemu` feature turns the SAME binary into a DYNAMIC measurement: built
 //! for QEMU's `mps2-an500` (Cortex-M7), it paints the free stack with a
 //! sentinel, runs the workload for real, and scans for the high-water (see
-//! `check-stack-qemu.sh` and the `stackmeasure` module below). That dynamic
-//! number is the ground truth the static `MAIN_FRAME + LARGEST_FRAME` heuristic
-//! only approximates — and it is MUCH larger (first measured: ~1081 KiB for the
-//! Matroska-FLAC open vs the ~304 KB the two-frame heuristic reports), because
-//! the decoder-construction call chain stacks MANY large frames the heuristic
-//! ignores. Reducing that transient is tracked under the roadmap's A2/A3.
+//! `check-stack-qemu.sh` and the `stackmeasure` module below). The number that
+//! matters is the TRANSIENT = stack growth BELOW the call site
+//! (`painted_hi - deepest`), i.e. the extra stack a task incurs calling into the
+//! decode path. Worst case (Matroska-FLAC) is ~297 KiB and FITS the board's
+//! 592 KiB headroom; the per-format sweep (Opus-in-WebM 221, WAV 77, WavPack 62,
+//! ALAC-CAF 59 KiB) confirms nothing exceeds it. (An earlier revision reported
+//! ~1081 KiB and called it a blocker — that was a measurement bug: it measured
+//! depth from the top of RAM, counting this harness's own bloated `main` frame,
+//! not growth below the call site. Fixed 2026-11-19 — see `measure`'s doc and
+//! `docs/plans/2026-11-19-flac-stack-externalization.md`.)
 //!
 //! Two episodes run back to back in the same `main`, so BOTH are genuinely
 //! *exercised* (open()'d and decoded, not just type-reachable by a `match`
@@ -104,7 +108,22 @@ mod stackmeasure {
     }
 
     /// Scan [__sheap .. painted_hi) from the bottom for the first overwritten
-    /// word (the deepest the stack reached). Returns (used, available) bytes.
+    /// word (the deepest the stack reached). Returns
+    /// `(transient_below_paint, total_from_ram_top)` bytes.
+    ///
+    /// `transient_below_paint` = `painted_hi - deepest` — how far the workload
+    /// grew the stack BELOW the paint point. THIS is the board-relevant number:
+    /// the extra stack a task incurs by calling into the decode path, to compare
+    /// against the board's free-stack headroom. It is 0 if nothing was
+    /// overwritten (e.g. measuring immediately after `paint`).
+    ///
+    /// `total_from_ram_top` = `_stack_start - deepest` — the whole stack depth
+    /// from the top of RAM. This is PROBE-SPECIFIC: it also counts everything
+    /// above the paint point (this harness's own bloated `main` frame — it holds
+    /// two episodes' decoders, both fixtures, and every measurement local at
+    /// once), which a real board task never carries. Reported only for context;
+    /// do NOT compare it against the board headroom (that was the original
+    /// apples-to-oranges error that over-reported the open transient ~3x).
     pub fn measure(painted_hi: usize) -> (usize, usize) {
         let lo = sheap();
         let top = stack_start();
@@ -117,7 +136,7 @@ mod stackmeasure {
             }
             p += 4;
         }
-        (top - deepest, top - lo)
+        (painted_hi - deepest, top - deepest)
     }
 }
 
@@ -184,6 +203,27 @@ const WAV_FIXTURE: &[u8] = &[
 const MKA_FLAC_FIXTURE: &[u8] =
     include_bytes!("../../../../soul-audio-core/testdata/tone-flac.mka");
 
+/// Additional real fixtures for the per-format open-transient sweep (design
+/// `2026-11-16-memory-and-battery-optimization-design.md` §5.1 "stack
+/// high-water-mark per format"). Each exercises a different scratch-carving
+/// decoder's construction nesting: WavPack (the largest shared scratch),
+/// Opus-in-WebM (`MatroskaOpus`), ALAC-in-CAF (`CafAlac`). All from
+/// soul-audio-core's test corpus, same path rule as `MKA_FLAC_FIXTURE`.
+///
+/// **`qemu`-only on purpose.** The sweep's `open_seekable` calls (below) give
+/// each decoder constructor a SECOND call site besides `open_seekable`'s own
+/// match arm, which stops the compiler inlining it — materializing its frame as
+/// a standalone "largest other frame" that trips the STATIC `check-stack.sh`
+/// gate. The static gate only needs the WAV + Matroska-FLAC episodes; the
+/// dynamic per-format numbers are a QEMU-run concern, so the whole sweep is
+/// gated out of the non-qemu (static `-Z emit-stack-sizes`) build.
+#[cfg(feature = "qemu")]
+const WAVPACK_FIXTURE: &[u8] = include_bytes!("../../../../soul-audio-core/testdata/tone-24.wv");
+#[cfg(feature = "qemu")]
+const OPUS_FIXTURE: &[u8] = include_bytes!("../../../../soul-audio-core/testdata/tone-opus.webm");
+#[cfg(feature = "qemu")]
+const ALAC_FIXTURE: &[u8] = include_bytes!("../../../../soul-audio-core/testdata/tone-alac.caf");
+
 /// A no-op output: write/flush succeed and discard. Fixed at 48 kHz/stereo/
 /// 24-bit so the deck always has a concrete target to pipe decoded PCM into.
 struct DiscardSink {
@@ -216,6 +256,15 @@ impl Sink for DiscardSink {
 /// real H7A3 map), so two 256 KB statics cost nothing here.
 static SCRATCH: StaticCell<[i32; decoder_scratch_len()]> = StaticCell::new();
 static SCRATCH2: StaticCell<[i32; decoder_scratch_len()]> = StaticCell::new();
+// One more per format in the per-format open sweep (same by-value-scratch reason
+// as SCRATCH2's doc comment: each open consumes its `&'static mut [i32]`).
+// `qemu`-only, like the sweep itself (see the WAVPACK_FIXTURE doc comment).
+#[cfg(feature = "qemu")]
+static SCRATCH3: StaticCell<[i32; decoder_scratch_len()]> = StaticCell::new();
+#[cfg(feature = "qemu")]
+static SCRATCH4: StaticCell<[i32; decoder_scratch_len()]> = StaticCell::new();
+#[cfg(feature = "qemu")]
+static SCRATCH5: StaticCell<[i32; decoder_scratch_len()]> = StaticCell::new();
 
 type ProbeDecoder = AnyDecoder<SliceSource<'static>, &'static mut [i32]>;
 type ProbeDeck = Deck<DiscardSink, ProbeDecoder, 0>;
@@ -237,6 +286,8 @@ fn main() -> ! {
     // the open->decode->pump calls below will touch.
     #[cfg(feature = "qemu")]
     let painted_hi = stackmeasure::paint();
+    #[cfg(feature = "qemu")]
+    let after_paint = stackmeasure::measure(painted_hi).0;
 
     let sink = DiscardSink {
         info: StreamInfo {
@@ -260,6 +311,9 @@ fn main() -> ! {
     let scratch: &'static mut [i32] = SCRATCH.init([0; decoder_scratch_len()]);
     let src = SliceSource::new(WAV_FIXTURE);
     let decoder = open_seekable(src, scratch).unwrap();
+    // qemu: WAV open transient (growth below the paint point), for per-format context.
+    #[cfg(feature = "qemu")]
+    let ep1_open = stackmeasure::measure(painted_hi).0;
     deck.load(decoder).unwrap();
     for _ in 0..4 {
         let _ = deck.pump();
@@ -272,6 +326,9 @@ fn main() -> ! {
     let scratch2: &'static mut [i32] = SCRATCH2.init([0; decoder_scratch_len()]);
     let src2 = SliceSource::new(MKA_FLAC_FIXTURE);
     let decoder2 = open_seekable(src2, scratch2).unwrap();
+    // DIAGNOSTIC: peak after episode-2 open_seekable (before load).
+    #[cfg(feature = "qemu")]
+    let ep2_open_peak = stackmeasure::measure(painted_hi).0;
     deck.load(decoder2).unwrap();
 
     // qemu: snapshot the OPEN-path peak (both episodes' decoder construction) now,
@@ -285,18 +342,52 @@ fn main() -> ! {
         let _ = deck.pump();
     }
 
-    // qemu: measure again (now the max of open + pump), report both so we can see
-    // which dominates, then exit QEMU.
+    // qemu: capture the open+pump peak, run the per-format open-transient sweep,
+    // report, and exit. ALL of this is qemu-only — see the WAVPACK_FIXTURE doc
+    // comment for why the sweep must NOT be in the static `-Z emit-stack-sizes`
+    // build (a second constructor call site defeats inlining and trips the static
+    // gate). The static gate measures the WAV + Matroska-FLAC episodes above.
     #[cfg(feature = "qemu")]
     {
-        let (total_peak, avail) = stackmeasure::measure(painted_hi);
+        // open+pump peak relative to the ORIGINAL paint, BEFORE the sweep re-paints.
+        let (openpump_transient, openpump_total) = stackmeasure::measure(painted_hi);
+
+        // Per-format sweep: RE-PAINT before each open so each number is that
+        // format's OWN transient (growth below the call site); drop each before
+        // the next. (WAV + Matroska-FLAC are the two episodes above.)
+        let s3 = SCRATCH3.init([0; decoder_scratch_len()]);
+        let ph_wv = stackmeasure::paint();
+        let wv = open_seekable(SliceSource::new(WAVPACK_FIXTURE), s3).unwrap();
+        let wavpack_open = stackmeasure::measure(ph_wv).0;
+        drop(wv);
+
+        let s4 = SCRATCH4.init([0; decoder_scratch_len()]);
+        let ph_op = stackmeasure::paint();
+        let op = open_seekable(SliceSource::new(OPUS_FIXTURE), s4).unwrap();
+        let opus_open = stackmeasure::measure(ph_op).0;
+        drop(op);
+
+        let s5 = SCRATCH5.init([0; decoder_scratch_len()]);
+        let ph_al = stackmeasure::paint();
+        let al = open_seekable(SliceSource::new(ALAC_FIXTURE), s5).unwrap();
+        let alac_open = stackmeasure::measure(ph_al).0;
+        drop(al);
+
         let _ = cortex_m_semihosting::hprintln!(
-            "mcu-stackprobe-qemu: open-path peak = {} KiB ({} B); open+pump peak = {} KiB ({} B); of {} KiB paintable",
+            "mcu-stackprobe-qemu: VALIDATE after_paint={} B (expect 0); open-path transient = {} KiB ({} B); open+pump transient = {} KiB; probe-total(ctx) = {} KiB",
+            after_paint,
             open_peak / 1024,
             open_peak,
-            total_peak / 1024,
-            total_peak,
-            avail / 1024
+            openpump_transient / 1024,
+            openpump_total / 1024,
+        );
+        let _ = cortex_m_semihosting::hprintln!(
+            "mcu-stackprobe-qemu: per-format open transient (KiB): wav={} mka-flac={} wavpack={} opus-webm={} alac-caf={}",
+            ep1_open / 1024,
+            ep2_open_peak / 1024,
+            wavpack_open / 1024,
+            opus_open / 1024,
+            alac_open / 1024,
         );
         cortex_m_semihosting::debug::exit(cortex_m_semihosting::debug::EXIT_SUCCESS);
     }
