@@ -120,6 +120,16 @@ Infra / gates:
   ~7-year shelf-life, confirming pause→Stop is the right pause policy. 13/13 model
   green.
 
+- **L4 — per-format stack transients** (design §5.1 "stack high-water per
+  format", previously only 2 formats measured). Extended `tools/mcu-stackprobe`
+  with a re-painted per-format open sweep over the scratch-carving decoders.
+  Result (growth below the call site, embedded-profile, fits the 592 KiB
+  headroom): **Matroska-FLAC 297 · Opus-in-WebM 221 · WAV 77 · WavPack 62 ·
+  ALAC-CAF 59 KiB**. Confirms Matroska-FLAC is the worst case and **nothing
+  exceeds headroom**; Opus is a notable 2nd (CELT/SILK construction). The gate
+  still keys on the worst case (which = the max), now with the full breakdown
+  printed. QEMU green.
+
 ## Status (end of session)
 
 Loop infrastructure + backlog established; **L0–L3 landed** (4 commits, all gated).
