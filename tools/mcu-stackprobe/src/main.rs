@@ -104,7 +104,22 @@ mod stackmeasure {
     }
 
     /// Scan [__sheap .. painted_hi) from the bottom for the first overwritten
-    /// word (the deepest the stack reached). Returns (used, available) bytes.
+    /// word (the deepest the stack reached). Returns
+    /// `(transient_below_paint, total_from_ram_top)` bytes.
+    ///
+    /// `transient_below_paint` = `painted_hi - deepest` — how far the workload
+    /// grew the stack BELOW the paint point. THIS is the board-relevant number:
+    /// the extra stack a task incurs by calling into the decode path, to compare
+    /// against the board's free-stack headroom. It is 0 if nothing was
+    /// overwritten (e.g. measuring immediately after `paint`).
+    ///
+    /// `total_from_ram_top` = `_stack_start - deepest` — the whole stack depth
+    /// from the top of RAM. This is PROBE-SPECIFIC: it also counts everything
+    /// above the paint point (this harness's own bloated `main` frame — it holds
+    /// two episodes' decoders, both fixtures, and every measurement local at
+    /// once), which a real board task never carries. Reported only for context;
+    /// do NOT compare it against the board headroom (that was the original
+    /// apples-to-oranges error that over-reported the open transient ~3x).
     pub fn measure(painted_hi: usize) -> (usize, usize) {
         let lo = sheap();
         let top = stack_start();
@@ -117,7 +132,7 @@ mod stackmeasure {
             }
             p += 4;
         }
-        (top - deepest, top - lo)
+        (painted_hi - deepest, top - deepest)
     }
 }
 
@@ -237,6 +252,8 @@ fn main() -> ! {
     // the open->decode->pump calls below will touch.
     #[cfg(feature = "qemu")]
     let painted_hi = stackmeasure::paint();
+    #[cfg(feature = "qemu")]
+    let after_paint = stackmeasure::measure(painted_hi).0;
 
     let sink = DiscardSink {
         info: StreamInfo {
@@ -260,6 +277,9 @@ fn main() -> ! {
     let scratch: &'static mut [i32] = SCRATCH.init([0; decoder_scratch_len()]);
     let src = SliceSource::new(WAV_FIXTURE);
     let decoder = open_seekable(src, scratch).unwrap();
+    // qemu: WAV open transient (growth below the paint point), for per-format context.
+    #[cfg(feature = "qemu")]
+    let ep1_open = stackmeasure::measure(painted_hi).0;
     deck.load(decoder).unwrap();
     for _ in 0..4 {
         let _ = deck.pump();
@@ -272,6 +292,9 @@ fn main() -> ! {
     let scratch2: &'static mut [i32] = SCRATCH2.init([0; decoder_scratch_len()]);
     let src2 = SliceSource::new(MKA_FLAC_FIXTURE);
     let decoder2 = open_seekable(src2, scratch2).unwrap();
+    // DIAGNOSTIC: peak after episode-2 open_seekable (before load).
+    #[cfg(feature = "qemu")]
+    let ep2_open_peak = stackmeasure::measure(painted_hi).0;
     deck.load(decoder2).unwrap();
 
     // qemu: snapshot the OPEN-path peak (both episodes' decoder construction) now,
@@ -289,14 +312,16 @@ fn main() -> ! {
     // which dominates, then exit QEMU.
     #[cfg(feature = "qemu")]
     {
-        let (total_peak, avail) = stackmeasure::measure(painted_hi);
+        let (openpump_transient, openpump_total) = stackmeasure::measure(painted_hi);
         let _ = cortex_m_semihosting::hprintln!(
-            "mcu-stackprobe-qemu: open-path peak = {} KiB ({} B); open+pump peak = {} KiB ({} B); of {} KiB paintable",
+            "mcu-stackprobe-qemu: VALIDATE after_paint={} B (expect 0); ep1(wav)-open={} B; ep2(mka-flac)-open={} B; open-path transient = {} KiB ({} B); open+pump transient = {} KiB; probe-total(ctx) = {} KiB",
+            after_paint,
+            ep1_open,
+            ep2_open_peak,
             open_peak / 1024,
             open_peak,
-            total_peak / 1024,
-            total_peak,
-            avail / 1024
+            openpump_transient / 1024,
+            openpump_total / 1024,
         );
         cortex_m_semihosting::debug::exit(cortex_m_semihosting::debug::EXIT_SUCCESS);
     }
