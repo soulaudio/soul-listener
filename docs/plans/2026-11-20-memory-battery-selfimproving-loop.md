@@ -139,6 +139,12 @@ Infra / gates:
   needs ~102 MHz vs ~158 MHz for resample-to-fixed-rate → native-rate is a real
   power win, so the firmware should prefer it over a fixed-DAC-rate path.
   Corrected the stale "DAC's fixed output rate" comment. 14/14 model green.
+  **Verified end-to-end:** the Deck already skips the resampler at matching rates
+  (`make_resampler` → `None` when `src_rate == sink_rate`; `resampler:
+  Option<Resampler>`), so native-rate clocking builds NO resampler — saving its
+  CPU *and* its memory. The only remaining piece is the board (Phase E) setting
+  the SAI/sink rate to the source's native family + switching the MCLK oscillator
+  — the actionable Phase-E clocking recommendation this loop produces.
 
 ## Status (end of session)
 
