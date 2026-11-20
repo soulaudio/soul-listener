@@ -95,6 +95,20 @@ Infra / gates:
   model tests + 36/36 dap-core green. *Finding: the CS43131 is efficient enough
   (~7 mA) that CPU and DAC are comparable — neither dominates — so both CPU DVFS
   AND decode efficiency matter for battery, validating the race-to-sleep focus.*
+- **L2 — resolve the DVFS "race-to-sleep" open question.** `power::dvfs` had
+  explicitly flagged (in `BATTERY_SAVER_SAFETY`'s doc) that a race-to-sleep policy
+  (burst at max clock, WFI longer) "is a different, not-strictly-dominated
+  strategy the model can represent but this doesn't implement." Answered it with
+  `system_avg_current_at_clock(rtf, ref, clock)` + a gate
+  `min_clock_not_beaten_by_race_to_sleep`: for **every** format, total-system
+  current at the minimum sustaining clock is ≤ at max clock — **race-to-sleep does
+  NOT win for this DAP**. Why: the H7A3 current-vs-clock curve is ~linear (no
+  super-linear high-clock penalty to exploit), low-clock active current is cheap,
+  and the ~9.5 mA output path is on either way. So `BatterySaver`'s minimize-clock
+  is already near energy-optimal — a high-clock-burst DVFS policy would not help.
+  Updated the dvfs doc to mark the refinement analyzed + answered. 25/25 power
+  tests green. *The L1 DAC model (constant output path) is exactly what made this
+  analyzable — it turned a hand-wavy "maybe race-to-sleep" into a gated answer.*
 
 ## Sources
 

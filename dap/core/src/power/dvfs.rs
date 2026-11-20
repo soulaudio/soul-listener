@@ -34,12 +34,16 @@ pub const BALANCED_SAFETY: f32 = 1.3;
 /// design doc §4.2 table. Note (see this module's unit tests): this
 /// minimizes *clock* (and so V²f instantaneous power), but — because it
 /// runs the CPU close to continuously at that bare-minimum clock — it does
-/// NOT necessarily minimize *duty cycle*/maximize sleep time; a
-/// "race-to-sleep" policy (boost to a high clock, decode a burst fast, WFI
-/// for longer) is a different, not-strictly-dominated strategy
-/// [`model`](super::model) can represent but [`clock_mhz_for_profile`]
-/// does not implement — flagged here as a known, deliberately out-of-scope
-/// refinement.
+/// NOT minimize *duty cycle*/maximize sleep time. Whether a "race-to-sleep"
+/// policy (boost to a high clock, decode a burst fast, WFI for longer) would
+/// draw *less* was previously flagged here as an open refinement; it is now
+/// **analyzed and answered — it would not**, for this DAP. See
+/// [`model::system_avg_current_at_clock`] and its
+/// `min_clock_not_beaten_by_race_to_sleep` test: the H7A3's ~linear
+/// current-vs-clock curve plus the always-on ~9.5 mA output path mean total
+/// current at the minimum sustaining clock is `<=` at max clock for every
+/// format, so minimize-clock is already near energy-optimal and a high-clock
+/// burst strategy does not beat it. (Model-level; confirm on silicon.)
 pub const BATTERY_SAVER_SAFETY: f32 = 1.15;
 
 /// DVFS clock policy for a [`PowerProfile`], given the current codec's RTF

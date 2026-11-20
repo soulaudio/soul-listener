@@ -274,6 +274,30 @@ pub fn system_current_ma(cpu_avg_ma: f32) -> f32 {
     cpu_avg_ma + PERIPHERAL_PLAYBACK_MA
 }
 
+/// Full-system average playback current, mA, **if the decode runs at
+/// `clock_mhz`**: derive the duty cycle from the codec's `rtf_at_ref_clock`,
+/// blend the CPU run/sleep current, and add the always-on output path. Average
+/// current over a fixed playback time is the charge drawn (energy proxy), so
+/// comparing this across clocks for one codec *is* the
+/// race-to-sleep-vs-minimum-clock question (`power::dvfs`'s flagged, previously
+/// out-of-scope refinement). Finding (see
+/// `min_clock_not_beaten_by_race_to_sleep`): for this DAP's ~linear
+/// current-vs-clock curve, running at max clock then sleeping (race-to-sleep)
+/// does NOT draw less than the minimum sustaining clock — so `BatterySaver`'s
+/// minimize-clock policy is already near energy-optimal, no high-clock burst
+/// strategy beats it here.
+#[must_use]
+pub fn system_avg_current_at_clock(rtf_at_ref_clock: f32, ref_mhz: u32, clock_mhz: u32) -> f32 {
+    let cost = decode_cost_cycles_per_sec(rtf_at_ref_clock, ref_mhz);
+    let duty = duty_cycle(cost, f64::from(clock_mhz) * 1.0e6);
+    let cpu = avg_current_ma(
+        duty,
+        active_current_ma_for_clock(clock_mhz),
+        SLEEP_CURRENT_MA,
+    );
+    system_current_ma(cpu)
+}
+
 /// DMA half-transfer + transfer-complete interrupt rate, Hz: a circular
 /// double-buffered DMA ring fires **two** IRQs (half + complete) per full
 /// ring drain, and the ring drains at `sample_rate` frames/s, so
@@ -460,6 +484,36 @@ mod tests {
         // 7 (CS43131) + 2 (SD) + 0.5 (display) = 9.5 mA.
         assert!((PERIPHERAL_PLAYBACK_MA - 9.5).abs() < 1e-6);
         assert!((system_current_ma(10.0) - 19.5).abs() < 1e-6);
+    }
+
+    /// Resolves `power::dvfs`'s flagged, previously-out-of-scope refinement:
+    /// is "race to sleep" (burst at max clock, then WFI) more energy-efficient
+    /// than `BatterySaver`'s minimum sustaining clock? For this DAP: **no.**
+    /// For every format, total-system current at the minimum sustaining clock is
+    /// `<=` current at max clock — so racing to sleep never wins. Why: the H7A3
+    /// current-vs-clock curve is ~linear (energy per cycle ~constant, no
+    /// super-linear high-clock penalty to exploit by racing), low-clock active
+    /// current is cheap, and the ~9.5 mA output path is on either way. So
+    /// minimize-clock IS near energy-optimal; a high-clock-burst DVFS policy
+    /// would not improve battery here. (Model-dependent on the 4-point current
+    /// curve + `SLEEP_CURRENT_MA`; confirm on silicon — the direction is the
+    /// finding.)
+    #[test]
+    fn min_clock_not_beaten_by_race_to_sleep() {
+        for (label, host_rtf) in ALL_DECODE_FORMATS {
+            let rtf = estimate_target_rtf(host_rtf);
+            let min_clock =
+                min_clock_mhz_for_rtf(rtf, H7A3_MAX_CLOCK_MHZ, TEST_TIGHT_SAFETY_MARGIN)
+                    .clamp(IDLE_CLOCK_MHZ, H7A3_MAX_CLOCK_MHZ);
+            let at_min = system_avg_current_at_clock(rtf, H7A3_MAX_CLOCK_MHZ, min_clock);
+            let at_max = system_avg_current_at_clock(rtf, H7A3_MAX_CLOCK_MHZ, H7A3_MAX_CLOCK_MHZ);
+            assert!(
+                at_min <= at_max + 1e-3,
+                "{label}: min-clock {min_clock} MHz draws {at_min:.2} mA but race-to-sleep \
+                 (max clock) draws {at_max:.2} mA — race-to-sleep unexpectedly wins; \
+                 the dvfs minimize-clock policy may no longer be energy-optimal"
+            );
+        }
     }
 
     // --- sleep-ratio / wakeup-rate (decode-ahead ring sizing) ---------
