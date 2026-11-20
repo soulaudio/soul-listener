@@ -209,8 +209,19 @@ const MKA_FLAC_FIXTURE: &[u8] =
 /// decoder's construction nesting: WavPack (the largest shared scratch),
 /// Opus-in-WebM (`MatroskaOpus`), ALAC-in-CAF (`CafAlac`). All from
 /// soul-audio-core's test corpus, same path rule as `MKA_FLAC_FIXTURE`.
+///
+/// **`qemu`-only on purpose.** The sweep's `open_seekable` calls (below) give
+/// each decoder constructor a SECOND call site besides `open_seekable`'s own
+/// match arm, which stops the compiler inlining it — materializing its frame as
+/// a standalone "largest other frame" that trips the STATIC `check-stack.sh`
+/// gate. The static gate only needs the WAV + Matroska-FLAC episodes; the
+/// dynamic per-format numbers are a QEMU-run concern, so the whole sweep is
+/// gated out of the non-qemu (static `-Z emit-stack-sizes`) build.
+#[cfg(feature = "qemu")]
 const WAVPACK_FIXTURE: &[u8] = include_bytes!("../../../../soul-audio-core/testdata/tone-24.wv");
+#[cfg(feature = "qemu")]
 const OPUS_FIXTURE: &[u8] = include_bytes!("../../../../soul-audio-core/testdata/tone-opus.webm");
+#[cfg(feature = "qemu")]
 const ALAC_FIXTURE: &[u8] = include_bytes!("../../../../soul-audio-core/testdata/tone-alac.caf");
 
 /// A no-op output: write/flush succeed and discard. Fixed at 48 kHz/stereo/
@@ -247,8 +258,12 @@ static SCRATCH: StaticCell<[i32; decoder_scratch_len()]> = StaticCell::new();
 static SCRATCH2: StaticCell<[i32; decoder_scratch_len()]> = StaticCell::new();
 // One more per format in the per-format open sweep (same by-value-scratch reason
 // as SCRATCH2's doc comment: each open consumes its `&'static mut [i32]`).
+// `qemu`-only, like the sweep itself (see the WAVPACK_FIXTURE doc comment).
+#[cfg(feature = "qemu")]
 static SCRATCH3: StaticCell<[i32; decoder_scratch_len()]> = StaticCell::new();
+#[cfg(feature = "qemu")]
 static SCRATCH4: StaticCell<[i32; decoder_scratch_len()]> = StaticCell::new();
+#[cfg(feature = "qemu")]
 static SCRATCH5: StaticCell<[i32; decoder_scratch_len()]> = StaticCell::new();
 
 type ProbeDecoder = AnyDecoder<SliceSource<'static>, &'static mut [i32]>;
@@ -327,46 +342,37 @@ fn main() -> ! {
         let _ = deck.pump();
     }
 
-    // qemu: capture the open+pump peak (relative to the ORIGINAL paint) now,
-    // BEFORE the per-format sweep below re-paints the stack.
-    #[cfg(feature = "qemu")]
-    let (openpump_transient, openpump_total) = stackmeasure::measure(painted_hi);
-
-    // --- Per-format open-transient sweep (design §5.1 "stack high-water-mark
-    // per format"). RE-PAINT before each open so each number is that format's
-    // OWN transient (growth below the call site), not the cumulative peak; drop
-    // each before the next. Compiled unconditionally so the static
-    // `-Z emit-stack-sizes` build monomorphizes every decoder too; measured only
-    // under qemu. These are the remaining scratch-carving decoders (WAV + the
-    // Matroska-FLAC worst case are the two episodes above).
-    let s3 = SCRATCH3.init([0; decoder_scratch_len()]);
-    #[cfg(feature = "qemu")]
-    let ph_wv = stackmeasure::paint();
-    let wv = open_seekable(SliceSource::new(WAVPACK_FIXTURE), s3).unwrap();
-    #[cfg(feature = "qemu")]
-    let wavpack_open = stackmeasure::measure(ph_wv).0;
-    drop(wv);
-
-    let s4 = SCRATCH4.init([0; decoder_scratch_len()]);
-    #[cfg(feature = "qemu")]
-    let ph_op = stackmeasure::paint();
-    let op = open_seekable(SliceSource::new(OPUS_FIXTURE), s4).unwrap();
-    #[cfg(feature = "qemu")]
-    let opus_open = stackmeasure::measure(ph_op).0;
-    drop(op);
-
-    let s5 = SCRATCH5.init([0; decoder_scratch_len()]);
-    #[cfg(feature = "qemu")]
-    let ph_al = stackmeasure::paint();
-    let al = open_seekable(SliceSource::new(ALAC_FIXTURE), s5).unwrap();
-    #[cfg(feature = "qemu")]
-    let alac_open = stackmeasure::measure(ph_al).0;
-    drop(al);
-
-    // qemu: report the headline worst case (ep2 Matroska-FLAC) + the per-format
-    // sweep, then exit QEMU.
+    // qemu: capture the open+pump peak, run the per-format open-transient sweep,
+    // report, and exit. ALL of this is qemu-only — see the WAVPACK_FIXTURE doc
+    // comment for why the sweep must NOT be in the static `-Z emit-stack-sizes`
+    // build (a second constructor call site defeats inlining and trips the static
+    // gate). The static gate measures the WAV + Matroska-FLAC episodes above.
     #[cfg(feature = "qemu")]
     {
+        // open+pump peak relative to the ORIGINAL paint, BEFORE the sweep re-paints.
+        let (openpump_transient, openpump_total) = stackmeasure::measure(painted_hi);
+
+        // Per-format sweep: RE-PAINT before each open so each number is that
+        // format's OWN transient (growth below the call site); drop each before
+        // the next. (WAV + Matroska-FLAC are the two episodes above.)
+        let s3 = SCRATCH3.init([0; decoder_scratch_len()]);
+        let ph_wv = stackmeasure::paint();
+        let wv = open_seekable(SliceSource::new(WAVPACK_FIXTURE), s3).unwrap();
+        let wavpack_open = stackmeasure::measure(ph_wv).0;
+        drop(wv);
+
+        let s4 = SCRATCH4.init([0; decoder_scratch_len()]);
+        let ph_op = stackmeasure::paint();
+        let op = open_seekable(SliceSource::new(OPUS_FIXTURE), s4).unwrap();
+        let opus_open = stackmeasure::measure(ph_op).0;
+        drop(op);
+
+        let s5 = SCRATCH5.init([0; decoder_scratch_len()]);
+        let ph_al = stackmeasure::paint();
+        let al = open_seekable(SliceSource::new(ALAC_FIXTURE), s5).unwrap();
+        let alac_open = stackmeasure::measure(ph_al).0;
+        drop(al);
+
         let _ = cortex_m_semihosting::hprintln!(
             "mcu-stackprobe-qemu: VALIDATE after_paint={} B (expect 0); open-path transient = {} KiB ({} B); open+pump transient = {} KiB; probe-total(ctx) = {} KiB",
             after_paint,
