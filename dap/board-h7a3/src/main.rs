@@ -19,6 +19,7 @@ use embassy_time::{Duration, Timer};
 use static_cell::StaticCell;
 
 use dap_core::app::{App, AppConfig};
+use dap_core::display::refresh::RefreshAction;
 use dap_core::firmware;
 use dap_core::stub::{StubControls, StubDisplay, StubPower, StubSink, StubStorage};
 
@@ -183,8 +184,15 @@ async fn main(_spawner: Spawner) {
         if outcome.tick.critical_shutdown {
             info!("board-h7a3: critical shutdown");
         }
+        // The refresh policy (dap_core::display::refresh) decides whether a
+        // redrawn frame is worth committing to the panel at all, so log which of
+        // the three outcomes happened rather than just "refreshed" — on real
+        // hardware the distinction is a 3 s full flash vs a 300 ms partial vs
+        // nothing.
         match outcome.render {
-            Some(Ok(())) => info!("board-h7a3: display refreshed"),
+            Some(Ok(RefreshAction::Full)) => info!("board-h7a3: display full refresh"),
+            Some(Ok(RefreshAction::Partial(_))) => info!("board-h7a3: display partial refresh"),
+            Some(Ok(RefreshAction::None)) => info!("board-h7a3: frame redrawn, panel unchanged"),
             Some(Err(_)) => info!("board-h7a3: display refresh failed"),
             None => {}
         }

@@ -15,7 +15,7 @@ use eink_ui::{col, row, Glyph, Icon, ProgressBar, Role, Spacer, Text, TextScale,
 use embedded_graphics::prelude::*;
 use heapless::String;
 
-use crate::display::{Display, DisplayError, Gray4};
+use crate::display::{DisplayError, Gray4};
 
 /// Everything [`render`] needs to draw one frame of the Now-Playing screen.
 /// Built fresh by the caller (typically [`crate::app::App::render`]) from the
@@ -47,7 +47,15 @@ pub struct NowPlayingView<'a> {
 /// `Timeout`, since [`DisplayError`] has no generic "drawing failed" variant of
 /// its own — and a failed in-memory draw is, for every real controller this
 /// crate targets, a transfer/bus-level fault rather than a `BUSY`-line timeout.
-pub fn render<D: Display>(d: &mut D, view: &NowPlayingView<'_>) -> Result<(), DisplayError> {
+/// Bound on [`DrawTarget`] rather than [`Display`](crate::display::Display) — it
+/// only ever *draws* (the `render_calls_no_refresh_itself` test pins that), and
+/// the looser bound is what lets [`App::render`](crate::app::App::render) draw
+/// through an `eink_ui::refresh::DirtyTracker` wrapper to measure the dirty
+/// region a partial refresh needs. Every `Display` still satisfies it.
+pub fn render<D: DrawTarget<Color = Gray4>>(
+    d: &mut D,
+    view: &NowPlayingView<'_>,
+) -> Result<(), DisplayError> {
     d.clear(Gray4::WHITE).map_err(|_| DisplayError::Bus)?;
 
     let glyph = if view.playing {

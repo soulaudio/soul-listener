@@ -19,15 +19,26 @@
 use soul_audio_core::{Progress, Sink};
 
 use crate::app::{App, TickOutcome};
+use crate::display::refresh::RefreshAction;
 use crate::display::{Display, DisplayError};
 use crate::ports::{Controls, Power, Storage};
 
-/// How often (in the caller's `now_ms` units) [`step`] forces a display
-/// refresh even with no notable [`TickOutcome`] event — keeps an
-/// elapsed-time readout from going stale during otherwise-uneventful
-/// playback. Deliberately coarse (not a UI-smoothness cadence): see the
-/// module docs for why a full refresh is too slow to run every tick.
-pub const RENDER_PERIOD_MS: u64 = 1_000;
+/// How often (in the caller's `now_ms` units) [`step`] redraws the screen with
+/// no notable [`TickOutcome`] event — keeps an elapsed-time readout from going
+/// stale during otherwise-uneventful playback.
+///
+/// **Derived from the refresh policy**, not chosen independently: there is no
+/// point redrawing a frame more often than
+/// [`MIN_PARTIAL_INTERVAL_MS`](crate::display::refresh::MIN_PARTIAL_INTERVAL_MS),
+/// since [`App::render`] would decline to commit it (and a redraw is a full
+/// layout + widget pass, so the wasted work is real). Keeping the two equal
+/// means the cadence has exactly one definition — see that constant's doc for
+/// the power tradeoff it encodes.
+///
+/// This was `1_000` while `render` unconditionally ran a full refresh, i.e. the
+/// loop asked for a 3-second panel flash every second. See
+/// [`App::render`]'s "Why this is not just `full_refresh()`".
+pub const RENDER_PERIOD_MS: u64 = crate::display::refresh::MIN_PARTIAL_INTERVAL_MS;
 
 /// What one [`step`] call did: the wrapped [`App::tick`] outcome, plus
 /// whether (and with what result) this step also rendered.
@@ -35,10 +46,14 @@ pub const RENDER_PERIOD_MS: u64 = 1_000;
 pub struct StepOutcome {
     /// The wrapped [`App::tick`] call's own outcome.
     pub tick: TickOutcome,
-    /// `Some(result)` if this step also called [`App::render`] (see
-    /// [`step`]'s render policy below); `None` if it skipped rendering this
-    /// period.
-    pub render: Option<Result<(), DisplayError>>,
+    /// `Some(result)` if this step also called [`App::render`] (see [`step`]'s
+    /// render policy below); `None` if it skipped the redraw this period.
+    ///
+    /// A `Some(Ok(action))` whose action is
+    /// [`RefreshAction::None`](crate::display::refresh::RefreshAction::None)
+    /// means the frame was redrawn but the panel deliberately left alone — the
+    /// refresh policy's decision, distinct from this step not rendering at all.
+    pub render: Option<Result<RefreshAction, DisplayError>>,
 }
 
 /// Drive one firmware scheduler period against `app`: [`App::tick`], then
@@ -95,7 +110,7 @@ where
 
     let render = if notable || due {
         *last_render_ms = Some(now_ms);
-        Some(app.render())
+        Some(app.render(now_ms))
     } else {
         None
     };

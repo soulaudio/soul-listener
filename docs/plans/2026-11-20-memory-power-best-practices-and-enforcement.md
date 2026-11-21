@@ -42,7 +42,8 @@ waking only on real events, never polling.
 | **DMA for audio** — core sleeps between blocks, IRQ per block not per sample | Double-buffered SAI DMA ring sized for a low wakeup rate | 🟡 modeled (`wakeups_per_sec`, ring budget); 🔜 real SAI DMA |
 | **Stop mode on pause** (32 µA, RAM retained ≈ shelf-life) | Enter Stop on pause; wake on EXTI; restore clock tree *before* peripherals | 🟡 modeled (`STOP_MODE_CURRENT_MA`) + the pre-Stop clock configuration is now gated (`power::peripherals`' `Paused` state: 4 clocks, wake sources only, gated against any output-path peripheral); 🔜 the real suspend/resume |
 | **Define every GPIO in low-power** — unused pins input-no-pull or driven; condition wake pins (pulls/RC/LSE RTC) | Pin-state audit; measure false-wake rate | 🔜 Phase E — **genuinely blocked on the schematic**, not on effort: there is no pin assignment in the repo to audit. The bank-level policy is gated (`power::peripherals`: unused banks gated, only a wake-carrying bank survives into Stop); the per-pin audit needs the pinout |
-| **Battery model grounded in datasheets** | Datasheet currents × measured decode cost; runtime floors as gates | ✅ calibrated to real figures (Akyga LP623255 **1100 mAh**, CS43131 envelope, microSD); ~41–74 h modeled |
+| **E-ink refresh discipline** — a bistable panel costs nothing to hold an image and ~34 mA while a waveform runs; minimize full refreshes (power + ghosting) | A policy keyed on what changed, with the ghosting bound derived from the panel spec; gate "no full refresh on a 1-field change" | ✅ **as of this round** — `display::refresh` + the wiring in `App::render`. Measured: **3 full refreshes over ten simulated minutes, where the old loop would have run ~600**. Found a live bug doing it (see the correction below) |
+| **Battery model grounded in datasheets** | Datasheet currents × measured decode cost; runtime floors as gates | ✅ calibrated to real figures (Akyga LP623255 **1100 mAh**, CS43131 envelope, microSD, and — as of this round — the display's actual refresh budget rather than an assumed one); **~38–67 h** total-system modeled, ~33–57 h once the regulator and thermal derate are folded in |
 | **Measure, don't claim** — "unverified power claims are product risks" | Power analyzer (Otii/Monsoon) or shunt+ADC; GPIO markers in traces; soak at temperature | 🔜 needs silicon — the one thing no model substitutes for |
 
 **Verdict:** the *model and policy* are strong and gated, and this round moved
@@ -66,7 +67,17 @@ be gated today. What is left after applying it:
 - Genuinely needs the **schematic**: the per-pin GPIO audit — there is no pin
   assignment in the repo to audit yet.
 
-**Correction this round:** the voltage-scale ceilings this repo had been using
+**Correction this round (display):** `App::render` ran a **full 3 s panel
+refresh on every render**, and `firmware::step` rendered once per second — a
+flash the panel cannot even complete before the next is demanded, at ~34 mA
+continuous against the battery model's 0.5 mA display budget (~68x). Every test
+asserted `render().is_ok()`; none asserted what a render *cost*. Fixed by the
+policy above; `DISPLAY_AVG_MA` is now **2.0 mA**, derived from the policy's own
+energy model rather than assumed, and the two are tied together by a seam gate
+in `dap-arch-tests`. Total-system runtime drops to ~38–67 h as a result — less
+flattering and actually true.
+
+**Correction (earlier this round):** the voltage-scale ceilings this repo had been using
 were the **STM32H743's**, inherited from the v1-era design doc §4.2 ("VOS3
 1.0 V/200 MHz"). On the actual part (H7A3, DEV_ID `0x480`) they are
 **280 / 225 / 160 / 88 MHz**. Consequence: the claim that the DAP can decode

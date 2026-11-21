@@ -167,9 +167,25 @@ pub const DAC_AMP_PLAYBACK_MA: f32 = 7.0;
 pub const SD_AVG_MA: f32 = 2.0;
 
 /// E-ink display current averaged over playback. The panel is bistable — ~0 mA
-/// holding a static image; only the brief refresh on a now-playing/progress
-/// change draws, averaging to a negligible **~0.5 mA**.
-pub const DISPLAY_AVG_MA: f32 = 0.5;
+/// holding a static image — so this is entirely the cost of the refresh
+/// waveforms the UI chooses to run, at ~34 mA each while they run.
+///
+/// **Derived from the refresh policy, not assumed.** This was `0.5` on the
+/// reasoning that "only the brief refresh on a now-playing/progress change
+/// draws". That was wrong in two ways: the code ran a *full* 3 s refresh (not a
+/// brief one) on every render, and `firmware::step` rendered every second — so
+/// the real figure was the panel's saturated ~34 mA, about 68x this term.
+/// `display::refresh` now implements an actual policy (partial refreshes for a
+/// progress tick, rate-limited, full only on a new frame or to clear ghosting),
+/// and its own `configured_avg_display_ma()` models that policy at **~1.85 mA**.
+/// `2.0` covers it with a little margin.
+///
+/// The two are kept consistent by the `display_refresh_policy_fits_the_battery_model`
+/// gate in `dap-arch-tests` — the one place that can see both the display and
+/// power slices (they may not depend on each other). Changing the UI's refresh
+/// cadence moves the policy's number and fails that gate until this constant
+/// follows.
+pub const DISPLAY_AVG_MA: f32 = 2.0;
 
 /// Total non-CPU output-path current during playback (DAC/amp + SD + display) at
 /// the battery rail — the always-on draw `system_current_ma` adds to the CPU blend.
@@ -803,9 +819,10 @@ mod tests {
     /// strictly LOWER than the CPU-only estimate for every format — i.e. the
     /// output path is really being counted (a dropped peripheral term regresses
     /// this). The gap is largest for the cheap formats (WAV), where the CPU
-    /// current is lowest and the ~9.5 mA output path dominates: at the real
-    /// 1100 mAh pack, WAV's optimistic CPU-only ~200h becomes a realistic ~74h
-    /// once the DAC/amp is in; the worst case (opus) is ~41h.
+    /// current is lowest and the ~11 mA output path dominates: at the real
+    /// 1100 mAh pack, WAV's optimistic CPU-only ~200h becomes a total-system
+    /// ~67h once the DAC/amp and the display's refresh budget are in; the worst
+    /// case (opus) is ~38h.
     #[test]
     fn system_runtime_is_realistic_and_below_cpu_only() {
         const MIN_SYSTEM_RUNTIME_HOURS: f32 = 30.0;
@@ -835,9 +852,9 @@ mod tests {
 
     #[test]
     fn system_current_adds_the_output_path() {
-        // 7 (CS43131) + 2 (SD) + 0.5 (display) = 9.5 mA.
-        assert!((PERIPHERAL_PLAYBACK_MA - 9.5).abs() < 1e-6);
-        assert!((system_current_ma(10.0) - 19.5).abs() < 1e-6);
+        // 7 (CS43131) + 2 (SD) + 2 (display, per the refresh policy) = 11 mA.
+        assert!((PERIPHERAL_PLAYBACK_MA - 11.0).abs() < 1e-6);
+        assert!((system_current_ma(10.0) - 21.0).abs() < 1e-6);
     }
 
     /// Resolves `power::dvfs`'s flagged, previously-out-of-scope refinement:
@@ -847,7 +864,7 @@ mod tests {
     /// `<=` current at max clock — so racing to sleep never wins. Why: the H7A3
     /// current-vs-clock curve is ~linear (energy per cycle ~constant, no
     /// super-linear high-clock penalty to exploit by racing), low-clock active
-    /// current is cheap, and the ~9.5 mA output path is on either way. So
+    /// current is cheap, and the ~11 mA output path is on either way. So
     /// minimize-clock IS near energy-optimal; a high-clock-burst DVFS policy
     /// would not improve battery here. (Model-dependent on the 4-point current
     /// curve + `SLEEP_CURRENT_MA`; confirm on silicon — the direction is the

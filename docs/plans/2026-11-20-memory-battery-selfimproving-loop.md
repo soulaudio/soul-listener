@@ -74,7 +74,9 @@ Battery (analytical / config / design):
    blocks. *Phase E.*
 10. **E-ink partial-refresh policy** — minimize full refreshes (power + ghosting);
     the UI already tracks dirty regions — gate "no full refresh on a 1-field
-    change". *Risk: low.*
+    change". *Risk: low.* **Done in L13 — and it was a live bug, not an
+    optimization: `App::render` ran a full 3 s panel flash on every render, once
+    per second.**
 
 Infra / gates:
 11. RTF-regression gate (desktop proxy, scaled) — guard decode efficiency.
@@ -261,9 +263,56 @@ Infra / gates:
   the SPI/I²C instance choice, both pending the schematic. The gates are written
   over the policy, so they survive the schematic renaming either.*
 
+- **L13 — the e-ink refresh policy, and the bug it uncovered.** Backlog #10 was
+  filed as a low-risk optimization ("minimize full refreshes"). It was a **live
+  defect**: `App::render` called `full_refresh()` unconditionally, and
+  `firmware::step` called `render` every `RENDER_PERIOD_MS` = 1 s. On this panel
+  a full refresh is **3 s** at ~34 mA — so the shipped loop asked for a
+  3-second panel flash every second. Physically unsatisfiable, continuously
+  flashing, and ~68× the current the battery model budgeted for the display.
+  Nothing caught it because every test asserted `render().is_ok()` rather than
+  what the render *cost*.
+  **New `dap-core::display::refresh`** — a policy returning `Full` /
+  `Partial(area)` / `None` from (what changed, the dirty region `eink-ui`'s
+  `DirtyTracker` measured, `now_ms`). Everything is derived from the panel spec
+  rather than chosen: the ghosting bound is `1 / PANEL.ghosting_rate_partial`
+  = **10 partials per full**, so a spec correction propagates. The key design
+  choice is an **asymmetry**: a *content* change (track, play↔pause) refreshes
+  immediately, while a *minor* change (progress/volume/battery — the only kind
+  that recurs on a timer) is throttled to `MIN_PARTIAL_INTERVAL_MS`. So the
+  throttle never delays anything a user initiated.
+  **Wired, not just written**: `App::render(now_ms)` draws through a
+  `DirtyTracker` and commits via the policy; `firmware::RENDER_PERIOD_MS` is now
+  *defined as* the policy's interval so the redraw cadence has one definition;
+  `now_playing::render`'s bound loosened to `DrawTarget` so it can draw through
+  the tracker. Measured end-to-end over ten simulated minutes: **3 full
+  refreshes, where the old loop would have run ~600**.
+  **Second finding — the model's display term was describing a device the code
+  didn't implement.** `DISPLAY_AVG_MA` was 0.5 mA on the reasoning that "only
+  the brief refresh on a progress change draws". Both halves were false. The
+  policy's own energy model (`configured_avg_display_ma`) puts the real figure
+  at **1.85 mA**, so `DISPLAY_AVG_MA` is now **2.0**, and the two are tied
+  together by a new seam gate. Total-system runtime consequently drops from
+  ~41–74 h to **~38–67 h** (~33–57 h with the regulator and thermal derate) —
+  less flattering and actually true.
+  **New `dap-arch-tests/tests/seams.rs`** — the home for invariants spanning two
+  slices that may not import each other (`display` ↮ `power`). It gates the
+  display↔model seam in *both* directions (policy must fit the budget; budget
+  must not exceed the policy by >2×, or slack hides regressions), pins the old
+  behaviour as busting the model's entire output-path budget on the display
+  alone, and compile-time-asserts that the redraw cadence never outpaces the
+  commit throttle.
+  **Known limitation, documented not hidden:** `now_playing::render` clears the
+  frame before drawing, so today's dirty region is the whole panel — a "partial"
+  refresh of everything. Still 300 ms instead of 3000 ms and flash-free (the
+  energy numbers above already assume this), but shrinking it needs per-widget
+  redraw or a previous-framebuffer diff, which `eink_ui::refresh` already flags
+  as its own planned refinement. The policy is region-shaped for when that lands.
+  78 dap-core + 4 seam + 2 headless tests; full `xtask verify` green.
+
 ## Status
 
-**L0–L12 landed**, all gated. Four lessons, in rough order of how much backlog
+**L0–L13 landed**, all gated. Five lessons, in rough order of how much backlog
 each one cleared:
 
 1. **"Needs the board" usually means "needs the board to *execute*."** L11 and
@@ -277,14 +326,20 @@ each one cleared:
    Anything still carried over from the v1 design docs deserves the same pass.
 3. **Promote measurements from reported to CI-blocking** (L9/L10) — a measured
    number that nothing enforces is a number that drifts.
-4. **The subsystem was already mature**, so the value was never in reinventing it
+4. **A test that asserts `is_ok()` asserts almost nothing.** L13's bug — a 3 s
+   full-panel flash demanded every second — survived a well-tested run loop
+   because every test checked that rendering *succeeded*, never what it *cost*.
+   Where an operation has a price (time, current, wakeups), assert the price.
+5. **The subsystem was already mature**, so the value was never in reinventing it
    — it was in filling gaps the code had *explicitly flagged* (output-path
    current, the race-to-sleep answer, datasheet floors, the regulator curve).
 
 Remaining work, by what actually blocks it:
-- **Host-gateable now** — *E-ink partial-refresh policy* (#10; the UI already
-  tracks dirty regions, so "no full refresh on a 1-field change" is a gate
-  waiting to be written). Best candidate for L13.
+- **Host-gateable now** — nothing obvious left in the memory/power roster; L13
+  took the last one. The nearest remaining candidates are a *per-widget dirty
+  region* (to shrink partial refreshes from full-panel to the changed row — see
+  L13's finding) and an *RTF-regression gate* (#11), both doable without
+  hardware.
 - **Needs a decision** — *scratch right-size* (#1, ~64 KiB): the WavPack
   large-block tradeoff, plus a soul-audio-core change.
 - **Needs care, not hardware** — *RTF hot-loop / decode-ahead ring*:
