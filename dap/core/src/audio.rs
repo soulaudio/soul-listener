@@ -184,11 +184,19 @@ impl<S: Sink, St: Storage, Pcm: AsRef<[i32]> + AsMut<[i32]>, const PRELOAD: usiz
     /// peak is unchanged). The two slots are inherent to receiving a ~58 KiB
     /// value by value and then moving it onward.
     ///
-    /// The real fix is an **in-place construction API upstream** — an
-    /// `open_seekable_into(&mut Option<AnyDecoder>)`, or a
-    /// `provide_with(track, impl FnOnce() -> Result<D, E>)` on the engine — so
-    /// the decoder is built directly into the deck's slot. That lives in
-    /// `soul-audio-core`/`soul-audio-engine`, behind
+    /// **The fix is not a different call shape — it is a smaller type.** Rust has
+    /// no safe placement-new (`MaybeUninit` needs `unsafe`, forbidden crate-wide;
+    /// `Box::new_in` needs an allocator, there is none; `get_or_insert_with`
+    /// still takes its closure's return by value), so these copies cannot be
+    /// removed. They are, however, all *proportional*: every frame on this path
+    /// measures as a small multiple of `size_of::<AnyDecoder>()` — this one at
+    /// 2.00x, `MatroskaDecoder::new_in` at 2.08x, `open_seekable` at 1.03x,
+    /// ~7.8x in total. Shrinking the decoder structs (moving their remaining
+    /// inline arrays into the shared `P` scratch, as WavPack already does at
+    /// 96 B inline versus Matroska's 59,760 B) shrinks every copy with them,
+    /// including this frame — with no change to this crate.
+    ///
+    /// That work lives in `soul-audio-core`, behind
     /// `.github/soul-audio-core.pin`. See
     /// `docs/plans/2026-11-21-memory-architecture-and-placement.md` §8.
     ///

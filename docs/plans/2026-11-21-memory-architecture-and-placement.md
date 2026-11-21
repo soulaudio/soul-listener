@@ -345,10 +345,62 @@ The fix is an **in-place construction API upstream** — an
 in `soul-audio-core`/`soul-audio-engine`, behind the pin. `AudioPlayer::pump`
 now carries this as a doc comment so it isn't re-attempted.
 
-**Consequence for sequencing:** there is no easier in-repo alternative. Both
-halves of the stack prize — the ~120 KiB `AudioPlayer::pump` double slot and the
-~220 KiB Matroska construction path — need the same upstream change (in-place
-construction) and the same pin bump. They are one project, not two.
+### The unifying result: every frame is a multiple of `size_of::<AnyDecoder>()`
+
+Dividing each measured frame by the 59,760 B decoder type:
+
+| frame | size | ÷ `AnyDecoder` |
+|---|---|---|
+| `AudioPlayer::pump` | 119,416 B | **2.00×** |
+| `MatroskaDecoder::new_in` | 124,560 B | **2.08×** |
+| `FlacDecoder<MatroskaFlacReader<..>>::new_in` | 111,064 B | **1.86×** |
+| `open_seekable` | 61,352 B | **1.03×** |
+| `MatroskaFlacReader::new` | 48,304 B | **0.81×** |
+| sum | 464,696 B | **7.78×** |
+
+The entire stack transient is **~7.8 copies of one 58 KiB type**. That is the
+whole problem, stated in one line.
+
+### Correction: the "in-place construction API" fix is not possible
+
+An earlier draft of this section proposed an upstream
+`open_seekable_into(&mut Option<AnyDecoder>)` or
+`provide_with(track, impl FnOnce() -> …)` to eliminate the copies. **Rust cannot
+express that safely.** There is no stable placement-new: `MaybeUninit` requires
+`unsafe` (forbidden crate-wide), `Box::new_in` requires an allocator (none), and
+`Option::get_or_insert_with` still takes its closure's return *by value*. Worse,
+the closure-based variant doesn't even help in principle — the decode happens
+*inside* the closure, so the closure's return slot is live during the decode,
+which is exactly today's situation.
+
+The copies are irreducible. **But they are all proportional**, which means the
+lever is not the call shape — it is the *type size*:
+
+> `7.78 × 59,760 B = 465 KiB`. `7.78 × 12,000 B ≈ 93 KiB`.
+
+So the upstream work is not a new API. It is **finishing the externalization the
+project already started**: move the remaining inline arrays out of the decoder
+structs into the shared `P` scratch via `ScratchCursor`, exactly as WavPack
+already does (96 B inline, versus Matroska's 59,760 B).
+
+**This makes it one change with three payoffs**, which L15 and this section
+arrived at independently:
+
+1. `size_of::<AnyDecoder>()` drops — L15's finding, the static footprint.
+2. The three nested Matroska construction frames shrink proportionally.
+3. `AudioPlayer::pump`'s double slot shrinks proportionally — no `dap-core`
+   change needed at all, which is why none of the three local variants moved it.
+
+Scope guidance: FLAC already sits at 12,472 B inline and WavPack at 96 B, so
+~12 KiB is a demonstrated target rather than an aspiration. Getting the worst
+variant there would take the whole tick from **415 KiB to roughly 95–120 KiB** —
+and at that point the stack *would* fit DTCM after all, reopening the option §8
+earlier closed. Worth re-checking once the real number is known rather than
+planning on it.
+
+**Consequence for sequencing:** there is no easier in-repo alternative, and no
+API design to agree first. It is one coherent upstream change — shrink the
+decoder structs — behind one pin bump.
 
 ### Scope note
 The decoder work is a `soul-audio-core` change, so it lands behind the pin and
