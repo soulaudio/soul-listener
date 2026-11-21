@@ -109,6 +109,25 @@ type Dap =
 /// unlinked AHB SRAM1/2/3 instead.
 static APP_CELL: StaticCell<Dap> = StaticCell::new();
 
+/// **Compile-time** memory-budget guard — best-practice enforcement (fail the
+/// *build*, not just a host test): the board's dominant AXI-SRAM statics (`App`
+/// by value + the decoder scratch) plus a 256 KiB stack reserve must fit the
+/// single linked 1 MB AXI-SRAM region. This is the compile-time twin of
+/// `dap-arch-tests`' runtime `board_static_footprint_leaves_stack_room_in_linked_axi_sram`
+/// guard: with it, a footprint regression that would leave too little stack
+/// can't even *link* the firmware. Add any new large AXI-SRAM static to this sum
+/// (or place it in the as-yet-unlinked AHB SRAM1/2/3).
+const AXI_SRAM_BYTES: usize = 1024 * 1024;
+const STACK_RESERVE_BYTES: usize = 256 * 1024;
+const _: () = assert!(
+    core::mem::size_of::<Dap>()
+        + soul_audio_core::decoder_scratch_len() * core::mem::size_of::<i32>()
+        + STACK_RESERVE_BYTES
+        <= AXI_SRAM_BYTES,
+    "board static footprint (App + decoder scratch) + 256 KiB stack reserve exceeds the 1 MB \
+     AXI-SRAM — shrink a buffer or move a static to AHB SRAM1/2/3",
+);
+
 #[embassy_executor::main]
 async fn main(_spawner: Spawner) {
     let _p = embassy_stm32::init(Default::default());
