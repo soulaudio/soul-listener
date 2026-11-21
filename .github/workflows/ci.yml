@@ -406,6 +406,49 @@ jobs:
         run: bash tools/mcu-stackprobe/check-stack.sh
 
   # ---------------------------------------------------------------------------
+  # mcu-stack-budget-dynamic — DYNAMIC on-target (Cortex-M7) stack gate (QEMU)
+  #
+  # The dynamic complement to the static `mcu-stack-budget` job above. Where the
+  # static gate sums MAIN_FRAME + the single largest OTHER frame from
+  # `-Z emit-stack-sizes` (which undercounts a deep construction call chain), this
+  # one RUNS the real open->decode->pump workload on `qemu-system-arm -machine
+  # mps2-an500` (a Cortex-M7 image) with guest-side stack-painting and measures how
+  # far the stack ACTUALLY grew. tools/mcu-stackprobe/check-stack-qemu.sh gates the
+  # worst transient across every exercised format against a regression-ratchet
+  # budget (DYNAMIC_STACK_BUDGET_KIB, default 384 KiB; current worst is the
+  # Matroska-FLAC episode at 297 KiB) AND the board's 592 KiB AXI-SRAM stack
+  # headroom. A decoder/format change that balloons the real on-target stack fails
+  # here, before hardware. (The static gate was wired long ago; QEMU was deferred
+  # for needing a system package — `qemu-system-arm` — which this job apt-installs.)
+  #
+  # Stable toolchain (the `qemu` feature needs no `-Z`, unlike the static gate's
+  # `-Z emit-stack-sizes`), thumbv7em target, soul-audio-core sibling pin. Own
+  # rust-cache scope, like the static job (mcu-stackprobe is its own workspace).
+  # ---------------------------------------------------------------------------
+  mcu-stack-budget-dynamic:
+    name: MCU stack budget (Cortex-M7, dynamic/QEMU)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      # tools/mcu-stackprobe path-deps soul-audio-core as a repo sibling.
+      - uses: ./.github/actions/checkout-soul-audio-core
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: thumbv7em-none-eabihf
+
+      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
+        with:
+          workspaces: "tools/mcu-stackprobe -> target"
+
+      - name: Install QEMU (qemu-system-arm)
+        run: sudo apt-get update && sudo apt-get install -y qemu-system-arm
+
+      - name: Run the dynamic stack-budget gate (QEMU mps2-an500)
+        run: bash tools/mcu-stackprobe/check-stack-qemu.sh
+
+  # ---------------------------------------------------------------------------
   # Unused dependencies — cargo machete
   #
   # cargo machete detects dependencies declared in Cargo.toml that are not
