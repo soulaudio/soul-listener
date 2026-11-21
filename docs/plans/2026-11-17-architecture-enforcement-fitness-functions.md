@@ -15,7 +15,8 @@
 | 3 | **No unbounded recursion** (bounded-stack prerequisite) | `#![deny(unconditional_recursion)]` on embedded crates (catches the obvious) + the **stack-budget gate** as the backstop (real recursion blows the budget) + the invariant documented. Full call-graph proof = `cargo-call-stack` (a future stronger gate; currently pinned to a dead nightly). | **Add** the deny + document. |
 | 4 | **Bounded stack** (WCSU + margin) | `mcu-stack-budget` CI gate: `-Z emit-stack-sizes` on the real thumbv7em binary decoding the **worst-case format**, budget + ~30% margin; verified to go red on regression. | **Enforced** ✓ |
 | 5 | **Bounded SRAM** (per-region budget) | `dap-arch-tests/budget.rs`: `size_of` per region (incl. the externalized scratch pool), honest total asserted ≤ 1.18 MB. | **Enforced** ✓ |
-| 6 | **Battery regression** (DVFS/energy model) | `dap-core::power::model` tests: clock-headroom-per-format ≤ VOS3, runtime ≥ floor, wakeup-rate. Honest: a datasheet-grounded **model**, not a measurement; real-power HIL regression = Phase E. | **Enforced (as a model)** ✓ |
+| 6 | **Battery regression** (DVFS/energy model) | `dap-core::power::model` tests: clock-headroom-per-format ≤ VOS2 (the real H7A3 band — see `power::clocks`), runtime ≥ floor, wakeup-rate. Honest: a datasheet-grounded **model**, not a measurement; real-power HIL regression = Phase E. | **Enforced (as a model)** ✓ |
+| 6b | **Clock-transition safety** (DVFS sequencing) | `dap-core::power::clocks` tests: replay every transition pair step-by-step and assert the flash is never under-waited and the clock never exceeds the live voltage scale's ceiling; plus every clock `dvfs` can select must be a datasheet-legal operating point. Pure logic over ST's H7A3 tables — the register writes that execute the plan are Phase E. | **Enforced** ✓ |
 
 [rust#54010]: https://github.com/rust-lang/rust/issues/54010
 

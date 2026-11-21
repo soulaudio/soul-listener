@@ -36,7 +36,7 @@ waking only on real events, never polling.
 |---|---|---|
 | **Tickless idle / WFI by default** — core sleeps at `await`, wakes on IRQ | Framework-level (don't hand-roll WFI loops — they miss wake conditions) | ✅ Embassy executor parks in WFI between ticks |
 | **DVFS** — lowest freq+VOS that sustains the workload; `P = α·C·V²·f` | A model mapping measured RTF → min clock per codec; a regression gate | ✅ `power::model` + `power::dvfs`; race-to-sleep analyzed (min-clock is optimal here) |
-| **Clock sequencing** — freq ↓ → flash wait-states → VOS ↓ (never VOS before freq) | A tested clock-transition routine; the ordering is a hard rule | 🔜 Phase E (real RCC/PWR writes) |
+| **Clock sequencing** — freq ↓ → flash wait-states → VOS ↓ (never VOS before freq) | A tested clock-transition routine; the ordering is a hard rule | ✅ **the routine, as of this round** — `power::clocks` emits the ordered plan and gates both invariants over *every* transition pair (`no_plan_ever_underwaits_flash_or_overclocks_the_voltage`); 🔜 the register writes that execute it |
 | **Peripheral clock gating** — gate unused APB/AHB clocks explicitly (not NOPs) | Enable-register discipline; audit unused peripherals | 🔜 Phase E |
 | **Avoid resampling when possible** — it's the heaviest stage | Native-rate clocking (dual MCLK oscillator); Deck builds no resampler at matching rates | ✅ modeled + gated (`native_rate_clocking_needs_lower_clock_than_resampling`); Deck verified |
 | **DMA for audio** — core sleeps between blocks, IRQ per block not per sample | Double-buffered SAI DMA ring sized for a low wakeup rate | 🟡 modeled (`wakeups_per_sec`, ring budget); 🔜 real SAI DMA |
@@ -45,9 +45,23 @@ waking only on real events, never polling.
 | **Battery model grounded in datasheets** | Datasheet currents × measured decode cost; runtime floors as gates | ✅ calibrated to real figures (Akyga LP623255 **1100 mAh**, CS43131 envelope, microSD); ~41–74 h modeled |
 | **Measure, don't claim** — "unverified power claims are product risks" | Power analyzer (Otii/Monsoon) or shunt+ADC; GPIO markers in traces; soak at temperature | 🔜 needs silicon — the one thing no model substitutes for |
 
-**Verdict:** the *model and policy* are strong and gated; the *code* for the
-actual low-power behavior (clock sequencing, peripheral gating, GPIO, DMA,
-suspend/resume) and the *measurement* are Phase-E, because they need the board.
+**Verdict:** the *model and policy* are strong and gated, and as of this round
+the *clock-sequencing decision* is gated too (`power::clocks` — the one Phase-E
+item that turned out not to need the board at all: the ordering rule is pure
+logic over the datasheet's VOS/wait-state tables, so it can be proven on the
+host and merely *executed* on silicon). What genuinely still needs the board is
+the rest of the low-power *behavior* (peripheral gating, GPIO, DMA,
+suspend/resume) and the *measurement*.
+
+**Correction this round:** the voltage-scale ceilings this repo had been using
+were the **STM32H743's**, inherited from the v1-era design doc §4.2 ("VOS3
+1.0 V/200 MHz"). On the actual part (H7A3, DEV_ID `0x480`) they are
+**280 / 225 / 160 / 88 MHz**. Consequence: the claim that the DAP can decode
+every format in the *lowest* voltage state was wrong — the heaviest format
+(opus, ~102 MHz) needs **VOS2**; only the cheap ones (wav, mp3) reach VOS3. The
+gates now assert the true bands per format rather than a mislabeled 200 MHz
+bound, and the resample fallback path turns out to clear VOS2's ceiling by only
+~2 MHz (158 vs 160), which is now itself gated.
 
 ## Phase-E low-power bring-up checklist (lock this in when the board exists)
 
@@ -55,7 +69,7 @@ From the researched 8-step protocol, specialized to this DAP:
 1. **HW sanity** — battery chemistry, regulator (SMPS vs LDO), VBAT routing, LED draw; baseline quiescent current.
 2. **Datasheet drill** — pin the H7A3 Sleep-with-SAI-DMA current (the model's one remaining placeholder), CS43131 draw at target volume/impedance, oscillator startup times.
 3. **Minimal baseline** — boot all-peripherals-off, enter deepest viable sleep, measure.
-4. **Active-path** — wake → SD read → decode burst → DMA → sleep; apply DVFS + native-rate clocking; gate unused clocks.
+4. **Active-path** — wake → SD read → decode burst → DMA → sleep; apply DVFS + native-rate clocking; gate unused clocks. The clock/VOS/wait-state transition itself is already decided and gated — execute `power::clocks::plan`'s steps in order (each `ClockStep` documents the blocking it implies: `VOSRDY` poll, `FLASH_ACR` read-back, PLL re-lock) rather than hand-rolling the sequence at the register level.
 5. **Wake-path hardening** — scroll-wheel/button EXTI, LSE RTC; measure false-wake rate; condition inputs.
 6. **Retention** — validate the deck/ring state across pause→Stop→resume (restore clocks before peripherals).
 7. **Soak** — days of real duty cycles at temperature; capture `I_avg`, spike distribution, wake-failure stats.
@@ -64,6 +78,10 @@ From the researched 8-step protocol, specialized to this DAP:
 **Anti-patterns to gate against:** single-instant current ≠ battery life (average over duty cycles); software-NOP clock gating (use the controller); VOS-before-freq transitions (hard faults); floating wake lines; relying on peripheral-register retention through deep sleep.
 
 ## Sources
+ST `stm32h7xx_ll_utils.c` (`STM32H7_DEV_ID == 0x480` branch — the CubeH7 LL
+implementation of RM0455's per-scale frequency ceilings and "FLASH recommended
+number of wait states" table; the authority for `power::clocks`' two tables);
+ST RM0455 (H7A3/7B3 reference manual) / DS13677;
 Embedded Rust Book (`no-std`); Effective Rust Item 33; ANSSI *Programming Rules
 to Develop Secure Applications with Rust* (avoid `unsafe`); `flip-link`;
 `static_assertions` / `const_assert!`; *Rust for Embedded Systems: Current State

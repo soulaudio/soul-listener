@@ -14,8 +14,9 @@ this stage, while *memory* footprint is concretely measurable today.
   factor) → CPU idles longer → less energy. Embassy already parks the core in WFI
   between `Timer::after` ticks, so decode efficiency (RTF) *is* battery life.
 - **VOS voltage scaling**: run the lowest frequency + VOS that sustains real-time
-  decode. STM32H7A3: VOS0 (280 MHz) … VOS3 (lower); Stop mode = 32 µA, RAM
-  retained — the pause/idle target.
+  decode. STM32H7A3 ceilings are **VOS0 280 / VOS1 225 / VOS2 160 / VOS3 88 MHz**
+  (per ST's own `DEV_ID 0x480` tables — *not* the H743 figures the v1 design doc
+  §4.2 carried; see L11). Stop mode = 32 µA, RAM retained — the pause/idle target.
 - **DMA audio (SAI/I²S) + WFI** lets the core sleep ~70 % during playback;
   interrupt only per DMA block, not per sample. (Phase E, when the real Sink lands.)
 - **Memory**: fixed/static buffers, zero heap (already enforced), right-size
@@ -63,8 +64,10 @@ Battery (analytical / config / design):
    from battery capacity, H7A3 RUN/Stop current (datasheet), and an RTF-derived
    sleep fraction; makes the race-to-sleep target quantitative. *Risk: none.*
 7. **Board clock/VOS recommendation** — pick the lowest freq+VOS that sustains
-   real-time decode once RTF is known; documented now, applied when measurable.
-   *(Blind RCC changes risk no-boot with no hardware to verify — design-only now.)*
+   real-time decode once RTF is known. *Answered in L11:* VOS2 (160 MHz) covers
+   every shipped format and the resample fallback; VOS3 (88 MHz) covers wav/mp3
+   only. The transition *sequence* is now gated too (`power::clocks`), so the
+   board's remaining job is executing the plan's steps, not deciding them.
 8. **Stop-mode-on-pause design** — enter Stop (32 µA, RAM retained) when paused;
    wake on the scroll-wheel/button EXTI. *Phase E.*
 9. **DMA SAI sink design** — double-buffered DMA so the core sleeps between
@@ -157,24 +160,104 @@ Infra / gates:
   green (floors hold at the lower capacity). *The single highest-impact accuracy
   fix in the battery model — it was silently ~2× optimistic on the real pack.*
 
-## Status (end of session)
+- **L7 — tweakable, thermal- and regulator-aware `PowerParams`** (#30). Gathered
+  every tunable (pack, temperature, sleep current, output-path currents,
+  regulator) into one struct with a `Default` reproducing the const baseline, and
+  folded in two physical effects the bare consts omitted: Li-Po capacity derates
+  with temperature (`capacity_temp_derate`), and the battery→chip regulator is
+  lossy. Both always *cost* runtime, never add it — gated
+  (`params_runtime_is_lower_than_the_bare_model`).
+- **L8 — load-dependent regulator efficiency curve** (#34). The flat efficiency
+  factor from L7 was wrong in a way that flattered the DAP: a buck's efficiency
+  is a *curve*, and the DAP's ~15–25 mA playback draw sits on its **light-load
+  flank**, where fixed switching/control loss dominates. Replaced with
+  `I_batt(I) = I/η∞ + fixed_loss + cond·I²` (three datasheet-fittable params),
+  so efficiency craters at tiny load, peaks at `I* = sqrt(fixed/cond)` (~61 mA
+  default), then droops again — η ≈ 0.85 at the DAP's 20 mA. New
+  `regulator_efficiency_at` / `regulator_peak_load_ma`, plus a curve-shape gate.
+- **L9 — the dynamic stack measurement became a real gate** (#33). The QEMU
+  open→decode→pump high-water was *measured but only reported*; the static
+  `-Z emit-stack-sizes` gate was the sole blocking check, and it undercounts a
+  deep construction chain. Wired the dynamic measurement in as CI-blocking —
+  closing the measure→enforce half of the stack loop.
+- **L10 — whole-firmware-tick stack gate** (#35). The decode gate measures
+  soul-audio-core's open path *in isolation* (~297 KiB), but the board reaches it
+  through `App::tick → AudioPlayer::pump → Engine::poll_open` and then runs
+  `App::render` in the same tick. New `mcu-tickprobe` wires a real `App` exactly
+  as the board does (with an in-memory Matroska-FLAC fixture, since `StubStorage`
+  never decodes): whole-tick worst is **413 KiB**, ~116 KiB above the isolated
+  number, fitting the 592 KiB headroom with ~179 KiB spare. *This* is the number
+  that answers "does the firmware fit its stack?".
 
-Loop infrastructure + backlog established; **L0–L3 landed** (4 commits, all gated).
-Finding: the memory/battery subsystem is already **mature** — no-alloc gates,
-footprint roster, stack measurement, battery model + DVFS all pre-existed; the
-genuine value was filling flagged gaps (realistic output-path current, the
-race-to-sleep answer, datasheet floors), not reinventing. Remaining high-value
-loops are **gated on decisions/pushes/hardware**, not effort:
+- **L11 — clock sequencing: the one Phase-E item that didn't need the board.**
+  The enforcement roster listed "Clock sequencing — freq ↓ → flash wait-states →
+  VOS ↓" as 🔜 Phase E, needing "a tested clock-transition routine". But the
+  ordering rule is *pure logic* over two datasheet tables — only the register
+  writes need silicon. New `dap-core::power::clocks` transcribes ST's own H7A3
+  tables (`stm32h7xx_ll_utils.c`, `STM32H7_DEV_ID == 0x480`): per-scale clock
+  ceilings and the flash wait-state ladder. It exposes `ClockPoint::for_clock`
+  (the canonical minimum-voltage operating point — only constructible from a
+  clock, so an inconsistent point is *unrepresentable* and the clock→voltage
+  mapping stays monotone) and `plan(from, to) → ClockPlan`, an ordered
+  `heapless::Vec` of at most three `ClockStep`s.
+  **What's gated:** rather than asserting the ordering rule on faith, the two
+  underlying invariants are checked at *every* step boundary of *every*
+  transition pair over a clock set covering both sides of all 22 wait-state
+  thresholds: (1) programmed wait-states ≥ what the live clock+voltage requires
+  (under-waiting corrupts instruction fetch), (2) live clock ≤ the live VOS's
+  ceiling (the "VOS-before-freq" hard-fault anti-pattern). The familiar
+  down/up asymmetry then *falls out* of the invariants. Plus a seam gate —
+  every clock `dvfs::clock_mhz_for_profile` can return, for every profile ×
+  format, must be a datasheet-legal point reachable by a safe plan.
+  **Finding (a real bug, not a gap):** the VOS ceilings this repo had been
+  using were the **H743's**, inherited from the v1-era design doc §4.2 ("VOS3
+  1.0 V/200 MHz"). The H7A3's are **280/225/160/88 MHz**. So
+  `clock_headroom_per_format_fits_vos3_target` was asserting `≤ 200 MHz` under a
+  label that was wrong by a factor of >2, and its headline claim — "the DAP can
+  run the lowest voltage state for every shipped format" — is **false**: the
+  heaviest format (opus, ~102 MHz) needs **VOS2**; only wav/mp3 reach VOS3.
+  Replaced with gates that pin the true band per format
+  (`heaviest_format_needs_vos2_not_vos3`, which fails in *both* directions — a
+  decoder speedup that newly unlocks VOS3 is a power win worth noticing).
+  Second finding: the resample **fallback** path needs ~158 MHz against VOS2's
+  160 MHz ceiling — a ~2 MHz margin, now gated, so a couple of percent of
+  resampler slowdown can't silently push the off-family-rate path up a voltage
+  scale. 57/57 dap-core, 11/11 new; clippy/fmt/arch-boundary/forbid-unsafe green.
+
+## Status
+
+**L0–L11 landed**, all gated. The recurring lesson across the loop: the
+memory/battery subsystem was already **mature**, so the value was never in
+reinventing it — it was in (a) filling gaps the code had *explicitly flagged*
+(output-path current, the race-to-sleep answer, datasheet floors, the regulator
+curve), (b) promoting measurements from *reported* to *CI-blocking* (L9/L10), and
+(c) checking the inherited numbers against the **actual part** — which is how
+L6 caught a 2× optimistic battery capacity and L11 caught H743 voltage tables
+masquerading as H7A3's. Both were wrong in the flattering direction; neither was
+a code bug. Worth repeating on anything still inherited from the v1 design docs.
+
+Remaining high-value loops, by what actually blocks them:
 - **Scratch right-size** (#1, ~64 KiB): needs the WavPack large-block tradeoff
-  decision + the soul-audio-core push (blocked on creds).
-- **Per-format stack transients** (extend the probe): doable; needs per-format
-  fixtures — next safe loop.
+  decision + a soul-audio-core change.
 - **RTF hot-loop / decode-ahead ring**: soul-audio-core, correctness-sensitive.
-- **Real battery numbers / Sleep current / clock+VOS apply**: need silicon.
+- **E-ink partial-refresh policy** (#10): doable now, host-gateable — the UI
+  already tracks dirty regions.
+- **Peripheral clock gating / GPIO low-power audit**: partly host-gateable in the
+  same style as L11 (an enable-register *policy* can be a pure decision with a
+  gate, even before the writes exist) — the next-best Phase-E item to pull
+  forward.
+- **Real battery numbers / Sleep current / executing the clock plan**: need
+  silicon. Note `SLEEP_CURRENT_MA` remains the model's dominant sensitivity
+  (gated as such), so the headline runtime figures are only as good as that one
+  bench measurement.
 
 ## Sources
 
-Memfault *Measuring Stack Usage*; ST *STM32H7 System Power Control (PWR)* &
+ST `stm32h7xx_ll_utils.c`, `STM32H7_DEV_ID == 0x480` branch (CubeH7's LL
+implementation of RM0455's per-scale clock ceilings + flash wait-state table —
+the authority for L11's two transcribed tables, and what exposed the inherited
+H743 figures); Memfault *Measuring Stack Usage*; ST *STM32H7 System Power
+Control (PWR)* &
 *AN5307 (H7A3/7B3 HW dev)* & VOS/SVOS scaling; TI *SPRAAW6* (DMA audio race-to-
 sleep); IEEE *perception-aware low-power audio decoder*; `static_cell`,
 `heapless`, rust-embedded book *Memory management in no_std*.
