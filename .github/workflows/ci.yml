@@ -103,7 +103,7 @@ jobs:
       # @stable: recent cargo-deny needs rustc >= 1.88.
       - uses: dtolnay/rust-toolchain@stable
 
-      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0  # v2.9.3
 
       - name: Install cargo-deny
         run: cargo install cargo-deny --locked
@@ -134,7 +134,7 @@ jobs:
 
       - uses: dtolnay/rust-toolchain@1.87
 
-      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0  # v2.9.3
 
       - name: epd-waveshare must not be in dependency graph
         run: |
@@ -202,7 +202,7 @@ jobs:
         with:
           targets: thumbv7em-none-eabihf
 
-      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0  # v2.9.3
         with:
           workspaces: "dap -> target"
 
@@ -278,7 +278,7 @@ jobs:
           targets: thumbv7em-none-eabihf
           components: clippy
 
-      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0  # v2.9.3
         with:
           workspaces: "dap -> target"
 
@@ -318,7 +318,7 @@ jobs:
 
       - uses: dtolnay/rust-toolchain@stable
 
-      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0  # v2.9.3
         with:
           workspaces: "dap -> target"
 
@@ -398,7 +398,7 @@ jobs:
           targets: thumbv7em-none-eabihf
           components: llvm-tools-preview
 
-      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0  # v2.9.3
         with:
           workspaces: "tools/mcu-stackprobe -> target"
 
@@ -438,7 +438,7 @@ jobs:
         with:
           targets: thumbv7em-none-eabihf
 
-      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0  # v2.9.3
         with:
           workspaces: "tools/mcu-stackprobe -> target"
 
@@ -468,7 +468,7 @@ jobs:
       # @stable, not @1.87: cargo-machete's recent releases need rustc >= 1.88.
       - uses: dtolnay/rust-toolchain@stable
 
-      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0  # v2.9.3
 
       - name: Install cargo-machete
         run: cargo install cargo-machete --locked
@@ -553,7 +553,7 @@ jobs:
       # @stable, not @1.87: cargo-audit's recent releases need rustc >= 1.88.
       - uses: dtolnay/rust-toolchain@stable
 
-      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0  # v2.9.3
 
       - name: Install cargo-audit
         run: cargo install cargo-audit --locked
@@ -660,7 +660,7 @@ jobs:
         with:
           components: clippy
 
-      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0  # v2.9.3
         with:
           workspaces: "eink-ui -> target"
 
@@ -680,7 +680,7 @@ jobs:
         with:
           targets: thumbv7em-none-eabihf
 
-      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0  # v2.9.3
         with:
           workspaces: "eink-ui -> target"
 
@@ -701,7 +701,7 @@ jobs:
 
       - uses: dtolnay/rust-toolchain@stable
 
-      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5  # v2.8.2
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0  # v2.9.3
         with:
           workspaces: "eink-ui -> target"
 
