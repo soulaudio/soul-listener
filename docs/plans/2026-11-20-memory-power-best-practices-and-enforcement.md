@@ -37,21 +37,34 @@ waking only on real events, never polling.
 | **Tickless idle / WFI by default** — core sleeps at `await`, wakes on IRQ | Framework-level (don't hand-roll WFI loops — they miss wake conditions) | ✅ Embassy executor parks in WFI between ticks |
 | **DVFS** — lowest freq+VOS that sustains the workload; `P = α·C·V²·f` | A model mapping measured RTF → min clock per codec; a regression gate | ✅ `power::model` + `power::dvfs`; race-to-sleep analyzed (min-clock is optimal here) |
 | **Clock sequencing** — freq ↓ → flash wait-states → VOS ↓ (never VOS before freq) | A tested clock-transition routine; the ordering is a hard rule | ✅ **the routine, as of this round** — `power::clocks` emits the ordered plan and gates both invariants over *every* transition pair (`no_plan_ever_underwaits_flash_or_overclocks_the_voltage`); 🔜 the register writes that execute it |
-| **Peripheral clock gating** — gate unused APB/AHB clocks explicitly (not NOPs) | Enable-register discipline; audit unused peripherals | 🔜 Phase E |
+| **Peripheral clock gating** — gate unused APB/AHB clocks explicitly (not NOPs) | Enable-register discipline; audit unused peripherals | ✅ **the policy + the audit, as of this round** — `power::peripherals`: every enabled clock must name an `(RCC_*ENR, bit)` coordinate (so "NOP gating" is unrepresentable), and the gated set is *derived* (`gateable & !enabled`), so nothing can be left unclassified. 12 of the part's 119 peripheral clocks on in Playback, 8 Idle, 4 Paused; 🔜 the RCC writes |
 | **Avoid resampling when possible** — it's the heaviest stage | Native-rate clocking (dual MCLK oscillator); Deck builds no resampler at matching rates | ✅ modeled + gated (`native_rate_clocking_needs_lower_clock_than_resampling`); Deck verified |
 | **DMA for audio** — core sleeps between blocks, IRQ per block not per sample | Double-buffered SAI DMA ring sized for a low wakeup rate | 🟡 modeled (`wakeups_per_sec`, ring budget); 🔜 real SAI DMA |
-| **Stop mode on pause** (32 µA, RAM retained ≈ shelf-life) | Enter Stop on pause; wake on EXTI; restore clock tree *before* peripherals | 🟡 modeled (`STOP_MODE_CURRENT_MA`); 🔜 the real suspend/resume |
-| **Define every GPIO in low-power** — unused pins input-no-pull or driven; condition wake pins (pulls/RC/LSE RTC) | Pin-state audit; measure false-wake rate | 🔜 Phase E |
+| **Stop mode on pause** (32 µA, RAM retained ≈ shelf-life) | Enter Stop on pause; wake on EXTI; restore clock tree *before* peripherals | 🟡 modeled (`STOP_MODE_CURRENT_MA`) + the pre-Stop clock configuration is now gated (`power::peripherals`' `Paused` state: 4 clocks, wake sources only, gated against any output-path peripheral); 🔜 the real suspend/resume |
+| **Define every GPIO in low-power** — unused pins input-no-pull or driven; condition wake pins (pulls/RC/LSE RTC) | Pin-state audit; measure false-wake rate | 🔜 Phase E — **genuinely blocked on the schematic**, not on effort: there is no pin assignment in the repo to audit. The bank-level policy is gated (`power::peripherals`: unused banks gated, only a wake-carrying bank survives into Stop); the per-pin audit needs the pinout |
 | **Battery model grounded in datasheets** | Datasheet currents × measured decode cost; runtime floors as gates | ✅ calibrated to real figures (Akyga LP623255 **1100 mAh**, CS43131 envelope, microSD); ~41–74 h modeled |
 | **Measure, don't claim** — "unverified power claims are product risks" | Power analyzer (Otii/Monsoon) or shunt+ADC; GPIO markers in traces; soak at temperature | 🔜 needs silicon — the one thing no model substitutes for |
 
-**Verdict:** the *model and policy* are strong and gated, and as of this round
-the *clock-sequencing decision* is gated too (`power::clocks` — the one Phase-E
-item that turned out not to need the board at all: the ordering rule is pure
-logic over the datasheet's VOS/wait-state tables, so it can be proven on the
-host and merely *executed* on silicon). What genuinely still needs the board is
-the rest of the low-power *behavior* (peripheral gating, GPIO, DMA,
-suspend/resume) and the *measurement*.
+**Verdict:** the *model and policy* are strong and gated, and this round moved
+two more rows off Phase E by noticing they needed the board only to *execute*,
+not to *decide*:
+
+- **Clock sequencing** → `power::clocks`. The ordering rule is pure logic over
+  the datasheet's VOS/wait-state tables, so it is proven on the host and merely
+  executed on silicon.
+- **Peripheral clock gating** → `power::peripherals`. Which clocks are on in
+  which power state is a *policy*, and the "audit unused peripherals" half is a
+  *completeness property* — both decidable without hardware.
+
+The pattern is worth naming, since it emptied most of what looked like a
+hardware-blocked backlog: **"needs the board" usually means "needs the board to
+execute"**. Separate the decision from the register write and the decision can
+be gated today. What is left after applying it:
+
+- Genuinely needs silicon: the **measurement** (no model substitutes), the real
+  `SLEEP_CURRENT_MA`, SAI DMA, and the suspend/resume code path.
+- Genuinely needs the **schematic**: the per-pin GPIO audit — there is no pin
+  assignment in the repo to audit yet.
 
 **Correction this round:** the voltage-scale ceilings this repo had been using
 were the **STM32H743's**, inherited from the v1-era design doc §4.2 ("VOS3
@@ -69,7 +82,7 @@ From the researched 8-step protocol, specialized to this DAP:
 1. **HW sanity** — battery chemistry, regulator (SMPS vs LDO), VBAT routing, LED draw; baseline quiescent current.
 2. **Datasheet drill** — pin the H7A3 Sleep-with-SAI-DMA current (the model's one remaining placeholder), CS43131 draw at target volume/impedance, oscillator startup times.
 3. **Minimal baseline** — boot all-peripherals-off, enter deepest viable sleep, measure.
-4. **Active-path** — wake → SD read → decode burst → DMA → sleep; apply DVFS + native-rate clocking; gate unused clocks. The clock/VOS/wait-state transition itself is already decided and gated — execute `power::clocks::plan`'s steps in order (each `ClockStep` documents the blocking it implies: `VOSRDY` poll, `FLASH_ACR` read-back, PLL re-lock) rather than hand-rolling the sequence at the register level.
+4. **Active-path** — wake → SD read → decode burst → DMA → sleep; apply DVFS + native-rate clocking; gate unused clocks. Both the clock transition and the gating policy are already decided and gated: execute `power::clocks::plan`'s steps in order (each `ClockStep` documents the blocking it implies: `VOSRDY` poll, `FLASH_ACR` read-back, PLL re-lock), and write `power::peripherals::enabled_mask(state, bus)` to each `RCC_*ENR` — rather than hand-rolling either at the register level.
 5. **Wake-path hardening** — scroll-wheel/button EXTI, LSE RTC; measure false-wake rate; condition inputs.
 6. **Retention** — validate the deck/ring state across pause→Stop→resume (restore clocks before peripherals).
 7. **Soak** — days of real duty cycles at temperature; capture `I_avg`, spike distribution, wake-failure stats.

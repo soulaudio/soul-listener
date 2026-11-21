@@ -34,6 +34,7 @@ use crate::ports::{BatteryReading, Power};
 pub mod clocks;
 pub mod dvfs;
 pub mod model;
+pub mod peripherals;
 
 /// Max events a single [`PowerService::poll`] can return. Eight distinct
 /// [`PowerEvent`] kinds exist; this bound is generous enough that every kind

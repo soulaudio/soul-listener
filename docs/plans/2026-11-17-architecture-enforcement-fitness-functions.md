@@ -17,6 +17,7 @@
 | 5 | **Bounded SRAM** (per-region budget) | `dap-arch-tests/budget.rs`: `size_of` per region (incl. the externalized scratch pool), honest total asserted ≤ 1.18 MB. | **Enforced** ✓ |
 | 6 | **Battery regression** (DVFS/energy model) | `dap-core::power::model` tests: clock-headroom-per-format ≤ VOS2 (the real H7A3 band — see `power::clocks`), runtime ≥ floor, wakeup-rate. Honest: a datasheet-grounded **model**, not a measurement; real-power HIL regression = Phase E. | **Enforced (as a model)** ✓ |
 | 6b | **Clock-transition safety** (DVFS sequencing) | `dap-core::power::clocks` tests: replay every transition pair step-by-step and assert the flash is never under-waited and the clock never exceeds the live voltage scale's ceiling; plus every clock `dvfs` can select must be a datasheet-legal operating point. Pure logic over ST's H7A3 tables — the register writes that execute the plan are Phase E. | **Enforced** ✓ |
+| 6c | **Peripheral-gating completeness** (unused clocks) | `dap-core::power::peripherals` tests: enabled ∪ gated must equal the part's whole gateable surface with no overlap, for every power state × enable register — so no peripheral can be unclassified. Plus the audio path is Playback-only, `Paused` keeps wake sources only, the states nest strictly, and deferred hardware (USB/FMC/OCTOSPI/SRAM1-3/DTCM/ITCM) is pinned off. | **Enforced** ✓ |
 
 [rust#54010]: https://github.com/rust-lang/rust/issues/54010
 

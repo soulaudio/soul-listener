@@ -224,36 +224,83 @@ Infra / gates:
   resampler slowdown can't silently push the off-family-rate path up a voltage
   scale. 57/57 dap-core, 11/11 new; clippy/fmt/arch-boundary/forbid-unsafe green.
 
+- **L12 — peripheral clock gating: the policy *and* the audit, host-gated.**
+  Applying L11's lesson again (see Status): the roster's "gate unused APB/AHB
+  clocks explicitly (not NOPs) — enable-register discipline; audit unused
+  peripherals" also needed the board only to *execute*. New
+  `dap-core::power::peripherals`:
+  - **Discipline as a type property.** Every enabled clock must name a concrete
+    `(RCC_*ENR, bit)` coordinate, so the anti-pattern the roster names
+    ("software-NOP clock gating — use the controller") is *unrepresentable*
+    rather than discouraged.
+  - **The audit as a completeness property.** The module works in masks, not
+    ~120 enum variants, because the gated set is **derived**:
+    `gated = gateable & !enabled`. Not being on the roster *is* a peripheral's
+    classification — off — so nothing can be left unclassified, and turning a
+    clock on is only possible by adding a roster entry, which forces a per-state
+    decision and a written justification at the same time. The gateable masks per
+    bus come from `stm32-metapac` v21's `rcc_h7ab` block (the same register
+    definitions `embassy-stm32` drives this part through).
+  - **Three power states** (`Playback` / `Idle` / `Paused`, the last being the
+    pre-Stop configuration), gated to nest **strictly**: `Paused ⊂ Idle ⊂
+    Playback`, proper subsets — so "lower power state" is a fact, not a label.
+  **Result:** of the part's **119** gateable peripheral clocks, **12** are on in
+  Playback, **8** in Idle, **4** in Paused — ~90 % of the chip unclocked even at
+  full tilt. Gates beyond the partition: the audio path (SAI1 + DMA1 + SDMMC1 +
+  its AF bank) is enabled *only* in Playback; `Paused` keeps nothing but the four
+  named wake/core clocks and no output-path peripheral (Stop's 32 µA budget
+  cannot absorb one); only a wake-carrying GPIO bank survives into Stop, and its
+  justification string must say which wake line; and a `MUST_STAY_GATED` tripwire
+  pins USB OTG HS/FS, FMC, OCTOSPI1/2, SRAM1-3 and DTCM/ITCM off in every state —
+  USB/BT are deferred past v2 and `memory.x` links AXI SRAM only, so enabling one
+  has to be a deliberate edit, not a quiet roster addition. Also a seam gate to
+  the battery model: every device `PERIPHERAL_PLAYBACK_MA` bills for (CS43131, SD,
+  display) must have its bus clock enabled in Playback — otherwise the two modules
+  describe different machines. 68/68 dap-core (11 new); full `xtask verify` green.
+  *Two inputs are flagged placeholders, not findings: the GPIO bank assignment and
+  the SPI/I²C instance choice, both pending the schematic. The gates are written
+  over the policy, so they survive the schematic renaming either.*
+
 ## Status
 
-**L0–L11 landed**, all gated. The recurring lesson across the loop: the
-memory/battery subsystem was already **mature**, so the value was never in
-reinventing it — it was in (a) filling gaps the code had *explicitly flagged*
-(output-path current, the race-to-sleep answer, datasheet floors, the regulator
-curve), (b) promoting measurements from *reported* to *CI-blocking* (L9/L10), and
-(c) checking the inherited numbers against the **actual part** — which is how
-L6 caught a 2× optimistic battery capacity and L11 caught H743 voltage tables
-masquerading as H7A3's. Both were wrong in the flattering direction; neither was
-a code bug. Worth repeating on anything still inherited from the v1 design docs.
+**L0–L12 landed**, all gated. Four lessons, in rough order of how much backlog
+each one cleared:
 
-Remaining high-value loops, by what actually blocks them:
-- **Scratch right-size** (#1, ~64 KiB): needs the WavPack large-block tradeoff
-  decision + a soul-audio-core change.
-- **RTF hot-loop / decode-ahead ring**: soul-audio-core, correctness-sensitive.
-- **E-ink partial-refresh policy** (#10): doable now, host-gateable — the UI
-  already tracks dirty regions.
-- **Peripheral clock gating / GPIO low-power audit**: partly host-gateable in the
-  same style as L11 (an enable-register *policy* can be a pure decision with a
-  gate, even before the writes exist) — the next-best Phase-E item to pull
-  forward.
-- **Real battery numbers / Sleep current / executing the clock plan**: need
-  silicon. Note `SLEEP_CURRENT_MA` remains the model's dominant sensitivity
-  (gated as such), so the headline runtime figures are only as good as that one
-  bench measurement.
+1. **"Needs the board" usually means "needs the board to *execute*."** L11 and
+   L12 were both filed as Phase E and both turned out to be pure decisions —
+   a transition *ordering* and a gating *policy* — with only the register writes
+   needing silicon. Separating the decision from the write is what moved them.
+   Apply this before accepting any remaining "blocked on hardware" label.
+2. **Check inherited numbers against the actual part.** L6 caught a 2×
+   optimistic battery capacity; L11 caught H743 voltage tables masquerading as
+   H7A3's. Neither was a code bug, and both erred in the *flattering* direction.
+   Anything still carried over from the v1 design docs deserves the same pass.
+3. **Promote measurements from reported to CI-blocking** (L9/L10) — a measured
+   number that nothing enforces is a number that drifts.
+4. **The subsystem was already mature**, so the value was never in reinventing it
+   — it was in filling gaps the code had *explicitly flagged* (output-path
+   current, the race-to-sleep answer, datasheet floors, the regulator curve).
+
+Remaining work, by what actually blocks it:
+- **Host-gateable now** — *E-ink partial-refresh policy* (#10; the UI already
+  tracks dirty regions, so "no full refresh on a 1-field change" is a gate
+  waiting to be written). Best candidate for L13.
+- **Needs a decision** — *scratch right-size* (#1, ~64 KiB): the WavPack
+  large-block tradeoff, plus a soul-audio-core change.
+- **Needs care, not hardware** — *RTF hot-loop / decode-ahead ring*:
+  soul-audio-core, correctness-sensitive.
+- **Needs the schematic** — the per-pin *GPIO low-power audit*. The bank-level
+  policy landed in L12; the pin states need a pinout that does not exist yet.
+- **Needs silicon** — the *measurement* itself, the real `SLEEP_CURRENT_MA`, SAI
+  DMA, suspend/resume, and executing the clock plan. Note `SLEEP_CURRENT_MA`
+  remains the model's dominant sensitivity (gated as such), so every headline
+  runtime figure is only as good as that one bench measurement.
 
 ## Sources
 
-ST `stm32h7xx_ll_utils.c`, `STM32H7_DEV_ID == 0x480` branch (CubeH7's LL
+`stm32-metapac` v21's `rcc_h7ab` RCC block (generated from ST's SVD via
+`stm32-data`; the authority for L12's per-bus gateable masks and enable-bit
+coordinates); ST `stm32h7xx_ll_utils.c`, `STM32H7_DEV_ID == 0x480` branch (CubeH7's LL
 implementation of RM0455's per-scale clock ceilings + flash wait-state table —
 the authority for L11's two transcribed tables, and what exposed the inherited
 H743 figures); Memfault *Measuring Stack Usage*; ST *STM32H7 System Power
