@@ -18,6 +18,19 @@ name = "mcu-stackprobe"
 test = false
 bench = false
 
+# The whole-firmware-tick probe (feature `tick`): drives dap-core's real
+# `firmware::step` — App::tick (open→decode) THEN App::render (e-ink flex
+# layout + widget draw) — on QEMU with the same stack-painting, so the gated
+# number is the WHOLE tick's worst transient, not just the decode path main.rs
+# measures. `required-features` keeps it out of the default/static build (and
+# the `-Z emit-stack-sizes` gate), so adding it can't perturb those.
+[[bin]]
+name = "mcu-tickprobe"
+path = "src/bin/tickprobe.rs"
+required-features = ["tick"]
+test = false
+bench = false
+
 [dependencies]
 # Sibling repo D:/dev/soulaudio/soul-audio-core, three levels up from this
 # file (tools/mcu-stackprobe/Cargo.toml -> tools/ -> soul-listener-gh/ ->
@@ -26,6 +39,16 @@ bench = false
 # comment for the full rationale; mirrored here since this harness measures
 # the same decode path the DAP board will run.
 soul-audio-core = { path = "../../../soul-audio-core/crates/soul-audio-core", default-features = false, features = ["embedded-profile"] }
+# dap-core (the board-agnostic App + firmware::step + stub ports) — only the
+# `tick` feature's whole-firmware-tick measurement uses it (see main.rs). It is
+# a MEMBER of the dap/ workspace, so its own deps (soul-audio-core/-engine,
+# eink-ui/-specs, embedded-graphics, heapless) resolve via dap/Cargo.toml's
+# [workspace.dependencies]; critically, that soul-audio-core path + features
+# (embedded-profile) canonicalize to the exact same package this crate already
+# path-deps above, so cargo unifies them into one instance (no duplicate, no
+# embassy — dap-core is runtime-agnostic). `stub` pulls in the no-op port
+# adapters the tick harness wires the App with.
+dap-core = { path = "../../dap/core", default-features = false, features = ["stub"], optional = true }
 cortex-m-rt = "0.7"
 cortex-m = "0.7"
 panic-halt = "0.2"
@@ -40,6 +63,10 @@ cortex-m-semihosting = { version = "0.5", optional = true }
 # Without this feature the crate is the original STATIC `-Z emit-stack-sizes`
 # target (check-stack.sh) and is never actually executed.
 qemu = ["dep:cortex-m-semihosting"]
+# Build the whole-firmware-tick probe (the `mcu-tickprobe` bin): pulls in
+# dap-core (App/firmware/stub) and semihosting. Run with
+# `cargo run --bin mcu-tickprobe --features tick` (check-tick-qemu.sh does this).
+tick = ["dep:dap-core", "dep:cortex-m-semihosting"]
 
 [profile.release]
 # Cargo's release defaults already give opt-level = 3; spelled out here so
