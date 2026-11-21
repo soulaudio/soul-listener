@@ -448,6 +448,14 @@ jobs:
       - name: Run the dynamic stack-budget gate (QEMU mps2-an500)
         run: bash tools/mcu-stackprobe/check-stack-qemu.sh
 
+      # Whole-firmware-tick gate: the board-accurate number. check-stack-qemu.sh
+      # above measures the decode path in isolation (~297 KiB); this runs the real
+      # `dap_core::firmware::step` (App::tick open→decode THEN App::render) and
+      # gates its worst transient (~413 KiB — the wrapper + render frames the
+      # isolated probe never counts). Same QEMU install + soul-audio-core pin.
+      - name: Run the whole-firmware-tick stack gate (QEMU mps2-an500)
+        run: bash tools/mcu-stackprobe/check-tick-qemu.sh
+
   # ---------------------------------------------------------------------------
   # Unused dependencies — cargo machete
   #
