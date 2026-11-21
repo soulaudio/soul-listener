@@ -30,24 +30,27 @@ this stage, while *memory* footprint is concretely measurable today.
 
   | format | scratch i32 | note |
   |---|---|---|
-  | WavPack | 65 536 | `MAX_BLOCK_PCM`; **sets the shared size** |
-  | ALAC | 28 672 | `3*MAX_FRAME + 2*MAX_FRAME*2ch`, `MAX_FRAME` = 4096 |
+  | WavPack | 65 536 | `MAX_BLOCK_PCM`; sets the shared size |
+  | ALAC | 28 672 | `MAX_FRAME*3 + MAX_FRAME*2ch*2` |
+  | Opus | 11 520 | `MAX_PACKET_SAMPLES` = 5760*2 |
+  | FLAC | 9 216 | `2ch * MAX_BLOCK(4608)` |
+  | AAC | 2 048 | `1024 * 2ch` |
 
-  > **Corrected in L14:** this table previously also listed Opus (11 520),
-  > FLAC (9 216) and AAC (2 048) as scratch carves. They are not — those three
-  > keep their working buffers *inline* in their own decoder structs (which is
-  > why `AnyDecoder` is ~174 KB) and never touch the shared scratch.
+  > **This table is correct** (verified L15). L14 briefly "corrected" it to two
+  > rows, claiming Opus/FLAC/AAC don't carve from the shared scratch. That was
+  > wrong: **seven** `AnyDecoder` variants carve from it — FLAC, ALAC, AAC, Opus,
+  > Matroska, WavPack, CAF — each sub-allocating through a `ScratchCursor`. Only
+  > WAV, AIFF and MP3 take no `P` at all. `decoder_scratch_len()` is sized to
+  > satisfy the largest carver (WavPack), which is why capping `MAX_BLOCK_PCM`
+  > (#1) is the lever on this buffer.
   >
-  > Note the two rows above describe **different soul-audio-core revisions**. At
-  > the rev this DAP's CI pins (`.github/soul-audio-core.pin`),
-  > `decoder_scratch_len()` is simply `wavpack::MAX_BLOCK_PCM` — WavPack is the
-  > *only* carve. The ALAC carve, and the `max(wavpack, alac)` definition,
-  > arrived in a later commit that the pin has not picked up. WavPack binds in
-  > both, which is why the L14 gate asserts against `MAX_BLOCK_PCM` (public in
-  > both revisions) rather than the newer `SCRATCH_LEN`.
+  > The two revisions differ only in spelling: at the pinned rev
+  > `decoder_scratch_len()` is `wavpack::MAX_BLOCK_PCM` directly; post-pin it is
+  > `max(wavpack::SCRATCH_LEN, alac::SCRATCH_LEN)`. WavPack binds in both.
   >
-  > Either way the point for backlog #1 holds: shrinking this buffer means
-  > shrinking WavPack's carve, and does nothing for the inline-buffer formats.
+  > Carving from `P` is a *separate* axis from a variant's **inline** footprint —
+  > see L15's roster. WavPack carves the most from `P` and is nearly the smallest
+  > inline (96 B); Matroska does both.
 
 - Static footprint: App 174.7 KiB + scratch 256 KiB ≈ 432 KiB; ~592 KiB stack
   headroom. Worst-case decode-open stack transient 315 KiB (fits — see the
@@ -78,7 +81,10 @@ Memory (concrete, measurable now):
    enforcement roster has listed this ✅ since before this loop; the backlog entry
    was stale).
 5. **ALAC/Opus/AAC buffer audit** — are any inline buffers oversized for the
-   stereo embedded target? *Risk: low.*
+   stereo embedded target? *Risk: low.* **Done in L15: no for those three; yes
+   for Matroska** (59 760 B inline, sets `size_of::<AnyDecoder>()`). Gated by
+   `any_decoder_variant_inline_footprint_roster`; the remaining win is roadmap
+   Phase A3's byte-arena seam, still open.
 
 Battery (analytical / config / design):
 6. **Power-budget model** — doc + a host test computing expected playback hours
@@ -348,12 +354,14 @@ Infra / gates:
   with the intended message, naming the tradeoff (at `PRELOAD = 0` this pool is a
   quarter of the linked AXI SRAM and competes with the decode-ahead ring). It is
   a *ceiling*, so #1's ~64 KiB shrink passes freely; only growth fails.
-  **Finding — the baseline table was wrong.** L0's measured baseline listed five
-  formats carving from the shared scratch (WavPack, ALAC, Opus, FLAC, AAC).
-  Opus/FLAC/AAC don't carve at all — they keep their buffers *inline* in their
-  decoder structs, which is why `AnyDecoder` is ~174 KB, and why shrinking the
-  shared scratch does nothing for them. Corrected above, because it changes what
-  #1 is worth: a WavPack cap is the *only* lever on this buffer.
+  **Retracted (see L15):** L14 also claimed L0's baseline table was wrong — that
+  only WavPack (and post-pin ALAC) carve from the shared scratch, and that
+  Opus/FLAC/AAC keep their buffers inline. **That claim was itself wrong.** Seven
+  variants carve from `P`; the original five-row table was right and has been
+  restored above. L14's cap gate is unaffected (it only uses
+  `decoder_scratch_len()` and `MAX_BLOCK_PCM`, both correct), but the prose was
+  not, and the error reached this doc, the test's comment, the commit message and
+  the PR body before L15 caught it.
   The gate asserts the consequence rather than the formula —
   `decoder_scratch_len() == wavpack::MAX_BLOCK_PCM`, i.e. WavPack is the binding
   constraint. If another carve ever overtakes it, that equality breaks and names
@@ -373,7 +381,7 @@ Infra / gates:
 
 ## Status
 
-**L0–L14 landed**, all gated. Five lessons, in rough order of how much backlog
+**L0–L15 landed**, all gated. Six lessons, in rough order of how much backlog
 each one cleared:
 
 1. **"Needs the board" usually means "needs the board to *execute*."** L11 and
@@ -395,7 +403,13 @@ each one cleared:
    full-panel flash demanded every second — survived a well-tested run loop
    because every test checked that rendering *succeeded*, never what it *cost*.
    Where an operation has a price (time, current, wakeups), assert the price.
-5. **The subsystem was already mature**, so the value was never in reinventing it
+5. **Measure the artifact; don't paraphrase the source.** L14 described the
+   scratch-carving design by reading `soul-audio-core` and got it wrong twice —
+   first from the wrong revision (the sibling, not the pin), then by conflating
+   `AnyDecoder` (~58 KB) with `Deck`/`App` (~174 KB). L15 answered the same class
+   of question with `size_of` against the pinned build and the numbers settled it
+   in one run. Prefer a measurement that CI can re-run over a claim about code.
+6. **The subsystem was already mature**, so the value was never in reinventing it
    — it was in filling gaps the code had *explicitly flagged* (output-path
    current, the race-to-sleep answer, datasheet floors, the regulator curve).
 
@@ -417,6 +431,48 @@ Remaining work, by what actually blocks it:
   DMA, suspend/resume, and executing the clock plan. Note `SLEEP_CURRENT_MA`
   remains the model's dominant sensitivity (gated as such), so every headline
   runtime figure is only as good as that one bench measurement.
+
+- **L15 — the inline-footprint audit (#5), and retracting L14's prose.** Backlog
+  #5 asked "ALAC/Opus/AAC buffer audit — are any inline buffers oversized for the
+  stereo embedded target?" Answered by measurement rather than reading code, with
+  a new `any_decoder_variant_inline_footprint_roster` gate (measured against the
+  **pinned** rev, i.e. what actually ships):
+
+  | variant | inline bytes | |
+  |---|---|---|
+  | **Matroska** | **59 760** | **sets `size_of::<AnyDecoder>()`** |
+  | MP3 | 44 240 | synthesis/subband state |
+  | Opus | 41 104 | CELT + SILK state |
+  | AAC | 34 056 | filterbank/SBR/PS state |
+  | ALAC | 25 896 | |
+  | CAF | 25 784 | wraps ALAC/PCM |
+  | WAV | 18 584 | large for a format with no codec state |
+  | FLAC | 12 472 | |
+  | AIFF | 104 | |
+  | WavPack | 96 | externalizes essentially everything to `P` |
+
+  **Answer to #5: no for the three formats it named** — ALAC/Opus/AAC are not the
+  problem — **and yes for Matroska**, which alone sets the enum's size. That
+  confirms the firmware roadmap's **Phase A3** ("close the one edge —
+  Matroska-wrapped-FLAC's 48 KB `u8` SimpleBlock buffer; needs a byte-arena seam
+  alongside the i32 scratch"), which is still open. This is the number that
+  quantifies it: externalizing that buffer would cut `AnyDecoder` by ~26 %
+  (59 760 → ~44 KB, where MP3 becomes the binder). The instructive contrast is
+  WavPack at **96 B** versus Matroska at **59 760 B** — both carve from the shared
+  `P`, but WavPack externalized everything while Matroska kept its block buffer
+  inline. That is the shape of the remaining win.
+  The gate also pins completeness: `size_of::<AnyDecoder>()` must not exceed the
+  largest variant the roster lists (plus a discriminant), so a new or grown
+  variant can't slip past the table.
+  **Two corrections to figures this loop had been repeating.** `AnyDecoder` is
+  **~58 KB**, not ~174 KB — the ~174 KB figure is `Deck`/`Engine`/`AudioPlayer`/
+  `App` (dominated by the output ring), and L14 conflated the two. And L14's claim
+  about which formats carve from the shared scratch was wrong; see the retraction
+  in that entry and the restored baseline table.
+  *Lesson, and the reason this entry exists: L14's error came from reading one
+  revision's source and asserting it as fact — twice over (the wrong rev, then the
+  wrong conflation). L15 answered the same class of question by `size_of` against
+  the pinned build instead. Measure the artifact, don't paraphrase the source.*
 
 ## Verifying against the CI pin (not just the sibling checkout)
 

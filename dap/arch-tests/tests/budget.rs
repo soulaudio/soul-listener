@@ -22,6 +22,13 @@ use dap_core::power::{PowerProfile, PowerService};
 use embedded_graphics::draw_target::DrawTarget;
 use embedded_graphics::geometry::{OriginDimensions, Size};
 use embedded_graphics::Pixel;
+use soul_audio_core::formats::caf::CafDecoder;
+use soul_audio_core::formats::matroska::MatroskaDecoder;
+use soul_audio_core::formats::mp3::Mp3Decoder;
+use soul_audio_core::formats::{
+    aac::AacDecoder, aiff::AiffDecoder, alac::AlacDecoder, flac::FlacDecoder, opus::OpusDecoder,
+    wav::WavDecoder, wavpack::WavpackDecoder,
+};
 use soul_audio_core::{AnyDecoder, Deck, SampleFormat, Sink, SinkError, SliceSource, StreamInfo};
 use soul_audio_engine::{Engine, LinearSequencer};
 use soul_audio_index::IndexReader;
@@ -386,29 +393,27 @@ fn report(name: &str, actual: usize, budget: usize) {
 /// format enlarging the shared scratch fails CI.
 ///
 /// # The breakdown
-/// At the `soul-audio-core` revision this DAP's CI pins
-/// (`.github/soul-audio-core.pin`), **exactly one** format carves from this
-/// buffer: `decoder_scratch_len()` is literally `wavpack::MAX_BLOCK_PCM` =
-/// **65,536 i32 = 256 KiB**. Nothing else touches it — Opus/FLAC/AAC keep their
-/// working buffers *inline* in their own decoder structs, which is why
-/// `AnyDecoder` is ~174 KB.
+/// **Seven** of `AnyDecoder`'s variants carve their working buffers from this one
+/// shared allocation — FLAC, ALAC, AAC, Opus, Matroska, WavPack and CAF — each
+/// sub-allocating what it needs through a `ScratchCursor`. Only WAV, AIFF and
+/// MP3 take no `P` at all. `decoder_scratch_len()` is therefore sized to satisfy
+/// the **largest** carver, which is WavPack: `wavpack::MAX_BLOCK_PCM` =
+/// **65,536 i32 = 256 KiB**.
 ///
-/// A **later** `soul-audio-core` revision (present in a sibling checkout tracking
-/// `main`, not yet picked up by the pin) adds an ALAC carve and redefines the
-/// function as `max(wavpack::SCRATCH_LEN, alac::SCRATCH_LEN)`:
+/// (Carving from `P` is separate from a variant's *inline* footprint — see
+/// `any_decoder_variant_inline_footprint_roster`, which audits that. The two are
+/// complementary: WavPack carves the most from `P` and has almost the smallest
+/// inline footprint, 96 B; Matroska carves from `P` *and* keeps a large inline
+/// block buffer.)
 ///
-/// | format | i32 | bytes | note |
-/// |---|---|---|---|
-/// | WavPack | 65,536 | 256 KiB | `MAX_BLOCK_PCM`; **sets the size in both revisions** |
-/// | ALAC | 28,672 | 112 KiB | `3·MAX_FRAME + 2·MAX_FRAME·2ch`, `MAX_FRAME` = 4096 — post-pin only |
-///
-/// The assertions below are deliberately written against
-/// `wavpack::MAX_BLOCK_PCM`, which is public in **both** revisions and is the
-/// binding constraint in both — so this gate is correct whether or not the pin
-/// is bumped. (An earlier draft of this test read `wavpack::SCRATCH_LEN`, which
-/// only exists post-pin: it compiled locally against the sibling checkout and
-/// broke CI, which builds the pin. The pin's own comment warns about exactly
-/// this.)
+/// The two revisions differ only in how the maximum is spelled: at the pinned
+/// rev `decoder_scratch_len()` is `wavpack::MAX_BLOCK_PCM` directly, while a
+/// later one (present in a sibling checkout tracking `main`) computes
+/// `max(wavpack::SCRATCH_LEN, alac::SCRATCH_LEN)`. WavPack binds in both, so the
+/// assertions below are written against `wavpack::MAX_BLOCK_PCM` — public in
+/// both revisions — and are correct whether or not the pin is bumped. (An
+/// earlier draft read `wavpack::SCRATCH_LEN`, which only exists post-pin: it
+/// compiled locally against the sibling and broke CI, which builds the pin.)
 ///
 /// Asserting `decoder_scratch_len() == wavpack::MAX_BLOCK_PCM` pins the
 /// *consequence* rather than the formula: if any carve ever overtakes WavPack,
@@ -450,6 +455,114 @@ fn shared_decoder_scratch_stays_within_its_cap() {
          is now driven by a different format, so the backlog's 'cap MAX_BLOCK_PCM' plan \
          (item #1) would no longer shrink it; re-derive the breakdown in this test's doc \
          comment before updating this assertion."
+    );
+}
+
+/// Ceiling on any single `AnyDecoder` variant's **inline** footprint — the
+/// per-decoder state that is *not* externalized to the shared `P` scratch.
+///
+/// 64 KiB. The worst variant today is Matroska at 59,760 B, so this is ~5.6 KiB
+/// of headroom: deliberately tight, because `AnyDecoder` is held by value in the
+/// `Deck` (and therefore in `Engine`/`AudioPlayer`/`App`), so every byte here is
+/// paid once per resident decoder whether or not that format is playing.
+const ANY_DECODER_VARIANT_CEILING: usize = 64 * 1024;
+
+/// The per-variant inline-footprint roster — the memory backlog's item #5
+/// ("ALAC/Opus/AAC buffer audit — are any inline buffers oversized for the
+/// stereo embedded target?"), answered by measurement.
+///
+/// # What it found
+/// Measured against the pinned `soul-audio-core` (`embedded-profile`, `Src =
+/// SliceSource`, `P = &'static mut [i32]`):
+///
+/// | variant | bytes | note |
+/// |---|---|---|
+/// | **Matroska** | **59,760** | **sets `size_of::<AnyDecoder>()`** — the Phase-A3 edge |
+/// | MP3 | 44,240 | synthesis/subband state |
+/// | Opus | 41,104 | CELT + SILK state |
+/// | AAC | 34,056 | filterbank/SBR/PS state |
+/// | ALAC | 25,896 | |
+/// | CAF | 25,784 | wraps ALAC/PCM |
+/// | WAV | 18,576 | large for a format with no codec state — worth a look |
+/// | FLAC | 12,472 | |
+/// | AIFF | 104 | |
+/// | WavPack | 96 | externalizes essentially everything to `P` |
+///
+/// So the answer to #5 is **no for ALAC/Opus/AAC specifically** — none of them
+/// is the problem — and **yes for Matroska**, which alone sets the enum's size.
+/// That is not a new discovery so much as a confirmation of the firmware
+/// roadmap's **Phase A3**, which flagged exactly this: *"close the one edge —
+/// Matroska-wrapped-FLAC's 48 KB u8 SimpleBlock buffer (needs a byte-arena seam
+/// alongside the i32 scratch)"*. A3 is still open, and this is the number that
+/// quantifies it: externalizing that buffer would cut `AnyDecoder` by ~26 %
+/// (59,760 → ~44 KB, where MP3 would become the binder).
+///
+/// Contrast WavPack (96 B) with Matroska (59,760 B): both carve from the shared
+/// `P`, but WavPack externalized *everything* while Matroska kept its block
+/// buffer inline. That is the shape of the remaining win.
+///
+/// # Why the roster is complete
+/// The final assertion pins `size_of::<AnyDecoder>()` to the largest measured
+/// variant (plus a discriminant word). A new or grown variant that this roster
+/// doesn't list would make the total exceed that, and the test says so — so the
+/// table can't silently fall behind the enum.
+#[test]
+fn any_decoder_variant_inline_footprint_roster() {
+    // `Mp3Decoder` takes no `P` (it externalizes nothing); the rest are
+    // instantiated exactly as `AnyDecoder` instantiates them.
+    let variants: [(&str, usize); 10] = [
+        ("matroska", size_of::<MatroskaDecoder<Src, P>>()),
+        ("mp3", size_of::<Mp3Decoder<Src>>()),
+        ("opus", size_of::<OpusDecoder<Src, P>>()),
+        ("aac", size_of::<AacDecoder<Src, P>>()),
+        ("alac", size_of::<AlacDecoder<Src, P>>()),
+        ("caf", size_of::<CafDecoder<Src, P>>()),
+        ("wav", size_of::<WavDecoder<Src>>()),
+        ("flac", size_of::<FlacDecoder<Src, P>>()),
+        ("aiff", size_of::<AiffDecoder<Src>>()),
+        ("wavpack", size_of::<WavpackDecoder<Src, P>>()),
+    ];
+
+    println!("\nAnyDecoder per-variant INLINE footprint (not counting the shared P scratch):");
+    let mut worst = ("", 0usize);
+    for (name, bytes) in variants {
+        println!("  {name:<9} {bytes:>7} B");
+        if bytes > worst.1 {
+            worst = (name, bytes);
+        }
+        assert!(
+            bytes <= ANY_DECODER_VARIANT_CEILING,
+            "the {name} variant's inline footprint is {bytes} B, over the \
+             {ANY_DECODER_VARIANT_CEILING} B per-variant ceiling. AnyDecoder is held by value in \
+             the Deck, so this is paid once per resident decoder regardless of what is playing — \
+             externalize the buffer into the shared P scratch (as WavPack does, at 96 B) rather \
+             than raising the ceiling."
+        );
+    }
+
+    let total = size_of::<AnyDecoder<Src, P>>();
+    report(
+        "AnyDecoder (largest variant)",
+        total,
+        ANY_DECODER_VARIANT_CEILING,
+    );
+
+    assert_eq!(
+        worst.0, "matroska",
+        "the largest inline variant is now {} ({} B), not Matroska — the Phase-A3 'externalize \
+         Matroska's SimpleBlock buffer' plan is no longer the biggest inline win, so re-derive \
+         this roster's doc comment before updating the expectation",
+        worst.0, worst.1
+    );
+
+    // Completeness: the enum can be no bigger than its largest variant plus a
+    // discriminant. If it is, some variant is missing from the roster above.
+    assert!(
+        total <= worst.1 + size_of::<usize>(),
+        "size_of::<AnyDecoder>() is {total} B but the largest variant this roster measures is \
+         {} B ({}) — some variant is missing from the roster, so the audit is incomplete. Add it.",
+        worst.1,
+        worst.0,
     );
 }
 
