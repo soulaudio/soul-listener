@@ -22,11 +22,12 @@ added two enforcement gates, a power-model refinement, and the architecture doc.
 | #32 | — | Full, code-grounded **`docs/ARCHITECTURE.md`** (replaced a stale v1 doc) |
 | #33 | #28 | **Dynamic QEMU decode-path stack gate** in CI (`check-stack-qemu.sh`) |
 | #34 | #30 | **Load-dependent regulator efficiency curve** in the power model |
+| #35 | #27 | **Whole-firmware-tick QEMU stack gate** (`check-tick-qemu.sh` + `mcu-tickprobe` bin) — board-accurate 413 KiB |
 
-### In review
+### In review (this doc)
 | PR | Task | What |
 |----|------|------|
-| #35 | #27 | **Whole-firmware-tick QEMU stack gate** (`check-tick-qemu.sh` + `mcu-tickprobe` bin) |
+| #36 | — | This roadmap / cross-device handoff doc |
 
 ---
 
@@ -41,7 +42,7 @@ the long-debunked "~1 MB blocker").
 |---|---|---|
 | Board AXI-SRAM stack headroom | **592 KiB** | `board-h7a3`: 1 MB AXI − (App 175 + scratch 256) |
 | Decode-open transient (isolated) | **297 KiB** local / **301 KiB** CI | `check-stack-qemu.sh`, worst = Matroska-FLAC |
-| **Whole-firmware-tick transient** | **413 KiB** | `check-tick-qemu.sh` (PR #35) — the board-accurate number |
+| **Whole-firmware-tick transient** | **413 KiB** | `check-tick-qemu.sh` (PR #35, merged) — the board-accurate number |
 | `App` static size | ~175 KiB (178,744 B) | `dap-arch-tests` footprint roster |
 | Decoder scratch (externalized) | 256 KiB (`decoder_scratch_len` = 65,536 × i32) | WavPack `MAX_BLOCK_PCM` |
 
@@ -70,7 +71,7 @@ as good as a bench measurement of it (Phase E, #36).
 | Static memory budgets | `dap-arch-tests/tests/budget.rs` + compile-time `assert!` in `board-h7a3` | per-region split ≤ 1,208 KB USER_SRAM; App+scratch+256 KB ≤ 1 MB AXI |
 | **Static** stack (per-frame) | `tools/mcu-stackprobe/check-stack.sh` (nightly `-Z emit-stack-sizes`) | main-frame + largest-other-frame budgets |
 | **Dynamic** decode stack | `tools/mcu-stackprobe/check-stack-qemu.sh` (QEMU) | `DYNAMIC_STACK_BUDGET_KIB` = 384; floor 592 |
-| **Dynamic** whole-tick stack | `tools/mcu-stackprobe/check-tick-qemu.sh` (QEMU, PR #35) | `DYNAMIC_TICK_BUDGET_KIB` = 480; floor 592 |
+| **Dynamic** whole-tick stack | `tools/mcu-stackprobe/check-tick-qemu.sh` (QEMU, PR #35, merged) | `DYNAMIC_TICK_BUDGET_KIB` = 480; floor 592 |
 | Banned deps | CI *Architecture boundaries* job | no epd-waveshare / minimp3 |
 | Reproducible upstream | `.github/soul-audio-core.pin` + pin-drift job | pinned rev, deliberate bumps |
 
@@ -159,9 +160,9 @@ bash tools/mcu-stackprobe/check-tick-qemu.sh       # whole tick   (budget 480)
 
 ## 6. Suggested next steps (resume order)
 
-1. **Land #27** — once PR #35's CI (the new `mcu-stack-budget-dynamic` whole-tick
-   step) is green, squash-merge it. That closes the stack-measurement loop:
-   static per-frame + dynamic decode + dynamic whole-tick, all enforced.
+1. **#27 is landed** (PR #35, merged) — the stack-measurement loop is closed:
+   static per-frame + dynamic decode + dynamic whole-tick, all enforced in CI.
+   (Only this roadmap PR #36 is still open — review + merge it from wherever.)
 2. **Decide #31 (WavPack).** If you want the 192 KB back, I draft the
    soul-audio-core sub-block WavPack change + the dap-core scratch shrink.
    Blocked on your call + your `soul-audio-core` WIP settling.
