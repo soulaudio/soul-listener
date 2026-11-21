@@ -9,6 +9,24 @@
 
 pub use soul_audio_core::{BufSource, SeekSource, Sink, Source};
 
+/// System clock/performance profile — a **port contract type**: the power slice
+/// ([`crate::power::PowerService`]) decides which profile is active, and a board's
+/// [`Power`] adapter applies it via [`Power::set_clock_profile`]. It lives here
+/// (the innermost contract layer, re-exported from `power` for ergonomics) so the
+/// `ports` boundary stays dependency-free — no port reaches up into a feature slice.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum PowerProfile {
+    /// Full performance: no battery-driven throttling.
+    Performance,
+    /// Default balanced profile (reserved for a future manual/UI-driven mode;
+    /// [`PowerService`](crate::power::PowerService) itself only auto-engages
+    /// between [`Performance`](Self::Performance) and
+    /// [`BatterySaver`](Self::BatterySaver)).
+    Balanced,
+    /// Reduced-power profile, auto-engaged below the saver SoC threshold.
+    BatterySaver,
+}
+
 /// The minimal capability [`AudioPlayer`](crate::audio::AudioPlayer) needs to
 /// turn a queue position into bytes ready for decoding: given a track index,
 /// open its encoded bytes as a seekable, bufferable source.
@@ -134,8 +152,8 @@ pub trait Power {
     fn set_charge_current_ma(&mut self, ma: u16);
 
     /// Set the system clock/performance profile (e.g. to engage
-    /// [`crate::power::PowerProfile::BatterySaver`] at low battery).
-    fn set_clock_profile(&mut self, profile: crate::power::PowerProfile);
+    /// [`PowerProfile::BatterySaver`] at low battery).
+    fn set_clock_profile(&mut self, profile: PowerProfile);
 
     /// Request an orderly power-off (called once on
     /// [`crate::power::PowerEvent::CriticalShutdown`]).

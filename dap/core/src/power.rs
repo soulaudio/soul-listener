@@ -37,21 +37,12 @@ pub const MAX_POWER_EVENTS: usize = 8;
 /// The bounded, no-alloc event set [`PowerService::poll`] returns.
 pub type PowerEvents = Vec<PowerEvent, MAX_POWER_EVENTS>;
 
-/// System clock/performance profile, driven by [`PowerService`] and applied
-/// through [`Power::set_clock_profile`].
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum PowerProfile {
-    /// Full performance: no battery-driven throttling.
-    Performance,
-    /// Default balanced profile (reserved for a future manual/UI-driven
-    /// mode; [`PowerService`] itself only ever auto-engages between
-    /// [`Performance`](Self::Performance) and
-    /// [`BatterySaver`](Self::BatterySaver)).
-    Balanced,
-    /// Reduced-power profile, auto-engaged below
-    /// [`PowerConfig::saver_soc_permille`].
-    BatterySaver,
-}
+/// System clock/performance profile — defined in [`crate::ports`] (a port
+/// contract type: the board's `Power` adapter applies it) and re-exported here,
+/// where [`PowerService`] decides which one is active. Re-exported so existing
+/// `power::PowerProfile` paths keep working while the canonical home is the
+/// dependency-free `ports` boundary.
+pub use crate::ports::PowerProfile;
 
 /// Charge/discharge state, derived each poll from the latest
 /// [`BatteryReading`].

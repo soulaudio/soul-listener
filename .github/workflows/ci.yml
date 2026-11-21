@@ -152,6 +152,13 @@ jobs:
           fi
           echo "OK: minimp3 not present in dependency graph"
 
+      # dap-core INTERNAL module layering (the hexagonal structure in
+      # docs/ARCHITECTURE.md): a dependency-free `ports` boundary, feature
+      # slices that import only `ports` (screens also `display`), and a free
+      # composition layer. Fast static grep over `use crate::…` — no build.
+      - name: dap-core module layering must hold
+        run: bash tools/check-arch-boundaries.sh
+
   # ---------------------------------------------------------------------------
   # board-h7a3 cross-build (Embassy 0.6, STM32H7A3)
   #
