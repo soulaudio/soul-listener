@@ -48,11 +48,23 @@ echo "qemu: $(command -v qemu-system-arm)"
 
 # Build + run the stack-painting harness. The .cargo/config.toml `runner` launches
 # QEMU with semihosting; the guest prints its measurement and exits the emulator.
+#
+# RUSTFLAGS is set EXPLICITLY (mirroring check-stack.sh) and must carry the link
+# args: the env var does NOT merge with .cargo/config.toml's `rustflags` — it
+# REPLACES them wholesale (env wins, full stop). CI exports `RUSTFLAGS=-D warnings`
+# globally, which would otherwise drop the inherited `-C link-arg=-Tlink.x
+# -C link-arg=-Tdefmt.x` this cortex-m-rt crate links with — producing an ELF with
+# no vector table that boots to a garbage SP/PC and QEMU-locks-up
+# ("Lockup: can't escalate to HardFault", PC=0) instead of running. Passing the
+# link args here restores a bootable image under any ambient RUSTFLAGS. (No
+# `-Z emit-stack-sizes` — that's the static gate's nightly-only concern; the
+# dynamic measurement is pure runtime stack-painting on stable.)
+#
 # Capture rc explicitly (don't let `set -e` kill us at the assignment) so a build
 # error OR a QEMU abort surfaces its full output in the CI log instead of a bare
 # "exit 134" — the output is otherwise swallowed into $OUT and lost.
 set +e
-OUT="$(cargo run --release --features qemu 2>&1)"
+OUT="$(RUSTFLAGS='-C link-arg=-Tlink.x -C link-arg=-Tdefmt.x' cargo run --release --features qemu 2>&1)"
 RC=$?
 set -e
 if [ "$RC" -ne 0 ]; then
