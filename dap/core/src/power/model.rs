@@ -17,6 +17,18 @@
 //! hardware, no global state) so it runs identically on host tests and (if
 //! ever needed) on-target.
 //!
+//! # Tweaking it — [`PowerParams`]
+//! The module `const`s are the datasheet-grounded baseline, but every tunable is
+//! also gathered into [`PowerParams`] (with a `Default` that reproduces the
+//! baseline) so a caller can re-run the whole estimate for a different pack,
+//! **operating temperature**, regulator, or a bench-measured current without
+//! editing consts. `PowerParams` also folds in two physical effects the bare
+//! `const`s omit, which make the estimate realistic (and conservative): Li-Po
+//! capacity **derates with temperature** ([`capacity_temp_derate`]), and the
+//! battery→chip **regulator is lossy** — most so at the DAP's light playback
+//! load, where a buck can sit near 50 % efficiency, so the battery supplies
+//! `chip_current / efficiency + I_Q`, not the chip current.
+//!
 //! # The run-mode current table (§1.1)
 //! Four measured/representative STM32H7-family operating points, spanning
 //! this board's (`STM32H7A3ZI`) full clock range plus two higher points from
@@ -340,6 +352,150 @@ pub fn wakeups_per_sec(sample_rate: u32, ring_frames: u32) -> f32 {
         return f32::INFINITY;
     }
     2.0 * sample_rate as f32 / ring_frames as f32
+}
+
+// === Tweakable, thermal- and regulator-aware parameter bundle ===============
+//
+// The functions above work off module `const`s (the datasheet-grounded baseline).
+// `PowerParams` gathers every tunable into ONE struct so a caller can re-run the
+// whole estimate for a different pack, operating temperature, regulator, or a
+// bench-measured current — without editing consts. `Default` reproduces the
+// baseline; override a field and the estimate follows. It also folds in two
+// physical effects the bare `const`s omit, which make the estimate *realistic*
+// (and conservative): Li-Po capacity derates with temperature, and the
+// battery→chip regulator is lossy — most so at the DAP's light playback load.
+
+/// Usable-capacity fraction of a single-cell Li-Po at `temp_c`. Piecewise-linear
+/// over the researched shape: ~**0.80 at 0 °C** rising to **1.00 at 25 °C**, flat
+/// 25–45 °C (the DAP's operating band), with a mild further droop below 0 °C
+/// (ion mobility falls off). Clamped to `[0.55, 1.0]` — this is a usable-energy
+/// derate, not a cycle-life model (aging above 45 °C is a separate concern).
+#[must_use]
+pub fn capacity_temp_derate(temp_c: f32) -> f32 {
+    let f = if temp_c >= 25.0 {
+        1.0
+    } else if temp_c >= 0.0 {
+        0.80 + (temp_c / 25.0) * 0.20 // 0 °C→0.80 … 25 °C→1.00
+    } else {
+        // below freezing: extrapolate the 0 °C point down toward ~0.55 at -20 °C
+        0.80 + (temp_c / 20.0) * 0.25
+    };
+    f.clamp(0.55, 1.0)
+}
+
+/// Every tunable input to the battery estimate, in one place. Each field defaults
+/// to the module's datasheet-grounded baseline; construct with `..Default::default()`
+/// and override only what you're changing (a bench figure, a colder temperature,
+/// a different regulator, a bigger pack).
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct PowerParams {
+    /// Nominal pack capacity, mAh (Akyga LP623255 = 1100).
+    pub battery_mah: f32,
+    /// Operating temperature, °C — derates usable capacity via
+    /// [`capacity_temp_derate`]. 25 °C nominal.
+    pub temp_c: f32,
+    /// CPU Sleep (WFI, SAI DMA running) current, mA — the dominant, least-known
+    /// term (see [`SLEEP_CURRENT_MA`]); bracket it by varying this field.
+    pub sleep_ma: f32,
+    /// DAC/amp playback current, mA ([`DAC_AMP_PLAYBACK_MA`]).
+    pub dac_ma: f32,
+    /// microSD average current, mA ([`SD_AVG_MA`]).
+    pub sd_ma: f32,
+    /// Display average current, mA ([`DISPLAY_AVG_MA`]).
+    pub display_ma: f32,
+    /// Battery→chip regulator efficiency at the DAP's light playback load, in
+    /// `(0, 1]`. A buck's efficiency craters at light load (>80 % @400 mA →
+    /// ~45 % @100 mA); a DAP draws ~15–25 mA, so the battery supplies
+    /// `chip_current / efficiency`. Conservative default **0.80**; drop it for a
+    /// worse light-load point or a PFM-less regulator.
+    pub regulator_efficiency: f32,
+    /// Regulator quiescent current at the battery, mA — dominates efficiency at
+    /// very light load. Default **0.05 mA**.
+    pub regulator_iq_ma: f32,
+}
+
+impl Default for PowerParams {
+    fn default() -> Self {
+        Self {
+            battery_mah: DEFAULT_BATTERY_MAH,
+            temp_c: 25.0,
+            sleep_ma: SLEEP_CURRENT_MA,
+            dac_ma: DAC_AMP_PLAYBACK_MA,
+            sd_ma: SD_AVG_MA,
+            display_ma: DISPLAY_AVG_MA,
+            regulator_efficiency: 0.80,
+            regulator_iq_ma: 0.05,
+        }
+    }
+}
+
+impl PowerParams {
+    /// Non-CPU output-path current during playback (DAC + SD + display), mA.
+    #[must_use]
+    pub fn peripheral_ma(&self) -> f32 {
+        self.dac_ma + self.sd_ma + self.display_ma
+    }
+
+    /// Temperature-derated usable capacity, mAh.
+    #[must_use]
+    pub fn usable_capacity_mah(&self) -> f32 {
+        self.battery_mah * capacity_temp_derate(self.temp_c)
+    }
+
+    /// The current the BATTERY supplies for a given chip-side draw, mA: the chip
+    /// current through the lossy regulator, `chip_ma / efficiency + I_Q`. This is
+    /// the term the bare `system_current_ma` omits — at light load it is well
+    /// above the chip current. `efficiency <= 0` degrades to `INFINITY`.
+    #[must_use]
+    pub fn battery_current_ma(&self, chip_ma: f32) -> f32 {
+        if self.regulator_efficiency <= 0.0 {
+            return f32::INFINITY;
+        }
+        chip_ma / self.regulator_efficiency + self.regulator_iq_ma
+    }
+
+    /// Full-system battery-rail current during playback at CPU-blend `cpu_avg_ma`:
+    /// `(cpu + peripheral)` drawn through the regulator.
+    #[must_use]
+    pub fn system_battery_ma(&self, cpu_avg_ma: f32) -> f32 {
+        self.battery_current_ma(cpu_avg_ma + self.peripheral_ma())
+    }
+
+    /// Realistic estimated runtime, hours, from an already-computed CPU blend —
+    /// folds in BOTH temperature (usable capacity) and the regulator (efficiency +
+    /// I_Q), the two effects the bare `runtime_hours(DEFAULT_BATTERY_MAH,
+    /// system_current_ma(..))` omits.
+    #[must_use]
+    pub fn runtime_hours(&self, cpu_avg_ma: f32) -> f32 {
+        runtime_hours(
+            self.usable_capacity_mah(),
+            self.system_battery_ma(cpu_avg_ma),
+        )
+    }
+
+    /// CPU blend current at `clock_mhz` for a codec's `rtf_at_ref_clock`, using
+    /// THIS params' `sleep_ma` (so `sleep_ma` is a live tunable, not just the
+    /// module const). Same math as [`system_avg_current_at_clock`]'s CPU part.
+    #[must_use]
+    pub fn cpu_avg_at_clock(&self, rtf_at_ref_clock: f32, ref_mhz: u32, clock_mhz: u32) -> f32 {
+        let cost = decode_cost_cycles_per_sec(rtf_at_ref_clock, ref_mhz);
+        let duty = duty_cycle(cost, f64::from(clock_mhz) * 1.0e6);
+        avg_current_ma(duty, active_current_ma_for_clock(clock_mhz), self.sleep_ma)
+    }
+
+    /// Fully self-contained realistic runtime for a codec decoded at `clock_mhz`:
+    /// folds in sleep (via the CPU blend), the output path, the regulator, and
+    /// temperature — i.e. every tunable in `self`. Give it a measured RTF + the
+    /// chosen clock and it yields the realistic hours for *this* configuration.
+    #[must_use]
+    pub fn runtime_hours_at_clock(
+        &self,
+        rtf_at_ref_clock: f32,
+        ref_mhz: u32,
+        clock_mhz: u32,
+    ) -> f32 {
+        self.runtime_hours(self.cpu_avg_at_clock(rtf_at_ref_clock, ref_mhz, clock_mhz))
+    }
 }
 
 #[cfg(test)]
@@ -688,5 +844,100 @@ mod tests {
         let mid = active_current_ma_for_clock(170); // halfway 60..280
         let expected = (RUN_CURRENT_MA_AT_60MHZ + RUN_CURRENT_MA_AT_280MHZ) / 2.0;
         assert!((mid - expected).abs() < 0.5);
+    }
+
+    // --- PowerParams: tweakable + thermal + regulator-aware ------------
+
+    #[test]
+    fn default_params_match_the_module_constants() {
+        let p = PowerParams::default();
+        assert_eq!(p.battery_mah, DEFAULT_BATTERY_MAH);
+        assert_eq!(p.temp_c, 25.0);
+        assert_eq!(p.sleep_ma, SLEEP_CURRENT_MA);
+        assert!((p.peripheral_ma() - PERIPHERAL_PLAYBACK_MA).abs() < 1e-6);
+    }
+
+    #[test]
+    fn capacity_derates_with_temperature() {
+        assert!(
+            (capacity_temp_derate(25.0) - 1.0).abs() < 1e-6,
+            "25 C = full"
+        );
+        assert!(
+            (capacity_temp_derate(45.0) - 1.0).abs() < 1e-6,
+            "45 C flat full"
+        );
+        assert!((capacity_temp_derate(0.0) - 0.80).abs() < 1e-6, "0 C ~80%");
+        assert!(capacity_temp_derate(-20.0) < 0.6, "deep cold well under");
+        assert!(
+            capacity_temp_derate(-100.0) >= 0.55,
+            "clamped, not negative"
+        );
+        // Cold strictly reduces usable capacity.
+        assert!(capacity_temp_derate(0.0) < capacity_temp_derate(25.0));
+    }
+
+    #[test]
+    fn regulator_makes_battery_draw_exceed_chip_draw() {
+        let p = PowerParams::default();
+        // 20 mA chip through an 80% regulator + 0.05 mA Iq = 25.05 mA at the battery.
+        assert!((p.battery_current_ma(20.0) - 25.05).abs() < 1e-3);
+        assert!(
+            p.battery_current_ma(20.0) > 20.0,
+            "the regulator always costs — the bare model omitted this"
+        );
+        // Worse light-load efficiency costs more.
+        let worse = PowerParams {
+            regulator_efficiency: 0.5,
+            ..p
+        };
+        assert!(worse.battery_current_ma(20.0) > p.battery_current_ma(20.0));
+    }
+
+    /// The realistic PowerParams runtime (temperature + regulator folded in) is
+    /// strictly LOWER than the bare CPU+peripheral estimate — the two omitted
+    /// physical effects always cost runtime, never add it.
+    #[test]
+    fn params_runtime_is_lower_than_the_bare_model() {
+        let p = PowerParams::default();
+        let cpu = 15.0_f32;
+        let bare = runtime_hours(DEFAULT_BATTERY_MAH, system_current_ma(cpu));
+        let real = p.runtime_hours(cpu);
+        assert!(
+            real < bare,
+            "realistic {real:.1}h should be below the bare {bare:.1}h (regulator + any thermal derate)"
+        );
+        // Cold operation is strictly worse than nominal.
+        let cold = PowerParams { temp_c: 0.0, ..p };
+        assert!(cold.runtime_hours(cpu) < real, "0 C runtime < 25 C runtime");
+    }
+
+    /// Sensitivity bracket for the model's dominant unknown, `sleep_ma`. The CPU
+    /// sleeps most of playback, so the estimate hinges on this one placeholder:
+    /// tripling it (5 → 15 mA) must move the runtime a LOT (well over 25%). This
+    /// makes the fragility explicit — the headline number is only as good as this
+    /// bench-measurable figure. (Task: replace with a measured value on silicon.)
+    #[test]
+    fn sleep_current_is_the_dominant_sensitivity() {
+        // WAV at the idle clock: tiny duty, so the CPU is asleep almost the whole
+        // time and the sleep current dominates the average.
+        let rtf = estimate_target_rtf(HOST_RTF_WAV);
+        let at = |sleep: f32| {
+            PowerParams {
+                sleep_ma: sleep,
+                ..PowerParams::default()
+            }
+            .runtime_hours_at_clock(rtf, H7A3_MAX_CLOCK_MHZ, IDLE_CLOCK_MHZ)
+        };
+        let at5 = at(5.0);
+        let at15 = at(15.0);
+        assert!(at15 < at5, "more sleep current = less runtime");
+        let spread = (at5 - at15) / at5;
+        assert!(
+            spread > 0.25,
+            "sleep_ma 5→15 moved runtime only {:.0}% — expected a large swing, since the \
+             estimate hinges on this placeholder",
+            spread * 100.0
+        );
     }
 }
