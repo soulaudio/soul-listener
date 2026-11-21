@@ -64,7 +64,7 @@ echo "qemu: $(command -v qemu-system-arm)"
 # error OR a QEMU abort surfaces its full output in the CI log instead of a bare
 # "exit 134" — the output is otherwise swallowed into $OUT and lost.
 set +e
-OUT="$(RUSTFLAGS='-C link-arg=-Tlink.x -C link-arg=-Tdefmt.x' cargo run --release --features qemu 2>&1)"
+OUT="$(RUSTFLAGS='-C link-arg=-Tlink.x -C link-arg=-Tdefmt.x' cargo run --release --features qemu --bin mcu-stackprobe 2>&1)"
 RC=$?
 set -e
 if [ "$RC" -ne 0 ]; then
