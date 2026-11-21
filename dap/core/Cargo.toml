@@ -24,6 +24,9 @@ soul-audio-engine = { workspace = true }
 # no_std-first by design; already resolved in this workspace's Cargo.lock as
 # a transitive dep of board-h7a3's embassy-stm32 (hardware feature).
 heapless = { version = "0.9", default-features = false }
+# no_std float intrinsics (f32::sqrt is std-only): the power model's regulator
+# curve uses libm::sqrtf. Already in the workspace lock as a transitive dep.
+libm = "0.2"
 
 # The e-ink UI toolkit (standalone eink-ui crate; no_std/no-alloc by default, so
 # this crate — and board-h7a3 — stays alloc-free). Screens draw with its widgets.

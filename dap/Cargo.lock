@@ -522,6 +522,7 @@ dependencies = [
  "eink-ui",
  "embedded-graphics",
  "heapless",
+ "libm",
  "soul-audio-core",
  "soul-audio-engine",
 ]

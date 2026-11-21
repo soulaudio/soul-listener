@@ -25,9 +25,15 @@
 //! editing consts. `PowerParams` also folds in two physical effects the bare
 //! `const`s omit, which make the estimate realistic (and conservative): Li-Po
 //! capacity **derates with temperature** ([`capacity_temp_derate`]), and the
-//! battery→chip **regulator is lossy** — most so at the DAP's light playback
-//! load, where a buck can sit near 50 % efficiency, so the battery supplies
-//! `chip_current / efficiency + I_Q`, not the chip current.
+//! battery→chip **regulator is lossy**, and lossy in a *load-dependent* way: a
+//! buck's efficiency traces a curve, not a constant — it craters at light load
+//! (fixed switching/control loss dominates a small output), peaks in the
+//! tens-of-mA range, then droops again at heavy load (I²R conduction) — so the
+//! battery supplies `chip/η∞ + fixed_loss + cond·chip²`, with efficiency falling
+//! off on BOTH sides of the peak. The DAP's ~15–25 mA playback draw sits on the
+//! rising (light-load) flank, so this costs real runtime the old flat factor
+//! hid (see [`PowerParams::battery_current_ma`] /
+//! [`PowerParams::regulator_efficiency_at`]).
 //!
 //! # The run-mode current table (§1.1)
 //! Four measured/representative STM32H7-family operating points, spanning
@@ -403,15 +409,27 @@ pub struct PowerParams {
     pub sd_ma: f32,
     /// Display average current, mA ([`DISPLAY_AVG_MA`]).
     pub display_ma: f32,
-    /// Battery→chip regulator efficiency at the DAP's light playback load, in
-    /// `(0, 1]`. A buck's efficiency craters at light load (>80 % @400 mA →
-    /// ~45 % @100 mA); a DAP draws ~15–25 mA, so the battery supplies
-    /// `chip_current / efficiency`. Conservative default **0.80**; drop it for a
-    /// worse light-load point or a PFM-less regulator.
-    pub regulator_efficiency: f32,
-    /// Regulator quiescent current at the battery, mA — dominates efficiency at
-    /// very light load. Default **0.05 mA**.
-    pub regulator_iq_ma: f32,
+    /// Regulator **conversion-efficiency ceiling** η∞ ∈ `(0, 1]`: the loss-free
+    /// conversion limit (gate-drive/duty), which the curve *approaches* but never
+    /// reaches — the actual peak efficiency is strictly below it (see
+    /// [`regulator_efficiency_at`](Self::regulator_efficiency_at)). Default
+    /// **0.92**. `η∞ <= 0` degrades the whole regulator to infinite battery draw.
+    pub regulator_conv_efficiency: f32,
+    /// Regulator **fixed loss** referred to the battery, mA: the roughly
+    /// load-independent switching + control draw the converter burns whenever
+    /// it's running (≈ its no-load input current). This is the knob that sets the
+    /// **light-load droop** — it dominates the loss when the output is small, so a
+    /// bigger value craters efficiency harder at the DAP's ~20 mA load. Default
+    /// **1.5 mA**. (Deep-standby draw is modeled separately by
+    /// [`STOP_MODE_CURRENT_MA`], not here — this term is the *active* fixed loss.)
+    pub regulator_fixed_loss_ma: f32,
+    /// Regulator **conduction-loss coefficient**, per mA (so `cond · I²` is in
+    /// mA): the I²R term (inductor DCR, switch R_DS(on)) that pulls efficiency
+    /// back down at **heavy load**. Together with `fixed_loss` it fixes the peak:
+    /// efficiency peaks at `I* = sqrt(fixed_loss / cond)` (see
+    /// [`regulator_peak_load_ma`](Self::regulator_peak_load_ma)). Default
+    /// **4.0e-4 /mA** (peak ≈ 61 mA). `cond <= 0` removes the heavy-load droop.
+    pub regulator_cond_loss_coeff: f32,
 }
 
 impl Default for PowerParams {
@@ -423,8 +441,9 @@ impl Default for PowerParams {
             dac_ma: DAC_AMP_PLAYBACK_MA,
             sd_ma: SD_AVG_MA,
             display_ma: DISPLAY_AVG_MA,
-            regulator_efficiency: 0.80,
-            regulator_iq_ma: 0.05,
+            regulator_conv_efficiency: 0.92,
+            regulator_fixed_loss_ma: 1.5,
+            regulator_cond_loss_coeff: 4.0e-4,
         }
     }
 }
@@ -442,16 +461,64 @@ impl PowerParams {
         self.battery_mah * capacity_temp_derate(self.temp_c)
     }
 
-    /// The current the BATTERY supplies for a given chip-side draw, mA: the chip
-    /// current through the lossy regulator, `chip_ma / efficiency + I_Q`. This is
-    /// the term the bare `system_current_ma` omits — at light load it is well
-    /// above the chip current. `efficiency <= 0` degrades to `INFINITY`.
+    /// The current the BATTERY supplies for a given chip-side draw, mA, through
+    /// the **load-dependent** lossy regulator:
+    ///
+    /// ```text
+    /// I_batt(I) = I / η∞           (ideal conversion)
+    ///           + fixed_loss_ma     (switching/control: the light-load penalty)
+    ///           + cond · I²         (I²R conduction: the heavy-load penalty)
+    /// ```
+    ///
+    /// This is the term the bare `system_current_ma` omits. Because `fixed_loss`
+    /// is a constant adder, the *efficiency* `I / I_batt(I)` is poor at tiny `I`,
+    /// best near `I* = sqrt(fixed_loss / cond)`, and tails off again as the `I²`
+    /// term grows — the real buck shape (see
+    /// [`regulator_efficiency_at`](Self::regulator_efficiency_at)). `η∞ <= 0`
+    /// degrades to `INFINITY`; a negative `cond` or `fixed_loss` is clamped to 0
+    /// (no negative loss).
     #[must_use]
     pub fn battery_current_ma(&self, chip_ma: f32) -> f32 {
-        if self.regulator_efficiency <= 0.0 {
+        if self.regulator_conv_efficiency <= 0.0 {
             return f32::INFINITY;
         }
-        chip_ma / self.regulator_efficiency + self.regulator_iq_ma
+        let fixed = self.regulator_fixed_loss_ma.max(0.0);
+        let cond = self.regulator_cond_loss_coeff.max(0.0);
+        chip_ma / self.regulator_conv_efficiency + fixed + cond * chip_ma * chip_ma
+    }
+
+    /// The regulator's **efficiency at a given chip-side load**, `I / I_batt(I)` ∈
+    /// `[0, 1)` — the load-dependent buck curve (see
+    /// [`battery_current_ma`](Self::battery_current_ma)). Rises from ~0 at tiny
+    /// load (fixed loss dominates), peaks at
+    /// [`regulator_peak_load_ma`](Self::regulator_peak_load_ma), then declines as
+    /// conduction dominates. `0.0` for a non-positive load or a degenerate
+    /// (infinite-draw) regulator.
+    #[must_use]
+    pub fn regulator_efficiency_at(&self, chip_ma: f32) -> f32 {
+        if chip_ma <= 0.0 {
+            return 0.0;
+        }
+        let batt = self.battery_current_ma(chip_ma);
+        if !batt.is_finite() || batt <= 0.0 {
+            return 0.0;
+        }
+        chip_ma / batt
+    }
+
+    /// The chip-side load, mA, at which [`regulator_efficiency_at`] peaks:
+    /// `I* = sqrt(fixed_loss / cond)` — where the light-load (fixed) and
+    /// heavy-load (conduction) losses cross over. Returns `INFINITY` if there is
+    /// no conduction term (`cond <= 0`), i.e. efficiency rises monotonically.
+    #[must_use]
+    pub fn regulator_peak_load_ma(&self) -> f32 {
+        let fixed = self.regulator_fixed_loss_ma.max(0.0);
+        let cond = self.regulator_cond_loss_coeff.max(0.0);
+        if cond <= 0.0 {
+            return f32::INFINITY;
+        }
+        // `f32::sqrt` is std-only; this crate is `no_std`, so use the libm intrinsic.
+        libm::sqrtf(fixed / cond)
     }
 
     /// Full-system battery-rail current during playback at CPU-blend `cpu_avg_ma`:
@@ -880,18 +947,68 @@ mod tests {
     #[test]
     fn regulator_makes_battery_draw_exceed_chip_draw() {
         let p = PowerParams::default();
-        // 20 mA chip through an 80% regulator + 0.05 mA Iq = 25.05 mA at the battery.
-        assert!((p.battery_current_ma(20.0) - 25.05).abs() < 1e-3);
+        // The regulator always costs: battery draw strictly exceeds the chip draw.
         assert!(
             p.battery_current_ma(20.0) > 20.0,
             "the regulator always costs — the bare model omitted this"
         );
-        // Worse light-load efficiency costs more.
+        // Sanity: at the DAP's ~20 mA playback load the modeled efficiency is a
+        // realistic-buck number on the light-load flank (well under the ceiling,
+        // not implausibly low).
+        let eta20 = p.regulator_efficiency_at(20.0);
+        assert!(
+            (0.75..p.regulator_conv_efficiency).contains(&eta20),
+            "η(20 mA) = {eta20:.3} should be a realistic light-load point below the ceiling"
+        );
+        // A worse regulator — bigger fixed (switching) loss — costs more.
         let worse = PowerParams {
-            regulator_efficiency: 0.5,
+            regulator_fixed_loss_ma: p.regulator_fixed_loss_ma + 2.0,
             ..p
         };
         assert!(worse.battery_current_ma(20.0) > p.battery_current_ma(20.0));
+        // A degenerate regulator (η∞ <= 0) degrades to infinite battery draw.
+        let dead = PowerParams {
+            regulator_conv_efficiency: 0.0,
+            ..p
+        };
+        assert!(dead.battery_current_ma(20.0).is_infinite());
+        assert_eq!(dead.regulator_efficiency_at(20.0), 0.0);
+    }
+
+    /// The regulator efficiency traces the real buck curve: it rises from a poor
+    /// light-load point, peaks near `regulator_peak_load_ma`, then droops again as
+    /// conduction loss takes over at heavy load.
+    #[test]
+    fn regulator_efficiency_follows_a_load_curve() {
+        let p = PowerParams::default();
+        let peak = p.regulator_peak_load_ma();
+        assert!(
+            (40.0..90.0).contains(&peak),
+            "default peak load {peak:.0} mA should sit in the tens-of-mA range"
+        );
+        let eta_light = p.regulator_efficiency_at(3.0);
+        let eta_peak = p.regulator_efficiency_at(peak);
+        let eta_heavy = p.regulator_efficiency_at(4.0 * peak);
+        // Light-load droop: far worse than peak.
+        assert!(
+            eta_light < eta_peak - 0.05,
+            "light load η={eta_light:.3} should be well below peak η={eta_peak:.3}"
+        );
+        // Heavy-load droop: conduction pulls it back down past the peak.
+        assert!(
+            eta_heavy < eta_peak,
+            "heavy load η={eta_heavy:.3} should fall below peak η={eta_peak:.3}"
+        );
+        // The peak really is a local max: a step either side is no higher.
+        assert!(p.regulator_efficiency_at(peak * 0.5) <= eta_peak);
+        assert!(p.regulator_efficiency_at(peak * 2.0) <= eta_peak);
+        // The peak stays strictly below the conversion ceiling η∞.
+        assert!(eta_peak < p.regulator_conv_efficiency);
+        // Monotone rise on the light-load flank (0 -> peak).
+        assert!(
+            p.regulator_efficiency_at(5.0) < p.regulator_efficiency_at(20.0),
+            "efficiency must climb with load below the peak"
+        );
     }
 
     /// The realistic PowerParams runtime (temperature + regulator folded in) is
