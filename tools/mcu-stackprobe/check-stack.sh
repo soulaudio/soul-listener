@@ -141,6 +141,15 @@ STACKSIZES_JSON="$(mktemp)"
 trap 'rm -f "$STACKSIZES_JSON"' EXIT
 "$LLVM_READOBJ" --stack-sizes --elf-output-style=JSON "$ELF" > "$STACKSIZES_JSON"
 
+# Diagnosis first, gate second. The two gated numbers say WHETHER the budget
+# holds; this table says WHERE the stack goes, which is what every
+# investigation actually needs (see parse-stack-sizes.py's module doc for the
+# 2026-11-21 case that prompted it). Printing it unconditionally costs nothing
+# and means a failing run already contains its own diagnosis.
+echo "-- largest stack frames (diagnosis; not gated) --"
+python3 "$SCRIPT_DIR/parse-stack-sizes.py" --table "${STACK_FRAME_TABLE_TOP:-12}" "$STACKSIZES_JSON"
+echo
+
 eval "$(python3 "$SCRIPT_DIR/parse-stack-sizes.py" "$STACKSIZES_JSON")"
 
 echo

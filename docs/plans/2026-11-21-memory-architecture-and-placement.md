@@ -8,8 +8,11 @@ numbers and two unused memory regions rather than on capacity.
 
 **Headline:** there is enough RAM — ~180 KiB of genuine headroom — but only if
 two regions that are currently invisible to the linker get used, and the honest
-blocker is not capacity. It is a **413 KiB stack transient** that is larger than
-any other single consumer and has never been attacked.
+blocker is not capacity. It is a **415 KiB stack transient** that is larger than
+any other single consumer and has never been attacked. §8 benchmarks it and
+localises it: five of seven formats open in 69–81 KiB, and essentially all of the
+excess is the **Matroska container path** (301 KiB) plus **`App::render`**
+(114 KiB).
 
 ## 1. What the chip actually has
 
@@ -36,8 +39,11 @@ Cross-check: the datasheet's "1.4 MB RAM" headline reconciles as 1024 + 128 + 32
   own retention and gating behaviour. Counting it as general-purpose RAM is how a
   buffer ends up unexpectedly un-retained across a pause.
 - **The stack reserve was 256 KiB in two gates while a third enforces 480 KiB.**
-  The isolated decode-open transient is 297 KiB and the whole firmware tick is
-  413 KiB — both *above* the reserve. The AXI check reported ~345 KB "to spare"
+  The isolated decode-open transient is ~300 KiB and the whole firmware tick is
+  ~415 KiB — both *above* the reserve. (Documented elsewhere as 297/413; measured
+  2026-11-21 at **301/415** against the sibling soul-audio-core. The few-KiB drift
+  is the sibling-versus-pin difference, not noise in the method — the probe
+  validates at 0 B after painting.) The AXI check reported ~345 KB "to spare"
   that the real stack would have run into. Corrected to **480 KiB** in both
   `dap-arch-tests` and `board-h7a3`, and the report label is now derived from the
   constant rather than restating it, since a hardcoded "256 KiB" is how the stale
@@ -52,13 +58,14 @@ so a single ~94 KiB framebuffer does fit across them — with a caveat in §5.
 |---|---|---|
 | `App` (decoder 58 + ring/resampler 116) | 175 KiB | `size_of`, `dap-arch-tests` |
 | Shared decoder scratch | 256 KiB | `decoder_scratch_len()` |
-| Worst-case stack — decode-open **and** `App::render` | **413 KiB** | QEMU stack-painting, `check-tick-qemu.sh` |
+| Worst-case stack — decode-open **and** `App::render` | **415 KiB** | QEMU stack-painting, `check-tick-qemu.sh` |
 | **Total, linked AXI SRAM** | **844 of 1024 KiB** | |
 
 Note the stack figure already includes UI rendering: the whole-tick probe runs
 `App::tick → pump → poll_open` *and* `App::render` (eink-ui layout + widget draw)
-in one tick, which is why it is 413 KiB rather than the 297 KiB of decode alone.
-There is no separate UI stack cost waiting to be discovered.
+in one tick, which is why it is 415 KiB rather than the 301 KiB of decode alone.
+There is no separate UI stack cost waiting to be discovered — and §8 quantifies
+it at **114 KiB**, making it a target in its own right.
 
 Still forecast, never implemented: framebuffer 94 · eink-ui scratch 32 · library
 listing 64 · catalog index 32 · DMA staging 64 = **286 KiB**.
@@ -131,6 +138,10 @@ Recorded because most were in the first draft of the plan itself.
    128 KiB into DTCM *and* proposed shrinking the stack. Those conflict: ST's
    guidance is that the **stack** has first claim on DTCM, so if the stack work
    lands, DTCM is the place it should go — and it would already be full.
+   *Resolved by §8's measurement: even a best-case whole tick is ~195 KiB, so
+   DTCM-for-stack was never achievable and the conflict dissolves. Worth keeping
+   as a record of why measuring first matters — the plan had a self-contradiction
+   that only a number could settle.*
 2. **"It fits exactly" is a smell, not a result.** Three unrelated budgets summing
    to precisely the region size is budget-fitting dressed as design, with no
    margin for one byte of growth.
@@ -146,7 +157,7 @@ Recorded because most were in the first draft of the plan itself.
 6. **"ITCM for hot code" with no measurement.** ITCM costs a linker section plus a
    boot-time copy from flash, and may be strictly worse than enabling I-cache —
    one register write. Measure before reaching for it.
-7. **Optimizing placement before the dominant consumer is understood.** 413 KiB
+7. **Optimizing placement before the dominant consumer is understood.** 415 KiB
    stack > 256 KiB scratch > 175 KiB `App`. Three loops of work went into the
    scratch; none into the stack beyond measuring it.
 
@@ -206,15 +217,8 @@ budget from reading as comfortable when it is not: `USER_SRAM` corrected, `SRD_S
 separated, stack reserve corrected in both gates, L5 scoped to jack, BT gaps
 recorded where the code lives.
 
-**Phase 1 — reduce the open transient. This is the real work.** Target **under
-128 KiB**, so the stack can live in DTCM as ST recommends. Only ~44 KiB of the
-315 KiB open transient is documented buffers (28 KiB SimpleBlock frame, 16 KiB
-codec_private, seek table); the rest looks like by-value construction through
-nested frames. The repo already has the idiom and the reasoning — from
-`board-h7a3`: *"plain `init` would construct on `main`'s stack and move, relying
-on RVO/NRVO the language does not guarantee"* — it simply has not been applied to
-decoder construction. Verify each step with `check-tick-qemu.sh`. Note this is a
-`soul-audio-core` change, so it sits behind `.github/soul-audio-core.pin`.
+**Phase 1 — reduce the open transient. This is the real work**, and it is now
+measured rather than hypothesised. See §8.
 
 **Phase 2 — place, with the stack's real size known.** DTCM to the **stack** if
 Phase 1 lands; UI buffers get what is left. Framebuffer within a single AHB-SRAM
@@ -226,7 +230,98 @@ instance (or split deliberately). AXI keeps scratch + `App` + any remaining stac
 `BT_PLAYBACK_MA`; second runtime figure.
 
 Deciding Phase 2 before Phase 1 is deciding with the biggest variable unknown —
-whether the stack is 413 KiB or 100 KiB changes whether AHB-SRAM is needed at all.
+how much of the 415 KiB is recoverable changes whether AHB-SRAM is needed at all.
+
+## 8. Phase 1, measured (2026-11-21)
+
+Benchmarked on QEMU `mps2-an500` (Cortex-M7) against the **sibling**
+soul-audio-core, plus `-Z emit-stack-sizes` for the static per-frame breakdown.
+
+### Dynamic: only the two Matroska-container paths are pathological
+
+| open path | transient |
+|---|---|
+| **Matroska-FLAC** | **301 KiB** |
+| **Opus-in-WebM** | **231 KiB** |
+| WAV | 81 KiB |
+| WavPack | 71 KiB |
+| ALAC-CAF | 69 KiB |
+
+Whole firmware tick (open + `App::render` in one tick): **415 KiB**. That
+decomposes as **301 KiB** of Matroska open plus **114 KiB** of `App::tick`
+wrapper and `App::render`.
+
+So this is not "the stack is too big" in general — five of seven formats open in
+**69–81 KiB**, which is unremarkable. It is specifically the Matroska container
+path, and secondarily the UI render.
+
+### Static: three nested *construction* frames account for it
+
+| frame | own size |
+|---|---|
+| `MatroskaDecoder::new_in` | 124,560 B |
+| `FlacDecoder<MatroskaFlacReader<..>>::new_in` | 111,064 B |
+| `MatroskaFlacReader::new` | 48,312 B |
+| `open_seekable` | 61,056 B |
+
+(`mcu_stackprobe::__cortex_m_rt_main` is 179,096 B but is the probe's own frame,
+not on the board's path — see `check-stack.sh`.)
+
+124 + 111 + 48 = **283 KiB of nested construction frames** against a 301 KiB
+measured transient. **The static and dynamic measurements agree**, which is what
+makes the diagnosis trustworthy rather than a story.
+
+### The mechanism, and why the obvious fix is unavailable
+
+The pattern is visible directly in `MatroskaOpus::new_in`:
+
+```rust
+Ok(Self { demux, core: OpusFrameDecoder::new(channels), …,
+          packet: [0; MAX_OPUS_PACKET], scratch })
+```
+
+Large inline arrays inside a struct returned by value from a fallible
+constructor. Each nesting level pays a full copy, because `Result<Self, E>`
+routinely defeats RVO — exactly the reasoning `board-h7a3` already cites for
+using `StaticCell::init_with` instead of `init`.
+
+The usual fix — construct into a caller-provided `&mut MaybeUninit<Self>` —
+**is not available here**: soul-audio-core is `#![forbid(unsafe_code)]`, and
+there is no allocator. So the tractable fix is the one the project already
+started: **move the remaining inline arrays into the shared `P` scratch via
+`ScratchCursor`**, which shrinks the struct and the construction frames
+together, with no `unsafe`.
+
+### The prize, and a correction to this doc's earlier target
+
+This converges with L15's separate finding that **Matroska has the largest
+*inline* footprint (59,760 B) and sets `size_of::<AnyDecoder>()`**. The same
+buffers cause both. One change fixes both: `AnyDecoder` would drop to MP3's
+44,240 B *and* the open transient would fall toward the other formats' ~80 KiB.
+
+Bringing the two Matroska paths in line with the rest takes the whole tick from
+**415 KiB to roughly 195–230 KiB — a saving of ~185–220 KiB**, larger than DTCM
+and AHB-SRAM combined (192 KiB). That is the single biggest memory lever in the
+project.
+
+**But the earlier "target under 128 KiB so the stack can live in DTCM" was
+wrong, and the measurement is what shows it.** Even the cheapest format's whole
+tick would be ~81 KiB open + 114 KiB render ≈ **195 KiB** — still well over
+DTCM's 128 KB. **DTCM-for-stack is off the table** regardless of how well Phase 1
+goes. The stack stays in AXI SRAM (where flip-link guards it), and DTCM is
+genuinely available for the UI working set after all — which makes §7's Phase 2
+simpler, not harder.
+
+A second, independent target also falls out: **`App::render` costs 114 KiB of
+stack**, and unlike the decoder work it lives in `eink-ui`/`dap-core` — *not*
+behind `.github/soul-audio-core.pin*. It may well be the easier of the two.
+
+### Scope note
+The decoder work is a `soul-audio-core` change, so it lands behind the pin and
+needs that repo's full decode matrix green. It is deliberately **not** bundled
+with this analysis. `check-stack.sh` now prints the frame table on every run
+(`STACK_FRAME_TABLE_TOP`, default 12), so each iteration can be verified against
+the same breakdown that produced this section.
 
 ## Sources
 
