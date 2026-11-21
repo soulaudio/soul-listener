@@ -1,0 +1,72 @@
+# Memory & power: best practices, how to enforce them, and where this DAP stands
+
+Web-researched 2026-11-20 against the embedded-Rust and low-power-firmware canon
+(sources at the end), then mapped to this repo. The theme matches the project's
+own philosophy: **every rule should be a gate, not a doc** — a lint, a test, a
+compile-time assertion, or an on-target measurement that fails CI on regression.
+
+Status key: **✅ enforced** · **🟡 partial / reporting-only** · **🔜 Phase E
+(needs the board)**.
+
+## Memory management
+
+| Practice (how to code it) | How to enforce it | This DAP |
+|---|---|---|
+| **`#![no_std]`, no `alloc`** — no heap: no fragmentation, worst-case is analyzable, no runtime OOM | CI builds the `no_std`/thumbv7em target; grep/deny any `alloc` import | ✅ board cross-build + `forbid(unsafe_code)`; no allocator linked |
+| **Zero heap allocation on the hot path** | Counting global allocator in a host test; assert 0 allocations across the real open→decode→pump cycle | ✅ `dap-sim/tests/no_alloc.rs` + `alloc_policy.rs` |
+| **Fixed-capacity collections** (`heapless`), const-generic buffers; no `Vec`/`String` | `heapless` only; size is a compile-time fact | ✅ `heapless` (kept patched — bumped 0.9.3→0.9.4 for RUSTSEC-2026-0574/0575) |
+| **`forbid(unsafe_code)`** (ANSSI rule: avoid `unsafe` in secure code) | `#![forbid(unsafe_code)]` at each crate root + a CI coverage gate | ✅ every embedded crate + `tools/check-forbid-unsafe.sh` |
+| **Stack-overflow protection** (Rust can't prove no stack overflow at compile time) | `flip-link` (puts the stack below statics → overflow faults instead of corrupting) | ✅ board links with flip-link |
+| **Bounded worst-case stack** | Static `-Z emit-stack-sizes` gate **and** a dynamic on-target high-water measurement | ✅ `check-stack.sh` (static) + `check-stack-qemu.sh` (QEMU stack-painting; worst-case open ~297 KiB, fits 592 KiB) |
+| **Externalize big decoder buffers** to one shared `&'static` scratch (not inline) | `StaticCell` pool, constructed in place (`init_with`, not `init`) | ✅ §7 scratch design; board uses `init_with` |
+| **Compile-time budget assertions** (size/layout invariants fail the *build*) | `const _: () = assert!(size_of::<T>() + … <= REGION)`; the `static_assertions` crate (`const_assert!`, `assert_eq_size!`) | ✅ **added this round** — a compile-time AXI-SRAM budget guard in `board-h7a3` (the twin of the runtime footprint test) + a const assert in `power::model` |
+| **Static footprint roster** — `size_of` guard per main-stack type | Host test tabulating every component vs a per-region budget | ✅ `dap-arch-tests/tests/budget.rs` |
+
+**Verdict:** memory discipline is textbook and comprehensively gated. The one
+upgrade this round: moving the dominant-statics budget from a *runtime test* to
+also a *compile-time assertion* — a footprint regression now can't even link.
+
+## Battery / power management
+
+Master lever (confirmed across sources): **race-to-sleep** — minimize *energy per
+task* `E = P_active × t_active`, not instantaneous current; CPU asleep by default,
+waking only on real events, never polling.
+
+| Practice (how to code it) | How to enforce / validate it | This DAP |
+|---|---|---|
+| **Tickless idle / WFI by default** — core sleeps at `await`, wakes on IRQ | Framework-level (don't hand-roll WFI loops — they miss wake conditions) | ✅ Embassy executor parks in WFI between ticks |
+| **DVFS** — lowest freq+VOS that sustains the workload; `P = α·C·V²·f` | A model mapping measured RTF → min clock per codec; a regression gate | ✅ `power::model` + `power::dvfs`; race-to-sleep analyzed (min-clock is optimal here) |
+| **Clock sequencing** — freq ↓ → flash wait-states → VOS ↓ (never VOS before freq) | A tested clock-transition routine; the ordering is a hard rule | 🔜 Phase E (real RCC/PWR writes) |
+| **Peripheral clock gating** — gate unused APB/AHB clocks explicitly (not NOPs) | Enable-register discipline; audit unused peripherals | 🔜 Phase E |
+| **Avoid resampling when possible** — it's the heaviest stage | Native-rate clocking (dual MCLK oscillator); Deck builds no resampler at matching rates | ✅ modeled + gated (`native_rate_clocking_needs_lower_clock_than_resampling`); Deck verified |
+| **DMA for audio** — core sleeps between blocks, IRQ per block not per sample | Double-buffered SAI DMA ring sized for a low wakeup rate | 🟡 modeled (`wakeups_per_sec`, ring budget); 🔜 real SAI DMA |
+| **Stop mode on pause** (32 µA, RAM retained ≈ shelf-life) | Enter Stop on pause; wake on EXTI; restore clock tree *before* peripherals | 🟡 modeled (`STOP_MODE_CURRENT_MA`); 🔜 the real suspend/resume |
+| **Define every GPIO in low-power** — unused pins input-no-pull or driven; condition wake pins (pulls/RC/LSE RTC) | Pin-state audit; measure false-wake rate | 🔜 Phase E |
+| **Battery model grounded in datasheets** | Datasheet currents × measured decode cost; runtime floors as gates | ✅ calibrated to real figures (Akyga LP623255 **1100 mAh**, CS43131 envelope, microSD); ~41–74 h modeled |
+| **Measure, don't claim** — "unverified power claims are product risks" | Power analyzer (Otii/Monsoon) or shunt+ADC; GPIO markers in traces; soak at temperature | 🔜 needs silicon — the one thing no model substitutes for |
+
+**Verdict:** the *model and policy* are strong and gated; the *code* for the
+actual low-power behavior (clock sequencing, peripheral gating, GPIO, DMA,
+suspend/resume) and the *measurement* are Phase-E, because they need the board.
+
+## Phase-E low-power bring-up checklist (lock this in when the board exists)
+
+From the researched 8-step protocol, specialized to this DAP:
+1. **HW sanity** — battery chemistry, regulator (SMPS vs LDO), VBAT routing, LED draw; baseline quiescent current.
+2. **Datasheet drill** — pin the H7A3 Sleep-with-SAI-DMA current (the model's one remaining placeholder), CS43131 draw at target volume/impedance, oscillator startup times.
+3. **Minimal baseline** — boot all-peripherals-off, enter deepest viable sleep, measure.
+4. **Active-path** — wake → SD read → decode burst → DMA → sleep; apply DVFS + native-rate clocking; gate unused clocks.
+5. **Wake-path hardening** — scroll-wheel/button EXTI, LSE RTC; measure false-wake rate; condition inputs.
+6. **Retention** — validate the deck/ring state across pause→Stop→resume (restore clocks before peripherals).
+7. **Soak** — days of real duty cycles at temperature; capture `I_avg`, spike distribution, wake-failure stats.
+8. **Document & lock** — real energy-per-task, sleep current, `I_avg`, measured battery hours → feed the real numbers back into `power::model` (replacing the estimates) and add an on-target power-regression check.
+
+**Anti-patterns to gate against:** single-instant current ≠ battery life (average over duty cycles); software-NOP clock gating (use the controller); VOS-before-freq transitions (hard faults); floating wake lines; relying on peripheral-register retention through deep sleep.
+
+## Sources
+Embedded Rust Book (`no-std`); Effective Rust Item 33; ANSSI *Programming Rules
+to Develop Secure Applications with Rust* (avoid `unsafe`); `flip-link`;
+`static_assertions` / `const_assert!`; *Rust for Embedded Systems: Current State
+and Open Problems* (arXiv 2311.05063); Embassy docs (async WFI idle); *Low-Power
+Firmware Techniques for Battery-Powered MCUs* (dev.to) — sleep modes, `E = P·t`,
+measurement protocol, anti-patterns; ST STM32H7 PWR / AN5014/AN5215/AN5307.
