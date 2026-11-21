@@ -102,8 +102,33 @@ const AUDIO_PATH_BUDGET: usize = 384 * 1024;
 /// model) that is exactly ONE `decoder_scratch_len()` (65,536 i32 = 256 KB),
 /// versus TWO (512 KB) at the old PRELOAD=1 — halving this pool is the whole
 /// reason the DAP moved to one resident decoder.
+///
+/// # This is a CAP, not a mirror
+/// It used to be `(1 + PRELOAD) * decoder_scratch_len() * size_of::<i32>()` —
+/// i.e. the budget was *defined as* the measured value, so "measured ≤ budget"
+/// was a tautology and a format that doubled the shared scratch doubled its own
+/// budget with it. Only the aggregate region total would have noticed, and it
+/// would have reported "everything got bigger" rather than naming the cause.
+/// [`SHARED_DECODER_SCRATCH_CAP_I32`] is now a committed ceiling and
+/// `shared_decoder_scratch_stays_within_its_cap` is the gate that holds the
+/// actual value to it.
 const DECODER_SCRATCH_POOL_BUDGET: usize =
-    (1 + PRELOAD) * soul_audio_core::decoder_scratch_len() * core::mem::size_of::<i32>();
+    (1 + PRELOAD) * SHARED_DECODER_SCRATCH_CAP_I32 * core::mem::size_of::<i32>();
+
+/// The committed ceiling on `soul_audio_core::decoder_scratch_len()` — the
+/// single shared buffer the externalized decoders carve their block-staging
+/// working set from, in `i32` samples.
+///
+/// **65,536 i32 = 256 KiB**, which is today's exact value and set entirely by
+/// WavPack (see `shared_decoder_scratch_stays_within_its_cap` for the
+/// breakdown). It is a ceiling, so shrinking the scratch — the memory backlog's
+/// item #1, capping `wavpack::MAX_BLOCK_PCM` under `embedded-profile` for a
+/// ~64 KiB win — passes freely; only *growth* fails.
+///
+/// Raising this is a real decision, not a formality: at `PRELOAD = 0` the pool
+/// is a quarter of the 1 MB AXI SRAM the board links, and it competes directly
+/// with the decode-ahead ring (see [`AUDIO_PATH_BUDGET`]'s battery-ring note).
+const SHARED_DECODER_SCRATCH_CAP_I32: usize = 65_536;
 
 /// Visual — **live framebuffer**: the 800x480 panel at Gray4 — **2 bits per
 /// pixel**, packed — so `800 * 480 * 2 / 8 = 96,000 B`. This is the frame
@@ -347,6 +372,87 @@ fn report(name: &str, actual: usize, budget: usize) {
     }
 }
 
+/// The shared decoder scratch — the single largest tunable static on the board
+/// after the `App` itself — must stay within its committed ceiling
+/// ([`SHARED_DECODER_SCRATCH_CAP_I32`]), and the test prints which format is
+/// *setting* it.
+///
+/// # Why this gate exists
+/// [`DECODER_SCRATCH_POOL_BUDGET`] used to be defined as the measured value, so
+/// nothing actually capped the scratch: a format change that doubled it doubled
+/// its budget too. This is the real cap, and the breakdown below is what the
+/// memory backlog's item #2 asked for: assert `decoder_scratch_len()` is within
+/// budget and print the per-format breakdown, so item #1's win locks in and any
+/// format enlarging the shared scratch fails CI.
+///
+/// # The breakdown
+/// At the `soul-audio-core` revision this DAP's CI pins
+/// (`.github/soul-audio-core.pin`), **exactly one** format carves from this
+/// buffer: `decoder_scratch_len()` is literally `wavpack::MAX_BLOCK_PCM` =
+/// **65,536 i32 = 256 KiB**. Nothing else touches it — Opus/FLAC/AAC keep their
+/// working buffers *inline* in their own decoder structs, which is why
+/// `AnyDecoder` is ~174 KB.
+///
+/// A **later** `soul-audio-core` revision (present in a sibling checkout tracking
+/// `main`, not yet picked up by the pin) adds an ALAC carve and redefines the
+/// function as `max(wavpack::SCRATCH_LEN, alac::SCRATCH_LEN)`:
+///
+/// | format | i32 | bytes | note |
+/// |---|---|---|---|
+/// | WavPack | 65,536 | 256 KiB | `MAX_BLOCK_PCM`; **sets the size in both revisions** |
+/// | ALAC | 28,672 | 112 KiB | `3·MAX_FRAME + 2·MAX_FRAME·2ch`, `MAX_FRAME` = 4096 — post-pin only |
+///
+/// The assertions below are deliberately written against
+/// `wavpack::MAX_BLOCK_PCM`, which is public in **both** revisions and is the
+/// binding constraint in both — so this gate is correct whether or not the pin
+/// is bumped. (An earlier draft of this test read `wavpack::SCRATCH_LEN`, which
+/// only exists post-pin: it compiled locally against the sibling checkout and
+/// broke CI, which builds the pin. The pin's own comment warns about exactly
+/// this.)
+///
+/// Asserting `decoder_scratch_len() == wavpack::MAX_BLOCK_PCM` pins the
+/// *consequence* rather than the formula: if any carve ever overtakes WavPack,
+/// the equality breaks and names the new binder — which is the fact you want at
+/// that moment, since the backlog's "cap `MAX_BLOCK_PCM`" plan (item #1) would
+/// then no longer shrink this buffer.
+#[test]
+fn shared_decoder_scratch_stays_within_its_cap() {
+    let actual_i32 = soul_audio_core::decoder_scratch_len();
+    let wavpack_i32 = soul_audio_core::formats::wavpack::MAX_BLOCK_PCM;
+
+    println!(
+        "\nshared decoder scratch: {actual_i32} i32 ({} B) — binding format: WavPack \
+         (MAX_BLOCK_PCM = {wavpack_i32} i32)",
+        actual_i32 * size_of::<i32>()
+    );
+    report(
+        "shared decoder scratch (decoder_scratch_len)",
+        actual_i32 * size_of::<i32>(),
+        SHARED_DECODER_SCRATCH_CAP_I32 * size_of::<i32>(),
+    );
+
+    assert!(
+        actual_i32 <= SHARED_DECODER_SCRATCH_CAP_I32,
+        "the shared decoder scratch grew to {actual_i32} i32 ({} B), over the committed \
+         {SHARED_DECODER_SCRATCH_CAP_I32} i32 ({} B) ceiling. At PRELOAD = {PRELOAD} this pool \
+         is {} B of the 1 MB AXI SRAM the board links, competing directly with the \
+         decode-ahead ring — so raising the cap is a deliberate tradeoff, not a formality. \
+         Shrink the format that grew, or raise SHARED_DECODER_SCRATCH_CAP_I32 and say why.",
+        actual_i32 * size_of::<i32>(),
+        SHARED_DECODER_SCRATCH_CAP_I32 * size_of::<i32>(),
+        DECODER_SCRATCH_POOL_BUDGET,
+    );
+
+    assert_eq!(
+        actual_i32, wavpack_i32,
+        "the shared scratch is no longer set by WavPack's MAX_BLOCK_PCM ({wavpack_i32} i32) but \
+         by some other carve ({actual_i32} i32) — most likely the post-pin ALAC carve. The size \
+         is now driven by a different format, so the backlog's 'cap MAX_BLOCK_PCM' plan \
+         (item #1) would no longer shrink it; re-derive the breakdown in this test's doc \
+         comment before updating this assertion."
+    );
+}
+
 /// Prints the full `memory_map::USER_SRAM` split as a running-total/margin
 /// report — each region's budget, the running total after it, and the
 /// margin still left in `USER_SRAM` — then asserts the whole split actually
@@ -366,7 +472,7 @@ fn memory_budget_fits_user_sram() {
             AUDIO_PATH_BUDGET,
         ),
         (
-            "decoder scratch pool ((1+PRELOAD) x decoder_scratch_len i32)",
+            "decoder scratch pool ((1+PRELOAD) x the 65,536-i32 scratch cap)",
             DECODER_SCRATCH_POOL_BUDGET,
         ),
         (

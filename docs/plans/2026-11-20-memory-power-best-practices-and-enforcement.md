@@ -21,10 +21,17 @@ Status key: **✅ enforced** · **🟡 partial / reporting-only** · **🔜 Phas
 | **Externalize big decoder buffers** to one shared `&'static` scratch (not inline) | `StaticCell` pool, constructed in place (`init_with`, not `init`) | ✅ §7 scratch design; board uses `init_with` |
 | **Compile-time budget assertions** (size/layout invariants fail the *build*) | `const _: () = assert!(size_of::<T>() + … <= REGION)`; the `static_assertions` crate (`const_assert!`, `assert_eq_size!`) | ✅ **added this round** — a compile-time AXI-SRAM budget guard in `board-h7a3` (the twin of the runtime footprint test) + a const assert in `power::model` |
 | **Static footprint roster** — `size_of` guard per main-stack type | Host test tabulating every component vs a per-region budget | ✅ `dap-arch-tests/tests/budget.rs` |
+| **Cap the dominant tunable buffer** — the shared decoder scratch is a quarter of the linked AXI SRAM | An absolute ceiling, not a budget derived from the measured value | ✅ **as of this round** — `SHARED_DECODER_SCRATCH_CAP_I32` (65,536 i32) + `shared_decoder_scratch_stays_within_its_cap`, which also prints which format binds. The previous "budget" was defined *as* `decoder_scratch_len()`, so it capped nothing |
 
-**Verdict:** memory discipline is textbook and comprehensively gated. The one
-upgrade this round: moving the dominant-statics budget from a *runtime test* to
-also a *compile-time assertion* — a footprint regression now can't even link.
+**Verdict:** memory discipline is textbook and comprehensively gated. Two
+upgrades across this round: the dominant-statics budget moved from a *runtime
+test* to also a *compile-time assertion* (a footprint regression now can't even
+link), and the shared decoder scratch gained a real ceiling — its old "budget"
+was defined as the measured value, so it capped nothing. Worth noting what that
+pattern cost to find, since it recurred four times in this loop (battery
+capacity, VOS tables, display current, scratch budget): **a number is only
+enforced if something would fail when it changes.** When reading a budget,
+ask what would have to break for the assertion to fire.
 
 ## Battery / power management
 

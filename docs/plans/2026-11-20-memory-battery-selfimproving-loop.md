@@ -30,11 +30,24 @@ this stage, while *memory* footprint is concretely measurable today.
 
   | format | scratch i32 | note |
   |---|---|---|
-  | WavPack | 65536 | `MAX_BLOCK_PCM`; sets the shared size |
-  | ALAC | 28 672 | `MAX_FRAME*3 + MAX_FRAME*2ch*2` |
-  | Opus | 11 520 | `MAX_PACKET_SAMPLES` = 5760*2 |
-  | FLAC | 9 216 | `2ch * MAX_BLOCK(4608)` |
-  | AAC | 2 048 | `1024 * 2ch` |
+  | WavPack | 65 536 | `MAX_BLOCK_PCM`; **sets the shared size** |
+  | ALAC | 28 672 | `3*MAX_FRAME + 2*MAX_FRAME*2ch`, `MAX_FRAME` = 4096 |
+
+  > **Corrected in L14:** this table previously also listed Opus (11 520),
+  > FLAC (9 216) and AAC (2 048) as scratch carves. They are not — those three
+  > keep their working buffers *inline* in their own decoder structs (which is
+  > why `AnyDecoder` is ~174 KB) and never touch the shared scratch.
+  >
+  > Note the two rows above describe **different soul-audio-core revisions**. At
+  > the rev this DAP's CI pins (`.github/soul-audio-core.pin`),
+  > `decoder_scratch_len()` is simply `wavpack::MAX_BLOCK_PCM` — WavPack is the
+  > *only* carve. The ALAC carve, and the `max(wavpack, alac)` definition,
+  > arrived in a later commit that the pin has not picked up. WavPack binds in
+  > both, which is why the L14 gate asserts against `MAX_BLOCK_PCM` (public in
+  > both revisions) rather than the newer `SCRATCH_LEN`.
+  >
+  > Either way the point for backlog #1 holds: shrinking this buffer means
+  > shrinking WavPack's carve, and does nothing for the inline-buffer formats.
 
 - Static footprint: App 174.7 KiB + scratch 256 KiB ≈ 432 KiB; ~592 KiB stack
   headroom. Worst-case decode-open stack transient 315 KiB (fits — see the
@@ -52,10 +65,18 @@ Memory (concrete, measurable now):
 2. **Footprint gate for the scratch** (`dap-arch-tests`): assert
    `decoder_scratch_len()` ≤ budget + print the per-format breakdown, so #1's win
    locks in and any format enlarging the shared scratch fails CI. *Risk: none.*
+   **Done in L14** — and the "budget" it was supposed to check turned out to be
+   defined *as* the measured value, so nothing capped the scratch at all.
 3. **Second-scratch audit.** Board uses one scratch (PRELOAD=0); confirm no
-   `SCRATCH2` equivalent is linked on the board. *Risk: none.*
+   `SCRATCH2` equivalent is linked on the board. *Risk: none.* **Confirmed in
+   L14:** `board-h7a3/src/main.rs` declares exactly one
+   `StaticCell<[i32; decoder_scratch_len()]>`, and the board AXI-SRAM gate counts
+   exactly one scratch. Nothing to change.
 4. **Alloc-count gate** — assert zero heap allocations across open→decode→pump
    (dap is `forbid(unsafe)` + no allocator, so this is near-free to assert). *none.*
+   **Already done** — `dap-sim/tests/no_alloc.rs` + `alloc_policy.rs` (the
+   enforcement roster has listed this ✅ since before this loop; the backlog entry
+   was stale).
 5. **ALAC/Opus/AAC buffer audit** — are any inline buffers oversized for the
    stereo embedded target? *Risk: low.*
 
@@ -310,9 +331,49 @@ Infra / gates:
   as its own planned refinement. The policy is region-shaped for when that lands.
   78 dap-core + 4 seam + 2 headless tests; full `xtask verify` green.
 
+- **L14 — the scratch cap, and a budget that was checking itself.** Backlog #2
+  ("assert `decoder_scratch_len()` ≤ budget + print the per-format breakdown")
+  looked half-done: `dap-arch-tests` already had a `DECODER_SCRATCH_POOL_BUDGET`.
+  But it was defined as
+  `(1 + PRELOAD) * decoder_scratch_len() * size_of::<i32>()` — **the budget was
+  the measured value**, so "measured ≤ budget" was a tautology and a format that
+  doubled the shared scratch doubled its own budget with it. The only thing that
+  would have noticed was the aggregate region total, and it would have reported
+  "everything got bigger" rather than naming the cause. Same shape as L13's
+  display term and L11's VOS tables: a number that looked enforced and wasn't.
+  Replaced with a committed ceiling (`SHARED_DECODER_SCRATCH_CAP_I32` = 65 536
+  i32 = 256 KiB, today's exact value) plus
+  `shared_decoder_scratch_stays_within_its_cap`, which prints the breakdown and
+  fails on growth. Verified it bites by lowering the cap by one `i32` — it fails
+  with the intended message, naming the tradeoff (at `PRELOAD = 0` this pool is a
+  quarter of the linked AXI SRAM and competes with the decode-ahead ring). It is
+  a *ceiling*, so #1's ~64 KiB shrink passes freely; only growth fails.
+  **Finding — the baseline table was wrong.** L0's measured baseline listed five
+  formats carving from the shared scratch (WavPack, ALAC, Opus, FLAC, AAC).
+  Opus/FLAC/AAC don't carve at all — they keep their buffers *inline* in their
+  decoder structs, which is why `AnyDecoder` is ~174 KB, and why shrinking the
+  shared scratch does nothing for them. Corrected above, because it changes what
+  #1 is worth: a WavPack cap is the *only* lever on this buffer.
+  The gate asserts the consequence rather than the formula —
+  `decoder_scratch_len() == wavpack::MAX_BLOCK_PCM`, i.e. WavPack is the binding
+  constraint. If another carve ever overtakes it, that equality breaks and names
+  the new binder, which is the fact you actually need at that moment.
+  **Process finding (learned the hard way).** The first version of this gate read
+  `wavpack::SCRATCH_LEN`, which exists only in a *newer* soul-audio-core than the
+  one `.github/soul-audio-core.pin` names. `cargo xtask verify` was green —
+  because `dap/` path-deps the sibling checkout, which tracks `main` — and CI
+  went red, because CI builds the pin. The pin's own comment warns about exactly
+  this ("Local dev is unaffected... this pin only governs CI"); the warning is
+  about *reproducibility*, but the sharper consequence is that **local green is
+  not CI green whenever the sibling is ahead of the pin.** The fix was to assert
+  against `MAX_BLOCK_PCM`, public and binding in both revisions, and then verify
+  it properly: a detached worktree of the pinned rev plus a cargo `paths`
+  override, so the pinned configuration could be built locally. 138 tests green
+  against the pin *and* against the sibling; full `xtask verify` green.
+
 ## Status
 
-**L0–L13 landed**, all gated. Five lessons, in rough order of how much backlog
+**L0–L14 landed**, all gated. Five lessons, in rough order of how much backlog
 each one cleared:
 
 1. **"Needs the board" usually means "needs the board to *execute*."** L11 and
@@ -320,10 +381,14 @@ each one cleared:
    a transition *ordering* and a gating *policy* — with only the register writes
    needing silicon. Separating the decision from the write is what moved them.
    Apply this before accepting any remaining "blocked on hardware" label.
-2. **Check inherited numbers against the actual part.** L6 caught a 2×
-   optimistic battery capacity; L11 caught H743 voltage tables masquerading as
-   H7A3's. Neither was a code bug, and both erred in the *flattering* direction.
-   Anything still carried over from the v1 design docs deserves the same pass.
+2. **Check whether a "gate" actually gates.** The recurring find, now four
+   times over: a number that looks enforced and isn't. L6's battery capacity was
+   a 2× optimistic placeholder; L11's VOS ceilings were the H743's wearing the
+   H7A3's label; L13's display current budgeted 0.5 mA for code that drew ~34;
+   L14's scratch budget was *defined as* the value it was supposed to cap. Every
+   one erred in the flattering direction, and none was a code bug. When reading
+   a budget or a datasheet constant, ask what would have to change for the
+   assertion to fail — if the answer is "nothing", it isn't a gate.
 3. **Promote measurements from reported to CI-blocking** (L9/L10) — a measured
    number that nothing enforces is a number that drifts.
 4. **A test that asserts `is_ok()` asserts almost nothing.** L13's bug — a 3 s
@@ -341,7 +406,9 @@ Remaining work, by what actually blocks it:
   L13's finding) and an *RTF-regression gate* (#11), both doable without
   hardware.
 - **Needs a decision** — *scratch right-size* (#1, ~64 KiB): the WavPack
-  large-block tradeoff, plus a soul-audio-core change.
+  large-block tradeoff, plus a soul-audio-core change. The cap gate from L14 is
+  in place, so whatever is decided locks in; and L14 confirmed WavPack really is
+  the only format a shrink would affect.
 - **Needs care, not hardware** — *RTF hot-loop / decode-ahead ring*:
   soul-audio-core, correctness-sensitive.
 - **Needs the schematic** — the per-pin *GPIO low-power audit*. The bank-level
@@ -350,6 +417,30 @@ Remaining work, by what actually blocks it:
   DMA, suspend/resume, and executing the clock plan. Note `SLEEP_CURRENT_MA`
   remains the model's dominant sensitivity (gated as such), so every headline
   runtime figure is only as good as that one bench measurement.
+
+## Verifying against the CI pin (not just the sibling checkout)
+
+`dap/` path-deps `../../soul-audio-core`, so `cargo xtask verify` builds whatever
+that working copy is — while CI builds the revision named in
+`.github/soul-audio-core.pin`. When the sibling is ahead of the pin, **local
+green does not imply CI green**: L14 shipped a gate referencing an API that only
+exists post-pin and went red in CI despite a clean local gate.
+
+To build the pinned configuration locally without touching the sibling checkout:
+
+```sh
+PIN=$(grep -v '^#' .github/soul-audio-core.pin | tr -d '[:space:]')
+git -C ../soul-audio-core worktree add --detach /tmp/sac-pin "$PIN"
+# then, in a CARGO_HOME you control, append to config.toml:
+#   paths = ["/tmp/sac-pin/crates/soul-audio-core",
+#            "/tmp/sac-pin/crates/soul-audio-engine",
+#            "/tmp/sac-pin/crates/soul-audio-index"]
+(cd dap && cargo test --workspace && cargo clippy --workspace --all-targets -- -D warnings)
+git -C ../soul-audio-core worktree remove --force /tmp/sac-pin   # and drop the override
+```
+
+Worth doing for any change that touches a `soul_audio_core::` path the DAP didn't
+already use.
 
 ## Sources
 
