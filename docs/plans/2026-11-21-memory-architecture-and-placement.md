@@ -312,9 +312,43 @@ goes. The stack stays in AXI SRAM (where flip-link guards it), and DTCM is
 genuinely available for the UI working set after all — which makes §7's Phase 2
 simpler, not harder.
 
-A second, independent target also falls out: **`App::render` costs 114 KiB of
-stack**, and unlike the decoder work it lives in `eink-ui`/`dap-core` — *not*
-behind `.github/soul-audio-core.pin*. It may well be the easier of the two.
+### The other 114 KiB is NOT render — and it is not fixable in-repo
+
+A first pass attributed the whole tick's 114 KiB over the isolated decode path to
+`App::render`, and guessed it would be the easier target because `eink-ui` is not
+behind the pin. **Both halves were wrong**, and the frame table settles it:
+
+- **All** eink-ui / screens / `embedded_graphics` frames together come to
+  **2,584 B**, with `App::render` itself at **664 B**. Immediate-mode rendering
+  through a borrowed `DrawTarget` is essentially free on the stack. There is no
+  UI stack problem.
+- The 114 KiB is **`dap_core::audio::AudioPlayer::pump`'s own frame: 119,416 B**
+  — almost exactly two `size_of::<AnyDecoder>()` (59,760 B). One slot is
+  `open_seekable`'s by-value return; the other is the decoder bound before it
+  moves into the engine (`Engine::provide` is inlined, so it has no frame).
+
+It is in `dap-core`, so it *looked* in-repo. It isn't fixable there. Three
+source-level variants were implemented and measured:
+
+| variant | `pump` frame |
+|---|---|
+| baseline | 119,416 B |
+| drop the named local, pass the call result straight to `provide` | 119,416 B |
+| `#[inline(never)]` on the `provide` hand-off | 119,424 B |
+| outline the entire loop body | 119,416 B (frame moves to the helper, still live during the decode — **peak unchanged**) |
+
+The two slots are inherent to receiving a ~58 KiB value by value and moving it
+onward; the receiving slot is necessarily live *during* the call that fills it.
+The fix is an **in-place construction API upstream** — an
+`open_seekable_into(&mut Option<AnyDecoder>)`, or
+`provide_with(track, impl FnOnce() -> Result<D, E>)` on the engine — which lives
+in `soul-audio-core`/`soul-audio-engine`, behind the pin. `AudioPlayer::pump`
+now carries this as a doc comment so it isn't re-attempted.
+
+**Consequence for sequencing:** there is no easier in-repo alternative. Both
+halves of the stack prize — the ~120 KiB `AudioPlayer::pump` double slot and the
+~220 KiB Matroska construction path — need the same upstream change (in-place
+construction) and the same pin bump. They are one project, not two.
 
 ### Scope note
 The decoder work is a `soul-audio-core` change, so it lands behind the pin and

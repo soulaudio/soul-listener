@@ -165,6 +165,35 @@ impl<S: Sink, St: Storage, Pcm: AsRef<[i32]> + AsMut<[i32]>, const PRELOAD: usiz
     /// [`AudioPlayerError::Open`] if the container/codec can't be identified
     /// or opened, [`AudioPlayerError::Deck`] if the decode/resample/sink
     /// pipeline fails.
+    /// # Stack cost: ~119 KiB, and it is NOT reducible from this crate
+    /// Measured (`tools/mcu-stackprobe/check-tick-qemu.sh` + `-Z
+    /// emit-stack-sizes`, 2026-11-21): this function's own frame is
+    /// **119,416 B** — almost exactly *two* `size_of::<AnyDecoder>()`
+    /// (59,760 B). One slot is `open_seekable`'s by-value return; the other is
+    /// the decoder bound here before it moves into the engine (`Engine::provide`
+    /// is small enough that the optimizer inlines it, so it has no frame of its
+    /// own). Both are live across the whole nested open, which for
+    /// Matroska-FLAC adds ~283 KiB of construction frames beneath this one — so
+    /// this frame lands directly on the whole-tick peak of ~415 KiB.
+    ///
+    /// **Three source-level fixes were tried and measured; none moved it:**
+    /// dropping the named local and passing the call result straight to
+    /// `provide` (119,416 B), marking the `provide` hand-off `#[inline(never)]`
+    /// (119,424 B), and outlining the entire loop body (119,416 B — the frame
+    /// simply moves to the helper, which is still live during the decode, so the
+    /// peak is unchanged). The two slots are inherent to receiving a ~58 KiB
+    /// value by value and then moving it onward.
+    ///
+    /// The real fix is an **in-place construction API upstream** — an
+    /// `open_seekable_into(&mut Option<AnyDecoder>)`, or a
+    /// `provide_with(track, impl FnOnce() -> Result<D, E>)` on the engine — so
+    /// the decoder is built directly into the deck's slot. That lives in
+    /// `soul-audio-core`/`soul-audio-engine`, behind
+    /// `.github/soul-audio-core.pin`. See
+    /// `docs/plans/2026-11-21-memory-architecture-and-placement.md` §8.
+    ///
+    /// Please don't re-attempt the local restructurings above without re-reading
+    /// that section; they have been measured.
     pub fn pump(&mut self) -> Result<Progress, AudioPlayerError<St>> {
         while let Some(track) = self.engine.poll_open() {
             let source = self
