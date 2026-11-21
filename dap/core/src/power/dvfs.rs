@@ -40,7 +40,7 @@ pub const BALANCED_SAFETY: f32 = 1.3;
 /// **analyzed and answered — it would not**, for this DAP. See
 /// [`model::system_avg_current_at_clock`] and its
 /// `min_clock_not_beaten_by_race_to_sleep` test: the H7A3's ~linear
-/// current-vs-clock curve plus the always-on ~9.5 mA output path mean total
+/// current-vs-clock curve plus the always-on ~11 mA output path mean total
 /// current at the minimum sustaining clock is `<=` at max clock for every
 /// format, so minimize-clock is already near energy-optimal and a high-clock
 /// burst strategy does not beat it. (Model-level; confirm on silicon.)

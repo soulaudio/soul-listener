@@ -20,13 +20,21 @@
 //! estimated RTF and returns the target clock (MHz) to apply — model-only
 //! (no VOS/PLL register writes happen here; the board applies those once
 //! it exists).
+//!
+//! [`clocks`] closes that last gap on the host side: it turns a target clock
+//! into the ordered, datasheet-legal [`clocks::ClockPlan`] the board must
+//! execute (voltage scale, flash wait-states, PLL — in the one order that never
+//! under-waits flash or over-clocks the voltage), so the *sequencing rule* is a
+//! gated host test rather than a comment the board code has to remember.
 
 use heapless::Vec;
 
 use crate::ports::{BatteryReading, Power};
 
+pub mod clocks;
 pub mod dvfs;
 pub mod model;
+pub mod peripherals;
 
 /// Max events a single [`PowerService::poll`] can return. Eight distinct
 /// [`PowerEvent`] kinds exist; this bound is generous enough that every kind

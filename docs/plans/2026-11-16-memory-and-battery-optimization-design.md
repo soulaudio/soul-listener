@@ -39,6 +39,15 @@ the ring size called out as the audio↔battery↔RAM tunable. That is what §3 
    current scales ~V²·f, and the H7 has on-the-fly voltage scaling steps
    (VOS0 1.35 V/480 MHz … **VOS3 1.0 V/200 MHz**). Representative run current:
 
+   > **Correction (2026-11-21):** those ceilings are the **STM32H743's**, not
+   > this board's. On the H7A3 (DEV_ID `0x480`) the scales cap at
+   > **280 / 225 / 160 / 88 MHz** — so VOS3 is 88 MHz here, not 200. The figure
+   > above was propagated into `power::model`'s clock-headroom gates and
+   > invalidated their headline claim; see
+   > `2026-11-20-memory-battery-selfimproving-loop.md` L11. The authoritative
+   > tables now live in `dap-core::power::clocks`.
+
+
    | Clock   | ~Current |
    |---------|----------|
    | 480 MHz | ~125 mA  |

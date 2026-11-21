@@ -87,7 +87,7 @@ fn run() {
         "real audio must have reached SimSink before rendering"
     );
 
-    app.render()
+    app.render(0)
         .expect("App::render must succeed against a healthy SimDisplay");
 
     let fb = app.display();

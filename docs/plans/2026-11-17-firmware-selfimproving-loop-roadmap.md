@@ -34,6 +34,13 @@ peripheral models) → **HIL on a board** (last, smallest: just the real adapter
   confirm (or tighten) the static ~450–570 KB worst-case; prove on-chip fit.
 - A3: close the one edge — Matroska-wrapped-FLAC's 48 KB u8 SimpleBlock buffer
   (needs a byte-arena seam alongside the i32 scratch) — or reserve for it.
+  **Still open, now quantified** (memory/battery loop L15,
+  `dap-arch-tests`' `any_decoder_variant_inline_footprint_roster`): Matroska's
+  inline footprint is **59,760 B** and is what sets `size_of::<AnyDecoder>()` —
+  the largest of all ten variants, ahead of MP3 (44,240) and Opus (41,104).
+  Externalizing that buffer would cut `AnyDecoder` by ~26 % (to ~44 KB, where MP3
+  becomes the binder). Contrast WavPack, which externalized everything and sits
+  at **96 B**. A per-variant ceiling now gates this so it can't grow further.
 - A4: wire **CI jobs**: static stack bound (`cargo-call-stack`/`emit-stack-sizes`)
   + dynamic QEMU stack high-water + decode/gapless scenarios; gate on budget.
 

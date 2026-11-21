@@ -19,6 +19,7 @@ use embassy_time::{Duration, Timer};
 use static_cell::StaticCell;
 
 use dap_core::app::{App, AppConfig};
+use dap_core::display::refresh::RefreshAction;
 use dap_core::firmware;
 use dap_core::stub::{StubControls, StubDisplay, StubPower, StubSink, StubStorage};
 
@@ -118,7 +119,17 @@ static APP_CELL: StaticCell<Dap> = StaticCell::new();
 /// can't even *link* the firmware. Add any new large AXI-SRAM static to this sum
 /// (or place it in the as-yet-unlinked AHB SRAM1/2/3).
 const AXI_SRAM_BYTES: usize = 1024 * 1024;
-const STACK_RESERVE_BYTES: usize = 256 * 1024;
+/// Stack headroom kept clear above the board's statics, in bytes.
+///
+/// **480 KiB — measured, not assumed**: `tools/mcu-stackprobe/check-tick-qemu.sh`
+/// enforces this budget against a whole-firmware-tick worst case of 413 KiB
+/// (decode-open plus `App::render` in one tick). This was 256 KiB, which was
+/// *below* both the 297 KiB isolated decode transient and the 413 KiB whole-tick
+/// figure — so the compile-time guard below would have permitted statics that the
+/// real stack runs into. Corrected 2026-11-21; keep in lockstep with
+/// `check-tick-qemu.sh` and `dap-arch-tests`' `BOARD_STACK_RESERVE`.
+/// See `docs/plans/2026-11-21-memory-architecture-and-placement.md`.
+const STACK_RESERVE_BYTES: usize = 480 * 1024;
 const _: () = assert!(
     core::mem::size_of::<Dap>()
         + soul_audio_core::decoder_scratch_len() * core::mem::size_of::<i32>()
@@ -183,8 +194,15 @@ async fn main(_spawner: Spawner) {
         if outcome.tick.critical_shutdown {
             info!("board-h7a3: critical shutdown");
         }
+        // The refresh policy (dap_core::display::refresh) decides whether a
+        // redrawn frame is worth committing to the panel at all, so log which of
+        // the three outcomes happened rather than just "refreshed" — on real
+        // hardware the distinction is a 3 s full flash vs a 300 ms partial vs
+        // nothing.
         match outcome.render {
-            Some(Ok(())) => info!("board-h7a3: display refreshed"),
+            Some(Ok(RefreshAction::Full)) => info!("board-h7a3: display full refresh"),
+            Some(Ok(RefreshAction::Partial(_))) => info!("board-h7a3: display partial refresh"),
+            Some(Ok(RefreshAction::None)) => info!("board-h7a3: frame redrawn, panel unchanged"),
             Some(Err(_)) => info!("board-h7a3: display refresh failed"),
             None => {}
         }
