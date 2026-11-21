@@ -395,6 +395,28 @@ pub const ROSTER: [Peripheral; 12] = [
     },
 ];
 
+/// # Known gap: Bluetooth output (v2)
+/// v2 adds Bluetooth as a **secondary** output path — an I²S-input A2DP source
+/// module sharing the SAI (or, preferably, on a dedicated SAI; see
+/// `docs/plans/2026-11-21-memory-architecture-and-placement.md`). Two things here
+/// will need to change, and neither is a simple addition:
+///
+/// 1. **A fourth state, as a *sibling*.** `PlaybackJack` and `PlaybackBt` are
+///    mutually exclusive, not nested: the DAC's control I²C is clocked in one,
+///    the BT module's control bus in the other, and neither set contains the
+///    other. `each_lower_power_state_gates_strictly_more` asserts a strict chain,
+///    so it must become a chain along `Paused ⊂ Idle ⊂ {either Playback}` with
+///    the two Playback states as leaves. Forcing one to "nest" inside the other
+///    to keep the current gate green would be fiction.
+/// 2. **`every_billed_output_path_device_has_its_bus_clock_enabled_in_playback`
+///    stops holding as written.** With two output paths the DAC is no longer
+///    clocked in *every* Playback state, so the gate becomes "every device the
+///    model bills for **in state X** is clocked in state X".
+///
+/// Nothing is added speculatively here: the module isn't chosen, so its control
+/// bus (a UART or I²C) has no `(RCC_*ENR, bit)` coordinate yet, and inventing one
+/// would defeat the point of requiring a real coordinate.
+///
 /// The clocks that must be gated **in every state**, named explicitly rather
 /// than merely omitted from [`ROSTER`].
 ///

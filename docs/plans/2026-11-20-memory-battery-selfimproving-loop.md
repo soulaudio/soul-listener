@@ -474,6 +474,23 @@ Remaining work, by what actually blocks it:
   wrong conflation). L15 answered the same class of question by `size_of` against
   the pinned build instead. Measure the artifact, don't paraphrase the source.*
 
+## Where memory *lives* — see the placement doc
+
+This loop is about how much memory is used and keeping it bounded. *Where* it
+sits — six regions with different domains, DMA reachability and retention — plus
+the cache/MPU decision and the Bluetooth output path are in
+[`2026-11-21-memory-architecture-and-placement.md`](2026-11-21-memory-architecture-and-placement.md).
+Three things from it that change this loop's numbers:
+
+- **`USER_SRAM` was wrong** (1208 → **1152 KB**; there is no AHB-SRAM3 on this
+  part), so the region-plan gate was checking 56 KB of RAM that doesn't exist.
+- **The stack reserve was wrong** (256 → **480 KiB**), below both measured
+  transients. A fifth instance of the "number that looks enforced and isn't"
+  pattern — see Status lesson 2.
+- **The 413 KiB stack is the largest single consumer**, bigger than the 256 KiB
+  scratch this loop has revisited three times and never attacked. Reducing it is
+  worth more than any placement change, and the repo already has the idiom.
+
 ## Verifying against the CI pin (not just the sibling checkout)
 
 `dap/` path-deps `../../soul-audio-core`, so `cargo xtask verify` builds whatever

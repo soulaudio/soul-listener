@@ -119,7 +119,17 @@ static APP_CELL: StaticCell<Dap> = StaticCell::new();
 /// can't even *link* the firmware. Add any new large AXI-SRAM static to this sum
 /// (or place it in the as-yet-unlinked AHB SRAM1/2/3).
 const AXI_SRAM_BYTES: usize = 1024 * 1024;
-const STACK_RESERVE_BYTES: usize = 256 * 1024;
+/// Stack headroom kept clear above the board's statics, in bytes.
+///
+/// **480 KiB — measured, not assumed**: `tools/mcu-stackprobe/check-tick-qemu.sh`
+/// enforces this budget against a whole-firmware-tick worst case of 413 KiB
+/// (decode-open plus `App::render` in one tick). This was 256 KiB, which was
+/// *below* both the 297 KiB isolated decode transient and the 413 KiB whole-tick
+/// figure — so the compile-time guard below would have permitted statics that the
+/// real stack runs into. Corrected 2026-11-21; keep in lockstep with
+/// `check-tick-qemu.sh` and `dap-arch-tests`' `BOARD_STACK_RESERVE`.
+/// See `docs/plans/2026-11-21-memory-architecture-and-placement.md`.
+const STACK_RESERVE_BYTES: usize = 480 * 1024;
 const _: () = assert!(
     core::mem::size_of::<Dap>()
         + soul_audio_core::decoder_scratch_len() * core::mem::size_of::<i32>()

@@ -45,12 +45,38 @@ use soul_audio_index::IndexReader;
 ///   family — the per-region base addresses and sizes (AXI_SRAM, SRAM1-3,
 ///   DTCM, ITCM, BACKUP_SRAM) linked firmware actually builds against.
 pub mod memory_map {
-    /// User-accessible, **DMA-capable** SRAM: AXI SRAM @ `0x2400_0000` plus
-    /// AHB SRAM1/2/3 @ `0x3000_0000`, 1,208 KB total. The only pool both
+    /// User-accessible, **DMA-capable**, **CD-domain** SRAM: AXI SRAM
+    /// (`0x2400_0000`, 1024 KB — internally AXI-SRAM1/2/3 at 256/384/384 KB but
+    /// contiguous and linked as one region) plus AHB-SRAM1 (`0x3000_0000`, 64 KB)
+    /// and AHB-SRAM2 (`0x3002_0000`, 64 KB) = **1152 KB**. The only pool both
     /// large enough and DMA-reachable to host the decoder, the e-ink
     /// framebuffer, the catalog index, and DMA staging buffers — everything
     /// this crate's per-region budgets (below) split up.
-    pub const USER_SRAM: usize = 1_208 * 1024;
+    ///
+    /// # Corrected 2026-11-21
+    /// This was **1208 KB**, described as "AXI SRAM plus AHB SRAM1/2/**3**".
+    /// There is no AHB-SRAM3 on this part: the H7A3 has exactly two AHB SRAMs of
+    /// 64 KB each (128 KB total, not 184 KB). The old figure over-stated the
+    /// available pool by 56 KB, so `memory_budget_fits_user_sram` was checking
+    /// the region plan against a ceiling that doesn't exist. Cross-checks: the
+    /// datasheet's "1.4 MB RAM" headline reconciles as 1152 (CD) + 32
+    /// ([`SRD_SRAM`]) + 128 ([`DTCM`]) + 64 ([`ITCM`]) + 4 ([`BACKUP_SRAM`]) ≈
+    /// 1380 KB. See `docs/plans/2026-11-21-memory-architecture-and-placement.md`.
+    ///
+    /// **Only 1024 KB of this is actually linked today** — `memory.x` maps the
+    /// AXI SRAM alone. The 128 KB of AHB SRAM is physically present and DMA-
+    /// reachable but invisible to the linker until a region is declared for it;
+    /// see the placement doc above.
+    pub const USER_SRAM: usize = 1152 * 1024;
+
+    /// SRAM in the **Smart Run Domain** (SRD), 32 KB. Deliberately *excluded*
+    /// from [`USER_SRAM`]: it is DMA-reachable, but it sits in a different power
+    /// domain from the CPU and the AXI/AHB SRAMs, with its own retention and
+    /// clock-gating behaviour in Stop (see `dap_core::power::peripherals`'
+    /// `Paused` state). Counting it as general-purpose RAM would mix two power
+    /// domains in one budget, which is how a buffer ends up unexpectedly
+    /// un-retained across a pause.
+    pub const SRD_SRAM: usize = 32 * 1024;
 
     /// Tightly-coupled data RAM @ `0x2000_0000`: fast, but **not DMA-capable**
     /// — the CPU only. Hosts stacks; never a candidate for the decode/DMA
@@ -864,11 +890,11 @@ fn component_footprint_roster() {
 }
 
 /// The board (`dap/board-h7a3`) LINKS a single RAM region: the 1 MB AXI SRAM
-/// (`memory.x` maps only `RAM : 0x2400_0000, 1024K`; the +184 KB of AHB
-/// SRAM1/2/3 @ `0x3000_0000` that [`memory_map::USER_SRAM`] also counts is NOT
-/// in the linker script). So unlike the per-region split above -- which checks
-/// against the full 1208 KB `USER_SRAM` -- every static the board actually
-/// places AND its whole call stack must fit THIS 1 MB.
+/// (`memory.x` maps only `RAM : 0x2400_0000, 1024K`; the +128 KB of AHB-SRAM1/2
+/// @ `0x3000_0000` that [`memory_map::USER_SRAM`] also counts is NOT in the
+/// linker script). So unlike the per-region split above -- which checks against
+/// the full 1152 KB `USER_SRAM` -- every static the board actually places AND its
+/// whole call stack must fit THIS 1 MB.
 ///
 /// This guards the board's two dominant AXI-SRAM statics -- the `App` moved into
 /// `APP_CELL`, and the one `decoder_scratch_len()` pool `SCRATCH` holds at
@@ -882,18 +908,36 @@ fn component_footprint_roster() {
 /// flip-link from `dap/`, and flip-link's two-pass relink defeats a headroom
 /// check on `_stack_start`/`__sheap`.)
 ///
-/// Reserve = 256 KiB: the memory/battery design doc's open-transient budget (the
-/// open -> decode -> pump stack peak sits inside it; `mcu-stack-budget` gates the
-/// per-frame sizes). When Phase E adds real-port statics (an e-ink framebuffer,
-/// DMA rings) to AXI SRAM, add them to the `statics` total below -- or place them
-/// in the as-yet-unlinked AHB SRAM1/2/3 (extend `memory.x` + `#[link_section]`).
+/// # The reserve must match what the stack actually measures
+/// Reserve = **480 KiB**, the budget `tools/mcu-stackprobe/check-tick-qemu.sh`
+/// enforces (`DYNAMIC_TICK_BUDGET_KIB`), against a measured whole-firmware-tick
+/// worst case of **413 KiB**.
+///
+/// This was **256 KiB**, taken from the memory/battery design doc's
+/// open-transient budget — but that figure predates the dynamic measurements and
+/// is *below both of them*: the isolated decode-open transient is 297 KiB and the
+/// whole tick (decode + `App::render`) is 413 KiB. Two gates reserving 256 KiB
+/// while a third enforces 480 KiB meant this check reported ~345 KB "to spare"
+/// that the real stack would have run straight into. Corrected 2026-11-21; see
+/// `docs/plans/2026-11-21-memory-architecture-and-placement.md`.
+///
+/// Keep this in lockstep with `check-tick-qemu.sh`'s budget and with
+/// `board-h7a3`'s `STACK_RESERVE_BYTES` (the compile-time twin). The measured
+/// transient is the single largest consumer of linked RAM — larger than the
+/// decoder scratch — so reducing it is worth more than any placement change; the
+/// placement doc's Phase 1 covers that.
+///
+/// When Phase E adds real-port statics (an e-ink framebuffer, DMA rings) to AXI
+/// SRAM, add them to the `statics` total below -- or place them in the
+/// as-yet-unlinked AHB-SRAM1/2 (extend `memory.x` + `#[link_section]`).
 #[test]
 fn board_static_footprint_leaves_stack_room_in_linked_axi_sram() {
     // memory.x's only linked RAM region: AXI SRAM @ 0x2400_0000.
     const AXI_SRAM_LINKED: usize = 1024 * 1024;
-    // Stack headroom to keep clear above all board statics (design open-transient
-    // budget). Keep in lockstep with board-h7a3/src/main.rs's APP_CELL note.
-    const BOARD_STACK_RESERVE: usize = 256 * 1024;
+    // Stack headroom to keep clear above all board statics. MEASURED, not
+    // assumed: `check-tick-qemu.sh`'s 480 KiB budget over a 413 KiB worst case.
+    // Keep in lockstep with board-h7a3/src/main.rs's STACK_RESERVE_BYTES.
+    const BOARD_STACK_RESERVE: usize = 480 * 1024;
 
     // The board's exact App (PRELOAD = 0, Pcm = &'static mut [i32]) and the one
     // decoder-scratch pool it hands out -- the two statics that dominate its RAM.
@@ -903,8 +947,15 @@ fn board_static_footprint_leaves_stack_room_in_linked_axi_sram() {
     let statics = app + scratch;
     let total = statics + BOARD_STACK_RESERVE;
 
+    // Label derived from the constant, not restated — a hardcoded "256 KiB" here
+    // is exactly how the stale reserve survived unnoticed.
+    println!(
+        "board AXI-SRAM statics (App {app} B + decoder scratch {scratch} B) + \
+         {} KiB measured stack reserve:",
+        BOARD_STACK_RESERVE / 1024
+    );
     report(
-        "board AXI-SRAM statics (App + decoder scratch) + 256 KiB stack reserve",
+        "board AXI-SRAM statics + stack reserve",
         total,
         AXI_SRAM_LINKED,
     );

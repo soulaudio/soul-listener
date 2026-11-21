@@ -189,6 +189,21 @@ pub const DISPLAY_AVG_MA: f32 = 2.0;
 
 /// Total non-CPU output-path current during playback (DAC/amp + SD + display) at
 /// the battery rail — the always-on draw `system_current_ma` adds to the CPU blend.
+///
+/// # Known gap: this is the WIRED output path only
+/// v2 adds Bluetooth as a secondary output (an I²S-input A2DP source module —
+/// see `docs/plans/2026-11-21-memory-architecture-and-placement.md`). BT playback
+/// is a *different* operating point, not an addition to this one: the radio is on
+/// (published A2DP source figures run ~16–28 mA) and the DAC/amp is OFF
+/// (−[`DAC_AMP_PLAYBACK_MA`]). Published comparisons of one device wired vs BT put
+/// the ratio at roughly 2:1 against BT, which would take this DAP's modeled
+/// ~38–67 h to roughly ~19–33 h.
+///
+/// There is deliberately **no `BT_PLAYBACK_MA` here yet** — adding a figure before
+/// the module is chosen would repeat the assumed-rather-than-derived mistake
+/// [`DISPLAY_AVG_MA`] made (it budgeted 0.5 mA for code that drew ~34). When the
+/// part is picked: add the term, add a second runtime figure, and gate the two
+/// output paths as siblings (see `power::peripherals`' matching note).
 pub const PERIPHERAL_PLAYBACK_MA: f32 = DAC_AMP_PLAYBACK_MA + SD_AVG_MA + DISPLAY_AVG_MA;
 
 /// How much faster the HOST this crate's tests/benches run on is than the
@@ -734,7 +749,18 @@ mod tests {
     }
 
     /// Native-rate clocking beats resample-to-fixed-rate, on clock and so on
-    /// power. The board's CS43131 DAC takes BOTH sample-rate families via a dual
+    /// power — **for jack output.**
+    ///
+    /// # Scope: this is the wired path only
+    /// A Bluetooth sink negotiates ONE rate for the connection, so it cannot be
+    /// re-clocked per track the way the DAC can. Playing 44.1k content to a 48k
+    /// BT link therefore *forces* the resampler — moving it from rare fallback to
+    /// common case on that path, where
+    /// `clock_headroom_pipeline_resampled_only_just_fits_vos2` shows only ~2 MHz
+    /// of VOS2 headroom. v2 adds Bluetooth as a secondary output; see
+    /// `docs/plans/2026-11-21-memory-architecture-and-placement.md`.
+    ///
+    /// The board's CS43131 DAC takes BOTH sample-rate families via a dual
     /// MCLK oscillator (22.5792 MHz→44.1k, 24.576 MHz→48k — see the DAC-selection
     /// research), so the firmware can clock the SAI at the source's native rate
     /// and SKIP the resampler for all standard content (44.1/48k + multiples) —

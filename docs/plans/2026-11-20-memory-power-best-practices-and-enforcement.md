@@ -23,6 +23,15 @@ Status key: **✅ enforced** · **🟡 partial / reporting-only** · **🔜 Phas
 | **Static footprint roster** — `size_of` guard per main-stack type | Host test tabulating every component vs a per-region budget | ✅ `dap-arch-tests/tests/budget.rs` |
 | **Cap the dominant tunable buffer** — the shared decoder scratch is a quarter of the linked AXI SRAM | An absolute ceiling, not a budget derived from the measured value | ✅ **as of this round** — `SHARED_DECODER_SCRATCH_CAP_I32` (65,536 i32) + `shared_decoder_scratch_stays_within_its_cap`, which also prints which format binds. The previous "budget" was defined *as* `decoder_scratch_len()`, so it capped nothing |
 
+**Not covered by this roster:** *where* memory lives. The rules above are about
+how much and whether it's bounded; the H7A3 has six separate RAM regions with
+different domains, DMA reachability and retention, and two of them (DTCM 128 KB,
+ITCM 64 KB) are currently 100 % unused while the budget reads as nearly full.
+Placement, the cache/MPU decision, and the Bluetooth output path are in
+[`2026-11-21-memory-architecture-and-placement.md`](2026-11-21-memory-architecture-and-placement.md),
+which also corrects `USER_SRAM` (1208 → 1152 KB; there is no AHB-SRAM3) and the
+stack reserve (256 → 480 KiB against a measured 413 KiB).
+
 **Verdict:** memory discipline is textbook and comprehensively gated. Two
 upgrades across this round: the dominant-statics budget moved from a *runtime
 test* to also a *compile-time assertion* (a footprint regression now can't even
