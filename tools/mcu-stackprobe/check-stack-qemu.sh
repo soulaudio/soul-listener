@@ -48,7 +48,18 @@ echo "qemu: $(command -v qemu-system-arm)"
 
 # Build + run the stack-painting harness. The .cargo/config.toml `runner` launches
 # QEMU with semihosting; the guest prints its measurement and exits the emulator.
+# Capture rc explicitly (don't let `set -e` kill us at the assignment) so a build
+# error OR a QEMU abort surfaces its full output in the CI log instead of a bare
+# "exit 134" — the output is otherwise swallowed into $OUT and lost.
+set +e
 OUT="$(cargo run --release --features qemu 2>&1)"
+RC=$?
+set -e
+if [ "$RC" -ne 0 ]; then
+  echo "ERROR: 'cargo run --release --features qemu' exited $RC. Full build/QEMU output:" >&2
+  printf '%s\n' "$OUT" >&2
+  exit 1
+fi
 LINE="$(printf '%s\n' "$OUT" | grep -E 'mcu-stackprobe-qemu:' || true)"
 if [ -z "$LINE" ]; then
   echo "ERROR: no measurement line in QEMU output:" >&2
