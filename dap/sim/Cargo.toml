@@ -46,6 +46,16 @@ criterion = "0.5"
 # `[workspace.dependencies]`, used by `crates/firmware`) and the embassy
 # ecosystem's current major line.
 static_cell = "2"
+# `tests/fat32_pipeline_e2e.rs` -- the REAL FAT32 Storage adapter driving the full
+# AudioPlayer decode path end to end (not the SimStorage stub): `fatfs`/`fscommon`
+# build a RAM FAT32 image holding a real WAV, `storage-fat32` mounts it, and the
+# player decodes straight off the card. Dev-only.
+storage-fat32 = { path = "../storage-fat32" }
+fatfs = "0.3"
+fscommon = "0.1"
+# The block-device/VolumeManager types the e2e builds a RAM FAT32 card from
+# (same major as storage-fat32's own dep).
+embedded-sdmmc = { version = "0.10", default-features = false }
 
 [[bench]]
 name = "decode_rtf"

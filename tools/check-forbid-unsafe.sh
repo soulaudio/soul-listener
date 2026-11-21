@@ -44,6 +44,9 @@ ENFORCED_CRATES=(
   # eink-ssd1677: the SSD1677 e-ink driver salvaged from the retired v1 firmware
   # (its one keepable piece); no_std, unsafe-free, forbid(unsafe) at its root.
   "eink-ssd1677:dap/eink-ssd1677/src/lib.rs"
+  # storage-fat32: the real FAT32 SD Storage adapter (embedded-sdmmc); the
+  # &'static VolumeManager design keeps it unsafe-free, so forbid it.
+  "storage-fat32:dap/storage-fat32/src/lib.rs"
   "eink-specs:crates/eink/eink-specs/src/lib.rs"
 )
 
