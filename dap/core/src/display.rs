@@ -14,6 +14,8 @@ use embedded_graphics::draw_target::DrawTarget;
 pub use embedded_graphics::pixelcolor::Gray4;
 pub use embedded_graphics::primitives::Rectangle;
 
+pub mod refresh;
+
 /// Why an [`EinkRefresh`] call failed.
 ///
 /// Deliberately coarse and `Copy` (no borrowed/board-specific data): the two

@@ -23,7 +23,10 @@ use core::fmt::Write as _;
 use heapless::String;
 use soul_audio_core::{DeckState, Progress, Quality, Sink};
 
+use eink_ui::refresh::DirtyTracker;
+
 use crate::audio::AudioPlayer;
+use crate::display::refresh::{FrameChange, RefreshAction, RefreshDecider};
 use crate::display::{Display, DisplayError};
 use crate::ports::{Controls, InputEvent, Power, Storage};
 use crate::power::{PowerConfig, PowerEvent, PowerService};
@@ -109,6 +112,49 @@ pub struct App<
     display: D,
     volume: f32,
     volume_step: f32,
+    refresh: RefreshDecider,
+    /// Summary of the frame currently **on the panel** — the baseline
+    /// [`render`](Self::render) diffs against. Updated only when a refresh is
+    /// actually performed (not when the policy skips one), so it always
+    /// describes what the user is looking at rather than what was last drawn
+    /// into the buffer.
+    panel_frame: Option<FrameSummary>,
+}
+
+/// The rendered-granularity summary of one frame, for deciding whether the panel
+/// needs updating at all.
+///
+/// Fields are stored **as drawn**, not as held: `volume_pct`/`battery_pct` are
+/// the integers `now_playing` actually prints, and `elapsed_s` the whole second
+/// it formats. So a volume nudge too small to change the printed percentage —
+/// or any sub-second progress — compares equal and costs no refresh, which is
+/// the cheapest possible form of the policy.
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct FrameSummary {
+    title: String<24>,
+    elapsed_s: u32,
+    volume_pct: u32,
+    battery_pct: u16,
+    playing: bool,
+}
+
+impl FrameSummary {
+    /// Classify this frame against the one on the panel — the
+    /// [`FrameChange`] the refresh policy consumes.
+    ///
+    /// The split is "would a user read this as a different screen?":
+    /// **content** is the title or the transport state (a new track, play↔pause
+    /// — a materially different frame, and the natural moment to clear
+    /// ghosting); **minor** is the progress/volume/battery readouts moving
+    /// inside an otherwise-identical frame.
+    fn change_from(&self, panel: &Self) -> FrameChange {
+        FrameChange {
+            content: self.title != panel.title || self.playing != panel.playing,
+            minor: self.elapsed_s != panel.elapsed_s
+                || self.volume_pct != panel.volume_pct
+                || self.battery_pct != panel.battery_pct,
+        }
+    }
 }
 
 impl<
@@ -144,6 +190,8 @@ impl<
             display,
             volume: 1.0,
             volume_step: config.volume_step,
+            refresh: RefreshDecider::new(),
+            panel_frame: None,
         }
     }
 
@@ -273,29 +321,44 @@ impl<
         self.player.state()
     }
 
-    /// Render the Now-Playing screen — the only screen Phase 2a has — to
-    /// the owned [`Display`]: build a [`NowPlayingView`] from the player's
-    /// and power service's current state, draw it via
-    /// [`now_playing::render`], then commit the frame with
-    /// [`EinkRefresh::full_refresh`](crate::display::EinkRefresh::full_refresh).
+    /// Render the Now-Playing screen — the only screen Phase 2a has — to the
+    /// owned [`Display`], and commit it to the panel **only if the refresh
+    /// policy says it's worth it**.
     ///
-    /// Not called from [`tick`](Self::tick) and not on any schedule of its
-    /// own: a full e-ink refresh is comparatively slow (hundreds of ms to a
-    /// few seconds — see `DisplaySpec::full_refresh_duration`), so *when* to
-    /// pay for one is a UI-scheduler decision a later phase will drive, not
-    /// something every scheduler period should do unconditionally. A caller
-    /// invokes this explicitly whenever the screen should reflect new
-    /// state.
+    /// Builds a [`NowPlayingView`] from the player's and power service's current
+    /// state, draws it through an [`eink_ui`] `DirtyTracker` (which measures the
+    /// rectangle the draw touched), then asks
+    /// [`RefreshDecider`](crate::display::refresh::RefreshDecider) whether that
+    /// earns a full refresh, a partial refresh of the dirty region, or nothing —
+    /// see `display::refresh`'s module docs for the rules, and the returned
+    /// [`RefreshAction`] for what this call actually did.
+    ///
+    /// # Why this is not just `full_refresh()`
+    /// It used to be: every `render` ran a full-panel refresh. On this panel
+    /// that waveform takes **3 s**, and `firmware::step` calls `render` on a
+    /// timer — so the shipped loop asked for a 3-second flash far more often
+    /// than one could complete, at ~34 mA of panel current against the battery
+    /// model's budget of a fraction of that. The policy is what makes the
+    /// elapsed-time readout affordable: a progress tick is a *partial* refresh
+    /// (300 ms, no flash), rate-limited, and a full refresh happens only on a
+    /// materially new frame or to clear accumulated ghosting.
+    ///
+    /// # Draw cost vs refresh cost
+    /// This always redraws the frame (layout + widgets into the buffer) even
+    /// when the policy then declines to commit it; only the *panel* refresh is
+    /// conditional. Callers that want to skip the draw too should gate on
+    /// [`firmware::RENDER_PERIOD_MS`](crate::firmware::RENDER_PERIOD_MS), which
+    /// `firmware::step` does.
     ///
     /// The track title has no real metadata source yet (no tag reading
     /// exists above [`Storage`] today) — it's a placeholder `"Track N"`
     /// (1-based queue position), or `"No Track"` with nothing loaded.
     ///
     /// # Errors
-    /// Whatever [`now_playing::render`] or
-    /// [`full_refresh`](crate::display::EinkRefresh::full_refresh) returns
-    /// — see [`DisplayError`].
-    pub fn render(&mut self) -> Result<(), DisplayError> {
+    /// Whatever [`now_playing::render`] or the chosen
+    /// [`EinkRefresh`](crate::display::EinkRefresh) call returns — see
+    /// [`DisplayError`].
+    pub fn render(&mut self, now_ms: u64) -> Result<RefreshAction, DisplayError> {
         let mut title: String<24> = String::new();
         match self.player.current() {
             Some(pos) => {
@@ -325,8 +388,55 @@ impl<
             playing: self.player.state() == DeckState::Playing,
         };
 
-        now_playing::render(&mut self.display, &view)?;
-        self.display.full_refresh()
+        // Summarize at RENDERED granularity (see `FrameSummary`) so a change
+        // too small to print doesn't cost a refresh.
+        let frame = FrameSummary {
+            title: title.clone(),
+            elapsed_s: view.elapsed_s,
+            volume_pct: (view.volume.clamp(0.0, 1.0) * 100.0) as u32,
+            battery_pct: view.battery_permille / 10,
+            playing: view.playing,
+        };
+        let change = match &self.panel_frame {
+            // Nothing on the panel: the decider forces a full refresh anyway,
+            // but call it a content change so the two agree.
+            None => FrameChange {
+                content: true,
+                minor: false,
+            },
+            Some(panel) => frame.change_from(panel),
+        };
+
+        // Draw through the tracker to learn the dirty rectangle a partial
+        // refresh would need. NOTE: `now_playing::render` clears the whole
+        // frame first, so today that rectangle is the full panel — a partial
+        // refresh of everything, which is still 300 ms instead of 3 s and
+        // flash-free. Shrinking it needs the screen to redraw only changed
+        // widgets (or a previous-framebuffer diff, which `eink_ui::refresh`
+        // flags as its own planned refinement); the policy here is already
+        // region-shaped for when that lands.
+        let mut tracker = DirtyTracker::new(&mut self.display);
+        now_playing::render(&mut tracker, &view)?;
+        let dirty = tracker.into_dirty().as_rectangle();
+
+        let action = self.refresh.decide(now_ms, change, dirty);
+        match action {
+            RefreshAction::None => {}
+            RefreshAction::Partial(area) => self.display.partial_refresh(area)?,
+            RefreshAction::Full => self.display.full_refresh()?,
+        }
+        // Only a performed refresh changes what the panel shows.
+        if action != RefreshAction::None {
+            self.panel_frame = Some(frame);
+        }
+        Ok(action)
+    }
+
+    /// The refresh policy's current state — ghosting accumulator and last
+    /// refresh time. Exposed for tests/telemetry; a driver doesn't need it.
+    #[must_use]
+    pub fn refresh_state(&self) -> &RefreshDecider {
+        &self.refresh
     }
 }
 
@@ -754,12 +864,12 @@ mod tests {
             // Nothing pumped yet this run -- `render` must still succeed
             // (title falls back to "No Track" per its docs) rather than
             // panicking on an absent `current()`/`decode_info()`.
-            assert!(app.render().is_ok());
+            assert!(app.render(0).is_ok());
 
             // After a tick the engine has auto-loaded track 0; `render` must
             // still succeed with a real decode chain behind it.
             app.tick(0);
-            assert!(app.render().is_ok());
+            assert!(app.render(0).is_ok());
         });
     }
 }
