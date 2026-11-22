@@ -26,8 +26,8 @@ use soul_audio_core::formats::caf::CafDecoder;
 use soul_audio_core::formats::matroska::MatroskaDecoder;
 use soul_audio_core::formats::mp3::Mp3Decoder;
 use soul_audio_core::formats::{
-    aac::AacDecoder, aiff::AiffDecoder, alac::AlacDecoder, flac::FlacDecoder, opus::OpusDecoder,
-    wav::WavDecoder, wavpack::WavpackDecoder,
+    aiff::AiffDecoder, alac::AlacDecoder, flac::FlacDecoder, opus::OpusDecoder, wav::WavDecoder,
+    wavpack::WavpackDecoder,
 };
 use soul_audio_core::{AnyDecoder, Deck, SampleFormat, Sink, SinkError, SliceSource, StreamInfo};
 use soul_audio_engine::{Engine, LinearSequencer};
@@ -536,11 +536,10 @@ const ANY_DECODER_VARIANT_CEILING: usize = 64 * 1024;
 fn any_decoder_variant_inline_footprint_roster() {
     // `Mp3Decoder` takes no `P` (it externalizes nothing); the rest are
     // instantiated exactly as `AnyDecoder` instantiates them.
-    let variants: [(&str, usize); 10] = [
+    let variants: [(&str, usize); 9] = [
         ("matroska", size_of::<MatroskaDecoder<Src, P>>()),
         ("mp3", size_of::<Mp3Decoder<Src>>()),
         ("opus", size_of::<OpusDecoder<Src, P>>()),
-        ("aac", size_of::<AacDecoder<Src, P>>()),
         ("alac", size_of::<AlacDecoder<Src, P>>()),
         ("caf", size_of::<CafDecoder<Src, P>>()),
         ("wav", size_of::<WavDecoder<Src>>()),

@@ -467,7 +467,6 @@ Matroska-FLAC path fully decomposed:
 | MatroskaOpus | 41,832 | | `MatroskaDemuxer` (post-§9) | 9,360 |
 | OpusDecoder | 41,000 | | `FlacDecoder.bytes` | 4,096 |
 | AlacDecoder | 25,832 | | `MatroskaFlacReader.codec_private` | 1,024 |
-| AacDecoder | 25,816 | | | |
 
 ### The staircase, and the floor
 
@@ -610,3 +609,52 @@ Bluetooth: [Microchip BM83 datasheet](https://ww1.microchip.com/downloads/en/Dev
 [IS2083/BM83 applications design guide](https://ww1.microchip.com/downloads/aemDocuments/documents/WSG/ApplicationNotes/ApplicationNotes/AN3118-IS2083-BM83-Bluetooth-Applications-Design-Guide-DS00003118.pdf) ·
 [EE Times: streaming audio, battery life and music quality](https://www.eetimes.com/streaming-audio-how-to-optimize-battery-life-and-music-quality/) ·
 [Silicon Labs: developing Bluetooth audio devices](https://www.silabs.com/documents/public/presentations/Developing-Bluetooth-Audio.pdf)
+
+## 12. Pin bumped to the AAC-gated rev (2026-11-22)
+
+`main` moved while this analysis was in flight:
+[#41](https://github.com/soulaudio/soul-listener/pull/41) bumped
+`.github/soul-audio-core.pin` `8d8e4e0` → `9cf69fd` and **dropped AAC from the
+DAP firmware** — upstream now patent-gates it behind an `aac` cargo feature which
+this firmware does not enable.
+
+That broke §8's per-variant roster, which imported `formats::aac::AacDecoder`:
+the module does not exist in a build without the feature, so CI failed with
+`unresolved import soul_audio_core::formats::aac`. Caught by CI testing the
+*merge* of this branch with the moved `main`, not by any local run — the local
+sibling checkout still had AAC ungated. A good argument for reading the merge
+result rather than the branch.
+
+**And the reason matters more than the build break.** The gate is a *licensing*
+one: AAC is a Via LA patent ($15,000 one-time + $0.98 per unit), so
+`dap-arch-tests`' new `aac_license.rs` asserts `!soul_audio_core::AAC_ENABLED` —
+the patented decoder must never be linked into a shipped device. The roster was
+importing that decoder into exactly that firmware. Removing it is therefore not
+merely a compile fix; a per-variant footprint roster has no business naming a
+decoder the product is legally required not to ship, and the roster would have
+quietly kept it alive in the dependency graph.
+
+AAC removed from the roster. Re-measured against the **new pin**:
+
+| variant | inline bytes |
+|---|---|
+| **Matroska** | **59,760** (binder, unchanged) |
+| MP3 | 44,240 |
+| Opus | 41,104 |
+| ALAC | 25,896 |
+| CAF | 25,784 |
+| WAV | 18,584 |
+| FLAC | 12,472 |
+| AIFF | 104 |
+| WavPack | 112 |
+
+Dropping AAC does not move the binding constraint — AAC was 25,816 B, far below
+Matroska — so every conclusion in §8–§11 survives. Clippy and the full dap suite
+(140 tests) are clean against the new pin.
+
+**One thing to keep straight.** §9/§11's figures (`AnyDecoder` 51,488 / 45,344 B;
+tick 356 / 344 KiB) are *with soul-audio-core PRs #111 and #113 applied*. The
+pin does not contain them, so the DAP's shipping baseline today is the 59,760 B
+above and a 415 KiB tick. Those wins land in the firmware only when the pin is
+bumped again — step 2 of §9's sequencing, now one bump further along than when
+it was written.
