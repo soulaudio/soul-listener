@@ -69,7 +69,7 @@ jobs:
     name: Format
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
 
       - uses: dtolnay/rust-toolchain@1.87
         with:
@@ -97,7 +97,7 @@ jobs:
     name: cargo-deny
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
 
       # dap/ path-deps soul-audio-core as a repo sibling. Run cargo-deny NATIVELY
       # (not EmbarkStudios/cargo-deny-action, which runs in a Docker container that
@@ -136,7 +136,7 @@ jobs:
     name: Architecture boundaries
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
 
       - uses: dtolnay/rust-toolchain@1.87
 
@@ -197,7 +197,7 @@ jobs:
       run:
         working-directory: dap/board-h7a3
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
 
       # The dap workspace path-deps soul-audio-core as a repo sibling.
       - uses: ./.github/actions/checkout-soul-audio-core
@@ -243,7 +243,7 @@ jobs:
       run:
         working-directory: dap
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
 
       # `cargo fmt --all` loads the workspace manifest, which path-deps
       # soul-audio-core — it must exist on disk even for a format-only job.
@@ -274,7 +274,7 @@ jobs:
       run:
         working-directory: dap
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
 
       # The dap workspace path-deps soul-audio-core as a repo sibling.
       - uses: ./.github/actions/checkout-soul-audio-core
@@ -317,7 +317,7 @@ jobs:
       run:
         working-directory: dap
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
 
       # The dap workspace path-deps soul-audio-core as a repo sibling.
       - uses: ./.github/actions/checkout-soul-audio-core
@@ -351,7 +351,7 @@ jobs:
     name: forbid(unsafe_code) coverage
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
 
       - name: Run the forbid-unsafe coverage gate
         run: bash tools/check-forbid-unsafe.sh
@@ -394,7 +394,7 @@ jobs:
     name: MCU stack budget (Cortex-M7, static)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
 
       # tools/mcu-stackprobe path-deps soul-audio-core as a repo sibling.
       - uses: ./.github/actions/checkout-soul-audio-core
@@ -435,7 +435,7 @@ jobs:
     name: MCU stack budget (Cortex-M7, dynamic/QEMU)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
 
       # tools/mcu-stackprobe path-deps soul-audio-core as a repo sibling.
       - uses: ./.github/actions/checkout-soul-audio-core
@@ -483,7 +483,7 @@ jobs:
     name: Unused dependencies
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
 
       # @stable, not @1.87: cargo-machete's recent releases need rustc >= 1.88.
       - uses: dtolnay/rust-toolchain@stable
@@ -514,7 +514,7 @@ jobs:
     name: All crates opt into workspace lints
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
 
       - name: Verify workspace lint opt-in
         run: |
@@ -568,7 +568,7 @@ jobs:
     name: Supply chain security
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
 
       # @stable, not @1.87: cargo-audit's recent releases need rustc >= 1.88.
       - uses: dtolnay/rust-toolchain@stable
@@ -605,7 +605,7 @@ jobs:
     name: Verify todo/unimplemented workspace lints are configured
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
 
       - name: Verify todo-deny workspace lint is configured
         run: |
@@ -621,7 +621,7 @@ jobs:
     name: Verify Cargo.lock is committed
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
 
       - name: Verify Cargo.lock exists (not gitignored)
         run: |
@@ -658,7 +658,7 @@ jobs:
       run:
         working-directory: eink-ui
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
 
       - uses: dtolnay/rust-toolchain@stable
         with:
@@ -674,7 +674,7 @@ jobs:
       run:
         working-directory: eink-ui
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
 
       - uses: dtolnay/rust-toolchain@stable
         with:
@@ -694,7 +694,7 @@ jobs:
       run:
         working-directory: eink-ui
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
 
       - uses: dtolnay/rust-toolchain@stable
         with:
@@ -717,7 +717,7 @@ jobs:
       run:
         working-directory: eink-ui
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
 
       - uses: dtolnay/rust-toolchain@stable
 
@@ -742,7 +742,7 @@ jobs:
     name: eink-ui dependency boundary
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
 
       - name: eink-ui must not depend on any product crate
         run: |
@@ -769,7 +769,7 @@ jobs:
     name: soul-audio-core pin drift (informational)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
 
       - name: Report pin vs soul-audio-core main
         run: |
