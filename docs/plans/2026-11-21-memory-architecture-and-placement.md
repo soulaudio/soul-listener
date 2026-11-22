@@ -772,3 +772,89 @@ ever be lowered against a fresh measurement, never to make a static fit.
 It also means the 592 KiB "board headroom" figure quoted throughout this doc and
 the reserve are two different things: the headroom is what is left after the
 statics, the reserve is what we *promise* to leave. Only the reserve moved.
+
+## 14. The 85 KiB spread was the compiler — and the gate was never reproducible (2026-11-22)
+
+§13 closed with an open item: explain the 85 KiB gap between CI's 308 KiB tick
+and a local 393 KiB at byte-identical content, and do not tighten the tick
+budget until it is explained. It is explained.
+
+**It was the rustc version, and nothing else.** CI's dynamic job ran
+`dtolnay/rust-toolchain@stable`, which resolved to **1.100.0** (2026-11-09).
+The local default was **1.95.0** (2026-04-14). Re-running the probe locally
+under 1.100.0 reproduces CI *exactly* — 308 KiB, 316,056 B to the byte, with
+every per-format value identical (`wav=64 mka-flac=219 wavpack=49
+opus-webm=171 alac-caf=47`) and the same `probe-total(ctx)`.
+
+| rustc | whole tick | worst open |
+|---|---|---|
+| 1.95.0 (2026-04-14) | **393 KiB** | 222 KiB |
+| 1.100.0 (2026-11-09) | **308 KiB** | 219 KiB |
+
+So the probe is not noisy — it is perfectly deterministic *given a compiler*.
+Seven months of inlining and frame-layout changes moved the whole-tick figure
+27%. The isolated decode probe barely moved (222 → 219), which is why the two
+disagreed: the whole-tick probe measures through the `App::tick` → `pump` →
+`poll_open` wrapper chain, and whether those caller frames survive or get
+inlined away is exactly what changed.
+
+### The actual defect was in the gate, not the measurement
+
+A gated number computed by a **floating** toolchain is not a gate. Before this,
+a new stable release could move `DYNAMIC_TICK_BUDGET_KIB`'s subject under the
+repo with no source change — in either direction: silently granting slack, or
+failing CI for a reason that has nothing to do with the firmware. And a
+contributor running the script locally measured whatever their default
+toolchain happened to be, which is how the 393 KiB reading appeared in the
+first place and nearly got written into the repo as the budget.
+
+The repo's own policy already said not to do this. `ci.yml`'s header: *"pinned
+to a specific stable release for reproducible builds"*. Every MSRV job pins
+`@1.87`. The **one job whose output is a number other gates enforce** was the
+one left on `@stable`.
+
+Fixed in two places:
+
+- **`tools/mcu-stackprobe/rust-toolchain.toml`** (new) pins `1.100.0` +
+  `thumbv7em-none-eabihf`. Both probe scripts `cd` into that directory before
+  building, so this governs CI *and* a local run — the measurement is now the
+  same number everywhere. It is scoped to that workspace deliberately: a
+  repo-root pin would override the `@1.87` MSRV jobs and silently stop them
+  checking the MSRV, and it does not touch the static `-Z emit-stack-sizes`
+  gate, which selects `+nightly` explicitly.
+- **`ci.yml`**'s dynamic job pins `@1.100.0` to match, so the action does not
+  download a second toolchain.
+
+### Which let the budgets close properly
+
+With compiler drift removed, the margins only have to cover real code growth:
+
+| gate | §13 | now | measured | margin |
+|---|---|---|---|---|
+| `DYNAMIC_STACK_BUDGET_KIB` | 288 | **256** | 219 | ~17% |
+| `DYNAMIC_TICK_BUDGET_KIB` | 416 | **352** | 308 | ~14% |
+| `BOARD_STACK_RESERVE` / `STACK_RESERVE_BYTES` | 416 KiB | **352 KiB** | 308 | lockstep |
+
+Net against where this roadmap started: the tick budget went **480 → 352 KiB**
+and the open-transient budget **384 → 256 KiB**, both now sitting on a
+reproducible measurement rather than a forecast. The reserve dropping to
+352 KiB frees **128 KiB** of AXI-SRAM for Phase E's statics.
+
+### The method note worth keeping
+
+§13 wrote a rule, then had to retract it one commit later, then it was the
+retraction that turned out to be incomplete too:
+
+1. *"Set the ratchet only from CI."* Wrong — fails on a contributor's machine.
+2. *"Size it above the highest reading any environment produces."* Safe, but it
+   treats irreproducibility as a fact of life and pays for it in permanent slack
+   (416 instead of 352).
+3. **What was actually required: make the measurement reproducible, then ratchet
+   to it.** An irreproducible measurement is a bug in the gate, not a tolerance
+   to budget around.
+
+The intermediate step was not wasted — shipping 416 was the right call while the
+spread was unexplained, because the alternative was a gate that is green in CI
+and red locally. But "I cannot reproduce this number" should have read as *fix
+the harness*, not *widen the budget*, and it took measuring the same source
+under two compilers to see it.

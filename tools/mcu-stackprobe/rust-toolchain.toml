@@ -1,0 +1,35 @@
+# Pins the toolchain the DYNAMIC stack probes measure with.
+#
+# This is not a style or MSRV pin — it is part of the measurement. The QEMU
+# probes report a stack high-water that the CI gates then enforce as a number
+# (`DYNAMIC_STACK_BUDGET_KIB`, `DYNAMIC_TICK_BUDGET_KIB`,
+# `BOARD_STACK_RESERVE`/`STACK_RESERVE_BYTES`), and that number depends on the
+# compiler: measured on the SAME source at pin c0c35c38, the whole-firmware-tick
+# transient is
+#
+#   rustc 1.95.0  (2026-04-14) -> 393 KiB
+#   rustc 1.100.0 (2026-11-09) -> 308 KiB
+#
+# — a 27% spread from inlining/frame-layout changes alone. The isolated decode
+# probe moves far less (222 -> 219 KiB) but is pinned by the same file.
+#
+# Without this pin the gate was not reproducible in either direction: CI ran
+# `dtolnay/rust-toolchain@stable`, so a new stable release could move the gated
+# number under the repo with no source change, and a contributor running the
+# script locally measured whatever their default toolchain gave (which is how a
+# 393 KiB local reading first appeared against CI's 308). The repo's own
+# toolchain policy — see `.github/workflows/ci.yml`'s header, "pinned to a
+# specific stable release for reproducible builds" — already said to do this;
+# the dynamic measurement job was the one place it had not been applied.
+#
+# Both probe scripts `cd` into this directory before building, so this file
+# governs them. It does NOT affect the static `-Z emit-stack-sizes` gate
+# (`check-stack.sh` selects `+nightly` explicitly, which overrides this file) or
+# any other workspace — `tools/mcu-stackprobe` is its own workspace.
+#
+# Bumping this is a DELIBERATE act: re-run both probes, expect the budgets to
+# move, and update them in the same commit. A gate failing because the compiler
+# changed is the intended signal, not noise to silence.
+[toolchain]
+channel = "1.100.0"
+targets = ["thumbv7em-none-eabihf"]

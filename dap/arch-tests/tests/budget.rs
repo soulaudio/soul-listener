@@ -908,25 +908,27 @@ fn component_footprint_roster() {
 /// check on `_stack_start`/`__sheap`.)
 ///
 /// # The reserve must match what the stack actually measures
-/// Reserve = **416 KiB**, the budget `tools/mcu-stackprobe/check-tick-qemu.sh`
-/// enforces (`DYNAMIC_TICK_BUDGET_KIB`), which covers both readings of the
-/// post-pin-bump whole-firmware-tick worst case (**CI 308 KiB, local 393 KiB**).
+/// Reserve = **352 KiB**, the budget `tools/mcu-stackprobe/check-tick-qemu.sh`
+/// enforces (`DYNAMIC_TICK_BUDGET_KIB`), against a measured whole-firmware-tick
+/// worst case of **308 KiB** under the compiler that probe now pins.
 ///
 /// This was **256 KiB**, taken from the memory/battery design doc's
 /// open-transient budget — but that figure predates the dynamic measurements and
 /// was *below both of them* (then 297 KiB isolated / 413 KiB whole-tick). Two
 /// gates reserving 256 KiB while a third enforced 480 KiB meant this check
 /// reported ~345 KB "to spare" that the real stack would have run straight into.
-/// Corrected 2026-11-21, then ratcheted 480 -> 416 KiB on 2026-11-22 when the
-/// pin bump to soul-audio-core #111 + #113 took CI's measured tick to 308 KiB.
+/// Corrected 2026-11-21, then ratcheted 480 -> 416 -> 352 KiB on 2026-11-22:
+/// the pin bump to soul-audio-core #111 + #113 took the measured tick to
+/// 308 KiB, and pinning the probe's compiler let the budget close on it.
 ///
-/// Not ratcheted all the way to CI's figure, because the tick probe does not
-/// reproduce across environments: at byte-identical content CI reads 308 KiB
-/// and a local NixOS/rustc-1.95 run reads 393 KiB (27% apart), while the
-/// isolated decode probe agrees within 1.4%. A budget sized to 308 would be
-/// green in CI and red on a contributor's machine, so this covers the higher
-/// reading. The isolated decode budget IS ratcheted to its measurement (288
-/// KiB over 219/222) because that probe is reproducible. See
+/// The intermediate 416 is worth knowing about. The tick figure first looked
+/// irreproducible — CI 308 KiB vs 393 KiB locally at byte-identical content,
+/// 27% apart, where the isolated decode probe differed by 1.4% — so the budget
+/// was set above the higher reading rather than risk a gate that is green in CI
+/// and red on a contributor's machine. The cause was the rustc version alone
+/// (1.95.0 vs 1.100.0); matching it reproduces CI to the byte. The probe now
+/// pins its compiler in `tools/mcu-stackprobe/rust-toolchain.toml`, so these
+/// budgets track real code growth instead of whatever stable shipped last. See
 /// `docs/plans/2026-11-21-memory-architecture-and-placement.md`.
 ///
 /// Keep this in lockstep with `check-tick-qemu.sh`'s budget and with
@@ -943,12 +945,11 @@ fn board_static_footprint_leaves_stack_room_in_linked_axi_sram() {
     // memory.x's only linked RAM region: AXI SRAM @ 0x2400_0000.
     const AXI_SRAM_LINKED: usize = 1024 * 1024;
     // Stack headroom to keep clear above all board statics. MEASURED, not
-    // assumed: `check-tick-qemu.sh`'s 416 KiB budget, which covers both readings
-    // of the post-pin-bump whole tick (CI 308 KiB, local 393 KiB — see that
-    // script's reproducibility caveat). Ratcheted from 480 by the pin bump to
-    // soul-audio-core #111 + #113.
+    // assumed: `check-tick-qemu.sh`'s 352 KiB budget over a 308 KiB measured
+    // whole tick, under the compiler that probe pins (see its
+    // rust-toolchain.toml). Ratcheted 480 -> 416 -> 352 on 2026-11-22.
     // Keep in lockstep with board-h7a3/src/main.rs's STACK_RESERVE_BYTES.
-    const BOARD_STACK_RESERVE: usize = 416 * 1024;
+    const BOARD_STACK_RESERVE: usize = 352 * 1024;
 
     // The board's exact App (PRELOAD = 0, Pcm = &'static mut [i32]) and the one
     // decoder-scratch pool it hands out -- the two statics that dominate its RAM.
