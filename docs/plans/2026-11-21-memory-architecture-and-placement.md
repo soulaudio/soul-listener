@@ -492,18 +492,94 @@ the cheap one; what is left is not cheap.
 | Externalize `MatroskaFlacReader.frame` (28,672 B) | 7,312 B (capped by MP3) | **Phase A3's byte-arena seam.** The shared scratch is `[i32]`, this buffer is `[u8]`, and `#![forbid(unsafe_code)]` rules out reinterpreting one as the other. Needs either a second owned `B: AsMut<[u8]>` parameter on `open`/`open_seekable` (API change rippling to every caller and repo) or streaming the SimpleBlock instead of buffering it (demuxer-interface change across every codec path). Note the 28 KiB buffer only buys 7,312 B — the rest is absorbed by MP3. |
 | Thread the scratch into `Mp3Decoder` (`.pcm` 9,216 B inline) | 9,216 B off MP3 | **Premature.** MP3 is not the binder, so this pays nothing until Matroska is below it. Worth noting that MP3 is the *only* compressed format that takes no `P` — every other codec already externalizes its PCM carry buffer. |
 
-### Recommendation
+### Recommendation, and what was then taken
 
-Stop here unless one of those tradeoffs is wanted. The honest summary is that
-§9 took the only lever that was pure waste (a Vorbis-sized buffer in a profile
-that cannot decode Vorbis through `AnyDecoder`), and the remaining ~73 KiB costs
-either a format-support decision, a decoder-logic rewrite, or a cross-repo API
-change — for a stack that already fits its budget with 124 KiB to spare
-(356 KiB against the 480 KiB ratchet, 592 KiB board headroom).
+The no-downside option on that list — the `MAX_SEEK_POINTS` subsampling fix —
+**was done**: soul-audio-core PR
+[#113](https://github.com/soulaudio/soul-audio-core/pull/113). See §11.
 
-The cheapest *correct* next step, if one is wanted, is the `MAX_SEEK_POINTS`
-subsampling fix: it improves seek coverage while reducing memory, so it is the
-only option on the list with no downside — just more work than a constant.
+What remains after it all carries a cost: a format-support decision
+(`MAX_FLAC_FRAME`), a cross-repo API change (the byte arena), or work that pays
+nothing yet (`Mp3Decoder`). **Recommend stopping there** unless one of those
+tradeoffs is actively wanted — the stack now fits with 136 KiB to spare
+(344 KiB against the 480 KiB ratchet; 592 KiB of board headroom).
+
+## 11. Second upstream slice — seek-table subsampling (2026-11-22)
+
+soul-audio-core PR [#113](https://github.com/soulaudio/soul-audio-core/pull/113),
+branch `perf/flac-seektable-subsample`. Independent of #111 in content, but
+*stacked* on [#112](https://github.com/soulaudio/soul-audio-core/pull/112) — a
+pre-existing `soul-audio-organize` shared-temp-dir test race that blocked its
+pre-push gate twice and turned out to be a real bug worth its own fix (see
+below).
+
+`FlacDemuxer` kept the **first** N seek points and dropped the rest, while the
+constant's doc claimed that meant "seeking stays correct, just coarser". It did
+not: past the cap everything was **unindexed**, so a seek into the tail of a long
+stream decode-discarded forward from the truncation point. It now retains an
+evenly-spaced subset spanning the whole table (the point count is known upfront
+from the SEEKTABLE block length, so a Bresenham selection keeps exactly
+`min(points, cap)`), and the cap drops 512 → 128 for **−6,144 B**.
+
+**Web research is what made 128 defensible rather than arbitrary.** The reference
+encoder's default is `-S 10s` — one point per ten seconds — so:
+
+| stream length | before | after |
+|---|---|---|
+| ≤ ~21 min (every ordinary track) | all points | **identical** |
+| 21–85 min | all points | coarser, full-span |
+| > ~85 min | **tail unindexed** | **full-span** |
+
+The common case is untouched; the case that changes most is the one that was
+broken. (Rockbox caps at 5000 — sensible with megabytes of RAM, where this array
+was 8,192 B of a 59,680 B `AnyDecoder`.)
+
+### Combined effect of #111 + #112
+
+The two cut different buffers, so they are additive (8,192 + 6,144):
+
+| | baseline | both |
+|---|---|---|
+| `size_of::<AnyDecoder>()` | 59,680 B | **45,344 B** (−24%) |
+| open — matroska-flac | 301 KiB | **220 KiB** |
+| open — opus-in-webm | 231 KiB | **170 KiB** |
+| open — wav / wavpack / alac | 81 / 71 / 69 | **64 / 48 / 46** |
+| **whole tick** | **415 KiB** | **344 KiB** (−71) |
+
+### A pre-existing test race, found by being blocked by it
+
+Pushing #113 failed its pre-push gate twice on `soul-audio-organize` tests with
+no relation to FLAC. Rather than bypass the gate, the mechanism turned out to be
+findable: `plan::tests` and `apply::tests` each declare their own
+`static N: AtomicU32` but build temp paths as `organize-test-{pid}-{tag}-{n}` in
+the same process and temp directory — and **both use the tags `src-move` and
+`dest-move`**, so the independent counters can mint the identical path. One test
+then populates the other's destination and the planner correctly reports
+`SkipDuplicate` where `Move` is expected.
+
+Deterministic repro (filtering to the two tests makes both counters start at
+zero): `cargo test -p soul-audio-organize --lib move_` fails 4/4 on main and
+passes 4/4 with the fix. Under the full suite it is intermittent, which is why it
+reads as noise — `xtask verify` fails on one or other of those two tests roughly
+one run in several, unrelated to whatever is being changed. Fixed in
+[#112](https://github.com/soulaudio/soul-audio-core/pull/112) by putting
+`module_path!()` in the directory name.
+
+Worth recording as a method note: "pre-existing flake, CI is the arbiter" was the
+right call on *attribution* but too passive as a stopping point. The mechanism
+cost ten minutes to find and converted a shrug into a two-line fix with a
+deterministic repro.
+
+### The multiplier decays — a correction to §8's model
+
+§8 measured the transient as ~7.8 *copies* of `AnyDecoder` and predicted
+reductions would scale by that factor. #111's 8,192 B did buy 59 KiB (~7×). This
+second 6,144 B adds only a further **12 KiB (~2×)**. Fewer frames are
+simultaneously live at the peak as the type shrinks, so the proportionality holds
+in *direction* but not as a constant — which is what approaching a floor looks
+like. The floor is the Opus cluster (~41 KB of CELT + SILK state): with both
+changes in, Matroska is 45,344 B and MP3 44,176 B, so the next reduction of any
+kind hands the binding constraint to MP3 and this staircase is done.
 
 ### Scope note
 The decoder work is a `soul-audio-core` change, so it lands behind the pin and
