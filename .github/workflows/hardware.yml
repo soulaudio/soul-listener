@@ -18,6 +18,33 @@
 
 name: Hardware
 
+# KNOWN BROKEN (2026-11-22), and not because of anything in this repo.
+#
+# Every `Module Check (*)` and the `Atopile ERC Check` job fails during atopile's
+# component-picker step, which calls atopile's REMOTE parts API at build time.
+# That request fails to resolve (socket.gaierror) on the runner, and atopile's own
+# error handling then crashes while unwrapping the exception:
+#
+#   faebryk/libs/picker/api/picker_lib.py:221  cause = cause.__cause__
+#   AttributeError: 'str' object has no attribute '__cause__'
+#
+# so the upstream bug hides the real (network) error. These jobs last passed in
+# Feb 2026 and have failed on every run since 2026-11-19.
+#
+# Consequences worth knowing:
+#   * This workflow is path-filtered (below), so it only runs when `hardware/**`
+#     or this file changes — which is why main looks green: it has never run
+#     there. Do not read a green main as these checks passing.
+#   * No status check is required on main (see the repo's branch protection), so
+#     these failures do not block merges; they show up as a PR's mergeStateStatus
+#     being UNSTABLE rather than CLEAN.
+#   * It makes any change to this file unverifiable, which is why the open
+#     actions/upload-artifact v4 -> v7 bump is parked instead of merged: the job
+#     fails before it ever reaches the upload step.
+#
+# Fixing it means making the picker not depend on a live API call in CI (atopile
+# supports a parts cache / lockfile for this) and/or upgrading past the
+# picker_lib exception-unwrapping bug.
 on:
   push:
     branches: [main]
