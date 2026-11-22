@@ -415,8 +415,8 @@ jobs:
   # mps2-an500` (a Cortex-M7 image) with guest-side stack-painting and measures how
   # far the stack ACTUALLY grew. tools/mcu-stackprobe/check-stack-qemu.sh gates the
   # worst transient across every exercised format against a regression-ratchet
-  # budget (DYNAMIC_STACK_BUDGET_KIB, default 384 KiB; current worst is the
-  # Matroska-FLAC episode at 297 KiB) AND the board's 592 KiB AXI-SRAM stack
+  # budget (DYNAMIC_STACK_BUDGET_KIB, default 288 KiB; current worst is the
+  # Matroska-FLAC episode at 219 KiB) AND the board's 592 KiB AXI-SRAM stack
   # headroom. A decoder/format change that balloons the real on-target stack fails
   # here, before hardware. (The static gate was wired long ago; QEMU was deferred
   # for needing a system package — `qemu-system-arm` — which this job apt-installs.)

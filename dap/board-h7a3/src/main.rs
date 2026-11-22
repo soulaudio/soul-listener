@@ -94,8 +94,9 @@ type Dap =
 /// On-target runtime stack high-water is now MEASURED, not just reasoned about:
 /// `tools/mcu-stackprobe` runs the real open->decode->pump path under QEMU
 /// (`mps2-an500`, Cortex-M7) with stack-painting. The worst-case track-open
-/// transient (Matroska-FLAC) is ~315 KiB of stack growth below the call site --
-/// it fits the 592 KiB headroom with ~277 KiB to spare. (An earlier revision of
+/// transient (Matroska-FLAC) is ~219 KiB of stack growth below the call site as
+/// of the pin bump to soul-audio-core #111 + #113 (it was ~297) -- it fits the
+/// 592 KiB headroom with ~373 KiB to spare. (An earlier revision of
 /// this note cited a ~1 MB figure from that harness; that was a measurement bug --
 /// it counted the probe's own `main` frame by measuring depth from the top of RAM
 /// instead of growth below the call site -- fixed 2026-11-19, see
@@ -104,16 +105,16 @@ type Dap =
 /// framebuffer, DMA audio rings), their statics eat into that 592 KiB headroom.
 /// `dap-arch-tests`' `board_static_footprint_leaves_stack_room_in_linked_axi_sram`
 /// guards that the board's dominant statics (this `App` + the decoder scratch)
-/// plus a 256 KiB stack reserve still fit the 1 MB AXI SRAM `memory.x` actually
-/// links (NOT the wider 1208 KB `USER_SRAM` the region budgets use) -- add any
-/// new large AXI-SRAM static to that accounting, or place it in the as-yet-
-/// unlinked AHB SRAM1/2/3 instead.
+/// plus the `STACK_RESERVE_BYTES` stack reserve still fit the 1 MB AXI SRAM
+/// `memory.x` actually links (NOT the wider 1152 KB `USER_SRAM` the region
+/// budgets use) -- add any new large AXI-SRAM static to that accounting, or
+/// place it in the as-yet-unlinked AHB SRAM1/2 instead.
 static APP_CELL: StaticCell<Dap> = StaticCell::new();
 
 /// **Compile-time** memory-budget guard — best-practice enforcement (fail the
 /// *build*, not just a host test): the board's dominant AXI-SRAM statics (`App`
-/// by value + the decoder scratch) plus a 256 KiB stack reserve must fit the
-/// single linked 1 MB AXI-SRAM region. This is the compile-time twin of
+/// by value + the decoder scratch) plus the `STACK_RESERVE_BYTES` stack reserve
+/// must fit the single linked 1 MB AXI-SRAM region. This is the compile-time twin of
 /// `dap-arch-tests`' runtime `board_static_footprint_leaves_stack_room_in_linked_axi_sram`
 /// guard: with it, a footprint regression that would leave too little stack
 /// can't even *link* the firmware. Add any new large AXI-SRAM static to this sum
@@ -121,21 +122,33 @@ static APP_CELL: StaticCell<Dap> = StaticCell::new();
 const AXI_SRAM_BYTES: usize = 1024 * 1024;
 /// Stack headroom kept clear above the board's statics, in bytes.
 ///
-/// **480 KiB — measured, not assumed**: `tools/mcu-stackprobe/check-tick-qemu.sh`
-/// enforces this budget against a whole-firmware-tick worst case of 413 KiB
-/// (decode-open plus `App::render` in one tick). This was 256 KiB, which was
-/// *below* both the 297 KiB isolated decode transient and the 413 KiB whole-tick
-/// figure — so the compile-time guard below would have permitted statics that the
-/// real stack runs into. Corrected 2026-11-21; keep in lockstep with
-/// `check-tick-qemu.sh` and `dap-arch-tests`' `BOARD_STACK_RESERVE`.
+/// **416 KiB — measured, not assumed**: `tools/mcu-stackprobe/check-tick-qemu.sh`
+/// enforces this budget against the whole-firmware-tick worst case (decode-open
+/// plus `App::render` in one tick). This was 256 KiB, which was *below* both the
+/// isolated decode transient and the whole-tick figure — so the compile-time
+/// guard below would have permitted statics that the real stack runs into.
+/// Corrected 2026-11-21; keep in lockstep with `check-tick-qemu.sh` and
+/// `dap-arch-tests`' `BOARD_STACK_RESERVE`.
+///
+/// Ratcheted 480 -> 416 KiB on 2026-11-22 by the pin bump to soul-audio-core
+/// #111 + #113. 416 rather than CI's measurement because that probe does not
+/// reproduce across environments: at identical content CI reads 308 KiB and a
+/// local run reads 393 KiB, so the reserve covers the HIGHER figure (see the
+/// caveat in `check-tick-qemu.sh`).
+///
+/// Note which way this cuts — lowering the reserve *frees* 64 KiB of AXI-SRAM
+/// for statics, so it loosens the assert below rather than tightening it. That
+/// is the intended direction (the placement doc's Phase E wants that room for a
+/// framebuffer and DMA rings), but it means this constant must only ever be
+/// lowered against a fresh measurement, never to make a static fit.
 /// See `docs/plans/2026-11-21-memory-architecture-and-placement.md`.
-const STACK_RESERVE_BYTES: usize = 480 * 1024;
+const STACK_RESERVE_BYTES: usize = 416 * 1024;
 const _: () = assert!(
     core::mem::size_of::<Dap>()
         + soul_audio_core::decoder_scratch_len() * core::mem::size_of::<i32>()
         + STACK_RESERVE_BYTES
         <= AXI_SRAM_BYTES,
-    "board static footprint (App + decoder scratch) + 256 KiB stack reserve exceeds the 1 MB \
+    "board static footprint (App + decoder scratch) + the 416 KiB stack reserve exceeds the 1 MB \
      AXI-SRAM — shrink a buffer or move a static to AHB SRAM1/2/3",
 );
 

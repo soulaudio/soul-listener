@@ -10,4 +10,4 @@
 # locally — this pin only governs CI.
 #
 # One line, the full 40-char SHA. Update with: tools/soul-audio-core-pin.sh --set <sha>
-9cf69fdb0ee6f53c7b04bb872d97e2c4c86ef015
+c0c35c381e63ee7b2761c9075ba6c54dfcc48722
