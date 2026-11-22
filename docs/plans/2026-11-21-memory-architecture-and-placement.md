@@ -443,6 +443,12 @@ step that exercises the change.
 
 ### Sequencing — the ratchets must NOT be tightened yet
 
+> **Done — see §13.** All four steps below were executed on 2026-11-22: #111,
+> #112 and #113 merged, the pin bumped to `c0c35c38`, and the budgets ratcheted
+> to 288/416 KiB against CI's post-bump measurement. The constraint this
+> section describes is exactly why the bump and the ratchet were separate
+> commits.
+
 soul-listener's CI builds the **pinned** soul-audio-core, which does not contain
 this change, so the current ratchet budgets (`DYNAMIC_STACK_BUDGET_KIB` 384,
 `DYNAMIC_TICK_BUDGET_KIB` 480) must stay as they are. Tightening them now would
@@ -500,8 +506,11 @@ The no-downside option on that list — the `MAX_SEEK_POINTS` subsampling fix �
 What remains after it all carries a cost: a format-support decision
 (`MAX_FLAC_FRAME`), a cross-repo API change (the byte arena), or work that pays
 nothing yet (`Mp3Decoder`). **Recommend stopping there** unless one of those
-tradeoffs is actively wanted — the stack now fits with 136 KiB to spare
-(344 KiB against the 480 KiB ratchet; 592 KiB of board headroom).
+tradeoffs is actively wanted — the stack now fits with room to spare. (This
+section predicted 344 KiB against the 480 KiB ratchet. CI measured **308 KiB**
+once the pin was bumped, now gated at **416 KiB** — sized above a local run's
+393 KiB rather than CI's figure, because that probe does not reproduce across
+environments; see §13.)
 
 ## 11. Second upstream slice — seek-table subsampling (2026-11-22)
 
@@ -658,3 +667,108 @@ pin does not contain them, so the DAP's shipping baseline today is the 59,760 B
 above and a 415 KiB tick. Those wins land in the firmware only when the pin is
 bumped again — step 2 of §9's sequencing, now one bump further along than when
 it was written.
+
+## 13. Pin bumped, and the ratchets closed on CI's numbers (2026-11-22)
+
+§9 step 2 and step 3, done — as **two** commits, deliberately.
+
+soul-audio-core #112, #111 and #113 are merged (`4d18d18`, `440a2bd`,
+`c0c35c38`) and `.github/soul-audio-core.pin` now names `c0c35c38`, so the DAP
+finally builds the sliced decoders instead of forecasting them.
+
+### What CI measured, before and after
+
+| probe | pin `9cf69fdb` | pin `c0c35c38` | delta |
+|---|---|---|---|
+| open — matroska-flac (worst) | 297 KiB | **219 KiB** | −78 |
+| open — opus-in-webm | 229 | **171** | −58 |
+| open — wav / wavpack / alac | 78 / 69 / 67 | **64 / 49 / 47** | −14 / −20 / −20 |
+| **whole firmware tick** | **414 KiB** | **308 KiB** | **−106** |
+
+New budgets:
+
+| gate | was | now | CI | local | basis |
+|---|---|---|---|---|---|
+| `DYNAMIC_STACK_BUDGET_KIB` | 384 | **288** | 219 | 222 | ratcheted to the measurement (+31%) |
+| `DYNAMIC_TICK_BUDGET_KIB` | 480 | **416** | 308 | **393** | sized above the *higher* reading |
+| `BOARD_STACK_RESERVE` / `STACK_RESERVE_BYTES` | 480 KiB | **416 KiB** | 308 | 393 | lockstep with the tick budget |
+
+### The tick probe does not reproduce across environments — so it is not ratcheted to CI
+
+This is the finding that changed the plan, and it was nearly missed.
+
+At **byte-identical content** (pin `c0c35c38`, sibling checkout at that exact
+rev) the two environments disagree:
+
+| probe | CI | local (NixOS, rustc 1.95.0) | spread |
+|---|---|---|---|
+| worst open transient | 219 KiB | 222 KiB | **1.4%** |
+| whole firmware tick | 308 KiB | **393 KiB** | **27.6%** |
+
+The first draft of this section set `DYNAMIC_TICK_BUDGET_KIB` to 360 — derived
+from CI's 308 while holding the old budget's ~16% margin. That would have been a
+gate that is **green in CI and red on a contributor's machine** (393 > 360): the
+exact trap the ratchet exists to avoid, arrived at by careful reasoning from one
+environment's numbers. 416 KiB clears the higher reading with ~6% to spare and
+still locks in 64 KiB of the win.
+
+The isolated decode probe *is* reproducible, so it IS ratcheted to its
+measurement. Treat the two probes differently until the spread is explained.
+
+**Open item (do not tighten the tick budget before closing it):** find the
+85 KiB. Both runs validate at `after_paint=0`, so neither measurement is
+unsound. The suspicious detail is `probe-total(ctx)`: CI reports 308 KiB —
+exactly equal to its tick figure — while locally it is 537 KiB against a
+393 KiB tick. That smells like a difference in how much caller context is live
+at the paint point (inlining of `App::tick`/`render` under a different rustc),
+not a difference in the firmware's real stack need. Until that is pinned down,
+CI's 308 KiB is **not** established as the on-target figure.
+
+### §11's combined-effect table was too pessimistic about the tick
+
+§11 predicted the two slices would take the tick 415 → 344 KiB (−71). CI
+measured 308 (−106). The open-path predictions were accurate (220 vs 219
+actual), so the error is specific to the whole-tick figure: §11 derived it by
+adding the isolated decode saving to a fixed tick overhead, but the wrapper
+frames the tick adds (`App::tick` → `AudioPlayer::pump` → `Engine::poll_open`)
+hold decoder-sized locals of their own, so they shrink with the type too. The
+saving compounds through the wrapper chain instead of sitting on top of it.
+Corrected above; §11's table left as written with this pointer, since the
+reasoning error is the useful part.
+
+### Why the bump and the ratchet are separate commits
+
+A local run of these probes does not reproduce CI's numbers. On identical
+content this machine read **435 KiB** where CI read **414** on the tick probe
+(~5%), while agreeing within ~1% on the isolated decode probe (300 vs 297) —
+and the per-format drift runs in *both* directions (local `wavpack` 65 vs CI 69,
+local `wav` 80 vs CI 78), so it is environment variance, not an offset that
+could be corrected for. The two environments also disagreed about the *size* of
+the saving (local −42 KiB on the tick, CI −106).
+
+Setting a blocking gate from the local figure would have put a budget in the
+repo that CI cannot reproduce — the same class of defect as §2's four
+"numbers that looked enforced and weren't". So the bump landed alone and CI
+measured the post-bump transient on its own runner.
+
+The first version of this rule read "the ratchet is only ever set from a CI run
+of the probe, never a local one." That is **wrong as stated**, and the 27%
+post-bump spread above is why: a budget set from CI alone fails on a
+contributor's machine. The rule that survives contact with the measurements is:
+
+> Ratchet to the measurement only where the probe is reproducible. Where it is
+> not, size the budget above the highest reading any supported environment
+> produces, and treat the spread itself as the bug to fix before tightening
+> further.
+
+### One consequence to keep in view
+
+Lowering `STACK_RESERVE_BYTES` 480 → 416 KiB *frees* 64 KiB of AXI-SRAM for
+statics — it loosens the board's compile-time assert rather than tightening it.
+That is the wanted direction (Phase E needs that room for a framebuffer and DMA
+rings), but it inverts the usual ratchet intuition, so the constant must only
+ever be lowered against a fresh measurement, never to make a static fit.
+
+It also means the 592 KiB "board headroom" figure quoted throughout this doc and
+the reserve are two different things: the headroom is what is left after the
+statics, the reserve is what we *promise* to leave. Only the reserve moved.

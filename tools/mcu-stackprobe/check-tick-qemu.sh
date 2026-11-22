@@ -10,10 +10,26 @@
 #
 # Why it matters: the board reaches the decoder construction THROUGH
 # App::tick → AudioPlayer::pump → Engine::poll_open, and those wrapper frames are
-# real on-target stack the isolated decode probe never counts. Measured whole-tick
-# worst is ~413 KiB, vs the isolated decode path's ~297 KiB — so this is the
-# number that actually answers "does the firmware fit its stack?" (413 KiB fits
-# the board's 592 KiB AXI-SRAM headroom with ~179 KiB to spare).
+# real on-target stack the isolated decode probe never counts. CI's measured
+# whole-tick worst is ~308 KiB, vs the isolated decode path's ~219 KiB — so this
+# is the number that actually answers "does the firmware fit its stack?" (and
+# even the higher 393 KiB local reading fits the board's 592 KiB AXI-SRAM
+# headroom).
+#
+# Those figures are post-pin-bump (soul-audio-core #111 + #113) as measured by
+# CI. They were 414/297 KiB before it; the two upstream slices took CI's whole
+# tick down by 106 KiB — more than the 71 KiB the placement doc predicted from
+# the isolated decode measurements, because the wrapper frames the tick adds
+# hold decoder-sized locals too, so they shrink with the type as well.
+#
+# CAVEAT — this probe is NOT reproducible across environments, and the budget
+# below is sized for that, not for CI alone. At byte-identical content (pin
+# c0c35c38) CI measures 308 KiB and a local NixOS/rustc-1.95 run measures
+# 393 KiB — 27% apart, where the isolated decode probe agrees within 1.4% (219
+# vs 222). The budget is therefore set above the HIGHER of the two, so the gate
+# cannot be green in CI and red on a contributor's machine. Tightening it toward
+# CI's 308 KiB requires explaining the 85 KiB spread first; until then the
+# ratchet here is deliberately looser than the measurement would allow.
 #
 # The `mcu-tickprobe` bin wires a real `App` exactly as board-h7a3/src/main.rs
 # does, except Storage is an in-memory Matroska-FLAC fixture (so the first tick
@@ -77,7 +93,7 @@ fi
 
 # Thresholds: a regression ratchet (tight) and the board's AXI-SRAM stack
 # headroom (hard safety floor). Both must hold.
-BUDGET_KIB="${DYNAMIC_TICK_BUDGET_KIB:-480}"
+BUDGET_KIB="${DYNAMIC_TICK_BUDGET_KIB:-416}"
 BOARD_HEADROOM_KIB=592
 echo "---"
 echo "whole-firmware-tick stack transient (growth below the call site): ${TICK_KIB} KiB"
