@@ -22,14 +22,24 @@
 # the isolated decode measurements, because the wrapper frames the tick adds
 # hold decoder-sized locals too, so they shrink with the type as well.
 #
-# CAVEAT — this probe is NOT reproducible across environments, and the budget
-# below is sized for that, not for CI alone. At byte-identical content (pin
-# c0c35c38) CI measures 308 KiB and a local NixOS/rustc-1.95 run measures
-# 393 KiB — 27% apart, where the isolated decode probe agrees within 1.4% (219
-# vs 222). The budget is therefore set above the HIGHER of the two, so the gate
-# cannot be green in CI and red on a contributor's machine. Tightening it toward
-# CI's 308 KiB requires explaining the 85 KiB spread first; until then the
-# ratchet here is deliberately looser than the measurement would allow.
+# REPRODUCIBILITY — this probe's number depends on the COMPILER, so the
+# toolchain is pinned in `rust-toolchain.toml` next to this script and the
+# budget below is set against that pinned measurement.
+#
+# The spread was found the hard way: at byte-identical content (pin c0c35c38) CI
+# measured 308 KiB and a local run measured 393 KiB — 27% apart, while the
+# isolated decode probe differed by only 1.4% (219 vs 222). It was not noise and
+# not the environment. CI ran rustc 1.100.0 and the local default was 1.95.0;
+# re-running locally under 1.100.0 reproduces CI EXACTLY, to the byte
+# (316,056 B), per-format values included. Inlining and frame layout changed
+# between those releases, and the whole-tick probe is far more sensitive to it
+# than the isolated decode path because it measures through the `App::tick` ->
+# `pump` -> `poll_open` wrapper chain, where the caller frames live or get
+# inlined away.
+#
+# So the gate is only meaningful with the compiler pinned — otherwise a new
+# stable release moves the gated number with no source change. See
+# `rust-toolchain.toml`.
 #
 # The `mcu-tickprobe` bin wires a real `App` exactly as board-h7a3/src/main.rs
 # does, except Storage is an in-memory Matroska-FLAC fixture (so the first tick
@@ -93,7 +103,7 @@ fi
 
 # Thresholds: a regression ratchet (tight) and the board's AXI-SRAM stack
 # headroom (hard safety floor). Both must hold.
-BUDGET_KIB="${DYNAMIC_TICK_BUDGET_KIB:-416}"
+BUDGET_KIB="${DYNAMIC_TICK_BUDGET_KIB:-352}"
 BOARD_HEADROOM_KIB=592
 echo "---"
 echo "whole-firmware-tick stack transient (growth below the call site): ${TICK_KIB} KiB"

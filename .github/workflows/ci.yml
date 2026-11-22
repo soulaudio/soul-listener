@@ -40,6 +40,12 @@
 #   dtolnay/rust-toolchain    @1.87    (pinned to a specific stable release for
 #                                       reproducible builds; update periodically
 #                                       to track new stable releases)
+#   dtolnay/rust-toolchain    @1.100.0 (the dynamic QEMU stack job only — its
+#                                       output is a GATED MEASUREMENT and the
+#                                       stack high-water depends on the compiler,
+#                                       so it must not float. Kept in step with
+#                                       tools/mcu-stackprobe/rust-toolchain.toml,
+#                                       which governs the probe builds.)
 
 name: CI
 
@@ -415,7 +421,7 @@ jobs:
   # mps2-an500` (a Cortex-M7 image) with guest-side stack-painting and measures how
   # far the stack ACTUALLY grew. tools/mcu-stackprobe/check-stack-qemu.sh gates the
   # worst transient across every exercised format against a regression-ratchet
-  # budget (DYNAMIC_STACK_BUDGET_KIB, default 288 KiB; current worst is the
+  # budget (DYNAMIC_STACK_BUDGET_KIB, default 256 KiB; current worst is the
   # Matroska-FLAC episode at 219 KiB) AND the board's 592 KiB AXI-SRAM stack
   # headroom. A decoder/format change that balloons the real on-target stack fails
   # here, before hardware. (The static gate was wired long ago; QEMU was deferred
@@ -434,7 +440,13 @@ jobs:
       # tools/mcu-stackprobe path-deps soul-audio-core as a repo sibling.
       - uses: ./.github/actions/checkout-soul-audio-core
 
-      - uses: dtolnay/rust-toolchain@stable
+      # Pinned, NOT @stable: this job's output is a gated measurement, and the
+      # measured stack high-water depends on the compiler (1.95.0 -> 393 KiB vs
+      # 1.100.0 -> 308 KiB on identical source). tools/mcu-stackprobe carries a
+      # rust-toolchain.toml with the same version, which is what actually governs
+      # the probe builds; this keeps the action from downloading a second
+      # toolchain. Bump both together, and re-measure the budgets when you do.
+      - uses: dtolnay/rust-toolchain@1.100.0
         with:
           targets: thumbv7em-none-eabihf
 

@@ -122,7 +122,7 @@ static APP_CELL: StaticCell<Dap> = StaticCell::new();
 const AXI_SRAM_BYTES: usize = 1024 * 1024;
 /// Stack headroom kept clear above the board's statics, in bytes.
 ///
-/// **416 KiB — measured, not assumed**: `tools/mcu-stackprobe/check-tick-qemu.sh`
+/// **352 KiB — measured, not assumed**: `tools/mcu-stackprobe/check-tick-qemu.sh`
 /// enforces this budget against the whole-firmware-tick worst case (decode-open
 /// plus `App::render` in one tick). This was 256 KiB, which was *below* both the
 /// isolated decode transient and the whole-tick figure — so the compile-time
@@ -130,25 +130,28 @@ const AXI_SRAM_BYTES: usize = 1024 * 1024;
 /// Corrected 2026-11-21; keep in lockstep with `check-tick-qemu.sh` and
 /// `dap-arch-tests`' `BOARD_STACK_RESERVE`.
 ///
-/// Ratcheted 480 -> 416 KiB on 2026-11-22 by the pin bump to soul-audio-core
-/// #111 + #113. 416 rather than CI's measurement because that probe does not
-/// reproduce across environments: at identical content CI reads 308 KiB and a
-/// local run reads 393 KiB, so the reserve covers the HIGHER figure (see the
-/// caveat in `check-tick-qemu.sh`).
+/// Ratcheted 480 -> 416 -> 352 KiB on 2026-11-22: first by the pin bump to
+/// soul-audio-core #111 + #113 (which took the tick 414 -> 308 KiB), then once
+/// the probe's compiler was pinned. The intermediate 416 existed because the
+/// measurement appeared irreproducible — CI read 308 KiB where a local run read
+/// 393 — so it covered the higher figure. That spread turned out to be the
+/// rustc version alone (1.95.0 vs 1.100.0, reproducible to the byte once
+/// matched), so `tools/mcu-stackprobe/rust-toolchain.toml` now pins it and the
+/// reserve can sit against the real number.
 ///
-/// Note which way this cuts — lowering the reserve *frees* 64 KiB of AXI-SRAM
+/// Note which way this cuts — lowering the reserve *frees* 128 KiB of AXI-SRAM
 /// for statics, so it loosens the assert below rather than tightening it. That
 /// is the intended direction (the placement doc's Phase E wants that room for a
 /// framebuffer and DMA rings), but it means this constant must only ever be
 /// lowered against a fresh measurement, never to make a static fit.
 /// See `docs/plans/2026-11-21-memory-architecture-and-placement.md`.
-const STACK_RESERVE_BYTES: usize = 416 * 1024;
+const STACK_RESERVE_BYTES: usize = 352 * 1024;
 const _: () = assert!(
     core::mem::size_of::<Dap>()
         + soul_audio_core::decoder_scratch_len() * core::mem::size_of::<i32>()
         + STACK_RESERVE_BYTES
         <= AXI_SRAM_BYTES,
-    "board static footprint (App + decoder scratch) + the 416 KiB stack reserve exceeds the 1 MB \
+    "board static footprint (App + decoder scratch) + the 352 KiB stack reserve exceeds the 1 MB \
      AXI-SRAM — shrink a buffer or move a static to AHB SRAM1/2/3",
 );
 

@@ -20,15 +20,16 @@
 # .github/workflows/ci.yml's `mcu-stack-budget-dynamic` job, which apt-installs
 # qemu-system-arm on the runner). Two thresholds, both enforced below:
 #   1. REGRESSION RATCHET — the worst measured per-format open transient must
-#      stay under DYNAMIC_STACK_BUDGET_KIB (default 288; current worst is the
-#      Matroska-FLAC episode at 219 KiB, so ~31% margin for codegen/upstream
-#      drift). Override the env var to ratchet DOWN as the transient shrinks.
-#      Ratcheted 384 -> 288 on 2026-11-22, when the upstream CodecPrivate and
-#      FLAC seek-table slices (soul-audio-core #111 + #113, picked up by the pin
-#      bump) took this episode 297 -> 219 KiB. The margin is deliberately held at
-#      the ~29% the 384 budget had rather than shaved to the measurement: a local
-#      run of this probe reads ~1% above CI's (300 vs 297 KiB at the same rev),
-#      so the budget has to absorb environment drift, not just real growth.
+#      stay under DYNAMIC_STACK_BUDGET_KIB (default 256; current worst is the
+#      Matroska-FLAC episode at 219 KiB, so ~17% margin for real code growth).
+#      Override the env var to ratchet DOWN as the transient shrinks.
+#      Ratcheted 384 -> 288 -> 256 on 2026-11-22: first when the upstream
+#      CodecPrivate and FLAC seek-table slices (soul-audio-core #111 + #113,
+#      picked up by the pin bump) took this episode 297 -> 219 KiB, then again
+#      once `rust-toolchain.toml` pinned the compiler. The margin could be cut
+#      to 17% precisely BECAUSE of that pin: it no longer has to absorb
+#      compiler drift, only real growth. Do not tighten it further without
+#      re-reading that file's note on what the pin is for.
 #   2. SAFETY FLOOR — the worst transient must also fit the board's AXI-SRAM
 #      stack headroom (592 KiB). Redundant while the budget < headroom, but kept
 #      explicit so raising the budget can never silently exceed the board.
@@ -133,7 +134,7 @@ fi
 
 # Thresholds: a regression ratchet (tight, catches drift early) and the board's
 # real AXI-SRAM stack headroom (the hard safety floor). Both must hold.
-BUDGET_KIB="${DYNAMIC_STACK_BUDGET_KIB:-288}"
+BUDGET_KIB="${DYNAMIC_STACK_BUDGET_KIB:-256}"
 BOARD_HEADROOM_KIB=592
 echo "---"
 echo "worst dynamic open transient (growth below the call site): ${WORST_KIB} KiB  (${WORST_WHICH})"
