@@ -34,9 +34,13 @@
 #   2. Get the commit SHA: git ls-remote https://github.com/<owner>/<repo> refs/tags/<tag>
 #   3. Update the SHA below and the version comment
 #
-# Current pins (as of 2026-02-20):
-#   actions/checkout          v4.2.2   11bd71901bbe5b1630ceea73d27597364c9af683
-#   Swatinem/rust-cache       v2.8.2   779680da715d629ac1d338a641029a2f4372abb5
+# Current pins (as of 2026-11-22):
+#   actions/checkout          v7.0.1   3d3c42e5aac5ba805825da76410c181273ba90b1
+#   Swatinem/rust-cache       v2.9.3   d1527c8f67ef9af357290475d4af4b0fab8f12e0
+#   actions/upload-artifact   v4.6.2   ea165f8d65b6e75b540449e92b4886f43607fa02
+#                                      (hardware.yml only; a v7.0.2 bump is open
+#                                       but cannot be validated — see below)
+#   atopile/setup-atopile     v1.8     a44779655197de0f408861581669f09b2145bc33
 #   dtolnay/rust-toolchain    @1.87    (pinned to a specific stable release for
 #                                       reproducible builds; update periodically
 #                                       to track new stable releases)
