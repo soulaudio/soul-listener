@@ -7,9 +7,9 @@
 //! # Method
 //! A global allocator wraps `std::alloc::System`, counting every
 //! `alloc`/`realloc` call while a process-wide `ARMED` flag is set. For each
-//! of the seven format bench fixtures (`dap-sim/benches/decode_rtf.rs`'s
-//! full WAV/FLAC/MP3/AAC/ALAC/Opus/WavPack fixture set — the DAP's whole
-//! shipped format range): open the file through `soul_audio_core::open_seekable`
+//! of the DAP's shipped decode formats — WAV/FLAC/MP3/ALAC/Opus/WavPack
+//! (AAC is patent-gated out of soul-audio-core, so it is neither decoded here
+//! nor on-device): open the file through `soul_audio_core::open_seekable`
 //! into a `Deck` (passthrough-rate, so no resampler is engaged — isolating
 //! the decoder's own allocation behaviour, which is this test's actual
 //! target), run an un-armed WARMUP batch of pumps (letting any one-time lazy
@@ -203,8 +203,9 @@ fn audio_path_steady_state_pump_allocates_zero_heap_bytes() {
                 include_bytes!("../../../../soul-audio-core/testdata/realmusic.flac");
             let mp3: &'static [u8] =
                 include_bytes!("../../../../soul-audio-core/testdata/realmusic.mp3");
-            let aac: &'static [u8] =
-                include_bytes!("../../../../soul-audio-core/testdata/realmusic-aac.m4a");
+            // AAC is patent-gated OUT of soul-audio-core (default-off `aac` feature,
+            // Via LA $15k + $0.98/unit) and never shipped on the DAP — there is no AAC
+            // decode path to no-alloc-check. Guard: dap/arch-tests/tests/aac_license.rs.
             let alac: &'static [u8] =
                 include_bytes!("../../../../soul-audio-core/testdata/realmusic-alac.m4a");
             let opus: &'static [u8] =
@@ -216,7 +217,6 @@ fn audio_path_steady_state_pump_allocates_zero_heap_bytes() {
             assert_steady_state_decode_allocates_nothing("wav", wav);
             assert_steady_state_decode_allocates_nothing("flac", flac);
             assert_steady_state_decode_allocates_nothing("mp3", mp3);
-            assert_steady_state_decode_allocates_nothing("aac", aac);
             assert_steady_state_decode_allocates_nothing("alac", alac);
             assert_steady_state_decode_allocates_nothing("opus", opus);
             assert_steady_state_decode_allocates_nothing("wavpack", wavpack);
