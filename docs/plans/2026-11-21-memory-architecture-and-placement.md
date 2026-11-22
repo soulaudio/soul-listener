@@ -402,6 +402,69 @@ planning on it.
 API design to agree first. It is one coherent upstream change — shrink the
 decoder structs — behind one pin bump.
 
+## 9. First upstream slice, done and measured (2026-11-22)
+
+soul-audio-core PR [#111](https://github.com/soulaudio/soul-audio-core/pull/111), branch
+`perf/matroska-codec-private-embedded`.
+
+`MatroskaDemuxer` kept its `CodecPrivate` in a **16 KiB inline array**, sized
+entirely for Vorbis's three setup headers. Everything else needs orders of
+magnitude less (`OpusHead` 19 B; AAC's `AudioSpecificConfig` a handful; FLAC's is
+independently capped at 1 KiB by `MatroskaFlacReader`). Under `embedded-profile`
+it is now **8 KiB**; desktop builds are untouched.
+
+The cap is derived, not chosen: `testdata/tone-vorbis.mka` carries a **4,286 B**
+`CodecPrivate`, so a first attempt at 2 KiB regressed
+`decode::open_decodes_matroska_vorbis_matches_ogg` — caught by the suite, then
+settled by reading the fixture's actual EBML element. 8 KiB clears it with ~1.9x
+headroom and declines anything larger as `Unsupported`, the same tradeoff class
+as `MAX_FLAC_FRAME`'s 48→28 KiB cap.
+
+| | before | after | Δ |
+|---|---|---|---|
+| `size_of::<AnyDecoder>()` | 59,680 B | **51,488 B** | −8,192 |
+| open — matroska-flac | 301 KiB | **250 KiB** | −51 |
+| open — opus-in-webm | 231 KiB | **182 KiB** | −49 |
+| open — wav | 81 | **70** | −11 |
+| open — wavpack | 71 | **54** | −17 |
+| open — alac-caf | 69 | **52** | −17 |
+| **whole tick** | **415 KiB** | **356 KiB** | **−59** |
+
+**The proportionality model is confirmed.** 8 KiB off the type bought 59 KiB of
+stack — a **7.2x multiplier** against the predicted ~7.8x. And every format
+improved, not just Matroska, because the shrink lands on the shared enum rather
+than one container path. §8's claim that "the lever is the type, not the API" is
+no longer a hypothesis.
+
+Upstream verification: `cargo xtask verify` green on soul-audio-core's **pinned
+1.93.1** (`rust-toolchain.toml`) — fmt, clippy `-D warnings`, **3,143 tests**,
+`no_std` thumbv7em cross-builds, including the `--features embedded-profile` test
+step that exercises the change.
+
+### Sequencing — the ratchets must NOT be tightened yet
+
+soul-listener's CI builds the **pinned** soul-audio-core, which does not contain
+this change, so the current ratchet budgets (`DYNAMIC_STACK_BUDGET_KIB` 384,
+`DYNAMIC_TICK_BUDGET_KIB` 480) must stay as they are. Tightening them now would
+make CI fail against the pin. The order is:
+
+1. merge soul-audio-core [#111](https://github.com/soulaudio/soul-audio-core/pull/111),
+2. bump `.github/soul-audio-core.pin` (`tools/soul-audio-core-pin.sh`),
+3. **then** ratchet the two budgets down to lock the win in,
+4. and re-check `any_decoder_variant_inline_footprint_roster` — Matroska at
+   51,488 B still binds (MP3 is 44,240 B), so the roster's expectation holds, but
+   the per-variant ceiling has ~14 KiB more headroom than it did.
+
+### What is left upstream
+The 28 KiB `MatroskaFlacReader::frame` SimpleBlock buffer is now the largest
+single inline array on the path. Externalizing it is roadmap **Phase A3** and
+needs the byte-arena seam A3 already names: the shared scratch is `[i32]` and
+this buffer is `[u8]`, and `#![forbid(unsafe_code)]` rules out reinterpreting
+one as the other. Options are a second owned `B: AsMut<[u8]>` scratch parameter
+on `open`/`open_seekable` (an API change rippling to every caller), or streaming
+the SimpleBlock payload instead of buffering it (a demuxer-interface change
+affecting every codec path). Neither is a two-line change; both are scoped work.
+
 ### Scope note
 The decoder work is a `soul-audio-core` change, so it lands behind the pin and
 needs that repo's full decode matrix green. It is deliberately **not** bundled
