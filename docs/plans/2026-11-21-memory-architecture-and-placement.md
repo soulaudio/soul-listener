@@ -455,15 +455,55 @@ make CI fail against the pin. The order is:
    51,488 B still binds (MP3 is 44,240 B), so the roster's expectation holds, but
    the per-variant ceiling has ~14 KiB more headroom than it did.
 
-### What is left upstream
-The 28 KiB `MatroskaFlacReader::frame` SimpleBlock buffer is now the largest
-single inline array on the path. Externalizing it is roadmap **Phase A3** and
-needs the byte-arena seam A3 already names: the shared scratch is `[i32]` and
-this buffer is `[u8]`, and `#![forbid(unsafe_code)]` rules out reinterpreting
-one as the other. Options are a second owned `B: AsMut<[u8]>` scratch parameter
-on `open`/`open_seekable` (an API change rippling to every caller), or streaming
-the SimpleBlock payload instead of buffering it (a demuxer-interface change
-affecting every codec path). Neither is a two-line change; both are scoped work.
+## 10. What is left, and why it now needs a decision (2026-11-22)
+
+Re-measured after §9, because the composition changed. Per-variant, with the
+Matroska-FLAC path fully decomposed:
+
+| variant | size | | field | bytes |
+|---|---|---|---|---|
+| **MatroskaDecoder** (binder) | **51,488** | | `MatroskaFlacReader.frame` | **28,672** |
+| Mp3Decoder | 44,176 | | `FlacDemuxer.seek_points` | **8,192** |
+| MatroskaOpus | 41,832 | | `MatroskaDemuxer` (post-§9) | 9,360 |
+| OpusDecoder | 41,000 | | `FlacDecoder.bytes` | 4,096 |
+| AlacDecoder | 25,832 | | `MatroskaFlacReader.codec_private` | 1,024 |
+| AacDecoder | 25,816 | | | |
+
+### The staircase, and the floor
+
+`size_of::<AnyDecoder>()` is `max(variants)`, so reductions only pay out until
+the next variant takes over:
+
+- Matroska 51,488 → below **44,176** ⇒ MP3 binds. Gain **7,312 B**.
+- Then MP3 44,176 → below **41,832** ⇒ MatroskaOpus binds. Gain 2,344 B.
+- Then the **Opus cluster at ~41,000** — CELT + SILK state, algorithmically
+  required.
+
+**So the whole remaining prize is 51,488 → ~41,000 = −10,488 B ≈ −73 KiB of
+stack, and it takes every step below to collect it.** §9's no-tradeoff win was
+the cheap one; what is left is not cheap.
+
+### Each remaining lever, and what it costs
+
+| lever | saving | the catch |
+|---|---|---|
+| `MAX_FLAC_FRAME` 28 → 20 KiB under embedded-profile | 8,192 B — enough on its own | **Format support.** 28 KiB was chosen to hold a worst-case 4096-block 24-bit stereo *verbatim* FLAC frame (4096 × 2 × 3 = 24,576 B). 20 KiB covers 16-bit but rejects that. Same class as the dropped surround decoders — a product call. |
+| `MAX_SEEK_POINTS` 512 → fewer | up to 7,680 B | **Not graceful as written.** The fill is `if seek_count < MAX_SEEK_POINTS { … }` — it keeps the *first* N and drops the rest, so a smaller table indexes only the start of a track and seeks beyond it decode-discard forward from there. Fixing it properly means *subsampling* (the SEEKTABLE length gives the point count upfront, so a stride is computable before the loop) — better coverage at ¼ the memory, but real decoder-logic work in soul-audio-core. |
+| Externalize `MatroskaFlacReader.frame` (28,672 B) | 7,312 B (capped by MP3) | **Phase A3's byte-arena seam.** The shared scratch is `[i32]`, this buffer is `[u8]`, and `#![forbid(unsafe_code)]` rules out reinterpreting one as the other. Needs either a second owned `B: AsMut<[u8]>` parameter on `open`/`open_seekable` (API change rippling to every caller and repo) or streaming the SimpleBlock instead of buffering it (demuxer-interface change across every codec path). Note the 28 KiB buffer only buys 7,312 B — the rest is absorbed by MP3. |
+| Thread the scratch into `Mp3Decoder` (`.pcm` 9,216 B inline) | 9,216 B off MP3 | **Premature.** MP3 is not the binder, so this pays nothing until Matroska is below it. Worth noting that MP3 is the *only* compressed format that takes no `P` — every other codec already externalizes its PCM carry buffer. |
+
+### Recommendation
+
+Stop here unless one of those tradeoffs is wanted. The honest summary is that
+§9 took the only lever that was pure waste (a Vorbis-sized buffer in a profile
+that cannot decode Vorbis through `AnyDecoder`), and the remaining ~73 KiB costs
+either a format-support decision, a decoder-logic rewrite, or a cross-repo API
+change — for a stack that already fits its budget with 124 KiB to spare
+(356 KiB against the 480 KiB ratchet, 592 KiB board headroom).
+
+The cheapest *correct* next step, if one is wanted, is the `MAX_SEEK_POINTS`
+subsampling fix: it improves seek coverage while reducing memory, so it is the
+only option on the list with no downside — just more work than a constant.
 
 ### Scope note
 The decoder work is a `soul-audio-core` change, so it lands behind the pin and
