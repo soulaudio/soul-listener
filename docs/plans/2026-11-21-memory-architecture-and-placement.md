@@ -52,6 +52,13 @@ Cross-check: the datasheet's "1.4 MB RAM" headline reconciles as 1024 + 128 + 32
 **AHB-SRAM1 and AHB-SRAM2 are address-contiguous** (`0x30000000` + `0x20000`),
 so a single ~94 KiB framebuffer does fit across them — with a caveat in §5.
 
+> **Linked 2026-11-23 — see §17.** `memory.x` now declares `AHB_SRAM` (128 KB at
+> `0x3000_0000`) and an `.ahbram` section, verified by a probe static linking to
+> exactly that address. Three walls remain before anything is placed there: the
+> RCC SRAM1/2 clocks are deliberately gated, nothing zeroes the region, and
+> `board-h7a3` forbids `unsafe_code` so it cannot use `#[link_section]` as it
+> stands.
+
 ## 2. What is measured today
 
 | item | size | source |
@@ -1115,3 +1122,90 @@ The general lesson, and it is the same one as §14's: a measurement harness need
 its own soundness checks, because a wrong measurement does not look wrong — it
 looks like data. Every number in this probe is now accompanied by a gate on the
 conditions that make it meaningful.
+
+## 17. AHB-SRAM1/2 linked — and the three walls behind it (2026-11-23)
+
+§1 found 128 KB of DMA-capable RAM invisible to the linker, and §13/§16 showed
+Phase E's forecast overrunning the linked 1 MB by 124 KB. `memory.x` now declares
+it:
+
+```
+RAM      : ORIGIN = 0x24000000, LENGTH = 1024K
+AHB_SRAM : ORIGIN = 0x30000000, LENGTH = 128K
+```
+
+plus an `.ahbram` output section (NOLOAD, ALIGN(32) both ends) so a static can be
+placed with `#[link_section = ".ahbram"]` instead of each caller inventing its
+own. Declared as **one** 128 KB region because AHB-SRAM1 and AHB-SRAM2 are
+address-contiguous (`0x3000_0000 + 0x2_0000 == 0x3002_0000`), which is the whole
+reason a single buffer bigger than 64 KB — the 96 KB framebuffer — can live
+there.
+
+**Verified, not assumed.** A 96,000-byte probe static placed in `.ahbram` links
+to exactly `0x3000_0000` in a 0x17700-byte BSS section, while `.bss` stays in AXI
+at `0x2400_0050`. flip-link coped with the second region (its parser is
+line-oriented, which is why neither region line carries a trailing comment).
+
+### Linking is necessary and not sufficient — three walls
+
+Each was found by trying, not by reading:
+
+1. **The RCC clocks are gated, on purpose.** `power::peripherals`'
+   `MUST_STAY_GATED` lists `SRAM1`/`SRAM2` (RCC_AHB2ENR bits 29/30) *because*
+   this region was unlinked. A read or write with the clock off bus-faults, so
+   **the first static placed in `.ahbram` must move those two out of
+   `MUST_STAY_GATED` and into `ROSTER`.** The enforcement caught this: the
+   roster's own rationale cited "memory.x links one RAM region", so the change
+   could not be made quietly.
+2. **Nothing zeroes it.** `cortex-m-rt`'s startup zeroes `.bss` within `RAM`
+   only. `.ahbram` is NOLOAD and never initialised, so anything relying on a
+   zeroed start is **unsound** there — a `StaticCell`'s `used` flag, an
+   `AtomicBool`, an `Option` discriminant. `__sahbram`/`__eahbram` exist so a
+   `pre_init` can clear the span when that is taken on. A framebuffer written
+   before it is read is fine; a `StaticCell` is not.
+3. **`board-h7a3` forbids `unsafe_code`.** `#[link_section]` and `#[used]` are
+   unsafe attributes in current Rust, so that crate **cannot place a static in
+   `.ahbram` as it stands** — the probe above only built after temporarily
+   relaxing the lint, and it also needed `#[used]`, because an unreferenced
+   NOLOAD static is garbage-collected by `--gc-sections` and vanishes silently.
+   The clean options are a narrowly-scoped `expect(unsafe_code)` with
+   justification, or a small sibling crate owning the placement behind a safe API
+   (the shape `eink-ssd1677` already uses). This is a real design decision, not a
+   formality, and it belongs with whoever writes the framebuffer.
+
+### The gate that should have existed all along
+
+`linker_script_regions_match_the_rust_memory_map` parses `memory.x` (via
+`include_str!`, so no runtime filesystem access) and pins it against
+`memory_map`:
+
+| assertion | why |
+|---|---|
+| `FLASH == memory_map::FLASH` | sizes must agree |
+| `RAM` base `0x2400_0000`, `AHB_SRAM` base `0x3000_0000` | a wrong base puts statics at an address the bus does not decode — a hard fault, not an overflow |
+| `AHB_SRAM == 128 KB` | both AHB SRAMs, contiguous |
+| **`RAM + AHB_SRAM == USER_SRAM`** | the real invariant |
+| `SRD_SRAM` absent | excluded on purpose — separate power domain |
+
+That last-but-one line is the gate §1 needed and did not have. Three numbers
+disagreed and none checked the others: `USER_SRAM` said 1208 KB, the part has
+1152 KB, and `memory.x` mapped 1024 KB. Every budget in `budget.rs` was measured
+against a ceiling that did not exist, and it took a human reading a datasheet to
+notice. Now a drift fails the build.
+
+Mutation-tested rather than trusted: shrinking `AHB_SRAM` to 64 KB fails with
+"should be AHB-SRAM1 + AHB-SRAM2 = 128 KB", and moving its base to `0x3800_0000`
+fails with "must be the AHB-SRAM1 base".
+
+### What this does and does not fix
+
+**Does:** the 124 KB cliff is gone *structurally*. Phase E's statics now have a
+destination, and `USER_SRAM`'s 1152 KB is finally a number the linker agrees
+with. With the framebuffer in AHB, the AXI region keeps ~255 KB spare for the
+stack reserve it already enforces.
+
+**Does not:** nothing is placed there yet, so no byte has moved. The shadow
+framebuffer question (96 KB, optional) is still open and is still the natural
+relief valve. And the three walls above are now documented, gated where possible,
+but unresolved — they are the real content of "use AHB SRAM", and they land with
+the first Phase E static.

@@ -659,6 +659,105 @@ fn memory_budget_fits_user_sram() {
     );
 }
 
+/// The LINKER SCRIPT and the Rust memory map must describe the same chip.
+///
+/// This is the gate that the 2026-11-21 `USER_SRAM` correction needed and did
+/// not have. [`memory_map::USER_SRAM`] said 1208 KB, the part has 1152 KB, and
+/// `board-h7a3/memory.x` mapped only the 1024 KB AXI region — three different
+/// numbers, none of which checked the others, so every budget above was measured
+/// against a ceiling that did not exist. Sizes in Rust constants are worthless if
+/// the linker disagrees about what is addressable, and nothing but a parse of the
+/// script itself can catch that.
+///
+/// Parsed at compile time via `include_str!`, so this needs no filesystem access
+/// at runtime and fails the build if the file is moved or renamed.
+#[test]
+fn linker_script_regions_match_the_rust_memory_map() {
+    const MEMORY_X: &str = include_str!("../../board-h7a3/memory.x");
+
+    /// `NAME : ORIGIN = 0x..., LENGTH = <n>K` -> (origin, bytes). Only parses the
+    /// `MEMORY { }` entry lines; every other line (comments, SECTIONS) is skipped
+    /// because it has no `ORIGIN =`.
+    fn region(src: &str, name: &str) -> Option<(u64, usize)> {
+        src.lines()
+            .map(str::trim)
+            .filter(|l| !l.starts_with('*') && !l.starts_with("/*"))
+            .find_map(|line| {
+                let (lhs, rhs) = line.split_once(':')?;
+                if lhs.trim() != name {
+                    return None;
+                }
+                let origin_str = rhs.split_once("ORIGIN")?.1.split_once('=')?.1;
+                let origin_str = origin_str.split(',').next()?.trim();
+                let origin = origin_str
+                    .strip_prefix("0x")
+                    .and_then(|h| u64::from_str_radix(h, 16).ok())?;
+                let len_str = rhs.split_once("LENGTH")?.1.split_once('=')?.1.trim();
+                let (digits, mult) = match len_str.strip_suffix('K') {
+                    Some(d) => (d, 1024),
+                    None => (len_str.strip_suffix('M')?, 1024 * 1024),
+                };
+                Some((origin, digits.trim().parse::<usize>().ok()? * mult))
+            })
+    }
+
+    let flash = region(MEMORY_X, "FLASH").expect("memory.x should declare a FLASH region");
+    let ram = region(MEMORY_X, "RAM").expect("memory.x should declare a RAM region");
+    let ahb = region(MEMORY_X, "AHB_SRAM").expect("memory.x should declare an AHB_SRAM region");
+
+    println!("memory.x FLASH    : {:#010x} {} B", flash.0, flash.1);
+    println!("memory.x RAM      : {:#010x} {} B", ram.0, ram.1);
+    println!("memory.x AHB_SRAM : {:#010x} {} B", ahb.0, ahb.1);
+
+    assert_eq!(
+        flash.1,
+        memory_map::FLASH,
+        "memory.x FLASH ({} B) must match memory_map::FLASH ({} B)",
+        flash.1,
+        memory_map::FLASH
+    );
+
+    // Base addresses are the datasheet's, and getting one wrong puts statics at
+    // an address the bus does not decode — a hard fault, not a size overflow.
+    assert_eq!(ram.0, 0x2400_0000, "RAM must be the AXI SRAM base");
+    assert_eq!(ahb.0, 0x3000_0000, "AHB_SRAM must be the AHB-SRAM1 base");
+
+    // AHB-SRAM1 and AHB-SRAM2 are 64 KB each and address-contiguous
+    // (0x3000_0000 + 0x2_0000 == 0x3002_0000), which is the whole reason they can
+    // be declared as one region and host a single buffer larger than 64 KB (the
+    // 96 KB framebuffer). If a future part splits them, this must split too.
+    assert_eq!(
+        ahb.1,
+        128 * 1024,
+        "AHB_SRAM should be AHB-SRAM1 + AHB-SRAM2 = 128 KB"
+    );
+
+    // THE invariant: what the linker can address must equal what the Rust-side
+    // budgets are allowed to spend. `USER_SRAM` is defined as the DMA-capable
+    // CD-domain pool, which is exactly AXI + AHB.
+    assert_eq!(
+        ram.1 + ahb.1,
+        memory_map::USER_SRAM,
+        "linked RAM ({} B) + AHB_SRAM ({} B) = {} B must equal memory_map::USER_SRAM ({} B) — \
+         if these drift, every budget in this file is measured against a ceiling the linker \
+         does not agree with, which is precisely the bug the 2026-11-21 USER_SRAM correction \
+         fixed by hand",
+        ram.1,
+        ahb.1,
+        ram.1 + ahb.1,
+        memory_map::USER_SRAM
+    );
+
+    // SRD-SRAM is deliberately NOT linked: different power domain, different
+    // retention behaviour (see memory_map::SRD_SRAM). Pinned so adding it to
+    // memory.x without revisiting that reasoning fails here.
+    assert!(
+        region(MEMORY_X, "SRD_SRAM").is_none(),
+        "SRD-SRAM is excluded from USER_SRAM on purpose (separate power domain); linking it \
+         means revisiting memory_map::SRD_SRAM's doc and the Paused-state retention argument"
+    );
+}
+
 #[test]
 fn any_decoder_fits_the_h7a3_decoder_budget() {
     let actual = size_of::<AnyDecoder<Src, P>>();
@@ -939,7 +1038,8 @@ fn component_footprint_roster() {
 ///
 /// When Phase E adds real-port statics (an e-ink framebuffer, DMA rings) to AXI
 /// SRAM, add them to the `statics` total below -- or place them in the
-/// as-yet-unlinked AHB-SRAM1/2 (extend `memory.x` + `#[link_section]`).
+/// now-linked AHB-SRAM1/2 (`memory.x`'s `AHB_SRAM` region + `#[link_section =
+/// ".ahbram"]`, subject to that file's three prerequisites).
 #[test]
 fn board_static_footprint_leaves_stack_room_in_linked_axi_sram() {
     // memory.x's only linked RAM region: AXI SRAM @ 0x2400_0000.
