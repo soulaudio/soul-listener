@@ -1,0 +1,166 @@
+{
+  "schema_version": 1,
+  "kind": "fixture",
+  "readme": [
+    "SYNTHETIC CATALOGUE — a test fixture, NOT sourcing truth.",
+    "",
+    "Every part below is invented to exercise the selection engine: there is one that qualifies,",
+    "and one for each way a part can fail (wrong frequency, 5 V part, unplaceable package, no",
+    "published phase noise, single-sourced). The MPNs are deliberately prefixed FIXTURE- so they",
+    "can never be mistaken for parts anyone researched or can order.",
+    "",
+    "The real catalogue replaces this file wholesale once distributor credentials exist: the",
+    "fetcher pulls every part in a category from TME / Mouser / Digi-Key, and the engine filters",
+    "it with exactly the same constraints exercised here. Nothing about the engine changes when",
+    "the data becomes real — which is the point of testing it against a fixture first.",
+    "",
+    "Attribute names match what parametric search returns (frequency_hz, supply_mv_max, package,",
+    "phase_noise_dbc_1khz, channels, break_before_make, max_freq_hz), because the constraints in",
+    "dap-hw-spec are written against that vocabulary rather than an invented one."
+  ],
+  "categories": {
+    "mclk-osc-44k1": [
+      {
+        "mpn": "FIXTURE-OSC-45M1584-A",
+        "manufacturer": "Fixture Devices",
+        "eu_sources": 2,
+        "eu_stock": 4200,
+        "unit_price_cents": 182,
+        "lead_time_days": 0,
+        "attrs": {
+          "frequency_hz": 45158400,
+          "supply_mv_max": 3300,
+          "package": "SMD-3225-4",
+          "phase_noise_dbc_1khz": -142
+        }
+      },
+      {
+        "mpn": "FIXTURE-OSC-45M1584-B",
+        "manufacturer": "Fixture Devices",
+        "eu_sources": 1,
+        "eu_stock": 90000,
+        "unit_price_cents": 41,
+        "lead_time_days": 0,
+        "attrs": {
+          "frequency_hz": 45158400,
+          "supply_mv_max": 3300,
+          "package": "SMD-2520-4",
+          "phase_noise_dbc_1khz": -138
+        }
+      },
+      {
+        "mpn": "FIXTURE-OSC-22M5792-WRONGFREQ",
+        "manufacturer": "Fixture Devices",
+        "eu_sources": 3,
+        "eu_stock": 250000,
+        "unit_price_cents": 28,
+        "lead_time_days": 0,
+        "attrs": {
+          "frequency_hz": 22579200,
+          "supply_mv_max": 3300,
+          "package": "SMD-3225-4",
+          "phase_noise_dbc_1khz": -145
+        }
+      },
+      {
+        "mpn": "FIXTURE-OSC-45M1584-5V",
+        "manufacturer": "Fixture Devices",
+        "eu_sources": 2,
+        "eu_stock": 1500,
+        "unit_price_cents": 95,
+        "lead_time_days": 0,
+        "attrs": {
+          "frequency_hz": 45158400,
+          "supply_mv_max": 5000,
+          "package": "SMD-5032-4",
+          "phase_noise_dbc_1khz": -140
+        }
+      },
+      {
+        "mpn": "FIXTURE-OSC-45M1584-BGA",
+        "manufacturer": "Fixture Devices",
+        "eu_sources": 2,
+        "eu_stock": 800,
+        "unit_price_cents": 60,
+        "lead_time_days": 0,
+        "attrs": {
+          "frequency_hz": 45158400,
+          "supply_mv_max": 3300,
+          "package": "WLCSP-6",
+          "phase_noise_dbc_1khz": -150
+        }
+      },
+      {
+        "mpn": "FIXTURE-OSC-45M1584-NOSPEC",
+        "manufacturer": "Fixture Devices",
+        "eu_sources": 3,
+        "eu_stock": 70000,
+        "unit_price_cents": 19,
+        "lead_time_days": 0,
+        "attrs": {
+          "frequency_hz": 45158400,
+          "supply_mv_max": 3300,
+          "package": "SMD-3225-4"
+        }
+      },
+      {
+        "mpn": "FIXTURE-OSC-45M1584-NOISY",
+        "manufacturer": "Fixture Devices",
+        "eu_sources": 3,
+        "eu_stock": 60000,
+        "unit_price_cents": 12,
+        "lead_time_days": 0,
+        "attrs": {
+          "frequency_hz": 45158400,
+          "supply_mv_max": 3300,
+          "package": "SMD-3225-4",
+          "phase_noise_dbc_1khz": -118
+        }
+      }
+    ],
+    "mclk-mux": [
+      {
+        "mpn": "FIXTURE-MUX-2CH-BBM",
+        "manufacturer": "Fixture Logic",
+        "eu_sources": 3,
+        "eu_stock": 120000,
+        "unit_price_cents": 11,
+        "lead_time_days": 0,
+        "attrs": {
+          "channels": 2,
+          "break_before_make": true,
+          "max_freq_hz": 200000000,
+          "supply_mv_max": 3300
+        }
+      },
+      {
+        "mpn": "FIXTURE-MUX-2CH-MAKEBEFOREBREAK",
+        "manufacturer": "Fixture Logic",
+        "eu_sources": 3,
+        "eu_stock": 90000,
+        "unit_price_cents": 9,
+        "lead_time_days": 0,
+        "attrs": {
+          "channels": 2,
+          "break_before_make": false,
+          "max_freq_hz": 200000000,
+          "supply_mv_max": 3300
+        }
+      },
+      {
+        "mpn": "FIXTURE-MUX-2CH-SLOW",
+        "manufacturer": "Fixture Logic",
+        "eu_sources": 2,
+        "eu_stock": 5000,
+        "unit_price_cents": 7,
+        "lead_time_days": 0,
+        "attrs": {
+          "channels": 2,
+          "break_before_make": true,
+          "max_freq_hz": 10000000,
+          "supply_mv_max": 3300
+        }
+      }
+    ]
+  }
+}

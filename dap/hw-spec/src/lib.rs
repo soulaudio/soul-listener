@@ -47,6 +47,7 @@
 
 pub mod budget;
 pub mod invariants;
+pub mod select;
 pub mod v1;
 pub mod v2;
 
@@ -280,8 +281,16 @@ pub struct Candidate {
 pub struct PartReq {
     /// Stable id, used to join against the sourcing snapshot.
     pub id: &'static str,
-    /// What the design needs, in words.
+    /// What the design needs, in words. For a human.
     pub what: &'static str,
+    /// The same requirement, machine-checkable. Prose cannot reject a part; a
+    /// [`Constraint`](crate::select::Constraint) can, and can say why.
+    ///
+    /// Empty means "not yet expressible", not "no requirements" — several
+    /// requirements here are still prose-only, and
+    /// `constraints_are_not_self_contradictory` only checks the ones that exist.
+    /// An empty list is a TODO, and the selection report prints it as one.
+    pub constraints: &'static [crate::select::Constraint<'static>],
     pub candidates: &'static [Candidate],
 }
 

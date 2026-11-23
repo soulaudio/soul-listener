@@ -8,10 +8,14 @@
 //! point is the diff, not a complete second design. Where V1 detail is not
 //! needed to express a delta, it is recorded loosely and marked as such.
 
+use crate::select::Constraint;
 use crate::{
     BoardSpec, Candidate, Dac, DacRole, LockStatus, Mcu, MemoryRegion, Oscillator, PartReq,
     PowerBudget, Preference, Provenance, RateEntry, Revision, VolumeMechanism,
 };
+
+/// No machine-checkable constraints yet — the requirement is prose-only.
+const NO_CONSTRAINTS: &[Constraint<'static>] = &[];
 
 const LOCK: LockStatus = LockStatus::Soft {
     until: "superseded — this revision exists to express the migration delta, not to be built",
@@ -93,6 +97,7 @@ const PARTS: &[PartReq] = &[
     PartReq {
         id: "dac",
         what: "stereo DAC (amp separate)",
+        constraints: NO_CONSTRAINTS,
         candidates: &[Candidate {
             mpn: "ES9038Q2M",
             preference: Preference::Preferred,
@@ -102,6 +107,7 @@ const PARTS: &[PartReq] = &[
     PartReq {
         id: "amp",
         what: "headphone amp — required because the V1 DAC has none",
+        constraints: NO_CONSTRAINTS,
         candidates: &[Candidate {
             mpn: "TPA6120A2",
             preference: Preference::Preferred,
@@ -112,6 +118,7 @@ const PARTS: &[PartReq] = &[
     PartReq {
         id: "mcu",
         what: "Cortex-M7 with FMC for external SDRAM",
+        constraints: NO_CONSTRAINTS,
         candidates: &[Candidate {
             mpn: "STM32H743ZIT6",
             preference: Preference::Preferred,
@@ -121,6 +128,7 @@ const PARTS: &[PartReq] = &[
     PartReq {
         id: "sdram",
         what: "32 MB SDRAM on FMC",
+        constraints: NO_CONSTRAINTS,
         candidates: &[Candidate {
             mpn: "W9825G6KH-6",
             preference: Preference::Preferred,
