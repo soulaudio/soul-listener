@@ -5,10 +5,14 @@
 //! `docs/plans/2026-11-15-v2-migration-design.md`; `hardware/elec/src` is still
 //! [`crate::v1`] and has not migrated.
 
+use crate::select::Constraint;
 use crate::{
     BoardSpec, Candidate, Dac, DacRole, LockStatus, Mcu, MemoryRegion, Oscillator, PartReq,
     PowerBudget, Preference, Provenance, RateEntry, Revision, VolumeMechanism,
 };
+
+/// No machine-checkable constraints yet — the requirement is prose-only.
+const NO_CONSTRAINTS: &[Constraint<'static>] = &[];
 
 /// Soft lock. Everything below may still change; this says what has to happen
 /// before it should not.
@@ -178,6 +182,102 @@ const POWER: PowerBudget = PowerBudget {
     provenance: Provenance::Datasheet("Cirrus CS43131 DS1155F2 + ST DS13677 + GDEM0397T81P"),
 };
 
+/// Packages a hand-assembled EU small-batch build can place and inspect.
+///
+/// Not an aesthetic preference: a BGA or a 1.6x1.2 mm package cannot be hand-
+/// soldered or inspected without equipment this build does not have, so it is a
+/// hard constraint rather than a nice-to-have.
+const HAND_PLACEABLE_OSC_PACKAGES: &[&str] =
+    &["SMD-3225-4", "SMD-2520-4", "SMD-5032-4", "SMD-7050-4"];
+
+/// The 44.1 kHz-family MCLK oscillator, machine-checkable.
+const OSC_44K1_CONSTRAINTS: &[Constraint<'static>] = &[
+    Constraint {
+        attr: "frequency_hz",
+        pred: crate::select::Predicate::NumEq {
+            value: 45_158_400.0,
+            rel_tol: 1e-6,
+        },
+        why: "1024 x 44100. The SAI can only DIVIDE its clock input, so a lower oscillator caps \
+              MCLK at 512fs and 176.4 kHz falls off the bottom at an unaccepted 128fs — which is \
+              the whole reason this is 45.1584 and not 22.5792 MHz",
+    },
+    Constraint {
+        attr: "supply_mv_max",
+        pred: crate::select::Predicate::AtMost(3300.0),
+        why: "the board has no rail above 3.3 V",
+    },
+    Constraint {
+        attr: "package",
+        pred: crate::select::Predicate::OneOf(HAND_PLACEABLE_OSC_PACKAGES),
+        why: "hand-assembled small batch: the package must be placeable and inspectable without \
+              equipment this build does not have",
+    },
+    Constraint {
+        attr: "phase_noise_dbc_1khz",
+        pred: crate::select::Predicate::AtMost(-130.0),
+        why: "jitter in the MCLK path is the single thing the dual-oscillator design exists to \
+              avoid; an oscillator with no published phase-noise figure is rejected rather than \
+              assumed adequate",
+    },
+];
+
+/// The 48 kHz-family MCLK oscillator. Same constraints, different frequency.
+const OSC_48K_CONSTRAINTS: &[Constraint<'static>] = &[
+    Constraint {
+        attr: "frequency_hz",
+        pred: crate::select::Predicate::NumEq {
+            value: 49_152_000.0,
+            rel_tol: 1e-6,
+        },
+        why: "1024 x 48000, for the same MCKDIV-headroom reason as the 44.1 kHz family",
+    },
+    Constraint {
+        attr: "supply_mv_max",
+        pred: crate::select::Predicate::AtMost(3300.0),
+        why: "the board has no rail above 3.3 V",
+    },
+    Constraint {
+        attr: "package",
+        pred: crate::select::Predicate::OneOf(HAND_PLACEABLE_OSC_PACKAGES),
+        why: "hand-assembled small batch",
+    },
+    Constraint {
+        attr: "phase_noise_dbc_1khz",
+        pred: crate::select::Predicate::AtMost(-130.0),
+        why: "jitter in the MCLK path",
+    },
+];
+
+/// The oscillator mux.
+const MUX_CONSTRAINTS: &[Constraint<'static>] = &[
+    Constraint {
+        attr: "channels",
+        pred: crate::select::Predicate::NumEq {
+            value: 2.0,
+            rel_tol: 0.0,
+        },
+        why: "two oscillators, one SAI clock input",
+    },
+    Constraint {
+        attr: "break_before_make",
+        pred: crate::select::Predicate::IsTrue,
+        why: "without it the two oscillators are briefly shorted together during a switch. This \
+              is why a PLL-based clock multiplier (NB3N511) is the wrong class of part rather \
+              than merely a worse one",
+    },
+    Constraint {
+        attr: "max_freq_hz",
+        pred: crate::select::Predicate::AtLeast(49_152_000.0),
+        why: "it has to pass the faster of the two oscillators",
+    },
+    Constraint {
+        attr: "supply_mv_max",
+        pred: crate::select::Predicate::AtMost(3300.0),
+        why: "the board has no rail above 3.3 V",
+    },
+];
+
 /// Requirements with candidates — the soft lock in practice.
 ///
 /// Stock figures are from the committed sourcing snapshot
@@ -187,6 +287,7 @@ const PARTS: &[PartReq] = &[
     PartReq {
         id: "dac",
         what: "stereo DAC + headphone amp, I2S slave, both MCLK families, >=120 dB(A) DR",
+        constraints: NO_CONSTRAINTS,
         candidates: &[
             Candidate {
                 mpn: "CS43131-CNZ",
@@ -215,6 +316,7 @@ const PARTS: &[PartReq] = &[
     PartReq {
         id: "mclk-osc-44k1",
         what: "45.1584 MHz fixed oscillator, <=3.3 V, low phase noise, SMD",
+        constraints: OSC_44K1_CONSTRAINTS,
         candidates: &[Candidate {
             mpn: "ASDMB-45.1584MHZ-LY-T",
             preference: Preference::Evaluating,
@@ -225,6 +327,7 @@ const PARTS: &[PartReq] = &[
     PartReq {
         id: "mclk-osc-48k",
         what: "49.152 MHz fixed oscillator, <=3.3 V, low phase noise, SMD",
+        constraints: OSC_48K_CONSTRAINTS,
         candidates: &[Candidate {
             mpn: "ASDMB-49.152MHZ-LY-T",
             preference: Preference::Evaluating,
@@ -234,6 +337,7 @@ const PARTS: &[PartReq] = &[
     PartReq {
         id: "mclk-mux",
         what: "2:1 clock mux, break-before-make, <=50 MHz, single digital select",
+        constraints: MUX_CONSTRAINTS,
         candidates: &[
             Candidate {
                 mpn: "74LVC1G3157GW",
@@ -259,6 +363,7 @@ const PARTS: &[PartReq] = &[
     PartReq {
         id: "mcu",
         what: "Cortex-M7 >=250 MHz, >=1 MB contiguous DMA-capable SRAM, SAI, SDMMC, 2 MB flash",
+        constraints: NO_CONSTRAINTS,
         candidates: &[
             Candidate {
                 mpn: "STM32H7A3ZIT6",
