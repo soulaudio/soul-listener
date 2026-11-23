@@ -1,0 +1,155 @@
+{
+  "status": "OK",
+  "data": {
+    "elements": [
+      {
+        "stock_quantity": 6916,
+        "symbol": "SN74LVC1G3157DCKR",
+        "unit": {
+          "id": "ST",
+          "short_name": "pcs",
+          "singular_translation": "Piece",
+          "plural_translation": null
+        },
+        "prices": {
+          "elements": [
+            {
+              "amount": 1,
+              "price": 0.189,
+              "special": false
+            },
+            {
+              "amount": 10,
+              "price": 0.131,
+              "special": false
+            },
+            {
+              "amount": 25,
+              "price": 0.116,
+              "special": false
+            },
+            {
+              "amount": 100,
+              "price": 0.099,
+              "special": false
+            },
+            {
+              "amount": 150,
+              "price": 0.096,
+              "special": false
+            },
+            {
+              "amount": 250,
+              "price": 0.09,
+              "special": false
+            },
+            {
+              "amount": 500,
+              "price": 0.086,
+              "special": false
+            },
+            {
+              "amount": 1000,
+              "price": 0.084,
+              "special": false
+            },
+            {
+              "amount": 3000,
+              "price": 0.08,
+              "special": false
+            },
+            {
+              "amount": 15000,
+              "price": 0.074,
+              "special": false
+            }
+          ],
+          "tax": {
+            "type": "VAT",
+            "rate": 23.0
+          },
+          "currency": "EUR",
+          "type": "NET"
+        },
+        "deliveries": null
+      },
+      {
+        "stock_quantity": 0,
+        "symbol": "STM32H7A3ZIT6",
+        "unit": {
+          "id": "ST",
+          "short_name": "pcs",
+          "singular_translation": "Piece",
+          "plural_translation": null
+        },
+        "prices": {
+          "elements": [
+            {
+              "amount": 1,
+              "price": 13.0,
+              "special": false
+            },
+            {
+              "amount": 10,
+              "price": 12.05,
+              "special": false
+            }
+          ],
+          "tax": {
+            "type": "VAT",
+            "rate": 23.0
+          },
+          "currency": "EUR",
+          "type": "NET"
+        },
+        "deliveries": null
+      },
+      {
+        "stock_quantity": 0,
+        "symbol": "STM32H7B3ZIT6",
+        "unit": {
+          "id": "ST",
+          "short_name": "pcs",
+          "singular_translation": "Piece",
+          "plural_translation": null
+        },
+        "prices": {
+          "elements": [
+            {
+              "amount": 1,
+              "price": 16.7,
+              "special": false
+            },
+            {
+              "amount": 5,
+              "price": 15.4,
+              "special": false
+            },
+            {
+              "amount": 30,
+              "price": 14.7,
+              "special": false
+            },
+            {
+              "amount": 120,
+              "price": 13.0,
+              "special": false
+            },
+            {
+              "amount": 240,
+              "price": 12.3,
+              "special": false
+            }
+          ],
+          "tax": {
+            "type": "VAT",
+            "rate": 23.0
+          },
+          "currency": "EUR",
+          "type": "NET"
+        },
+        "deliveries": null
+      }
+    ]
+  }
+}
