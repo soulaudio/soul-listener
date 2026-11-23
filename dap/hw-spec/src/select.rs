@@ -67,6 +67,15 @@ pub enum Predicate<'a> {
     /// Text equal to one of these, case-insensitively.
     OneOf(&'a [&'a str]),
     IsTrue,
+    /// The attribute must be present AND false.
+    ///
+    /// Not the same as omitting the constraint, and not the same as `IsTrue`
+    /// negated by the caller: several real requirements are negative facts that
+    /// must be *published* rather than assumed — "this module needs no vendor
+    /// NDA", "this cell is not soldered in". An absent attribute stays a
+    /// rejection under this predicate, for the same reason it does under the
+    /// others: unknown is not a pass.
+    IsFalse,
 }
 
 /// A requirement expressed so a machine can reject a part.
@@ -165,6 +174,10 @@ fn check<'a>(part: &CataloguePart<'a>, c: &Constraint<'a>) -> Result<(), Rejecti
         },
         Predicate::IsTrue => match v {
             AttrValue::Bool(b) => b,
+            _ => return Err(Rejection::WrongType { attr: c.attr }),
+        },
+        Predicate::IsFalse => match v {
+            AttrValue::Bool(b) => !b,
             _ => return Err(Rejection::WrongType { attr: c.attr }),
         },
     };

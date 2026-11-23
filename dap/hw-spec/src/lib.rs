@@ -47,6 +47,7 @@
 
 pub mod budget;
 pub mod invariants;
+pub mod licensing;
 pub mod select;
 pub mod v1;
 pub mod v2;

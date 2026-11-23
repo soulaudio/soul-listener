@@ -2,7 +2,7 @@
   "schema_version": 1,
   "kind": "fixture",
   "readme": [
-    "SYNTHETIC CATALOGUE — a test fixture, NOT sourcing truth.",
+    "SYNTHETIC CATALOGUE \u2014 a test fixture, NOT sourcing truth.",
     "",
     "Every part below is invented to exercise the selection engine: there is one that qualifies,",
     "and one for each way a part can fail (the OTHER family's clock, 5 V part, unplaceable",
@@ -10,7 +10,7 @@
     "prefixed FIXTURE- so they can never be mistaken for parts anyone researched or can order.",
     "",
     "FIXTURE-OSC-24M576-WRONGFAMILY is the interesting one. 24.576 MHz is a perfectly good",
-    "CS43131 MCLK — the DAC accepts it for every rate the product supports — and it is the",
+    "CS43131 MCLK \u2014 the DAC accepts it for every rate the product supports \u2014 and it is the",
     "cheapest, deepest-stocked, most-sourced oscillator here. It still has to be rejected for the",
     "44.1 kHz family, because the SAI cannot divide it to an exact 64 x 44100 bit clock",
     "(24.576e6 / 2.8224e6 = 8.707...). That is a constraint belonging to the MCU's serial port,",
@@ -19,11 +19,19 @@
     "The real catalogue replaces this file wholesale once distributor credentials exist: the",
     "fetcher pulls every part in a category from TME / Mouser / Digi-Key, and the engine filters",
     "it with exactly the same constraints exercised here. Nothing about the engine changes when",
-    "the data becomes real — which is the point of testing it against a fixture first.",
+    "the data becomes real \u2014 which is the point of testing it against a fixture first.",
     "",
     "Attribute names match what parametric search returns (frequency_hz, supply_mv_max, package,",
     "phase_noise_dbc_1khz, channels, break_before_make, max_freq_hz), because the constraints in",
-    "dap-hw-spec are written against that vocabulary rather than an invented one."
+    "dap-hw-spec are written against that vocabulary rather than an invented one.",
+    "",
+    "The battery and bluetooth categories exist because several constraints on those parts are",
+    "LICENSING constraints wearing electrical clothing, and they are the ones a price-first",
+    "filter gets wrong. FIXTURE-CELL-1200-SOLDERTAB is the cheapest cell with the deepest stock",
+    "and the largest capacity, and it has to lose: solder tabs mean no spare battery and no",
+    "Art. 11 user-replaceability. FIXTURE-CELL-1100-BARE is cheaper still and would transfer",
+    "UN 38.3 and IEC 62133-2 certification from the cell vendor to us. FIXTURE-BT-BARE-SOC is",
+    "half the price of the qualified module and costs a full Bluetooth qualification programme."
   ],
   "categories": {
     "mclk-osc-44k1": [
@@ -165,6 +173,250 @@
           "channels": 2,
           "break_before_make": true,
           "max_freq_hz": 10000000,
+          "supply_mv_max": 3300
+        }
+      }
+    ],
+    "battery": [
+      {
+        "mpn": "FIXTURE-CELL-1100-JST-A",
+        "manufacturer": "Fixture Power",
+        "eu_sources": 2,
+        "eu_stock": 900,
+        "unit_price_cents": 480,
+        "lead_time_days": 0,
+        "attrs": {
+          "integrated_pcm": true,
+          "un38_3_report": true,
+          "iec62133_2_report": true,
+          "termination": "JST-PH-2.0",
+          "cells_series": 1,
+          "capacity_mah": 1100,
+          "watt_hours": 4.07,
+          "thickness_mm": 6.2,
+          "width_mm": 32.0,
+          "length_mm": 55.0
+        }
+      },
+      {
+        "mpn": "FIXTURE-CELL-1100-JST-B",
+        "manufacturer": "Fixture Power",
+        "eu_sources": 1,
+        "eu_stock": 15000,
+        "unit_price_cents": 390,
+        "lead_time_days": 0,
+        "attrs": {
+          "integrated_pcm": true,
+          "un38_3_report": true,
+          "iec62133_2_report": true,
+          "termination": "JST-PH-2.0",
+          "cells_series": 1,
+          "capacity_mah": 1100,
+          "watt_hours": 4.07,
+          "thickness_mm": 6.2,
+          "width_mm": 32.0,
+          "length_mm": 55.0
+        }
+      },
+      {
+        "mpn": "FIXTURE-CELL-1100-BARE",
+        "manufacturer": "Fixture Power",
+        "eu_sources": 3,
+        "eu_stock": 80000,
+        "unit_price_cents": 210,
+        "lead_time_days": 0,
+        "attrs": {
+          "integrated_pcm": false,
+          "un38_3_report": true,
+          "iec62133_2_report": true,
+          "termination": "JST-PH-2.0",
+          "cells_series": 1,
+          "capacity_mah": 1100,
+          "watt_hours": 4.07,
+          "thickness_mm": 6.2,
+          "width_mm": 32.0,
+          "length_mm": 55.0
+        }
+      },
+      {
+        "mpn": "FIXTURE-CELL-1200-SOLDERTAB",
+        "manufacturer": "Fixture Power",
+        "eu_sources": 3,
+        "eu_stock": 120000,
+        "unit_price_cents": 185,
+        "lead_time_days": 0,
+        "attrs": {
+          "integrated_pcm": true,
+          "un38_3_report": true,
+          "iec62133_2_report": true,
+          "termination": "solder-tab",
+          "cells_series": 1,
+          "capacity_mah": 1200,
+          "watt_hours": 4.44,
+          "thickness_mm": 6.2,
+          "width_mm": 32.0,
+          "length_mm": 55.0
+        }
+      },
+      {
+        "mpn": "FIXTURE-CELL-1100-NODOCS",
+        "manufacturer": "Fixture Power",
+        "eu_sources": 3,
+        "eu_stock": 60000,
+        "unit_price_cents": 240,
+        "lead_time_days": 0,
+        "attrs": {
+          "integrated_pcm": true,
+          "un38_3_report": false,
+          "iec62133_2_report": true,
+          "termination": "JST-PH-2.0",
+          "cells_series": 1,
+          "capacity_mah": 1100,
+          "watt_hours": 4.07,
+          "thickness_mm": 6.2,
+          "width_mm": 32.0,
+          "length_mm": 55.0
+        }
+      },
+      {
+        "mpn": "FIXTURE-CELL-2S-2000",
+        "manufacturer": "Fixture Power",
+        "eu_sources": 2,
+        "eu_stock": 5000,
+        "unit_price_cents": 760,
+        "lead_time_days": 0,
+        "attrs": {
+          "integrated_pcm": true,
+          "un38_3_report": true,
+          "iec62133_2_report": true,
+          "termination": "JST-PH-2.0",
+          "cells_series": 2,
+          "capacity_mah": 2000,
+          "watt_hours": 14.8,
+          "thickness_mm": 6.2,
+          "width_mm": 32.0,
+          "length_mm": 55.0
+        }
+      },
+      {
+        "mpn": "FIXTURE-CELL-1800-THICK",
+        "manufacturer": "Fixture Power",
+        "eu_sources": 2,
+        "eu_stock": 4000,
+        "unit_price_cents": 620,
+        "lead_time_days": 0,
+        "attrs": {
+          "integrated_pcm": true,
+          "un38_3_report": true,
+          "iec62133_2_report": true,
+          "termination": "JST-PH-2.0",
+          "cells_series": 1,
+          "capacity_mah": 1800,
+          "watt_hours": 6.66,
+          "thickness_mm": 9.0,
+          "width_mm": 32.0,
+          "length_mm": 55.0
+        }
+      },
+      {
+        "mpn": "FIXTURE-CELL-600-SMALL",
+        "manufacturer": "Fixture Power",
+        "eu_sources": 3,
+        "eu_stock": 200000,
+        "unit_price_cents": 150,
+        "lead_time_days": 0,
+        "attrs": {
+          "integrated_pcm": true,
+          "un38_3_report": true,
+          "iec62133_2_report": true,
+          "termination": "JST-PH-2.0",
+          "cells_series": 1,
+          "capacity_mah": 600,
+          "watt_hours": 2.22,
+          "thickness_mm": 4.0,
+          "width_mm": 32.0,
+          "length_mm": 55.0
+        }
+      }
+    ],
+    "bluetooth": [
+      {
+        "mpn": "FIXTURE-BT-MODULE-QUALIFIED",
+        "manufacturer": "Fixture Radio",
+        "eu_sources": 2,
+        "eu_stock": 3000,
+        "unit_price_cents": 410,
+        "lead_time_days": 0,
+        "attrs": {
+          "is_module": true,
+          "bt_sig_qualified": true,
+          "radio_certified_eu": true,
+          "requires_vendor_nda": false,
+          "codec_sbc": true,
+          "supply_mv_max": 3300
+        }
+      },
+      {
+        "mpn": "FIXTURE-BT-BARE-SOC",
+        "manufacturer": "Fixture Radio",
+        "eu_sources": 3,
+        "eu_stock": 90000,
+        "unit_price_cents": 190,
+        "lead_time_days": 0,
+        "attrs": {
+          "is_module": false,
+          "bt_sig_qualified": false,
+          "radio_certified_eu": false,
+          "requires_vendor_nda": false,
+          "codec_sbc": true,
+          "supply_mv_max": 3300
+        }
+      },
+      {
+        "mpn": "FIXTURE-BT-MODULE-NO-QDID",
+        "manufacturer": "Fixture Radio",
+        "eu_sources": 3,
+        "eu_stock": 40000,
+        "unit_price_cents": 230,
+        "lead_time_days": 0,
+        "attrs": {
+          "is_module": true,
+          "bt_sig_qualified": false,
+          "radio_certified_eu": true,
+          "requires_vendor_nda": false,
+          "codec_sbc": true,
+          "supply_mv_max": 3300
+        }
+      },
+      {
+        "mpn": "FIXTURE-BT-MODULE-NDA",
+        "manufacturer": "Fixture Radio",
+        "eu_sources": 2,
+        "eu_stock": 20000,
+        "unit_price_cents": 330,
+        "lead_time_days": 0,
+        "attrs": {
+          "is_module": true,
+          "bt_sig_qualified": true,
+          "radio_certified_eu": true,
+          "requires_vendor_nda": true,
+          "codec_sbc": true,
+          "supply_mv_max": 3300
+        }
+      },
+      {
+        "mpn": "FIXTURE-BT-MODULE-LICENSED-CODECS-ONLY",
+        "manufacturer": "Fixture Radio",
+        "eu_sources": 3,
+        "eu_stock": 50000,
+        "unit_price_cents": 280,
+        "lead_time_days": 0,
+        "attrs": {
+          "is_module": true,
+          "bt_sig_qualified": true,
+          "radio_certified_eu": true,
+          "requires_vendor_nda": false,
+          "codec_sbc": false,
           "supply_mv_max": 3300
         }
       }

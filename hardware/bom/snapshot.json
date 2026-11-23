@@ -214,6 +214,30 @@
         "since": "2026-11-23",
         "note": "No offers recorded on purpose: stock and price were NOT retrieved, and inventing them would be worse than admitting the gap. Run the fetcher with distributor credentials to replace this with real offers. A Hard lock does not accept sourcing_pending."
       }
+    },
+    "AKY-LP623255": {
+      "manufacturer": "Akyga",
+      "description": "1S Li-Po 1100 mAh, 6.2 x 32 x 55 mm, integrated PCM, JST PH 2.0 lead",
+      "package": "pouch cell",
+      "satisfies": "battery",
+      "offers": [],
+      "sourcing_pending": {
+        "reason": "the documented prototype cell (licensing research S1). Needs the per-model AKY0646 UN 38.3 summary and IEC 62133-2 report archived from the vendor, and a second source researched before it can be Preferred",
+        "since": "2026-11-23",
+        "note": "No offers recorded on purpose: stock and price were NOT retrieved, and inventing them would be worse than admitting the gap. Run the fetcher with distributor credentials to replace this with real offers. A Hard lock does not accept sourcing_pending."
+      }
+    },
+    "FSC-BT1035": {
+      "manufacturer": "Feasycom",
+      "description": "Bluetooth module (Qualcomm QCC3056), pre-qualified radio - DO NOT POPULATE on the shipped wired-only board",
+      "package": "module",
+      "satisfies": "bluetooth",
+      "offers": [],
+      "sourcing_pending": {
+        "reason": "deliberately unsourced: the module is DNP on the shipped board, so there is nothing to buy. Needs the QDID and the RED/FCC certificate numbers recorded before it could be populated, plus the ~EUR 5k SIG Declaration budgeted",
+        "since": "2026-11-23",
+        "note": "No offers recorded on purpose: stock and price were NOT retrieved, and inventing them would be worse than admitting the gap. Run the fetcher with distributor credentials to replace this with real offers. A Hard lock does not accept sourcing_pending."
+      }
     }
   }
 }

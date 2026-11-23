@@ -213,23 +213,56 @@ pub const V2_LINES: &[BudgetLine] = &[
 ];
 
 /// V2's conditional risks.
-pub const V2_RISKS: &[ConditionalRisk] = &[ConditionalRisk {
-    id: "cache-dma-coherency",
-    condition: "the D-cache is enabled",
-    consequence:
-        "DMA writes and CPU reads see different memory. The audio path is the worst place \
+pub const V2_RISKS: &[ConditionalRisk] = &[
+    ConditionalRisk {
+        id: "cache-dma-coherency",
+        condition: "the D-cache is enabled",
+        consequence:
+            "DMA writes and CPU reads see different memory. The audio path is the worst place \
              for it: a stale cache line in an SAI buffer is silent corruption that sounds like a \
              glitch, not like a bug, and it is intermittent. Teensy requires the same 32-byte \
              alignment independently, so this is cross-vendor practice rather than an ST quirk \
              (AN4839).",
-    // Enabling either cache is the trigger. The I-cache alone is safe for
-    // coherency (instruction fetch is read-only) but is listed because the
-    // project's own rule is "caches on WITH the MPU work, or off and
-    // documented — never partially".
-    trigger_symbols: &["enable_dcache", "enable_icache"],
-    mitigation_symbols: &["MPU", "mpu", "non_cacheable", "noncacheable"],
-    mitigation:
-        "configure an MPU non-cacheable region covering every DMA buffer and 32-byte-align \
+        // Enabling either cache is the trigger. The I-cache alone is safe for
+        // coherency (instruction fetch is read-only) but is listed because the
+        // project's own rule is "caches on WITH the MPU work, or off and
+        // documented — never partially".
+        trigger_symbols: &["enable_dcache", "enable_icache"],
+        mitigation_symbols: &["MPU", "mpu", "non_cacheable", "noncacheable"],
+        mitigation:
+            "configure an MPU non-cacheable region covering every DMA buffer and 32-byte-align \
              those buffers, then re-measure the stack probes (the cache changes codegen, and the \
              budgets are pinned to a measurement).",
-}];
+    },
+    ConditionalRisk {
+        id: "live-battery-hotswap",
+        condition: "the firmware or the product copy claims the battery can be changed WHILE the \
+                    device is running",
+        consequence:
+            "there is no bridge energy source on the board. Unplugging the cell cuts VSYS \
+             immediately, so the device browns out mid-operation — and the dangerous case is \
+             mid-write: a FAT32 directory update or a `.soulidx` catalogue write that is torn in \
+             half leaves the card inconsistent, which presents as lost music rather than as a \
+             power bug. A connectorised cell makes the swap PHYSICALLY possible, which is exactly \
+             what makes claiming it tempting.",
+        // The battery requirement's `termination` constraint deliberately selects
+        // a connectorised cell, so the hardware half of hot-swap is already true.
+        // What is missing is bridge energy, and these symbols are how a claim
+        // about live swapping would show up in the firmware.
+        trigger_symbols: &["hot_swap", "hotswap", "HotSwap", "live_swap"],
+        mitigation_symbols: &[
+            "bridge_cap",
+            "BRIDGE_CAP",
+            "supercap",
+            "SUPERCAP",
+            "hold_up",
+        ],
+        mitigation:
+            "either (a) add a bridge capacitor or supercap sized for the swap window plus a \
+             clean-shutdown path that quiesces the SD card before the rail collapses, and size \
+             it against the measured write-completion time; or (b) describe the feature as \
+             'user-replaceable battery, power off to change' and carry spare cells as an \
+             accessory — which is the honest version of what the board supports today, and still \
+             delivers the buy-a-second-battery outcome.",
+    },
+];

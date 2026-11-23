@@ -308,6 +308,146 @@ const MUX_CONSTRAINTS: &[Constraint<'static>] = &[
     },
 ];
 
+/// Terminations that let a user swap the cell with their hands.
+///
+/// Hot-swap and user-replaceability both come down to this: a connectorised cell
+/// can be unplugged, a solder-tab cell cannot. EU Battery Regulation Art. 11
+/// requires user-replaceability as a floor; being able to carry a charged spare
+/// is the stronger property the product wants, and it is the connector that
+/// delivers both.
+const USER_SWAPPABLE_TERMINATIONS: &[&str] =
+    &["JST-PH-2.0", "JST-PH", "connector", "molex-picoblade"];
+
+/// The battery cell, machine-checkable.
+///
+/// Several of these are *licensing* constraints wearing electrical clothing. The
+/// certification for a lithium cell belongs to whoever manufactures the battery,
+/// and buying bare cells to protect ourselves would make that us — which is why
+/// `integrated_pcm` is a hard filter and not a preference. See
+/// [`crate::licensing::BATTERY_CERT_CONDITIONS`].
+const BATTERY_CONSTRAINTS: &[Constraint<'static>] = &[
+    Constraint {
+        attr: "integrated_pcm",
+        pred: crate::select::Predicate::IsTrue,
+        why: "the cell must arrive as a finished, pre-certified assembly with its own protection \
+              circuit. Buying bare cells and adding our own PCM makes US the battery \
+              manufacturer, inheriting UN 38.3 and IEC 62133-2 testing — a five-figure \
+              certification programme acquired by a sourcing decision",
+    },
+    Constraint {
+        attr: "un38_3_report",
+        pred: crate::select::Predicate::IsTrue,
+        why: "UN 38.3 transport testing must exist FOR THIS MODEL and be obtainable from the \
+              vendor. Certification is per model, so a vendor's general compliance claim is not \
+              the document that ships with the product",
+    },
+    Constraint {
+        attr: "iec62133_2_report",
+        pred: crate::select::Predicate::IsTrue,
+        why: "IEC 62133-2 cell safety report, per model, from the vendor — the other half of the \
+              archive that lets certification sit with them rather than us",
+    },
+    Constraint {
+        attr: "termination",
+        pred: crate::select::Predicate::OneOf(USER_SWAPPABLE_TERMINATIONS),
+        why: "a connectorised cell is what makes a spare battery usable: the user unplugs one and \
+              plugs in another. Solder tabs would satisfy nothing — not Art. 11 \
+              user-replaceability, and certainly not carrying a charged spare",
+    },
+    Constraint {
+        attr: "cells_series",
+        pred: crate::select::Predicate::NumEq {
+            value: 1.0,
+            rel_tol: 0.0,
+        },
+        why: "1S. The charger, the fuel gauge and every rail in the power model assume a single \
+              3.7 V nominal cell; a 2S pack is a different power tree, not a bigger battery",
+    },
+    Constraint {
+        attr: "capacity_mah",
+        pred: crate::select::Predicate::AtLeast(1000.0),
+        why: "below ~1000 mAh the runtime drops out of the compact-DAP class the product is \
+              measured against (Shanling M0 Pro ~14.5 h, FiiO M6 ~12 h)",
+    },
+    Constraint {
+        attr: "watt_hours",
+        pred: crate::select::Predicate::AtMost(100.0),
+        why: "above 100 Wh a lithium battery installed in equipment leaves UN3481 PI967 Section \
+              II and needs Class 9 dangerous-goods shipping. The design is ~4 Wh, so this is a \
+              guard against a future cell choice quietly changing how the product can be posted",
+    },
+    Constraint {
+        attr: "thickness_mm",
+        pred: crate::select::Predicate::AtMost(7.1),
+        why: "the battery bay is 35 x 59 x 7.1 mm",
+    },
+    Constraint {
+        attr: "width_mm",
+        pred: crate::select::Predicate::AtMost(35.0),
+        why: "battery bay width",
+    },
+    Constraint {
+        attr: "length_mm",
+        pred: crate::select::Predicate::AtMost(59.0),
+        why: "battery bay length",
+    },
+];
+
+/// The Bluetooth module — **not populated on the shipped board**, and specified
+/// anyway.
+///
+/// Specified because the constraints are the expensive part. Every one of these
+/// is a licensing or certification inheritance: a bare Bluetooth *chip* costs a
+/// SIG qualification programme and, for Qualcomm parts, an NDA and a gated SDK. A
+/// pre-qualified *module* costs neither, because its QDID and its RED/FCC radio
+/// approvals are inheritable. The difference between those two choices is roughly
+/// the entire licensing budget of the product.
+const BLUETOOTH_CONSTRAINTS: &[Constraint<'static>] = &[
+    Constraint {
+        attr: "is_module",
+        pred: crate::select::Predicate::IsTrue,
+        why: "a module, never a bare chip. The module vendor has already run the radio through \
+              qualification and certification; starting from a chip means running both ourselves",
+    },
+    Constraint {
+        attr: "bt_sig_qualified",
+        pred: crate::select::Predicate::IsTrue,
+        why: "the module must carry its own Bluetooth SIG qualification (a QDID we can reference \
+              in an end-product Declaration). Without one, using Bluetooth means a full \
+              qualification programme rather than a ~$5k Declaration — this is exactly how \
+              Tangara inherits the ESP32's QDID",
+    },
+    Constraint {
+        attr: "radio_certified_eu",
+        pred: crate::select::Predicate::IsTrue,
+        why: "pre-certified for RED/CE, so populating the radio does not require a radiated \
+              emissions programme on our own board. Note this is not a full exemption: the end \
+              product still needs its own EMC test (Tangara needed one despite a pre-certified \
+              module)",
+    },
+    Constraint {
+        attr: "requires_vendor_nda",
+        pred: crate::select::Predicate::IsFalse,
+        why: "an NDA-gated SDK is incompatible with shipping open-source firmware: the Qualcomm \
+              QCC route needs an NDA and ADK access. A pre-made module encapsulates the \
+              NDA-bound firmware behind a documented host interface, which is why this is a hard \
+              filter rather than an inconvenience",
+    },
+    Constraint {
+        attr: "codec_sbc",
+        pred: crate::select::Predicate::IsTrue,
+        why: "SBC is the mandatory royalty-free codec and the only one the product commits to. \
+              aptX is licensed through the module vendor and LDAC source has no off-the-shelf \
+              module, so neither is required — a module that offers ONLY licensed codecs would \
+              make the audio path depend on a fee",
+    },
+    Constraint {
+        attr: "supply_mv_max",
+        pred: crate::select::Predicate::AtMost(3300.0),
+        why: "the board has no rail above 3.3 V",
+    },
+];
+
 /// Requirements with candidates — the soft lock in practice.
 ///
 /// Stock figures are from the committed sourcing snapshot
@@ -415,6 +555,51 @@ const PARTS: &[PartReq] = &[
                      power and a refresh-contention problem in the audio path",
                 ),
                 note: "",
+            },
+        ],
+    },
+    PartReq {
+        id: "battery",
+        what: "1S Li-Po, >=1000 mAh, finished cell with its own PCM, connectorised, fits a \
+               35 x 59 x 7.1 mm bay, per-model UN 38.3 + IEC 62133-2 docs available",
+        constraints: BATTERY_CONSTRAINTS,
+        candidates: &[Candidate {
+            mpn: "AKY-LP623255",
+            preference: Preference::Evaluating,
+            // Evaluating rather than Preferred on purpose. The licensing research
+            // records this as the documented prototype cell, but a second source
+            // has not been researched, and `requirements_have_a_preference_and_a_
+            // second_source` would then demand an Alternate — which could only be
+            // satisfied by inventing one.
+            note: "Akyga AKY-LP623255: 1100 mAh, 6.2 x 32 x 55 mm, PCM + JST, vendor issues the \
+                   per-model AKY0646 docs. The documented prototype cell (licensing research §1); \
+                   marked Evaluating because no second source is researched yet, and a 1500 mAh \
+                   class-leading cell is deferred pending a bay tweak.",
+        }],
+    },
+    PartReq {
+        id: "bluetooth",
+        what: "pre-qualified BT module (inheritable QDID + EU radio cert), SBC, no vendor NDA — \
+               DO NOT POPULATE on the shipped wired-only board",
+        constraints: BLUETOOTH_CONSTRAINTS,
+        candidates: &[
+            Candidate {
+                mpn: "FSC-BT1035",
+                preference: Preference::Evaluating,
+                note: "Feasycom FSC-BT1035 (QCC3056). The documented if/when choice: inherits the \
+                       module's RED/FCC/BQB radio certs and hides the Qualcomm NDA behind a host \
+                       interface. Evaluating, not Preferred — the shipped board leaves it \
+                       unpopulated, and populating it moves the device from the EMC Directive to \
+                       the RED (see licensing::regime_for) and adds an antenna window.",
+            },
+            Candidate {
+                mpn: "STM32WB55RGV6TR",
+                preference: Preference::Rejected(
+                    "v1 part, and the wrong shape of decision: a bare BLE SoC rather than a \
+                     pre-qualified module, so Bluetooth qualification and EU radio certification \
+                     would both be ours to run instead of inherited",
+                ),
+                note: "kept so the module-vs-chip choice is not re-litigated from scratch",
             },
         ],
     },

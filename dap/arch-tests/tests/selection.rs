@@ -245,7 +245,7 @@ fn the_mux_filter_rejects_make_before_break_and_too_slow_parts() {
         qualified,
         vec!["FIXTURE-MUX-2CH-BBM".to_string()],
         "only the break-before-make, fast-enough mux should survive: a make-before-break part \
-         briefly shorts the two oscillators together, and a 10 MHz part cannot pass a 49.152 MHz \
+         briefly shorts the two oscillators together, and a 10 MHz part cannot pass a 24.576 MHz \
          clock"
     );
 }
@@ -277,5 +277,172 @@ fn constraints_are_not_self_contradictory() {
                 }
             }
         }
+    }
+}
+
+/// The battery filter, where the cheapest, biggest, deepest-stocked cell loses.
+///
+/// This is the licensing filter with the most money behind it. Two of the
+/// rejected cells are commercially the most attractive parts in the category:
+///
+/// - `FIXTURE-CELL-1200-SOLDERTAB` is the cheapest, has the deepest stock AND the
+///   largest capacity. Solder tabs make a spare battery impossible and fail EU
+///   Battery Regulation Art. 11 user-replaceability.
+/// - `FIXTURE-CELL-1100-BARE` is cheaper than either survivor and triple-sourced.
+///   Buying bare cells and adding our own protection circuit makes *us* the
+///   battery manufacturer, inheriting UN 38.3 and IEC 62133-2 testing — a
+///   five-figure certification programme acquired by a sourcing decision.
+///
+/// A price-first filter picks both. That is the whole argument for encoding these
+/// as constraints rather than leaving them in a document.
+#[test]
+fn the_battery_filter_rejects_the_cheapest_and_largest_cells_for_licensing_reasons() {
+    let qualified = report("battery");
+
+    assert!(
+        !qualified.contains(&"FIXTURE-CELL-1200-SOLDERTAB".to_string()),
+        "the solder-tab cell is the cheapest, deepest-stocked and highest-capacity part in the \
+         category, and must lose: a user cannot unplug it, so there is no spare battery and no \
+         Art. 11 user-replaceability"
+    );
+    assert!(
+        !qualified.contains(&"FIXTURE-CELL-1100-BARE".to_string()),
+        "the bare cell without a protection circuit must lose even though it is cheap and \
+         triple-sourced: protecting it ourselves would transfer UN 38.3 and IEC 62133-2 \
+         certification from the vendor to us"
+    );
+    assert!(
+        !qualified.contains(&"FIXTURE-CELL-1100-NODOCS".to_string()),
+        "a vendor that will not issue the per-model transport report leaves us holding an \
+         undocumented battery; certification is per model, so a general compliance claim is not \
+         the document that ships"
+    );
+    assert!(
+        !qualified.contains(&"FIXTURE-CELL-2S-2000".to_string()),
+        "a 2S pack is a different power tree, not a bigger battery — the charger, gauge and every \
+         rail in the power model assume one cell"
+    );
+    assert!(
+        !qualified.contains(&"FIXTURE-CELL-1800-THICK".to_string()),
+        "9 mm does not fit a 7.1 mm bay regardless of how good the cell is"
+    );
+    assert!(
+        !qualified.contains(&"FIXTURE-CELL-600-SMALL".to_string()),
+        "600 mAh drops the runtime out of the compact-DAP class the product is measured against"
+    );
+
+    assert_eq!(
+        qualified.len(),
+        2,
+        "exactly the two connectorised, PCM-equipped, documented 1S cells should qualify, got \
+         {qualified:?}"
+    );
+}
+
+/// Hot-swap is a *termination* property, and the filter has to treat it as one.
+///
+/// The product wants users to be able to buy a second cell and swap it. At part
+/// level that is exactly one thing: the cell is connectorised rather than
+/// soldered. This test pins that the constraint discriminates on that alone — the
+/// solder-tab part is otherwise superior on capacity, price and stock, so if it
+/// ever qualifies, the swap story is gone and nothing else would notice.
+#[test]
+fn every_qualifying_cell_can_be_unplugged_by_a_user() {
+    let owned = load("battery");
+    let parts = borrow(&owned);
+    let req = ACTIVE
+        .parts
+        .iter()
+        .find(|r| r.id == "battery")
+        .expect("the spec must have a battery requirement");
+    let mut verdicts = vec![None; parts.len()];
+    evaluate(&parts, req.constraints, &mut verdicts);
+
+    for v in verdicts.iter().flatten() {
+        if v.rejection.is_some() {
+            continue;
+        }
+        let termination = v
+            .part
+            .attrs
+            .iter()
+            .find(|(k, _)| k.eq_ignore_ascii_case("termination"))
+            .map(|(_, val)| *val);
+        match termination {
+            Some(AttrValue::Text(t)) => assert!(
+                !t.to_lowercase().contains("solder"),
+                "{} qualified with a {t} termination. A soldered cell cannot be swapped by a \
+                 user, which defeats both the spare-battery feature and Art. 11.",
+                v.part.mpn
+            ),
+            other => panic!(
+                "{} qualified without a usable termination attribute ({other:?}) — the \
+                 constraint should have rejected it",
+                v.part.mpn
+            ),
+        }
+    }
+}
+
+/// The Bluetooth filter buys certification inheritance, not parts.
+///
+/// Every rejection here is a cost avoided rather than a specification missed: a
+/// bare SoC at half the price costs a Bluetooth qualification programme and an EU
+/// radio certification programme, and an NDA-gated module cannot ship with
+/// open-source firmware at all.
+#[test]
+fn the_bluetooth_filter_requires_inheritable_qualification_and_no_nda() {
+    let qualified = report("bluetooth");
+
+    assert!(
+        !qualified.contains(&"FIXTURE-BT-BARE-SOC".to_string()),
+        "the bare SoC is half the price of the qualified module and triple-sourced. It must lose: \
+         with no module QDID and no pre-certified radio, Bluetooth qualification and EU radio \
+         certification both become ours to run"
+    );
+    assert!(
+        !qualified.contains(&"FIXTURE-BT-MODULE-NO-QDID".to_string()),
+        "a module with no SIG qualification offers nothing to inherit — the end-product \
+         Declaration has to reference a QDID"
+    );
+    assert!(
+        !qualified.contains(&"FIXTURE-BT-MODULE-NDA".to_string()),
+        "an NDA-gated SDK is incompatible with shipping open-source firmware, which is why this \
+         is a hard filter and not a preference"
+    );
+    assert!(
+        !qualified.contains(&"FIXTURE-BT-MODULE-LICENSED-CODECS-ONLY".to_string()),
+        "a module without SBC makes the audio path depend on a licensed codec; SBC is the \
+         royalty-free baseline the product commits to"
+    );
+
+    assert_eq!(
+        qualified,
+        vec!["FIXTURE-BT-MODULE-QUALIFIED".to_string()],
+        "only the pre-qualified, EU-certified, NDA-free, SBC-capable module should survive"
+    );
+}
+
+/// Every requirement whose failure mode is a licence fee must carry constraints.
+///
+/// The requirements where getting it wrong costs money rather than a redesign are
+/// exactly the ones where prose is least adequate, because the wrong part works
+/// perfectly and the bill arrives later. This refuses to let them sit in
+/// `NO_CONSTRAINTS`.
+#[test]
+fn licensing_sensitive_requirements_are_not_prose_only() {
+    for id in ["battery", "bluetooth"] {
+        let req = ACTIVE
+            .parts
+            .iter()
+            .find(|r| r.id == id)
+            .unwrap_or_else(|| panic!("the spec must have a '{id}' requirement"));
+        assert!(
+            !req.constraints.is_empty(),
+            "requirement '{id}' has no machine-checkable constraints. Its failure mode is a \
+             certification or licensing cost, not a part that does not work — so a reviewer \
+             reading the prose would see nothing wrong. These are the requirements that most need \
+             filters."
+        );
     }
 }
