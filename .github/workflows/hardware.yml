@@ -49,12 +49,28 @@ on:
   push:
     branches: [main]
     paths:
-      - 'hardware/**'
+      # The atopile DESIGN, not everything under hardware/. hardware/bom/ holds
+      # sourcing data (snapshot.json, the distributor CSVs) that this workflow
+      # never reads: it builds the .ato design and runs ERC. Including it meant
+      # every sourcing refresh triggered the jobs below -- which are known broken
+      # (see the note at the top of this file), so a BOM update produced a wall of
+      # red that had nothing to do with the change.
+      - 'hardware/elec/**'
+      - 'hardware/ato.yaml'
+      - 'hardware/ato-lock.yaml'
       - '.github/workflows/hardware.yml'
   pull_request:
     branches: [main]
     paths:
-      - 'hardware/**'
+      # The atopile DESIGN, not everything under hardware/. hardware/bom/ holds
+      # sourcing data (snapshot.json, the distributor CSVs) that this workflow
+      # never reads: it builds the .ato design and runs ERC. Including it meant
+      # every sourcing refresh triggered the jobs below -- which are known broken
+      # (see the note at the top of this file), so a BOM update produced a wall of
+      # red that had nothing to do with the change.
+      - 'hardware/elec/**'
+      - 'hardware/ato.yaml'
+      - 'hardware/ato-lock.yaml'
       - '.github/workflows/hardware.yml'
 
 jobs:
