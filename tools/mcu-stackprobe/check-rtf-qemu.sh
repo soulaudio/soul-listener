@@ -115,23 +115,55 @@ if printf '%s\n' "$VALIDATE" | grep -q 'suspect_overflow=true'; then
   exit 1
 fi
 
-INSN_PER_S="$(printf '%s\n' "$OUT" \
-  | sed -nE 's/.*caches=off ticks=[0-9]+ ticks_per_audio_s=([0-9]+).*/\1/p' | head -1)"
-if [ -z "$INSN_PER_S" ]; then
-  echo "ERROR: could not parse instructions-per-audio-second from the output." >&2
-  exit 1
-fi
-
-# Regression ratchet. 22,000,000 over a measured 19,998,974 (~10% margin). This
-# is instructions, not cycles, and is deterministic under -icount — so unlike the
-# stack budgets it needs no allowance for compiler drift beyond real codegen
-# change. The probe's own toolchain is pinned by rust-toolchain.toml next door.
-BUDGET_INSN="${DECODE_INSN_BUDGET_PER_AUDIO_S:-22000000}"
-echo "instructions per second of decoded audio (caches=off, the shipped config): ${INSN_PER_S}"
-echo "regression-ratchet budget (DECODE_INSN_BUDGET_PER_AUDIO_S):                ${BUDGET_INSN}"
-
+# --- parse the two stages -------------------------------------------------
+# DECODE ONLY: each format at its OWN native rate, so the resampler is bypassed.
+DECODE_WORST="$(printf '%s\n' "$OUT" \
+  | sed -nE 's/.*decode_only worst_format=([a-z0-9-]+) worst_ticks_per_audio_s=([0-9]+).*/\2/p' | head -1)"
+DECODE_WORST_FMT="$(printf '%s\n' "$OUT" \
+  | sed -nE 's/.*decode_only worst_format=([a-z0-9-]+) worst_ticks_per_audio_s=([0-9]+).*/\1/p' | head -1)"
+# FULL PIPELINE: 44.1 kHz source into a 48 kHz sink, so the resampler runs.
+PIPELINE="$(printf '%s\n' "$OUT" \
+  | sed -nE 's/.*resampler .*flac_resampled_per_s=([0-9]+) .*/\1/p' | head -1)"
+RESAMPLER="$(printf '%s\n' "$OUT" \
+  | sed -nE 's/.*resampler .*resampler_per_s=([0-9]+) .*/\1/p' | head -1)"
+RESAMPLE_X100="$(printf '%s\n' "$OUT" \
+  | sed -nE 's/.*resampled_vs_native_centi=([0-9]+).*/\1/p' | head -1)"
+FLAC_NATIVE="$(printf '%s\n' "$OUT" \
+  | sed -nE 's/.*resampler flac_native_per_s=([0-9]+) .*/\1/p' | head -1)"
 SPEEDUP_I="$(printf '%s\n' "$OUT" | sed -nE 's/.*speedup_centi i_vs_off=([0-9]+).*/\1/p' | head -1)"
 SPEEDUP_ID="$(printf '%s\n' "$OUT" | sed -nE 's/.*speedup_centi .*id_vs_off=([0-9]+).*/\1/p' | head -1)"
+
+for v in DECODE_WORST PIPELINE RESAMPLER RESAMPLE_X100 FLAC_NATIVE; do
+  eval "val=\${$v:-}"
+  if [ -z "$val" ]; then
+    echo "ERROR: could not parse $v from the probe output." >&2
+    exit 1
+  fi
+done
+
+# --- the two ratchets -----------------------------------------------------
+# Separate budgets, because these are different engineering quantities and a
+# regression in either has a different fix. Instructions, not cycles, and exact
+# under -icount, so neither needs a compiler-drift allowance beyond real codegen
+# change (the probe's toolchain is pinned by rust-toolchain.toml next door).
+BUDGET_DECODE="${DECODE_INSN_BUDGET_PER_AUDIO_S:-11000000}"
+BUDGET_PIPELINE="${PIPELINE_INSN_BUDGET_PER_AUDIO_S:-22000000}"
+
+echo "decode only, worst format (${DECODE_WORST_FMT}), at its NATIVE rate:  ${DECODE_WORST}"
+echo "  ratchet (DECODE_INSN_BUDGET_PER_AUDIO_S):                          ${BUDGET_DECODE}"
+echo "full pipeline (44.1 kHz source -> 48 kHz sink, resampler engaged):   ${PIPELINE}"
+echo "  ratchet (PIPELINE_INSN_BUDGET_PER_AUDIO_S):                        ${BUDGET_PIPELINE}"
+echo
+echo "RESAMPLER COST, attributed: ${RESAMPLER} instructions per second of audio"
+echo "  same fixture, same codec, same cache state — the only difference between"
+echo "  the pipeline figure and FLAC at its native rate (${FLAC_NATIVE}) is whether"
+echo "  the resampler runs. That makes it ${RESAMPLE_X100}/100 x the native-rate cost, and the"
+echo "  single heaviest stage in the DAP's audio path — more than the heaviest"
+echo "  DECODER (${DECODE_WORST_FMT}, ${DECODE_WORST}). The board carries a dual MCLK oscillator"
+echo "  specifically so the SAI can clock natively and skip it; power::model's"
+echo "  native_rate_clocking_needs_lower_clock_than_resampling asserts the"
+echo "  direction, and this is the magnitude."
+
 echo
 echo "cache speedup, emulated: i=${SPEEDUP_I:-?}/100  i+d=${SPEEDUP_ID:-?}/100"
 if [ "${SPEEDUP_ID:-100}" = "100" ] && [ "${SPEEDUP_I:-100}" = "100" ]; then
@@ -145,29 +177,41 @@ else
 fi
 
 echo
-echo "target RTF implied at 280 MHz, as a function of CPI (CPI is what the caches"
-echo "change, and the part that needs silicon):"
-for cpi_centi in 120 150 300 500 800; do
-  # RTF = f_cpu / (insn_per_s * CPI); x100 arithmetic throughout.
-  rtf_centi=$(( 280000000 * 100 * 100 / (INSN_PER_S * cpi_centi) ))
-  # Minimum clock in MHz to sustain realtime (RTF = 1.0) at this CPI.
-  min_mhz=$(( INSN_PER_S * cpi_centi / 100 / 1000000 ))
-  printf '  CPI %d.%02d -> RTF %d.%02dx realtime, needs >= %d MHz to hold realtime\n' \
-    $((cpi_centi / 100)) $((cpi_centi % 100)) \
-    $((rtf_centi / 100)) $((rtf_centi % 100)) \
-    "$min_mhz"
+echo "minimum core clock to hold realtime, as a function of CPI (CPI is what the"
+echo "caches change, and the part that still needs silicon):"
+printf '  %-10s %-22s %s\n' "CPI" "native-rate (${DECODE_WORST_FMT})" "resampled"
+for cpi_centi in 120 150 300 610 800; do
+  native_mhz=$(( DECODE_WORST * cpi_centi / 100 / 1000000 ))
+  resamp_mhz=$(( PIPELINE * cpi_centi / 100 / 1000000 ))
+  printf '  %d.%02d%-5s %-22s %s\n' \
+    $((cpi_centi / 100)) $((cpi_centi % 100)) "" \
+    ">= ${native_mhz} MHz" ">= ${resamp_mhz} MHz"
 done
+echo "  (CPI 6.10 is the value the power model's 50x host derate implicitly assumes"
+echo "   for the resampled pipeline — see the placement doc S15/S16.)"
 
-if [ "$INSN_PER_S" -gt "$BUDGET_INSN" ]; then
+FAIL=0
+if [ "$DECODE_WORST" -gt "$BUDGET_DECODE" ]; then
   echo >&2
-  echo "FAIL (regression): decode work (${INSN_PER_S} instructions per audio second)" >&2
-  echo "       exceeds the ratchet budget (${BUDGET_INSN}) by $((INSN_PER_S - BUDGET_INSN)). A decoder," >&2
-  echo "       resampler or container change made the DAP do materially more work per" >&2
-  echo "       second of audio, which raises the minimum clock and therefore current" >&2
-  echo "       draw. Reduce it, or — if the cost is understood and accepted — raise" >&2
+  echo "FAIL (regression): worst decode-only cost (${DECODE_WORST} instructions per audio" >&2
+  echo "       second, ${DECODE_WORST_FMT}) exceeds the ratchet (${BUDGET_DECODE}) by $((DECODE_WORST - BUDGET_DECODE))." >&2
+  echo "       A decoder got more expensive. This raises the minimum clock even for" >&2
+  echo "       native-rate playback, which is the low-power path — reduce it, or raise" >&2
   echo "       DECODE_INSN_BUDGET_PER_AUDIO_S deliberately." >&2
+  FAIL=1
+fi
+if [ "$PIPELINE" -gt "$BUDGET_PIPELINE" ]; then
+  echo >&2
+  echo "FAIL (regression): full-pipeline cost (${PIPELINE} instructions per audio second)" >&2
+  echo "       exceeds the ratchet (${BUDGET_PIPELINE}) by $((PIPELINE - BUDGET_PIPELINE)). A decoder," >&2
+  echo "       resampler or container change made the DAP do materially more work per" >&2
+  echo "       second of audio. Reduce it, or raise PIPELINE_INSN_BUDGET_PER_AUDIO_S" >&2
+  echo "       deliberately." >&2
+  FAIL=1
+fi
+if [ "$FAIL" -ne 0 ]; then
   exit 1
 fi
 echo
-echo "OK: decode work ${INSN_PER_S} instructions per audio second is within the"
-echo "    ${BUDGET_INSN} ratchet budget ($((BUDGET_INSN - INSN_PER_S)) to spare)."
+echo "OK: decode-only ${DECODE_WORST} <= ${BUDGET_DECODE} ($((BUDGET_DECODE - DECODE_WORST)) to spare)"
+echo "    pipeline    ${PIPELINE} <= ${BUDGET_PIPELINE} ($((BUDGET_PIPELINE - PIPELINE)) to spare)"

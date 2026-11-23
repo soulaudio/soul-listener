@@ -11,6 +11,26 @@
 //! thumbv7em codegen and reports work per second of decoded audio, which is what
 //! the model actually wants.
 //!
+//! # What it measures, and why the split matters
+//!
+//! Two quantities, deliberately separated, because conflating them produced a
+//! wrong answer once already (see the placement doc S16):
+//!
+//! * **decode only** — each format at its OWN native rate, so the resampler is
+//!   bypassed. This is the cost that bounds the clock floor for native-rate
+//!   playback, the low-power path the board is built for.
+//! * **full pipeline** — 44.1 kHz source into a 48 kHz sink, so the resampler
+//!   runs. The difference between the two IS the resampler, and it is the
+//!   heaviest stage in the audio path: ~19.1M instructions per second of audio,
+//!   22x FLAC decode and 2x the heaviest decoder.
+//!
+//! Running every format into one fixed sink rate measures neither cleanly. It
+//! ranks the formats by how far their native rate sits from the sink, not by
+//! codec cost — which is how an earlier revision concluded that Opus was the
+//! CHEAPEST format. Opus is 48 kHz by spec (RFC 6716), so against a 48 kHz sink
+//! it was the only format NOT being resampled; at its native rate it is in fact
+//! the most expensive decoder by 11x.
+//!
 //! It is also the rig for the cache question.
 //! `docs/plans/2026-11-21-memory-architecture-and-placement.md` §4 records that
 //! the M7 resets with both caches OFF, that `cortex-m-rt` does not enable them,
@@ -74,11 +94,63 @@ use soul_audio_core::{
 const MKA_FLAC_FIXTURE: &[u8] =
     include_bytes!("../../../../../soul-audio-core/testdata/tone-flac.mka");
 
-/// Output rate the sink presents, so the measured path includes the resampler
-/// the board really runs. RTF is defined against the OUTPUT timeline: the sink
-/// must be fed `SINK_RATE` frames per wall-clock second or audio glitches,
-/// whatever the file's native rate is.
-const SINK_RATE: u32 = 48_000;
+/// How many formats the sweep covers.
+const FORMATS: usize = 6;
+
+/// The per-format sweep: every format `power::model` hardcodes a
+/// `HOST_RTF_*` for, so each of those projected inputs gets a measured
+/// counterpart. All are the same synthetic `tone-*` source material, so the
+/// numbers differ by codec and container cost rather than by content.
+///
+/// **AAC is deliberately absent.** It is Via LA patent-encumbered, gated behind
+/// an opt-in `aac` feature, and `dap-arch-tests`' `aac_license.rs` asserts
+/// `!soul_audio_core::AAC_ENABLED` — the DAP must not link it. Measuring it here
+/// would import that decoder into exactly the binary that is legally required
+/// not to ship it, which is the same mistake the variant roster made (§12).
+/// `HOST_RTF_AAC` therefore stays a host-only figure on purpose.
+const SWEEP: [(&str, &[u8], u32); FORMATS] = [
+    // WAV: no codec at all, so this is the floor — container parse only.
+    (
+        "wav",
+        include_bytes!("../../../../../soul-audio-core/testdata/tone.wav"),
+        44_100,
+    ),
+    // FLAC in Matroska: the DAP's realistic worst case for the stack probes, and
+    // the fixture the three cache passes below also use (at 48 kHz, resampled).
+    ("mka-flac", MKA_FLAC_FIXTURE, 44_100),
+    (
+        "mp3",
+        include_bytes!("../../../../../soul-audio-core/testdata/tone.mp3"),
+        44_100,
+    ),
+    (
+        "alac-caf",
+        include_bytes!("../../../../../soul-audio-core/testdata/tone-alac.caf"),
+        44_100,
+    ),
+    // Opus: the heaviest decoder (CELT + SILK), and the format L11's "needs VOS2,
+    // VOS3 unreachable" conclusion is specifically about. Opus is 48 kHz BY SPEC
+    // (RFC 6716), which is why its native rate differs from the rest — and why an
+    // earlier version of this sweep, which ran everything into a fixed 48 kHz
+    // sink, made Opus look like the CHEAPEST format: it was the only one not
+    // being resampled. See the module doc.
+    (
+        "opus-webm",
+        include_bytes!("../../../../../soul-audio-core/testdata/tone-opus.webm"),
+        48_000,
+    ),
+    (
+        "wavpack",
+        include_bytes!("../../../../../soul-audio-core/testdata/tone-24.wv"),
+        44_100,
+    ),
+];
+
+/// Sink rate used for the RESAMPLED measurement: 48 kHz against 44.1 kHz source
+/// material, so the pipeline includes the resampler. RTF is defined against the
+/// OUTPUT timeline — the sink must be fed this many frames per wall-clock second
+/// or audio glitches, whatever the file's native rate is.
+const SINK_RATE_RESAMPLED: u32 = 48_000;
 const SINK_CHANNELS: u16 = 2;
 
 /// SysTick is a 24-bit down-counter; this is its maximum reload.
@@ -119,16 +191,50 @@ impl Sink for CountingSink {
 type ProbeDecoder = AnyDecoder<SliceSource<'static>, &'static mut [i32]>;
 type ProbeDeck = Deck<CountingSink, ProbeDecoder, 0>;
 
-// One scratch and one deck per pass. The scratch is moved into the decoder by
+// TWO decks, one per sink rate — and no more than that.
+//
+// `Deck::load` replaces the current track and drops the previous decoder, so one
+// deck can host many formats in turn —
+// the same episode pattern `mcu-stackprobe`'s main.rs uses. That matters here
+// because this bin runs nine passes (six formats + three cache configurations)
+// and a deck is ~165 KiB; nine of them would not fit the harness's RAM. But the
+// SINK is moved into the deck at construction and its rate is fixed, so measuring
+// at two output rates needs exactly two decks.
+//
+// Worth spelling out, because getting it wrong is SILENT: an earlier revision
+// threaded a `sink_rate` argument through `run_pass` while still constructing a
+// single 48 kHz deck, so every "native rate" pass was in fact still resampling
+// and only the divisor changed. The numbers stayed plausible (~18M rather than
+// ~0.85M) and the only visible tell was `audio_ms` drifting to 2182 for a 2 s
+// fixture. `run_pass` now asserts the deck's real sink rate against the rate the
+// pass claims, so the two cannot disagree again.
+static DECK_44K: StaticCell<ProbeDeck> = StaticCell::new();
+static DECK_48K: StaticCell<ProbeDeck> = StaticCell::new();
+
+// The scratch, however, MUST be one per pass. It is moved into the decoder by
 // value, so a pass cannot reuse the previous pass's `&'static mut [i32]` — there
 // is no safe way to reclaim that borrow, only an independent `StaticCell`. Same
-// reasoning as `mcu-stackprobe`'s `SCRATCH2`.
+// reasoning as `mcu-stackprobe`'s `SCRATCH2`. Nine passes, nine scratches, at
+// `decoder_scratch_len()` i32 each (~256 KiB) = ~2.25 MB of .bss, which fits the
+// harness's deliberately oversized 4 MB `memory.x` region (that file is a
+// generic test map, NOT the real H7A3 one — see its own doc comment).
+static SCRATCH_FMT: [&StaticCell<[i32; decoder_scratch_len()]>; FORMATS] = [
+    &SCRATCH_F0,
+    &SCRATCH_F1,
+    &SCRATCH_F2,
+    &SCRATCH_F3,
+    &SCRATCH_F4,
+    &SCRATCH_F5,
+];
+static SCRATCH_F0: StaticCell<[i32; decoder_scratch_len()]> = StaticCell::new();
+static SCRATCH_F1: StaticCell<[i32; decoder_scratch_len()]> = StaticCell::new();
+static SCRATCH_F2: StaticCell<[i32; decoder_scratch_len()]> = StaticCell::new();
+static SCRATCH_F3: StaticCell<[i32; decoder_scratch_len()]> = StaticCell::new();
+static SCRATCH_F4: StaticCell<[i32; decoder_scratch_len()]> = StaticCell::new();
+static SCRATCH_F5: StaticCell<[i32; decoder_scratch_len()]> = StaticCell::new();
 static SCRATCH_A: StaticCell<[i32; decoder_scratch_len()]> = StaticCell::new();
 static SCRATCH_B: StaticCell<[i32; decoder_scratch_len()]> = StaticCell::new();
 static SCRATCH_C: StaticCell<[i32; decoder_scratch_len()]> = StaticCell::new();
-static DECK_A: StaticCell<ProbeDeck> = StaticCell::new();
-static DECK_B: StaticCell<ProbeDeck> = StaticCell::new();
-static DECK_C: StaticCell<ProbeDeck> = StaticCell::new();
 
 /// Which counter the run is using. Reported, never assumed — the two measure
 /// different quantities (see the module doc).
@@ -223,19 +329,23 @@ impl Counter {
     }
 }
 
-/// One pass's result.
+/// One pass's result. Carries its own `sink_rate`, because the sweep runs each
+/// format at its NATIVE rate (no resampler) while the cache passes run at 48 kHz
+/// against 44.1 kHz source (resampler engaged) — so normalising work to a second
+/// of audio cannot use one global rate.
 struct Pass {
     ticks: u64,
     frames: u32,
+    sink_rate: u32,
     pumps: u32,
     hit_cap: bool,
     suspect_overflow: bool,
 }
 
-fn sink() -> CountingSink {
+fn sink(rate: u32) -> CountingSink {
     CountingSink {
         info: StreamInfo {
-            sample_rate: SINK_RATE,
+            sample_rate: rate,
             channels: SINK_CHANNELS,
             format: SampleFormat::Int { bits: 24 },
         },
@@ -250,15 +360,24 @@ fn sink() -> CountingSink {
 /// steady-state-only number would flatter the cached case.
 fn run_pass(
     instrument: Instrument,
+    fixture: &'static [u8],
+    sink_rate: u32,
     scratch: &'static mut [i32],
-    deck_cell: &'static StaticCell<ProbeDeck>,
+    deck: &mut ProbeDeck,
     syst: &mut SYST,
 ) -> Pass {
     FRAMES_OUT.store(0, Ordering::Relaxed);
+    // The deck's sink rate IS the output rate; `sink_rate` only normalises work
+    // per second of audio. If they disagree the pass measures a different
+    // pipeline than it reports, so refuse rather than print a plausible wrong
+    // number (see DECK_44K's note).
+    assert!(
+        deck.sink().stream_info().sample_rate == sink_rate,
+        "run_pass: deck sink rate does not match the rate this pass claims"
+    );
     let mut counter = Counter::start(instrument, syst);
 
-    let deck: &'static mut ProbeDeck = deck_cell.init(Deck::new(sink(), Quality::Fast));
-    let src = SliceSource::new(MKA_FLAC_FIXTURE);
+    let src = SliceSource::new(fixture);
     let decoder = open_seekable(src, scratch).unwrap();
     deck.load(decoder).unwrap();
 
@@ -284,18 +403,19 @@ fn run_pass(
     Pass {
         ticks,
         frames: FRAMES_OUT.load(Ordering::Relaxed),
+        sink_rate,
         pumps,
         hit_cap,
         suspect_overflow: counter.suspect_overflow,
     }
 }
 
-/// `ticks * SINK_RATE / frames`, in u64 so a long fixture cannot overflow.
+/// `ticks * sink_rate / frames`, in u64 so a long fixture cannot overflow.
 fn ticks_per_audio_second(p: &Pass) -> u64 {
     if p.frames == 0 {
         return 0;
     }
-    p.ticks * u64::from(SINK_RATE) / u64::from(p.frames)
+    p.ticks * u64::from(p.sink_rate) / u64::from(p.frames)
 }
 
 /// RTF at `f_hz`, x100 so it prints without float formatting: `250` == 2.50x.
@@ -337,16 +457,83 @@ fn main() -> ! {
     p.SYST.clear_current();
     p.SYST.enable_counter();
 
-    // Pass A — caches OFF: what the firmware ships as today. The M7 resets with
-    // both disabled and nothing in the dependency chain turns them on. Disabled
-    // explicitly anyway, so the pass is self-describing rather than relying on
-    // reset state (and stays correct after a bootloader that enabled them).
+    // `Quality::Fast` matches `dap_core::app`'s own `AppConfig` default, so the
+    // resampler cost measured here is the one the board actually pays.
+    let deck_44k: &'static mut ProbeDeck = DECK_44K.init(Deck::new(sink(44_100), Quality::Fast));
+    let deck_48k: &'static mut ProbeDeck =
+        DECK_48K.init(Deck::new(sink(SINK_RATE_RESAMPLED), Quality::Fast));
+
+    // Caches OFF for the whole format sweep: that is what the firmware ships as
+    // today (the M7 resets with both disabled and nothing in the dependency chain
+    // turns them on). Disabled explicitly rather than relying on reset state, so
+    // the sweep stays correct after a bootloader that enabled them.
     p.SCB.disable_icache();
     p.SCB.disable_dcache(&mut p.CPUID);
+
+    // --- Per-format sweep -------------------------------------------------
+    // One row per format the power model projects a HOST_RTF_* for, so every
+    // projected input gains a measured counterpart. Printed as it goes, because a
+    // format that fails to decode should still leave the earlier rows readable.
+    // Each format at its OWN native rate, so the resampler is bypassed and the
+    // figure is DECODE cost alone. Measuring every format into one fixed sink rate
+    // instead measures "decode + whatever resampling that mismatch implies", which
+    // is dominated by the resampler and ranks the formats wrongly (see the module
+    // doc's note on Opus).
+    let mut worst_name = "none";
+    let mut worst_per_s = 0u64;
+    let mut flac_native_per_s = 0u64;
+    for (i, (name, fixture, native_rate)) in SWEEP.iter().enumerate() {
+        let scratch = SCRATCH_FMT[i].init([0; decoder_scratch_len()]);
+        // The deck whose sink ALREADY runs at this fixture's native rate, so the
+        // resampler is genuinely bypassed rather than nominally so.
+        let deck: &mut ProbeDeck = if *native_rate == 44_100 {
+            &mut *deck_44k
+        } else {
+            &mut *deck_48k
+        };
+        let r = run_pass(
+            instrument,
+            fixture,
+            *native_rate,
+            scratch,
+            deck,
+            &mut p.SYST,
+        );
+        let per_s = ticks_per_audio_second(&r);
+        if per_s > worst_per_s {
+            worst_per_s = per_s;
+            worst_name = name;
+        }
+        if *name == "mka-flac" {
+            flac_native_per_s = per_s;
+        }
+        cortex_m_semihosting::hprintln!(
+            "mcu-rtfprobe: decode_only format={} sink_hz={} ticks={} frames={} audio_ms={} ticks_per_audio_s={} hit_cap={} suspect_overflow={}",
+            name,
+            native_rate,
+            r.ticks,
+            r.frames,
+            u64::from(r.frames) * 1000 / u64::from(*native_rate),
+            per_s,
+            r.hit_cap,
+            r.suspect_overflow
+        );
+    }
+    cortex_m_semihosting::hprintln!(
+        "mcu-rtfprobe: decode_only worst_format={} worst_ticks_per_audio_s={}",
+        worst_name,
+        worst_per_s
+    );
+
+    // --- Cache sweep, on the Matroska-FLAC path ---------------------------
+    // Pass A — caches off (the shipped configuration), the baseline for the two
+    // ratios below.
     let a = run_pass(
         instrument,
+        MKA_FLAC_FIXTURE,
+        SINK_RATE_RESAMPLED,
         SCRATCH_A.init([0; decoder_scratch_len()]),
-        &DECK_A,
+        deck_48k,
         &mut p.SYST,
     );
 
@@ -358,8 +545,10 @@ fn main() -> ! {
     p.SCB.enable_icache();
     let b = run_pass(
         instrument,
+        MKA_FLAC_FIXTURE,
+        SINK_RATE_RESAMPLED,
         SCRATCH_B.init([0; decoder_scratch_len()]),
-        &DECK_B,
+        deck_48k,
         &mut p.SYST,
     );
 
@@ -368,8 +557,10 @@ fn main() -> ! {
     p.SCB.enable_dcache(&mut p.CPUID);
     let c = run_pass(
         instrument,
+        MKA_FLAC_FIXTURE,
+        SINK_RATE_RESAMPLED,
         SCRATCH_C.init([0; decoder_scratch_len()]),
-        &DECK_C,
+        deck_48k,
         &mut p.SYST,
     );
 
@@ -386,7 +577,7 @@ fn main() -> ! {
         a.pumps, b.pumps, c.pumps,
         a.hit_cap, b.hit_cap, c.hit_cap,
         a.suspect_overflow, b.suspect_overflow, c.suspect_overflow,
-        u64::from(a.frames) * 1000 / u64::from(SINK_RATE)
+        u64::from(a.frames) * 1000 / u64::from(SINK_RATE_RESAMPLED)
     );
     cortex_m_semihosting::hprintln!(
         "mcu-rtfprobe: caches=off ticks={} ticks_per_audio_s={} rtf_centi_at_280mhz={}",
@@ -410,6 +601,25 @@ fn main() -> ! {
         "mcu-rtfprobe: speedup_centi i_vs_off={} id_vs_off={}",
         speedup_centi(&a, &b),
         speedup_centi(&a, &c)
+    );
+
+    // The resampler, attributed. Same fixture, same codec, same cache state —
+    // the only difference between `a` (48 kHz sink) and the sweep's mka-flac row
+    // (44.1 kHz native) is whether the resampler runs. That difference is the
+    // single largest term in the DAP's decode-path CPU cost, and the reason the
+    // board carries a dual MCLK oscillator so the SAI can clock natively and skip
+    // it entirely (see power::model's native_rate_clocking test).
+    let flac_resampled_per_s = ticks_per_audio_second(&a);
+    let resampler_per_s = flac_resampled_per_s.saturating_sub(flac_native_per_s);
+    let resample_x100 = (flac_resampled_per_s * 100)
+        .checked_div(flac_native_per_s)
+        .unwrap_or(0);
+    cortex_m_semihosting::hprintln!(
+        "mcu-rtfprobe: resampler flac_native_per_s={} flac_resampled_per_s={} resampler_per_s={} resampled_vs_native_centi={}",
+        flac_native_per_s,
+        flac_resampled_per_s,
+        resampler_per_s,
+        resample_x100
     );
 
     cortex_m_semihosting::debug::exit(cortex_m_semihosting::debug::EXIT_SUCCESS);
