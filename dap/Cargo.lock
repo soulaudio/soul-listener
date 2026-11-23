@@ -508,6 +508,7 @@ name = "dap-arch-tests"
 version = "0.1.0"
 dependencies = [
  "dap-core",
+ "dap-hw-spec",
  "embedded-graphics",
  "soul-audio-core",
  "soul-audio-engine",
@@ -526,6 +527,10 @@ dependencies = [
  "soul-audio-core",
  "soul-audio-engine",
 ]
+
+[[package]]
+name = "dap-hw-spec"
+version = "0.1.0"
 
 [[package]]
 name = "dap-sim"
