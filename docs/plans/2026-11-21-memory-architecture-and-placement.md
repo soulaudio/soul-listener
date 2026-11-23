@@ -129,6 +129,14 @@ cross-vendor standard practice, not an ST quirk.
 **Rule: caches on *with* MPU non-cacheable DMA regions *and* 32-byte alignment,
 or caches off and documented. Never partially.**
 
+> **Attempted 2026-11-23 — see §15.** The cache ratio turns out to be
+> unmeasurable without silicon (QEMU models no caches and does not even
+> implement DWT CYCCNT), but the attempt produced the first target-ISA decode
+> measurement — 20.0M instructions per second of audio — and showed that the
+> power model's 50x host derate silently assumes **CPI ~6** on the M7. The
+> minimum clock for Matroska-FLAC spans ~30 MHz (cached) to ~120 MHz (at that
+> implied CPI), so the suspicion recorded here is quantified, not resolved.
+
 ## 5. Antipatterns found while drafting this plan
 
 Recorded because most were in the first draft of the plan itself.
@@ -858,3 +866,117 @@ spread was unexplained, because the alternative was a gate that is green in CI
 and red locally. But "I cannot reproduce this number" should have read as *fix
 the harness*, not *widen the budget*, and it took measuring the same source
 under two compilers to see it.
+
+## 15. Cached vs uncached RTF — what is measurable, and the assumption it exposed (2026-11-23)
+
+§4 called measuring cached-vs-uncached RTF "the largest unexplored battery lever
+in the project", because the whole chain is `RTF -> minimum clock -> current ->
+hours` and ST's figure is that a disabled D-cache roughly halves M7 performance.
+This section is the attempt. The short version: **the cache ratio cannot be
+measured without silicon, but trying to measure it produced a better number than
+the one the model had, and exposed a hidden assumption in it.**
+
+### The harness
+
+`tools/mcu-stackprobe/src/bin/rtfprobe.rs` (feature `rtf`, bin `mcu-rtfprobe`,
+driven by `check-rtf-qemu.sh`) runs the real
+`open_seekable -> Deck::load -> Deck::pump` path on thumbv7em codegen over the
+Matroska-FLAC fixture, decoding to a 48 kHz stereo sink so the resampler is
+included — the shape `AudioPlayer` actually runs. Three passes: caches off,
+I-cache only, I+D. 2.005 s of audio (96,256 frames) per pass, 376 pumps, and the
+probe asserts all three decoded **the same** audio before any ratio is believed.
+
+It picks its instrument at runtime and reports which:
+
+* **DWT CYCCNT** — true core cycles. **QEMU `mps2-an500` does not implement it**:
+  `cycle_counter_enabled()` returns false and it reads 0. That was the first
+  finding, and it rules out the obvious approach.
+* **SysTick** — always present. Under `-icount shift=0` QEMU advances virtual
+  time one nanosecond per guest instruction, so SysTick becomes an exact
+  instruction counter. On silicon it measures real time at a known clock.
+
+### Why `-icount` is not optional
+
+Run without it, the same three passes reported **203.4M / 239.9M / 243.9M**
+ticks — an apparent **0.84x speedup, i.e. caches making decode 16% slower**.
+That is host scheduling jitter, not data. It is also exactly the kind of number
+that gets written into a doc: it has three digits, a consistent direction, and a
+plausible story (cache maintenance overhead). With `-icount shift=0` all three
+passes are **bit-identical at 40,104,611 instructions**, speedup exactly 1.00x.
+
+### The cache question is unanswerable in emulation
+
+QEMU's TCG is a functional emulator: no caches, no flash/AXI wait states, no
+store buffer, no dual-issue. Identical instruction streams regardless of the SCB
+cache bits — which the bit-identical counts above *prove* rather than assume. So
+the gate deliberately does **not** ratchet the ratio, and the script prints that
+1.00x is the absence of a measurement. ST's "about half" stays a citation.
+
+### What is sound, and what it says
+
+**19,998,974 instructions per second of decoded audio** (~20.0M) for
+Matroska-FLAC → 48 kHz stereo including resampling. Cache-independent, exact,
+reproducible. From it:
+
+    target_RTF ~= f_cpu / (instructions_per_audio_second * CPI)
+
+| CPI | RTF at 280 MHz | min clock to hold realtime |
+|---|---|---|
+| 1.20 (cached, dual-issue) | 11.66x | 23 MHz |
+| 1.50 (cached, realistic) | 9.33x | 29 MHz |
+| 3.00 | 4.66x | 59 MHz |
+| 5.00 | 2.80x | 99 MHz |
+| 8.00 (uncached, flash-bound) | 1.75x | 159 MHz |
+
+### The assumption this exposed
+
+The model's input for this exact path is `HOST_RTF_PIPELINE_RESAMPLED` (115.5)
+divided by `HOST_TO_TARGET_DERATE` (50) = **2.31x** target RTF. Against the
+measured instruction count, 2.31x implies **CPI ~6.1**.
+
+That is the finding. The 50x derate is documented as a "pessimistic host/target
+gap" — a defensible-sounding safety factor. Expressed in instructions it is
+something much more specific and much less obviously intended: *an assumption
+that the M7 stalls ~6 cycles per instruction*, i.e. a heavily memory-bound,
+uncached-flash machine. Nobody chose CPI 6; it fell out of picking the round end
+of a "10-50x faster" range.
+
+Consequences, with the caveat that CPI itself is still unmeasured:
+
+* **The minimum clock for this format spans 4x** on the cache decision alone —
+  ~30 MHz cached vs ~120 MHz at the model's implied CPI 6. That is the battery
+  lever, now quantified in structure: current scales steeply with clock and VOS
+  step, so a 4x clock difference is not a rounding error.
+* **§4's suspicion looks justified.** At CPI 6, 88 MHz (VOS3) yields RTF 0.73x —
+  cannot hold realtime, which is exactly L11's "VOS3 is unreachable". At CPI 1.5
+  it yields 2.93x, comfortably realtime. So that conclusion is *consistent with
+  being an artifact of running uncached*, and should not be treated as a property
+  of the silicon until the caches are measured. (Measured here for FLAC, not
+  Opus — Opus is the heavier format, so its own number is still owed.)
+* **The derate is now falsifiable.** `HOST_TO_TARGET_DERATE` can be replaced by
+  `instructions_per_audio_second * CPI / f_cpu` the moment CPI is known, with
+  only one estimated term instead of a whole-machine fudge factor.
+
+### What is gated now
+
+`DECODE_INSN_BUDGET_PER_AUDIO_S` = **22,000,000** over the measured 19,998,974
+(~10% margin), wired into CI's dynamic QEMU job. A decoder, resampler or
+container change that makes the DAP do materially more work per second of audio
+now fails a build — no hardware required. Unlike the stack budgets this needs no
+allowance for compiler drift beyond genuine codegen change, because the count is
+exact under `-icount` and the probe's toolchain is pinned next door (§14).
+
+The soundness preconditions are gated too, not assumed: the script fails if the
+three passes decoded different amounts, if any pass hit the pump cap, if the
+probe flagged a possibly-missed SysTick wrap, or if the emulated speedup is
+anything other than 1.00x (which would mean the run lacked `-icount`, or QEMU
+grew a memory model and the caveats need revisiting).
+
+### What still needs silicon
+
+Flash the same bin via `probe-rs`/`cargo embed` on board-h7a3 and the probe
+selects DWT CYCCNT automatically, at which point `speedup_centi i_vs_off` and
+`id_vs_off` become real measurements and CPI follows directly. That one run
+settles: the true RTF, whether the I-cache alone is enough (it carries none of
+the D-cache's DMA coherency hazards — AN4839, §4's "never partially" rule), and
+whether VOS3 is genuinely unreachable or merely unreachable uncached.
