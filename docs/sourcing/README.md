@@ -61,6 +61,17 @@ That last command is the useful one. It prints, per requirement, which parts qua
 rejected one failed** — e.g. a 24.576 MHz oscillator being rejected for the 44.1 kHz family even
 though the DAC accepts it, because the SAI cannot divide it to an exact 64 × Fs bit clock.
 
+## 3b. TME is verified working
+
+The TME pair has been tested against the live `/auth/token` endpoint: it returns a Bearer token
+(300-second expiry, with a refresh token), and an authenticated `/products` call succeeds. So the
+TME half of the pipeline is credential-ready.
+
+Note v2 is **OAuth 2.0 client-credentials, not HMAC**, and an activated tme.eu *customer* account is
+mandatory — there is no anonymous mode. See
+[`DISTRIBUTOR-API-SETUP.md`](DISTRIBUTOR-API-SETUP.md) for the corrected flow and the four endpoints
+the fetch needs (`/products/search`, `/products`, `/products/parameters`, `/products/data`).
+
 ## 4. What the credentials unlock
 
 The one missing stage is fetching a real catalogue. The order of work once `.env` is filled:
