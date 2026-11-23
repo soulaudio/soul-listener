@@ -1,5 +1,10 @@
 # BOM sourcing — Digi-Key EU (digikey.de — NL warehouse)
+# Revision: v1
 # Updated: 2026-02-20
+#
+# Bills the V1 schematic in hardware/elec/src (STM32H743 + SDRAM + ES9038Q2M +
+# TPA6120A2). The firmware targets V2; see tme.csv's header for why the V1-only
+# lines stay. Source of truth for what the design wants: dap/hw-spec.
 # Format: Ref,QtyTotal,MfrPartNo,DKPartNo,Description,Package,UnitPriceEUR,Notes
 #
 # Digi-Key EU stocks items not available at TME — particularly ESS Technology parts.

@@ -1,6 +1,19 @@
 # BOM sourcing — TME (tme.eu) — Primary EU distributor (Czech Republic)
 # REST API: https://api.tme.eu
+# Revision: v1
 # Updated: 2026-02-20
+#
+# This bills the V1 schematic in hardware/elec/src, which is STM32H743 + external
+# SDRAM + ES9038Q2M + TPA6120A2. The FIRMWARE targets V2 (STM32H7A3 + CS43131,
+# no SDRAM, no discrete amp), so four lines below — U1, U2, U3, U8 — are parts V2
+# eliminates. They stay because a BOM must match the schematic it bills, and that
+# schematic is still V1; the migration is tracked, not forgotten.
+#
+# The source of truth for which parts the design wants is dap/hw-spec, not this
+# file. `dap/arch-tests/tests/sourcing_boms.rs` enforces the correspondence: the
+# Revision above must match the MCU actually instantiated in elec/src/mcu.ato, and
+# a v1 BOM may not bill V2-only parts. When the schematic migrates, this file
+# fails the gate until it migrates too.
 # Format: Ref,QtyTotal,MfrPartNo,TMESymbol,Description,Package,UnitPriceEUR,Notes
 #
 # TODO: populate stock/price from TME REST API (GET /Products/Search)

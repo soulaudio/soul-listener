@@ -176,7 +176,31 @@ fn hw_bom() -> Result<()> {
             .bold()
     );
     println!();
-    println!("{}", "Sourcing BOM files:".cyan());
+    // Name the revision these files bill. They bill the schematic in
+    // hardware/elec/src, which is V1, while the firmware targets V2 — printing
+    // them as plain "sourcing BOM files" invites reading a correct V1 BOM as a
+    // current shopping list, which is the confusion
+    // dap/arch-tests/tests/sourcing_boms.rs exists to prevent.
+    //
+    // Read from the file's own `# Revision:` header rather than hardcoded, so
+    // this line cannot drift from the files it is describing — the same failure
+    // mode the header was added to fix.
+    let billed = std::fs::read_to_string("hardware/bom/sourcing/tme.csv")
+        .ok()
+        .and_then(|t| {
+            t.lines()
+                .filter(|l| l.starts_with('#'))
+                .filter_map(|l| l.trim_start_matches('#').trim().split_once(':'))
+                .find(|(k, _)| k.trim().eq_ignore_ascii_case("Revision"))
+                .map(|(_, v)| v.trim().to_string())
+        });
+    match billed {
+        Some(rev) => println!(
+            "{}",
+            format!("Sourcing BOM files (bill the {rev} schematic):").cyan()
+        ),
+        None => println!("{}", "Sourcing BOM files:".cyan()),
+    }
     println!(
         "  {}",
         "hardware/bom/sourcing/tme.csv       (TME — CZ/EU primary)".dimmed()
