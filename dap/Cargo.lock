@@ -510,6 +510,7 @@ dependencies = [
  "dap-core",
  "dap-hw-spec",
  "embedded-graphics",
+ "serde_json",
  "soul-audio-core",
  "soul-audio-engine",
  "soul-audio-index",
