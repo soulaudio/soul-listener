@@ -90,8 +90,11 @@ const DAC: Dac = Dac {
         min_db: 127,
         internal_bits: 32,
     },
-    // ~23 mW total playback from a 1.8 V core via the internal charge pump.
-    playback_ma: 12.8,
+    // ~23 mW of playback power. At the battery rail that is ~6 mA at moderate
+    // listening and up to ~11 mA near full 32 ohm output; the model takes 7 mA as
+    // the realistic average. NOT 12.8 mA — that is the same power referred to the
+    // chip's 1.8 V core, which is the error the bridge gate caught.
+    playback_ma_at_battery: 7.0,
     integrated_amp: true,
     provenance: Provenance::Datasheet("Cirrus CS43131 DS1155F2"),
 };
@@ -167,10 +170,11 @@ const RATES: &[RateEntry] = &[
 const POWER: PowerBudget = PowerBudget {
     battery_mah: 1100,
     target_hours: 20.0,
-    // DAC+amp 12.8 + microSD average + e-ink average. The display figure is the
-    // one that was 0.5 mA against code drawing ~34 mA until the refresh policy
-    // landed, which is why these are gated rather than asserted in prose.
-    peripheral_playback_ma: 15.8,
+    // DAC+amp 7.0 + microSD 2.0 + e-ink 2.0, all battery-referred, matching
+    // `power::model::PERIPHERAL_PLAYBACK_MA`. The display figure is the one that
+    // was 0.5 mA against code drawing ~34 mA until the refresh policy landed,
+    // which is why these are gated rather than asserted in prose.
+    peripheral_playback_ma: 11.0,
     provenance: Provenance::Datasheet("Cirrus CS43131 DS1155F2 + ST DS13677 + GDEM0397T81P"),
 };
 

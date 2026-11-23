@@ -11,6 +11,8 @@ soul-audio-engine = { workspace = true }
 soul-audio-index = { workspace = true }
 # This workspace member (dap-core), for the `AudioPlayer`/`App` size guards.
 dap-core = { path = "../core" }
+# hw_spec_bridge.rs: the firmware constants must agree with THE spec.
+dap-hw-spec = { path = "../hw-spec" }
 # For the `App` size guard's `StubDisplay` test double (`dap_core::display`'s
 # `Display` port is `DrawTarget<Color = Gray4> + EinkRefresh`). Same version
 # dap-sim already pins (dap/sim/Cargo.toml).

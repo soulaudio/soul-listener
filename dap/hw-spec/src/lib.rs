@@ -167,8 +167,17 @@ pub struct Dac {
     /// one of these — that is `rate_matrix_is_reachable`.
     pub accepted_mclk_ratios: &'static [u16],
     pub volume: VolumeMechanism,
-    /// Typical playback current, mA, for the power model.
-    pub playback_ma: f32,
+    /// Typical playback current **referred to the battery rail**, mA.
+    ///
+    /// The rail is in the name because a bare "mA" is meaningless for a part
+    /// with internal rails, and getting it wrong is silent. The CS43131's
+    /// ~23 mW of playback power is 12.8 mA at its 1.8 V core and ~6-7 mA drawn
+    /// from a 3.7 V battery — the same power, a factor of ~1.8 apart. The power
+    /// model works battery-referred (`DAC_AMP_PLAYBACK_MA`'s doc: "playback
+    /// current at the battery rail"), so this field must too. The first draft of
+    /// this spec used the rail-referred figure and the bridge gate in
+    /// `dap-arch-tests` caught it.
+    pub playback_ma_at_battery: f32,
     /// Integrated headphone amp, or a separate amp part is required.
     pub integrated_amp: bool,
     pub provenance: Provenance,

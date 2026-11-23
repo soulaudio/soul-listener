@@ -65,7 +65,8 @@ const DAC: Dac = Dac {
     // audio-section draw includes the TPA6120A2, a desktop-class part. Marked an
     // estimate deliberately — the power model was calibrated for V2's CS43131,
     // and that mismatch is one of the tracked deltas.
-    playback_ma: 120.0,
+    // Battery-referred, and an order-of-magnitude guess rather than a figure.
+    playback_ma_at_battery: 120.0,
     integrated_amp: false,
     provenance: Provenance::Estimate(
         "ES9038Q2M + TPA6120A2 audio section; never measured, and far above the model's \
