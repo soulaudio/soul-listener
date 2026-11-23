@@ -10,8 +10,8 @@
 
 use crate::select::Constraint;
 use crate::{
-    BoardSpec, Candidate, Dac, DacRole, LockStatus, Mcu, MemoryRegion, Oscillator, PartReq,
-    PowerBudget, Preference, Provenance, RateEntry, Revision, VolumeMechanism,
+    BoardSpec, Candidate, Dac, DacRole, LockStatus, MclkContract, Mcu, MemoryRegion, Oscillator,
+    PartReq, PowerBudget, Preference, Provenance, RateEntry, Revision, VolumeMechanism,
 };
 
 /// No machine-checkable constraints yet — the requirement is prose-only.
@@ -59,7 +59,11 @@ const DAC: Dac = Dac {
     // V1 clocks the DAC from the MCU as SAI master — the arrangement that makes
     // native-rate switching awkward and is the reason V2 inverts it.
     role: DacRole::I2sMaster,
-    accepted_mclk_ratios: &[512, 384, 256, 128],
+    // The ratio model genuinely applies here — ESS parts do specify MCLK as a
+    // multiple of Fs. It is kept as a contrast to V2's CS43131, which does not:
+    // the two DACs want different *kinds* of clock, and treating them as the same
+    // kind is the error `MclkContract` was introduced to make impossible.
+    mclk: MclkContract::FsMultiple(&[512, 384, 256, 128]),
     volume: VolumeMechanism::DacDigital {
         step_db_centi: 50,
         min_db: 127,

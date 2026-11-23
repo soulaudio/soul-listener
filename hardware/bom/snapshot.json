@@ -143,26 +143,26 @@
         "note": "No offers recorded on purpose: stock and price were NOT retrieved, and inventing them would be worse than admitting the gap. Run the fetcher with distributor credentials to replace this with real offers. A Hard lock does not accept sourcing_pending."
       }
     },
-    "ASDMB-45.1584MHZ-LY-T": {
+    "ASDMB-22.5792MHZ-LY-T": {
       "manufacturer": "Abracon",
-      "description": "45.1584 MHz fixed MEMS/XO oscillator (placeholder)",
+      "description": "22.5792 MHz fixed MEMS/XO oscillator (placeholder)",
       "package": "SMD",
       "satisfies": "mclk-osc-44k1",
       "offers": [],
       "sourcing_pending": {
-        "reason": "placeholder part: the 45.1584 MHz FREQUENCY is the requirement, the specific oscillator is not chosen. Needs a phase-noise figure before it can be preferred",
+        "reason": "placeholder part: the 22.5792 MHz FREQUENCY is the requirement, the specific oscillator is not chosen. Needs a phase-noise figure measured against the DS1155F2 Fig. 4-14 mask before it can be preferred. NOTE this requirement changed on 2026-11-23: it was 45.1584 MHz, chosen to clear a CS43131 MCLK/Fs ratio limit that the datasheet shows does not exist. 22.5792 MHz is a nominal CS43131 MCLK_INT, and a far more widely stocked frequency, so the real candidate set should be wide.",
         "since": "2026-11-23",
         "note": "No offers recorded on purpose: stock and price were NOT retrieved, and inventing them would be worse than admitting the gap. Run the fetcher with distributor credentials to replace this with real offers. A Hard lock does not accept sourcing_pending."
       }
     },
-    "ASDMB-49.152MHZ-LY-T": {
+    "ASDMB-24.576MHZ-LY-T": {
       "manufacturer": "Abracon",
-      "description": "49.152 MHz fixed MEMS/XO oscillator (placeholder)",
+      "description": "24.576 MHz fixed MEMS/XO oscillator (placeholder)",
       "package": "SMD",
       "satisfies": "mclk-osc-48k",
       "offers": [],
       "sourcing_pending": {
-        "reason": "placeholder part, as above for the 48 kHz family",
+        "reason": "placeholder part, as above for the 48 kHz family; was 49.152 MHz until 2026-11-23",
         "since": "2026-11-23",
         "note": "No offers recorded on purpose: stock and price were NOT retrieved, and inventing them would be worse than admitting the gap. Run the fetcher with distributor credentials to replace this with real offers. A Hard lock does not accept sourcing_pending."
       }

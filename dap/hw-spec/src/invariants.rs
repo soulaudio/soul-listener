@@ -11,15 +11,29 @@
 
 #![cfg(test)]
 
-use crate::{v1::V1, v2::V2, LockStatus, Preference, Provenance, Revision, VolumeMechanism};
+use crate::{
+    v1::V1, v2::V2, LockStatus, MclkContract, Preference, Provenance, Revision, VolumeMechanism,
+};
 
 /// Every rate the spec claims must be reachable with the declared clock tree.
 ///
-/// This is the 176.4 kHz question as an executable constraint: the arithmetic
-/// must close exactly (`osc_hz / mckdiv == ratio * hz`, no remainder) and the
-/// resulting ratio must be one the DAC accepts. With the 22.5792/24.576 pair,
-/// 176.4 kHz lands on 128fs and this fails — which is why V2 proposes
-/// 45.1584/49.152.
+/// Two things must hold, and they are *different* checks:
+///
+/// 1. **The SAI arithmetic closes exactly** — `osc_hz / mckdiv == frame_bits *
+///    hz`, no remainder. This is what makes LRCK exactly Fs, and it is the
+///    constraint that forces one oscillator per sample-rate family.
+/// 2. **The DAC's own MCLK contract is satisfied** — which depends on which
+///    contract it declares. See [`MclkContract`]: an Fs-multiple part must land
+///    on an accepted ratio, a fixed-system-clock part must be fed one of its
+///    nominal frequencies.
+///
+/// Keeping these separate is the lesson from getting it wrong. An earlier version
+/// of this test checked only (2), in the Fs-multiple form, for every DAC — and
+/// so "proved" that 176.4 kHz was unreachable on a 22.5792 MHz oscillator
+/// because it lands on 128fs. The arithmetic was right and the premise was
+/// false: the CS43131 does not constrain that ratio. The test passed, the
+/// conclusion was wrong, and the cost was a 1024xFs oscillator pair chosen to
+/// clear a limit that does not exist.
 #[test]
 fn rate_matrix_is_reachable_with_the_declared_oscillators() {
     for spec in [&V2, &V1] {
@@ -36,37 +50,128 @@ fn rate_matrix_is_reachable_with_the_declared_oscillators() {
                 r.hz,
                 r.osc_hz
             );
+            // (1) The SAI side: the bit clock must come out exact.
             assert!(
                 r.is_exact(),
                 "{:?}: {} Hz does not close exactly — {} Hz / {} = {} Hz, but {} x {} = {} Hz. \
-                 A clock tree that does not divide exactly cannot be bit-accurate.",
+                 LRCK is derived from that bit clock, so a tree that does not divide exactly \
+                 plays at the wrong rate.\n\
+                 Resolve by one of:\n  \
+                 (a) pick an mckdiv that divides exactly;\n  \
+                 (b) add an oscillator for this rate's family;\n  \
+                 (c) drop {} Hz from the supported matrix.",
                 spec.revision,
                 r.hz,
                 r.osc_hz,
                 r.mckdiv,
-                r.mclk_hz(),
-                r.ratio,
+                r.sck_hz(),
+                r.frame_bits,
                 r.hz,
-                u32::from(r.ratio) * r.hz
+                u32::from(r.frame_bits) * r.hz,
+                r.hz
+            );
+
+            // (2) The DAC side, by whichever contract it declares.
+            match spec.dac.mclk {
+                MclkContract::FixedSystemClock(nominal) => {
+                    // The oscillator feeds XTI/MCLK directly, so the oscillator
+                    // itself — not the divided bit clock — must be nominal.
+                    assert!(
+                        nominal.contains(&r.osc_hz),
+                        "{:?}: {} Hz is clocked from a {} Hz oscillator, but {} requires its MCLK \
+                         to be one of {:?} Hz exactly (it is a fixed system clock, not an Fs \
+                         multiple). The oscillator is wired to XTI/MCLK with no divider, so this \
+                         is a hard mismatch.\n\
+                         Resolve by one of:\n  \
+                         (a) use a nominal frequency as the oscillator;\n  \
+                         (b) put a divider or PLL between oscillator and DAC — which reintroduces \
+                         the jitter the fixed-oscillator design exists to avoid;\n  \
+                         (c) select a DAC whose contract this tree satisfies.",
+                        spec.revision,
+                        r.hz,
+                        r.osc_hz,
+                        spec.dac.mpn,
+                        nominal
+                    );
+                }
+                MclkContract::FsMultiple(ratios) => {
+                    // Here the MCLK the DAC sees scales with Fs, so the ratio is
+                    // the quantity under test.
+                    let ratio = r.sck_hz() / r.hz;
+                    let ratio = u16::try_from(ratio).unwrap_or(u16::MAX);
+                    assert!(
+                        ratios.contains(&ratio),
+                        "{:?}: {} Hz lands on MCLK/LRCK = {}fs, which {} does not accept (accepts \
+                         {:?}).\n\
+                         Resolve by one of:\n  \
+                         (a) change the oscillator so the divider reaches an accepted ratio;\n  \
+                         (b) drop {} Hz from the supported matrix;\n  \
+                         (c) if a datasheet read shows {} does accept {}fs, add it — but check \
+                         FIRST that this part really constrains the ratio at all, because the \
+                         CS43131 does not and assuming it did cost a wrong oscillator pair.",
+                        spec.revision,
+                        r.hz,
+                        ratio,
+                        spec.dac.mpn,
+                        ratios,
+                        r.hz,
+                        spec.dac.mpn,
+                        ratio
+                    );
+                }
+            }
+        }
+    }
+}
+
+/// Under a fixed-system-clock contract, every declared oscillator must be one the
+/// DAC accepts.
+///
+/// [`rate_matrix_is_reachable_with_the_declared_oscillators`] only covers
+/// oscillators some rate names. This covers the rest: an oscillator in the BOM
+/// that no rate uses is either dead weight on the board or a rate matrix someone
+/// forgot to extend, and either way it should not be a frequency the DAC cannot
+/// take.
+#[test]
+fn every_declared_oscillator_is_one_the_dac_can_be_fed() {
+    for spec in [&V2, &V1] {
+        let MclkContract::FixedSystemClock(nominal) = spec.dac.mclk else {
+            // Under an Fs-multiple contract the oscillator is divided before it
+            // reaches the DAC, so there is nothing to check here.
+            continue;
+        };
+        for o in spec.oscillators {
+            assert!(
+                nominal.contains(&o.hz),
+                "{:?}: oscillator {} Hz ({}) is not one of {}'s nominal MCLK frequencies {:?}. \
+                 Every oscillator on this board feeds XTI/MCLK through the mux, so an \
+                 unacceptable one cannot be on the board at all — not even for a rate family \
+                 that is currently unused.",
+                spec.revision,
+                o.hz,
+                o.note,
+                spec.dac.mpn,
+                nominal
             );
             assert!(
-                spec.dac.accepted_mclk_ratios.contains(&r.ratio),
-                "{:?}: {} Hz needs MCLK/LRCK = {}fs, which {} does not accept (accepts {:?}).\n\
-                 Resolve by one of:\n  \
-                 (a) change the oscillator so MCKDIV can reach an accepted ratio — this is why \
-                 V2 proposes 45.1584/49.152 MHz rather than 22.5792/24.576 (the SAI can only \
-                 divide, so a lower oscillator caps the ratio);\n  \
-                 (b) drop {} Hz from the supported rate matrix;\n  \
-                 (c) if a datasheet read shows {} does accept {}fs, add it to \
-                 accepted_mclk_ratios — other DACs (ADAU1966, WM8742) do support 128fs.",
+                spec.rates.iter().any(|r| r.osc_hz == o.hz),
+                "{:?}: oscillator {} Hz is declared but no rate uses it. Either add the rates it \
+                 serves or remove the part.",
                 spec.revision,
-                r.hz,
-                r.ratio,
-                spec.dac.mpn,
-                spec.dac.accepted_mclk_ratios,
-                r.hz,
-                spec.dac.mpn,
-                r.ratio
+                o.hz
+            );
+            // Two oscillators at the same frequency are two parts doing one
+            // part's job: extra cost, extra board area, a second phase-noise
+            // contributor and a mux input wasted. Caught here because the
+            // "declared but unused" check above cannot see it — a duplicate of a
+            // used frequency is, trivially, used.
+            assert_eq!(
+                spec.oscillators.iter().filter(|x| x.hz == o.hz).count(),
+                1,
+                "{:?}: {} Hz is declared more than once. One oscillator per frequency; if two \
+                 rate families need the same clock they share the same part.",
+                spec.revision,
+                o.hz
             );
         }
     }

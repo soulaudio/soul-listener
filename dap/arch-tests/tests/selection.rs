@@ -175,11 +175,11 @@ fn the_oscillator_filter_explains_every_rejection() {
     // The two legitimate candidates differ only in sourcing depth and price,
     // which is what makes them a useful ranking test.
     assert!(
-        qualified.contains(&"FIXTURE-OSC-45M1584-A".to_string()),
+        qualified.contains(&"FIXTURE-OSC-22M5792-A".to_string()),
         "the double-sourced, low-noise, hand-placeable 45.1584 MHz part must qualify"
     );
     assert!(
-        qualified.contains(&"FIXTURE-OSC-45M1584-B".to_string()),
+        qualified.contains(&"FIXTURE-OSC-22M5792-B".to_string()),
         "the single-sourced but otherwise compliant part must also qualify — depth is a RANKING \
          criterion, not a filter, so it loses rather than disappearing"
     );
@@ -195,7 +195,7 @@ fn the_oscillator_filter_explains_every_rejection() {
 fn an_oscillator_with_no_published_phase_noise_is_rejected() {
     let qualified = report("mclk-osc-44k1");
     assert!(
-        !qualified.contains(&"FIXTURE-OSC-45M1584-NOSPEC".to_string()),
+        !qualified.contains(&"FIXTURE-OSC-22M5792-NOSPEC".to_string()),
         "the part with no phase-noise figure is cheap (19 cents), triple-sourced and deeply \
          stocked — exactly the part a price-first filter would pick. An unknown jitter figure \
          must reject it, because jitter is the single thing the dual-oscillator design exists to \
@@ -203,16 +203,23 @@ fn an_oscillator_with_no_published_phase_noise_is_rejected() {
     );
 }
 
-/// The 22.5792 MHz part is the most attractive one in the catalogue on every
-/// commercial axis, and it is the one that cannot reach 176.4 kHz.
+/// The 24.576 MHz part is the most attractive one in the catalogue on every
+/// commercial axis, is a frequency the DAC fully accepts, and is still wrong.
+///
+/// This is the rejection that encodes the distinction the spec previously got
+/// wrong. 24.576 MHz is a nominal CS43131 MCLK — the DAC would take it for every
+/// rate the product supports — so a filter reasoning only about the DAC would
+/// pass it. It fails because the *SAI* cannot divide it to an exact 64 x 44100
+/// bit clock, and LRCK derived from that clock is the sample rate. The constraint
+/// belongs to the MCU's serial port, not to the DAC.
 #[test]
-fn the_cheaper_lower_frequency_oscillator_is_rejected_on_frequency() {
+fn the_other_familys_clock_is_rejected_even_though_the_dac_accepts_it() {
     let qualified = report("mclk-osc-44k1");
     assert!(
-        !qualified.contains(&"FIXTURE-OSC-22M5792-WRONGFREQ".to_string()),
-        "22.5792 MHz is triple-sourced, 250k in stock and the cheapest part here — and the SAI \
-         can only divide, so it caps MCLK at 512fs and 176.4 kHz lands on an unaccepted 128fs. \
-         This is the rejection that encodes the oscillator decision."
+        !qualified.contains(&"FIXTURE-OSC-24M576-WRONGFAMILY".to_string()),
+        "24.576 MHz is triple-sourced, 250k in stock, the cheapest part here, and a frequency the \
+         CS43131 accepts. It must still be rejected for the 44.1 kHz family: 24.576e6 / (64 x \
+         44100) = 8.707..., so no integer SAI divider produces an exact 44.1 kHz LRCK."
     );
 }
 
@@ -223,7 +230,7 @@ fn ranking_prefers_the_double_sourced_oscillator_over_the_cheaper_one() {
     let qualified = report("mclk-osc-44k1");
     assert_eq!(
         qualified.first().map(String::as_str),
-        Some("FIXTURE-OSC-45M1584-A"),
+        Some("FIXTURE-OSC-22M5792-A"),
         "A is 182 cents with 2 EU sources; B is 41 cents with 1. For a hand-assembled small \
          batch the 1.41 EUR is noise and the second source is the difference between a stalled \
          build and a delayed one, which is why DEFAULT_RANKING puts depth first"

@@ -7,8 +7,8 @@
 
 use crate::select::Constraint;
 use crate::{
-    BoardSpec, Candidate, Dac, DacRole, LockStatus, Mcu, MemoryRegion, Oscillator, PartReq,
-    PowerBudget, Preference, Provenance, RateEntry, Revision, VolumeMechanism,
+    BoardSpec, Candidate, Dac, DacRole, LockStatus, MclkContract, Mcu, MemoryRegion, Oscillator,
+    PartReq, PowerBudget, Preference, Provenance, RateEntry, Revision, VolumeMechanism,
 };
 
 /// No machine-checkable constraints yet — the requirement is prose-only.
@@ -81,14 +81,22 @@ const DAC: Dac = Dac {
     // from the external oscillator, so changing rate changes the clock tree, not
     // a resampler.
     role: DacRole::I2sSlave,
-    // Per the DAC-selection research: MCLK/LRCK of 512, 256 or 384.
+    // This part does NOT constrain MCLK as a multiple of Fs. It wants a fixed
+    // system clock of 22.5792 or 24.576 MHz and carries the sample rate in the
+    // ASP_SPRATE register instead.
     //
-    // NOTE, and it is the reason `rate_matrix_is_reachable` exists: 128 is NOT
-    // in this list, and 128fs is what a 22.5792 MHz oscillator yields at
-    // 176.4 kHz. Other DACs do accept 128fs (ADAU1966, WM8742), so if a
-    // datasheet read shows the CS43131 does too, add it here and the oscillator
-    // pair below can drop back to 22.5792/24.576.
-    accepted_mclk_ratios: &[512, 384, 256],
+    // DS1155F2 §4.6.1: "When the MCLK is supplied to the device through the
+    // XTI/MCLK pin ... its frequency must be one of the nominal MCLK_INT
+    // frequencies (22.5792 or 24.576 MHz), and its duty cycle must be between
+    // 45% to 55%." Register 0x1000B adds that only 384 kHz in master mode pins
+    // the choice: "For all other rates, MCLK_INT can be either 22.5792 MHz or
+    // 24.576 MHz."
+    //
+    // An earlier draft of this spec recorded `accepted_mclk_ratios: [512, 384,
+    // 256]` and concluded that 176.4 kHz "falls off the bottom at 128fs", which
+    // drove a 1024xFs oscillator pair. That was a category error, not a bad
+    // reading: ratios are how the ES9038Q2M (V1) works, not this part.
+    mclk: MclkContract::FixedSystemClock(&[22_579_200, 24_576_000]),
     volume: VolumeMechanism::DacDigital {
         step_db_centi: 50,
         min_db: 127,
@@ -103,71 +111,91 @@ const DAC: Dac = Dac {
     provenance: Provenance::Datasheet("Cirrus CS43131 DS1155F2"),
 };
 
-/// The oscillator pair — **a proposal, and the open hardware decision.**
+/// The oscillator pair — the two nominal CS43131 system clocks.
 ///
-/// 45.1584 MHz = 1024 x 44.1k and 49.152 MHz = 1024 x 48k. Starting an octave
-/// above the usual 22.5792/24.576 pair is what makes the whole rate matrix
-/// reachable: the SAI can only *divide* its clock input, so a 22.5792 MHz
-/// oscillator caps MCLK at 512fs and 176.4 kHz falls off the bottom at 128fs —
-/// a ratio the CS43131 does not list. Doubling the oscillator gives MCKDIV room
-/// in both directions while staying integer-divided off a fixed oscillator, so
-/// the no-PLL jitter argument is untouched.
+/// 22.5792 MHz and 24.576 MHz, which are simultaneously:
 ///
-/// Verify before a hard lock: that the H7A3's SAI clock input tolerates
-/// 49.152 MHz, and that the CS43131 really excludes 128fs.
+/// - the only two frequencies the CS43131 accepts on XTI/MCLK, so each
+///   oscillator can feed the DAC *directly* with no divider in the path; and
+/// - exact integer sources for the SAI's bit clock across the whole rate matrix
+///   (MCKDIV 8/4/2 for the 1x/2x/4x rates of each family).
+///
+/// **Why two, now that the DAC would accept either for every supported rate:**
+/// the SAI, not the DAC. SCK must be exactly `64 x Fs` so that LRCK is exactly
+/// Fs, and 24.576 MHz does not divide into the 44.1 kHz family by an integer
+/// (24.576e6 / 2.8224e6 = 8.707...). One oscillator per family is what makes
+/// native-rate playback bit-exact; a single oscillator would force either
+/// resampling or a fractional PLL, which is the jitter the design exists to
+/// avoid.
+///
+/// An earlier draft specified 45.1584/49.152 MHz (1024xFs) to clear a DAC ratio
+/// limit that does not exist. The 512x pair is strictly better on every axis
+/// that matters — lower power, far better distributor stock, relaxed layout —
+/// and is what the datasheet actually asks for.
+///
+/// Still to verify before a hard lock: the H7A3's SAI clock-input requirements at
+/// 24.576 MHz (headroom is ample, but it is unmeasured), and the phase-noise mask
+/// in DS1155F2 Fig. 4-14, which applies to a directly-supplied MCLK and is what
+/// the oscillator's phase-noise constraint should eventually be derived from
+/// rather than the round -130 dBc/Hz placeholder used today.
 const OSCILLATORS: &[Oscillator] = &[
     Oscillator {
-        hz: 45_158_400,
+        hz: 22_579_200,
         family_hz: 44_100,
-        note: "1024 x 44.1k — serves 44.1/88.2/176.4 kHz via MCKDIV",
+        note: "512 x 44.1k; a nominal CS43131 MCLK_INT — serves 44.1/88.2/176.4 kHz",
     },
     Oscillator {
-        hz: 49_152_000,
+        hz: 24_576_000,
         family_hz: 48_000,
-        note: "1024 x 48k — serves 48/96/192 kHz via MCKDIV",
+        note: "512 x 48k; a nominal CS43131 MCLK_INT — serves 48/96/192 kHz",
     },
 ];
 
 /// Every rate the product claims, with the exact clock tree that reaches it.
 ///
-/// `osc_hz / mckdiv == ratio * hz` must hold exactly, and `ratio` must be one of
-/// [`DAC`]'s accepted ratios. Both are gated.
+/// `osc_hz / mckdiv == frame_bits * hz` must hold exactly, and each oscillator
+/// must itself be a frequency the DAC accepts on MCLK (it is wired straight to
+/// XTI). Both are gated.
+///
+/// 32-bit stereo frames throughout, so `frame_bits` is 64 and MCKDIV walks 8/4/2
+/// as the rate doubles within a family. Every division is an integer power of
+/// two — nothing here is approximate.
 const RATES: &[RateEntry] = &[
     RateEntry {
         hz: 44_100,
-        osc_hz: 45_158_400,
-        mckdiv: 2,
-        ratio: 512,
+        osc_hz: 22_579_200,
+        mckdiv: 8,
+        frame_bits: 64,
     },
     RateEntry {
         hz: 88_200,
-        osc_hz: 45_158_400,
-        mckdiv: 1,
-        ratio: 512,
+        osc_hz: 22_579_200,
+        mckdiv: 4,
+        frame_bits: 64,
     },
     RateEntry {
         hz: 176_400,
-        osc_hz: 45_158_400,
-        mckdiv: 1,
-        ratio: 256,
+        osc_hz: 22_579_200,
+        mckdiv: 2,
+        frame_bits: 64,
     },
     RateEntry {
         hz: 48_000,
-        osc_hz: 49_152_000,
-        mckdiv: 2,
-        ratio: 512,
+        osc_hz: 24_576_000,
+        mckdiv: 8,
+        frame_bits: 64,
     },
     RateEntry {
         hz: 96_000,
-        osc_hz: 49_152_000,
-        mckdiv: 1,
-        ratio: 512,
+        osc_hz: 24_576_000,
+        mckdiv: 4,
+        frame_bits: 64,
     },
     RateEntry {
         hz: 192_000,
-        osc_hz: 49_152_000,
-        mckdiv: 1,
-        ratio: 256,
+        osc_hz: 24_576_000,
+        mckdiv: 2,
+        frame_bits: 64,
     },
 ];
 
@@ -195,12 +223,14 @@ const OSC_44K1_CONSTRAINTS: &[Constraint<'static>] = &[
     Constraint {
         attr: "frequency_hz",
         pred: crate::select::Predicate::NumEq {
-            value: 45_158_400.0,
+            value: 22_579_200.0,
             rel_tol: 1e-6,
         },
-        why: "1024 x 44100. The SAI can only DIVIDE its clock input, so a lower oscillator caps \
-              MCLK at 512fs and 176.4 kHz falls off the bottom at an unaccepted 128fs — which is \
-              the whole reason this is 45.1584 and not 22.5792 MHz",
+        why: "22.5792 MHz is simultaneously a nominal CS43131 MCLK_INT (so it feeds XTI with no \
+              divider) and 512 x 44100, which divides by an integer to an exact 64 x Fs bit clock \
+              at 44.1, 88.2 and 176.4 kHz. 24.576 MHz satisfies the DAC equally well and cannot \
+              produce this family exactly, which is why the frequency is pinned rather than left \
+              as 'either nominal MCLK'",
     },
     Constraint {
         attr: "supply_mv_max",
@@ -227,10 +257,10 @@ const OSC_48K_CONSTRAINTS: &[Constraint<'static>] = &[
     Constraint {
         attr: "frequency_hz",
         pred: crate::select::Predicate::NumEq {
-            value: 49_152_000.0,
+            value: 24_576_000.0,
             rel_tol: 1e-6,
         },
-        why: "1024 x 48000, for the same MCKDIV-headroom reason as the 44.1 kHz family",
+        why: "the other nominal CS43131 MCLK_INT, and 512 x 48000 — exact for 48, 96 and 192 kHz",
     },
     Constraint {
         attr: "supply_mv_max",
@@ -268,7 +298,7 @@ const MUX_CONSTRAINTS: &[Constraint<'static>] = &[
     },
     Constraint {
         attr: "max_freq_hz",
-        pred: crate::select::Predicate::AtLeast(49_152_000.0),
+        pred: crate::select::Predicate::AtLeast(24_576_000.0),
         why: "it has to pass the faster of the two oscillators",
     },
     Constraint {
@@ -315,21 +345,23 @@ const PARTS: &[PartReq] = &[
     },
     PartReq {
         id: "mclk-osc-44k1",
-        what: "45.1584 MHz fixed oscillator, <=3.3 V, low phase noise, SMD",
+        what: "22.5792 MHz fixed oscillator, <=3.3 V, low phase noise, SMD",
         constraints: OSC_44K1_CONSTRAINTS,
         candidates: &[Candidate {
-            mpn: "ASDMB-45.1584MHZ-LY-T",
+            mpn: "ASDMB-22.5792MHZ-LY-T",
             preference: Preference::Evaluating,
             note: "placeholder: the frequency is the requirement, the part is not chosen. \
-                       Needs a phase-noise figure and an EU stock check.",
+                       Needs a phase-noise figure against DS1155F2 Fig. 4-14 and an EU stock \
+                       check. Note this is a far more common frequency than the 45.1584 MHz the \
+                       spec previously asked for, so the candidate set should be wide.",
         }],
     },
     PartReq {
         id: "mclk-osc-48k",
-        what: "49.152 MHz fixed oscillator, <=3.3 V, low phase noise, SMD",
+        what: "24.576 MHz fixed oscillator, <=3.3 V, low phase noise, SMD",
         constraints: OSC_48K_CONSTRAINTS,
         candidates: &[Candidate {
-            mpn: "ASDMB-49.152MHZ-LY-T",
+            mpn: "ASDMB-24.576MHZ-LY-T",
             preference: Preference::Evaluating,
             note: "placeholder, as above",
         }],

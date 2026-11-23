@@ -5,9 +5,16 @@
     "SYNTHETIC CATALOGUE — a test fixture, NOT sourcing truth.",
     "",
     "Every part below is invented to exercise the selection engine: there is one that qualifies,",
-    "and one for each way a part can fail (wrong frequency, 5 V part, unplaceable package, no",
-    "published phase noise, single-sourced). The MPNs are deliberately prefixed FIXTURE- so they",
-    "can never be mistaken for parts anyone researched or can order.",
+    "and one for each way a part can fail (the OTHER family's clock, 5 V part, unplaceable",
+    "package, no published phase noise, too noisy, single-sourced). The MPNs are deliberately",
+    "prefixed FIXTURE- so they can never be mistaken for parts anyone researched or can order.",
+    "",
+    "FIXTURE-OSC-24M576-WRONGFAMILY is the interesting one. 24.576 MHz is a perfectly good",
+    "CS43131 MCLK — the DAC accepts it for every rate the product supports — and it is the",
+    "cheapest, deepest-stocked, most-sourced oscillator here. It still has to be rejected for the",
+    "44.1 kHz family, because the SAI cannot divide it to an exact 64 x 44100 bit clock",
+    "(24.576e6 / 2.8224e6 = 8.707...). That is a constraint belonging to the MCU's serial port,",
+    "not to the DAC, which is exactly the distinction an earlier version of this spec got wrong.",
     "",
     "The real catalogue replaces this file wholesale once distributor credentials exist: the",
     "fetcher pulls every part in a category from TME / Mouser / Digi-Key, and the engine filters",
@@ -21,97 +28,97 @@
   "categories": {
     "mclk-osc-44k1": [
       {
-        "mpn": "FIXTURE-OSC-45M1584-A",
+        "mpn": "FIXTURE-OSC-22M5792-A",
         "manufacturer": "Fixture Devices",
         "eu_sources": 2,
         "eu_stock": 4200,
         "unit_price_cents": 182,
         "lead_time_days": 0,
         "attrs": {
-          "frequency_hz": 45158400,
+          "frequency_hz": 22579200,
           "supply_mv_max": 3300,
           "package": "SMD-3225-4",
           "phase_noise_dbc_1khz": -142
         }
       },
       {
-        "mpn": "FIXTURE-OSC-45M1584-B",
+        "mpn": "FIXTURE-OSC-22M5792-B",
         "manufacturer": "Fixture Devices",
         "eu_sources": 1,
         "eu_stock": 90000,
         "unit_price_cents": 41,
         "lead_time_days": 0,
         "attrs": {
-          "frequency_hz": 45158400,
+          "frequency_hz": 22579200,
           "supply_mv_max": 3300,
           "package": "SMD-2520-4",
           "phase_noise_dbc_1khz": -138
         }
       },
       {
-        "mpn": "FIXTURE-OSC-22M5792-WRONGFREQ",
+        "mpn": "FIXTURE-OSC-24M576-WRONGFAMILY",
         "manufacturer": "Fixture Devices",
         "eu_sources": 3,
         "eu_stock": 250000,
         "unit_price_cents": 28,
         "lead_time_days": 0,
         "attrs": {
-          "frequency_hz": 22579200,
+          "frequency_hz": 24576000,
           "supply_mv_max": 3300,
           "package": "SMD-3225-4",
           "phase_noise_dbc_1khz": -145
         }
       },
       {
-        "mpn": "FIXTURE-OSC-45M1584-5V",
+        "mpn": "FIXTURE-OSC-22M5792-5V",
         "manufacturer": "Fixture Devices",
         "eu_sources": 2,
         "eu_stock": 1500,
         "unit_price_cents": 95,
         "lead_time_days": 0,
         "attrs": {
-          "frequency_hz": 45158400,
+          "frequency_hz": 22579200,
           "supply_mv_max": 5000,
           "package": "SMD-5032-4",
           "phase_noise_dbc_1khz": -140
         }
       },
       {
-        "mpn": "FIXTURE-OSC-45M1584-BGA",
+        "mpn": "FIXTURE-OSC-22M5792-BGA",
         "manufacturer": "Fixture Devices",
         "eu_sources": 2,
         "eu_stock": 800,
         "unit_price_cents": 60,
         "lead_time_days": 0,
         "attrs": {
-          "frequency_hz": 45158400,
+          "frequency_hz": 22579200,
           "supply_mv_max": 3300,
           "package": "WLCSP-6",
           "phase_noise_dbc_1khz": -150
         }
       },
       {
-        "mpn": "FIXTURE-OSC-45M1584-NOSPEC",
+        "mpn": "FIXTURE-OSC-22M5792-NOSPEC",
         "manufacturer": "Fixture Devices",
         "eu_sources": 3,
         "eu_stock": 70000,
         "unit_price_cents": 19,
         "lead_time_days": 0,
         "attrs": {
-          "frequency_hz": 45158400,
+          "frequency_hz": 22579200,
           "supply_mv_max": 3300,
           "package": "SMD-3225-4"
         }
       },
       {
-        "mpn": "FIXTURE-OSC-45M1584-NOISY",
+        "mpn": "FIXTURE-OSC-22M5792-NOISY",
         "manufacturer": "Fixture Devices",
         "eu_sources": 3,
         "eu_stock": 60000,
         "unit_price_cents": 12,
         "lead_time_days": 0,
         "attrs": {
-          "frequency_hz": 45158400,
+          "frequency_hz": 22579200,
           "supply_mv_max": 3300,
           "package": "SMD-3225-4",
           "phase_noise_dbc_1khz": -118

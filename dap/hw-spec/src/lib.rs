@@ -160,14 +160,50 @@ pub enum VolumeMechanism {
     HostDigital,
 }
 
+/// How a DAC wants its master clock — and the two contracts are *not* the same
+/// shape.
+///
+/// This enum exists because assuming one of them cost a wrong clock tree. The
+/// first draft of the V2 spec modelled MCLK as an Fs multiple for every DAC,
+/// which is true of the ES9038Q2M and false of the CS43131; the consequence was
+/// a pair of 1024xFs oscillators chosen to clear a ratio limit that does not
+/// exist on the part actually selected. Making the contract explicit means a
+/// future DAC swap has to *state* which rule it follows, and the invariants
+/// check the one it states rather than a hardcoded assumption.
+#[derive(Debug, Clone, Copy)]
+pub enum MclkContract {
+    /// MCLK must be one of these MCLK/LRCK **ratios** — so the required MCLK
+    /// frequency scales with the sample rate, and a rate whose ratio is not
+    /// accepted cannot be played natively.
+    ///
+    /// The ES9038Q2M works this way, as do most ESS and Wolfson parts. It is the
+    /// model people mean by "512fs".
+    FsMultiple(&'static [u16]),
+    /// MCLK must be one of these **absolute frequencies**, with no relation to
+    /// the sample rate at all.
+    ///
+    /// The CS43131 works this way. §4.6.1 of DS1155F2: "When the MCLK is supplied
+    /// to the device through the XTI/MCLK pin ... its frequency must be one of the
+    /// nominal MCLK_INT frequencies (22.5792 or 24.576 MHz)". The sample rate is
+    /// carried by the `ASP_SPRATE` register plus LRCK, and register 0x1000B
+    /// states that for every rate below 384 kHz "MCLK_INT can be either 22.5792
+    /// MHz or 24.576 MHz" — the ratio is simply not a quantity this part
+    /// constrains.
+    ///
+    /// Under this contract, "does it accept 128fs?" is a malformed question, and
+    /// the thing that actually forces two oscillators is the *SAI* needing an
+    /// exact integer LRCK, not the DAC.
+    FixedSystemClock(&'static [u32]),
+}
+
 /// The DAC/amp, and the facts the audio path depends on.
 #[derive(Debug, Clone, Copy)]
 pub struct Dac {
     pub mpn: &'static str,
     pub role: DacRole,
-    /// Accepted MCLK/LRCK ratios. A rate the spec claims to support must land on
-    /// one of these — that is `rate_matrix_is_reachable`.
-    pub accepted_mclk_ratios: &'static [u16],
+    /// What this part requires of MCLK. See [`MclkContract`] — the two variants
+    /// are checked by different rules, which is the point of the enum.
+    pub mclk: MclkContract,
     pub volume: VolumeMechanism,
     /// Typical playback current **referred to the battery rail**, mA.
     ///
@@ -197,35 +233,47 @@ pub struct Oscillator {
 /// One supported output rate, and exactly how the clock tree reaches it.
 ///
 /// This is the table that makes "native-rate first" checkable instead of
-/// aspirational: `osc_hz / mckdiv == ratio * hz`, with `ratio` accepted by the
-/// DAC. A rate that cannot satisfy that is not supported, and
-/// `rate_matrix_is_reachable` says so with the resolutions spelled out.
+/// aspirational: `osc_hz / mckdiv == frame_bits * hz`, exactly, with no
+/// remainder. That product is the **bit clock** (SCK), and the reason it has to
+/// close exactly is that the frame clock LRCK derived from it *is* the sample
+/// rate the DAC converts at. A clock tree that only divides approximately plays
+/// at the wrong speed and eventually drops or repeats a frame.
+///
+/// This is the constraint that actually forces two oscillators, and it belongs to
+/// the SAI rather than the DAC: 24.576 MHz cannot produce an exact 44.1 kHz
+/// family LRCK by integer division (24.576e6 / (64 x 44100) = 8.707...), so the
+/// 44.1 kHz family needs its own clock source regardless of what the DAC accepts
+/// on MCLK.
 #[derive(Debug, Clone, Copy)]
 pub struct RateEntry {
     /// Output sample rate, Hz.
     pub hz: u32,
     /// Oscillator driving it.
     pub osc_hz: u32,
-    /// SAI master-clock divider applied to the oscillator.
+    /// Divider the SAI applies to the oscillator to produce the bit clock.
     pub mckdiv: u32,
-    /// Resulting MCLK/LRCK ratio.
-    pub ratio: u16,
+    /// Bit-clock periods per stereo frame — 64 for a 32-bit two-channel frame.
+    ///
+    /// Named for what it is rather than "ratio": it is a serial-port format
+    /// property, not a property of the DAC's master clock. Conflating the two is
+    /// precisely the error [`MclkContract`] documents.
+    pub frame_bits: u16,
 }
 
 impl RateEntry {
-    /// The MCLK this entry produces.
+    /// The bit clock (SCK) this entry produces.
     #[must_use]
-    pub const fn mclk_hz(&self) -> u32 {
+    pub const fn sck_hz(&self) -> u32 {
         self.osc_hz / self.mckdiv
     }
 
     /// Whether the arithmetic closes: dividing the oscillator by `mckdiv` must
-    /// give exactly `ratio * hz`, with no remainder anywhere.
+    /// give exactly `frame_bits * hz`, with no remainder anywhere.
     #[must_use]
     pub const fn is_exact(&self) -> bool {
         self.mckdiv != 0
             && self.osc_hz.is_multiple_of(self.mckdiv)
-            && self.mclk_hz() == self.ratio as u32 * self.hz
+            && self.sck_hz() == self.frame_bits as u32 * self.hz
     }
 }
 
