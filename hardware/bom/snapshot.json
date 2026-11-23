@@ -30,7 +30,7 @@
       "country": "PL",
       "warehouse": "PL",
       "eu": true,
-      "api": "https://api.tme.eu (v2, HMAC-signed)",
+      "api": "https://api.tme.eu (v2, OAuth 2.0 client-credentials)",
       "role": "primary \u2014 broadest EU passive/connector stock, fast intra-EU shipping"
     },
     "mouser": {

@@ -23,32 +23,81 @@ So the division is: **you create the accounts (about ten minutes total), and not
 pipeline needs you.** The fetcher reads credentials from the environment, and everything it feeds is
 already built and under test.
 
-## TME — `developers.tme.eu`
+## TME — two accounts, in this order
 
-1. `https://developers.tme.eu` → **Sign up**, accept the API Terms and Conditions, then click the
-   activation link in the email.
-2. Log in → **API Token keys** tab → enter an application name → **Create application**.
-   This yields the **application secret** (20 characters).
-3. The same screen shows the **token** (50 characters).
+> An earlier version of this section described the **v1** flow: create the application first, treat
+> the customer-account link as an optional upgrade for personalised pricing, and sign requests with
+> HMAC. All three of those are wrong for v2, and the error is not cosmetic — following that order
+> leaves you staring at a "Generate new private key" panel demanding a temporary token you have no
+> way to produce. Corrected below against TME's own v2 OpenAPI document
+> (`https://developers.tme.eu/openapi.json`) and verified against the live endpoint.
 
-That pair is enough for market data. Requests must carry the header:
+**Both accounts are mandatory**, and the customer account comes first:
 
-```
-request-context: anonymous
-```
+1. **Customer account** at `https://www.tme.eu` — register and get it *activated*. A new company
+   account may wait on manual verification, and note the storefront you register on binds the
+   account to that country's TME subsidiary (see the delivery-country note below).
+2. **Developer account** at `https://developers.tme.eu` — sign up, accept the API Terms, click the
+   email activation link.
+3. Back at **tme.eu** → User Panel → **Applications** → **Register new application**. This generates
+   a **temporary token**, whose only purpose is to prove your customer account to the developer
+   portal.
+4. At **developers.tme.eu** → create an application → **paste the temporary token** → state the key
+   purpose → **Generate new private key** → **Show private keys**.
 
-**Optional, and worth doing:** linking a private key to a `tme.eu` customer account makes the API
-return *your* pricing rather than list pricing. For that, log in at `tme.eu` → User Panel →
-**Applications** → **Register new app**, copy the temporary authentication token, and paste it into
-`developers.tme.eu` to generate the private key. Skip this for a first run — list pricing is the
-right input for comparing candidates anyway, since it is what anyone reproducing the BOM would pay.
+You end with a **50-character token** and a **20-character application secret**, both hex.
 
-Requests are **HMAC-signed** (the token is the username, the secret signs the request).
+There is **no anonymous mode in v2**. `request-context: anonymous` was a v1 feature; it appears
+nowhere in the v2 specification, which is why the customer account cannot be skipped.
+
+### Auth is OAuth 2.0 client-credentials, not HMAC
+
+The token is the Basic-auth *username* and the secret is the *password*; that pair buys a short-lived
+bearer token:
 
 ```sh
-export TME_TOKEN=...      # 50 chars
-export TME_APP_SECRET=... # 20 chars
+curl -s -X POST 'https://api.tme.eu/auth/token' \
+  -u "$TME_TOKEN:$TME_APP_SECRET" \
+  -H 'Content-Type: application/x-www-form-urlencoded' \
+  --data-urlencode 'grant_type=client_credentials'
+# -> {"access_token":"…","token_type":"Bearer","expires_in":300,"refresh_token":"…"}
 ```
+
+`expires_in` is **300 seconds**, so a run that fetches more than a few categories has to refresh
+mid-run (`grant_type=refresh_token`) rather than authenticate once at startup.
+
+### The endpoints the pipeline needs
+
+Four, because TME splits identity, parameters and pricing. Verified against the live API:
+
+| endpoint | gives | required params |
+|---|---|---|
+| `GET /products/search` | symbols matching a phrase and/or category | `scope[]`, and `phrase` **or** `category_id` |
+| `GET /products` | identity: `symbol`, `ean`, `manufacturer`, `description`, `multiples`, `minimal_amount` | `symbols[]` **or** `mpns[]` |
+| `GET /products/parameters` | the parametric attributes the selection constraints consume | `symbols[]` |
+| `GET /products/data` | **prices, stock levels, delivery** — max **50 symbols per call** | `scope[]`, `symbols[]`, `amounts[]` |
+
+Two things worth knowing before writing the mapping:
+
+- **`/products` accepts `mpns[]`.** We can look parts up by manufacturer part number directly
+  instead of first resolving TME's own `symbol`, which removes a whole lookup stage.
+- **The spec's `required` flags are not reliable.** `/products/search` marks both `phrase` and
+  `category_id` required while its prose says "provide either … or both", and `/products` marks both
+  `symbols[]` and `mpns[]` required when they are alternatives. Trust the prose.
+
+```sh
+export TME_TOKEN=...      # 50 chars, hex
+export TME_APP_SECRET=... # 20 chars, hex
+```
+
+### Delivery country: the SK/CZ trap
+
+TME is not one company. The group runs separate national subsidiaries — TME Czech Republic s.r.o.
+and TME Slovakia s.r.o. — and each "is responsible for issuing invoices with VAT rates applicable"
+in its own country, while the parent in Łódź holds the warehouse and ships everything **from
+Poland**. So an account registered on the Slovak storefront belongs to TME Slovakia and will not
+accept a Czech delivery address: the constraint is the invoicing entity, not logistics. Decide the
+delivery country before registering, because it is baked into which subsidiary holds the account.
 
 ## Mouser — Search API
 
