@@ -1,0 +1,219 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-11-23",
+  "generator": "tools/sourcing (ato-sourcing) \u2014 regenerate with `cargo run -p ato-sourcing -- fetch`",
+  "readme": [
+    "Committed sourcing snapshot: price, stock, lifecycle and compliance per (MPN, distributor).",
+    "",
+    "WHY COMMITTED: CI must be deterministic and offline. A gate that queries a live API fails",
+    "when a distributor rate-limits, and gives a different answer on every run \u2014 which is also",
+    "exactly why hardware.yml's atopile picker is currently broken (it calls a remote parts API",
+    "from CI). The fetcher runs locally with credentials; CI only ever reads this file.",
+    "",
+    "WHY JSON AND NOT SQLITE: this is reviewed in pull requests. A stock change or an EOL notice",
+    "should show up as a readable diff, which a binary database cannot do. Keys are sorted and",
+    "formatting is stable so diffs stay minimal.",
+    "",
+    "PROVENANCE: every offer carries `source`. `api` means a distributor API returned it;",
+    "`manual-research` means a human read it off a product page, with the date. The two are never",
+    "merged, so a hand-entered figure can always be told apart from a retrieved one.",
+    "",
+    "SOURCING_PENDING: a part with no offers MUST carry `sourcing_pending` with a reason and a date. The gap is then data rather than absence \u2014 a candidate nobody priced cannot hide in a missing key. A Hard-locked revision does not accept it.",
+    "",
+    "COMPLIANCE: per IPC-1752A practice, a compliance claim is stored with the date it was made",
+    "and the regulation revision it refers to \u2014 not as a bare boolean. A RoHS 'yes' from 2019 is",
+    "not a statement about today's exemption list."
+  ],
+  "distributors": {
+    "tme": {
+      "name": "Transfer Multisort Elektronik",
+      "country": "PL",
+      "warehouse": "PL",
+      "eu": true,
+      "api": "https://api.tme.eu (v2, HMAC-signed)",
+      "role": "primary \u2014 broadest EU passive/connector stock, fast intra-EU shipping"
+    },
+    "mouser": {
+      "name": "Mouser Electronics",
+      "country": "US",
+      "warehouse": "DE",
+      "eu": true,
+      "api": "https://api.mouser.com (Search API v2, API key)",
+      "role": "secondary \u2014 TI/ADI/Cirrus semiconductors, DE warehouse so EU-domestic delivery"
+    },
+    "digikey": {
+      "name": "Digi-Key",
+      "country": "US",
+      "warehouse": "NL",
+      "eu": true,
+      "api": "https://api.digikey.com (Product Information v4, OAuth 2.0)",
+      "role": "secondary \u2014 deepest semiconductor catalogue; NL warehouse for EU orders"
+    }
+  },
+  "parts": {
+    "CS43131-CNZ": {
+      "manufacturer": "Cirrus Logic",
+      "description": "Stereo DAC with integrated ground-centred Class-H headphone amplifier",
+      "package": "QFN-32",
+      "satisfies": "dac",
+      "offers": [
+        {
+          "distributor": "mouser",
+          "distributor_pn": null,
+          "stock": 141,
+          "moq": 1,
+          "order_multiple": 1,
+          "lead_time_days": null,
+          "price_breaks": [],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": "https://statics.cirrus.com/pubs/proDatasheet/CS43131_DS1155F2.pdf",
+          "source": "manual-research",
+          "retrieved_at": "2026-11-23",
+          "note": "stock read from the product page during research; price breaks and lifecycle need an API fetch"
+        },
+        {
+          "distributor": "digikey",
+          "distributor_pn": null,
+          "stock": 401,
+          "moq": 1,
+          "order_multiple": 1,
+          "lead_time_days": null,
+          "price_breaks": [],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": "https://statics.cirrus.com/pubs/proDatasheet/CS43131_DS1155F2.pdf",
+          "source": "manual-research",
+          "retrieved_at": "2026-11-23",
+          "note": "stock read from the product page during research"
+        }
+      ]
+    },
+    "CS43131-CNZR": {
+      "manufacturer": "Cirrus Logic",
+      "description": "Same die as CS43131-CNZ, tape-and-reel packaging",
+      "package": "QFN-32",
+      "satisfies": null,
+      "offers": [
+        {
+          "distributor": "mouser",
+          "distributor_pn": null,
+          "stock": 0,
+          "moq": 1,
+          "order_multiple": 1,
+          "lead_time_days": null,
+          "price_breaks": [],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": null,
+          "source": "manual-research",
+          "retrieved_at": "2026-11-23",
+          "note": "NOT STOCKED at Mouser. Recorded deliberately: -CNZR is the same die as -CNZ, so a BOM naming it still builds \u2014 from Digi-Key only. The risk is single-sourcing, not unavailability, which is what preferred_parts_have_more_than_one_eu_source gates."
+        },
+        {
+          "distributor": "digikey",
+          "distributor_pn": null,
+          "stock": 221,
+          "moq": 1,
+          "order_multiple": 1,
+          "lead_time_days": null,
+          "price_breaks": [],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": null,
+          "source": "manual-research",
+          "retrieved_at": "2026-11-23",
+          "note": "stocked here, which is why single-distributor sourcing hides the problem"
+        }
+      ]
+    },
+    "CS43198-CNZ": {
+      "manufacturer": "Cirrus Logic",
+      "description": "Stereo DAC, no integrated headphone amp",
+      "package": "QFN-32",
+      "satisfies": "dac",
+      "offers": [],
+      "sourcing_pending": {
+        "reason": "same family as the preferred CS43131 but without the integrated amp; needs an amp stage, so it is a fallback-with-board-change rather than a drop-in",
+        "since": "2026-11-23",
+        "note": "No offers recorded on purpose: stock and price were NOT retrieved, and inventing them would be worse than admitting the gap. Run the fetcher with distributor credentials to replace this with real offers. A Hard lock does not accept sourcing_pending."
+      }
+    },
+    "ASDMB-45.1584MHZ-LY-T": {
+      "manufacturer": "Abracon",
+      "description": "45.1584 MHz fixed MEMS/XO oscillator (placeholder)",
+      "package": "SMD",
+      "satisfies": "mclk-osc-44k1",
+      "offers": [],
+      "sourcing_pending": {
+        "reason": "placeholder part: the 45.1584 MHz FREQUENCY is the requirement, the specific oscillator is not chosen. Needs a phase-noise figure before it can be preferred",
+        "since": "2026-11-23",
+        "note": "No offers recorded on purpose: stock and price were NOT retrieved, and inventing them would be worse than admitting the gap. Run the fetcher with distributor credentials to replace this with real offers. A Hard lock does not accept sourcing_pending."
+      }
+    },
+    "ASDMB-49.152MHZ-LY-T": {
+      "manufacturer": "Abracon",
+      "description": "49.152 MHz fixed MEMS/XO oscillator (placeholder)",
+      "package": "SMD",
+      "satisfies": "mclk-osc-48k",
+      "offers": [],
+      "sourcing_pending": {
+        "reason": "placeholder part, as above for the 48 kHz family",
+        "since": "2026-11-23",
+        "note": "No offers recorded on purpose: stock and price were NOT retrieved, and inventing them would be worse than admitting the gap. Run the fetcher with distributor credentials to replace this with real offers. A Hard lock does not accept sourcing_pending."
+      }
+    },
+    "74LVC1G3157GW": {
+      "manufacturer": "Nexperia",
+      "description": "2-channel analog mux/demux, break-before-make",
+      "package": "TSSOP-6",
+      "satisfies": "mclk-mux",
+      "offers": [],
+      "sourcing_pending": {
+        "reason": "preferred on function (passive break-before-make mux); EU stock and price not yet retrieved",
+        "since": "2026-11-23",
+        "note": "No offers recorded on purpose: stock and price were NOT retrieved, and inventing them would be worse than admitting the gap. Run the fetcher with distributor credentials to replace this with real offers. A Hard lock does not accept sourcing_pending."
+      }
+    },
+    "SN74LVC1G3157DCKR": {
+      "manufacturer": "Texas Instruments",
+      "description": "2-channel analog mux/demux, break-before-make",
+      "package": "SC-70-6",
+      "satisfies": "mclk-mux",
+      "offers": [],
+      "sourcing_pending": {
+        "reason": "TI equivalent of the same function, kept as the second source",
+        "since": "2026-11-23",
+        "note": "No offers recorded on purpose: stock and price were NOT retrieved, and inventing them would be worse than admitting the gap. Run the fetcher with distributor credentials to replace this with real offers. A Hard lock does not accept sourcing_pending."
+      }
+    },
+    "STM32H7A3ZIT6": {
+      "manufacturer": "STMicroelectronics",
+      "description": "Cortex-M7 280 MHz, 2 MB flash, 1.4 MB SRAM",
+      "package": "LQFP-144",
+      "satisfies": "mcu",
+      "offers": [],
+      "sourcing_pending": {
+        "reason": "preferred on function; EU stock and price not yet retrieved",
+        "since": "2026-11-23",
+        "note": "No offers recorded on purpose: stock and price were NOT retrieved, and inventing them would be worse than admitting the gap. Run the fetcher with distributor credentials to replace this with real offers. A Hard lock does not accept sourcing_pending."
+      }
+    },
+    "STM32H7B3ZIT6": {
+      "manufacturer": "STMicroelectronics",
+      "description": "Cortex-M7 280 MHz, higher flash, same memory map",
+      "package": "LQFP-144",
+      "satisfies": "mcu",
+      "offers": [],
+      "sourcing_pending": {
+        "reason": "pin-compatible higher-flash fallback if H7A3 supply tightens",
+        "since": "2026-11-23",
+        "note": "No offers recorded on purpose: stock and price were NOT retrieved, and inventing them would be worse than admitting the gap. Run the fetcher with distributor credentials to replace this with real offers. A Hard lock does not accept sourcing_pending."
+      }
+    }
+  }
+}

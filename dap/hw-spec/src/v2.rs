@@ -191,8 +191,10 @@ const PARTS: &[PartReq] = &[
             Candidate {
                 mpn: "CS43131-CNZ",
                 preference: Preference::Preferred,
-                note: "the -CNZ suffix is deliberate: stocked at Mouser EU and Digi-Key EU, \
-                       while -CNZR (tape and reel) is NOT stocked at Mouser",
+                note: "the -CNZ suffix is deliberate, and the reason is DEPTH rather than \
+                       availability: -CNZ is stocked at both Mouser EU and Digi-Key EU, while \
+                       -CNZR (tape and reel, same die) is stocked only at Digi-Key. Either can \
+                       be built; only one has a second source",
             },
             Candidate {
                 mpn: "CS43198-CNZ",
