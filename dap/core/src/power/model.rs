@@ -216,6 +216,53 @@ pub const PERIPHERAL_PLAYBACK_MA: f32 = DAC_AMP_PLAYBACK_MA + SD_AVG_MA + DISPLA
 /// measurement: the real number needs `board-h7a3` silicon.
 pub const HOST_TO_TARGET_DERATE: f32 = 50.0;
 
+/// Instructions per second of decoded audio, **measured on target** by
+/// `tools/mcu-stackprobe`'s `mcu-rtfprobe` under QEMU with `-icount` (exact and
+/// deterministic; see `check-rtf-qemu.sh`). These are the measured counterpart to
+/// the `HOST_RTF_*` projections, and the units the model actually wants: cost per
+/// second of audio, independent of clock.
+///
+/// They are *instructions*, not cycles. Cycles = instructions x CPI, and CPI is
+/// the one term still unmeasured — it is precisely what the caches change, and
+/// QEMU models no caches (see
+/// `docs/plans/2026-11-21-memory-architecture-and-placement.md` S15/S16).
+///
+/// Worst DECODER at its own native sample rate, so no resampling is included:
+/// Opus (CELT + SILK), the heaviest of the seven.
+pub const MEASURED_INSN_PER_AUDIO_SEC_WORST_DECODE: f32 = 9_585_185.0;
+
+/// FLAC decode at its native rate — the cheap end of the lossless formats, kept
+/// alongside the worst case because the spread between them is what shows how
+/// badly a single host derate fits (see
+/// [`CPI_IMPLIED_BY_HOST_DERATE`]'s gate).
+pub const MEASURED_INSN_PER_AUDIO_SEC_FLAC_DECODE: f32 = 852_989.0;
+
+/// The FULL pipeline: 44.1 kHz source into a 48 kHz sink, so decode **and**
+/// resample, which is the shape `AudioPlayer` runs when the DAC is pinned to one
+/// rate. Same fixture and codec as [`MEASURED_INSN_PER_AUDIO_SEC_FLAC_DECODE`] —
+/// the only difference is whether the resampler runs.
+pub const MEASURED_INSN_PER_AUDIO_SEC_PIPELINE_RESAMPLED: f32 = 19_997_420.0;
+
+/// The resampler alone, by difference. **The single heaviest stage in the audio
+/// path** — 2x the worst decoder and 22x FLAC's decode. This is why the board
+/// carries a dual MCLK oscillator (22.5792/24.576 MHz): clocking the SAI at the
+/// source rate skips this entirely for all standard content.
+pub const MEASURED_INSN_PER_AUDIO_SEC_RESAMPLER: f32 =
+    MEASURED_INSN_PER_AUDIO_SEC_PIPELINE_RESAMPLED - MEASURED_INSN_PER_AUDIO_SEC_FLAC_DECODE;
+
+/// The CPI that makes the measured path reproduce [`HOST_TO_TARGET_DERATE`]'s
+/// answer **for the resampled pipeline**: 6.06 cycles per instruction.
+///
+/// This is not a measurement and not a recommendation — it is the derate's own
+/// hidden assumption, made visible. Nobody chose a stall of ~6 cycles per
+/// instruction; it fell out of taking the pessimistic end of a "10-50x faster
+/// than target" range. Expressed this way it can be checked, and
+/// `the_single_derate_cannot_serve_both_stages` does check it.
+///
+/// A plausible CACHED M7 runs this class of code nearer 1.2-1.5. The gap between
+/// that and 6.06 is the cache question, still open (S15).
+pub const CPI_IMPLIED_BY_HOST_DERATE: f32 = 6.06;
+
 /// Project a HOST-measured RTF (`dap-sim/benches/decode_rtf.rs`) onto the
 /// target clock's RTF, using the pessimistic [`HOST_TO_TARGET_DERATE`].
 /// E.g. a HOST RTF of 250x becomes an estimated target RTF of 5x. Still a
@@ -263,6 +310,40 @@ pub fn min_clock_mhz_for_rtf(rtf_at_ref_clock: f32, ref_mhz: u32, safety: f32) -
     }
     let needed = ref_mhz as f32 / rtf_at_ref_clock * safety;
     ceil_to_u32(needed).max(1)
+}
+
+/// The lowest clock (MHz) sustaining real-time, from a **measured instruction
+/// count** per second of audio and an explicit CPI, with the same safety margin
+/// as [`min_clock_mhz_for_rtf`].
+///
+/// `cycles/s = insn/s * cpi`, and the clock must supply at least that many
+/// cycles per second, so `min_mhz = insn_per_audio_sec * cpi * safety / 1e6`.
+///
+/// This is the sibling of [`min_clock_mhz_for_rtf`] and deliberately kept
+/// alongside it rather than replacing it. The two take different routes to the
+/// same quantity: that one derates a whole-machine host measurement by a single
+/// scalar, this one uses a target-ISA instruction count with CPI as the only
+/// estimated term. Neither is authoritative yet — CPI needs silicon — but they
+/// disagree in a structured way that is itself informative (see
+/// `the_single_derate_cannot_serve_both_stages`).
+#[must_use]
+pub fn min_clock_mhz_for_insn(insn_per_audio_sec: f32, cpi: f32, safety: f32) -> u32 {
+    if insn_per_audio_sec <= 0.0 || cpi <= 0.0 {
+        return 1;
+    }
+    ceil_to_u32(insn_per_audio_sec * cpi * safety / 1.0e6).max(1)
+}
+
+/// Clock-invariant decode cost in cycles/s from a measured instruction count —
+/// the [`decode_cost_cycles_per_sec`] input, measured rather than projected, so
+/// [`duty_cycle`] and the runtime estimate can be driven from the on-target
+/// figure once CPI is known.
+#[must_use]
+pub fn decode_cost_cycles_per_sec_from_insn(insn_per_audio_sec: f32, cpi: f32) -> f64 {
+    if insn_per_audio_sec <= 0.0 || cpi <= 0.0 {
+        return 0.0;
+    }
+    f64::from(insn_per_audio_sec) * f64::from(cpi)
 }
 
 /// The CPU cycles needed per second of audio, at the given reference clock's
@@ -771,6 +852,146 @@ mod tests {
     /// over a fixed-DAC-rate + always-resample path. (If a future resampler
     /// speedup ever inverts this, revisit the clocking strategy — that's the gate
     /// doing its job.)
+    /// The resampler costs more than any decoder — the attribution that
+    /// `mcu-rtfprobe` established and the reason native-rate clocking is a
+    /// first-order power decision rather than a refinement.
+    ///
+    /// Pinned as a gate because it was got WRONG once: measuring every format
+    /// into one fixed 48 kHz sink made Opus look like the cheapest format, since
+    /// Opus is 48 kHz by spec and was the only one not being resampled. If a
+    /// future resampler speedup genuinely inverts this, that is a real change in
+    /// the power strategy and should be a deliberate edit here.
+    #[test]
+    fn the_resampler_outweighs_every_decoder() {
+        // `black_box` so this stays a runtime assertion carrying a useful
+        // message: both operands are `const`, so clippy's assertions-on-constants
+        // fires otherwise, and a `const { assert!(..) }` cannot format values in.
+        let resampler = core::hint::black_box(MEASURED_INSN_PER_AUDIO_SEC_RESAMPLER);
+        let worst_decode = core::hint::black_box(MEASURED_INSN_PER_AUDIO_SEC_WORST_DECODE);
+        let flac_decode = core::hint::black_box(MEASURED_INSN_PER_AUDIO_SEC_FLAC_DECODE);
+        assert!(
+            resampler > worst_decode,
+            "resampler ({} insn/audio-s) should cost more than the worst decoder ({}) — if it \
+             no longer does, revisit whether native-rate clocking is still the priority",
+            resampler,
+            worst_decode
+        );
+        // ...and by a wide margin over a typical lossless decode, which is what
+        // makes skipping it worth hardware (the dual MCLK oscillator).
+        let ratio = resampler / flac_decode;
+        assert!(
+            ratio > 10.0,
+            "resampler should dominate FLAC decode by >10x, measured {ratio}x"
+        );
+    }
+
+    /// **The headline result of S16, as a gate.** At the derate's own implied CPI,
+    /// native-rate playback of the heaviest format fits VOS3 while the resampled
+    /// pipeline does not.
+    ///
+    /// This is what `heaviest_format_needs_vos2_not_vos3` could not see: that test
+    /// routes decode-only host RTFs through a derate calibrated (implicitly) on a
+    /// resampler-heavy workload, so it reports VOS2 for pure decode too. The
+    /// measured path separates the stages, and the separation is what decides
+    /// whether the lowest voltage scale is usable for playback at all.
+    #[test]
+    fn native_rate_reaches_vos3_while_resampling_needs_vos2() {
+        let native = min_clock_mhz_for_insn(
+            MEASURED_INSN_PER_AUDIO_SEC_WORST_DECODE,
+            CPI_IMPLIED_BY_HOST_DERATE,
+            TEST_SAFETY_MARGIN,
+        );
+        let resampled = min_clock_mhz_for_insn(
+            MEASURED_INSN_PER_AUDIO_SEC_PIPELINE_RESAMPLED,
+            CPI_IMPLIED_BY_HOST_DERATE,
+            TEST_SAFETY_MARGIN,
+        );
+        assert_eq!(
+            clocks::Vos::lowest_supporting(native),
+            Some(clocks::Vos::Vos3),
+            "native-rate worst decode needs {native} MHz, which should fit VOS3 (caps at {} MHz)",
+            clocks::Vos::Vos3.max_clock_mhz()
+        );
+        assert!(
+            resampled > clocks::Vos::Vos3.max_clock_mhz(),
+            "the resampled pipeline needs {resampled} MHz, which should EXCEED VOS3's {} MHz — \
+             if resampling ever fits VOS3, native-rate clocking stops being a power decision",
+            clocks::Vos::Vos3.max_clock_mhz()
+        );
+        assert_eq!(
+            clocks::Vos::lowest_supporting(resampled),
+            Some(clocks::Vos::Vos2),
+            "the resampled pipeline ({resampled} MHz) should need exactly VOS2"
+        );
+    }
+
+    /// A single scalar host->target derate cannot serve both pipeline stages, and
+    /// this pins the size of the mismatch so neither path can be "corrected"
+    /// toward the other without a deliberate edit.
+    ///
+    /// Calibrate CPI so the measured path reproduces the host path for the
+    /// RESAMPLED pipeline (that is what [`CPI_IMPLIED_BY_HOST_DERATE`] is), and the
+    /// same CPI then makes pure DECODE markedly cheaper than the host path claims
+    /// — 1.3x for Opus, ~10x for FLAC. The host cannot be right about both: a
+    /// resampler is dense, regular, vectorisable arithmetic that x86
+    /// auto-vectorises from a large cache, while entropy-heavy decode is branchy
+    /// and gains far less, so the two stages do not share a host/target ratio.
+    #[test]
+    fn the_single_derate_cannot_serve_both_stages() {
+        // Calibration: the two paths agree on the resampled pipeline, by
+        // construction. Allow 2 MHz for f32 rounding through two different
+        // formulas.
+        let host_pipeline = min_clock_mhz_for_rtf(
+            estimate_target_rtf(HOST_RTF_PIPELINE_RESAMPLED),
+            H7A3_MAX_CLOCK_MHZ,
+            TEST_SAFETY_MARGIN,
+        );
+        let measured_pipeline = min_clock_mhz_for_insn(
+            MEASURED_INSN_PER_AUDIO_SEC_PIPELINE_RESAMPLED,
+            CPI_IMPLIED_BY_HOST_DERATE,
+            TEST_SAFETY_MARGIN,
+        );
+        assert!(
+            host_pipeline.abs_diff(measured_pipeline) <= 2,
+            "CPI_IMPLIED_BY_HOST_DERATE should reproduce the host path for the resampled \
+             pipeline: host {host_pipeline} MHz vs measured {measured_pipeline} MHz"
+        );
+
+        // Same CPI, pure decode: the host path is strictly more pessimistic, and
+        // by more for the cheaper codec.
+        let host_opus = min_clock_mhz_for_rtf(
+            estimate_target_rtf(HOST_RTF_OPUS),
+            H7A3_MAX_CLOCK_MHZ,
+            TEST_SAFETY_MARGIN,
+        );
+        let measured_opus = min_clock_mhz_for_insn(
+            MEASURED_INSN_PER_AUDIO_SEC_WORST_DECODE,
+            CPI_IMPLIED_BY_HOST_DERATE,
+            TEST_SAFETY_MARGIN,
+        );
+        let host_flac = min_clock_mhz_for_rtf(
+            estimate_target_rtf(HOST_RTF_FLAC),
+            H7A3_MAX_CLOCK_MHZ,
+            TEST_SAFETY_MARGIN,
+        );
+        let measured_flac = min_clock_mhz_for_insn(
+            MEASURED_INSN_PER_AUDIO_SEC_FLAC_DECODE,
+            CPI_IMPLIED_BY_HOST_DERATE,
+            TEST_SAFETY_MARGIN,
+        );
+        assert!(
+            host_opus > measured_opus,
+            "host path should over-state opus decode: host {host_opus} MHz vs measured \
+             {measured_opus} MHz"
+        );
+        assert!(
+            host_flac > measured_flac * 4,
+            "the mismatch should be far larger for a cheap codec, where the resampler-calibrated \
+             derate has nothing to hide behind: host {host_flac} MHz vs measured {measured_flac} \
+             MHz"
+        );
+    }
+
     #[test]
     fn native_rate_clocking_needs_lower_clock_than_resampling() {
         // Heaviest raw decoder = the lowest RTF of the seven.
