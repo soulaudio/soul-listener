@@ -73,6 +73,10 @@ fn named_enforcement_gates_actually_exist() {
         ("sourcing_snapshot.rs", include_str!("sourcing_snapshot.rs")),
         ("budget_lines.rs", include_str!("budget_lines.rs")),
         ("licensing_posture.rs", include_str!("licensing_posture.rs")),
+        (
+            "filesystem_swappability.rs",
+            include_str!("filesystem_swappability.rs"),
+        ),
     ];
 
     let mut checked = 0usize;
