@@ -869,6 +869,14 @@ under two compilers to see it.
 
 ## 15. Cached vs uncached RTF — what is measurable, and the assumption it exposed (2026-11-23)
 
+> **Corrected by §16 (same day).** This section calls 19,998,974 instructions per
+> second of audio a DECODE measurement. It is not: ~96% of it is the
+> **resampler**. The figure is right for the pipeline it measured (44.1 kHz source
+> into a 48 kHz sink) but wrong as an attribution, and the per-format conclusions
+> that follow from it are superseded. The CPI ~6.1 finding below stands, and
+> §16 sharpens what it implies. Kept as written because the mis-attribution and
+> how it surfaced are the instructive part.
+
 §4 called measuring cached-vs-uncached RTF "the largest unexplored battery lever
 in the project", because the whole chain is `RTF -> minimum clock -> current ->
 hours` and ST's figure is that a disabled D-cache roughly halves M7 performance.
@@ -980,3 +988,130 @@ selects DWT CYCCNT automatically, at which point `speedup_centi i_vs_off` and
 settles: the true RTF, whether the I-cache alone is enough (it carries none of
 the D-cache's DMA coherency hazards — AN4839, §4's "never partially" rule), and
 whether VOS3 is genuinely unreachable or merely unreachable uncached.
+
+## 16. The resampler is the lever, not the cache — and §15's headline number was mis-attributed (2026-11-23)
+
+§15 reported "19,998,974 instructions per second of **decoded audio**" for
+Matroska-FLAC and treated it as decode cost. **That attribution was wrong.**
+Extending the probe to sweep every format exposed it: ~96% of that figure is the
+**resampler**, not the decoder.
+
+### How the error announced itself
+
+Sweeping all six formats into the single 48 kHz sink §15 used produced this,
+which is not a believable ranking:
+
+| format | instructions/audio-s (48 kHz sink) |
+|---|---|
+| wav | 19,343,368 |
+| mka-flac | 19,997,410 |
+| mp3 | 19,668,531 |
+| alac-caf | 19,903,089 |
+| wavpack | 19,855,949 |
+| **opus-webm** | **9,585,177** |
+
+Five codecs of wildly different complexity landing within 3% of each other, and
+**Opus — CELT + SILK, the heaviest decoder there is — coming out cheapest, at
+half the cost of WAV, which has no codec at all.** Both tells point the same way:
+something that is not decoding dominates the measurement.
+
+The cause: the `tone-*` fixtures are 44.1 kHz, Opus is 48 kHz **by spec**
+(RFC 6716), and the sink was 48 kHz. So every format except Opus was being
+resampled, and Opus was the only one measured honestly.
+
+### The corrected picture
+
+Measuring each format at its **own native rate** (resampler bypassed), and
+separately the same FLAC into a 48 kHz sink (resampler engaged):
+
+| stage | instructions per second of audio |
+|---|---|
+| wav decode | 196,911 |
+| mp3 decode | 523,252 |
+| wavpack decode | 711,106 |
+| alac decode | 758,343 |
+| flac decode | 852,989 |
+| **opus decode** (heaviest, as expected) | **9,585,185** |
+| **resampler** (44.1 → 48 kHz) | **19,144,431** |
+
+So the resampler costs **22.4x FLAC's decode** and **2x the heaviest decoder**.
+It is, by a wide margin, the single most expensive stage in the DAP's audio path.
+Opus is confirmed as the heaviest *decoder* (11x FLAC) — it only looked cheap
+because it was the one format not being resampled.
+
+### What this does to the clock floor, and to L11
+
+| CPI | native-rate (opus, worst decoder) | resampled |
+|---|---|---|
+| 1.20 | >= 11 MHz | >= 23 MHz |
+| 1.50 | >= 14 MHz | >= 29 MHz |
+| 3.00 | >= 28 MHz | >= 59 MHz |
+| **6.10** (the model's implied value, §15) | **>= 58 MHz** | **>= 121 MHz** |
+| 8.00 | >= 76 MHz | >= 159 MHz |
+
+VOS3 is **88 MHz**. Read the 6.10 row: native-rate playback of the heaviest
+format needs 58 MHz — **VOS3 is reachable, with 30 MHz to spare** — while the
+resampled pipeline needs 121 MHz, which VOS3 cannot supply.
+
+**So L11's "opus needs VOS2, VOS3 is unreachable" is true of the RESAMPLED
+pipeline and false of native-rate playback.** §4 and §15 both suspected the
+caches; the deciding factor turns out to be whether the resampler runs at all.
+That is a far better place to be: cache state is a measurement we still cannot
+make without silicon, whereas resampling is a design decision already supported
+by the hardware.
+
+And the hardware was built for it. The board's CS43131 takes both rate families
+from a **dual MCLK oscillator** (22.5792 MHz → 44.1k, 24.576 MHz → 48k), chosen
+precisely so the SAI can clock at the source rate and skip the resampler for all
+standard content. `power::model`'s
+`native_rate_clocking_needs_lower_clock_than_resampling` already gates the
+*direction* of this. The magnitude — **23.4x** — is what was missing, and it is
+large enough to change priorities: native-rate clocking is not a nicety, it is
+the difference between VOS3 and VOS2 for every track in the library.
+
+### Why the host benchmarks could not have shown this
+
+The model's host figures imply resampling costs about **1.3x** the FLAC decode
+(`HOST_RTF_FLAC` 266.6 vs `HOST_RTF_PIPELINE_RESAMPLED` 115.5). On target it is
+**22.4x** — a ~17x disagreement about the relative cost of two pipeline stages.
+
+That is the structural problem with `HOST_TO_TARGET_DERATE` being a single
+scalar: it applies one factor to every stage, when the stages do not share a
+host/target ratio. A resampler is dense, regular, vectorisable arithmetic — x86
+auto-vectorises it and feeds it from a huge cache; a Cortex-M7 runs it scalar.
+Entropy-decode-heavy codecs are branchy and gain far less from the host. So the
+host over-flatters the resampler specifically, and no choice of a single derate
+can correct for that. The 50x figure is not merely imprecise; it is the wrong
+*shape* of correction.
+
+### Gated
+
+Two ratchets, because a regression in each has a different fix:
+
+| gate | measured | budget |
+|---|---|---|
+| `DECODE_INSN_BUDGET_PER_AUDIO_S` (worst decoder, native rate) | 9,585,185 (opus) | 11,000,000 |
+| `PIPELINE_INSN_BUDGET_PER_AUDIO_S` (44.1 -> 48 kHz, resampler engaged) | 19,997,420 | 22,000,000 |
+
+The decode-only gate is the one that matters for the low-power path: it bounds
+the clock floor for native-rate playback, where the DAP should spend its life.
+
+### A bug worth recording, because it was silent
+
+The first attempt at this restructure threaded a `sink_rate` argument through
+`run_pass` while still constructing a **single 48 kHz deck**. The sink lives
+inside the `Deck` and its rate is fixed at construction, so every "native rate"
+pass was still resampling — only the *divisor* changed. The output stayed
+entirely plausible (~18M instead of ~0.85M), and the sole visible tell was the
+`audio_ms` column reading 2182 ms for a 2000 ms fixture.
+
+It was caught only because the earlier one-off experiment (editing the
+`SINK_RATE` constant directly) had already produced the real numbers, so the
+refactor's output could be compared against a known answer. `run_pass` now
+asserts `deck.sink().stream_info().sample_rate == sink_rate`, so a declared rate
+and the actual pipeline cannot diverge again.
+
+The general lesson, and it is the same one as §14's: a measurement harness needs
+its own soundness checks, because a wrong measurement does not look wrong — it
+looks like data. Every number in this probe is now accompanied by a gate on the
+conditions that make it meaningful.
