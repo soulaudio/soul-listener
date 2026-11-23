@@ -253,8 +253,36 @@ impl Peripheral {
 /// Grounded in the v2 hardware set (`docs/plans/2026-11-15-v2-migration-design.md`
 /// §: CS43131 DAC on SAI, GDEY0397T81P/SSD1677 e-ink on SPI, MT6701 scroll-wheel,
 /// BQ21080 charger + MAX17048 gauge on I²C, microSD on SDMMC1) and the memory map
-/// (`dap/board-h7a3/memory.x` links **one** RAM region, AXI SRAM — which is why
-/// SRAM1/2/3, DTCM and ITCM are absent here and so gated).
+/// (`dap/board-h7a3/memory.x`).
+///
+/// # SRAM1/SRAM2 are now LINKED but still gated — read this before placing a static
+/// `memory.x` gained an `AHB_SRAM` region (128K at `0x3000_0000`, AHB-SRAM1 +
+/// AHB-SRAM2, contiguous) and an `.ahbram` output section. Nothing is placed
+/// there yet, so their clocks stay in [`MUST_STAY_GATED`] — an unused SRAM with
+/// its clock off is exactly right.
+///
+/// The first static that lands in `.ahbram` must move `SRAM1`/`SRAM2` OUT of
+/// [`MUST_STAY_GATED`] and into [`ROSTER`], because a read or write with the
+/// clock gated bus-faults. Two further prerequisites, both verified the hard way
+/// (see the placement doc S17):
+///
+/// * **Zero-init.** `cortex-m-rt`'s startup zeroes `.bss` in `RAM` only.
+///   `.ahbram` is NOLOAD and never zeroed, so anything depending on a zeroed
+///   start — a `StaticCell`'s `used` flag, an `AtomicBool`, an `Option`
+///   discriminant — is unsound there until a `pre_init` clears
+///   `__sahbram..__eahbram`.
+/// * **`board-h7a3` forbids `unsafe_code`**, and `#[link_section]`/`#[used]` are
+///   unsafe attributes, so that crate **cannot** place a static there as it
+///   stands. Placement needs either a narrowly-scoped `expect(unsafe_code)` with
+///   justification, or a small sibling crate owning the placement behind a safe
+///   API (the shape `eink-ssd1677` already uses).
+///
+/// DTCM/ITCM remain genuinely unlinked, hence still gated.
+///
+/// `SRAM3` is listed in [`MUST_STAY_GATED`] for register completeness; the H7A3
+/// has only two AHB SRAMs (the 1208K/"SRAM1-3" figure corrected in S1 came from
+/// the H743's map), so that bit is reserved on this part and gating it is a
+/// no-op rather than a decision.
 ///
 /// # Two placeholders, both flagged
 /// 1. **GPIO bank assignment.** No schematic exists yet, so which banks carry the
@@ -276,8 +304,10 @@ pub const ROSTER: [Peripheral; 12] = [
             bit: 31,
         },
         states: ALWAYS,
-        why: "the one RAM region memory.x links (1 MB, D1, DMA-capable) — gating \
-              it would unmap every static the firmware owns",
+        why: "the RAM region holding every static the firmware owns (1 MB, D1, \
+              DMA-capable) — gating it would unmap them. memory.x also links \
+              AHB_SRAM now, but nothing is placed there yet, so SRAM1/2 stay \
+              gated; see this module's doc before changing that",
     },
     Peripheral {
         name: "SYSCFG",

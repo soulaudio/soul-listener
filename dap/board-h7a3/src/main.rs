@@ -108,7 +108,11 @@ type Dap =
 /// plus the `STACK_RESERVE_BYTES` stack reserve still fit the 1 MB AXI SRAM
 /// `memory.x` actually links (NOT the wider 1152 KB `USER_SRAM` the region
 /// budgets use) -- add any new large AXI-SRAM static to that accounting, or
-/// place it in the as-yet-unlinked AHB SRAM1/2 instead.
+/// place it in AHB SRAM1/2 instead -- now LINKED as memory.x's `AHB_SRAM`
+/// region with an `.ahbram` section, though three prerequisites apply before
+/// anything goes there (RCC SRAM1EN/SRAM2EN, zero-init, and this crate's
+/// `forbid(unsafe_code)` vs `#[link_section]`): see memory.x and
+/// `dap_core::power::peripherals`.
 static APP_CELL: StaticCell<Dap> = StaticCell::new();
 
 /// **Compile-time** memory-budget guard — best-practice enforcement (fail the
@@ -118,7 +122,7 @@ static APP_CELL: StaticCell<Dap> = StaticCell::new();
 /// `dap-arch-tests`' runtime `board_static_footprint_leaves_stack_room_in_linked_axi_sram`
 /// guard: with it, a footprint regression that would leave too little stack
 /// can't even *link* the firmware. Add any new large AXI-SRAM static to this sum
-/// (or place it in the as-yet-unlinked AHB SRAM1/2/3).
+/// (or place it in the now-linked AHB SRAM1/2 -- see memory.x's prerequisites).
 const AXI_SRAM_BYTES: usize = 1024 * 1024;
 /// Stack headroom kept clear above the board's statics, in bytes.
 ///
