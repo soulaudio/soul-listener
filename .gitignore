@@ -67,3 +67,10 @@ test_*.txt
 
 # Git worktrees
 .worktrees/
+
+# Credentials — distributor API keys. NEVER committed.
+# `.env.example` is the committed template; the negation must stay last so the
+# template survives the wildcard above it.
+.env
+.env.*
+!.env.example

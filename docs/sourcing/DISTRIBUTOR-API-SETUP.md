@@ -78,6 +78,9 @@ Free tier: **1,000 requests/day, 120 requests/minute.**
 ```sh
 export DIGIKEY_CLIENT_ID=...
 export DIGIKEY_CLIENT_SECRET=...
+# Which host to call. Start on the sandbox — identical flow, no production quota
+# spent while the per-vendor field mapping is still unproven.
+export DIGIKEY_API_HOST=sandbox-api.digikey.com   # then api.digikey.com
 ```
 
 ## Rules for handling these
