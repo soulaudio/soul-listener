@@ -45,6 +45,7 @@
 #![no_std]
 #![forbid(unsafe_code)]
 
+pub mod budget;
 pub mod invariants;
 pub mod v1;
 pub mod v2;
