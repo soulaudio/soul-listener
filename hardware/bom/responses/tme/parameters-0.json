@@ -1,0 +1,696 @@
+{
+  "status": "OK",
+  "data": {
+    "elements": [
+      {
+        "symbol": "SN74LVC1G3157DCKR",
+        "parameters": {
+          "elements": [
+            {
+              "id": 2,
+              "name": "Manufacturer",
+              "values": [
+                {
+                  "id": 77,
+                  "value": "TEXAS INSTRUMENTS"
+                }
+              ]
+            },
+            {
+              "id": 367,
+              "name": "Type of integrated circuit",
+              "values": [
+                {
+                  "id": 1499587,
+                  "value": "analog switch"
+                }
+              ]
+            },
+            {
+              "id": 1390,
+              "name": "Output configuration",
+              "values": [
+                {
+                  "id": 1460094,
+                  "value": "SPDT"
+                }
+              ]
+            },
+            {
+              "id": 383,
+              "name": "Number of channels",
+              "values": [
+                {
+                  "id": 1443898,
+                  "value": "1"
+                }
+              ]
+            },
+            {
+              "id": 35,
+              "name": "Case",
+              "values": [
+                {
+                  "id": 1491172,
+                  "value": "SC70-6"
+                }
+              ]
+            },
+            {
+              "id": 98,
+              "name": "Supply voltage",
+              "values": [
+                {
+                  "id": 1493697,
+                  "value": "1.65...5.5V DC"
+                }
+              ]
+            },
+            {
+              "id": 10,
+              "name": "Mounting",
+              "values": [
+                {
+                  "id": 1436750,
+                  "value": "SMD"
+                }
+              ]
+            },
+            {
+              "id": 909,
+              "name": "Kind of package",
+              "values": [
+                {
+                  "id": 1443488,
+                  "value": "reel"
+                },
+                {
+                  "id": 1437179,
+                  "value": "tape"
+                }
+              ]
+            },
+            {
+              "id": 3658,
+              "name": "Manufacturer standard package",
+              "values": [
+                {
+                  "id": 2151454,
+                  "value": "3000pcs."
+                }
+              ]
+            },
+            {
+              "id": 375,
+              "name": "Interface",
+              "values": []
+            },
+            {
+              "id": 2826,
+              "name": "Family",
+              "values": []
+            },
+            {
+              "id": 789,
+              "name": "Number of inputs/outputs",
+              "values": []
+            },
+            {
+              "id": 32,
+              "name": "Operating temperature",
+              "values": []
+            },
+            {
+              "id": 804,
+              "name": "Integrated circuit features",
+              "values": []
+            },
+            {
+              "id": 403,
+              "name": "Number of comparators",
+              "values": []
+            },
+            {
+              "id": 2408,
+              "name": "Kind of architecture",
+              "values": []
+            },
+            {
+              "id": 409,
+              "name": "Clock frequency",
+              "values": []
+            },
+            {
+              "id": 3437,
+              "name": "Kind of core",
+              "values": []
+            },
+            {
+              "id": 3461,
+              "name": "Memory",
+              "values": []
+            }
+          ]
+        }
+      },
+      {
+        "symbol": "STM32H7A3ZIT6",
+        "parameters": {
+          "elements": [
+            {
+              "id": 2,
+              "name": "Manufacturer",
+              "values": [
+                {
+                  "id": 35,
+                  "value": "STMicroelectronics"
+                }
+              ]
+            },
+            {
+              "id": 367,
+              "name": "Type of integrated circuit",
+              "values": [
+                {
+                  "id": 2030955,
+                  "value": "STM32 ARM microcontroller"
+                }
+              ]
+            },
+            {
+              "id": 1390,
+              "name": "Output configuration",
+              "values": []
+            },
+            {
+              "id": 383,
+              "name": "Number of channels",
+              "values": []
+            },
+            {
+              "id": 35,
+              "name": "Case",
+              "values": [
+                {
+                  "id": 1453593,
+                  "value": "LQFP144"
+                }
+              ]
+            },
+            {
+              "id": 98,
+              "name": "Supply voltage",
+              "values": [
+                {
+                  "id": 1502810,
+                  "value": "1.62...3.6V DC"
+                }
+              ]
+            },
+            {
+              "id": 10,
+              "name": "Mounting",
+              "values": [
+                {
+                  "id": 1436750,
+                  "value": "SMD"
+                }
+              ]
+            },
+            {
+              "id": 909,
+              "name": "Kind of package",
+              "values": []
+            },
+            {
+              "id": 3658,
+              "name": "Manufacturer standard package",
+              "values": []
+            },
+            {
+              "id": 375,
+              "name": "Interface",
+              "values": [
+                {
+                  "id": 1853043,
+                  "value": "CAN FD"
+                },
+                {
+                  "id": 1506593,
+                  "value": "GPIO"
+                },
+                {
+                  "id": 1597647,
+                  "value": "HDMI CEC"
+                },
+                {
+                  "id": 1443824,
+                  "value": "I2C"
+                },
+                {
+                  "id": 1491220,
+                  "value": "I2S"
+                },
+                {
+                  "id": 1949955,
+                  "value": "LPUART"
+                },
+                {
+                  "id": 1604046,
+                  "value": "MDIO"
+                },
+                {
+                  "id": 1627041,
+                  "value": "PDM"
+                },
+                {
+                  "id": 1597646,
+                  "value": "SAI"
+                },
+                {
+                  "id": 1778163,
+                  "value": "SDMMC"
+                },
+                {
+                  "id": 1602678,
+                  "value": "SPDIF"
+                },
+                {
+                  "id": 1443806,
+                  "value": "SPI"
+                },
+                {
+                  "id": 1453415,
+                  "value": "UART"
+                },
+                {
+                  "id": 1453590,
+                  "value": "USART"
+                },
+                {
+                  "id": 1453663,
+                  "value": "USB"
+                }
+              ]
+            },
+            {
+              "id": 2826,
+              "name": "Family",
+              "values": [
+                {
+                  "id": 2030966,
+                  "value": "STM32H7"
+                }
+              ]
+            },
+            {
+              "id": 789,
+              "name": "Number of inputs/outputs",
+              "values": [
+                {
+                  "id": 1453592,
+                  "value": "112"
+                }
+              ]
+            },
+            {
+              "id": 32,
+              "name": "Operating temperature",
+              "values": [
+                {
+                  "id": 1819326,
+                  "value": "-40...85\u00b0C"
+                }
+              ]
+            },
+            {
+              "id": 804,
+              "name": "Integrated circuit features",
+              "values": [
+                {
+                  "id": 1624225,
+                  "value": "Brown Out Reset (BOR)"
+                },
+                {
+                  "id": 1518703,
+                  "value": "CRC"
+                },
+                {
+                  "id": 1518772,
+                  "value": "DMA"
+                },
+                {
+                  "id": 1518792,
+                  "value": "LCD controller"
+                },
+                {
+                  "id": 1532165,
+                  "value": "operational amplifier"
+                },
+                {
+                  "id": 1949949,
+                  "value": "PdR"
+                },
+                {
+                  "id": 1491233,
+                  "value": "PoR"
+                },
+                {
+                  "id": 1949950,
+                  "value": "PVD"
+                },
+                {
+                  "id": 1508626,
+                  "value": "watchdog"
+                }
+              ]
+            },
+            {
+              "id": 403,
+              "name": "Number of comparators",
+              "values": [
+                {
+                  "id": 1453515,
+                  "value": "2"
+                }
+              ]
+            },
+            {
+              "id": 2408,
+              "name": "Kind of architecture",
+              "values": [
+                {
+                  "id": 1637498,
+                  "value": "Cortex M7"
+                }
+              ]
+            },
+            {
+              "id": 409,
+              "name": "Clock frequency",
+              "values": [
+                {
+                  "id": 1962455,
+                  "value": "280MHz"
+                }
+              ]
+            },
+            {
+              "id": 3437,
+              "name": "Kind of core",
+              "values": [
+                {
+                  "id": 2085963,
+                  "value": "32-bit"
+                }
+              ]
+            },
+            {
+              "id": 3461,
+              "name": "Memory",
+              "values": [
+                {
+                  "id": 1979742,
+                  "value": "1.4MB SRAM"
+                },
+                {
+                  "id": 1979481,
+                  "value": "2MB FLASH"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "symbol": "STM32H7B3ZIT6",
+        "parameters": {
+          "elements": [
+            {
+              "id": 2,
+              "name": "Manufacturer",
+              "values": [
+                {
+                  "id": 35,
+                  "value": "STMicroelectronics"
+                }
+              ]
+            },
+            {
+              "id": 367,
+              "name": "Type of integrated circuit",
+              "values": [
+                {
+                  "id": 2030955,
+                  "value": "STM32 ARM microcontroller"
+                }
+              ]
+            },
+            {
+              "id": 1390,
+              "name": "Output configuration",
+              "values": []
+            },
+            {
+              "id": 383,
+              "name": "Number of channels",
+              "values": []
+            },
+            {
+              "id": 35,
+              "name": "Case",
+              "values": [
+                {
+                  "id": 1453593,
+                  "value": "LQFP144"
+                }
+              ]
+            },
+            {
+              "id": 98,
+              "name": "Supply voltage",
+              "values": [
+                {
+                  "id": 1502810,
+                  "value": "1.62...3.6V DC"
+                }
+              ]
+            },
+            {
+              "id": 10,
+              "name": "Mounting",
+              "values": [
+                {
+                  "id": 1436750,
+                  "value": "SMD"
+                }
+              ]
+            },
+            {
+              "id": 909,
+              "name": "Kind of package",
+              "values": []
+            },
+            {
+              "id": 3658,
+              "name": "Manufacturer standard package",
+              "values": []
+            },
+            {
+              "id": 375,
+              "name": "Interface",
+              "values": [
+                {
+                  "id": 1853043,
+                  "value": "CAN FD"
+                },
+                {
+                  "id": 1506593,
+                  "value": "GPIO"
+                },
+                {
+                  "id": 1597647,
+                  "value": "HDMI CEC"
+                },
+                {
+                  "id": 1443824,
+                  "value": "I2C"
+                },
+                {
+                  "id": 1491220,
+                  "value": "I2S"
+                },
+                {
+                  "id": 1949955,
+                  "value": "LPUART"
+                },
+                {
+                  "id": 1604046,
+                  "value": "MDIO"
+                },
+                {
+                  "id": 1627041,
+                  "value": "PDM"
+                },
+                {
+                  "id": 1597646,
+                  "value": "SAI"
+                },
+                {
+                  "id": 1778163,
+                  "value": "SDMMC"
+                },
+                {
+                  "id": 1602678,
+                  "value": "SPDIF"
+                },
+                {
+                  "id": 1443806,
+                  "value": "SPI"
+                },
+                {
+                  "id": 1453415,
+                  "value": "UART"
+                },
+                {
+                  "id": 1453590,
+                  "value": "USART"
+                },
+                {
+                  "id": 1453663,
+                  "value": "USB"
+                }
+              ]
+            },
+            {
+              "id": 2826,
+              "name": "Family",
+              "values": [
+                {
+                  "id": 2030966,
+                  "value": "STM32H7"
+                }
+              ]
+            },
+            {
+              "id": 789,
+              "name": "Number of inputs/outputs",
+              "values": [
+                {
+                  "id": 1453592,
+                  "value": "112"
+                }
+              ]
+            },
+            {
+              "id": 32,
+              "name": "Operating temperature",
+              "values": [
+                {
+                  "id": 1819326,
+                  "value": "-40...85\u00b0C"
+                }
+              ]
+            },
+            {
+              "id": 804,
+              "name": "Integrated circuit features",
+              "values": [
+                {
+                  "id": 1624225,
+                  "value": "Brown Out Reset (BOR)"
+                },
+                {
+                  "id": 1518703,
+                  "value": "CRC"
+                },
+                {
+                  "id": 1518772,
+                  "value": "DMA"
+                },
+                {
+                  "id": 1518792,
+                  "value": "LCD controller"
+                },
+                {
+                  "id": 1532165,
+                  "value": "operational amplifier"
+                },
+                {
+                  "id": 1949949,
+                  "value": "PdR"
+                },
+                {
+                  "id": 1491233,
+                  "value": "PoR"
+                },
+                {
+                  "id": 1949950,
+                  "value": "PVD"
+                },
+                {
+                  "id": 1508626,
+                  "value": "watchdog"
+                }
+              ]
+            },
+            {
+              "id": 403,
+              "name": "Number of comparators",
+              "values": [
+                {
+                  "id": 1453515,
+                  "value": "2"
+                }
+              ]
+            },
+            {
+              "id": 2408,
+              "name": "Kind of architecture",
+              "values": [
+                {
+                  "id": 1637498,
+                  "value": "Cortex M7"
+                }
+              ]
+            },
+            {
+              "id": 409,
+              "name": "Clock frequency",
+              "values": [
+                {
+                  "id": 1962455,
+                  "value": "280MHz"
+                }
+              ]
+            },
+            {
+              "id": 3437,
+              "name": "Kind of core",
+              "values": [
+                {
+                  "id": 2085963,
+                  "value": "32-bit"
+                }
+              ]
+            },
+            {
+              "id": 3461,
+              "name": "Memory",
+              "values": [
+                {
+                  "id": 1979742,
+                  "value": "1.4MB SRAM"
+                },
+                {
+                  "id": 1979481,
+                  "value": "2MB FLASH"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

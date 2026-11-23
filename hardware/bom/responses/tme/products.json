@@ -1,0 +1,140 @@
+{
+  "status": "OK",
+  "data": {
+    "elements": [
+      {
+        "product_status": [],
+        "symbol": "SN74LVC1G3157DCKR",
+        "ean": "",
+        "customer_symbol": "",
+        "category": {
+          "id": 100222,
+          "name": "Analog multiplexers and switches"
+        },
+        "manufacturer_symbols": [
+          "SN74LVC1G3157DCKR"
+        ],
+        "manufacturer": {
+          "id": 77,
+          "name": "TEXAS INSTRUMENTS"
+        },
+        "description": "IC: analog switch; SPDT; Ch: 1; SC70-6; 1.65\u00f75.5VDC; reel,tape",
+        "multiples": 1,
+        "minimal_amount": 1,
+        "weight": {
+          "value": 0.02,
+          "unit": "g"
+        },
+        "unit": {
+          "id": "ST",
+          "short_name": "pcs",
+          "singular_translation": "Piece",
+          "plural_translation": null
+        },
+        "packing": {
+          "elements": [
+            {
+              "id": "RL1",
+              "translation": "Reel",
+              "amount": 3000
+            }
+          ]
+        },
+        "assets": {
+          "primary_photo": {
+            "prime": "//cmrkzalcya.cloudimg.io/v7/_cdn_/BF/EC/00/00/0/52987_1.jpg?width=640&height=480&wat=1&wat_url=_tme-wrk_%2Ftme_new.png&wat_scale=100p&ci_sign=66f68121e987b3ab4450c94fe9e30fcf7b169abb",
+            "thumbnail": "//cmrkzalcya.cloudimg.io/v7/_cdn_/BF/EC/00/00/0/52987_1.jpg?width=100&height=75&q=75&ci_sign=17248c021990f41e757e9f091316a4f5a51b5815",
+            "high_resolution": null
+          }
+        },
+        "notification": null
+      },
+      {
+        "product_status": [
+          "BLOCKED_FOR_ZBL_BACKORDERS"
+        ],
+        "symbol": "STM32H7A3ZIT6",
+        "ean": "",
+        "customer_symbol": "",
+        "category": {
+          "id": 112866,
+          "name": "ST microcontrollers"
+        },
+        "manufacturer_symbols": [
+          "STM32H7A3ZIT6"
+        ],
+        "manufacturer": {
+          "id": 35,
+          "name": "STMicroelectronics"
+        },
+        "description": "IC: STM32 ARM microcontroller; 280MHz; LQFP144; 1.62\u00f73.6VDC",
+        "multiples": 1,
+        "minimal_amount": 1,
+        "weight": {
+          "value": 0.5,
+          "unit": "g"
+        },
+        "unit": {
+          "id": "ST",
+          "short_name": "pcs",
+          "singular_translation": "Piece",
+          "plural_translation": null
+        },
+        "packing": {
+          "elements": []
+        },
+        "assets": {
+          "primary_photo": {
+            "prime": "//cmrkzalcya.cloudimg.io/v7/_cdn_/16/B7/61/00/0/1473377_1.jpg?width=640&height=480&wat=1&wat_url=_tme-wrk_%2Ftme_new.png&wat_scale=100p&ci_sign=9b913469b2e54eb9db8ad8ce00f9b8969e94662b",
+            "thumbnail": "//cmrkzalcya.cloudimg.io/v7/_cdn_/16/B7/61/00/0/1473377_1.jpg?width=100&height=75&q=75&ci_sign=9d6d2e66cfa004933d4bbf19289faee198e22eac",
+            "high_resolution": null
+          }
+        },
+        "notification": null
+      },
+      {
+        "product_status": [
+          "BLOCKED_FOR_ZBL_BACKORDERS"
+        ],
+        "symbol": "STM32H7B3ZIT6",
+        "ean": "",
+        "customer_symbol": "",
+        "category": {
+          "id": 112866,
+          "name": "ST microcontrollers"
+        },
+        "manufacturer_symbols": [
+          "STM32H7B3ZIT6"
+        ],
+        "manufacturer": {
+          "id": 35,
+          "name": "STMicroelectronics"
+        },
+        "description": "IC: STM32 ARM microcontroller; 280MHz; LQFP144; 1.62\u00f73.6VDC",
+        "multiples": 1,
+        "minimal_amount": 1,
+        "weight": {
+          "value": 0.5,
+          "unit": "g"
+        },
+        "unit": {
+          "id": "ST",
+          "short_name": "pcs",
+          "singular_translation": "Piece",
+          "plural_translation": null
+        },
+        "packing": {
+          "elements": []
+        },
+        "assets": {
+          "primary_photo": {
+            "prime": "//cmrkzalcya.cloudimg.io/v7/_cdn_/16/B7/61/00/0/1473377_1.jpg?width=640&height=480&wat=1&wat_url=_tme-wrk_%2Ftme_new.png&wat_scale=100p&ci_sign=9b913469b2e54eb9db8ad8ce00f9b8969e94662b",
+            "thumbnail": "//cmrkzalcya.cloudimg.io/v7/_cdn_/16/B7/61/00/0/1473377_1.jpg?width=100&height=75&q=75&ci_sign=9d6d2e66cfa004933d4bbf19289faee198e22eac",
+            "high_resolution": null
+          }
+        },
+        "notification": null
+      }
+    ]
+  }
+}

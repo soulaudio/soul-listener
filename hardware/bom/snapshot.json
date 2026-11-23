@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "generated_at": "2026-11-23",
-  "generator": "tools/sourcing (ato-sourcing) \u2014 regenerate with `cargo run -p ato-sourcing -- fetch`",
+  "generator": "tools/bom-fetch-tme.py + tools/bom-snapshot-merge-tme.py (TME API v2); Mouser and Digi-Key offers are still manual-research",
   "readme": [
     "Committed sourcing snapshot: price, stock, lifecycle and compliance per (MPN, distributor).",
     "",
@@ -88,6 +88,22 @@
           "source": "manual-research",
           "retrieved_at": "2026-11-23",
           "note": "stock read from the product page during research"
+        },
+        {
+          "distributor": "tme",
+          "distributor_pn": null,
+          "stock": 0,
+          "moq": null,
+          "order_multiple": null,
+          "lead_time_days": null,
+          "price_breaks": [],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-23",
+          "note": "NOT CARRIED BY TME: a GET /products lookup by mpns[] on 2026-11-23 returned no element for this MPN. Recorded rather than omitted so the negative result is not re-discovered by the next person; both snapshot gates filter on stock > 0, so this counts as information and not as a source."
         }
       ]
     },
@@ -128,6 +144,22 @@
           "source": "manual-research",
           "retrieved_at": "2026-11-23",
           "note": "stocked here, which is why single-distributor sourcing hides the problem"
+        },
+        {
+          "distributor": "tme",
+          "distributor_pn": null,
+          "stock": 0,
+          "moq": null,
+          "order_multiple": null,
+          "lead_time_days": null,
+          "price_breaks": [],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-23",
+          "note": "NOT CARRIED BY TME: a GET /products lookup by mpns[] on 2026-11-23 returned no element for this MPN. Recorded rather than omitted so the negative result is not re-discovered by the next person; both snapshot gates filter on stock > 0, so this counts as information and not as a source."
         }
       ]
     },
@@ -136,9 +168,26 @@
       "description": "Stereo DAC, no integrated headphone amp",
       "package": "QFN-32",
       "satisfies": "dac",
-      "offers": [],
+      "offers": [
+        {
+          "distributor": "tme",
+          "distributor_pn": null,
+          "stock": 0,
+          "moq": null,
+          "order_multiple": null,
+          "lead_time_days": null,
+          "price_breaks": [],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-23",
+          "note": "NOT CARRIED BY TME: a GET /products lookup by mpns[] on 2026-11-23 returned no element for this MPN. Recorded rather than omitted so the negative result is not re-discovered by the next person; both snapshot gates filter on stock > 0, so this counts as information and not as a source."
+        }
+      ],
       "sourcing_pending": {
-        "reason": "same family as the preferred CS43131 but without the integrated amp; needs an amp stage, so it is a fallback-with-board-change rather than a drop-in",
+        "reason": "TME has been fetched and reports no stock for this part (and does not carry it); Mouser and Digi-Key have not been fetched yet, so the EU sourcing question is still open rather than answered negatively.",
         "since": "2026-11-23",
         "note": "No offers recorded on purpose: stock and price were NOT retrieved, and inventing them would be worse than admitting the gap. Run the fetcher with distributor credentials to replace this with real offers. A Hard lock does not accept sourcing_pending."
       }
@@ -148,9 +197,26 @@
       "description": "22.5792 MHz fixed MEMS/XO oscillator (placeholder)",
       "package": "SMD",
       "satisfies": "mclk-osc-44k1",
-      "offers": [],
+      "offers": [
+        {
+          "distributor": "tme",
+          "distributor_pn": null,
+          "stock": 0,
+          "moq": null,
+          "order_multiple": null,
+          "lead_time_days": null,
+          "price_breaks": [],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-23",
+          "note": "NOT CARRIED BY TME: a GET /products lookup by mpns[] on 2026-11-23 returned no element for this MPN. Recorded rather than omitted so the negative result is not re-discovered by the next person; both snapshot gates filter on stock > 0, so this counts as information and not as a source."
+        }
+      ],
       "sourcing_pending": {
-        "reason": "placeholder part: the 22.5792 MHz FREQUENCY is the requirement, the specific oscillator is not chosen. Needs a phase-noise figure measured against the DS1155F2 Fig. 4-14 mask before it can be preferred. NOTE this requirement changed on 2026-11-23: it was 45.1584 MHz, chosen to clear a CS43131 MCLK/Fs ratio limit that the datasheet shows does not exist. 22.5792 MHz is a nominal CS43131 MCLK_INT, and a far more widely stocked frequency, so the real candidate set should be wide.",
+        "reason": "TME has been fetched and reports no stock for this part (and does not carry it); Mouser and Digi-Key have not been fetched yet, so the EU sourcing question is still open rather than answered negatively.",
         "since": "2026-11-23",
         "note": "No offers recorded on purpose: stock and price were NOT retrieved, and inventing them would be worse than admitting the gap. Run the fetcher with distributor credentials to replace this with real offers. A Hard lock does not accept sourcing_pending."
       }
@@ -160,9 +226,26 @@
       "description": "24.576 MHz fixed MEMS/XO oscillator (placeholder)",
       "package": "SMD",
       "satisfies": "mclk-osc-48k",
-      "offers": [],
+      "offers": [
+        {
+          "distributor": "tme",
+          "distributor_pn": null,
+          "stock": 0,
+          "moq": null,
+          "order_multiple": null,
+          "lead_time_days": null,
+          "price_breaks": [],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-23",
+          "note": "NOT CARRIED BY TME: a GET /products lookup by mpns[] on 2026-11-23 returned no element for this MPN. Recorded rather than omitted so the negative result is not re-discovered by the next person; both snapshot gates filter on stock > 0, so this counts as information and not as a source."
+        }
+      ],
       "sourcing_pending": {
-        "reason": "placeholder part, as above for the 48 kHz family; was 49.152 MHz until 2026-11-23",
+        "reason": "TME has been fetched and reports no stock for this part (and does not carry it); Mouser and Digi-Key have not been fetched yet, so the EU sourcing question is still open rather than answered negatively.",
         "since": "2026-11-23",
         "note": "No offers recorded on purpose: stock and price were NOT retrieved, and inventing them would be worse than admitting the gap. Run the fetcher with distributor credentials to replace this with real offers. A Hard lock does not accept sourcing_pending."
       }
@@ -172,9 +255,26 @@
       "description": "2-channel analog mux/demux, break-before-make",
       "package": "TSSOP-6",
       "satisfies": "mclk-mux",
-      "offers": [],
+      "offers": [
+        {
+          "distributor": "tme",
+          "distributor_pn": null,
+          "stock": 0,
+          "moq": null,
+          "order_multiple": null,
+          "lead_time_days": null,
+          "price_breaks": [],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-23",
+          "note": "NOT CARRIED BY TME: a GET /products lookup by mpns[] on 2026-11-23 returned no element for this MPN. Recorded rather than omitted so the negative result is not re-discovered by the next person; both snapshot gates filter on stock > 0, so this counts as information and not as a source."
+        }
+      ],
       "sourcing_pending": {
-        "reason": "preferred on function (passive break-before-make mux); EU stock and price not yet retrieved",
+        "reason": "TME has been fetched and reports no stock for this part (and does not carry it); Mouser and Digi-Key have not been fetched yet, so the EU sourcing question is still open rather than answered negatively.",
         "since": "2026-11-23",
         "note": "No offers recorded on purpose: stock and price were NOT retrieved, and inventing them would be worse than admitting the gap. Run the fetcher with distributor credentials to replace this with real offers. A Hard lock does not accept sourcing_pending."
       }
@@ -184,21 +284,100 @@
       "description": "2-channel analog mux/demux, break-before-make",
       "package": "SC-70-6",
       "satisfies": "mclk-mux",
-      "offers": [],
-      "sourcing_pending": {
-        "reason": "TI equivalent of the same function, kept as the second source",
-        "since": "2026-11-23",
-        "note": "No offers recorded on purpose: stock and price were NOT retrieved, and inventing them would be worse than admitting the gap. Run the fetcher with distributor credentials to replace this with real offers. A Hard lock does not accept sourcing_pending."
-      }
+      "offers": [
+        {
+          "distributor": "tme",
+          "distributor_pn": "SN74LVC1G3157DCKR",
+          "stock": 6916,
+          "moq": 1,
+          "order_multiple": 1,
+          "lead_time_days": null,
+          "price_breaks": [
+            {
+              "qty": 1,
+              "unit_price": 0.189
+            },
+            {
+              "qty": 10,
+              "unit_price": 0.131
+            },
+            {
+              "qty": 25,
+              "unit_price": 0.116
+            },
+            {
+              "qty": 100,
+              "unit_price": 0.099
+            },
+            {
+              "qty": 150,
+              "unit_price": 0.096
+            },
+            {
+              "qty": 250,
+              "unit_price": 0.09
+            },
+            {
+              "qty": 500,
+              "unit_price": 0.086
+            },
+            {
+              "qty": 1000,
+              "unit_price": 0.084
+            },
+            {
+              "qty": 3000,
+              "unit_price": 0.08
+            },
+            {
+              "qty": 15000,
+              "unit_price": 0.074
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-23",
+          "note": "GET /products + /products/data, country=SK, currency=EUR. Prices are NET of tax 23.0% (VAT). special=False on every break, so these are LIST prices and not account-negotiated \u2014 reproducible by anyone with an API key."
+        }
+      ]
     },
     "STM32H7A3ZIT6": {
       "manufacturer": "STMicroelectronics",
       "description": "Cortex-M7 280 MHz, 2 MB flash, 1.4 MB SRAM",
       "package": "LQFP-144",
       "satisfies": "mcu",
-      "offers": [],
+      "offers": [
+        {
+          "distributor": "tme",
+          "distributor_pn": "STM32H7A3ZIT6",
+          "stock": 0,
+          "moq": 1,
+          "order_multiple": 1,
+          "lead_time_days": null,
+          "price_breaks": [
+            {
+              "qty": 1,
+              "unit_price": 13.0
+            },
+            {
+              "qty": 10,
+              "unit_price": 12.05
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-23",
+          "note": "GET /products + /products/data, country=SK, currency=EUR. Prices are NET of tax 23.0% (VAT). special=False on every break, so these are LIST prices and not account-negotiated \u2014 reproducible by anyone with an API key. TME product_status=['BLOCKED_FOR_ZBL_BACKORDERS']. Note BLOCKED_FOR_ZBL_BACKORDERS is an ORDERING restriction (no zero-balance backorders accepted), not a lifecycle state, which is why lifecycle stays 'unknown' rather than being inferred from it."
+        }
+      ],
       "sourcing_pending": {
-        "reason": "preferred on function; EU stock and price not yet retrieved",
+        "reason": "TME has been fetched and reports no stock for this part; Mouser and Digi-Key have not been fetched yet, so the EU sourcing question is still open rather than answered negatively.",
         "since": "2026-11-23",
         "note": "No offers recorded on purpose: stock and price were NOT retrieved, and inventing them would be worse than admitting the gap. Run the fetcher with distributor credentials to replace this with real offers. A Hard lock does not accept sourcing_pending."
       }
@@ -208,9 +387,47 @@
       "description": "Cortex-M7 280 MHz, higher flash, same memory map",
       "package": "LQFP-144",
       "satisfies": "mcu",
-      "offers": [],
+      "offers": [
+        {
+          "distributor": "tme",
+          "distributor_pn": "STM32H7B3ZIT6",
+          "stock": 0,
+          "moq": 1,
+          "order_multiple": 1,
+          "lead_time_days": null,
+          "price_breaks": [
+            {
+              "qty": 1,
+              "unit_price": 16.7
+            },
+            {
+              "qty": 5,
+              "unit_price": 15.4
+            },
+            {
+              "qty": 30,
+              "unit_price": 14.7
+            },
+            {
+              "qty": 120,
+              "unit_price": 13.0
+            },
+            {
+              "qty": 240,
+              "unit_price": 12.3
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-23",
+          "note": "GET /products + /products/data, country=SK, currency=EUR. Prices are NET of tax 23.0% (VAT). special=False on every break, so these are LIST prices and not account-negotiated \u2014 reproducible by anyone with an API key. TME product_status=['BLOCKED_FOR_ZBL_BACKORDERS']. Note BLOCKED_FOR_ZBL_BACKORDERS is an ORDERING restriction (no zero-balance backorders accepted), not a lifecycle state, which is why lifecycle stays 'unknown' rather than being inferred from it."
+        }
+      ],
       "sourcing_pending": {
-        "reason": "pin-compatible higher-flash fallback if H7A3 supply tightens",
+        "reason": "TME has been fetched and reports no stock for this part; Mouser and Digi-Key have not been fetched yet, so the EU sourcing question is still open rather than answered negatively.",
         "since": "2026-11-23",
         "note": "No offers recorded on purpose: stock and price were NOT retrieved, and inventing them would be worse than admitting the gap. Run the fetcher with distributor credentials to replace this with real offers. A Hard lock does not accept sourcing_pending."
       }
@@ -220,9 +437,26 @@
       "description": "1S Li-Po 1100 mAh, 6.2 x 32 x 55 mm, integrated PCM, JST PH 2.0 lead",
       "package": "pouch cell",
       "satisfies": "battery",
-      "offers": [],
+      "offers": [
+        {
+          "distributor": "tme",
+          "distributor_pn": null,
+          "stock": 0,
+          "moq": null,
+          "order_multiple": null,
+          "lead_time_days": null,
+          "price_breaks": [],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-23",
+          "note": "NOT CARRIED BY TME: a GET /products lookup by mpns[] on 2026-11-23 returned no element for this MPN. Recorded rather than omitted so the negative result is not re-discovered by the next person; both snapshot gates filter on stock > 0, so this counts as information and not as a source."
+        }
+      ],
       "sourcing_pending": {
-        "reason": "the documented prototype cell (licensing research S1). Needs the per-model AKY0646 UN 38.3 summary and IEC 62133-2 report archived from the vendor, and a second source researched before it can be Preferred",
+        "reason": "TME has been fetched and reports no stock for this part (and does not carry it); Mouser and Digi-Key have not been fetched yet, so the EU sourcing question is still open rather than answered negatively.",
         "since": "2026-11-23",
         "note": "No offers recorded on purpose: stock and price were NOT retrieved, and inventing them would be worse than admitting the gap. Run the fetcher with distributor credentials to replace this with real offers. A Hard lock does not accept sourcing_pending."
       }
@@ -232,9 +466,26 @@
       "description": "Bluetooth module (Qualcomm QCC3056), pre-qualified radio - DO NOT POPULATE on the shipped wired-only board",
       "package": "module",
       "satisfies": "bluetooth",
-      "offers": [],
+      "offers": [
+        {
+          "distributor": "tme",
+          "distributor_pn": null,
+          "stock": 0,
+          "moq": null,
+          "order_multiple": null,
+          "lead_time_days": null,
+          "price_breaks": [],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-23",
+          "note": "NOT CARRIED BY TME: a GET /products lookup by mpns[] on 2026-11-23 returned no element for this MPN. Recorded rather than omitted so the negative result is not re-discovered by the next person; both snapshot gates filter on stock > 0, so this counts as information and not as a source."
+        }
+      ],
       "sourcing_pending": {
-        "reason": "deliberately unsourced: the module is DNP on the shipped board, so there is nothing to buy. Needs the QDID and the RED/FCC certificate numbers recorded before it could be populated, plus the ~EUR 5k SIG Declaration budgeted",
+        "reason": "TME has been fetched and reports no stock for this part (and does not carry it); Mouser and Digi-Key have not been fetched yet, so the EU sourcing question is still open rather than answered negatively.",
         "since": "2026-11-23",
         "note": "No offers recorded on purpose: stock and price were NOT retrieved, and inventing them would be worse than admitting the gap. Run the fetcher with distributor credentials to replace this with real offers. A Hard lock does not accept sourcing_pending."
       }
