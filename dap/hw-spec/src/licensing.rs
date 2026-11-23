@@ -150,7 +150,12 @@ pub const EXPOSURES: &[Exposure] = &[
         status: RoyaltyStatus::Declined {
             instead: "FAT32, accepting the 4 GB/file cap; TB cards are reformatted",
         },
-        enforced_by: "dap-storage-fat32 is the only filesystem implementation in the tree",
+        // Note what this enforces and what it does not. Nothing stops someone
+        // writing an exFAT implementation; what is gated is that the firmware
+        // stays able to swap one in, so deferring exFAT remains a reversible
+        // decision rather than a permanent architecture.
+        enforced_by: "dap-arch-tests::filesystem_swappability::\
+                      the_storage_port_has_a_non_filesystem_implementation",
         source: "licensing §6 — Microsoft patents; the kernel pledge does not cover bare metal",
     },
     Exposure {

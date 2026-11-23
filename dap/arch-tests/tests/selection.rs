@@ -446,3 +446,174 @@ fn licensing_sensitive_requirements_are_not_prose_only() {
         );
     }
 }
+
+/// A spare battery has to be *buyable*, which is a property of the candidate SET.
+///
+/// The other licensing constraints are per-part: this one cannot be, and that
+/// distinction is worth stating. "Widely available" is not a fact about a cell —
+/// a single perfect cell from a single manufacturer satisfies every per-part
+/// constraint in the spec and still leaves the user unable to buy a spare when
+/// that manufacturer discontinues it. For a *consumable the user replaces*, the
+/// supply question outlives the build: a soldered cell only has to be available
+/// while we are manufacturing, a user-swappable one has to be available for as
+/// long as people own the device.
+///
+/// So availability is checked over the qualifying set, and it is checked for
+/// manufacturer diversity rather than stock depth. Depth is a ranking criterion
+/// (`DEFAULT_RANKING` puts source depth first); *independence* is the thing that
+/// survives one vendor exiting the market.
+#[test]
+fn a_spare_cell_is_obtainable_from_more_than_one_manufacturer() {
+    let owned = load("battery");
+    let parts = borrow(&owned);
+    let req = ACTIVE
+        .parts
+        .iter()
+        .find(|r| r.id == "battery")
+        .expect("the spec must have a battery requirement");
+    let mut verdicts = vec![None; parts.len()];
+    evaluate(&parts, req.constraints, &mut verdicts);
+
+    let mut makers: Vec<&str> = verdicts
+        .iter()
+        .flatten()
+        .filter(|v| v.rejection.is_none())
+        .map(|v| v.part.manufacturer)
+        .collect();
+    makers.sort_unstable();
+    makers.dedup();
+
+    assert!(
+        makers.len() >= 2,
+        "only {} manufacturer(s) ({makers:?}) produce a cell that satisfies the battery \
+         constraints. The battery is the one part an END USER re-buys, so single-sourcing it is \
+         worse than single-sourcing anything else on the board: when that manufacturer \
+         discontinues the model, every device in the field loses its spare supply, and the \
+         swappable-battery feature quietly becomes a dead promise.\n\n\
+         Resolve by one of:\n  \
+         (a) find a second manufacturer's cell that fits the bay and carries its own per-model \
+         certification — the preferred answer, and the reason the constraints target a STANDARD \
+         pouch size and a STANDARD connector rather than a specific part;\n  \
+         (b) relax a dimensional constraint if the bay can afford it (that is a mechanical \
+         decision, not a sourcing one);\n  \
+         (c) drop the user-swappable-spare claim and solder the cell — which also removes the \
+         Art. 11 user-replaceability design and should not be done quietly.",
+        makers.len()
+    );
+}
+
+/// Wide availability must not be bought by relaxing a licensing constraint.
+///
+/// The two requirements pull against each other on purpose: availability wants
+/// the broadest possible candidate set, and the certification constraints
+/// deliberately narrow it. The failure mode worth guarding is satisfying the
+/// first by weakening the second — admitting a bare cell or a solder-tab part to
+/// get the manufacturer count up.
+///
+/// So this asserts both hold *at once*: every cell counted as available also
+/// carries its own protection circuit, its per-model reports, and a connector a
+/// user can unplug.
+#[test]
+fn every_available_cell_also_satisfies_the_certification_constraints() {
+    let owned = load("battery");
+    let parts = borrow(&owned);
+    let req = ACTIVE
+        .parts
+        .iter()
+        .find(|r| r.id == "battery")
+        .expect("the spec must have a battery requirement");
+    let mut verdicts = vec![None; parts.len()];
+    evaluate(&parts, req.constraints, &mut verdicts);
+
+    let qualifying: Vec<_> = verdicts
+        .iter()
+        .flatten()
+        .filter(|v| v.rejection.is_none())
+        .collect();
+
+    assert!(
+        !qualifying.is_empty(),
+        "no cell qualifies at all — availability is moot if the constraint set admits nothing"
+    );
+
+    for v in qualifying {
+        for (attr, expect_true) in [
+            ("integrated_pcm", true),
+            ("un38_3_report", true),
+            ("iec62133_2_report", true),
+        ] {
+            let val = v
+                .part
+                .attrs
+                .iter()
+                .find(|(k, _)| k.eq_ignore_ascii_case(attr))
+                .map(|(_, val)| *val);
+            assert!(
+                matches!(val, Some(AttrValue::Bool(b)) if b == expect_true),
+                "{} is counted as an available spare but its '{attr}' is {val:?}. Widening the \
+                 candidate set must not come from relaxing the certification constraints: a bare \
+                 or undocumented cell makes US the battery manufacturer, which is a five-figure \
+                 certification programme rather than a sourcing inconvenience.",
+                v.part.mpn
+            );
+        }
+    }
+}
+
+/// The connector allow-list must contain only industry-standard connectors.
+///
+/// This is what makes "widely available" achievable rather than aspirational.
+/// Availability of a spare depends on the *interface* being standard: a cell with
+/// a proprietary moulded connector can be the best cell in the world and still
+/// leave the user with exactly one supplier. JST PH 2.0 is the de-facto standard
+/// for single-cell Li-Po, which is why the board's connector choice is itself a
+/// sourcing decision.
+#[test]
+fn the_accepted_battery_connectors_are_industry_standards() {
+    use dap_hw_spec::select::Predicate;
+
+    // Deliberately a literal list rather than a reference to the spec's own
+    // constant: this test is asking "are these standards?", and importing the
+    // answer from the thing under test would make it tautological.
+    const INDUSTRY_STANDARD: &[&str] = &[
+        "JST-PH-2.0",
+        "JST-PH",
+        "JST-XH",
+        "molex-picoblade",
+        "molex-pico-ezmate",
+        "connector",
+    ];
+
+    let req = ACTIVE
+        .parts
+        .iter()
+        .find(|r| r.id == "battery")
+        .expect("the spec must have a battery requirement");
+    let termination = req
+        .constraints
+        .iter()
+        .find(|c| c.attr.eq_ignore_ascii_case("termination"))
+        .expect("the battery requirement must constrain termination");
+
+    let Predicate::OneOf(allowed) = termination.pred else {
+        panic!(
+            "the termination constraint is no longer a OneOf list, so the set of accepted \
+             connectors cannot be checked against the industry standards"
+        )
+    };
+
+    for a in allowed {
+        assert!(
+            INDUSTRY_STANDARD.iter().any(|s| s.eq_ignore_ascii_case(a)),
+            "'{a}' is accepted as a battery termination but is not in the industry-standard list. \
+             A spare cell is only widely available if its connector is: a proprietary or \
+             vendor-specific termination leaves exactly one supplier, no matter how good the cell \
+             is. If '{a}' really is a standard, add it to INDUSTRY_STANDARD here with a note — do \
+             not widen only the spec side, because then nothing is comparing the two."
+        );
+    }
+    assert!(
+        !allowed.is_empty(),
+        "the termination allow-list is empty, so no cell can qualify"
+    );
+}
