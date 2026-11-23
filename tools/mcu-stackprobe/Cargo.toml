@@ -31,6 +31,21 @@ required-features = ["tick"]
 test = false
 bench = false
 
+# The decode real-time-factor probe (feature `rtf`): runs the real
+# open_seekable -> Deck::load -> Deck::pump path three times — caches off,
+# I-cache, I+D — and reports cycles per second of decoded audio. Replaces the
+# power model's host-benchmark-divided-by-50 RTF input with a measurement on
+# real thumbv7em codegen, and measures the cache ratio §4 of the placement doc
+# currently takes from ST's "roughly 2x" instead of from this board. Like the
+# tick probe, `required-features` keeps it out of the static
+# `-Z emit-stack-sizes` gate so it cannot perturb those numbers.
+[[bin]]
+name = "mcu-rtfprobe"
+path = "src/bin/rtfprobe.rs"
+required-features = ["rtf"]
+test = false
+bench = false
+
 [dependencies]
 # Sibling repo D:/dev/soulaudio/soul-audio-core, three levels up from this
 # file (tools/mcu-stackprobe/Cargo.toml -> tools/ -> soul-listener-gh/ ->
@@ -67,6 +82,11 @@ qemu = ["dep:cortex-m-semihosting"]
 # dap-core (App/firmware/stub) and semihosting. Run with
 # `cargo run --bin mcu-tickprobe --features tick` (check-tick-qemu.sh does this).
 tick = ["dep:dap-core", "dep:cortex-m-semihosting"]
+# Build the decode-RTF probe (the `mcu-rtfprobe` bin). Needs semihosting to
+# report, and `cortex-m`'s cache/DWT control (already a hard dependency).
+# Run with `cargo run --bin mcu-rtfprobe --features rtf`
+# (tools/mcu-stackprobe/check-rtf-qemu.sh does this).
+rtf = ["dep:cortex-m-semihosting"]
 
 [profile.release]
 # Cargo's release defaults already give opt-level = 3; spelled out here so

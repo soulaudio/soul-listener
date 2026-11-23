@@ -33,3 +33,11 @@
 [toolchain]
 channel = "1.100.0"
 targets = ["thumbv7em-none-eabihf"]
+# Declared so a local `rustup` install of this pin is self-sufficient. Without
+# them, a minimal install satisfies the build but `cargo fmt`/`cargo clippy` in
+# this directory fail with "'cargo-fmt' is not installed for the toolchain
+# '1.100.0'" — confusing, because the repo-root toolchain has them and nothing
+# says this directory selects a different one. CI happens not to hit it (the
+# toolchain action installs the default profile, which includes both), which is
+# exactly why it would otherwise only ever bite a contributor.
+components = ["rustfmt", "clippy"]

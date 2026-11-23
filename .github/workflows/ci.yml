@@ -464,6 +464,21 @@ jobs:
       - name: Run the dynamic stack-budget gate (QEMU mps2-an500)
         run: bash tools/mcu-stackprobe/check-stack-qemu.sh
 
+      # Decode-work gate: instructions per second of decoded audio, measured on
+      # real Cortex-M7 codegen under `-icount` (which makes the guest SysTick an
+      # exact instruction counter, so the figure is deterministic and a sound
+      # ratchet). This is the power model's RTF input made measurable: the model
+      # otherwise takes a HOST x86 benchmark divided by a 50x derate, which in
+      # instruction terms silently assumes CPI ~6 on the M7.
+      #
+      # The same probe runs caches-off / I-cache / I+D passes, but QEMU models no
+      # caches and no wait states, so all three execute identical instructions
+      # and the cache RATIO is deliberately NOT gated — the script prints that it
+      # is an absence of a measurement, not a result. That number needs
+      # board-h7a3 silicon, where the probe selects DWT CYCCNT automatically.
+      - name: Run the decode-work gate (QEMU mps2-an500, -icount)
+        run: bash tools/mcu-stackprobe/check-rtf-qemu.sh
+
       # Whole-firmware-tick gate: the board-accurate number. check-stack-qemu.sh
       # above measures the decode path in isolation (~297 KiB); this runs the real
       # `dap_core::firmware::step` (App::tick open→decode THEN App::render) and
