@@ -1,0 +1,6 @@
+[package]
+name = "dap-hw-spec"
+version = "0.1.0"
+edition = "2021"
+description = "THE machine-readable hardware spec for the DAP — one source of truth the firmware consumes and the atopile design is generated from. Soft-locked to v2; see src/lib.rs."
+publish = false

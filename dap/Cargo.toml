@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["core", "sim", "board-h7a3", "arch-tests", "eink-ssd1677", "storage-fat32"]
+members = ["core", "sim", "board-h7a3", "arch-tests", "eink-ssd1677", "storage-fat32", "hw-spec"]
 
 [workspace.dependencies]
 # Sibling repo D:/dev/soulaudio/soul-audio-core, two levels up from this file

@@ -528,6 +528,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "dap-hw-spec"
+version = "0.1.0"
+
+[[package]]
 name = "dap-sim"
 version = "0.1.0"
 dependencies = [
