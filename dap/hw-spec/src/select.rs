@@ -55,7 +55,7 @@ impl AttrValue<'_> {
 #[derive(Debug, Clone, Copy)]
 pub enum Predicate<'a> {
     /// Exactly this number. Uses a relative tolerance, because a catalogue may
-    /// carry 45.1584 MHz as 45158400, 45.1584e6 or 45158400.000001 depending on
+    /// carry 22.5792 MHz as 22579200, 22.5792e6 or 22579200.000001 depending on
     /// who parsed it, and an oscillator that is off by one part in 10^9 is the
     /// same oscillator.
     NumEq {
@@ -67,6 +67,15 @@ pub enum Predicate<'a> {
     /// Text equal to one of these, case-insensitively.
     OneOf(&'a [&'a str]),
     IsTrue,
+    /// The attribute must be present AND false.
+    ///
+    /// Not the same as omitting the constraint, and not the same as `IsTrue`
+    /// negated by the caller: several real requirements are negative facts that
+    /// must be *published* rather than assumed — "this module needs no vendor
+    /// NDA", "this cell is not soldered in". An absent attribute stays a
+    /// rejection under this predicate, for the same reason it does under the
+    /// others: unknown is not a pass.
+    IsFalse,
 }
 
 /// A requirement expressed so a machine can reject a part.
@@ -165,6 +174,10 @@ fn check<'a>(part: &CataloguePart<'a>, c: &Constraint<'a>) -> Result<(), Rejecti
         },
         Predicate::IsTrue => match v {
             AttrValue::Bool(b) => b,
+            _ => return Err(Rejection::WrongType { attr: c.attr }),
+        },
+        Predicate::IsFalse => match v {
+            AttrValue::Bool(b) => !b,
             _ => return Err(Rejection::WrongType { attr: c.attr }),
         },
     };
@@ -318,14 +331,16 @@ mod tests {
         let c = Constraint {
             attr: "frequency_hz",
             pred: Predicate::NumEq {
-                value: 45_158_400.0,
+                value: 22_579_200.0,
                 rel_tol: 1e-6,
             },
-            why: "the 44.1 kHz family needs 1024 x 44100 so MCKDIV can reach an accepted ratio",
+            why: "the 44.1 kHz family needs 512 x 44100 — a nominal CS43131 MCLK that also \
+                  divides to an exact 64 x Fs bit clock",
         };
-        let exact = [("frequency_hz", AttrValue::Num(45_158_400.0))];
-        let rounded = [("frequency_hz", AttrValue::Num(45_158_400.000_01))];
-        let wrong = [("frequency_hz", AttrValue::Num(22_579_200.0))];
+        let exact = [("frequency_hz", AttrValue::Num(22_579_200.0))];
+        let rounded = [("frequency_hz", AttrValue::Num(22_579_200.000_01))];
+        // The other family's nominal clock: accepted by the DAC, wrong for 44.1 kHz.
+        let wrong = [("frequency_hz", AttrValue::Num(24_576_000.0))];
 
         assert!(check(&part("exact", &exact, 1, 1, None), &c).is_ok());
         assert!(
@@ -346,7 +361,7 @@ mod tests {
             why: "jitter in the MCLK path is the one thing the dual-oscillator design exists to \
                   avoid",
         };
-        let no_figure = [("frequency_hz", AttrValue::Num(45_158_400.0))];
+        let no_figure = [("frequency_hz", AttrValue::Num(22_579_200.0))];
         let r = check(&part("unknown", &no_figure, 2, 100, None), &c).unwrap_err();
         assert!(
             matches!(r, Rejection::MissingAttribute { .. }),
@@ -390,7 +405,7 @@ mod tests {
             Constraint {
                 attr: "frequency_hz",
                 pred: Predicate::NumEq {
-                    value: 45_158_400.0,
+                    value: 22_579_200.0,
                     rel_tol: 1e-6,
                 },
                 why: "family",
@@ -402,7 +417,7 @@ mod tests {
             },
         ];
         let good = [
-            ("frequency_hz", AttrValue::Num(45_158_400.0)),
+            ("frequency_hz", AttrValue::Num(22_579_200.0)),
             ("supply_mv_max", AttrValue::Num(3300.0)),
         ];
         let bad_freq = [
