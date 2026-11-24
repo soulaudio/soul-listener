@@ -1,0 +1,7 @@
+{
+  "kind": "candidates",
+  "category": "bluetooth",
+  "generated_at": "2026-11-24",
+  "note": "Values are RAW vendor strings; dap_hw_spec::parametric::derive interprets them. Rebuild with tools/sourcing-run.py export.",
+  "parts": []
+}

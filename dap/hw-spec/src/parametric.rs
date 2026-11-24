@@ -439,6 +439,8 @@ pub fn expected_dimension(attr: &str) -> Option<Dimension> {
         _ if eq(a, "watt_hours") => Dimension::Energy,
         _ if eq(a, "thickness_mm") || eq(a, "width_mm") || eq(a, "length_mm") => Dimension::Length,
         _ if eq(a, "channels") || eq(a, "cells_series") => Dimension::Count,
+        _ if eq(a, "resolution_bits") => Dimension::Count,
+        _ if eq(a, "dynamic_range_db") => Dimension::Count,
         // Minimum order quantity. A count, and a constraint rather than a
         // ranking criterion — see the oscillator requirement for why a 1000-piece
         // reel is not merely "worse" for a hand-assembled batch.

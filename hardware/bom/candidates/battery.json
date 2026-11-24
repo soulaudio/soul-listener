@@ -98,15 +98,16 @@
     },
     {
       "mpn": "AKY0107",
-      "manufacturer": "AKYGA BATTERY",
-      "eu_sources": 1,
-      "eu_stock": 2818,
+      "manufacturer": "AKYGA",
+      "eu_sources": 2,
+      "eu_stock": 2873,
       "unit_price_cents": 671,
       "moq": 1,
       "lead_time_days": null,
-      "datasheet_url": "https://www.tme.eu/Document/d09d785c980e096e8a2305b0492fc05e/AKY0107.pdf",
+      "datasheet_url": "https://www.akyga.com/app_products_attachments/product-cards/symbol/AKY0107/code/en",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -1388,7 +1389,7 @@
       "mpn": "AKY0829",
       "manufacturer": "AKYGA BATTERY",
       "eu_sources": 1,
-      "eu_stock": 91,
+      "eu_stock": 81,
       "unit_price_cents": 1454,
       "moq": 1,
       "lead_time_days": null,
@@ -1434,7 +1435,7 @@
       "mpn": "AKY0854",
       "manufacturer": "AKYGA BATTERY",
       "eu_sources": 1,
-      "eu_stock": 31,
+      "eu_stock": 28,
       "unit_price_cents": 2560,
       "moq": 1,
       "lead_time_days": null,

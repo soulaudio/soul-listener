@@ -169,10 +169,98 @@ def cmd_export(args) -> int:
         )
         + "\n"
     )
-    print(f"{len(cands)} candidate(s) -> {out.relative_to(ROOT)}")
-    for c in cands:
-        print(f"  {c['mpn']:<26} sources={c['eu_sources']} stock={c['eu_stock']:<8} "
-              f"attrs={sorted(c['attrs_raw'])}")
+    print(f"  {args.category:<16} {len(cands):>4} candidate(s) -> {out.relative_to(ROOT)}")
+    # Per-part detail is useful when exporting one category by hand and pure noise
+    # across seven of them, so it follows the caller's intent rather than always
+    # printing.
+    if getattr(args, "verbose", True):
+        for c in cands:
+            print(f"      {c['mpn']:<26} sources={c['eu_sources']} stock={c['eu_stock']:<8} "
+                  f"attrs={sorted(c['attrs_raw'])}")
+    return 0
+
+
+# The sweeps that back the committed snapshot, declared rather than remembered.
+#
+# Each entry is (vendor, category id, phrase, requirement id, limit). Keeping it
+# here makes a refresh reproducible: the alternative is a shell history nobody
+# else has, and "which categories is this conclusion based on?" becomes
+# unanswerable.
+SWEEPS = [
+    ("tme", "100269", "22.5792MHz", "mclk-osc-44k1", 60),
+    ("tme", "100269", "24.576MHz", "mclk-osc-48k", 60),
+    ("tme", "100222", "SPDT", "mclk-mux", 300),
+    ("tme", "100076", "Li-Po", "battery", 120),
+    ("tme", "112878", None, "dac", 150),
+    ("tme", "112866", None, "mcu", 150),
+]
+
+CATEGORIES = ["dac", "mclk-osc-44k1", "mclk-osc-48k", "mclk-mux", "mcu", "battery", "bluetooth"]
+
+
+def cmd_refresh(args) -> int:
+    """Fetch every available vendor, re-export, regenerate the snapshot.
+
+    One command so a refresh is reproducible and so the sweep list is a committed
+    fact rather than shell history. A vendor without credentials is skipped and
+    reported — a partial refresh is a normal outcome, not an error.
+    """
+    env = load_env()
+    adapters = {a.name: a for a in build_adapters(env)}
+    available = [n for n, a in adapters.items() if a.available()]
+    skipped = [n for n, a in adapters.items() if not a.available()]
+    print(f"vendors available: {available}")
+    if skipped:
+        print(f"vendors skipped (no credentials): {skipped}")
+    if not available:
+        print("nothing to do; see docs/sourcing/DISTRIBUTOR-API-SETUP.md")
+        return 0
+
+    calls = 0
+    # 1. Verification: the MPNs the spec names, from every vendor.
+    for name in available:
+        a = adapters[name]
+        mpns = spec_mpns()
+        db = Catalogue(DB_PATH)
+        run = db.start_run(name, "mpns", ",".join(mpns), time.strftime("%Y-%m-%d"))
+        parts = a.lookup_mpns(mpns)
+        for pt in parts:
+            db.upsert(pt, run, category=spec_category_of(pt.queried_as, pt.mpn, pt.vendor_pn))
+        db.finish_run(run, getattr(a, "calls", 0), len(parts))
+        print(f"  {name}: resolved {len(parts)} of {len(mpns)} named parts")
+        calls += getattr(a, "calls", 0)
+
+    # 2. Discovery: the declared category sweeps.
+    for vendor, cat, phrase, label, limit in SWEEPS:
+        if vendor not in available:
+            continue
+        a = adapters[vendor]
+        before = getattr(a, "calls", 0)
+        db = Catalogue(DB_PATH)
+        run = db.start_run(vendor, "category", f"{cat} {phrase or ''}".strip(),
+                           time.strftime("%Y-%m-%d"))
+        try:
+            parts = a.search_category(str(cat), limit, phrase=phrase)
+        except RuntimeError as e:
+            print(f"  {vendor} {label}: SWEEP FAILED — {e}")
+            continue
+        for pt in parts:
+            db.upsert(pt, run, category=label)
+        db.finish_run(run, getattr(a, "calls", 0) - before, len(parts))
+        print(f"  {vendor} {label}: {len(parts)} parts")
+    for name in available:
+        calls = getattr(adapters[name], "calls", 0)
+        print(f"  {name}: {calls} API calls")
+
+    # 3. Export every category, then regenerate the snapshot.
+    print("\nexporting candidates:")
+    for cat in CATEGORIES:
+        rc = cmd_export(argparse.Namespace(category=cat, verbose=False))
+        if rc:
+            return rc
+    print("\nregenerating snapshot:")
+    import subprocess
+    subprocess.run([sys.executable, str(ROOT / "tools/bom-snapshot-merge.py")], check=False)
     return 0
 
 
@@ -223,6 +311,41 @@ def cmd_selftest(args) -> int:
     check("YTB is not a datasheet type", "YTB" not in DOC_TYPE_PREFERENCE,
           "the TI part's second document is a product video")
 
+    from sourcing.canon import SYNONYMS, canonical, merge_values
+
+    # Vendor vocabulary must collapse to one canonical token.
+    check("TME 'SMD' canonicalises", canonical("mounting", "SMD") == "SMD")
+    check("Digi-Key 'Surface Mount' canonicalises",
+          canonical("mounting", "Surface Mount") == "SMD",
+          "the same part, two vendor spellings, one spec constraint")
+    check("'XO (Standard)' is an oscillator",
+          canonical("part_type", "XO (Standard)") == "oscillator")
+    check("unknown values pass through",
+          canonical("mounting", "Flip Chip") == "Flip Chip",
+          "inventing agreement would be worse than a visible rejection")
+
+    # A merge must be deterministic and must prefer the informative value.
+    v, conflicts = merge_values("mounting", {"tme": "SMD", "digikey": "Surface Mount"})
+    check("cross-vendor merge agrees", v == "SMD" and not conflicts)
+    v, conflicts = merge_values("mounting", {"tme": "SMD", "digikey": "THT"})
+    check("a real enum conflict is reported", v and conflicts,
+          "two vendors disagreeing about one part is data worth surfacing")
+    v, _ = merge_values("supply_mv", {"digikey": "1.71V ~ 3.63V", "tme": "3.3V DC"})
+    check("a range beats a bare nominal", v == "1.71V ~ 3.63V",
+          "only the range lets a containment constraint do real work")
+    v, conflicts = merge_values("frequency_hz",
+                                {"digikey": "22.5792 MHz", "tme": "22.5792MHz"})
+    check("formatting differences are NOT conflicts", not conflicts,
+          "reporting them would bury the real ones in noise")
+    # Order independence: the same inputs in a different dict order must agree.
+    a1, _ = merge_values("mounting", {"digikey": "Surface Mount", "tme": "SMD"})
+    a2, _ = merge_values("mounting", {"tme": "SMD", "digikey": "Surface Mount"})
+    check("merge is order-independent", a1 == a2,
+          "the winner used to depend on SQL row order")
+    check("every synonym table maps to itself",
+          all(canonical(a, t) == t for a, tbl in SYNONYMS.items() for t in set(tbl.values())),
+          "a canonical value must be a fixed point, or re-export drifts")
+
     print(f"\n{'selftest OK' if not failures else 'FAILURES: ' + str(failures)}")
     return 1 if failures else 0
 
@@ -253,6 +376,9 @@ def main() -> int:
 
     t = sub.add_parser("selftest", help="check the pure helpers; no network")
     t.set_defaults(func=cmd_selftest)
+
+    rf = sub.add_parser("refresh", help="fetch all vendors, re-export, regenerate the snapshot")
+    rf.set_defaults(func=cmd_refresh)
 
     args = ap.parse_args()
     return args.func(args)
