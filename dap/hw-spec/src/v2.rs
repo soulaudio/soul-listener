@@ -504,20 +504,20 @@ const MUX_CONSTRAINTS: &[Constraint<'static>] = &[
 /// the bay is checked by a person against a drawing, which is what the
 /// constraint's own `why` already says.
 ///
-/// # A note on "hot swappable"
+/// # Swappable, with the device off
 ///
-/// The constraints below deliver a **user-swappable** cell: connectorised (JST),
-/// with its own protection circuit, obtainable as a spare. They do not deliver a
-/// *hot*-swappable one, and no cell attribute could.
+/// Scope, stated because a connectorised cell invites the stronger reading:
+/// the owner powers the device down, opens the bay, unplugs one cell and plugs
+/// in another. That is what the constraints below deliver — a JST-connectorised
+/// finished cell with its own protection circuit, obtainable as a spare.
 ///
-/// With a single cell, unplugging it removes the only power source — the device
-/// loses state mid-swap regardless of which cell is fitted. Hot swap is a
-/// property of the POWER TREE, not of the battery: it needs a holdup source
-/// across the gap (a supercapacitor sized for the RTC and a clean shutdown, or
-/// USB present during the swap, or a second cell). That is a board decision for
-/// `power.ato` and the power model, and it is recorded here rather than in a
-/// commit message because the connector makes the stronger claim look already
-/// satisfied.
+/// **Hot swap — replacing the cell while the device runs — is explicitly not a
+/// requirement.** It would be a property of the power tree rather than of the
+/// cell (a single-cell device loses its only supply the moment the connector
+/// parts, so it needs holdup across the gap), and nothing here is designed for
+/// it. Recorded so that "swappable" is not quietly read as the stronger claim
+/// later, and so no one adds a supercapacitor to satisfy a requirement that was
+/// never made.
 const BATTERY_CONSTRAINTS: &[Constraint<'static>] = &[
     Constraint {
         evidence: Evidence::Catalogue,
@@ -1037,6 +1037,21 @@ pub const SINGLE_MANUFACTURER_ACCEPTED: &[(&str, &str)] = &[(
 
 pub const SINGLE_SOURCE_ACCEPTED: &[(&str, &str)] = &[
     (
+        "AKY-LP623255",
+        "TME is the only distributor stocking it (1298 at MOQ 1), and this one is accepted on \
+         MECHANICS rather than for want of an alternative. AKY0107 is the same maker's cell at \
+         1350 mAh with 2873 across Digi-Key AND TME — it satisfies the two-source rule outright \
+         — and it is 37 mm wide against a 35 mm bay. Of the 31 cells that pass this \
+         requirement, LP623255 (6.2 x 32 x 55 mm) is the only one whose encoded geometry fits. \
+         \
+         So the exposure is real and the fix is cheap and known: widen the bay 2 mm and promote \
+         AKY0107, which is recorded as the Alternate for exactly that reason. Until then a cell \
+         that fits with one distributor beats a cell that does not fit with two. Note this is \
+         SEPARATE from the single-manufacturer exposure in SINGLE_MANUFACTURER_ACCEPTED: every \
+         qualifying cell is AKYGA either way, so promoting AKY0107 would close this entry and \
+         not that one.",
+    ),
+    (
         "STM32H7A3ZIT6",
         "Mouser's 8 units are the only EU stock of this part: Digi-Key and TME both read \
          ZERO, though both list it Active at MOQ 1, so it is a shortage and not an \
@@ -1123,7 +1138,7 @@ const PARTS: &[PartReq] = &[
         candidates: &[
             Candidate {
                 mpn: "NSC5083D-22.5792M",
-                preference: Preference::Evaluating,
+                preference: Preference::Alternate,
                 note: "DATASHEET-CONFIRMED 2026-11-24. NDK, NZ2520SDA family — the datasheet is \
                        titled 'Ultra Low Phase Noise Type' and states 'ultra low phase noise \
                        make this product ideal for High quality audio', with typical phase \
@@ -1159,7 +1174,7 @@ const PARTS: &[PartReq] = &[
             },
             Candidate {
                 mpn: "ASV-22.5792MHZ-LR-T",
-                preference: Preference::Evaluating,
+                preference: Preference::Preferred,
                 note: "DATASHEET-CONFIRMED (abracon.com/Oscillators/ASV.pdf, see \
                        docs/sourcing/datasheet-confirmations/): an active 3.3Vdc HCMOS clock \
                        oscillator, 2.97-3.63 V, -40..+85 C, +/-25 ppm. 18319 at TME and 1319 at \
@@ -1205,7 +1220,7 @@ const PARTS: &[PartReq] = &[
         candidates: &[
             Candidate {
                 mpn: "NSC5083D-24.576M",
-                preference: Preference::Evaluating,
+                preference: Preference::Alternate,
                 note: "The 48 kHz half of the NDK NZ2520SDA matched pair: same family, same \
                        2.5 x 2.0 x 0.9 mm package, same -40..+85 C, same 43 fs typical phase \
                        jitter. 2867 in stock at Digi-Key, MOQ 1, 2.61 EUR. \
@@ -1224,7 +1239,7 @@ const PARTS: &[PartReq] = &[
             },
             Candidate {
                 mpn: "ASV-24.576MHZ-EJ-T",
-                preference: Preference::Evaluating,
+                preference: Preference::Preferred,
                 note: "The 48 kHz partner the ASV option never had. Abracon ASV, same family as \
                        the 44.1 kHz ASV-22.5792MHZ-LR-T this spec already carries, +/-20 ppm, \
                        4-SMD No Lead, MOQ 1, 2.00 EUR — and stocked at ALL THREE distributors \
@@ -1392,7 +1407,7 @@ const PARTS: &[PartReq] = &[
         candidates: &[
             Candidate {
                 mpn: "MEM2080-00-128-00-A",
-                preference: Preference::Evaluating,
+                preference: Preference::Preferred,
                 note: "GCT, push-push, 10 (8 + 2) contacts so it has card-detect, and the \
                        THINNEST qualifying socket found at 1.28 mm above board. In a 7.1 mm \
                        device sharing its thickness budget with a 7.1 mm battery bay, 1.4 mm \
@@ -1401,7 +1416,7 @@ const PARTS: &[PartReq] = &[
             },
             Candidate {
                 mpn: "1140084168",
-                preference: Preference::Evaluating,
+                preference: Preference::Alternate,
                 note: "Amphenol, push-pull, 10 (8 + 2), 1.55 mm — nearly as thin as the GCT \
                        part with far deeper stock (75365 across two distributors, MOQ 1, \
                        1.53 EUR). Push-PULL rather than push-push: no ejector spring to fail, \
@@ -1448,8 +1463,16 @@ const PARTS: &[PartReq] = &[
         candidates: &[
             Candidate {
                 mpn: "AKY-LP623255",
-                preference: Preference::Evaluating,
-                note: "CATALOGUE-CONFIRMED 2026-11-24: 1100 mAh, 3.7 V, 'cables; JST SYP-02T-1 \
+                preference: Preference::Preferred,
+                note: "PICKED 2026-11-24 because it is the only qualifying cell that FITS. The \
+                       part number encodes 6.2 x 32 x 55 mm against a 35 x 59 x 7.1 mm bay; \
+                       AKY0107 (LP503759) is 37 mm wide and does not, which is why the \
+                       better-sourced, higher-capacity cell is the alternate rather than the \
+                       pick. Fit is still DATASHEET evidence — neither distributor publishes \
+                       cell dimensions, TME's product page states capacity and connector and no \
+                       geometry at all — so the drawing has to be read before this is ordered. \
+                       \
+                       CATALOGUE-CONFIRMED 2026-11-24: 1100 mAh, 3.7 V, 'cables; JST SYP-02T-1 \
                        socket', features 'PCB protection' — so the integrated-PCM condition the \
                        whole certification argument rests on is confirmed from vendor data rather \
                        than assumed. 1298 in stock at TME, MOQ 1. Ranks 3rd of 31 qualifying \
@@ -1466,12 +1489,18 @@ const PARTS: &[PartReq] = &[
             },
             Candidate {
                 mpn: "AKY0107",
-                preference: Preference::Evaluating,
-                note: "1350 mAh, 2818 in stock, MOQ 1 — ranks 1st of the 31 qualifying cells on \
-                       stock depth, and more capacity than the documented part. Recorded as a \
-                       model-level fallback, NOT as manufacturer independence: see the \
-                       requirement's single-maker finding. Bay fit unconfirmed, which is the \
-                       blocker on preferring it. \
+                preference: Preference::Alternate,
+                note: "1350 mAh, 2873 in stock across TWO distributors (Digi-Key + TME), MOQ 1 — \
+                       ranks 1st of the 31 qualifying cells, and the only one that satisfies the \
+                       two-source AVL rule. It is the ALTERNATE and not the pick for one \
+                       mechanical reason: LP503759 encodes 37 mm width against a 35 mm bay. \
+                       \
+                       That makes this a cheap, concrete trade rather than a dead end — widen \
+                       the bay by 2 mm and this becomes the better part on every axis that \
+                       remains (two distributors, +250 mAh, 1.2 mm thinner). Recorded so the \
+                       mechanical design can price the decision instead of rediscovering it. \
+                       Recorded as a model-level fallback, NOT as manufacturer independence: \
+                       see the requirement's single-maker finding. \
                        \
                        SINGLE-MANUFACTURER FINDING, measured 2026-11-24: all 70 Li-Po cells TME \
                        carries are AKYGA BATTERY, and so are all 31 that pass the constraints. \
@@ -1499,6 +1528,26 @@ const PARTS: &[PartReq] = &[
                DO NOT POPULATE on the shipped wired-only board",
         constraints: BLUETOOTH_CONSTRAINTS,
         candidates: &[
+            // DELIBERATELY UNPICKED, 2026-11-24, while every other requirement
+            // got a Preferred part.
+            //
+            // The catalogue half of this requirement ranks 324 qualifying
+            // modules and the top of that list is the wrong KIND of part, which
+            // is the clearest case in this spec of ranking not being deciding:
+            //
+            //   * The ESP32-WROOM / WROVER / S3-MINI modules that lead on
+            //     sourcing are WiFi+BT combos. Populating one changes the radio
+            //     regime the whole compliance posture rests on — the shipped
+            //     board is an EMC device BECAUSE no radio is populated
+            //     (`licensing::regime_for`) — and it is a full application SoC
+            //     rather than a codec-carrying audio module.
+            //   * `RN4871U-V/RM118` is BLE-only. No A2DP, so no SBC, so it
+            //     fails `codec_sbc` — a datasheet fact the filter cannot see.
+            //
+            // All three deciding properties here (inheritable QDID, SBC, no
+            // vendor NDA) are `Evidence::Datasheet`, and the part is DO NOT
+            // POPULATE on the shipped board, so there is no cost to waiting and
+            // a real cost to reserving a footprint for the wrong module.
             Candidate {
                 mpn: "FSC-BT1035",
                 preference: Preference::Evaluating,

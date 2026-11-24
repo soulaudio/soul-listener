@@ -15,11 +15,20 @@
 # VDDA must be filtered: 1 µH ferrite bead + 1 µF + 10 nF to GND.
 
 from "parts/STM32H743ZIT6/STM32H743ZIT6.ato" import STM32H743ZIT6
-from "interfaces.ato" import I2CBus, I2SBus, SPIDevice, DisplayCtrl, SDMMCBus
-from "interfaces.ato" import UARTBus, USBDiffPair, SWDPort, FMCBus, QSPIBus
-from "interfaces.ato" import EncoderBus, ClockSource
-from "parts/Crystal/Crystal.ato" import Crystal
+from "interfaces.ato" import I2CBus
+from "interfaces.ato" import I2SBus
+from "interfaces.ato" import SPIDevice
+from "interfaces.ato" import DisplayCtrl
+from "interfaces.ato" import SDMMCBus
+from "interfaces.ato" import UARTBus
+from "interfaces.ato" import USBDiffPair
+from "interfaces.ato" import SWDPort
+from "interfaces.ato" import FMCBus
+from "interfaces.ato" import QSPIBus
+from "interfaces.ato" import EncoderBus
+from "interfaces.ato" import ClockSource
 import ElectricPower
+import Crystal
 import Electrical
 import Capacitor
 
@@ -72,8 +81,8 @@ module MCU:
     # VCAP: internal core LDO decoupling — 1 µF each, MUST NOT connect to VDD
     c_vcap1 = new Capacitor; c_vcap1.capacitance = 1uF +/- 20%; c_vcap1.package = "0402"
     c_vcap2 = new Capacitor; c_vcap2.capacitance = 1uF +/- 20%; c_vcap2.package = "0402"
-    mcu.VCAP1 ~ c_vcap1.p1; c_vcap1.p2 ~ power_3v3.lv
-    mcu.VCAP2 ~ c_vcap2.p1; c_vcap2.p2 ~ power_3v3.lv
+    mcu.VCAP1 ~ c_vcap1.unnamed[0]; c_vcap1.unnamed[1] ~ power_3v3.lv
+    mcu.VCAP2 ~ c_vcap2.unnamed[0]; c_vcap2.unnamed[1] ~ power_3v3.lv
 
     # BOOT0: pull to GND for normal flash boot (high = system memory boot)
     power_3v3.lv ~ mcu.BOOT0
@@ -92,30 +101,30 @@ module MCU:
     c_vdd_10 = new Capacitor; c_vdd_10.capacitance = 100nF +/- 20%; c_vdd_10.package = "0402"
     c_vdd_11 = new Capacitor; c_vdd_11.capacitance = 100nF +/- 20%; c_vdd_11.package = "0402"
     c_vdd_usb = new Capacitor; c_vdd_usb.capacitance = 100nF +/- 20%; c_vdd_usb.package = "0402"
-    power_3v3.hv ~ c_vdd_1.p1;   c_vdd_1.p2   ~ power_3v3.lv
-    power_3v3.hv ~ c_vdd_2.p1;   c_vdd_2.p2   ~ power_3v3.lv
-    power_3v3.hv ~ c_vdd_3.p1;   c_vdd_3.p2   ~ power_3v3.lv
-    power_3v3.hv ~ c_vdd_4.p1;   c_vdd_4.p2   ~ power_3v3.lv
-    power_3v3.hv ~ c_vdd_5.p1;   c_vdd_5.p2   ~ power_3v3.lv
-    power_3v3.hv ~ c_vdd_6.p1;   c_vdd_6.p2   ~ power_3v3.lv
-    power_3v3.hv ~ c_vdd_7.p1;   c_vdd_7.p2   ~ power_3v3.lv
-    power_3v3.hv ~ c_vdd_8.p1;   c_vdd_8.p2   ~ power_3v3.lv
-    power_3v3.hv ~ c_vdd_9.p1;   c_vdd_9.p2   ~ power_3v3.lv
-    power_3v3.hv ~ c_vdd_10.p1;  c_vdd_10.p2  ~ power_3v3.lv
-    power_3v3.hv ~ c_vdd_11.p1;  c_vdd_11.p2  ~ power_3v3.lv
-    power_3v3.hv ~ c_vdd_usb.p1; c_vdd_usb.p2 ~ power_3v3.lv  # VDD33_USB decoupling
+    power_3v3.hv ~ c_vdd_1.unnamed[0];   c_vdd_1.unnamed[1]   ~ power_3v3.lv
+    power_3v3.hv ~ c_vdd_2.unnamed[0];   c_vdd_2.unnamed[1]   ~ power_3v3.lv
+    power_3v3.hv ~ c_vdd_3.unnamed[0];   c_vdd_3.unnamed[1]   ~ power_3v3.lv
+    power_3v3.hv ~ c_vdd_4.unnamed[0];   c_vdd_4.unnamed[1]   ~ power_3v3.lv
+    power_3v3.hv ~ c_vdd_5.unnamed[0];   c_vdd_5.unnamed[1]   ~ power_3v3.lv
+    power_3v3.hv ~ c_vdd_6.unnamed[0];   c_vdd_6.unnamed[1]   ~ power_3v3.lv
+    power_3v3.hv ~ c_vdd_7.unnamed[0];   c_vdd_7.unnamed[1]   ~ power_3v3.lv
+    power_3v3.hv ~ c_vdd_8.unnamed[0];   c_vdd_8.unnamed[1]   ~ power_3v3.lv
+    power_3v3.hv ~ c_vdd_9.unnamed[0];   c_vdd_9.unnamed[1]   ~ power_3v3.lv
+    power_3v3.hv ~ c_vdd_10.unnamed[0];  c_vdd_10.unnamed[1]  ~ power_3v3.lv
+    power_3v3.hv ~ c_vdd_11.unnamed[0];  c_vdd_11.unnamed[1]  ~ power_3v3.lv
+    power_3v3.hv ~ c_vdd_usb.unnamed[0]; c_vdd_usb.unnamed[1] ~ power_3v3.lv  # VDD33_USB decoupling
 
     # 10 µF bulk capacitor for VDD
     c_vdd_bulk = new Capacitor
     c_vdd_bulk.capacitance = 10uF +/- 20%
     c_vdd_bulk.package = "0805"
-    power_3v3.hv ~ c_vdd_bulk.p1; c_vdd_bulk.p2 ~ power_3v3.lv
+    power_3v3.hv ~ c_vdd_bulk.unnamed[0]; c_vdd_bulk.unnamed[1] ~ power_3v3.lv
 
     # VDDA filter: ferrite bead + 1 µF + 10 nF (LC filter for analog supply)
     c_vdda_1  = new Capacitor; c_vdda_1.capacitance  = 1uF  +/- 20%; c_vdda_1.package  = "0402"
     c_vdda_2  = new Capacitor; c_vdda_2.capacitance  = 10nF +/- 20%; c_vdda_2.package  = "0402"
-    power_3v3.hv ~ c_vdda_1.p1; c_vdda_1.p2 ~ power_3v3.lv
-    power_3v3.hv ~ c_vdda_2.p1; c_vdda_2.p2 ~ power_3v3.lv
+    power_3v3.hv ~ c_vdda_1.unnamed[0]; c_vdda_1.unnamed[1] ~ power_3v3.lv
+    power_3v3.hv ~ c_vdda_2.unnamed[0]; c_vdda_2.unnamed[1] ~ power_3v3.lv
 
     # ── HSE clock interface wiring (crystal/TCXO lives in clock.ato) ──────────
     # Swap clock source by replacing HseClock in main.ato — mcu.ato is untouched.
@@ -124,7 +133,7 @@ module MCU:
 
     # ── LSE Crystal (32.768 kHz for RTC) ─────────────────────────────────────
     lse_xtal = new Crystal
-    lse_xtal.frequency = 32768Hz +/- 20ppm
+    lse_xtal.frequency = 32768Hz +/- 0.002%
     # lse_xtal.package not set — crystal packages (3215) are not in atopile's passive package enum
     c_lse_1 = new Capacitor; c_lse_1.capacitance = 10pF +/- 20%; c_lse_1.package = "0402"  # Nearest registry value to ideal 6 pF CL
     c_lse_2 = new Capacitor; c_lse_2.capacitance = 10pF +/- 20%; c_lse_2.package = "0402"  # Nearest registry value to ideal 6 pF CL

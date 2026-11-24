@@ -27,13 +27,13 @@ Still to confirm by hand for whichever part is chosen: `dynamic_range_db`, `inte
 
 22.5792 MHz fixed oscillator, operating range covering 3.3 V, low phase noise, SMD
 
-179 of 371 swept candidates qualify. **Nothing is picked yet for this requirement.**
+179 of 371 swept candidates qualify. Currently preferred: `ASV-22.5792MHZ-LR-T`.
 
 Still to confirm by hand for whichever part is chosen: `phase_noise_dbc_1khz`.
 
 | # | MPN | manufacturer | EU src | stock | MOQ | EUR @1 | where |
 |---|---|---|---:|---:|---:|---:|---|
-| 1 | `ASV-22.5792MHZ-LR-T` | ABRACON | 2 | 18319 | 1 | 2.11 | [digikey](https://www.digikey.nl/en/products/detail/abracon-llc/ASV-22-5792MHZ-LR-T/15995980) · [mouser](https://cz.mouser.com/en/ProductDetail/ABRACON/ASV-22.5792MHZ-LR-T?qs=fnpEE5GccuOy%2FTECAxvETg%3D%3D) · [tme](https://www.tme.eu/en/details/asv22.5792mhzlrt-0/) |
+| 1 | `ASV-22.5792MHZ-LR-T` **<-- picked** | ABRACON | 2 | 18319 | 1 | 2.11 | [digikey](https://www.digikey.nl/en/products/detail/abracon-llc/ASV-22-5792MHZ-LR-T/15995980) · [mouser](https://cz.mouser.com/en/ProductDetail/ABRACON/ASV-22.5792MHZ-LR-T?qs=fnpEE5GccuOy%2FTECAxvETg%3D%3D) · [tme](https://www.tme.eu/en/details/asv22.5792mhzlrt-0/) |
 | 2 | `CCHD-957-25-22.5792` | Crystek Corporation | 2 | 126 | 1 | 29.24 | [digikey](https://www.digikey.nl/en/products/detail/crystek-corporation/CCHD-957-25-22-5792/2742155) · [mouser](https://cz.mouser.com/en/ProductDetail/Crystek-Corporation/CCHD-957-25-22.5792?qs=0ahj2ebvT2%2FMyeJwq3kSsA%3D%3D) |
 | 3 | `SX3M22.5792B20F30TNN` | Shenzhen SCTF Electronics | 1 | 72000 | 10 | 1.20 | [digikey](https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX3M22-5792B20F30TNN/25700692) |
 | 4 | `SX3M22.5792M20F30TNN` | Shenzhen SCTF Electronics | 1 | 72000 | 10 | 1.20 | [digikey](https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX3M22-5792M20F30TNN/25572973) |
@@ -50,13 +50,13 @@ _169 further qualifying parts not shown; `sourcing-report` states the full count
 
 24.576 MHz fixed oscillator, operating range covering 3.3 V, low phase noise, SMD
 
-218 of 605 swept candidates qualify. **Nothing is picked yet for this requirement.**
+218 of 605 swept candidates qualify. Currently preferred: `ASV-24.576MHZ-EJ-T`.
 
 Still to confirm by hand for whichever part is chosen: `phase_noise_dbc_1khz`.
 
 | # | MPN | manufacturer | EU src | stock | MOQ | EUR @1 | where |
 |---|---|---|---:|---:|---:|---:|---|
-| 1 | `ASV-24.576MHZ-EJ-T` | ABRACON | 3 | 18797 | 1 | 2.00 | [digikey](https://www.digikey.nl/en/products/detail/abracon-llc/ASV-24-576MHZ-EJ-T/675513) · [mouser](https://cz.mouser.com/en/ProductDetail/ABRACON/ASV-24.576MHZ-EJ-T?qs=GgB7MJ%2FTIsRYewXBpNiXkA%3D%3D) · [tme](https://www.tme.eu/en/details/asv24.576mhzejt-0/) |
+| 1 | `ASV-24.576MHZ-EJ-T` **<-- picked** | ABRACON | 3 | 18797 | 1 | 2.00 | [digikey](https://www.digikey.nl/en/products/detail/abracon-llc/ASV-24-576MHZ-EJ-T/675513) · [mouser](https://cz.mouser.com/en/ProductDetail/ABRACON/ASV-24.576MHZ-EJ-T?qs=GgB7MJ%2FTIsRYewXBpNiXkA%3D%3D) · [tme](https://www.tme.eu/en/details/asv24.576mhzejt-0/) |
 | 2 | `ASDDV-24.576MHZ-LC-T3` | ABRACON | 2 | 43557 | 1 | 1.37 | [digikey](https://www.digikey.nl/en/products/detail/abracon-llc/ASDDV-24-576MHZ-LC-T3/15771176) · [tme](https://www.tme.eu/en/details/asddv24.576mhzlc-0/) |
 | 3 | `ASEM1-24.576MHZ-LC-T` | ABRACON | 2 | 21728 | 1 | 2.72 | [digikey](https://www.digikey.nl/en/products/detail/abracon-llc/ASEM1-24-576MHZ-LC-T/1873210) · [tme](https://www.tme.eu/en/details/asem124.576mhz-0/) |
 | 4 | `ASFL1-24.576MHZ-EC-T` | ABRACON | 2 | 13310 | 1 | 1.94 | [digikey](https://www.digikey.nl/en/products/detail/abracon-llc/ASFL1-24-576MHZ-EC-T/687864) · [tme](https://www.tme.eu/en/details/asfl124.576mhzec-0/) |
@@ -119,7 +119,7 @@ _200 further qualifying parts not shown; `sourcing-report` states the full count
 
 microSD socket, push-push or push-pull, card-detect switch, SMD, >=5000 insertion cycles
 
-173 of 601 swept candidates qualify. **Nothing is picked yet for this requirement.**
+173 of 601 swept candidates qualify. Currently preferred: `MEM2080-00-128-00-A`.
 
 Still to confirm by hand for whichever part is chosen: `card_detect_switch`, `insertion_cycles`, `sd_logo_not_required`.
 
@@ -127,7 +127,7 @@ Still to confirm by hand for whichever part is chosen: `card_detect_switch`, `in
 |---|---|---|---:|---:|---:|---:|---|
 | 1 | `1140084168` | AMPHENOL COMMUNICATIONS SOLUTIONS | 3 | 86238 | 1 | 1.53 | [digikey](https://www.digikey.nl/en/products/detail/amphenol-cs-commercial-products/1140084168/2187086) · [mouser](https://cz.mouser.com/en/ProductDetail/Amphenol-Commercial-Products/1140084168?qs=tcdQdce0DUrgPsHyuD5Law%3D%3D) · [tme](https://www.tme.eu/en/details/1140084168/) |
 | 2 | `2908-05WB-MG` ~~RULED OUT~~<br>_8 contacts with no ninth: no card-detect switch, so firmware would have to poll the bus to…_ | 3M | 3 | 73578 | 1 | 4.23 | [digikey](https://www.digikey.nl/en/products/detail/3m/2908-05WB-MG/1242497) · [mouser](https://cz.mouser.com/en/ProductDetail/3M-Electronic-Solutions-Division/2908-05WB-MG?qs=vnwGVgFuQiZPJoOt79ALlw%3D%3D) · [tme](https://www.tme.eu/en/details/290805wbmg-3m-0/) |
-| 3 | `MEM2080-00-128-00-A` | GCT | 3 | 23887 | 1 | 1.23 | [digikey](https://www.digikey.nl/en/products/detail/gct/MEM2080-00-128-00-A/16681105) · [mouser](https://cz.mouser.com/en/ProductDetail/GCT/MEM2080-00-128-00-A?qs=vvQtp7zwQdPJXzpf1SnYug%3D%3D) · [tme](https://www.tme.eu/en/details/mem2080-00-128-00a/) |
+| 3 | `MEM2080-00-128-00-A` **<-- picked** | GCT | 3 | 23887 | 1 | 1.23 | [digikey](https://www.digikey.nl/en/products/detail/gct/MEM2080-00-128-00-A/16681105) · [mouser](https://cz.mouser.com/en/ProductDetail/GCT/MEM2080-00-128-00-A?qs=vvQtp7zwQdPJXzpf1SnYug%3D%3D) · [tme](https://www.tme.eu/en/details/mem2080-00-128-00a/) |
 | 4 | `105027-0001` ~~RULED OUT~~<br>_MOQ 2000. 150000 in stock at two distributors and unbuyable for a five-board prototype run…_ | MOLEX | 2 | 150000 | 1 | 1.51 | [digikey](https://www.digikey.nl/en/products/detail/waldom/105027-0001/28730120) · [mouser](https://cz.mouser.com/en/ProductDetail/Molex/105027-0001?qs=39WuQm6e6OkSeL34qdqRiA%3D%3D) · [tme](https://www.tme.eu/en/details/1050270001-mol/) |
 | 5 | `10067099-200LF` | AMPHENOL | 2 | 41021 | 1 | 0.86 | [digikey](https://www.digikey.nl/en/products/detail/amphenol-cs-fci/10067099-200LF/4238739) · [mouser](https://cz.mouser.com/en/ProductDetail/Amphenol-FCI/10067099-200LF?qs=i4V1y6YhAeneA%2F%2FxXHdZ7w%3D%3D) · [tme](https://www.tme.eu/en/details/10067099200lf-amp/) |
 | 6 | `MEM2075-00-140-01-A` | GCT | 2 | 25021 | 1 | 1.56 | [digikey](https://www.digikey.nl/en/products/detail/gct/MEM2075-00-140-01-A/9859614) · [tme](https://www.tme.eu/en/details/mem2075-00-140-01a/) |
@@ -142,7 +142,7 @@ _163 further qualifying parts not shown; `sourcing-report` states the full count
 
 1S Li-Po, >=1000 mAh, finished cell with its own PCM, connectorised, fits a 35 x 59 x 7.1 mm bay, per-model UN 38.3 + IEC 62133-2 docs available
 
-31 of 627 swept candidates qualify. **Nothing is picked yet for this requirement.**
+31 of 627 swept candidates qualify. Currently preferred: `AKY-LP623255`.
 
 Still to confirm by hand for whichever part is chosen: `un38_3_report`, `iec62133_2_report`, `watt_hours`, `thickness_mm`, `width_mm`, `length_mm`.
 
@@ -150,7 +150,7 @@ Still to confirm by hand for whichever part is chosen: `un38_3_report`, `iec6213
 |---|---|---|---:|---:|---:|---:|---|
 | 1 | `AKY0107` | AKYGA | 2 | 2873 | 1 | 6.71 | [digikey](https://www.digikey.nl/en/products/detail/akyga/AKY0107/26848639) · [tme](https://www.tme.eu/en/details/aky-lp503759/) |
 | 2 | `AKY0393` | AKYGA BATTERY | 1 | 1545 | 1 | 8.39 | [tme](https://www.tme.eu/en/details/aky-lp903759/) |
-| 3 | `AKY-LP623255` | AKYGA BATTERY | 1 | 1298 | 1 | 4.61 | [tme](https://www.tme.eu/en/details/aky-lp623255/) |
+| 3 | `AKY-LP623255` **<-- picked** | AKYGA BATTERY | 1 | 1298 | 1 | 4.61 | [tme](https://www.tme.eu/en/details/aky-lp623255/) |
 | 4 | `AKY0571` | AKYGA BATTERY | 1 | 1124 | 1 | 6.36 | [tme](https://www.tme.eu/en/details/aky-lp803040/) |
 | 5 | `AKY0662` | AKYGA BATTERY | 1 | 905 | 1 | 6.02 | [tme](https://www.tme.eu/en/details/aky-lp103035/) |
 | 6 | `AKY0638` | AKYGA BATTERY | 1 | 896 | 1 | 6.31 | [tme](https://www.tme.eu/en/details/aky-lp603450/) |

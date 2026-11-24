@@ -42,8 +42,26 @@ fp-info-cache
 *.net
 
 # Atopile
-hardware/.ato/          # Atopile package cache (like node_modules)
-hardware/build/         # Generated KiCad project output
+#
+# NOTE: .gitignore has NO inline comments. These two patterns used to read
+#   `hardware/.ato/          # Atopile package cache`
+# which git treats as a single pattern INCLUDING the spaces and the '#', so it
+# matched nothing and neither directory was ignored. It went unnoticed because
+# the toolchain was broken for months — no build ran, so nothing was ever
+# generated to be accidentally committed. The first successful build staged
+# `hardware/build/logs/latest`.
+#
+# Atopile package cache (like node_modules)
+hardware/.ato/
+# Generated build output: logs, BOMs, manifests, manufacturing data
+hardware/build/
+# Per-module `check-*` layouts.
+#
+# atopile creates `<layout>/<build-name>/<build-name>.kicad_pcb` for every build
+# target, so the eight per-module validation builds each produce one. They are
+# never routed and carry no design intent — only `default/` is the real board,
+# and that one IS committed because `--frozen` diffs against it.
+hardware/elec/layouts/check-*/
 
 # Manufacturing
 /hardware/manufacturing/gerber/*.zip

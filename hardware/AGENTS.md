@@ -3,9 +3,20 @@
 ## Overview
 
 This directory contains the hardware design for the SoulAudio DAP board,
-written in [Atopile](https://atopile.io) (v0.12.5+). Atopile is a code-first
-PCB DSL that compiles `.ato` files into KiCad projects and validates designs
-using `assert` statements (acting as ERC rules).
+written in [atopile](https://atopile.io), pinned to **0.15.9** (Python 3.14
+only). atopile is a code-first PCB DSL that compiles `.ato` files into KiCad
+projects.
+
+**Before changing anything here, read
+[`docs/hardware/ATOPILE-TOOLCHAIN.md`](../docs/hardware/ATOPILE-TOOLCHAIN.md).**
+Two things in it will otherwise cost you a day. First, the pin is 0.15.9 because
+every earlier version resolves parts against a hostname that no longer exists —
+"stay on the stable line" is not available. Second, `assert` statements are NOT
+checked by the offline build: they are solver constraints, the solve runs after
+part picking, and part picking needs an interactive sign-in. A false assert
+passes `cargo xtask hardware check`. The sentence that used to be here — that
+atopile "validates designs using assert statements (acting as ERC rules)" — is
+true only once you have run `ato auth login`.
 
 The hardware is organized as **vertical slices** mirroring the firmware crate
 structure — each `.ato` module corresponds to a `crates/platform/src/` or

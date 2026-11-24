@@ -18,6 +18,28 @@ pre-commit:
       glob: "*.{rs,toml}"
       run: cargo xtask precommit
 
+    # Atopile, per VERTICAL SLICE. Editing `power.ato` checks `check-power` and
+    # nothing else: 20-35 s measured, against about 5 minutes for every module
+    # plus the whole board. That is the difference between a hook people keep and
+    # a hook people bypass with `--no-verify`.
+    #
+    # A change to anything shared (`main.ato`, `interfaces.ato`, `parts/**`,
+    # `ato.yaml`) cannot be attributed to one slice and escalates to the full
+    # check. Conservative on purpose: the cost of guessing wrong that way is a
+    # slow commit; the other way it is an unchecked design.
+    #
+    # WHAT THIS CATCHES: syntax, imports, field resolution, the instance graph
+    # and ERC. WHAT IT DOES NOT: `assert` design rules and DRC. Those need the
+    # constraint solver, which runs after part picking, which on atopile 0.15.8+
+    # requires sign-in — so they are checked by the Hardware workflow with a
+    # token, not here. See docs/hardware/ATOPILE-TOOLCHAIN.md.
+    #
+    # Skips with a notice when `ato` is not installed, since most contributors
+    # here touch firmware and have no reason to carry a Python 3.14 toolchain.
+    hardware:
+      glob: "hardware/**/*.{ato,yaml}"
+      run: cargo xtask hardware check-changed {staged_files}
+
 # Commit-message policy: Conventional Commits + a clean history (no AI /
 # attribution trailers). Pure-Rust check so it behaves identically on every
 # platform — `{1}` is the path to the commit-message file git passes in.
