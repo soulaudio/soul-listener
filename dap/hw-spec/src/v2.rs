@@ -476,6 +476,48 @@ const MUX_CONSTRAINTS: &[Constraint<'static>] = &[
 /// certification for a lithium cell belongs to whoever manufactures the battery,
 /// and buying bare cells to protect ourselves would make that us. See
 /// [`crate::licensing::BATTERY_CERT_CONDITIONS`].
+/// # Deferred: catalogue-level SIZE filtering
+///
+/// Requested, and deliberately not enabled yet. The attribute exists and is
+/// already mapped — Digi-Key publishes `Size / Dimension` as
+/// `'2.44" L x 1.50" W x 0.24" H (62.0mm x 38.1mm x 6.0mm)'` — so the gap is not
+/// the data model. It is three things, in order:
+///
+/// 1. **Coverage.** 5 of 627 candidates publish it, all of them Jauch cells from
+///    Digi-Key. TME publishes no dimensions for cells at all. Switching
+///    `thickness_mm` from `Evidence::Datasheet` to `Catalogue` today would
+///    reject 622 cells for a vendor data gap and leave the AKYGA parts — the
+///    only ones that actually qualify — rejected too, since TME is where they
+///    come from.
+/// 2. **A parse rule.** `parametric::derive` has no rule for a dual-unit,
+///    three-axis string. It needs to extract the millimetre triple specifically,
+///    because the inch figures are rounded (`0.24"` is 6.096 mm against a stated
+///    6.0 mm) and a 7.1 mm bay has no room for that error.
+/// 3. **Three attributes, not one.** A cell that fits 35 x 59 x 7.1 mm in one
+///    orientation may not in another, so `body_length_mm`, `body_width_mm` and
+///    `body_thickness_mm` are separate constraints — and whether the cell may be
+///    rotated is a mechanical decision, not an arithmetic one.
+///
+/// So the enabling order is: teach `derive` the triple, add the three
+/// dimensions, wait for (or add) a distributor that publishes cell dimensions,
+/// then flip the evidence. Until then `thickness_mm` stays datasheet-only and
+/// the bay is checked by a person against a drawing, which is what the
+/// constraint's own `why` already says.
+///
+/// # Swappable, with the device off
+///
+/// Scope, stated because a connectorised cell invites the stronger reading:
+/// the owner powers the device down, opens the bay, unplugs one cell and plugs
+/// in another. That is what the constraints below deliver — a JST-connectorised
+/// finished cell with its own protection circuit, obtainable as a spare.
+///
+/// **Hot swap — replacing the cell while the device runs — is explicitly not a
+/// requirement.** It would be a property of the power tree rather than of the
+/// cell (a single-cell device loses its only supply the moment the connector
+/// parts, so it needs holdup across the gap), and nothing here is designed for
+/// it. Recorded so that "swappable" is not quietly read as the stronger claim
+/// later, and so no one adds a supercapacitor to satisfy a requirement that was
+/// never made.
 const BATTERY_CONSTRAINTS: &[Constraint<'static>] = &[
     Constraint {
         evidence: Evidence::Catalogue,
@@ -602,6 +644,102 @@ const BATTERY_CONSTRAINTS: &[Constraint<'static>] = &[
 /// frequency, supply, temperature and package; it does not publish a QDID, a
 /// certification number, or whether an SDK is NDA-gated. Left as catalogue
 /// constraints these rejected all 100 modules for fields nobody carries.
+/// The microSD socket.
+///
+/// # Why this requirement exists at all
+///
+/// `interfaces.ato` has carried an `SDMMCBus` and `mcu.ato` an `mcu.sdcard`
+/// port since V1, and the firmware's whole storage path assumes a card — but no
+/// socket was ever sourced, so the one component the user physically touches
+/// most often was the only one with no part behind it. A bus with no connector
+/// is not a storage subsystem.
+///
+/// # microSD, not SD
+///
+/// Both vendors publish the distinction and they publish it in different
+/// fields: Digi-Key as `Card Type` ('microSD™', or 'Secure Digital - microSD™'),
+/// TME as `Kind of card` ('microSD'). A full-size SD socket is not a worse
+/// option here, it is the wrong part — the card cage alone is wider than the
+/// 35 mm bay the battery already shares.
+///
+/// The trademark glyph is the reason this is `Contains` rather than an exact
+/// match: `'microSD™' != 'microSD'`, and `canon.py` folds both spellings plus
+/// Digi-Key's `'Secure Digital - microSD™'` onto one token. `Contains` would
+/// also match `'microSDHC'`, which is correct — the socket is identical and the
+/// capacity class is a property of the card, not the connector.
+const MICROSD_CONSTRAINTS: &[Constraint<'static>] = &[
+    Constraint {
+        evidence: Evidence::Catalogue,
+        attr: "card_type",
+        pred: crate::select::Predicate::Contains("microSD"),
+        why: "microSD, not full-size SD. A full-size cage does not fit beside a 35 x 59 mm \
+              battery bay in a 7.1 mm-thick device, and the firmware's SDMMC path is 4-bit \
+              either way. Both distributors publish this — Digi-Key as 'Card Type', TME as \
+              'Kind of card' — so it is the one genuinely catalogue-checkable half of the \
+              requirement",
+    },
+    Constraint {
+        evidence: Evidence::Catalogue,
+        attr: "insertion_removal",
+        pred: crate::select::Predicate::Contains("push-"),
+        why: "the card must be removable by hand, repeatedly, without a tool. Matches both \
+              'push-push' (spring-ejected) and 'push-pull' (gripped), which are the two \
+              mechanisms that qualify; a bare 'with hinged cover' cage does not and is \
+              excluded. \
+              \
+              Contains rather than OneOf, and the first draft got this wrong: TME publishes \
+              this field MULTI-VALUED and joined, as 'push-push; top board mount', \
+              'bottom board mount; push-push' and 'push-pull; top board mount; with hinged \
+              cover'. An exact match against either token rejected all 398 sockets — the same \
+              mistake the battery requirement's 'Leads' and 'features' constraints were \
+              already written as Contains to avoid",
+    },
+    Constraint {
+        evidence: Evidence::Catalogue,
+        attr: "mounting",
+        pred: crate::select::Predicate::OneOf(&["SMD"]),
+        why: "hand-assembled small batch, so surface mount. TME publishes connector mounting as \
+              'SMT' and Digi-Key as 'Surface Mount, Right Angle'; both reach this as 'SMD' \
+              through canon.py, because the orientation is a layout choice and not a different \
+              mounting technology",
+    },
+    // --- Datasheet-only ---------------------------------------------------
+    Constraint {
+        evidence: Evidence::Datasheet,
+        attr: "card_detect_switch",
+        pred: crate::select::Predicate::IsTrue,
+        why: "a card-detect contact, so firmware learns a card has arrived instead of polling \
+              the bus for one. \
+              \
+              Datasheet rather than Catalogue, which the first draft got wrong: Digi-Key does \
+              publish 'Features' = 'Switch' for some sockets, but TME publishes no features \
+              list for card connectors AT ALL, so as a catalogue constraint it rejected all 400 \
+              TME parts for a vendor data gap rather than a design fault. Presence of a \
+              card-detect pin is on every socket's drawing, and the pin count hints at it \
+              ('9 (8 + 1)' is eight signal contacts plus one switch)",
+    },
+    // --- Datasheet-only ---------------------------------------------------
+    Constraint {
+        evidence: Evidence::Datasheet,
+        attr: "insertion_cycles",
+        pred: crate::select::Predicate::AtLeast(5000.0),
+        why: "the user-swappable storage promise is worthless if the socket wears out. 5000 \
+              cycles is the commodity figure for this class; distributors publish contact \
+              plating and current rating but never a cycle count, so this is read off the \
+              datasheet of whichever socket is chosen",
+    },
+    Constraint {
+        evidence: Evidence::Datasheet,
+        attr: "sd_logo_not_required",
+        pred: crate::select::Predicate::IsTrue,
+        why: "the SD Association licenses the LOGO and the full specification, not the \
+              electrical interface. This product uses SDMMC in SPI/4-bit mode with no SD mark \
+              on the artwork, which is the position licensing::EXPOSURES already records — this \
+              constraint exists so the socket choice cannot quietly reintroduce a branded part \
+              that implies membership we do not hold",
+    },
+];
+
 const BLUETOOTH_CONSTRAINTS: &[Constraint<'static>] = &[
     // The one certification-adjacent fact a catalogue DOES answer: Digi-Key
     // publishes `Package / Case: 'Module'`, which is precisely the
@@ -612,7 +750,15 @@ const BLUETOOTH_CONSTRAINTS: &[Constraint<'static>] = &[
         pred: crate::select::Predicate::Contains("Module"),
         why: "a module, never a bare chip. The module vendor has already run the radio through \
               qualification and certification; starting from a chip means running both ourselves. \
-              Catalogue-checkable because distributors classify the package as 'Module'",
+              Catalogue-checkable because distributors classify the package as 'Module'. \
+              \
+              Known coverage gap, investigated 2026-11-24: unpublished for 338 of 806 \
+              candidates (42%), and that is a REAL vendor gap rather than a mapping one. TME \
+              publishes no package field for its IoT module category at all — it carries \
+              'Dimensions' (18x25.5x3.1mm) and 'Type of communications module' (IoT) instead — \
+              so only 62 of its 444 parts can answer this, against 410 of Digi-Key's 448. The \
+              rejections are correct: a part whose form factor nobody states is not a part \
+              known to be a module",
     },
     Constraint {
         evidence: Evidence::Catalogue,
@@ -784,6 +930,12 @@ const DAC_CONSTRAINTS: &[Constraint<'static>] = &[
         pred: crate::select::Predicate::OneOf(&["SMD"]),
         why: "hand-assembled small batch, so surface mount",
     },
+    Constraint {
+        evidence: Evidence::Catalogue,
+        attr: "package",
+        pred: crate::select::Predicate::ExcludesAll(&["WLCSP", "BGA"]),
+        why: "hand-solderable, which 'SMD' does not imply. Found by scaling the sweep to 1860               converters: CS43131-CWZR is the SAME DIE as the preferred part in a '42-UFBGA,               WLCSP' with 3873 in stock and Active status, and it passed every catalogue               constraint this requirement had — because a wafer-level chip-scale package is               indeed surface mount. A 0.4 mm-pitch WLCSP needs a stencil, paste and reflow with               no way to inspect or rework the joints, which is exactly what 'hand-assembled               small batch' rules out. Stated as an exclusion rather than an allowlist of               packages because vendors spell package names dozens of ways, and the one time               this spec enumerated allowed package codes it rejected every real oscillator",
+    },
     // --- Datasheet-only ---------------------------------------------------
     //
     // None of the following is a parametric field at any distributor fetched so
@@ -840,7 +992,65 @@ const DAC_CONSTRAINTS: &[Constraint<'static>] = &[
 /// quietly excusing a part that no longer needs excusing.
 ///
 /// A reason is required, and is the audit record a reviewer reads.
+/// Requirements whose part the USER is expected to buy and replace themselves.
+///
+/// # Why this is a list and not a property of the part
+///
+/// "Widely available" means something different for a cell than for a DAC. A
+/// converter needs two distributors so WE can build the board; a replaceable
+/// battery needs more than that — the owner has to be able to buy a spare, in
+/// three years, without this project's distributor accounts. That makes
+/// MANUFACTURER diversity the thing that matters, not distributor count: if one
+/// maker stops producing the cell, a second distributor stocking the same dead
+/// part helps nobody.
+///
+/// So the two properties are enforced separately rather than conflated:
+///
+/// - `preferred_parts_have_more_than_one_eu_source` — can we build it.
+/// - `user_swappable_requirements_span_two_manufacturers` — can the owner
+///   replace it.
+///
+/// The microSD socket is deliberately NOT here. The user swaps the *card*, which
+/// is not on this BOM at all; the socket is soldered down and is ours.
+pub const USER_SWAPPABLE_REQUIREMENTS: &[&str] = &["battery"];
+
+/// User-swappable requirements that do NOT yet span two manufacturers, and why.
+///
+/// Same discipline as [`SINGLE_SOURCE_ACCEPTED`]: the reason is the audit
+/// record, and `accepted_single_manufacturer_is_still_warranted` deletes an
+/// entry by failing the build once a second manufacturer qualifies.
+pub const SINGLE_MANUFACTURER_ACCEPTED: &[(&str, &str)] = &[(
+    "battery",
+    "AKYGA is the only manufacturer whose cells pass this requirement, and the sweep behind \
+     that statement is now large enough to mean something: 627 candidates across TME's whole \
+     446-part battery category and Digi-Key's Li-Po keyword sweep, of which 31 qualify and \
+     every one is AKYGA. Jauch Quartz is a genuine second maker and Digi-Key stocks it, but \
+     its closest cell (LP503759JU) is 62.0 x 38.1 mm against a 35 x 59 x 7.1 mm bay, so it \
+     fails on mechanics rather than on sourcing. \
+     \
+     This is accepted rather than resolved because the realistic fixes are both outside the \
+     sourcing pipeline: widen the bay, or buy direct from a pouch-cell maker (Farnell and RS \
+     stock more bare cells than either distributor fetched here). What is NOT acceptable is \
+     shipping a user-replaceable-battery promise whose spare has one maker — that is the \
+     exposure this entry exists to keep visible.",
+)];
+
 pub const SINGLE_SOURCE_ACCEPTED: &[(&str, &str)] = &[
+    (
+        "AKY-LP623255",
+        "TME is the only distributor stocking it (1298 at MOQ 1), and this one is accepted on \
+         MECHANICS rather than for want of an alternative. AKY0107 is the same maker's cell at \
+         1350 mAh with 2873 across Digi-Key AND TME — it satisfies the two-source rule outright \
+         — and it is 37 mm wide against a 35 mm bay. Of the 31 cells that pass this \
+         requirement, LP623255 (6.2 x 32 x 55 mm) is the only one whose encoded geometry fits. \
+         \
+         So the exposure is real and the fix is cheap and known: widen the bay 2 mm and promote \
+         AKY0107, which is recorded as the Alternate for exactly that reason. Until then a cell \
+         that fits with one distributor beats a cell that does not fit with two. Note this is \
+         SEPARATE from the single-manufacturer exposure in SINGLE_MANUFACTURER_ACCEPTED: every \
+         qualifying cell is AKYGA either way, so promoting AKY0107 would close this entry and \
+         not that one.",
+    ),
     (
         "STM32H7A3ZIT6",
         "Mouser's 8 units are the only EU stock of this part: Digi-Key and TME both read \
@@ -898,6 +1108,20 @@ const PARTS: &[PartReq] = &[
                        this is a fallback with a board change, not a drop-in",
             },
             Candidate {
+                mpn: "CS43131-CWZR",
+                preference: Preference::Rejected(
+                    "same die as the preferred part, but in a 42-UFBGA/WLCSP: a 0.4 mm-pitch \
+                     wafer-level package cannot be hand-soldered or inspected, and this board \
+                     is hand-assembled in small batches",
+                ),
+                note: "kept because it is the single best-STOCKED CS43131 anywhere — 3873 at \
+                       Digi-Key against 347 for -CNZ — so it will keep surfacing as the \
+                       obvious answer to the DAC's single-sourcing problem. It is not: the \
+                       package is the blocker, not the supply. Recorded 2026-11-24, when it \
+                       passed every catalogue constraint the requirement had and exposed that \
+                       'mounting = SMD' never expressed hand-solderability",
+            },
+            Candidate {
                 mpn: "ES9038Q2M",
                 preference: Preference::Rejected(
                     "v1 part: no integrated amp (needs TPA6120A2), far higher playback current, \
@@ -914,7 +1138,7 @@ const PARTS: &[PartReq] = &[
         candidates: &[
             Candidate {
                 mpn: "NSC5083D-22.5792M",
-                preference: Preference::Evaluating,
+                preference: Preference::Alternate,
                 note: "DATASHEET-CONFIRMED 2026-11-24. NDK, NZ2520SDA family — the datasheet is \
                        titled 'Ultra Low Phase Noise Type' and states 'ultra low phase noise \
                        make this product ideal for High quality audio', with typical phase \
@@ -950,7 +1174,7 @@ const PARTS: &[PartReq] = &[
             },
             Candidate {
                 mpn: "ASV-22.5792MHZ-LR-T",
-                preference: Preference::Evaluating,
+                preference: Preference::Preferred,
                 note: "DATASHEET-CONFIRMED (abracon.com/Oscillators/ASV.pdf, see \
                        docs/sourcing/datasheet-confirmations/): an active 3.3Vdc HCMOS clock \
                        oscillator, 2.97-3.63 V, -40..+85 C, +/-25 ppm. 18319 at TME and 1319 at \
@@ -996,7 +1220,7 @@ const PARTS: &[PartReq] = &[
         candidates: &[
             Candidate {
                 mpn: "NSC5083D-24.576M",
-                preference: Preference::Evaluating,
+                preference: Preference::Alternate,
                 note: "The 48 kHz half of the NDK NZ2520SDA matched pair: same family, same \
                        2.5 x 2.0 x 0.9 mm package, same -40..+85 C, same 43 fs typical phase \
                        jitter. 2867 in stock at Digi-Key, MOQ 1, 2.61 EUR. \
@@ -1012,6 +1236,37 @@ const PARTS: &[PartReq] = &[
                 note: "Kyocera AVX, +/-20 ppm, 1062 in stock at Digi-Key at MOQ 1, 1.10 EUR — \
                        and the 48 kHz half of its own matched pair. Publishes no phase-noise \
                        figure, which is what keeps it behind the NDK part.",
+            },
+            Candidate {
+                mpn: "ASV-24.576MHZ-EJ-T",
+                preference: Preference::Preferred,
+                note: "The 48 kHz partner the ASV option never had. Abracon ASV, same family as \
+                       the 44.1 kHz ASV-22.5792MHZ-LR-T this spec already carries, +/-20 ppm, \
+                       4-SMD No Lead, MOQ 1, 2.00 EUR — and stocked at ALL THREE distributors \
+                       (Digi-Key 4113, TME 10000, Mouser 4684), which makes it the \
+                       best-sourced clock part in this spec by a wide margin. Its 22.5792 MHz \
+                       sibling is also three-sourced, so this is the only PAIR where both \
+                       frequencies clear the two-source AVL rule with a spare. \
+                       \
+                       Found by widening the 24.576 MHz sweep from 162 parts to 639: the ASV \
+                       family was previously recorded at 22.5792 MHz only, so it could not form \
+                       a pair and the two-source ASV route was closed. It is open now, and it \
+                       is the only candidate pair where BOTH frequencies have two stocking EU \
+                       distributors. \
+                       \
+                       The caveat is temperature and it is not a detail: this part is \
+                       -20..+70 C commercial where its own 22.5792 MHz sibling is -40..+85 C \
+                       industrial, so the pair is NOT grade-matched. Adequate for this design \
+                       (the CS43131's own ambient range is -20..+70 C, so the DAC bounds it \
+                       first either way) but strictly worse than the NDK pair, which is \
+                       industrial at both frequencies and 43 fs. The trade is sourcing depth \
+                       against jitter and temperature grade. \
+                       \
+                       TME publishes this part's type as 'crystal'. That is wrong — ASV is \
+                       Abracon's XO family and Digi-Key says 'oscillator' — and it matters: the \
+                       part passes `part_type` only because the export's tie-break picks the \
+                       alphabetically-first vendor and 'digikey' precedes 'tme'. See \
+                       `no_spec_candidate_depends_on_a_conflicted_attribute`.",
             },
             Candidate {
                 mpn: "ASDMB-24.576MHZ-LY-T",
@@ -1135,6 +1390,72 @@ const PARTS: &[PartReq] = &[
         ],
     },
     PartReq {
+        id: "microsd",
+        what: "microSD socket, push-push or push-pull, card-detect switch, SMD, >=5000 \
+               insertion cycles",
+        constraints: MICROSD_CONSTRAINTS,
+        // All three came out of the sweep rather than a catalogue hunt by hand —
+        // 173 of 601 sockets qualify, and these are the two-source ones with
+        // MOQ 1. Recorded as Evaluating, not Preferred: choosing between them is
+        // a mechanical decision about bezel cutout and board height that the
+        // sourcing pipeline has no standing to make.
+        //
+        // Height is the axis that will probably decide it, and it is the one the
+        // filter cannot yet judge: both vendors publish it, Digi-Key dual-unit
+        // as '0.104" (2.65mm)', which `parse_quantity` does not read. See
+        // MICROSD_CONSTRAINTS.
+        candidates: &[
+            Candidate {
+                mpn: "MEM2080-00-128-00-A",
+                preference: Preference::Preferred,
+                note: "GCT, push-push, 10 (8 + 2) contacts so it has card-detect, and the \
+                       THINNEST qualifying socket found at 1.28 mm above board. In a 7.1 mm \
+                       device sharing its thickness budget with a 7.1 mm battery bay, 1.4 mm \
+                       against the Amphenol 10067099's 2.65 mm is the difference that matters \
+                       more than the 37 cents. 9963 across Digi-Key and TME, MOQ 1, 1.23 EUR.",
+            },
+            Candidate {
+                mpn: "1140084168",
+                preference: Preference::Alternate,
+                note: "Amphenol, push-pull, 10 (8 + 2), 1.55 mm — nearly as thin as the GCT \
+                       part with far deeper stock (75365 across two distributors, MOQ 1, \
+                       1.53 EUR). Push-PULL rather than push-push: no ejector spring to fail, \
+                       but the card must be gripped, which needs the cutout to expose it.",
+            },
+            Candidate {
+                mpn: "10067099-200LF",
+                preference: Preference::Evaluating,
+                note: "Amphenol, push-pull, 10 (8 + 2), 41021 across two distributors at MOQ 1 \
+                       and 0.86 EUR — the cheapest two-source socket that qualifies. Kept \
+                       behind the other two on height alone: 2.65 mm is double the GCT part \
+                       and the worst of the shortlist.",
+            },
+            Candidate {
+                mpn: "2908-05WB-MG",
+                preference: Preference::Rejected(
+                    "8 contacts with no ninth: no card-detect switch, so firmware would have \
+                     to poll the bus to notice a card. Also 4.23 EUR against 0.86-1.53 for \
+                     the shortlist",
+                ),
+                note: "3M, push-push, two sources and 53053 in stock — it ranks highly on \
+                       sourcing and is wrong on function, which is exactly the case the \
+                       datasheet-only card_detect_switch constraint exists to catch. The pin \
+                       count is the tell: '8' where every shortlisted part reads '10 (8 + 2)'.",
+            },
+            Candidate {
+                mpn: "105027-0001",
+                preference: Preference::Rejected(
+                    "MOQ 2000. 150000 in stock at two distributors and unbuyable for a \
+                     five-board prototype run — 3020 EUR for the first batch",
+                ),
+                note: "Molex, push-pull, 1.70 mm, 1.51 EUR per piece in a reel. Recorded \
+                       because it ranks SECOND on raw stock and would otherwise keep \
+                       resurfacing; Rank::AcquisitionCost is what demotes it, and this note \
+                       is why.",
+            },
+        ],
+    },
+    PartReq {
         id: "battery",
         what: "1S Li-Po, >=1000 mAh, finished cell with its own PCM, connectorised, fits a \
                35 x 59 x 7.1 mm bay, per-model UN 38.3 + IEC 62133-2 docs available",
@@ -1142,8 +1463,16 @@ const PARTS: &[PartReq] = &[
         candidates: &[
             Candidate {
                 mpn: "AKY-LP623255",
-                preference: Preference::Evaluating,
-                note: "CATALOGUE-CONFIRMED 2026-11-24: 1100 mAh, 3.7 V, 'cables; JST SYP-02T-1 \
+                preference: Preference::Preferred,
+                note: "PICKED 2026-11-24 because it is the only qualifying cell that FITS. The \
+                       part number encodes 6.2 x 32 x 55 mm against a 35 x 59 x 7.1 mm bay; \
+                       AKY0107 (LP503759) is 37 mm wide and does not, which is why the \
+                       better-sourced, higher-capacity cell is the alternate rather than the \
+                       pick. Fit is still DATASHEET evidence — neither distributor publishes \
+                       cell dimensions, TME's product page states capacity and connector and no \
+                       geometry at all — so the drawing has to be read before this is ordered. \
+                       \
+                       CATALOGUE-CONFIRMED 2026-11-24: 1100 mAh, 3.7 V, 'cables; JST SYP-02T-1 \
                        socket', features 'PCB protection' — so the integrated-PCM condition the \
                        whole certification argument rests on is confirmed from vendor data rather \
                        than assumed. 1298 in stock at TME, MOQ 1. Ranks 3rd of 31 qualifying \
@@ -1160,12 +1489,18 @@ const PARTS: &[PartReq] = &[
             },
             Candidate {
                 mpn: "AKY0107",
-                preference: Preference::Evaluating,
-                note: "1350 mAh, 2818 in stock, MOQ 1 — ranks 1st of the 31 qualifying cells on \
-                       stock depth, and more capacity than the documented part. Recorded as a \
-                       model-level fallback, NOT as manufacturer independence: see the \
-                       requirement's single-maker finding. Bay fit unconfirmed, which is the \
-                       blocker on preferring it. \
+                preference: Preference::Alternate,
+                note: "1350 mAh, 2873 in stock across TWO distributors (Digi-Key + TME), MOQ 1 — \
+                       ranks 1st of the 31 qualifying cells, and the only one that satisfies the \
+                       two-source AVL rule. It is the ALTERNATE and not the pick for one \
+                       mechanical reason: LP503759 encodes 37 mm width against a 35 mm bay. \
+                       \
+                       That makes this a cheap, concrete trade rather than a dead end — widen \
+                       the bay by 2 mm and this becomes the better part on every axis that \
+                       remains (two distributors, +250 mAh, 1.2 mm thinner). Recorded so the \
+                       mechanical design can price the decision instead of rediscovering it. \
+                       Recorded as a model-level fallback, NOT as manufacturer independence: \
+                       see the requirement's single-maker finding. \
                        \
                        SINGLE-MANUFACTURER FINDING, measured 2026-11-24: all 70 Li-Po cells TME \
                        carries are AKYGA BATTERY, and so are all 31 that pass the constraints. \
@@ -1193,6 +1528,26 @@ const PARTS: &[PartReq] = &[
                DO NOT POPULATE on the shipped wired-only board",
         constraints: BLUETOOTH_CONSTRAINTS,
         candidates: &[
+            // DELIBERATELY UNPICKED, 2026-11-24, while every other requirement
+            // got a Preferred part.
+            //
+            // The catalogue half of this requirement ranks 324 qualifying
+            // modules and the top of that list is the wrong KIND of part, which
+            // is the clearest case in this spec of ranking not being deciding:
+            //
+            //   * The ESP32-WROOM / WROVER / S3-MINI modules that lead on
+            //     sourcing are WiFi+BT combos. Populating one changes the radio
+            //     regime the whole compliance posture rests on — the shipped
+            //     board is an EMC device BECAUSE no radio is populated
+            //     (`licensing::regime_for`) — and it is a full application SoC
+            //     rather than a codec-carrying audio module.
+            //   * `RN4871U-V/RM118` is BLE-only. No A2DP, so no SBC, so it
+            //     fails `codec_sbc` — a datasheet fact the filter cannot see.
+            //
+            // All three deciding properties here (inheritable QDID, SBC, no
+            // vendor NDA) are `Evidence::Datasheet`, and the part is DO NOT
+            // POPULATE on the shipped board, so there is no cost to waiting and
+            // a real cost to reserving a footprint for the wrong module.
             Candidate {
                 mpn: "FSC-BT1035",
                 preference: Preference::Evaluating,

@@ -38,7 +38,7 @@ from __future__ import annotations
 import pathlib
 import sqlite3
 
-from .canon import merge_values
+from .canon import SYNONYMS, _is_range, canonical, merge_values
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS fetch_runs (
@@ -79,6 +79,7 @@ CREATE TABLE IF NOT EXISTS parts (
     lifecycle_raw TEXT,
     status_raw    TEXT,                    -- JSON array, vendor's own wording
     datasheet_url TEXT,
+    product_url   TEXT,   -- the distributor's own product page
     run_id        INTEGER NOT NULL REFERENCES fetch_runs(id),
     UNIQUE (vendor, vendor_pn)
 );
@@ -100,6 +101,15 @@ CREATE TABLE IF NOT EXISTS price_breaks (
 );
 
 CREATE INDEX IF NOT EXISTS parts_by_mpn      ON parts(mpn);
+-- The grouping key `candidates()` actually uses, as an EXPRESSION index.
+--
+-- `parts_by_mpn` stopped being usable the moment grouping moved to
+-- COALESCE(queried_as, mpn): SQLite cannot use a column index for an expression,
+-- so every per-part subquery fell back to scanning `parts_by_category`. With
+-- 1500 parts in one category that is ~2.25M row visits per subquery kind, five
+-- kinds per part, and the export went from seconds to minutes as the catalogue
+-- grew from 1065 parts to 5982.
+CREATE INDEX IF NOT EXISTS parts_by_spec_key ON parts(COALESCE(queried_as, mpn), category);
 CREATE INDEX IF NOT EXISTS parts_by_category ON parts(category);
 CREATE INDEX IF NOT EXISTS attrs_by_name     ON attributes(name);
 """
@@ -122,8 +132,19 @@ class Catalogue:
         calls a day. Migrating in place keeps a schema change from spending it.
         """
         have = {r[1] for r in self.conn.execute("PRAGMA table_info(parts)")}
+        if "product_url" not in have:
+            self.conn.execute("ALTER TABLE parts ADD COLUMN product_url TEXT")
+            self.conn.commit()
         if "queried_as" not in have:
             self.conn.execute("ALTER TABLE parts ADD COLUMN queried_as TEXT")
+            self.conn.commit()
+            # The expression index in SCHEMA references `queried_as`, so on a
+            # pre-existing catalogue it could not be created before the column
+            # existed. Create it now rather than leaving the export to scan.
+            self.conn.execute(
+                "CREATE INDEX IF NOT EXISTS parts_by_spec_key "
+                "ON parts(COALESCE(queried_as, mpn), category)"
+            )
             self.conn.commit()
 
     def start_run(self, vendor: str, mode: str, target: str, started_at: str) -> int:
@@ -155,8 +176,8 @@ class Catalogue:
             INSERT INTO parts (vendor, vendor_pn, mpn, queried_as, manufacturer,
                                description, category,
                                stock, moq, order_multiple, lead_time_days, lifecycle_raw,
-                               status_raw, datasheet_url, run_id)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+                               status_raw, datasheet_url, product_url, run_id)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
             ON CONFLICT (vendor, vendor_pn) DO UPDATE SET
                 mpn=excluded.mpn,
                 -- COALESCE, not overwrite: a later category sweep re-touches a
@@ -171,13 +192,15 @@ class Catalogue:
                 order_multiple=excluded.order_multiple,
                 lead_time_days=excluded.lead_time_days,
                 lifecycle_raw=excluded.lifecycle_raw, status_raw=excluded.status_raw,
-                datasheet_url=excluded.datasheet_url, run_id=excluded.run_id
+                datasheet_url=excluded.datasheet_url,
+                product_url=excluded.product_url, run_id=excluded.run_id
             """,
             (
                 part.vendor, part.vendor_pn, part.mpn, part.queried_as,
                 part.manufacturer, part.description,
                 category, part.stock, part.moq, part.order_multiple, part.lead_time_days,
-                part.lifecycle_raw, _json.dumps(part.status_raw), part.datasheet_url, run_id,
+                part.lifecycle_raw, _json.dumps(part.status_raw), part.datasheet_url,
+                part.product_url, run_id,
             ),
         )
         # Always re-read the id. `cur.lastrowid` is only meaningful for a real
@@ -239,7 +262,26 @@ class Catalogue:
             # and the winner mattered: TME says mounting='SMD' where Digi-Key says
             # 'Surface Mount' for the SAME part, and the spec constrains "SMD". So
             # whether a part qualified depended on which row came back last.
-            per_attr: dict[str, dict[str, str]] = {}
+            # Attributes this part's vendors genuinely disagree about, AFTER
+            # canonicalisation. Exported per part rather than only printed:
+            # `merge_values` must still pick one value, and it picks the
+            # alphabetically-first vendor — so for a discriminating field the
+            # verdict depends on vendor NAME order. `ASV-24.576MHZ-EJ-T` passes
+            # `part_type` only because TME calls it a 'crystal' (wrong — it is
+            # Abracon's XO family) and 'digikey' happens to sort before 'tme'.
+            # A gate cannot check that fragility from a log line.
+            conflicted: list[str] = []
+            # Collected per (attribute, vendor) as a LIST, not assigned.
+            #
+            # One vendor can hold several rows for one MPN — Digi-Key files the
+            # cut-tape and reel packagings separately — and they do not always
+            # publish the same thing: for `SN74LVC1G3157DCKR` one row says
+            # `switch_configuration = 'SPDT'` and another `'SPDT - NO/NC'`.
+            # Assigning into a dict took whichever row SQL returned last, which
+            # is the same row-order bug `canon.py` was written to kill, just
+            # inside a single vendor instead of across two. It rejected the
+            # PREFERRED mux against its own requirement.
+            per_vendor_vals: dict[str, dict[str, list[str]]] = {}
             for name, vendor, raw in self.conn.execute(
                 """
                 SELECT a.name, p.vendor, a.value_raw
@@ -248,7 +290,41 @@ class Catalogue:
                 """,
                 (mpn, category),
             ):
-                per_attr.setdefault(name, {})[vendor] = raw
+                per_vendor_vals.setdefault(name, {}).setdefault(vendor, []).append(raw)
+
+            per_attr: dict[str, dict[str, str]] = {}
+            for name, by_vendor_list in per_vendor_vals.items():
+                for vendor, vals in by_vendor_list.items():
+                    # Canonicalise first, then take the distinct values. Two rows
+                    # spelling one fact differently must collapse to agreement
+                    # rather than be reported as a vendor contradicting itself.
+                    distinct = sorted({canonical(name, v) for v in vals if v and v.strip()})
+                    if not distinct:
+                        continue
+                    if len(distinct) > 1 and name.strip().lower() in SYNONYMS:
+                        # Reported only for ENUMERATED attributes, exactly as
+                        # `merge_values` does across vendors — and for the same
+                        # reason. The first version of this reported every
+                        # formatting difference, so one vendor publishing
+                        # '-40°C ~ 125°C (TA)' on one packaging row and
+                        # '-40°C ~ 125°C' on another counted as self-
+                        # contradiction, and conflicts went from 5 to 27 with
+                        # the real ones buried in the noise. For a dimensioned
+                        # field `parametric::derive` reconciles the spellings and
+                        # the constraints compare parsed numbers.
+                        conflicts.append(
+                            f"{mpn}.{name}: {vendor} publishes {len(distinct)} different "
+                            f"values across its own rows: {distinct}"
+                        )
+                        conflicted.append(name)
+                    # Prefer a range over a bare nominal, then the first
+                    # alphabetically — the same rule `merge_values` applies
+                    # across vendors, so the two levels of merge cannot disagree
+                    # about which of two values is more informative.
+                    ranged = [v for v in distinct if _is_range(v)]
+                    per_attr.setdefault(name, {})[vendor] = (
+                        ranged[0] if ranged else distinct[0]
+                    )
 
             attrs: dict[str, str] = {}
             for name, by_vendor in per_attr.items():
@@ -259,6 +335,7 @@ class Catalogue:
                     # A real disagreement about one part: reported, never
                     # silently resolved.
                     conflicts.append(f"{mpn}.{name}: " + ", ".join(conflict))
+                    conflicted.append(name)
             # The price at the LOWEST break the vendor publishes, not the qty-1
             # price. `qty <= 1` was returning NULL for every reel-only part — so
             # the entire oscillator category exported as unpriced and ranked last
@@ -293,6 +370,23 @@ class Catalogue:
                 """,
                 (mpn, category),
             ).fetchone()
+            # Per-vendor product links, so a proposal can be checked at the
+            # distributor it would actually be ordered from. Keyed by vendor
+            # rather than reduced to one, because the price and stock a reader
+            # wants to verify differ per vendor — which is the whole reason the
+            # pipeline fetches more than one.
+            links = {
+                v: u
+                for v, u in self.conn.execute(
+                    """
+                    SELECT vendor, MIN(product_url) FROM parts
+                    WHERE COALESCE(queried_as, mpn)=? AND category=?
+                      AND product_url IS NOT NULL AND product_url <> ''
+                    GROUP BY vendor
+                    """,
+                    (mpn, category),
+                )
+            }
             # Any vendor's datasheet link will do; MIN is just determinism.
             ds = self.conn.execute(
                 """
@@ -313,6 +407,8 @@ class Catalogue:
                     "lead_time_days": lead,
                     "datasheet_url": ds,
                     "vendors": (vendors or "").split(","),
+                    "product_urls": links,
+                    "conflicts": sorted(conflicted),
                     "attrs_raw": {
                         **attrs,
                         **({"moq": str(moq)} if moq is not None else {}),

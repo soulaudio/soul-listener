@@ -605,7 +605,7 @@
         {
           "distributor": "digikey",
           "distributor_pn": "1727-6073-1-ND",
-          "stock": 40729,
+          "stock": 40684,
           "moq": 1,
           "order_multiple": null,
           "lead_time_days": 140,
@@ -705,7 +705,7 @@
         {
           "distributor": "digikey",
           "distributor_pn": "296-14909-1-ND",
-          "stock": 895727,
+          "stock": 895177,
           "moq": 1,
           "order_multiple": null,
           "lead_time_days": 182,
@@ -1553,6 +1553,160 @@
         }
       ]
     },
+    "ASV-24.576MHZ-EJ-T": {
+      "manufacturer": "Abracon",
+      "description": "24.576 MHz XO, +/-20 ppm, 4-SMD No Lead \u2014 the 48 kHz partner of ASV-22.5792MHZ-LR-T, but -20..+70 C commercial where that part is -40..+85 C industrial",
+      "package": "SMD",
+      "satisfies": "mclk-osc-48k",
+      "offers": [
+        {
+          "distributor": "digikey",
+          "distributor_pn": "535-9318-1-ND",
+          "stock": 4113,
+          "moq": 1,
+          "order_multiple": null,
+          "lead_time_days": 84,
+          "price_breaks": [
+            {
+              "qty": 1,
+              "unit_price": 2.0
+            },
+            {
+              "qty": 10,
+              "unit_price": 1.733
+            },
+            {
+              "qty": 25,
+              "unit_price": 1.6384
+            },
+            {
+              "qty": 50,
+              "unit_price": 1.5706
+            },
+            {
+              "qty": 100,
+              "unit_price": 1.5057
+            },
+            {
+              "qty": 250,
+              "unit_price": 1.42396
+            },
+            {
+              "qty": 500,
+              "unit_price": 1.3651
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "active",
+          "compliance": [
+            {
+              "regulation": "RoHS",
+              "revision": "ROHS3",
+              "status": "ROHS3 Compliant",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            },
+            {
+              "regulation": "REACH",
+              "revision": "unstated",
+              "status": "REACH Unaffected",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            }
+          ],
+          "datasheet_url": "https://abracon.com/Oscillators/ASV.pdf",
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "digikey API, EUR. MOQ 1, order multiple None. Vendor part number 535-9318-1-ND."
+        },
+        {
+          "distributor": "mouser",
+          "distributor_pn": "815-ASV-24.576-EJ-T",
+          "stock": 4684,
+          "moq": 1,
+          "order_multiple": 1,
+          "lead_time_days": 84,
+          "price_breaks": [
+            {
+              "qty": 1,
+              "unit_price": 2.0
+            },
+            {
+              "qty": 10,
+              "unit_price": 1.74
+            },
+            {
+              "qty": 25,
+              "unit_price": 1.57
+            },
+            {
+              "qty": 100,
+              "unit_price": 1.51
+            },
+            {
+              "qty": 250,
+              "unit_price": 1.43
+            },
+            {
+              "qty": 500,
+              "unit_price": 1.37
+            },
+            {
+              "qty": 1000,
+              "unit_price": 1.31
+            },
+            {
+              "qty": 2000,
+              "unit_price": 1.22
+            },
+            {
+              "qty": 5000,
+              "unit_price": 1.19
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [
+            {
+              "regulation": "RoHS",
+              "revision": "unstated",
+              "status": "RoHS Compliant",
+              "asserted_at": "2026-11-24",
+              "source": "mouser"
+            }
+          ],
+          "datasheet_url": "https://www.mouser.com/datasheet/3/184/1/ASV.pdf",
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "mouser API, EUR. MOQ 1, order multiple 1. Vendor part number 815-ASV-24.576-EJ-T."
+        },
+        {
+          "distributor": "tme",
+          "distributor_pn": "ASV24.576MHZEJT-0",
+          "stock": 10000,
+          "moq": 1000,
+          "order_multiple": 1000,
+          "lead_time_days": null,
+          "price_breaks": [
+            {
+              "qty": 1000,
+              "unit_price": 0.76
+            },
+            {
+              "qty": 2000,
+              "unit_price": 0.68
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "tme API, EUR. MOQ 1000, order multiple 1000. Reel/tray minimum: stock does not mean one unit is purchasable. Vendor part number ASV24.576MHZEJT-0. TME product_status=['EXTERNAL_WAREHOUSE', 'BLOCKED_FOR_ZBL_MP']. BLOCKED_FOR_ZBL_BACKORDERS is an ORDERING restriction, not a lifecycle state."
+        }
+      ]
+    },
     "KC2016Z22.5792C1KX00": {
       "manufacturer": "Kyocera AVX",
       "description": "Active oscillator, 22.5792 MHz, +/-20ppm, 3.3VDC, -40..+85C, CMOS, 2.0x1.6x0.8 mm",
@@ -2246,6 +2400,767 @@
           "note": "NOT CARRIED BY TME: looked up on 2026-11-24 by manufacturer part number, by the vendor's own symbol, and by keyword, with no match. Recorded rather than omitted so the negative result is not re-discovered; both snapshot gates filter on stock > 0, so this informs without counting as a source."
         }
       ]
+    },
+    "MEM2080-00-128-00-A": {
+      "manufacturer": "GCT",
+      "description": "microSD socket, push-push, 10 (8+2) contacts, 1.28 mm above board",
+      "package": "SMD card connector",
+      "satisfies": "microsd",
+      "offers": [
+        {
+          "distributor": "digikey",
+          "distributor_pn": "2073-MEM2080-00-128-00-ACT-ND",
+          "stock": 5423,
+          "moq": 1,
+          "order_multiple": null,
+          "lead_time_days": 49,
+          "price_breaks": [
+            {
+              "qty": 1,
+              "unit_price": 1.45
+            },
+            {
+              "qty": 10,
+              "unit_price": 1.228
+            },
+            {
+              "qty": 25,
+              "unit_price": 1.1504
+            },
+            {
+              "qty": 50,
+              "unit_price": 1.0954
+            },
+            {
+              "qty": 100,
+              "unit_price": 1.043
+            },
+            {
+              "qty": 250,
+              "unit_price": 0.97764
+            },
+            {
+              "qty": 500,
+              "unit_price": 0.93094
+            },
+            {
+              "qty": 1000,
+              "unit_price": 0.8865
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "active",
+          "compliance": [
+            {
+              "regulation": "RoHS",
+              "revision": "ROHS3",
+              "status": "ROHS3 Compliant",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            },
+            {
+              "regulation": "REACH",
+              "revision": "unstated",
+              "status": "REACH Unaffected",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            }
+          ],
+          "datasheet_url": "https://gct.co/files/specs/mem2080-spec.pdf",
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "digikey API, EUR. MOQ 1, order multiple None. Vendor part number 2073-MEM2080-00-128-00-ACT-ND."
+        },
+        {
+          "distributor": "mouser",
+          "distributor_pn": "640-MEM2080-0012800A",
+          "stock": 13924,
+          "moq": 1,
+          "order_multiple": 1,
+          "lead_time_days": 49,
+          "price_breaks": [
+            {
+              "qty": 1,
+              "unit_price": 1.39
+            },
+            {
+              "qty": 10,
+              "unit_price": 1.23
+            },
+            {
+              "qty": 25,
+              "unit_price": 1.1
+            },
+            {
+              "qty": 100,
+              "unit_price": 1.05
+            },
+            {
+              "qty": 250,
+              "unit_price": 0.986
+            },
+            {
+              "qty": 500,
+              "unit_price": 0.932
+            },
+            {
+              "qty": 1000,
+              "unit_price": 0.832
+            },
+            {
+              "qty": 2400,
+              "unit_price": 0.794
+            },
+            {
+              "qty": 4800,
+              "unit_price": 0.765
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [
+            {
+              "regulation": "RoHS",
+              "revision": "unstated",
+              "status": "RoHS Compliant",
+              "asserted_at": "2026-11-24",
+              "source": "mouser"
+            }
+          ],
+          "datasheet_url": "https://www.mouser.com/catalog/specsheets/Global_Connector_gct_mem2080-npi-flyer-V1_0.pdf",
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "mouser API, EUR. MOQ 1, order multiple 1. Vendor part number 640-MEM2080-0012800A."
+        },
+        {
+          "distributor": "tme",
+          "distributor_pn": "MEM2080-00-128-00A",
+          "stock": 4540,
+          "moq": 1,
+          "order_multiple": 1,
+          "lead_time_days": null,
+          "price_breaks": [
+            {
+              "qty": 1,
+              "unit_price": 1.23
+            },
+            {
+              "qty": 10,
+              "unit_price": 1.04
+            },
+            {
+              "qty": 25,
+              "unit_price": 0.98
+            },
+            {
+              "qty": 50,
+              "unit_price": 0.94
+            },
+            {
+              "qty": 60,
+              "unit_price": 0.93
+            },
+            {
+              "qty": 100,
+              "unit_price": 0.9
+            },
+            {
+              "qty": 250,
+              "unit_price": 0.84
+            },
+            {
+              "qty": 500,
+              "unit_price": 0.8
+            },
+            {
+              "qty": 1000,
+              "unit_price": 0.77
+            },
+            {
+              "qty": 2400,
+              "unit_price": 0.74
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": "https://www.tme.eu/Document/41ef42a6cba62dc9db8617d43a1c9af9/MEM2080-00-128-00A.pdf",
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "tme API, EUR. MOQ 1, order multiple 1. Vendor part number MEM2080-00-128-00A."
+        }
+      ]
+    },
+    "1140084168": {
+      "manufacturer": "Amphenol Communications Solutions",
+      "description": "microSD socket, push-pull, 10 (8+2) contacts, 1.55 mm above board",
+      "package": "SMD card connector",
+      "satisfies": "microsd",
+      "offers": [
+        {
+          "distributor": "digikey",
+          "distributor_pn": "664-1140084168CT-ND",
+          "stock": 74157,
+          "moq": 1,
+          "order_multiple": null,
+          "lead_time_days": 196,
+          "price_breaks": [
+            {
+              "qty": 1,
+              "unit_price": 1.75
+            },
+            {
+              "qty": 10,
+              "unit_price": 1.489
+            },
+            {
+              "qty": 25,
+              "unit_price": 1.3956
+            },
+            {
+              "qty": 50,
+              "unit_price": 1.3288
+            },
+            {
+              "qty": 100,
+              "unit_price": 1.2652
+            },
+            {
+              "qty": 250,
+              "unit_price": 1.18596
+            },
+            {
+              "qty": 500,
+              "unit_price": 1.12934
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "active",
+          "compliance": [
+            {
+              "regulation": "RoHS",
+              "revision": "ROHS3",
+              "status": "ROHS3 Compliant",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            },
+            {
+              "regulation": "REACH",
+              "revision": "unstated",
+              "status": "REACH Unaffected",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            }
+          ],
+          "datasheet_url": "https://cdn.amphenol-cs.com/media/wysiwyg/files/documentation/datasheet/inputoutput/io_micro_sdcard.pdf",
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "digikey API, EUR. MOQ 1, order multiple None. Vendor part number 664-1140084168CT-ND."
+        },
+        {
+          "distributor": "mouser",
+          "distributor_pn": "523-114-00841-68",
+          "stock": 10873,
+          "moq": 1,
+          "order_multiple": 1,
+          "lead_time_days": 63,
+          "price_breaks": [
+            {
+              "qty": 1,
+              "unit_price": 1.75
+            },
+            {
+              "qty": 10,
+              "unit_price": 1.49
+            },
+            {
+              "qty": 25,
+              "unit_price": 1.33
+            },
+            {
+              "qty": 100,
+              "unit_price": 1.27
+            },
+            {
+              "qty": 250,
+              "unit_price": 1.19
+            },
+            {
+              "qty": 500,
+              "unit_price": 1.14
+            },
+            {
+              "qty": 1000,
+              "unit_price": 1.07
+            },
+            {
+              "qty": 5000,
+              "unit_price": 1.06
+            },
+            {
+              "qty": 7500,
+              "unit_price": 1.06
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [
+            {
+              "regulation": "RoHS",
+              "revision": "unstated",
+              "status": "RoHS Compliant",
+              "asserted_at": "2026-11-24",
+              "source": "mouser"
+            }
+          ],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "mouser API, EUR. MOQ 1, order multiple 1. Vendor part number 523-114-00841-68."
+        },
+        {
+          "distributor": "tme",
+          "distributor_pn": "1140084168",
+          "stock": 1208,
+          "moq": 1,
+          "order_multiple": 1,
+          "lead_time_days": null,
+          "price_breaks": [
+            {
+              "qty": 1,
+              "unit_price": 1.53
+            },
+            {
+              "qty": 5,
+              "unit_price": 1.4
+            },
+            {
+              "qty": 10,
+              "unit_price": 1.3
+            },
+            {
+              "qty": 25,
+              "unit_price": 1.15
+            },
+            {
+              "qty": 30,
+              "unit_price": 1.13
+            },
+            {
+              "qty": 50,
+              "unit_price": 1.11
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "tme API, EUR. MOQ 1, order multiple 1."
+        }
+      ]
+    },
+    "10067099-200LF": {
+      "manufacturer": "Amphenol ICC (FCI)",
+      "description": "microSD socket, push-pull, 10 (8+2) contacts, 2.65 mm above board",
+      "package": "SMD card connector",
+      "satisfies": "microsd",
+      "offers": [
+        {
+          "distributor": "digikey",
+          "distributor_pn": "609-5773-1-ND",
+          "stock": 26021,
+          "moq": 1,
+          "order_multiple": 1,
+          "lead_time_days": 105,
+          "price_breaks": [
+            {
+              "qty": 1,
+              "unit_price": 0.86
+            },
+            {
+              "qty": 10,
+              "unit_price": 0.73
+            },
+            {
+              "qty": 25,
+              "unit_price": 0.6836
+            },
+            {
+              "qty": 50,
+              "unit_price": 0.6508
+            },
+            {
+              "qty": 100,
+              "unit_price": 0.6197
+            },
+            {
+              "qty": 250,
+              "unit_price": 0.58084
+            },
+            {
+              "qty": 500,
+              "unit_price": 0.5531
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "active",
+          "compliance": [
+            {
+              "regulation": "RoHS",
+              "revision": "ROHS3",
+              "status": "ROHS3 Compliant",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            },
+            {
+              "regulation": "REACH",
+              "revision": "unstated",
+              "status": "REACH Affected",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            }
+          ],
+          "datasheet_url": "https://cdn.amphenol-cs.com/media/wysiwyg/files/documentation/datasheet/boardwiretoboard/bwb_sdmemorycard.pdf",
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "digikey API, EUR. MOQ 1, order multiple 1. Vendor part number 609-5773-1-ND."
+        },
+        {
+          "distributor": "mouser",
+          "distributor_pn": "649-10067099-200LF",
+          "stock": 0,
+          "moq": 1,
+          "order_multiple": 1,
+          "lead_time_days": 77,
+          "price_breaks": [
+            {
+              "qty": 1,
+              "unit_price": 0.808
+            },
+            {
+              "qty": 10,
+              "unit_price": 0.688
+            },
+            {
+              "qty": 25,
+              "unit_price": 0.614
+            },
+            {
+              "qty": 100,
+              "unit_price": 0.585
+            },
+            {
+              "qty": 250,
+              "unit_price": 0.549
+            },
+            {
+              "qty": 500,
+              "unit_price": 0.522
+            },
+            {
+              "qty": 1000,
+              "unit_price": 0.483
+            },
+            {
+              "qty": 2500,
+              "unit_price": 0.448
+            },
+            {
+              "qty": 5000,
+              "unit_price": 0.432
+            },
+            {
+              "qty": 7500,
+              "unit_price": 0.432
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "mouser API, EUR. MOQ 1, order multiple 1. Vendor part number 649-10067099-200LF."
+        },
+        {
+          "distributor": "tme",
+          "distributor_pn": "10067099200LF-AMP",
+          "stock": 15000,
+          "moq": 1500,
+          "order_multiple": 1500,
+          "lead_time_days": null,
+          "price_breaks": [
+            {
+              "qty": 1500,
+              "unit_price": 0.579
+            },
+            {
+              "qty": 3000,
+              "unit_price": 0.565
+            },
+            {
+              "qty": 15000,
+              "unit_price": 0.554
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": "https://cdn.amphenol-icc.com/media/wysiwyg/files/drawing/10067099.pdf",
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "tme API, EUR. MOQ 1500, order multiple 1500. Reel/tray minimum: stock does not mean one unit is purchasable. Vendor part number 10067099200LF-AMP. TME product_status=['EXTERNAL_WAREHOUSE', 'BLOCKED_FOR_ZBL_MP']. BLOCKED_FOR_ZBL_BACKORDERS is an ORDERING restriction, not a lifecycle state."
+        }
+      ]
+    },
+    "2908-05WB-MG": {
+      "manufacturer": "3M",
+      "description": "microSD socket, push-push, 8 contacts \u2014 NO card-detect switch",
+      "package": "SMD card connector",
+      "satisfies": "microsd",
+      "offers": [
+        {
+          "distributor": "digikey",
+          "distributor_pn": "3M5607CT-ND",
+          "stock": 17853,
+          "moq": 1,
+          "order_multiple": 1,
+          "lead_time_days": 133,
+          "price_breaks": [
+            {
+              "qty": 1,
+              "unit_price": 4.23
+            },
+            {
+              "qty": 10,
+              "unit_price": 3.592
+            },
+            {
+              "qty": 25,
+              "unit_price": 3.3664
+            },
+            {
+              "qty": 50,
+              "unit_price": 3.2058
+            },
+            {
+              "qty": 100,
+              "unit_price": 3.0527
+            },
+            {
+              "qty": 250,
+              "unit_price": 2.86156
+            },
+            {
+              "qty": 500,
+              "unit_price": 2.76934
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "active",
+          "compliance": [
+            {
+              "regulation": "RoHS",
+              "revision": "ROHS3",
+              "status": "ROHS3 Compliant",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            },
+            {
+              "regulation": "REACH",
+              "revision": "unstated",
+              "status": "REACH Unaffected",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            }
+          ],
+          "datasheet_url": "https://multimedia.3m.com/mws/media/416257O/3mtm-card-connector-microsdtm-2900-series-ts2197.pdf",
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "digikey API, EUR. MOQ 1, order multiple 1. Vendor part number 3M5607CT-ND."
+        },
+        {
+          "distributor": "mouser",
+          "distributor_pn": "517-2908-05WB-MG",
+          "stock": 20525,
+          "moq": 1,
+          "order_multiple": 1,
+          "lead_time_days": 154,
+          "price_breaks": [
+            {
+              "qty": 1,
+              "unit_price": 4.23
+            },
+            {
+              "qty": 10,
+              "unit_price": 3.6
+            },
+            {
+              "qty": 25,
+              "unit_price": 3.37
+            },
+            {
+              "qty": 50,
+              "unit_price": 3.21
+            },
+            {
+              "qty": 100,
+              "unit_price": 3.05
+            },
+            {
+              "qty": 250,
+              "unit_price": 2.87
+            },
+            {
+              "qty": 500,
+              "unit_price": 2.77
+            },
+            {
+              "qty": 1000,
+              "unit_price": 2.48
+            },
+            {
+              "qty": 3000,
+              "unit_price": 2.4
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [
+            {
+              "regulation": "RoHS",
+              "revision": "unstated",
+              "status": "RoHS Compliant",
+              "asserted_at": "2026-11-24",
+              "source": "mouser"
+            }
+          ],
+          "datasheet_url": "https://www.mouser.com/datasheet/3/167/1/ts2197.pdf",
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "mouser API, EUR. MOQ 1, order multiple 1. Vendor part number 517-2908-05WB-MG."
+        },
+        {
+          "distributor": "tme",
+          "distributor_pn": "290805WBMG-3M-0",
+          "stock": 35200,
+          "moq": 3000,
+          "order_multiple": 3000,
+          "lead_time_days": null,
+          "price_breaks": [
+            {
+              "qty": 3000,
+              "unit_price": 1.13
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "tme API, EUR. MOQ 3000, order multiple 3000. Reel/tray minimum: stock does not mean one unit is purchasable. Vendor part number 290805WBMG-3M-0. TME product_status=['EXTERNAL_WAREHOUSE', 'BLOCKED_FOR_ZBL_MP']. BLOCKED_FOR_ZBL_BACKORDERS is an ORDERING restriction, not a lifecycle state."
+        }
+      ]
+    },
+    "105027-0001": {
+      "manufacturer": "Molex",
+      "description": "microSD socket, push-pull, 1.70 mm above board \u2014 reel-only, MOQ 2000",
+      "package": "SMD card connector",
+      "satisfies": "microsd",
+      "offers": [
+        {
+          "distributor": "digikey",
+          "distributor_pn": "6270-105027-0001TR-ND",
+          "stock": 134000,
+          "moq": 2000,
+          "order_multiple": 2000,
+          "lead_time_days": null,
+          "price_breaks": [
+            {
+              "qty": 2000,
+              "unit_price": 0.63027
+            },
+            {
+              "qty": 6000,
+              "unit_price": 0.61251
+            },
+            {
+              "qty": 18000,
+              "unit_price": 0.57701
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "active",
+          "compliance": [
+            {
+              "regulation": "RoHS",
+              "revision": "ROHS3",
+              "status": "ROHS3 Compliant",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            },
+            {
+              "regulation": "REACH",
+              "revision": "unstated",
+              "status": "REACH Unknown",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            }
+          ],
+          "datasheet_url": "https://www.waldomemea.com/upload/parts/datasheets/mf-mol/mol-105027-0001.pdf",
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "digikey API, EUR. MOQ 2000, order multiple 2000. Reel/tray minimum: stock does not mean one unit is purchasable. Vendor part number 6270-105027-0001TR-ND."
+        },
+        {
+          "distributor": "mouser",
+          "distributor_pn": "538-105027-0001",
+          "stock": 0,
+          "moq": 1,
+          "order_multiple": 1,
+          "lead_time_days": 0,
+          "price_breaks": [],
+          "currency": "EUR",
+          "lifecycle": "obsolete",
+          "compliance": [
+            {
+              "regulation": "RoHS",
+              "revision": "unstated",
+              "status": "RoHS Compliant",
+              "asserted_at": "2026-11-24",
+              "source": "mouser"
+            }
+          ],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "mouser API, EUR. MOQ 1, order multiple 1. Vendor part number 538-105027-0001."
+        },
+        {
+          "distributor": "tme",
+          "distributor_pn": "1050270001-MOL",
+          "stock": 16000,
+          "moq": 2000,
+          "order_multiple": 2000,
+          "lead_time_days": null,
+          "price_breaks": [
+            {
+              "qty": 2000,
+              "unit_price": 1.51
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "tme API, EUR. MOQ 2000, order multiple 2000. Reel/tray minimum: stock does not mean one unit is purchasable. Vendor part number 1050270001-MOL. TME product_status=['EXTERNAL_WAREHOUSE', 'BLOCKED_FOR_ZBL_MP']. BLOCKED_FOR_ZBL_BACKORDERS is an ORDERING restriction, not a lifecycle state."
+        }
+      ]
     }
   },
   "catalogue_coverage": {
@@ -2257,39 +3172,44 @@
     ],
     "by_requirement": {
       "battery": {
-        "parts_swept": 77,
-        "stocked": 73,
-        "with_datasheet": 77
+        "parts_swept": 646,
+        "stocked": 536,
+        "with_datasheet": 552
       },
       "bluetooth": {
-        "parts_swept": 100,
-        "stocked": 100,
-        "with_datasheet": 99
+        "parts_swept": 891,
+        "stocked": 600,
+        "with_datasheet": 806
       },
       "dac": {
-        "parts_swept": 138,
-        "stocked": 99,
-        "with_datasheet": 126
+        "parts_swept": 1898,
+        "stocked": 502,
+        "with_datasheet": 1695
       },
       "mclk-mux": {
-        "parts_swept": 364,
-        "stocked": 132,
-        "with_datasheet": 305
+        "parts_swept": 807,
+        "stocked": 421,
+        "with_datasheet": 718
       },
       "mclk-osc-44k1": {
-        "parts_swept": 127,
-        "stocked": 95,
-        "with_datasheet": 126
+        "parts_swept": 388,
+        "stocked": 96,
+        "with_datasheet": 385
       },
       "mclk-osc-48k": {
-        "parts_swept": 164,
-        "stocked": 103,
-        "with_datasheet": 163
+        "parts_swept": 640,
+        "stocked": 503,
+        "with_datasheet": 617
       },
       "mcu": {
-        "parts_swept": 109,
-        "stocked": 60,
-        "with_datasheet": 101
+        "parts_swept": 1781,
+        "stocked": 429,
+        "with_datasheet": 1451
+      },
+      "microsd": {
+        "parts_swept": 647,
+        "stocked": 406,
+        "with_datasheet": 423
       }
     }
   }

@@ -1,0 +1,272 @@
+(kicad_pcb
+	(version 20241229)
+	(generator "atopile")
+	(generator_version "0.15.9")
+	(general
+		(thickness 1.6)
+		(legacy_teardrops no)
+	)
+	(paper "A4")
+	(layers
+		(0 "F.Cu" signal)
+		(31 "B.Cu" signal)
+		(32 "B.Adhes" user "B.Adhesive")
+		(33 "F.Adhes" user "F.Adhesive")
+		(34 "B.Paste" user)
+		(35 "F.Paste" user)
+		(36 "B.SilkS" user "B.Silkscreen")
+		(37 "F.SilkS" user "F.Silkscreen")
+		(38 "B.Mask" user)
+		(39 "F.Mask" user)
+		(40 "Dwgs.User" user "User.Drawings")
+		(41 "Cmts.User" user "User.Comments")
+		(42 "Eco1.User" user "User.Eco1")
+		(43 "Eco2.User" user "User.Eco2")
+		(44 "Edge.Cuts" user)
+		(45 "Margin" user)
+		(46 "B.CrtYd" user "B.Courtyard")
+		(47 "F.CrtYd" user "F.Courtyard")
+		(48 "B.Fab" user)
+		(49 "F.Fab" user)
+		(50 "User.1" user)
+		(51 "User.2" user)
+		(52 "User.3" user)
+		(53 "User.4" user)
+		(54 "User.5" user)
+		(55 "User.6" user)
+		(56 "User.7" user)
+		(57 "User.8" user)
+		(58 "User.9" user)
+	)
+	(setup
+		(pad_to_mask_clearance 0)
+		(allow_soldermask_bridges_in_footprints no)
+		(pcbplotparams
+			(layerselection 0x00010fc_ffffffff)
+			(plot_on_all_layers_selection 0x0000000_00000000)
+			(dashed_line_dash_ratio 12)
+			(dashed_line_gap_ratio 3)
+			(svgprecision 4)
+			(mode 1)
+			(hpglpennumber 1)
+			(hpglpenspeed 20)
+			(hpglpendiameter 15)
+			(outputformat 1)
+			(drillshape 1)
+			(scaleselection 1)
+			(outputdirectory "")
+		)
+	)
+	(gr_text "ATO-FLOORPLAN-BEGIN"
+		(at 0.000 -6.000 0)
+		(layer "Cmts.User")
+		(effects
+			(font
+				(size 1.0 1.0)
+				(thickness 0.167)
+			)
+			(justify left top)
+		)
+	)
+	(gr_rect
+		(start 35.000 44.000)
+		(end 60.000 60.000)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "Dwgs.User")
+	)
+	(gr_text "audio"
+		(at 35.600 44.600 0)
+		(layer "Dwgs.User")
+		(effects
+			(font
+				(size 1.0 1.0)
+				(thickness 0.167)
+			)
+			(justify left top)
+		)
+	)
+	(gr_rect
+		(start 0.000 0.500)
+		(end 35.000 59.500)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(fill no)
+		(layer "Cmts.User")
+	)
+	(gr_text "battery (KEEPOUT)"
+		(at 0.600 1.100 0)
+		(layer "Cmts.User")
+		(effects
+			(font
+				(size 1.0 1.0)
+				(thickness 0.167)
+			)
+			(justify left top)
+		)
+	)
+	(gr_rect
+		(start 93.000 0.000)
+		(end 100.000 14.000)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "Dwgs.User")
+	)
+	(gr_text "bluetooth"
+		(at 93.600 0.600 0)
+		(layer "Dwgs.User")
+		(effects
+			(font
+				(size 1.0 1.0)
+				(thickness 0.167)
+			)
+			(justify left top)
+		)
+	)
+	(gr_rect
+		(start 37.000 22.000)
+		(end 46.000 34.000)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "Dwgs.User")
+	)
+	(gr_text "clock"
+		(at 37.600 22.600 0)
+		(layer "Dwgs.User")
+		(effects
+			(font
+				(size 1.0 1.0)
+				(thickness 0.167)
+			)
+			(justify left top)
+		)
+	)
+	(gr_rect
+		(start 85.000 46.000)
+		(end 100.000 60.000)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "Dwgs.User")
+	)
+	(gr_text "display"
+		(at 85.600 46.600 0)
+		(layer "Dwgs.User")
+		(effects
+			(font
+				(size 1.0 1.0)
+				(thickness 0.167)
+			)
+			(justify left top)
+		)
+	)
+	(gr_rect
+		(start 35.000 0.000)
+		(end 60.000 17.000)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "Dwgs.User")
+	)
+	(gr_text "input"
+		(at 35.600 0.600 0)
+		(layer "Dwgs.User")
+		(effects
+			(font
+				(size 1.0 1.0)
+				(thickness 0.167)
+			)
+			(justify left top)
+		)
+	)
+	(gr_rect
+		(start 46.000 17.000)
+		(end 72.000 43.000)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "Dwgs.User")
+	)
+	(gr_text "mcu"
+		(at 46.600 17.600 0)
+		(layer "Dwgs.User")
+		(effects
+			(font
+				(size 1.0 1.0)
+				(thickness 0.167)
+			)
+			(justify left top)
+		)
+	)
+	(gr_rect
+		(start 72.000 17.000)
+		(end 93.000 46.000)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "Dwgs.User")
+	)
+	(gr_text "memory"
+		(at 72.600 17.600 0)
+		(layer "Dwgs.User")
+		(effects
+			(font
+				(size 1.0 1.0)
+				(thickness 0.167)
+			)
+			(justify left top)
+		)
+	)
+	(gr_rect
+		(start 60.000 0.000)
+		(end 85.000 16.000)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "Dwgs.User")
+	)
+	(gr_text "power"
+		(at 60.600 0.600 0)
+		(layer "Dwgs.User")
+		(effects
+			(font
+				(size 1.0 1.0)
+				(thickness 0.167)
+			)
+			(justify left top)
+		)
+	)
+	(gr_text "ATO-FLOORPLAN-END"
+		(at 0.000 62.000 0)
+		(layer "Cmts.User")
+		(effects
+			(font
+				(size 1.0 1.0)
+				(thickness 0.167)
+			)
+			(justify left top)
+		)
+	)
+
+)

@@ -18,8 +18,8 @@
 
 import ElectricPower
 import Capacitor
+import Crystal
 
-from "parts/Crystal/Crystal.ato" import Crystal
 from "interfaces.ato" import ClockSource
 
 module HseClock:
@@ -47,10 +47,12 @@ module HseClock:
 
     # ── Crystal ───────────────────────────────────────────────────────────────
     xtal = new Crystal
-    xtal.frequency = 25MHz +/- 30ppm
+    xtal.frequency = 25MHz
+    xtal.frequency_tolerance = 30ppm
+    xtal.load_capacitance = 12pF
 
-    xtal.p1 ~ clk.osc_in   # OSC_IN  side of crystal (→ MCU PH0)
-    xtal.p2 ~ clk.osc_out  # OSC_OUT side of crystal (← MCU PH1 amplifier feedback)
+    xtal.unnamed[0] ~ clk.osc_in   # OSC_IN  side of crystal (→ MCU PH0)
+    xtal.unnamed[1] ~ clk.osc_out  # OSC_OUT side of crystal (← MCU PH1 amplifier feedback)
 
     # ── Load capacitors ───────────────────────────────────────────────────────
     # 18 pF each → effective CL ≈ 12 pF (see docstring calculation above).
@@ -58,12 +60,12 @@ module HseClock:
     c_osc_in = new Capacitor
     c_osc_in.capacitance = 18pF +/- 5%
     c_osc_in.package     = "0402"
-    clk.osc_in ~ c_osc_in.p1; c_osc_in.p2 ~ power_3v3.lv
+    clk.osc_in ~ c_osc_in.unnamed[0]; c_osc_in.unnamed[1] ~ power_3v3.lv
 
     c_osc_out = new Capacitor
     c_osc_out.capacitance = 18pF +/- 5%
     c_osc_out.package     = "0402"
-    clk.osc_out ~ c_osc_out.p1; c_osc_out.p2 ~ power_3v3.lv
+    clk.osc_out ~ c_osc_out.unnamed[0]; c_osc_out.unnamed[1] ~ power_3v3.lv
 
     # ── Validation ────────────────────────────────────────────────────────────
     # STM32H743 HSE input range: 4–50 MHz (datasheet §6.3.8)

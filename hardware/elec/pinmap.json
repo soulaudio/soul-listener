@@ -1,0 +1,1546 @@
+{
+ "components": {
+  "AP2112K33TRG1": {
+   "file": "hardware/elec/src/parts/AP2112K33TRG1/AP2112K33TRG1.ato",
+   "kind": "component",
+   "manufacturer": null,
+   "mpn": null,
+   "pins": [
+    {
+     "pin": "1",
+     "signal": "VIN"
+    },
+    {
+     "pin": "2",
+     "signal": "GND"
+    },
+    {
+     "pin": "3",
+     "signal": "EN"
+    },
+    {
+     "pin": "4",
+     "signal": "NC"
+    },
+    {
+     "pin": "5",
+     "signal": "VOUT"
+    }
+   ],
+   "signals_on_multiple_pins": {}
+  },
+  "Ant2450AT18A100E": {
+   "file": "hardware/elec/src/parts/0433AT62A0100E/0433AT62A0100E.ato",
+   "kind": "component",
+   "manufacturer": null,
+   "mpn": null,
+   "pins": [
+    {
+     "pin": "1",
+     "signal": "RF"
+    },
+    {
+     "pin": "2",
+     "signal": "GND"
+    }
+   ],
+   "signals_on_multiple_pins": {}
+  },
+  "BQ25895RTWT": {
+   "file": "hardware/elec/src/parts/BQ25895RTWT/BQ25895RTWT.ato",
+   "kind": "component",
+   "manufacturer": null,
+   "mpn": null,
+   "pins": [
+    {
+     "pin": "1",
+     "signal": "PGND_1"
+    },
+    {
+     "pin": "2",
+     "signal": "VBUS_1"
+    },
+    {
+     "pin": "3",
+     "signal": "VBUS_2"
+    },
+    {
+     "pin": "4",
+     "signal": "DM"
+    },
+    {
+     "pin": "5",
+     "signal": "DP"
+    },
+    {
+     "pin": "6",
+     "signal": "STAT"
+    },
+    {
+     "pin": "7",
+     "signal": "INT"
+    },
+    {
+     "pin": "8",
+     "signal": "SCL"
+    },
+    {
+     "pin": "9",
+     "signal": "SDA"
+    },
+    {
+     "pin": "10",
+     "signal": "OTG"
+    },
+    {
+     "pin": "11",
+     "signal": "CE"
+    },
+    {
+     "pin": "12",
+     "signal": "ILIM"
+    },
+    {
+     "pin": "13",
+     "signal": "TS"
+    },
+    {
+     "pin": "14",
+     "signal": "BTST"
+    },
+    {
+     "pin": "15",
+     "signal": "SW_1"
+    },
+    {
+     "pin": "16",
+     "signal": "SW_2"
+    },
+    {
+     "pin": "17",
+     "signal": "REGN"
+    },
+    {
+     "pin": "18",
+     "signal": "SYS_1"
+    },
+    {
+     "pin": "19",
+     "signal": "SYS_2"
+    },
+    {
+     "pin": "20",
+     "signal": "BAT_1"
+    },
+    {
+     "pin": "21",
+     "signal": "BAT_2"
+    },
+    {
+     "pin": "22",
+     "signal": "PMID_1"
+    },
+    {
+     "pin": "23",
+     "signal": "PMID_2"
+    },
+    {
+     "pin": "24",
+     "signal": "PGND_2"
+    },
+    {
+     "pin": "25",
+     "signal": "EP"
+    }
+   ],
+   "signals_on_multiple_pins": {}
+  },
+  "EC11": {
+   "file": "hardware/elec/src/parts/EC11/EC11.ato",
+   "kind": "component",
+   "manufacturer": null,
+   "mpn": null,
+   "pins": [
+    {
+     "pin": "1",
+     "signal": "ENC_A"
+    },
+    {
+     "pin": "2",
+     "signal": "GND_ENC"
+    },
+    {
+     "pin": "3",
+     "signal": "ENC_B"
+    },
+    {
+     "pin": "4",
+     "signal": "SW_1"
+    },
+    {
+     "pin": "5",
+     "signal": "SW_2"
+    }
+   ],
+   "signals_on_multiple_pins": {}
+  },
+  "ES9038Q2M": {
+   "file": "hardware/elec/src/parts/ES9038Q2M/ES9038Q2M.ato",
+   "kind": "component",
+   "manufacturer": null,
+   "mpn": null,
+   "pins": [
+    {
+     "pin": "1",
+     "signal": "DVDD"
+    },
+    {
+     "pin": "2",
+     "signal": "DVSS"
+    },
+    {
+     "pin": "3",
+     "signal": "SCL"
+    },
+    {
+     "pin": "4",
+     "signal": "SDA"
+    },
+    {
+     "pin": "5",
+     "signal": "MUTE"
+    },
+    {
+     "pin": "6",
+     "signal": "IREF"
+    },
+    {
+     "pin": "7",
+     "signal": "AGND_1"
+    },
+    {
+     "pin": "9",
+     "signal": "AVDD_1"
+    },
+    {
+     "pin": "11",
+     "signal": "AOUT_R_NEG"
+    },
+    {
+     "pin": "12",
+     "signal": "AOUT_R_POS"
+    },
+    {
+     "pin": "13",
+     "signal": "AOUT_L_NEG"
+    },
+    {
+     "pin": "14",
+     "signal": "AOUT_L_POS"
+    },
+    {
+     "pin": "15",
+     "signal": "AVSS_1"
+    },
+    {
+     "pin": "17",
+     "signal": "AVDD_3"
+    },
+    {
+     "pin": "19",
+     "signal": "AGND_3"
+    },
+    {
+     "pin": "20",
+     "signal": "IREF_2"
+    },
+    {
+     "pin": "21",
+     "signal": "DVSS_2"
+    },
+    {
+     "pin": "22",
+     "signal": "DVDD_2"
+    },
+    {
+     "pin": "23",
+     "signal": "XO"
+    },
+    {
+     "pin": "24",
+     "signal": "MCLK"
+    },
+    {
+     "pin": "25",
+     "signal": "BCLK"
+    },
+    {
+     "pin": "26",
+     "signal": "LRCK"
+    },
+    {
+     "pin": "27",
+     "signal": "DATA"
+    },
+    {
+     "pin": "28",
+     "signal": "FMT"
+    }
+   ],
+   "signals_on_multiple_pins": {}
+  },
+  "FH12_24S": {
+   "file": "hardware/elec/src/parts/FH12_24S/FH12_24S.ato",
+   "kind": "component",
+   "manufacturer": null,
+   "mpn": null,
+   "pins": [
+    {
+     "pin": "1",
+     "signal": "NC1"
+    },
+    {
+     "pin": "2",
+     "signal": "GDR"
+    },
+    {
+     "pin": "3",
+     "signal": "RESE"
+    },
+    {
+     "pin": "4",
+     "signal": "NC4"
+    },
+    {
+     "pin": "5",
+     "signal": "VSH2"
+    },
+    {
+     "pin": "6",
+     "signal": "NC6"
+    },
+    {
+     "pin": "7",
+     "signal": "NC7"
+    },
+    {
+     "pin": "8",
+     "signal": "BS1"
+    },
+    {
+     "pin": "9",
+     "signal": "BUSY"
+    },
+    {
+     "pin": "10",
+     "signal": "RST"
+    },
+    {
+     "pin": "11",
+     "signal": "DC"
+    },
+    {
+     "pin": "12",
+     "signal": "CS"
+    },
+    {
+     "pin": "13",
+     "signal": "SCL"
+    },
+    {
+     "pin": "14",
+     "signal": "SDA"
+    },
+    {
+     "pin": "15",
+     "signal": "VDDIO"
+    },
+    {
+     "pin": "16",
+     "signal": "VCI"
+    },
+    {
+     "pin": "17",
+     "signal": "VSS"
+    },
+    {
+     "pin": "18",
+     "signal": "VDD"
+    },
+    {
+     "pin": "19",
+     "signal": "VPP"
+    },
+    {
+     "pin": "20",
+     "signal": "VSH1"
+    },
+    {
+     "pin": "21",
+     "signal": "VGH"
+    },
+    {
+     "pin": "22",
+     "signal": "VSL"
+    },
+    {
+     "pin": "23",
+     "signal": "VGL"
+    },
+    {
+     "pin": "24",
+     "signal": "VCOM"
+    }
+   ],
+   "signals_on_multiple_pins": {}
+  },
+  "LT3042EMSE": {
+   "file": "hardware/elec/src/parts/LT3042EMSE/LT3042EMSE.ato",
+   "kind": "component",
+   "manufacturer": null,
+   "mpn": null,
+   "pins": [
+    {
+     "pin": "1",
+     "signal": "IN"
+    },
+    {
+     "pin": "2",
+     "signal": "EN"
+    },
+    {
+     "pin": "3",
+     "signal": "SET"
+    },
+    {
+     "pin": "4",
+     "signal": "ILIM"
+    },
+    {
+     "pin": "5",
+     "signal": "BYP"
+    },
+    {
+     "pin": "6",
+     "signal": "PG"
+    },
+    {
+     "pin": "7",
+     "signal": "GND"
+    },
+    {
+     "pin": "8",
+     "signal": "OUT"
+    },
+    {
+     "pin": "9",
+     "signal": "EP"
+    }
+   ],
+   "signals_on_multiple_pins": {}
+  },
+  "LT3045EMSE": {
+   "file": "hardware/elec/src/parts/LT3045EMSE/LT3045EMSE.ato",
+   "kind": "component",
+   "manufacturer": null,
+   "mpn": null,
+   "pins": [
+    {
+     "pin": "1",
+     "signal": "IN"
+    },
+    {
+     "pin": "2",
+     "signal": "IN_2"
+    },
+    {
+     "pin": "3",
+     "signal": "VIOC"
+    },
+    {
+     "pin": "4",
+     "signal": "EN_UV"
+    },
+    {
+     "pin": "5",
+     "signal": "PG"
+    },
+    {
+     "pin": "6",
+     "signal": "ILIM"
+    },
+    {
+     "pin": "7",
+     "signal": "PGFB"
+    },
+    {
+     "pin": "8",
+     "signal": "SET"
+    },
+    {
+     "pin": "9",
+     "signal": "GND"
+    },
+    {
+     "pin": "10",
+     "signal": "OUTS"
+    },
+    {
+     "pin": "11",
+     "signal": "OUT"
+    },
+    {
+     "pin": "12",
+     "signal": "OUT_2"
+    },
+    {
+     "pin": "13",
+     "signal": "EP"
+    }
+   ],
+   "signals_on_multiple_pins": {}
+  },
+  "LT3094EMSE": {
+   "file": "hardware/elec/src/parts/LT3094EMSE/LT3094EMSE.ato",
+   "kind": "component",
+   "manufacturer": null,
+   "mpn": null,
+   "pins": [
+    {
+     "pin": "1",
+     "signal": "IN"
+    },
+    {
+     "pin": "2",
+     "signal": "IN_2"
+    },
+    {
+     "pin": "3",
+     "signal": "EN_UV"
+    },
+    {
+     "pin": "4",
+     "signal": "PG"
+    },
+    {
+     "pin": "5",
+     "signal": "PGFB"
+    },
+    {
+     "pin": "6",
+     "signal": "ILIM"
+    },
+    {
+     "pin": "7",
+     "signal": "VIOC"
+    },
+    {
+     "pin": "8",
+     "signal": "SET"
+    },
+    {
+     "pin": "9",
+     "signal": "GND"
+    },
+    {
+     "pin": "10",
+     "signal": "OUTS"
+    },
+    {
+     "pin": "11",
+     "signal": "OUT"
+    },
+    {
+     "pin": "12",
+     "signal": "OUT_2"
+    },
+    {
+     "pin": "13",
+     "signal": "EP"
+    }
+   ],
+   "signals_on_multiple_pins": {}
+  },
+  "MBR0530": {
+   "file": "hardware/elec/src/parts/MBR0530/MBR0530.ato",
+   "kind": "component",
+   "manufacturer": null,
+   "mpn": null,
+   "pins": [
+    {
+     "pin": "1",
+     "signal": "K"
+    },
+    {
+     "pin": "2",
+     "signal": "A"
+    }
+   ],
+   "signals_on_multiple_pins": {}
+  },
+  "PESD5V0L5UY": {
+   "file": "hardware/elec/src/parts/PESD5V0L5UY/PESD5V0L5UY.ato",
+   "kind": "component",
+   "manufacturer": null,
+   "mpn": null,
+   "pins": [
+    {
+     "pin": "1",
+     "signal": "IO1"
+    },
+    {
+     "pin": "2",
+     "signal": "GND"
+    },
+    {
+     "pin": "3",
+     "signal": "IO2"
+    },
+    {
+     "pin": "4",
+     "signal": "IO3"
+    },
+    {
+     "pin": "5",
+     "signal": "IO4"
+    },
+    {
+     "pin": "6",
+     "signal": "IO5"
+    }
+   ],
+   "signals_on_multiple_pins": {}
+  },
+  "PTS526": {
+   "file": "hardware/elec/src/parts/PTS526/PTS526.ato",
+   "kind": "component",
+   "manufacturer": null,
+   "mpn": null,
+   "pins": [
+    {
+     "pin": "1",
+     "signal": "A1"
+    },
+    {
+     "pin": "2",
+     "signal": "B1"
+    }
+   ],
+   "signals_on_multiple_pins": {}
+  },
+  "S2B_PH_K_S": {
+   "file": "hardware/elec/src/parts/S2B_PH_K_S/S2B_PH_K_S.ato",
+   "kind": "component",
+   "manufacturer": null,
+   "mpn": null,
+   "pins": [
+    {
+     "pin": "1",
+     "signal": "BAT_POS"
+    },
+    {
+     "pin": "2",
+     "signal": "BAT_NEG"
+    }
+   ],
+   "signals_on_multiple_pins": {}
+  },
+  "STM32H743ZIT6": {
+   "file": "hardware/elec/src/parts/STM32H743ZIT6/STM32H743ZIT6.ato",
+   "kind": "component",
+   "manufacturer": null,
+   "mpn": null,
+   "pins": [
+    {
+     "pin": "1",
+     "signal": "SAI1_MCLK_A"
+    },
+    {
+     "pin": "2",
+     "signal": "LCD_BUSY"
+    },
+    {
+     "pin": "3",
+     "signal": "SAI1_LRCLK_A"
+    },
+    {
+     "pin": "4",
+     "signal": "SAI1_BCLK_A"
+    },
+    {
+     "pin": "5",
+     "signal": "SAI1_SD_A"
+    },
+    {
+     "pin": "6",
+     "signal": "VBAT"
+    },
+    {
+     "pin": "7",
+     "signal": "BTN_POWER"
+    },
+    {
+     "pin": "10",
+     "signal": "FMC_A0"
+    },
+    {
+     "pin": "11",
+     "signal": "FMC_A1"
+    },
+    {
+     "pin": "12",
+     "signal": "FMC_A2"
+    },
+    {
+     "pin": "13",
+     "signal": "FMC_A3"
+    },
+    {
+     "pin": "14",
+     "signal": "FMC_A4"
+    },
+    {
+     "pin": "15",
+     "signal": "FMC_A5"
+    },
+    {
+     "pin": "16",
+     "signal": "VSS_1"
+    },
+    {
+     "pin": "17",
+     "signal": "VDD_1"
+    },
+    {
+     "pin": "19",
+     "signal": "QUADSPI_BK1_IO2"
+    },
+    {
+     "pin": "25",
+     "signal": "NRST"
+    },
+    {
+     "pin": "26",
+     "signal": "FMC_SDWE"
+    },
+    {
+     "pin": "28",
+     "signal": "FMC_SDNE0"
+    },
+    {
+     "pin": "29",
+     "signal": "FMC_SDCKE0"
+    },
+    {
+     "pin": "30",
+     "signal": "VDD_2"
+    },
+    {
+     "pin": "31",
+     "signal": "VSSA"
+    },
+    {
+     "pin": "32",
+     "signal": "VREF_PLUS"
+    },
+    {
+     "pin": "33",
+     "signal": "VDDA"
+    },
+    {
+     "pin": "34",
+     "signal": "BTN_PLAY"
+    },
+    {
+     "pin": "35",
+     "signal": "BTN_NEXT"
+    },
+    {
+     "pin": "36",
+     "signal": "BTN_PREV"
+    },
+    {
+     "pin": "37",
+     "signal": "ENC_B"
+    },
+    {
+     "pin": "38",
+     "signal": "VSS_2"
+    },
+    {
+     "pin": "39",
+     "signal": "VDD_3"
+    },
+    {
+     "pin": "40",
+     "signal": "SPI1_NSS"
+    },
+    {
+     "pin": "41",
+     "signal": "SPI1_SCK"
+    },
+    {
+     "pin": "42",
+     "signal": "SPI1_MISO"
+    },
+    {
+     "pin": "43",
+     "signal": "SPI1_MOSI"
+    },
+    {
+     "pin": "44",
+     "signal": "AMP_EN"
+    },
+    {
+     "pin": "46",
+     "signal": "LCD_DC"
+    },
+    {
+     "pin": "47",
+     "signal": "LCD_RST"
+    },
+    {
+     "pin": "48",
+     "signal": "QUADSPI_CLK"
+    },
+    {
+     "pin": "49",
+     "signal": "FMC_SDRAS"
+    },
+    {
+     "pin": "50",
+     "signal": "FMC_A6"
+    },
+    {
+     "pin": "51",
+     "signal": "VSS_3"
+    },
+    {
+     "pin": "52",
+     "signal": "VDD_4"
+    },
+    {
+     "pin": "53",
+     "signal": "FMC_A7"
+    },
+    {
+     "pin": "54",
+     "signal": "FMC_A8"
+    },
+    {
+     "pin": "55",
+     "signal": "FMC_A9"
+    },
+    {
+     "pin": "56",
+     "signal": "FMC_A10"
+    },
+    {
+     "pin": "57",
+     "signal": "FMC_A11"
+    },
+    {
+     "pin": "58",
+     "signal": "FMC_D4"
+    },
+    {
+     "pin": "59",
+     "signal": "FMC_D5"
+    },
+    {
+     "pin": "60",
+     "signal": "FMC_D6"
+    },
+    {
+     "pin": "61",
+     "signal": "VSS_4"
+    },
+    {
+     "pin": "62",
+     "signal": "VDD_5"
+    },
+    {
+     "pin": "63",
+     "signal": "FMC_D7"
+    },
+    {
+     "pin": "64",
+     "signal": "FMC_D8"
+    },
+    {
+     "pin": "65",
+     "signal": "FMC_D9"
+    },
+    {
+     "pin": "66",
+     "signal": "FMC_D10"
+    },
+    {
+     "pin": "67",
+     "signal": "FMC_D11"
+    },
+    {
+     "pin": "68",
+     "signal": "FMC_D12"
+    },
+    {
+     "pin": "69",
+     "signal": "PH0_OSC_IN"
+    },
+    {
+     "pin": "70",
+     "signal": "PH1_OSC_OUT"
+    },
+    {
+     "pin": "71",
+     "signal": "VCAP1"
+    },
+    {
+     "pin": "72",
+     "signal": "VDD_6"
+    },
+    {
+     "pin": "77",
+     "signal": "FMC_D13"
+    },
+    {
+     "pin": "78",
+     "signal": "FMC_D14"
+    },
+    {
+     "pin": "79",
+     "signal": "FMC_D15"
+    },
+    {
+     "pin": "80",
+     "signal": "QUADSPI_BK1_IO0"
+    },
+    {
+     "pin": "81",
+     "signal": "QUADSPI_BK1_IO1"
+    },
+    {
+     "pin": "82",
+     "signal": "QUADSPI_BK1_IO3"
+    },
+    {
+     "pin": "83",
+     "signal": "VSS_5"
+    },
+    {
+     "pin": "84",
+     "signal": "VDD_7"
+    },
+    {
+     "pin": "85",
+     "signal": "FMC_D0"
+    },
+    {
+     "pin": "86",
+     "signal": "FMC_D1"
+    },
+    {
+     "pin": "87",
+     "signal": "FMC_A12"
+    },
+    {
+     "pin": "89",
+     "signal": "FMC_BA0"
+    },
+    {
+     "pin": "90",
+     "signal": "FMC_BA1"
+    },
+    {
+     "pin": "93",
+     "signal": "FMC_SDCLK"
+    },
+    {
+     "pin": "94",
+     "signal": "VSS_6"
+    },
+    {
+     "pin": "95",
+     "signal": "VDD33_USB"
+    },
+    {
+     "pin": "98",
+     "signal": "SDMMC1_D0"
+    },
+    {
+     "pin": "99",
+     "signal": "SDMMC1_D1"
+    },
+    {
+     "pin": "100",
+     "signal": "ENC_A"
+    },
+    {
+     "pin": "101",
+     "signal": "UART1_TX"
+    },
+    {
+     "pin": "102",
+     "signal": "UART1_RX"
+    },
+    {
+     "pin": "103",
+     "signal": "USB_OTG_HS_DM"
+    },
+    {
+     "pin": "104",
+     "signal": "USB_OTG_HS_DP"
+    },
+    {
+     "pin": "105",
+     "signal": "SWDIO"
+    },
+    {
+     "pin": "106",
+     "signal": "VCAP2"
+    },
+    {
+     "pin": "107",
+     "signal": "VSS_7"
+    },
+    {
+     "pin": "108",
+     "signal": "VDD_8"
+    },
+    {
+     "pin": "109",
+     "signal": "SWDCLK"
+    },
+    {
+     "pin": "111",
+     "signal": "SDMMC1_D2"
+    },
+    {
+     "pin": "112",
+     "signal": "SDMMC1_D3"
+    },
+    {
+     "pin": "113",
+     "signal": "SDMMC1_CLK"
+    },
+    {
+     "pin": "114",
+     "signal": "FMC_D2"
+    },
+    {
+     "pin": "115",
+     "signal": "FMC_D3"
+    },
+    {
+     "pin": "116",
+     "signal": "SDMMC1_CMD"
+    },
+    {
+     "pin": "117",
+     "signal": "BTN_MENU"
+    },
+    {
+     "pin": "118",
+     "signal": "BTN_BACK"
+    },
+    {
+     "pin": "119",
+     "signal": "BTN_SEL"
+    },
+    {
+     "pin": "120",
+     "signal": "VSS_8"
+    },
+    {
+     "pin": "121",
+     "signal": "VDD_9"
+    },
+    {
+     "pin": "130",
+     "signal": "VSS_9"
+    },
+    {
+     "pin": "131",
+     "signal": "VDD_10"
+    },
+    {
+     "pin": "132",
+     "signal": "FMC_SDCAS"
+    },
+    {
+     "pin": "133",
+     "signal": "SWO"
+    },
+    {
+     "pin": "135",
+     "signal": "ENC_SW"
+    },
+    {
+     "pin": "136",
+     "signal": "QUADSPI_BK1_NCS"
+    },
+    {
+     "pin": "138",
+     "signal": "BOOT0"
+    },
+    {
+     "pin": "139",
+     "signal": "I2C1_SCL"
+    },
+    {
+     "pin": "140",
+     "signal": "I2C1_SDA"
+    },
+    {
+     "pin": "141",
+     "signal": "FMC_NBL0"
+    },
+    {
+     "pin": "142",
+     "signal": "FMC_NBL1"
+    },
+    {
+     "pin": "144",
+     "signal": "VDD_11"
+    }
+   ],
+   "signals_on_multiple_pins": {}
+  },
+  "STM32WB55RGV6": {
+   "file": "hardware/elec/src/parts/STM32WB55RGV6/STM32WB55RGV6.ato",
+   "kind": "component",
+   "manufacturer": null,
+   "mpn": null,
+   "pins": [
+    {
+     "pin": "1",
+     "signal": "VBAT"
+    },
+    {
+     "pin": "3",
+     "signal": "PC14_OSC32_IN"
+    },
+    {
+     "pin": "4",
+     "signal": "PC15_OSC32_OUT"
+    },
+    {
+     "pin": "8",
+     "signal": "NRST_WB"
+    },
+    {
+     "pin": "13",
+     "signal": "VREFPLUS"
+    },
+    {
+     "pin": "14",
+     "signal": "VDDA"
+    },
+    {
+     "pin": "24",
+     "signal": "UART1_TX"
+    },
+    {
+     "pin": "30",
+     "signal": "VDD"
+    },
+    {
+     "pin": "31",
+     "signal": "RF_ANT"
+    },
+    {
+     "pin": "32",
+     "signal": "VSSRF"
+    },
+    {
+     "pin": "33",
+     "signal": "VDDRF"
+    },
+    {
+     "pin": "34",
+     "signal": "OSC_OUT"
+    },
+    {
+     "pin": "35",
+     "signal": "OSC_IN"
+    },
+    {
+     "pin": "41",
+     "signal": "VFBSMPS"
+    },
+    {
+     "pin": "42",
+     "signal": "VSSSMPS"
+    },
+    {
+     "pin": "43",
+     "signal": "VLXSMPS"
+    },
+    {
+     "pin": "44",
+     "signal": "VDDSMPS"
+    },
+    {
+     "pin": "45",
+     "signal": "VDD_2"
+    },
+    {
+     "pin": "51",
+     "signal": "UART1_RX"
+    },
+    {
+     "pin": "54",
+     "signal": "SWDIO_WB"
+    },
+    {
+     "pin": "55",
+     "signal": "VDDUSB"
+    },
+    {
+     "pin": "56",
+     "signal": "SWDCLK_WB"
+    },
+    {
+     "pin": "68",
+     "signal": "VDD_3"
+    },
+    {
+     "pin": "69",
+     "signal": "EP"
+    }
+   ],
+   "signals_on_multiple_pins": {}
+  },
+  "Si1308EDL": {
+   "file": "hardware/elec/src/parts/Si1308EDL/Si1308EDL.ato",
+   "kind": "component",
+   "manufacturer": null,
+   "mpn": null,
+   "pins": [
+    {
+     "pin": "1",
+     "signal": "G"
+    },
+    {
+     "pin": "2",
+     "signal": "S"
+    },
+    {
+     "pin": "3",
+     "signal": "D"
+    }
+   ],
+   "signals_on_multiple_pins": {}
+  },
+  "TEXAS_INSTRUMENTS_SN74LVC1G3157DCKR_package": {
+   "file": "hardware/elec/src/parts/TEXAS_INSTRUMENTS_SN74LVC1G3157DCKR/TEXAS_INSTRUMENTS_SN74LVC1G3157DCKR.ato",
+   "kind": "component",
+   "manufacturer": "TEXAS INSTRUMENTS",
+   "mpn": "SN74LVC1G3157DCKR",
+   "pins": [],
+   "signals_on_multiple_pins": {}
+  },
+  "TPA6120A2": {
+   "file": "hardware/elec/src/parts/TPA6120A2/TPA6120A2.ato",
+   "kind": "component",
+   "manufacturer": null,
+   "mpn": null,
+   "pins": [
+    {
+     "pin": "1",
+     "signal": "LIN_POS"
+    },
+    {
+     "pin": "2",
+     "signal": "LIN_NEG"
+    },
+    {
+     "pin": "6",
+     "signal": "RIN_NEG"
+    },
+    {
+     "pin": "7",
+     "signal": "RIN_POS"
+    },
+    {
+     "pin": "8",
+     "signal": "RVCC_POS"
+    },
+    {
+     "pin": "9",
+     "signal": "ROUT"
+    },
+    {
+     "pin": "10",
+     "signal": "RVCC_NEG"
+    },
+    {
+     "pin": "12",
+     "signal": "LVCC_NEG"
+    },
+    {
+     "pin": "13",
+     "signal": "LOUT"
+    },
+    {
+     "pin": "14",
+     "signal": "LVCC_POS"
+    },
+    {
+     "pin": "15",
+     "signal": "EP"
+    }
+   ],
+   "signals_on_multiple_pins": {}
+  },
+  "TPS61023DRLR": {
+   "file": "hardware/elec/src/parts/TPS61023DRLR/TPS61023DRLR.ato",
+   "kind": "component",
+   "manufacturer": null,
+   "mpn": null,
+   "pins": [
+    {
+     "pin": "1",
+     "signal": "FB"
+    },
+    {
+     "pin": "2",
+     "signal": "EN"
+    },
+    {
+     "pin": "3",
+     "signal": "VIN"
+    },
+    {
+     "pin": "4",
+     "signal": "GND"
+    },
+    {
+     "pin": "5",
+     "signal": "SW"
+    },
+    {
+     "pin": "6",
+     "signal": "VOUT"
+    }
+   ],
+   "signals_on_multiple_pins": {}
+  },
+  "TPS63700DRCR": {
+   "file": "hardware/elec/src/parts/TPS63700DRCR/TPS63700DRCR.ato",
+   "kind": "component",
+   "manufacturer": null,
+   "mpn": null,
+   "pins": [
+    {
+     "pin": "1",
+     "signal": "COMP"
+    },
+    {
+     "pin": "2",
+     "signal": "GND"
+    },
+    {
+     "pin": "3",
+     "signal": "VIN"
+    },
+    {
+     "pin": "4",
+     "signal": "EN"
+    },
+    {
+     "pin": "5",
+     "signal": "IN"
+    },
+    {
+     "pin": "6",
+     "signal": "SW"
+    },
+    {
+     "pin": "7",
+     "signal": "PS_GND"
+    },
+    {
+     "pin": "8",
+     "signal": "OUT"
+    },
+    {
+     "pin": "9",
+     "signal": "FB"
+    },
+    {
+     "pin": "10",
+     "signal": "VREF"
+    },
+    {
+     "pin": "11",
+     "signal": "EP"
+    }
+   ],
+   "signals_on_multiple_pins": {}
+  },
+  "W25Q128JVSIQ": {
+   "file": "hardware/elec/src/parts/W25Q128JVSIQ/W25Q128JVSIQ.ato",
+   "kind": "component",
+   "manufacturer": null,
+   "mpn": null,
+   "pins": [
+    {
+     "pin": "1",
+     "signal": "CS_NEG"
+    },
+    {
+     "pin": "2",
+     "signal": "IO1"
+    },
+    {
+     "pin": "3",
+     "signal": "IO2"
+    },
+    {
+     "pin": "4",
+     "signal": "GND"
+    },
+    {
+     "pin": "5",
+     "signal": "IO0"
+    },
+    {
+     "pin": "6",
+     "signal": "CLK"
+    },
+    {
+     "pin": "7",
+     "signal": "IO3"
+    },
+    {
+     "pin": "8",
+     "signal": "VCC"
+    }
+   ],
+   "signals_on_multiple_pins": {}
+  },
+  "W9825G6KH6": {
+   "file": "hardware/elec/src/parts/W9825G6KH6/W9825G6KH6.ato",
+   "kind": "component",
+   "manufacturer": null,
+   "mpn": null,
+   "pins": [
+    {
+     "pin": "1",
+     "signal": "VDD_1"
+    },
+    {
+     "pin": "2",
+     "signal": "DQ0"
+    },
+    {
+     "pin": "3",
+     "signal": "VDDQ_1"
+    },
+    {
+     "pin": "6",
+     "signal": "VSSQ_1"
+    },
+    {
+     "pin": "7",
+     "signal": "DQ3"
+    },
+    {
+     "pin": "11",
+     "signal": "DQ6"
+    },
+    {
+     "pin": "15",
+     "signal": "DQML"
+    },
+    {
+     "pin": "16",
+     "signal": "WE_NEG"
+    },
+    {
+     "pin": "17",
+     "signal": "CAS_NEG"
+    },
+    {
+     "pin": "18",
+     "signal": "RAS_NEG"
+    },
+    {
+     "pin": "19",
+     "signal": "CS_NEG"
+    },
+    {
+     "pin": "20",
+     "signal": "BA0"
+    },
+    {
+     "pin": "21",
+     "signal": "BA1"
+    },
+    {
+     "pin": "23",
+     "signal": "A0"
+    },
+    {
+     "pin": "26",
+     "signal": "A3"
+    },
+    {
+     "pin": "28",
+     "signal": "VSS_1"
+    },
+    {
+     "pin": "31",
+     "signal": "A6"
+    },
+    {
+     "pin": "34",
+     "signal": "A9"
+    },
+    {
+     "pin": "36",
+     "signal": "A12"
+    },
+    {
+     "pin": "37",
+     "signal": "CKE"
+    },
+    {
+     "pin": "38",
+     "signal": "CLK"
+    },
+    {
+     "pin": "39",
+     "signal": "DQMH"
+    },
+    {
+     "pin": "40",
+     "signal": "NC_1"
+    },
+    {
+     "pin": "42",
+     "signal": "DQ8"
+    },
+    {
+     "pin": "47",
+     "signal": "DQ11"
+    },
+    {
+     "pin": "49",
+     "signal": "VDDQ_4"
+    },
+    {
+     "pin": "51",
+     "signal": "DQ14"
+    },
+    {
+     "pin": "52",
+     "signal": "VSSQ_4"
+    }
+   ],
+   "signals_on_multiple_pins": {}
+  }
+ },
+ "readme": "GENERATED from hardware/elec/src/**/*.ato by tools/ato-pinmap.py. Do not edit. The .ato component definitions are the single source of truth for pin assignment; this file and dap/hw-spec/src/pinmap.rs are both derived from them, and the_pinmap_is_current fails the build if either goes stale."
+}

@@ -49,18 +49,18 @@ module Input:
     r_enc_a = new Resistor; r_enc_a.resistance = 10kohm +/- 5%; r_enc_a.package = "0402"
     r_enc_b = new Resistor; r_enc_b.resistance = 10kohm +/- 5%; r_enc_b.package = "0402"
     r_enc_sw = new Resistor; r_enc_sw.resistance = 10kohm +/- 5%; r_enc_sw.package = "0402"
-    power_3v3.hv ~ r_enc_a.p1;  r_enc_a.p2  ~ encoder.a
-    power_3v3.hv ~ r_enc_b.p1;  r_enc_b.p2  ~ encoder.b
-    power_3v3.hv ~ r_enc_sw.p1; r_enc_sw.p2 ~ encoder.sw
+    power_3v3.hv ~ r_enc_a.unnamed[0];  r_enc_a.unnamed[1]  ~ encoder.a
+    power_3v3.hv ~ r_enc_b.unnamed[0];  r_enc_b.unnamed[1]  ~ encoder.b
+    power_3v3.hv ~ r_enc_sw.unnamed[0]; r_enc_sw.unnamed[1] ~ encoder.sw
 
     # Hardware debounce caps: 100 nF to GND on each line (RC with pull-up)
     # f_cutoff = 1 / (2π × 10kΩ × 100nF) ≈ 160 Hz — eliminates contact bounce
     c_enc_a  = new Capacitor; c_enc_a.capacitance  = 100nF +/- 20%; c_enc_a.package  = "0402"
     c_enc_b  = new Capacitor; c_enc_b.capacitance  = 100nF +/- 20%; c_enc_b.package  = "0402"
     c_enc_sw = new Capacitor; c_enc_sw.capacitance = 100nF +/- 20%; c_enc_sw.package = "0402"
-    encoder.a  ~ c_enc_a.p1;  c_enc_a.p2  ~ power_3v3.lv
-    encoder.b  ~ c_enc_b.p1;  c_enc_b.p2  ~ power_3v3.lv
-    encoder.sw ~ c_enc_sw.p1; c_enc_sw.p2 ~ power_3v3.lv
+    encoder.a  ~ c_enc_a.unnamed[0];  c_enc_a.unnamed[1]  ~ power_3v3.lv
+    encoder.b  ~ c_enc_b.unnamed[0];  c_enc_b.unnamed[1]  ~ power_3v3.lv
+    encoder.sw ~ c_enc_sw.unnamed[0]; c_enc_sw.unnamed[1] ~ power_3v3.lv
 
     # ── Navigation Buttons ────────────────────────────────────────────────────
     # 4 tactile buttons: Play/Pause, Previous, Next, Menu
@@ -80,12 +80,12 @@ module Input:
     r_menu = new Resistor; r_menu.resistance = 10kohm +/- 5%; r_menu.package = "0402"
     r_back = new Resistor; r_back.resistance = 10kohm +/- 5%; r_back.package = "0402"
     r_sel  = new Resistor; r_sel.resistance  = 10kohm +/- 5%; r_sel.package  = "0402"
-    power_3v3.hv ~ r_play.p1; r_play.p2 ~ encoder.btn_play
-    power_3v3.hv ~ r_prev.p1; r_prev.p2 ~ encoder.btn_prev
-    power_3v3.hv ~ r_next.p1; r_next.p2 ~ encoder.btn_next
-    power_3v3.hv ~ r_menu.p1; r_menu.p2 ~ encoder.btn_menu
-    power_3v3.hv ~ r_back.p1; r_back.p2 ~ encoder.btn_back
-    power_3v3.hv ~ r_sel.p1;  r_sel.p2  ~ encoder.btn_sel
+    power_3v3.hv ~ r_play.unnamed[0]; r_play.unnamed[1] ~ encoder.btn_play
+    power_3v3.hv ~ r_prev.unnamed[0]; r_prev.unnamed[1] ~ encoder.btn_prev
+    power_3v3.hv ~ r_next.unnamed[0]; r_next.unnamed[1] ~ encoder.btn_next
+    power_3v3.hv ~ r_menu.unnamed[0]; r_menu.unnamed[1] ~ encoder.btn_menu
+    power_3v3.hv ~ r_back.unnamed[0]; r_back.unnamed[1] ~ encoder.btn_back
+    power_3v3.hv ~ r_sel.unnamed[0];  r_sel.unnamed[1]  ~ encoder.btn_sel
 
     # Button wiring: A1 → GPIO pull-up node; B1 → GND (active low)
     btn_play.A1 ~ encoder.btn_play; btn_play.B1 ~ power_3v3.lv
@@ -102,12 +102,12 @@ module Input:
     c_menu = new Capacitor; c_menu.capacitance = 100nF +/- 20%; c_menu.package = "0402"
     c_back = new Capacitor; c_back.capacitance = 100nF +/- 20%; c_back.package = "0402"
     c_sel  = new Capacitor; c_sel.capacitance  = 100nF +/- 20%; c_sel.package  = "0402"
-    encoder.btn_play ~ c_play.p1; c_play.p2 ~ power_3v3.lv
-    encoder.btn_prev ~ c_prev.p1; c_prev.p2 ~ power_3v3.lv
-    encoder.btn_next ~ c_next.p1; c_next.p2 ~ power_3v3.lv
-    encoder.btn_menu ~ c_menu.p1; c_menu.p2 ~ power_3v3.lv
-    encoder.btn_back ~ c_back.p1; c_back.p2 ~ power_3v3.lv
-    encoder.btn_sel  ~ c_sel.p1;  c_sel.p2  ~ power_3v3.lv
+    encoder.btn_play ~ c_play.unnamed[0]; c_play.unnamed[1] ~ power_3v3.lv
+    encoder.btn_prev ~ c_prev.unnamed[0]; c_prev.unnamed[1] ~ power_3v3.lv
+    encoder.btn_next ~ c_next.unnamed[0]; c_next.unnamed[1] ~ power_3v3.lv
+    encoder.btn_menu ~ c_menu.unnamed[0]; c_menu.unnamed[1] ~ power_3v3.lv
+    encoder.btn_back ~ c_back.unnamed[0]; c_back.unnamed[1] ~ power_3v3.lv
+    encoder.btn_sel  ~ c_sel.unnamed[0];  c_sel.unnamed[1]  ~ power_3v3.lv
 
     # ── Power Button ──────────────────────────────────────────────────────────
     # Connected to STM32H743 PC13/WKUP2 pin for wake-from-standby
@@ -115,8 +115,8 @@ module Input:
     btn_pwr = new PTS526
     r_pwr = new Resistor; r_pwr.resistance = 10kohm +/- 5%; r_pwr.package = "0402"
     c_pwr = new Capacitor; c_pwr.capacitance = 100nF +/- 20%; c_pwr.package = "0402"
-    power_3v3.hv ~ r_pwr.p1; r_pwr.p2 ~ encoder.btn_power
-    encoder.btn_power ~ c_pwr.p1; c_pwr.p2 ~ power_3v3.lv
+    power_3v3.hv ~ r_pwr.unnamed[0]; r_pwr.unnamed[1] ~ encoder.btn_power
+    encoder.btn_power ~ c_pwr.unnamed[0]; c_pwr.unnamed[1] ~ power_3v3.lv
     btn_pwr.A1 ~ encoder.btn_power; btn_pwr.B1 ~ power_3v3.lv
 
     # ── Validation ────────────────────────────────────────────────────────────

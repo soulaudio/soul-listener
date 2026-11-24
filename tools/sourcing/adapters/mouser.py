@@ -317,6 +317,7 @@ class MouserAdapter(Adapter):
             start += len(batch)
             if len(batch) < page:
                 break
+        self.last_total = total
         if total is not None and total > len(out):
             # Never let a capped sweep read as a census.
             print(f"  limit={limit} caps '{keyword}' at {len(out)} of {total} match(es) — "
@@ -385,4 +386,5 @@ class MouserAdapter(Adapter):
             queried_as=queried_as,
             status_raw=compliance,
             datasheet_url=(p.get("DataSheetUrl") or "").strip() or None,
+            product_url=(p.get("ProductDetailUrl") or "").strip() or None,
         )

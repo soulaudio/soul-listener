@@ -249,6 +249,12 @@ pub const V2_RISKS: &[ConditionalRisk] = &[
         // a connectorised cell, so the hardware half of hot-swap is already true.
         // What is missing is bridge energy, and these symbols are how a claim
         // about live swapping would show up in the firmware.
+        //
+        // Scope confirmed 2026-11-24: the battery requirement is SWAPPABLE with
+        // the device off, and hot swap is explicitly not a requirement. So this
+        // guard is not waiting for a feature — it exists because the connector
+        // makes the stronger claim look available, and a firmware symbol is
+        // where that claim would first appear.
         trigger_symbols: &["hot_swap", "hotswap", "HotSwap", "live_swap"],
         mitigation_symbols: &[
             "bridge_cap",

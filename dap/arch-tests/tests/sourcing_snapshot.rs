@@ -24,7 +24,11 @@
 //! Functional equivalence is what `PartReq.what` is for, and it stays a human
 //! judgement.
 
-use dap_hw_spec::v2::SINGLE_SOURCE_ACCEPTED;
+use dap_arch_tests::candidates::{load, maker_key, part, typed};
+use dap_hw_spec::select::{evaluate, AttrValue, CataloguePart};
+use dap_hw_spec::v2::{
+    SINGLE_MANUFACTURER_ACCEPTED, SINGLE_SOURCE_ACCEPTED, USER_SWAPPABLE_REQUIREMENTS,
+};
 use dap_hw_spec::{Preference, ACTIVE};
 use serde_json::Value;
 
@@ -490,6 +494,114 @@ fn accepted_single_sourcing_is_still_warranted() {
              ({stocking:?}). The exception has outlived its reason: DELETE the entry so the \
              real gate guards the part again.",
             stocking.len()
+        );
+    }
+}
+
+/// Distinct manufacturers among the parts that PASS a requirement's constraints.
+///
+/// Qualifying, not swept: the battery category holds NiMH packs and cells that
+/// do not fit the bay, and counting their makers would report manufacturer
+/// diversity this design cannot actually use.
+fn qualifying_manufacturers(req_id: &str) -> Vec<String> {
+    const EXPORTS: &[(&str, &str)] = &[(
+        "battery",
+        include_str!("../../../hardware/bom/candidates/battery.json"),
+    )];
+    let Some((_, doc)) = EXPORTS.iter().find(|(id, _)| *id == req_id) else {
+        panic!(
+            "no candidate export wired for user-swappable requirement '{req_id}'; add it to \
+             EXPORTS in this helper, or the gate silently guards nothing"
+        )
+    };
+    let Some(req) = ACTIVE.parts.iter().find(|r| r.id == req_id) else {
+        panic!("no requirement '{req_id}' in the active spec")
+    };
+    let raws = load(doc, req_id);
+    let typedv: Vec<Vec<(&'static str, AttrValue<'_>)>> =
+        raws.iter().map(|r| typed(r, req.constraints)).collect();
+    let parts: Vec<CataloguePart<'_>> = raws.iter().zip(&typedv).map(|(r, t)| part(r, t)).collect();
+    let mut slots: Vec<Option<_>> = vec![None; parts.len()];
+    let n = evaluate(&parts, req.constraints, &mut slots);
+    assert_eq!(n, parts.len());
+    let mut makers: Vec<String> = slots
+        .into_iter()
+        .flatten()
+        .filter(|v| v.qualified())
+        .map(|v| maker_key(v.part.manufacturer))
+        .filter(|m| !m.is_empty())
+        .collect();
+    makers.sort();
+    makers.dedup();
+    makers
+}
+
+/// A part the OWNER replaces must be buyable from more than one manufacturer.
+///
+/// # Why distributor depth is not enough here
+///
+/// `preferred_parts_have_more_than_one_eu_source` answers "can we build the
+/// board". It is satisfied by two distributors stocking one maker's part, which
+/// is the right test for a DAC — we only have to buy it once, now.
+///
+/// A user-replaceable battery is a promise to someone else, years out. If the
+/// single maker discontinues the cell, a second distributor stocking the same
+/// dead part helps nobody, and the owner is left with a device whose
+/// "replaceable" battery cannot be replaced. So for these requirements the test
+/// is manufacturer diversity among the parts that actually QUALIFY — not among
+/// the parts swept, which would pass on cells that do not fit.
+///
+/// Exceptions live in `v2::SINGLE_MANUFACTURER_ACCEPTED` with a stated reason,
+/// and `accepted_single_manufacturer_is_still_warranted` deletes them when they
+/// stop being true.
+#[test]
+fn user_swappable_requirements_span_two_manufacturers() {
+    for req_id in USER_SWAPPABLE_REQUIREMENTS {
+        let makers = qualifying_manufacturers(req_id);
+        if SINGLE_MANUFACTURER_ACCEPTED
+            .iter()
+            .any(|(r, _)| r == req_id)
+        {
+            continue;
+        }
+        assert!(
+            makers.len() >= 2,
+            "requirement '{req_id}' is user-swappable but only {} manufacturer(s) make a \
+             qualifying part ({makers:?}).\nThe owner has to be able to buy a spare without \
+             this project's distributor accounts, so one maker is a promise we cannot keep.\n\
+             Resolve by one of:\n  \
+             (a) relax the mechanical constraint that is excluding the second maker — for the \
+             battery that is the bay, and Jauch cells fail on size rather than sourcing;\n  \
+             (b) add a distributor that stocks bare pouch cells (Farnell, RS);\n  \
+             (c) accept it explicitly in `v2::SINGLE_MANUFACTURER_ACCEPTED` with the reason.",
+            makers.len()
+        );
+    }
+}
+
+/// An accepted single-manufacturer exception must still be warranted.
+#[test]
+fn accepted_single_manufacturer_is_still_warranted() {
+    for (req_id, reason) in SINGLE_MANUFACTURER_ACCEPTED {
+        assert!(
+            reason.len() > 120,
+            "SINGLE_MANUFACTURER_ACCEPTED entry '{req_id}' has a {}-char reason. This field is \
+             the audit record for a promise made to the device's owner; it has to say which \
+             makers were checked and why the alternatives fail.",
+            reason.len()
+        );
+        assert!(
+            USER_SWAPPABLE_REQUIREMENTS.contains(req_id),
+            "SINGLE_MANUFACTURER_ACCEPTED excuses '{req_id}', which is not in \
+             USER_SWAPPABLE_REQUIREMENTS — so it exempts nothing and the entry is stale."
+        );
+        let makers = qualifying_manufacturers(req_id);
+        assert!(
+            makers.len() < 2,
+            "SINGLE_MANUFACTURER_ACCEPTED still excuses '{req_id}', but {} manufacturers now \
+             make a qualifying part ({makers:?}). DELETE the entry so the real gate guards the \
+             requirement again.",
+            makers.len()
         );
     }
 }

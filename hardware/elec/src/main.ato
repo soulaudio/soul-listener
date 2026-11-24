@@ -20,8 +20,20 @@
 # via the star-connected agnd node; both connect to the board GND plane at
 # the single star junction near the DAC.
 
+import RectangularBoardShape
+
 from "mcu.ato"       import MCU
-from "interfaces.ato" import I2CBus, SPIDevice, I2SBus, UARTBus, SWDPort, DisplayCtrl, FMCBus, QSPIBus, EncoderBus, USBDiffPair, AmpSupplyBus
+from "interfaces.ato" import I2CBus
+from "interfaces.ato" import SPIDevice
+from "interfaces.ato" import I2SBus
+from "interfaces.ato" import UARTBus
+from "interfaces.ato" import SWDPort
+from "interfaces.ato" import DisplayCtrl
+from "interfaces.ato" import FMCBus
+from "interfaces.ato" import QSPIBus
+from "interfaces.ato" import EncoderBus
+from "interfaces.ato" import USBDiffPair
+from "interfaces.ato" import AmpSupplyBus
 from "audio.ato"     import Audio
 from "power.ato"     import Power
 from "display.ato"   import Display
@@ -35,6 +47,21 @@ module SoulAudioDAP:
     SoulAudio DAP — complete board netlist.
     Connects MCU, audio chain, power management, display, BLE, memory, and input.
     """
+
+    # ── Mechanical envelope ───────────────────────────────────────────────────
+    #
+    # The board outline, declared HERE rather than drawn in KiCad, because
+    # atopile owns it once it is declared: `_clear_existing_outline` deletes
+    # every Edge.Cuts primitive on each build when a RectangularBoardShape is
+    # present. Hand-drawn edges and this declaration cannot coexist — one wipes
+    # the other — so the source is the single owner and
+    # `hardware/elec/placement.yaml` is checked against it.
+    #
+    # Keep these two numbers equal to `board.width_mm` / `board.height_mm` in
+    # placement.yaml; `board_outline_matches_the_floorplan` asserts it.
+    board = new RectangularBoardShape
+    board.x = 100mm
+    board.y = 60mm
 
     # ── Sub-module instances ──────────────────────────────────────────────────
     mcu       = new MCU

@@ -104,13 +104,72 @@ oscillator reaches a 3.3 V board.
 
 ```sh
 tools/sourcing-run.py refresh                          # EVERYTHING: fetch, export, snapshot
+tools/sourcing-run.py plan                             # how big each sweep's category really is
 tools/sourcing-run.py selftest                         # pure helpers, no network
 tools/sourcing-run.py fetch  --vendor tme              # the MPNs the snapshot names
 tools/sourcing-run.py fetch  --vendor tme --category 100269 \
      --phrase 22.5792MHz --as mclk-osc-44k1 --limit 60 # a category sweep
 tools/sourcing-run.py export --category mclk-osc-44k1  # -> candidates/<id>.json
 tools/sourcing-run.py status                           # what the DB holds
+
+cargo run -p dap-arch-tests --example sourcing-report  # what the FILTER makes of it
+cargo run -p dap-arch-tests --example propose          # ranked proposals, with links
+tools/sourcing-run.py sweep --vendor digikey           # one vendor's sweeps, nothing else
 ```
+
+### `propose` — the shortlist you pick from
+
+Writes `hardware/bom/PROPOSALS.md` (read this), `proposals.json` (the decision record,
+including the alternatives) and `selected.json` (the handoff: what is actually picked).
+
+Ranked by the spec's own `DEFAULT_RANKING`, with a clickable distributor link per row, and
+parts the spec has already **ruled out** marked as such with the reason — a two-source socket
+with 73 000 in stock and no card-detect switch otherwise keeps getting re-offered, because
+the missing switch is datasheet evidence the filter cannot see.
+
+Picking a part, and how it reaches firmware and the board, is
+[`PICKING-AND-HANDOFF.md`](PICKING-AND-HANDOFF.md).
+
+### `plan` — size a sweep before running it
+
+Every `SWEEPS` limit is a number someone chose, and a limit means nothing without the size of the
+thing it limits. `plan` probes each declared sweep's first page and prints the vendor's own total,
+the coverage that limit achieves, and what exhausting the rest would cost against today's remaining
+budget.
+
+It was worth writing immediately. Two limits turned out to be badly wrong in opposite directions:
+Digi-Key's `"lithium polymer battery pack"` matches **2 products in the entire catalogue**, while
+`"24.576MHz oscillator"` matches **6110**. Neither was visible before.
+
+Two measured facts shape how the sweeps are now written:
+
+- **Digi-Key ranks by relevance**, so a capped sweep keeps the most relevant N rather than an
+  arbitrary N — `SN74LVC1G3157DCKR` is the first result for `"SPDT analog switch SC70"`. What a
+  relevance engine does badly is breadth of *phrasing*, so several angles per requirement are
+  declared and unioned (deduplication is free: `parts` is UNIQUE on `(vendor, vendor_pn)`).
+- **Digi-Key keyword search is not conjunctive.** Adding words can collapse the result set to a
+  near-exact phrase match: `"24.576MHz standard clock oscillator"` returns 5. A longer query is not
+  a safely narrower one, so every phrase in `SWEEPS` carries its measured total in a comment.
+
+### `sourcing-report` — what the constraints actually do
+
+The arch tests answer "is anything broken", and a green suite says nothing about whether the filter
+is doing real work. Two failure modes are invisible to it: a constraint that rejects **everything**
+(a hard `moq <= 100` once eliminated the entire oscillator category) and a constraint that rejects
+**nothing**, which is decoration that looks identical to a good one.
+
+So the report prints, per requirement: candidates swept, how many qualify, a histogram of *what did
+the rejecting*, whether the spec's own preferred and alternate parts survive their own constraints,
+and the ranked head by `DEFAULT_RANKING`. It flags zero-pass and all-pass requirements as anomalies.
+
+The histogram distinguishes `not published by any vendor` from `out of range`, because the first is
+a catalogue **coverage** gap and the second is a real rejection — conflating them makes a data
+problem look like a market problem.
+
+It shares `dap_arch_tests::candidates` with the gates on purpose. That loader used to be copied into
+every test file that needed it, and a fourth copy was about to go into this report, where it would
+have been free to disagree: a report claiming a part qualifies while a gate rejects it is worse than
+no report, because nobody sees the disagreement until the part is ordered.
 
 `refresh` is the one command that matters day to day. The category sweeps it performs are declared
 in `SWEEPS` at the top of the script rather than remembered, so a refresh is reproducible and

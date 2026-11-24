@@ -22,7 +22,8 @@ import Capacitor
 import Inductor
 
 from "parts/PESD5V0L5UY/PESD5V0L5UY.ato" import PESD5V0L5UY
-from "interfaces.ato" import SPIDevice, DisplayCtrl
+from "interfaces.ato" import SPIDevice
+from "interfaces.ato" import DisplayCtrl
 from "parts/FH12_24S/FH12_24S.ato" import FH12_24S
 from "parts/Si1308EDL/Si1308EDL.ato" import Si1308EDL
 from "parts/MBR0530/MBR0530.ato" import MBR0530
@@ -58,15 +59,15 @@ module Display:
 
     # BS1: pull to GND for 4-wire SPI — do not float
     r_bs1 = new Resistor; r_bs1.resistance = 10kohm +/- 5%; r_bs1.package = "0402"
-    power_3v3.lv ~ r_bs1.p1; r_bs1.p2 ~ fpc.BS1
+    power_3v3.lv ~ r_bs1.unnamed[0]; r_bs1.unnamed[1] ~ fpc.BS1
 
     # VDD internal core — decouple only; not connected to VCI
     c_vdd = new Capacitor; c_vdd.capacitance = 1uF +/- 20%; c_vdd.package = "0402"
-    fpc.VDD ~ c_vdd.p1; c_vdd.p2 ~ power_3v3.lv
+    fpc.VDD ~ c_vdd.unnamed[0]; c_vdd.unnamed[1] ~ power_3v3.lv
 
     # VDDIO decoupling (separate from main VCI bulk cap)
     c_vddio = new Capacitor; c_vddio.capacitance = 1uF +/- 20%; c_vddio.package = "0402"
-    power_3v3.hv ~ c_vddio.p1; c_vddio.p2 ~ power_3v3.lv
+    power_3v3.hv ~ c_vddio.unnamed[0]; c_vddio.unnamed[1] ~ power_3v3.lv
 
     # HV rail bypass caps (25 V min rated, X5R/X7R, 0805)
     # Negative rails (VSL/VGL/VCOM): cap is from GND to rail — note physical polarity on layout.
@@ -76,12 +77,12 @@ module Display:
     c_vsl  = new Capacitor; c_vsl.capacitance  = 4.7uF +/- 20%; c_vsl.package  = "0805"
     c_vgl  = new Capacitor; c_vgl.capacitance  = 4.7uF +/- 20%; c_vgl.package  = "0805"
     c_vcom = new Capacitor; c_vcom.capacitance = 1uF   +/- 20%; c_vcom.package = "0805"
-    fpc.VSH1 ~ c_vsh1.p1; c_vsh1.p2 ~ power_3v3.lv
-    fpc.VSH2 ~ c_vsh2.p1; c_vsh2.p2 ~ power_3v3.lv
-    fpc.VGH  ~ c_vgh.p1;  c_vgh.p2  ~ power_3v3.lv
-    fpc.VSL  ~ c_vsl.p1;  c_vsl.p2  ~ power_3v3.lv
-    fpc.VGL  ~ c_vgl.p1;  c_vgl.p2  ~ power_3v3.lv
-    fpc.VCOM ~ c_vcom.p1; c_vcom.p2 ~ power_3v3.lv
+    fpc.VSH1 ~ c_vsh1.unnamed[0]; c_vsh1.unnamed[1] ~ power_3v3.lv
+    fpc.VSH2 ~ c_vsh2.unnamed[0]; c_vsh2.unnamed[1] ~ power_3v3.lv
+    fpc.VGH  ~ c_vgh.unnamed[0];  c_vgh.unnamed[1]  ~ power_3v3.lv
+    fpc.VSL  ~ c_vsl.unnamed[0];  c_vsl.unnamed[1]  ~ power_3v3.lv
+    fpc.VGL  ~ c_vgl.unnamed[0];  c_vgl.unnamed[1]  ~ power_3v3.lv
+    fpc.VCOM ~ c_vcom.unnamed[0]; c_vcom.unnamed[1] ~ power_3v3.lv
 
     # ── Booster circuit (GDR pin 2 / RESE pin 3) ─────────────────────────────
     #
@@ -128,25 +129,25 @@ module Display:
     c_boost_in = new Capacitor
     c_boost_in.capacitance = 4.7uF +/- 20%
     c_boost_in.package = "0805"
-    power_3v3.hv ~ c_boost_in.p1; c_boost_in.p2 ~ power_3v3.lv
+    power_3v3.hv ~ c_boost_in.unnamed[0]; c_boost_in.unnamed[1] ~ power_3v3.lv
 
     # L1: boost inductor — 47 µH, 500 mA DCR, shielded SMD (e.g. Würth 744031470)
     # Value from Good Display SSD1677/SSD2677 application schematic.
     # Alternatives: 10 µH (newer Waveshare revisions) also works with higher switching loss.
     l1 = new Inductor
-    l1.value = 47uH +/- 20%
+    l1.inductance = 47uH +/- 20%
     l1.package = "0805"
-    power_3v3.hv ~ l1.p1   # VCI feeds inductor
+    power_3v3.hv ~ l1.unnamed[0]   # VCI feeds inductor
 
     # Q1: N-channel boost switch
     q1 = new Si1308EDL
-    l1.p2    ~ q1.D          # inductor output → MOSFET drain (SW node)
+    l1.unnamed[1]    ~ q1.D          # inductor output → MOSFET drain (SW node)
     fpc.GDR  ~ q1.G          # SSD2677 gate drive output → MOSFET gate
 
     # D1: primary Schottky rectifier — SW node → VGH pre-charge rail
     # Anode at SW node; cathode drives VSH1 (pre-charge for +20 V gate rail via IC pump).
     d1 = new MBR0530
-    l1.p2   ~ d1.A           # anode: SW node (= inductor p2 = Q1 drain)
+    l1.unnamed[1]   ~ d1.A           # anode: SW node (= inductor p2 = Q1 drain)
     d1.K    ~ fpc.VSH1       # cathode: VSH1 pin — IC uses this as +HV pre-charge input
     # Output decoupling for D1 cathode (the existing c_vsh1 cap in this module also
     # connects to fpc.VSH1, providing the required HV bypass — no duplicate cap needed here)
@@ -154,17 +155,17 @@ module Display:
     # D2: secondary Schottky rectifier — SW node → VSH2 pre-charge rail
     # Provides the second positive pre-charge supply for the IC's source driver pump.
     d2 = new MBR0530
-    l1.p2   ~ d2.A           # anode: SW node (shared with D1 anode)
+    l1.unnamed[1]   ~ d2.A           # anode: SW node (shared with D1 anode)
     d2.K    ~ fpc.VSH2       # cathode: VSH2 pin — pre-charge for +15 V source rail
     # Output decoupling provided by existing c_vsh1/c_vsh2 caps connected to fpc.VSH1/VSH2.
-    # SW node (l1.p2 / Q1.D) must NOT have bulk capacitance — it is the switching node.
+    # SW node (l1.unnamed[1] / Q1.D) must NOT have bulk capacitance — it is the switching node.
 
     # R_BIAS: VCI → RESE pull-up (keeps RESE at known level when boost is idle)
     r_bias = new Resistor
     r_bias.resistance = 1Mohm +/- 5%
     r_bias.package = "0402"
-    power_3v3.hv ~ r_bias.p1
-    r_bias.p2    ~ fpc.RESE  # RESE node = Q1 source = top of R_sense
+    power_3v3.hv ~ r_bias.unnamed[0]
+    r_bias.unnamed[1]    ~ fpc.RESE  # RESE node = Q1 source = top of R_sense
 
     # Q1 source and RESE node tie-together
     q1.S ~ fpc.RESE
@@ -174,8 +175,8 @@ module Display:
     r_sense = new Resistor
     r_sense.resistance = 2.2ohm +/- 5%
     r_sense.package = "0402"
-    fpc.RESE     ~ r_sense.p1
-    r_sense.p2   ~ power_3v3.lv   # GND
+    fpc.RESE     ~ r_sense.unnamed[0]
+    r_sense.unnamed[1]   ~ power_3v3.lv   # GND
 
     # ── ESD protection ────────────────────────────────────────────────────────
     # 2× PESD5V0L5UY (SOT363, 5-ch, 5.0 V VRWM, ~16 pF/ch) placed close to FPC connector.
@@ -194,18 +195,18 @@ module Display:
     # ── Supply decoupling ─────────────────────────────────────────────────────
     c_vci_bulk = new Capacitor; c_vci_bulk.capacitance = 10uF  +/- 20%; c_vci_bulk.package = "0805"
     c_vci_hf   = new Capacitor; c_vci_hf.capacitance   = 100nF +/- 20%; c_vci_hf.package   = "0402"
-    power_3v3.hv ~ c_vci_bulk.p1; c_vci_bulk.p2 ~ power_3v3.lv
-    power_3v3.hv ~ c_vci_hf.p1;   c_vci_hf.p2   ~ power_3v3.lv
+    power_3v3.hv ~ c_vci_bulk.unnamed[0]; c_vci_bulk.unnamed[1] ~ power_3v3.lv
+    power_3v3.hv ~ c_vci_hf.unnamed[0];   c_vci_hf.unnamed[1]   ~ power_3v3.lv
 
     # ── Pull-up on BUSY (active high = busy, open drain on some variants) ─────
     r_busy = new Resistor
     r_busy.resistance = 10kohm +/- 5%
     r_busy.package = "0402"
-    power_3v3.hv ~ r_busy.p1; r_busy.p2 ~ ctrl.busy
+    power_3v3.hv ~ r_busy.unnamed[0]; r_busy.unnamed[1] ~ ctrl.busy
 
     # ── RST line: 100 nF filter cap ───────────────────────────────────────────
     c_rst = new Capacitor; c_rst.capacitance = 100nF +/- 20%; c_rst.package = "0402"
-    ctrl.rst ~ c_rst.p1; c_rst.p2 ~ power_3v3.lv
+    ctrl.rst ~ c_rst.unnamed[0]; c_rst.unnamed[1] ~ power_3v3.lv
 
     # ── Validation ────────────────────────────────────────────────────────────
     assert power_3v3.voltage within 2.7V to 3.6V

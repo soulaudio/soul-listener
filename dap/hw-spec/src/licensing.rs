@@ -165,11 +165,14 @@ pub const EXPOSURES: &[Exposure] = &[
             instead: "the public Simplified Specification in SPI/SD mode, and no SD logo printed",
         },
         // Enforced by what is absent: SDA membership buys the logo and the full
-        // spec, and we use neither. The honest enforcement point is the artwork
-        // review, which no test can perform — recorded as such rather than
-        // claimed.
-        enforced_by: "no SDA membership exists, so no logo may be placed on artwork or packaging \
-                      — a release checklist item, not a test",
+        // spec, and we use neither. The artwork half still cannot be tested —
+        // recorded as such rather than claimed — but the PART half now can be,
+        // since the microSD requirement exists: a socket choice is where a
+        // branded part could reintroduce a mark implying membership we do not
+        // hold, and the requirement constrains that explicitly.
+        enforced_by: "dap-hw-spec::v2's microsd requirement constrains sd_logo_not_required; the \
+                      artwork half is a release checklist item, not a test, because no SDA \
+                      membership exists so no logo may be placed on packaging",
         source: "licensing §2.10 — SDA membership ~$2k/yr for the logo",
     },
     Exposure {

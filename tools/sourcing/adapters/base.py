@@ -65,6 +65,14 @@ class VendorPart:
     queried_as: str | None = None
     status_raw: list[str] = field(default_factory=list)
     datasheet_url: str | None = None
+    #: The distributor's own product page.
+    #:
+    #: Carried because a ranked proposal nobody can click is a proposal nobody
+    #: checks. The datasheet answers "is this the right part"; this answers "is
+    #: this the right ORDER" — packaging, price breaks, lead time and the
+    #: vendor's own stock figure, which is the one number that goes stale fastest
+    #: in a committed artefact.
+    product_url: str | None = None
 
     def unit_price_cents(self) -> int | None:
         """Cheapest single-unit price, in cents, for ranking.
@@ -133,6 +141,16 @@ class Adapter(abc.ABC):
         """
 
     # --- Shared helpers -------------------------------------------------
+
+    #: Total matches the vendor reported for the LAST `search_category` call,
+    #: or None if it published no total.
+    #:
+    #: Exposed so a sweep can be PLANNED rather than guessed: a limit is only
+    #: meaningful against the size of the thing being limited, and every adapter
+    #: already receives this number in order to print its "this is a SAMPLE"
+    #: warning. Keeping it only in a print statement meant the one fact needed to
+    #: size a sweep was visible to a human and unavailable to the code.
+    last_total: int | None = None
 
     #: Vendor parameter name -> spec attribute name. Subclasses override.
     #: Keys are compared case-insensitively and with surrounding whitespace

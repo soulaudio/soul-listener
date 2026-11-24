@@ -32,6 +32,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
+from ..throttle import Throttle
 from .base import Adapter, PriceBreak, VendorPart
 
 def _absolute(url: str | None) -> str | None:
@@ -63,6 +64,18 @@ SEARCH_PAGE = 50
 # processing your request") for requests that succeed on retry — the same
 # flakiness `productdetails` shows. A 5xx is never an answer.
 SEARCH_RETRIES = 4
+# **Digi-Key will not paginate past 300 results for any query.** Measured:
+# `Offset=300, Limit=50` returns HTTP 400 "Offset + Limit must be less than or
+# equal to 300".
+#
+# This is a hard ceiling on the whole discovery path, not a tuning knob, and it
+# is the reason `SWEEPS` declares several keyword angles per requirement instead
+# of one broad query: with a 300-result window, unioning angles is the ONLY way
+# to see more than 300 parts. Measured gain for a second angle on
+# "22.5792MHz" vs "22.5792MHz XO": 241 of 300 overlap, union 359, so +20% — real
+# but with clear diminishing returns, and the parts it adds are genuine
+# oscillators (CB3LV, DSC1001, CMX-309FAB) rather than noise.
+SEARCH_MAX_WINDOW = 300
 
 
 class DigikeyAdapter(Adapter):
@@ -80,8 +93,14 @@ class DigikeyAdapter(Adapter):
     ATTR_MAP = {
         # --- DAC / analogue ---------------------------------------------------
         "Number of D/A Converters": "channels",
+        # Digi-Key's other spelling, used by parts filed outside the dedicated
+        # DAC category. Verified not to co-occur with `Number of D/A Converters`
+        # on any part — `map_attrs` JOINS duplicate keys with '; ', which is
+        # correct for a multi-valued list and corrupting for a scalar.
+        "Number of Channels": "channels",
         "Data Interface": "data_interface",
         "Number of Bits": "resolution_bits",
+        "Resolution (Bits)": "resolution_bits",
         "Architecture": "converter_architecture",
         "Voltage - Supply, Analog": "supply_mv",
         "Voltage - Supply, Digital": "supply_digital_mv",
@@ -106,14 +125,50 @@ class DigikeyAdapter(Adapter):
         "Height - Seated (Max)": "height_mm",
         "Voltage - Supply": "supply_mv",
         # --- Switches / muxes -------------------------------------------------
-        "Circuit": "switch_configuration",
-        "Independent Circuits": "channels",
+        #
+        # `Switch Circuit` and `Number of Circuits` are the REAL names, verified
+        # against 50 parts where both appear on 50 and 49 of them. This slot used
+        # to hold `Circuit` and `Independent Circuits`, which were transcribed
+        # from Digi-Key's web UI rather than read off a response and therefore
+        # never matched anything.
+        #
+        # The cost was invisible and large: `switch_configuration` and `channels`
+        # were reaching the filter from TME ALONE, so 386 of 668 muxes were
+        # rejected as "switch_configuration not published" and the Nexperia
+        # alternate `74LVC1G3157GW` — which TME does not carry — failed its own
+        # requirement entirely. A mapping gap reads exactly like a vendor data
+        # gap, and only the rejection histogram told them apart.
+        "Switch Circuit": "switch_configuration",
+        "Number of Circuits": "channels",
+        # Digi-Key's supply field for analog switches, 50/50 coverage. Separate
+        # from `Voltage - Supply, Dual (V±)`, which this design has no use for
+        # and which comes back '-' for every single-supply part anyway.
+        "Voltage - Supply, Single (V+)": "supply_mv",
         "On-State Resistance (Max)": "ron_max_ohm",
         # --- MCU --------------------------------------------------------------
         "Core Processor": "cpu_core",
         "Speed": "core_clock_hz",
+        # 48/50 coverage, and the reason 101 MCUs were rejected for an
+        # unpublished supply voltage.
+        "Voltage - Supply (Vcc/Vdd)": "supply_mv",
         "RAM Size": "sram_bytes",
         "Program Memory Size": "flash_bytes",
+        # --- Card connectors --------------------------------------------------
+        #
+        # Verified against 25 real microSD sockets, where `Card Type` appears on
+        # 25 of 25 and the rest on 23-24. `Card Type` is the microSD-vs-full-SD
+        # discriminator and the only field that answers the requirement at all.
+        "Card Type": "card_type",
+        "Insertion, Removal Method": "insertion_removal",
+        # Carries 'Switch' for a socket with a card-detect contact, which is what
+        # lets firmware notice a card arriving rather than polling for it.
+        "Features": "connector_features",
+        # Mapped but NOT constrained — see MICROSD_CONSTRAINTS. Digi-Key states
+        # it as '0.071" (1.80mm)', dual-unit, which is exactly the kind of string
+        # that needs `parametric::derive` to be taught a rule before a constraint
+        # can safely rest on it.
+        "Height Above Board": "height_mm",
+        "Number of Positions": "pin_count",
         # --- Battery ----------------------------------------------------------
         #
         # Mapped hopefully rather than observed: Digi-Key returns ZERO parametric
@@ -127,7 +182,8 @@ class DigikeyAdapter(Adapter):
     }
 
     def __init__(self, client_id: str, client_secret: str,
-                 host: str = "api.digikey.com", site: str = "NL", currency: str = "EUR"):
+                 host: str = "api.digikey.com", site: str = "NL", currency: str = "EUR",
+                 spent_today: int = 0):
         self._id = client_id
         self._secret = client_secret
         self.host = host
@@ -135,7 +191,15 @@ class DigikeyAdapter(Adapter):
         self.currency = currency
         self._bearer: str | None = None
         self._expires_at = 0.0
-        self.calls = 0
+        # Paced and budgeted through the shared throttle, like Mouser.
+        #
+        # This was missing and it cost a run: `throttle.py` was written for
+        # Mouser's 30/minute cap and only Mouser was wired to it, so Digi-Key
+        # made unpaced calls with no daily accounting and a sweep hit HTTP 429
+        # mid-run. Seven sweeps then failed at offset 0, correctly refusing to
+        # report a partial category — but the whole point of having a limiter was
+        # not to get there.
+        self.throttle = Throttle(self.name, spent_today=spent_today)
 
     # --- Adapter surface ------------------------------------------------
 
@@ -237,10 +301,19 @@ class DigikeyAdapter(Adapter):
         collected: list[dict] = []
         offset = 0
         expected: int | None = None
-        while len(collected) < limit:
+        # Clamp to the vendor's hard pagination window. Asking for more produced
+        # an HTTP 400 that aborted the sweep, so five declared sweeps returned
+        # nothing at all — correctly, since reporting the 300 already collected
+        # as the category would have been a lie, but the fix belongs here rather
+        # than in every caller's limit.
+        reachable = min(limit, SEARCH_MAX_WINDOW)
+        while len(collected) < reachable:
             body = {
                 "Keywords": phrase or "",
-                "Limit": min(SEARCH_PAGE, limit - len(collected)),
+                # Both terms clamped: the page size AND the remaining window, so
+                # `Offset + Limit` can never exceed 300.
+                "Limit": min(SEARCH_PAGE, reachable - len(collected),
+                             SEARCH_MAX_WINDOW - offset),
                 "Offset": offset,
             }
             if category:
@@ -258,9 +331,22 @@ class DigikeyAdapter(Adapter):
                 time.sleep(2.0 * (attempt + 1))
                 d = self._post("/products/v4/search/keyword", body)
             if "_http_error" in d:
+                code = d["_http_error"]
+                # Say what actually happened. A 4xx is not retried (repeating a
+                # malformed request only spends quota), so claiming "after 4
+                # retries" for a 400 sent me looking for a flaky endpoint when
+                # the request shape was simply wrong.
+                tried = (
+                    f"after {SEARCH_RETRIES} retries"
+                    if code >= 500
+                    else "rate limited — retried with Retry-After backoff and still refused; "
+                    "this is usually the DAILY cap, which no backoff can wait out"
+                    if code == 429
+                    else "not retried (4xx)"
+                )
                 raise RuntimeError(
                     f"Digi-Key keyword search failed at offset {offset}: HTTP "
-                    f"{d['_http_error']} after {SEARCH_RETRIES} retries: "
+                    f"{code} {tried}: "
                     f"{d.get('_detail','')[:160]}. {len(collected)} part(s) collected; reporting "
                     f"that as the category would be wrong."
                 )
@@ -273,9 +359,16 @@ class DigikeyAdapter(Adapter):
             offset += len(products)
             if expected is not None and offset >= expected:
                 break
-        if expected is not None and limit < expected:
-            print(f"  NOTE: limit={limit} caps a category of {expected} part(s) — "
-                  f"this is a SAMPLE, not the category.")
+        self.last_total = expected
+        if expected is not None and len(collected) < expected:
+            why = (
+                f"Digi-Key will not paginate past {SEARCH_MAX_WINDOW}"
+                if limit > SEARCH_MAX_WINDOW
+                else f"limit={limit}"
+            )
+            print(f"  NOTE: {why}, so this is {len(collected)} of {expected} part(s) — "
+                  f"a SAMPLE, not the category. Digi-Key ranks by relevance, so these are the "
+                  f"most relevant {len(collected)}; add another keyword angle to see more.")
         return [self._to_part(p) for p in collected]
 
     # --- Internals ------------------------------------------------------
@@ -366,6 +459,7 @@ class DigikeyAdapter(Adapter):
             # (//media.digikey.com/...) exactly as TME does, and a URL nobody can
             # open is not a datasheet link. Caught by the slice gate.
             datasheet_url=_absolute(p.get("DatasheetUrl")),
+            product_url=_absolute(p.get("ProductUrl")),
         )
 
     def _authenticate(self) -> None:
@@ -388,7 +482,7 @@ class DigikeyAdapter(Adapter):
             d = json.loads(r.read())
         self._bearer = d["access_token"]
         self._expires_at = time.monotonic() + float(d.get("expires_in", 600))
-        self.calls += 1
+        self.throttle.calls += 1
 
     def _headers(self) -> dict[str, str]:
         import time
@@ -406,25 +500,59 @@ class DigikeyAdapter(Adapter):
             "Accept": "application/json",
         }
 
-    def _get(self, path: str) -> dict:
-        req = urllib.request.Request(f"https://{self.host}{path}", headers=self._headers())
-        self.calls += 1
-        try:
-            with urllib.request.urlopen(req, timeout=45) as r:
-                return json.loads(r.read())
-        except urllib.error.HTTPError as e:
-            # A 404 for a part Digi-Key does not carry is an ANSWER.
-            return {"_http_error": e.code, "_detail": e.read().decode(errors="replace")[:300]}
+    @property
+    def calls(self) -> int:
+        """Calls made, read from the throttle so budget and log agree."""
+        return self.throttle.calls
 
-    def _post(self, path: str, body: dict) -> dict:
-        headers = {**self._headers(), "Content-Type": "application/json"}
-        req = urllib.request.Request(
-            f"https://{self.host}{path}", data=json.dumps(body).encode(), headers=headers,
-            method="POST",
-        )
-        self.calls += 1
-        try:
-            with urllib.request.urlopen(req, timeout=60) as r:
-                return json.loads(r.read())
-        except urllib.error.HTTPError as e:
-            return {"_http_error": e.code, "_detail": e.read().decode(errors="replace")[:300]}
+    def _retry_429(self, e) -> float | None:
+        """Backoff for a rate-limited call, or None if it must not be retried.
+
+        **429 is retryable and was not being retried.** The search path only
+        retried `>= 500`, so a rate-limited sweep died at offset 0 and the error
+        message even called it "not retried (4xx)" — true, and the wrong
+        behaviour. Mouser's adapter had honoured `Retry-After` from the start;
+        this is the same rule.
+        """
+        if e.code != 429:
+            return None
+        return self.throttle.backoff(0, e.headers.get("Retry-After"))
+
+    def _get(self, path: str, attempts: int = 3) -> dict:
+        for attempt in range(attempts):
+            self.throttle.acquire()
+            req = urllib.request.Request(f"https://{self.host}{path}", headers=self._headers())
+            try:
+                with urllib.request.urlopen(req, timeout=45) as r:
+                    self.throttle.note_headers(r.headers)
+                    return json.loads(r.read())
+            except urllib.error.HTTPError as e:
+                wait = self._retry_429(e)
+                if wait is not None and attempt + 1 < attempts:
+                    time.sleep(wait)
+                    continue
+                # A 404 for a part Digi-Key does not carry is an ANSWER.
+                return {"_http_error": e.code,
+                        "_detail": e.read().decode(errors="replace")[:300]}
+        return {"_http_error": 429, "_detail": "rate limited after retries"}
+
+    def _post(self, path: str, body: dict, attempts: int = 3) -> dict:
+        for attempt in range(attempts):
+            self.throttle.acquire()
+            headers = {**self._headers(), "Content-Type": "application/json"}
+            req = urllib.request.Request(
+                f"https://{self.host}{path}", data=json.dumps(body).encode(), headers=headers,
+                method="POST",
+            )
+            try:
+                with urllib.request.urlopen(req, timeout=60) as r:
+                    self.throttle.note_headers(r.headers)
+                    return json.loads(r.read())
+            except urllib.error.HTTPError as e:
+                wait = self._retry_429(e)
+                if wait is not None and attempt + 1 < attempts:
+                    time.sleep(wait)
+                    continue
+                return {"_http_error": e.code,
+                        "_detail": e.read().decode(errors="replace")[:300]}
+        return {"_http_error": 429, "_detail": "rate limited after retries"}
