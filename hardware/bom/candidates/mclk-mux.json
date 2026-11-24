@@ -98,16 +98,17 @@
       }
     },
     {
-      "mpn": "74LVC1G3157GW,125",
-      "manufacturer": "Nexperia USA Inc.",
+      "mpn": "74LVC1G3157GW",
+      "manufacturer": "Nexperia",
       "eu_sources": 1,
       "eu_stock": 40729,
       "unit_price_cents": 12,
-      "moq": 1,
+      "moq": 0,
       "lead_time_days": 140,
       "datasheet_url": "https://assets.nexperia.com/documents/data-sheet/74LVC1G3157.pdf",
       "vendors": [
-        "digikey"
+        "digikey",
+        "mouser"
       ],
       "attrs_raw": {
         "mounting": "SMD",
@@ -115,8 +116,8 @@
         "package": "6-TSSOP, SC-88, SOT-363",
         "ron_max_ohm": "10Ohm",
         "supplier_package": "6-TSSOP",
-        "moq": "1",
-        "order_multiple": "1"
+        "moq": "0",
+        "order_multiple": "0"
       }
     },
     {
@@ -4118,15 +4119,16 @@
     {
       "mpn": "SN74LVC1G3157DCKR",
       "manufacturer": "TEXAS INSTRUMENTS",
-      "eu_sources": 2,
-      "eu_stock": 902630,
+      "eu_sources": 3,
+      "eu_stock": 1433227,
       "unit_price_cents": 19,
       "moq": 1,
       "lead_time_days": 182,
       "datasheet_url": "https://www.ti.com/lit/ds/symlink/sn74lvc1g3157.pdf?ts=1728540283477&ref_url=https%253A%252F%252Fwww.ti.com%252Fproduct%252FSN74LVC1G3157",
       "vendors": [
         "tme",
-        "digikey"
+        "digikey",
+        "mouser"
       ],
       "attrs_raw": {
         "channels": "1",

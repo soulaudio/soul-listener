@@ -1098,15 +1098,16 @@
     },
     {
       "mpn": "ASDMB-24.576MHZ-LY-T",
-      "manufacturer": "Abracon LLC",
-      "eu_sources": 1,
-      "eu_stock": 979,
+      "manufacturer": "ABRACON",
+      "eu_sources": 2,
+      "eu_stock": 2967,
       "unit_price_cents": 392,
       "moq": 1,
       "lead_time_days": 182,
       "datasheet_url": "https://abracon.com/Oscillators/ASDMB.pdf",
       "vendors": [
-        "digikey"
+        "digikey",
+        "mouser"
       ],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -2414,7 +2415,8 @@
       "datasheet_url": "https://media.digikey.com/pdf/Data%20Sheets/Kyocera%20International/Z_Series_X_Type.pdf",
       "vendors": [
         "tme",
-        "digikey"
+        "digikey",
+        "mouser"
       ],
       "attrs_raw": {
         "frequency_hz": "24.576 MHz",

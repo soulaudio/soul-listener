@@ -821,6 +821,55 @@ const DAC_CONSTRAINTS: &[Constraint<'static>] = &[
 /// Stock figures are from the committed sourcing snapshot
 /// (`hardware/bom/snapshot.json`), not from here; these notes record *why* a
 /// candidate is where it is.
+/// Preferred parts whose single EU-distributor stocking is accepted, and why.
+///
+/// # Why a table and not a weakened gate
+///
+/// `preferred_parts_have_more_than_one_eu_source` offers three resolutions and
+/// the third is "accept single-sourcing explicitly, and record why" — which had
+/// no mechanism, so the only way to take it was to make the gate quieter. An
+/// exception that lives in the gate is invisible; an exception that lives here
+/// answers "which parts are we exposed on, and on whose word?" by being read.
+///
+/// # This list cannot rot
+///
+/// `accepted_single_sourcing_is_still_warranted` asserts that every entry is
+/// still a Preferred candidate AND still has fewer than two stocking EU
+/// distributors. So an entry that becomes untrue fails the build and must be
+/// deleted — the list shrinks on its own as sourcing improves, rather than
+/// quietly excusing a part that no longer needs excusing.
+///
+/// A reason is required, and is the audit record a reviewer reads.
+pub const SINGLE_SOURCE_ACCEPTED: &[(&str, &str)] = &[
+    (
+        "STM32H7A3ZIT6",
+        "Mouser's 8 units are the only EU stock of this part: Digi-Key and TME both read \
+         ZERO, though both list it Active at MOQ 1, so it is a shortage and not an \
+         end-of-life. Resolution (a) was checked rather than assumed — a 29-part Digi-Key \
+         sweep and a 50-part Mouser sweep of the H7A3/H7B3 range found NO 144-LQFP variant \
+         with stock (-ZIT6Q is 0/0 as well), and the alternate STM32H7B3ZIT6 is 0 at all \
+         three distributors, so there is no same-footprint answer to switch to. What does \
+         exist is STM32H7A3IIT6Q, the identical die and flash in 176-LQFP with 2339 + 1770 \
+         across both distributors; it is recorded as an Evaluating candidate because taking \
+         it is a footprint change, which is a board decision rather than a sourcing one. \
+         Accepted meanwhile: 8 units covers a 5-board prototype run, and the real mitigation \
+         is either fetching a fourth distributor or committing to the 176-pin package.",
+    ),
+    (
+        "CS43131-CNZ",
+        "Digi-Key is the only distributor STOCKING it (347 at MOQ 1, Active); Mouser carries \
+     both -CNZ and -CNZR at zero stock, reel-only (MOQ 490 and 4000), and TME does not \
+     carry Cirrus at all. Accepted rather than resolved because every alternative is \
+     worse: the one DAC with two stocked sources (CS43198-CNZ, Digi-Key 346 + Mouser 450) \
+     omits the integrated ground-centred Class-H amp that this requirement is FOR, so \
+     swapping to it is a board change, not a second source. Only three distributors have \
+     been fetched — Farnell, Arrow and RS all carry Cirrus and are the realistic second \
+     stocking source; adding one is the way this entry gets deleted rather than argued \
+     with. Exposure is a build stop if Digi-Key runs dry, mitigated by the 490-piece reel \
+     being orderable from Mouser on a 0-day lead.",
+    ),
+];
+
 const PARTS: &[PartReq] = &[
     PartReq {
         id: "dac",
@@ -830,10 +879,17 @@ const PARTS: &[PartReq] = &[
             Candidate {
                 mpn: "CS43131-CNZ",
                 preference: Preference::Preferred,
-                note: "the -CNZ suffix is deliberate, and the reason is DEPTH rather than \
-                       availability: -CNZ is stocked at both Mouser EU and Digi-Key EU, while \
-                       -CNZR (tape and reel, same die) is stocked only at Digi-Key. Either can \
-                       be built; only one has a second source",
+                note: "chosen on audio merit: the integrated ground-centred Class-H amp is \
+                       the reason this requirement exists, and the only alternate with two \
+                       stocked sources (CS43198) does not have it. CORRECTION 2026-11-24: an \
+                       earlier note claimed the -CNZ suffix was preferred because it was \
+                       'stocked at both Mouser EU and Digi-Key EU' while -CNZR was Digi-Key \
+                       only. The Mouser API refutes both halves — Mouser carries -CNZ and \
+                       -CNZR at ZERO stock, reel-only at MOQ 490 and 4000 — and at Digi-Key \
+                       both variants are MOQ 1 at the same EUR 16.44, so the suffix has no \
+                       measured sourcing consequence. The 141-unit Mouser figure the old note \
+                       rested on was hand-researched and never verified. Single EU stocking \
+                       source, accepted in SINGLE_SOURCE_ACCEPTED",
             },
             Candidate {
                 mpn: "CS43198-CNZ",
@@ -1048,8 +1104,25 @@ const PARTS: &[PartReq] = &[
             Candidate {
                 mpn: "STM32H7B3ZIT6",
                 preference: Preference::Alternate,
-                note: "same family and map, higher flash — a pin-compatible fallback if H7A3 \
-                       supply tightens",
+                note: "same family and map, higher flash, pin-compatible. CORRECTION \
+                       2026-11-24: this was described as the fallback 'if H7A3 supply \
+                       tightens', and it cannot play that role today — it is ZERO stock at \
+                       Digi-Key, Mouser and TME, as is -ZIT6Q. A pin-compatible part nobody \
+                       stocks is a design fallback, not a supply one",
+            },
+            Candidate {
+                mpn: "STM32H7A3IIT6Q",
+                preference: Preference::Evaluating,
+                note: "the SAME die and the same 2 MB flash as the preferred part in a \
+                       176-LQFP instead of 144, so every memory figure this spec depends on \
+                       (1024 KB AXI-SRAM, 128 KB DTCM, 280 MHz) is unchanged. Found by \
+                       sweeping for a better-stocked variant when the 144-pin part went \
+                       single-sourced: 2339 at Digi-Key and 1770 at Mouser, both MOQ 1, both \
+                       Active — the only H7A3 with 2 MB flash that two EU distributors \
+                       actually stock. Evaluating and NOT Alternate because 144 -> 176 pins \
+                       is a footprint and routing change, and the Q suffix adds an internal \
+                       SMPS whose external parts differ; it is a board decision, recorded \
+                       here with the data rather than taken by the sourcing pipeline",
             },
             Candidate {
                 mpn: "STM32H743ZIT6",

@@ -55,7 +55,20 @@ CREATE TABLE IF NOT EXISTS parts (
     id            INTEGER PRIMARY KEY,
     vendor        TEXT NOT NULL,
     vendor_pn     TEXT NOT NULL,
-    mpn           TEXT NOT NULL,
+    mpn           TEXT NOT NULL,          -- the vendor's own spelling, verbatim
+    -- The identifier the SPEC asked for, when this row came from a named lookup.
+    --
+    -- Vendors decorate MPNs differently for the same die: Digi-Key returns the
+    -- mux as '74LVC1G3157GW,125' where Mouser returns '74LVC1G3157GW'. Grouping
+    -- by `mpn` made those two PHANTOM PARTS — the datasheet sat on one and the
+    -- gate read the other, and source depth never joined, so a part stocked by
+    -- two distributors counted as single-sourced.
+    --
+    -- Safe as a grouping key because every vendor is queried with the SAME
+    -- identifier list (`spec_mpns()`, the snapshot's own keys), so this column
+    -- holds the same string across vendors by construction. NULL for swept
+    -- parts, which were never asked for by name.
+    queried_as    TEXT,
     manufacturer  TEXT NOT NULL,
     description   TEXT,
     category      TEXT,                    -- the spec requirement id, if known
@@ -99,6 +112,19 @@ class Catalogue:
         self.conn = sqlite3.connect(path)
         self.conn.execute("PRAGMA foreign_keys = ON")
         self.conn.executescript(SCHEMA)
+        self._migrate()
+
+    def _migrate(self) -> None:
+        """Add columns a `CREATE TABLE IF NOT EXISTS` cannot add to a live table.
+
+        The catalogue is rebuildable and gitignored, so dropping it would also
+        work — but a rebuild costs distributor quota, and Mouser's budget is 1000
+        calls a day. Migrating in place keeps a schema change from spending it.
+        """
+        have = {r[1] for r in self.conn.execute("PRAGMA table_info(parts)")}
+        if "queried_as" not in have:
+            self.conn.execute("ALTER TABLE parts ADD COLUMN queried_as TEXT")
+            self.conn.commit()
 
     def start_run(self, vendor: str, mode: str, target: str, started_at: str) -> int:
         cur = self.conn.execute(
@@ -126,12 +152,19 @@ class Catalogue:
 
         cur = self.conn.execute(
             """
-            INSERT INTO parts (vendor, vendor_pn, mpn, manufacturer, description, category,
+            INSERT INTO parts (vendor, vendor_pn, mpn, queried_as, manufacturer,
+                               description, category,
                                stock, moq, order_multiple, lead_time_days, lifecycle_raw,
                                status_raw, datasheet_url, run_id)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
             ON CONFLICT (vendor, vendor_pn) DO UPDATE SET
-                mpn=excluded.mpn, manufacturer=excluded.manufacturer,
+                mpn=excluded.mpn,
+                -- COALESCE, not overwrite: a later category sweep re-touches a
+                -- row that a named lookup already identified, and it arrives
+                -- with queried_as=NULL. Overwriting would silently un-identify
+                -- the part and split its offers again.
+                queried_as=COALESCE(excluded.queried_as, parts.queried_as),
+                manufacturer=excluded.manufacturer,
                 description=excluded.description,
                 category=COALESCE(excluded.category, parts.category),
                 stock=excluded.stock, moq=excluded.moq,
@@ -141,7 +174,8 @@ class Catalogue:
                 datasheet_url=excluded.datasheet_url, run_id=excluded.run_id
             """,
             (
-                part.vendor, part.vendor_pn, part.mpn, part.manufacturer, part.description,
+                part.vendor, part.vendor_pn, part.mpn, part.queried_as,
+                part.manufacturer, part.description,
                 category, part.stock, part.moq, part.order_multiple, part.lead_time_days,
                 part.lifecycle_raw, _json.dumps(part.status_raw), part.datasheet_url, run_id,
             ),
@@ -183,15 +217,15 @@ class Catalogue:
         """
         rows = self.conn.execute(
             """
-            SELECT mpn,
+            SELECT COALESCE(queried_as, mpn)             AS key,
                    MIN(manufacturer)                     AS manufacturer,
                    COUNT(DISTINCT CASE WHEN stock > 0 THEN vendor END) AS eu_sources,
                    SUM(stock)                            AS eu_stock,
                    GROUP_CONCAT(DISTINCT vendor)         AS vendors
             FROM parts
             WHERE category = ?
-            GROUP BY mpn
-            ORDER BY mpn
+            GROUP BY key
+            ORDER BY key
             """,
             (category,),
         ).fetchall()
@@ -210,7 +244,7 @@ class Catalogue:
                 """
                 SELECT a.name, p.vendor, a.value_raw
                 FROM attributes a JOIN parts p ON p.id = a.part_id
-                WHERE p.mpn = ? AND p.category = ?
+                WHERE COALESCE(p.queried_as, p.mpn) = ? AND p.category = ?
                 """,
                 (mpn, category),
             ):
@@ -233,7 +267,7 @@ class Catalogue:
                 """
                 SELECT b.unit_price
                 FROM price_breaks b JOIN parts p ON p.id = b.part_id
-                WHERE p.mpn = ? AND p.category = ?
+                WHERE COALESCE(p.queried_as, p.mpn) = ? AND p.category = ?
                 ORDER BY b.qty ASC
                 LIMIT 1
                 """,
@@ -241,7 +275,7 @@ class Catalogue:
             ).fetchone()
             price = price[0] if price else None
             lead = self.conn.execute(
-                "SELECT MAX(lead_time_days) FROM parts WHERE mpn=? AND category=?",
+                "SELECT MAX(lead_time_days) FROM parts\n                 WHERE COALESCE(queried_as, mpn)=? AND category=?",
                 (mpn, category),
             ).fetchone()[0]
             # MOQ and order multiple are exported as ATTRIBUTES so the
@@ -255,7 +289,7 @@ class Catalogue:
             moq, mult = self.conn.execute(
                 """
                 SELECT MIN(COALESCE(moq, 1)), MIN(COALESCE(order_multiple, 1))
-                FROM parts WHERE mpn=? AND category=?
+                FROM parts WHERE COALESCE(queried_as, mpn)=? AND category=?
                 """,
                 (mpn, category),
             ).fetchone()
@@ -263,7 +297,8 @@ class Catalogue:
             ds = self.conn.execute(
                 """
                 SELECT MIN(datasheet_url) FROM parts
-                WHERE mpn=? AND category=? AND datasheet_url IS NOT NULL
+                WHERE COALESCE(queried_as, mpn)=? AND category=?
+                  AND datasheet_url IS NOT NULL
                 """,
                 (mpn, category),
             ).fetchone()[0]
@@ -292,6 +327,30 @@ class Catalogue:
             for c in conflicts[:10]:
                 print(f"      {c}")
         return out
+
+    def calls_today(self, today: str) -> dict[str, int]:
+        """API calls each vendor has already spent today, by vendor.
+
+        Mouser's cap is 1000 calls per CALENDAR DAY, which no in-process counter
+        can track: a refresh gets run several times a day and each process would
+        start from zero, so the cap would be discovered by being refused
+        mid-sweep — and a refused call looks like a vendor that does not carry
+        the part.
+
+        `started_at` is stored as a date string by the runner, so a prefix match
+        is the right comparison and also tolerates a fuller timestamp if one is
+        ever written.
+        """
+        rows = self.conn.execute(
+            """
+            SELECT vendor, COALESCE(SUM(api_calls), 0)
+            FROM fetch_runs
+            WHERE started_at LIKE ? || '%'
+            GROUP BY vendor
+            """,
+            (today,),
+        ).fetchall()
+        return {vendor: int(n or 0) for vendor, n in rows}
 
     def summary(self) -> list[tuple]:
         return self.conn.execute(

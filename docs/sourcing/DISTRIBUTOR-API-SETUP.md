@@ -104,12 +104,58 @@ delivery country before registering, because it is baked into which subsidiary h
 1. Complete the **Search API Request Form** (linked from `mouser.com/api-search/`).
 2. The key arrives by email.
 
-Free tier: **1,000 requests/day, 30 requests/minute.** The key is passed in the request body or as
-`apiKey`, depending on endpoint.
+Free tier: **1,000 requests/day, 30 requests/minute** — the tightest caps of the three by an order
+of magnitude, which is why `tools/sourcing/throttle.py` exists. The key is a 36-character UUID
+passed as `?apiKey=`; there is no OAuth step and no token to refresh.
 
 ```sh
 export MOUSER_SEARCH_API_KEY=...
 ```
+
+### What Mouser actually contributes: commerce, not parametrics
+
+Measured on 2026-11-24, across three named parts and a 21-part in-stock sweep, on **both** the
+`search/partnumber` and `search/keyword` endpoints: Mouser's `ProductAttributes` contains exactly two
+names, `Packaging` and `Standard Pack Qty`. Not one parametric field.
+
+The parametric data exists, but only inside `Description`, unlabelled and positional:
+
+```
+Standard Clock Oscillators MultiVolt ECS-2520MVLC,Active,XO (Standard),22.5792MHz,
+Enable/Disable,CMOS,1.8V, 2.5V, 3.3V, 50ppm,-40 C   85 C,Surface Mount,4-SMD,
+```
+
+Frequency, supply, stability, temperature and mounting are all there with no field names, in an
+order that varies by product category, and one value (`1.8V, 2.5V, 3.3V`) contains the separator.
+Splitting that and assigning meaning by index is value interpretation by position — forbidden at the
+adapter seam, and wrong in the invisible direction, since a shifted field maps `50ppm` onto a supply
+voltage and the constraint then *passes* on a fabricated number.
+
+So `MouserAdapter.ATTR_MAP` is empty **by measurement**, and Mouser joins as a commerce source:
+
+| contributes | does not contribute |
+|---|---|
+| stocked-source depth (`eu_source_depth`) | any parametric attribute |
+| qty-1 price and MOQ (`candidates()` takes `MIN` across vendors) | lifecycle status (always `null`) |
+| lead time, datasheet URLs, RoHS claims | — |
+
+`mouser_contributes_no_parametrics_and_never_parses_description` pins this, because "Mouser returns
+no attributes" looks like an unfinished adapter and the obvious fix is the wrong one.
+
+### Mouser runs the verification path only
+
+It is not in `SWEEPS`. A part discovered only at Mouser arrives with no attributes and so can never
+pass a filter — sweeping would spend the tightest daily budget to produce unjudgeable rows. The 18
+named lookups cost 18–26 calls and about 40 seconds.
+
+### Expect transient 5xx, and never read one as absence
+
+Mouser returns `503 Service Unavailable` in clusters that outlast four retries, and **the affected
+parts rotate between runs**, which is how you can tell it is the server and not the part. The adapter
+keeps `unresolved` strictly separate from "not carried" and writes nothing for an unresolved part, so
+the previous run's value stands rather than being replaced by a zero that reads as a shortage
+forever. Re-running clears them. Note also that a read timeout arrives as a bare `TimeoutError`, not
+a `URLError`, so the retry clause catches `OSError`.
 
 ## Digi-Key — `developer.digikey.com`
 
@@ -149,21 +195,26 @@ export DIGIKEY_API_HOST=sandbox-api.digikey.com   # then api.digikey.com
 
 | stage | state |
 |---|---|
-| vendor field plumbing (which JSON key is the MPN) | **needs one real response per vendor** |
+| vendor field plumbing (which JSON key is the MPN) | done for TME, Digi-Key and Mouser, each written against a recorded response under `hardware/bom/responses/` |
 | value parsing — units, ranges, booleans | done: `dap-hw-spec::parametric`, 12 tests |
 | filter with reasons | done: `dap-hw-spec::select`, 8 tests |
 | rank with stated policy | done |
 | candidates → spec → firmware gates | done |
 
-The remaining per-vendor work is field renaming, and it should be written against a **recorded**
+All three distributors are now implemented. The sequence below is what each one followed, and is
+what a fourth (Farnell, RS, Arrow) should follow — field renaming written against a **recorded**
 response rather than from documentation. Mouser's Swagger spec is not retrievable unauthenticated
 (it 302s into a geo-context setter), and transcribing field names from prose is exactly the kind of
-guess that produces a parser which looks right and silently maps nothing.
+guess that produces a parser which looks right and silently maps nothing. It did, once: Digi-Key's
+`Function` field holds `'Standby (Power Down)'` rather than a part type, and mapping it rejected
+correct parts as passive quartz.
 
-So the sequence once credentials exist:
+The sequence:
 
-1. Make one request per vendor for a part we already know (`CS43131-CNZ` is a good probe — it is in
-   the snapshot with hand-researched stock figures, so the response can be checked against something).
+1. Make one request per vendor for a part we already know (`CS43131-CNZ` was the probe — it was in
+   the snapshot with hand-researched stock figures, so the response could be checked against
+   something. That check paid for itself immediately: the hand-researched "141 in stock at Mouser"
+   was wrong, and the real figure is **zero, reel-only at MOQ 490**).
 2. Commit the response as a fixture under `hardware/bom/responses/`, redacted of anything
    account-specific.
 3. Write the field mapping against that fixture, with a test.

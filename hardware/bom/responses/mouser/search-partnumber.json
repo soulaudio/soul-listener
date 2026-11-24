@@ -1,0 +1,278 @@
+{
+ "SN74LVC1G3157DCKR": {
+  "Errors": [],
+  "SearchResults": {
+   "NumberOfResult": 1,
+   "Parts": [
+    {
+     "Availability": "530597 In Stock",
+     "DataSheetUrl": "",
+     "Description": "Analogue Switch ICs SPDT Analog Switch",
+     "FactoryStock": "0",
+     "ImagePath": "https://www.mouser.com/images/texasinstruments/images/ITP_TI_SC70-6_DCK_t.jpg",
+     "Category": "Analogue Switch ICs",
+     "LeadTime": "182 Days",
+     "LifecycleStatus": null,
+     "Manufacturer": "Texas Instruments",
+     "ManufacturerPartNumber": "SN74LVC1G3157DCKR",
+     "Min": "1",
+     "Mult": "1",
+     "MouserPartNumber": "595-SN74LVC1G3157DCK",
+     "ProductAttributes": [
+      {
+       "AttributeName": "Packaging",
+       "AttributeValue": "Reel"
+      },
+      {
+       "AttributeName": "Packaging",
+       "AttributeValue": "Cut Tape"
+      },
+      {
+       "AttributeName": "Packaging",
+       "AttributeValue": "MouseReel",
+       "AttributeCost": "A MouseReel\u2122 fee of 5,00 \u20ac will be added and calculated in your basket. All MouseReel\u2122 orders are non-cancellable and non-returnable."
+      },
+      {
+       "AttributeName": "Standard Pack Qty",
+       "AttributeValue": "3000"
+      }
+     ],
+     "PriceBreaks": [
+      {
+       "Quantity": 1,
+       "Price": "0,213 \u20ac",
+       "RawPrice": 0.213,
+       "Currency": "EUR"
+      },
+      {
+       "Quantity": 10,
+       "Price": "0,145 \u20ac",
+       "RawPrice": 0.145,
+       "Currency": "EUR"
+      },
+      {
+       "Quantity": 25,
+       "Price": "0,128 \u20ac",
+       "RawPrice": 0.128,
+       "Currency": "EUR"
+      },
+      {
+       "Quantity": 100,
+       "Price": "0,11 \u20ac",
+       "RawPrice": 0.11,
+       "Currency": "EUR"
+      },
+      {
+       "Quantity": 250,
+       "Price": "0,101 \u20ac",
+       "RawPrice": 0.101,
+       "Currency": "EUR"
+      },
+      {
+       "Quantity": 500,
+       "Price": "0,096 \u20ac",
+       "RawPrice": 0.096,
+       "Currency": "EUR"
+      },
+      {
+       "Quantity": 1000,
+       "Price": "0,091 \u20ac",
+       "RawPrice": 0.091,
+       "Currency": "EUR"
+      },
+      {
+       "Quantity": 3000,
+       "Price": "0,085 \u20ac",
+       "RawPrice": 0.085,
+       "Currency": "EUR"
+      }
+     ],
+     "AlternatePackagings": null,
+     "ProductDetailUrl": "https://cz.mouser.com/en/ProductDetail/Texas-Instruments/SN74LVC1G3157DCKR?qs=PVVDbbWpW3J21wbz0QWbxg%3D%3D",
+     "Reeling": true,
+     "ROHSStatus": "RoHS Compliant",
+     "SuggestedReplacement": "",
+     "MultiSimBlue": 0,
+     "UnitWeightKg": {
+      "UnitWeight": 2.5e-06
+     },
+     "AvailabilityInStock": "530597",
+     "AvailabilityOnOrder": [],
+     "InfoMessages": [],
+     "SurchargeMessages": null,
+     "ProductCompliance": [
+      {
+       "ComplianceName": "TARIC",
+       "ComplianceValue": "8542399000"
+      },
+      {
+       "ComplianceName": "CNHTS",
+       "ComplianceValue": "8542399000"
+      },
+      {
+       "ComplianceName": "CAHTS",
+       "ComplianceValue": "8542390000"
+      },
+      {
+       "ComplianceName": "USHTS",
+       "ComplianceValue": "8542390090"
+      },
+      {
+       "ComplianceName": "JPHTS",
+       "ComplianceValue": "8542390990"
+      },
+      {
+       "ComplianceName": "MXHTS",
+       "ComplianceValue": "8542399999"
+      },
+      {
+       "ComplianceName": "ECCN",
+       "ComplianceValue": "EAR99"
+      }
+     ],
+     "TradeCompliance": [
+      {
+       "ComplianceName": "Country of Origin",
+       "ComplianceValue": "China",
+       "ComplianceDescription": "The country in which a product was manufactured, produced or substantially transformed."
+      },
+      {
+       "ComplianceName": "Assembly Country of Origin",
+       "ComplianceValue": "China",
+       "ComplianceDescription": "The country in which the final product is physically assembled from its components."
+      },
+      {
+       "ComplianceName": "Country of Diffusion",
+       "ComplianceValue": null,
+       "ComplianceDescription": "The country in which the wafer used in a semiconductor was made."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "STM32H7A3ZIT6": {
+  "Errors": [],
+  "SearchResults": {
+   "NumberOfResult": 1,
+   "Parts": [
+    {
+     "Availability": "8 In Stock",
+     "DataSheetUrl": "",
+     "Description": "ARM Microcontrollers - MCU High-performance & DSP DP-FPU, Arm Cortex-M7 MCU 2MBytes of Flash 1376 KB SRAM,",
+     "FactoryStock": "0",
+     "ImagePath": "https://www.mouser.com/images/stmicroelectronics/images/LQFP_144_SPL.jpg",
+     "Category": "ARM Microcontrollers - MCU",
+     "LeadTime": "364 Days",
+     "LifecycleStatus": null,
+     "Manufacturer": "STMicroelectronics",
+     "ManufacturerPartNumber": "STM32H7A3ZIT6",
+     "Min": "1",
+     "Mult": "1",
+     "MouserPartNumber": "511-STM32H7A3ZIT6",
+     "ProductAttributes": [
+      {
+       "AttributeName": "Packaging",
+       "AttributeValue": "Tray"
+      },
+      {
+       "AttributeName": "Standard Pack Qty",
+       "AttributeValue": "360"
+      }
+     ],
+     "PriceBreaks": [
+      {
+       "Quantity": 1,
+       "Price": "13,52 \u20ac",
+       "RawPrice": 13.52,
+       "Currency": "EUR"
+      },
+      {
+       "Quantity": 10,
+       "Price": "11,61 \u20ac",
+       "RawPrice": 11.61,
+       "Currency": "EUR"
+      },
+      {
+       "Quantity": 25,
+       "Price": "10,19 \u20ac",
+       "RawPrice": 10.19,
+       "Currency": "EUR"
+      },
+      {
+       "Quantity": 100,
+       "Price": "9,87 \u20ac",
+       "RawPrice": 9.87,
+       "Currency": "EUR"
+      },
+      {
+       "Quantity": 250,
+       "Price": "9,83 \u20ac",
+       "RawPrice": 9.83,
+       "Currency": "EUR"
+      },
+      {
+       "Quantity": 360,
+       "Price": "9,16 \u20ac",
+       "RawPrice": 9.16,
+       "Currency": "EUR"
+      }
+     ],
+     "AlternatePackagings": null,
+     "ProductDetailUrl": "https://cz.mouser.com/en/ProductDetail/STMicroelectronics/STM32H7A3ZIT6?qs=xZ%2FP%252Ba9zWqZE%252B9TFQxqASA%3D%3D",
+     "Reeling": false,
+     "ROHSStatus": "RoHS Compliant",
+     "SuggestedReplacement": "",
+     "MultiSimBlue": 0,
+     "UnitWeightKg": {
+      "UnitWeight": 0.001315
+     },
+     "AvailabilityInStock": "8",
+     "AvailabilityOnOrder": [
+      {
+       "Quantity": 3960,
+       "Date": "2027-02-08T00:00:00"
+      }
+     ],
+     "InfoMessages": [],
+     "SurchargeMessages": null,
+     "ProductCompliance": [
+      {
+       "ComplianceName": "CNHTS",
+       "ComplianceValue": "8542319092"
+      },
+      {
+       "ComplianceName": "CAHTS",
+       "ComplianceValue": "8542310000"
+      },
+      {
+       "ComplianceName": "USHTS",
+       "ComplianceValue": "8542310025"
+      },
+      {
+       "ComplianceName": "ECCN",
+       "ComplianceValue": "3A991.a.2"
+      }
+     ],
+     "TradeCompliance": [
+      {
+       "ComplianceName": "Country of Origin",
+       "ComplianceValue": "Philippines",
+       "ComplianceDescription": "The country in which a product was manufactured, produced or substantially transformed."
+      },
+      {
+       "ComplianceName": "Assembly Country of Origin",
+       "ComplianceValue": "Not available",
+       "ComplianceDescription": "The country in which the final product is physically assembled from its components."
+      },
+      {
+       "ComplianceName": "Country of Diffusion",
+       "ComplianceValue": "Not available",
+       "ComplianceDescription": "The country in which the wafer used in a semiconductor was made."
+      }
+     ]
+    }
+   ]
+  }
+ }
+}

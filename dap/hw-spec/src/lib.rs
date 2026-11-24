@@ -314,9 +314,16 @@ pub enum Preference {
 /// One orderable candidate for a requirement.
 #[derive(Debug, Clone, Copy)]
 pub struct Candidate {
-    /// Manufacturer part number, exactly as orderable. The suffix matters:
-    /// CS43131-CNZ is stocked in EU, CS43131-CNZR (tape and reel) is not stocked
-    /// at Mouser — a distinction invisible in prose and fatal in a BOM.
+    /// Manufacturer part number, exactly as orderable — the packaging suffix is
+    /// part of the identifier, not decoration, and a BOM that drops it is not
+    /// orderable.
+    ///
+    /// This comment used to justify that with "CS43131-CNZ is stocked in EU,
+    /// CS43131-CNZR (tape and reel) is not stocked at Mouser". Measured against
+    /// the Mouser API on 2026-11-24, Mouser stocks NEITHER — both are reel-only
+    /// at zero on hand — so that particular pair is not an example of anything.
+    /// The suffix still matters: Digi-Key indexes the mux as
+    /// `74LVC1G3157GW,125` and a bare-MPN lookup 404s on it.
     pub mpn: &'static str,
     pub preference: Preference,
     pub note: &'static str,

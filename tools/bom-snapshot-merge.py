@@ -83,11 +83,17 @@ def main() -> int:
                 FROM parts
                 WHERE vendor = ?
                   AND (mpn = ? COLLATE NOCASE OR vendor_pn = ? COLLATE NOCASE
-                       OR mpn LIKE ? COLLATE NOCASE)
+                       OR mpn LIKE ? COLLATE NOCASE
+                       -- The identifier the lookup ASKED for. The LIKE above
+                       -- catches Digi-Key's ',125' packaging suffix, but only
+                       -- suffixes; `queried_as` is exact and covers any vendor
+                       -- spelling, including TME indexing a cell under its own
+                       -- symbol rather than the manufacturer PN.
+                       OR queried_as = ? COLLATE NOCASE)
                 ORDER BY stock DESC
                 LIMIT 1
                 """,
-                (vendor, mpn, mpn, mpn + ",%"),
+                (vendor, mpn, mpn, mpn + ",%", mpn),
             ).fetchone()
 
             if row is None:

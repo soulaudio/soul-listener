@@ -2211,17 +2211,49 @@
       }
     },
     {
+      "mpn": "STM32H7A3IIT6Q",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 2,
+      "eu_stock": 4109,
+      "unit_price_cents": 1756,
+      "moq": 1,
+      "lead_time_days": 210,
+      "datasheet_url": "https://www.st.com/resource/en/datasheet/stm32h7a3ii.pdf",
+      "vendors": [
+        "digikey",
+        "mouser",
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "280MHz",
+        "cpu_core": "Cortex-M7",
+        "flash_bytes": "2MB (2M x 8)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "176-LQFP",
+        "sram_bytes": "1.4M x 8",
+        "supplier_package": "176-LQFP (24x24)",
+        "gpio_count": "128",
+        "manufacturer_name": "STMicroelectronics",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.62...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
       "mpn": "STM32H7A3ZIT6",
       "manufacturer": "STMicroelectronics",
-      "eu_sources": 0,
-      "eu_stock": 0,
+      "eu_sources": 1,
+      "eu_stock": 8,
       "unit_price_cents": 1300,
       "moq": 1,
       "lead_time_days": 364,
       "datasheet_url": "https://www.st.com/resource/en/datasheet/stm32h7a3zi.pdf",
       "vendors": [
         "tme",
-        "digikey"
+        "digikey",
+        "mouser"
       ],
       "attrs_raw": {
         "core_clock_hz": "280MHz",
@@ -2251,7 +2283,8 @@
       "datasheet_url": "https://www.st.com/resource/en/datasheet/stm32h7b3vi.pdf",
       "vendors": [
         "tme",
-        "digikey"
+        "digikey",
+        "mouser"
       ],
       "attrs_raw": {
         "core_clock_hz": "280MHz",

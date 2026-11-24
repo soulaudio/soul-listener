@@ -555,7 +555,8 @@
       "datasheet_url": "https://abracon.com/Oscillators/ASV.pdf",
       "vendors": [
         "tme",
-        "digikey"
+        "digikey",
+        "mouser"
       ],
       "attrs_raw": {
         "frequency_hz": "22.5792 MHz",
@@ -656,14 +657,15 @@
     {
       "mpn": "CCHD-957-25-22.5792",
       "manufacturer": "Crystek Corporation",
-      "eu_sources": 1,
-      "eu_stock": 67,
+      "eu_sources": 2,
+      "eu_stock": 126,
       "unit_price_cents": 2924,
       "moq": 1,
-      "lead_time_days": 63,
+      "lead_time_days": 84,
       "datasheet_url": "https://www.crystek.com/specification/clock/CCHD-957.pdf",
       "vendors": [
-        "digikey"
+        "digikey",
+        "mouser"
       ],
       "attrs_raw": {
         "body_size": "0.559\" L x 0.360\" W (14.20mm x 9.14mm)",
@@ -677,7 +679,7 @@
         "part_type": "oscillator",
         "supply_mv": "3.3V",
         "moq": "1",
-        "order_multiple": "25"
+        "order_multiple": "1"
       }
     },
     {
@@ -1007,7 +1009,8 @@
       "datasheet_url": "https://media.digikey.com/pdf/Data%20Sheets/Kyocera%20International/Z_Series_X_Type.pdf",
       "vendors": [
         "tme",
-        "digikey"
+        "digikey",
+        "mouser"
       ],
       "attrs_raw": {
         "frequency_hz": "22.5792 MHz",

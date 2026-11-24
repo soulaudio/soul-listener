@@ -41,11 +41,11 @@ class _Unavailable(Adapter):
         )
 
 
-class MouserAdapter(_Unavailable):
-    name = "mouser"
-    display_name = "Mouser Electronics"
-    warehouse = "DE"
-    needs = (
-        "MOUSER_SEARCH_API_KEY, plus one recorded response to write the field mapping "
-        "against — the Swagger spec is not retrievable unauthenticated"
-    )
+# Mouser graduated out of this module on 2026-11-24: a key arrived, three parts
+# and a 21-part sweep were recorded, and `adapters/mouser.py` was written against
+# those responses. The measured finding was that Mouser publishes NO parametric
+# attributes at all, so it joined as a commerce source — see that module.
+#
+# `_Unavailable` stays because the pattern is the point: the next distributor
+# (Farnell, RS, Arrow) starts here, reporting what it needs, and the pipeline
+# treats an unavailable vendor as a normal partial run.
