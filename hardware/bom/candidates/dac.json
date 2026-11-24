@@ -219,7 +219,7 @@
     },
     {
       "mpn": "CS43131-CNZ",
-      "manufacturer": "Cirrus Logic Inc.",
+      "manufacturer": "Cirrus Logic",
       "eu_sources": 1,
       "eu_stock": 347,
       "unit_price_cents": 1644,
@@ -227,7 +227,8 @@
       "lead_time_days": 140,
       "datasheet_url": "https://statics.cirrus.com/pubs/proDatasheet/CS43131_DS1155F2.pdf",
       "vendors": [
-        "digikey"
+        "digikey",
+        "mouser"
       ],
       "attrs_raw": {
         "channels": "2",
@@ -300,15 +301,16 @@
     },
     {
       "mpn": "CS43198-CNZ",
-      "manufacturer": "Cirrus Logic Inc.",
-      "eu_sources": 1,
-      "eu_stock": 346,
+      "manufacturer": "Cirrus Logic",
+      "eu_sources": 2,
+      "eu_stock": 796,
       "unit_price_cents": 1615,
       "moq": 1,
       "lead_time_days": 140,
       "datasheet_url": "https://statics.cirrus.com/pubs/proDatasheet/CS43198_F1.pdf",
       "vendors": [
-        "digikey"
+        "digikey",
+        "mouser"
       ],
       "attrs_raw": {
         "channels": "2",
@@ -322,7 +324,7 @@
         "supply_digital_mv": "1.66V ~ 1.94V",
         "supply_mv": "1.66V ~ 1.94V",
         "moq": "1",
-        "order_multiple": "490"
+        "order_multiple": "1"
       }
     },
     {

@@ -47,9 +47,24 @@ def load_env() -> dict[str, str]:
 
 
 def build_adapters(env: dict[str, str]):
+    # Mouser's daily cap is 1000 calls, so what it has already spent TODAY is
+    # part of its construction. An in-process counter starts at zero every run
+    # and the fourth refresh of the morning would discover the cap by being
+    # refused; `fetch_runs.api_calls` has recorded it all along.
+    spent = {}
+    try:
+        spent = Catalogue(DB_PATH).calls_today(time.strftime("%Y-%m-%d"))
+    except Exception:
+        # A missing or unreadable catalogue must not stop a fetch — it is the
+        # rebuildable half of the two-tier store. Worst case the budget starts
+        # from zero, which is what the old behaviour was everywhere.
+        pass
     return [
         TmeAdapter(env.get("TME_TOKEN", ""), env.get("TME_APP_SECRET", "")),
-        MouserAdapter(),
+        MouserAdapter(
+            env.get("MOUSER_SEARCH_API_KEY", ""),
+            spent_today=spent.get("mouser", 0),
+        ),
         DigikeyAdapter(
             env.get("DIGIKEY_CLIENT_ID", ""),
             env.get("DIGIKEY_CLIENT_SECRET", ""),
@@ -132,8 +147,16 @@ def cmd_fetch(args) -> int:
                 ),
                 None,
             )
+            # An adapter may report a part it could not RESOLVE — the lookup
+            # failed — which is a different fact from the vendor not carrying it.
+            # Printing both as "not carried" would contradict the adapter's own
+            # warning two lines earlier, and "not carried" is the verdict that
+            # gets a part written off.
+            unresolved = dict(getattr(a, "unresolved", []) or [])
             if hit:
                 print(f"  {m:<26} stock={hit.stock:<7} attrs={len(hit.attrs_raw)}")
+            elif m in unresolved:
+                print(f"  {m:<26} UNRESOLVED (lookup failed; nothing written)")
             else:
                 print(f"  {m:<26} not carried")
         _ = found
@@ -208,6 +231,16 @@ SWEEPS = [
     ("digikey", "", "stereo audio DAC I2S", "dac", 150),
     ("digikey", "", "lithium polymer battery pack", "battery", 150),
     ("digikey", "", "bluetooth module", "bluetooth", 100),
+    # Mouser is DELIBERATELY absent from this list, and the reason is not quota
+    # alone. Mouser publishes no named parametric fields at all — only
+    # `Packaging` and `Standard Pack Qty` — so a part discovered only there
+    # arrives with nothing for a constraint to judge and can never pass a
+    # filter. Sweeping would spend the tightest daily budget of the three (1000
+    # calls, 30/minute) to produce unjudgeable rows.
+    #
+    # Mouser runs the named-lookup path instead, where it contributes what the
+    # pipeline was actually short of: stocked-source depth, qty-1 MOQ and price,
+    # lead time and datasheet links. See `adapters/mouser.py`.
 ]
 
 CATEGORIES = ["dac", "mclk-osc-44k1", "mclk-osc-48k", "mclk-mux", "mcu", "battery", "bluetooth"]
@@ -352,6 +385,105 @@ def cmd_selftest(args) -> int:
                                 {"digikey": "22.5792 MHz", "tme": "22.5792MHz"})
     check("formatting differences are NOT conflicts", not conflicts,
           "reporting them would bury the real ones in noise")
+    # --- Mouser hydration, against recorded responses ------------------
+    #
+    # Run against fixtures rather than live: this checks the MAPPING, which is
+    # what field-name mistakes break, and the Digi-Key `Function`/`Base
+    # Resonator` mix-up proves a mapping transcribed from prose can look right
+    # and mean something else.
+    from sourcing.adapters.mouser import (
+        PUBLISHED_ATTRIBUTE_NAMES, MouserAdapter, _lead_days, _norm, _stock,
+    )
+
+    mz = MouserAdapter("")
+    fixtures = ROOT / "hardware/bom/responses/mouser"
+    pn = json.loads((fixtures / "search-partnumber.json").read_text())
+    kw = json.loads((fixtures / "search-keyword-oscillator.json").read_text())
+
+    mux = mz._to_part(pn["SN74LVC1G3157DCKR"]["SearchResults"]["Parts"][0],
+                      queried_as="SN74LVC1G3157DCKR")
+    check("mouser mpn maps", mux.mpn == "SN74LVC1G3157DCKR")
+    check("mouser vendor_pn is Mouser's own", mux.vendor_pn.startswith("595-"),
+          mux.vendor_pn)
+    # 'Availability' is prose ("530597 In Stock"); AvailabilityInStock is bare.
+    check("stock parsed from the bare field", mux.stock == 530597, str(mux.stock))
+    check("moq and multiple are ints", mux.moq == 1 and mux.order_multiple == 1)
+    check("lead time extracted in days", mux.lead_time_days == 182,
+          str(mux.lead_time_days))
+    # The display price is "0,213 €" — a comma decimal. Parsing it would be a
+    # locale bug that reads as a 1000x error.
+    check("price comes from RawPrice, not the localised string",
+          mux.price_breaks[0].unit_price == 0.213
+          and mux.price_breaks[0].currency == "EUR",
+          f"{mux.price_breaks[0].unit_price} {mux.price_breaks[0].currency}")
+    check("qty-1 price in cents", mux.unit_price_cents() == 21,
+          str(mux.unit_price_cents()))
+    # Mouser returns LifecycleStatus: null for every part measured, including
+    # ones Digi-Key marks Active. Absent evidence must stay absent.
+    check("absent lifecycle stays absent", mux.lifecycle_raw is None,
+          "defaulting it to Active would let the EOL gate pass on nothing")
+    check("RoHS recorded as an IPC-1752A-shaped claim",
+          mux.status_raw and mux.status_raw[0]["regulation"] == "RoHS"
+          and mux.status_raw[0]["revision"] == "unstated"
+          and mux.status_raw[0]["status"] == "RoHS Compliant")
+    check("customs codes are NOT filed as compliance",
+          all(c["regulation"] == "RoHS" for c in mux.status_raw),
+          "TARIC/CNHTS/USHTS are tariff codes, not environmental regulations")
+
+    # The governing finding: Mouser publishes no parametric field at all.
+    # Selected by MPN, not by index: the fixture's order is the vendor's, and
+    # pinning a position would make the test pass for the wrong reason.
+    osc = mz._to_part(next(p for p in kw["SearchResults"]["Parts"]
+                           if p["ManufacturerPartNumber"] == "ECS-2520MVLC-225.792-BN-TR"))
+    check("mouser contributes NO parametric attributes",
+          osc.attrs_raw == {} and mux.attrs_raw == {},
+          f"osc={osc.attrs_raw} mux={mux.attrs_raw}")
+    names = {a["AttributeName"] for p in kw["SearchResults"]["Parts"]
+             for a in (p.get("ProductAttributes") or [])}
+    check("the whole published vocabulary is packaging",
+          names <= set(PUBLISHED_ATTRIBUTE_NAMES), str(sorted(names)))
+    # And the parametrics ARE in Description, unlabelled — which is why parsing
+    # it is forbidden rather than merely unimplemented.
+    check("parametrics are present but unnamed in Description",
+          "22.5792MHz" in osc.description and "Surface Mount" in osc.description,
+          "positional, category-dependent, and one value contains the separator")
+    check("datasheet url still harvested", bool(osc.datasheet_url),
+          "the commerce contribution: a link where another vendor published none")
+    check("empty datasheet becomes None, not ''", mux.datasheet_url is None,
+          "an empty string reads as a link nobody can open")
+
+    check("_stock survives non-numeric availability",
+          _stock({"Availability": "Call for Availability"}) == 0)
+    check("_stock handles thousands separators",
+          _stock({"Availability": "1,317 In Stock"}) == 1317)
+    check("_lead_days ignores a missing lead time", _lead_days(None) is None)
+    check("_norm strips packaging punctuation",
+          _norm("74LVC1G3157GW,125") == "74LVC1G3157GW125")
+
+    from sourcing.throttle import BudgetExhausted, Throttle, limit_for
+
+    mlim = limit_for("mouser")
+    check("mouser paced for 30/min with headroom",
+          2.0 < mlim.min_interval() < 2.2, f"{mlim.min_interval():.2f}s")
+    check("mouser daily budget reserves headroom",
+          mlim.budget() == 900, str(mlim.budget()))
+    t = Throttle("mouser", spent_today=900, sleep=lambda _: None)
+    try:
+        t.acquire()
+        check("a spent budget raises rather than 429s", False)
+    except BudgetExhausted:
+        check("a spent budget raises rather than 429s", True,
+              "a 429 counted as absence is how a stocked part gets written off")
+    t2 = Throttle("mouser", spent_today=0, sleep=lambda _: None)
+    t2.acquire()
+    check("a failed call still counts against quota", t2.calls == 1,
+          "counting only successes over-spends exactly when things go wrong")
+    check("vendor Retry-After is authoritative",
+          Throttle("mouser", sleep=lambda _: None).backoff(0, "7") == 7.0)
+    check("backoff is never faster than pacing",
+          Throttle("mouser", sleep=lambda _: None).backoff(0, "0")
+          >= 0.0, "a zero Retry-After must not bypass spacing entirely")
+
     # Order independence: the same inputs in a different dict order must agree.
     a1, _ = merge_values("mounting", {"digikey": "Surface Mount", "tme": "SMD"})
     a2, _ = merge_values("mounting", {"tme": "SMD", "digikey": "Surface Mount"})

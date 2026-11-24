@@ -5,6 +5,29 @@
   "note": "Values are RAW vendor strings; dap_hw_spec::parametric::derive interprets them. Rebuild with tools/sourcing-run.py export.",
   "parts": [
     {
+      "mpn": "AKY-LP623255",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 1298,
+      "unit_price_cents": 461,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/e47080e29ae26da2feed951f4827cf75/AKY0646.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "1100mAh",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
       "mpn": "AKY0081",
       "manufacturer": "AKYGA BATTERY",
       "eu_sources": 1,
@@ -921,29 +944,6 @@
         "manufacturer_name": "AKYGA BATTERY",
         "rated_voltage_mv": "3.7V",
         "termination": "cables; MOLEX 5264-2P socket",
-        "moq": "1",
-        "order_multiple": "1"
-      }
-    },
-    {
-      "mpn": "AKY0646",
-      "manufacturer": "AKYGA BATTERY",
-      "eu_sources": 1,
-      "eu_stock": 1298,
-      "unit_price_cents": 461,
-      "moq": 1,
-      "lead_time_days": null,
-      "datasheet_url": "https://www.tme.eu/Document/e47080e29ae26da2feed951f4827cf75/AKY0646.pdf",
-      "vendors": [
-        "tme"
-      ],
-      "attrs_raw": {
-        "battery_chemistry": "Li-Po",
-        "battery_features": "PCB protection",
-        "capacity_mah": "1100mAh",
-        "manufacturer_name": "AKYGA BATTERY",
-        "rated_voltage_mv": "3.7V",
-        "termination": "cables; JST SYP-02T-1 socket",
         "moq": "1",
         "order_multiple": "1"
       }

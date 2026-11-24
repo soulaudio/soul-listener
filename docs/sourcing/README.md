@@ -74,17 +74,24 @@ the fetch needs (`/products/search`, `/products`, `/products/parameters`, `/prod
 
 ## 4. What the credentials unlock
 
-The one missing stage is fetching a real catalogue. The order of work once `.env` is filled:
+All three distributors are implemented and fetched. The order of work below is the sequence each one
+followed, kept because it is what a fourth distributor should do — and because step 1 is the step
+that caught a fabricated number in the spec:
 
-1. **One request per vendor, for a part we already know.** `CS43131-CNZ` is the right probe: it is
-   already in `snapshot.json` with hand-researched stock figures, so the response can be checked
-   against something rather than merely parsed.
+1. **One request per vendor, for a part we already know.** `CS43131-CNZ` was the probe: it was
+   already in `snapshot.json` with hand-researched stock figures, so the response could be checked
+   against something rather than merely parsed. Worth doing — Mouser's real figure is **0 stock,
+   reel-only at MOQ 490**, not the `141` the snapshot claimed, and that one number was the whole
+   basis of the preferred DAC's two-source compliance.
 2. **Commit the response as a fixture** under `hardware/bom/responses/`, redacted of anything
    account-specific. This is deliberate: Mouser's Swagger spec is not retrievable unauthenticated
    (it 302s into a geo-context setter), and transcribing field names from prose produces a parser
    that looks right and silently maps nothing.
 3. **Write the per-vendor field mapping against that fixture**, with a test.
-4. **Then** run it across the categories and commit the new snapshot.
+4. **Then** run it across the categories and commit the new snapshot — except where a vendor
+   publishes no parametric fields. Mouser does not (see `DISTRIBUTOR-API-SETUP.md`), so it runs the
+   named-lookup path only: a part discovered solely at Mouser has nothing for a constraint to judge,
+   and Mouser has the tightest daily budget of the three.
 
 Step 3 is small because the hard half is already done. Vendors publish parametric values as human
 strings, and `dap_hw_spec::parametric` already turns those into the typed attributes the constraints

@@ -58,22 +58,6 @@
       "satisfies": "dac",
       "offers": [
         {
-          "distributor": "mouser",
-          "distributor_pn": null,
-          "stock": 141,
-          "moq": 1,
-          "order_multiple": 1,
-          "lead_time_days": null,
-          "price_breaks": [],
-          "currency": "EUR",
-          "lifecycle": "unknown",
-          "compliance": [],
-          "datasheet_url": "https://statics.cirrus.com/pubs/proDatasheet/CS43131_DS1155F2.pdf",
-          "source": "manual-research",
-          "retrieved_at": "2026-11-23",
-          "note": "stock read from the product page during research; price breaks and lifecycle need an API fetch"
-        },
-        {
           "distributor": "digikey",
           "distributor_pn": "598-2473-ND",
           "stock": 347,
@@ -126,6 +110,39 @@
           "note": "digikey API, EUR. MOQ 1, order multiple 490. Vendor part number 598-2473-ND."
         },
         {
+          "distributor": "mouser",
+          "distributor_pn": "777-CS43131-CNZ",
+          "stock": 0,
+          "moq": 490,
+          "order_multiple": 490,
+          "lead_time_days": 0,
+          "price_breaks": [
+            {
+              "qty": 490,
+              "unit_price": 10.59
+            },
+            {
+              "qty": 980,
+              "unit_price": 10.58
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [
+            {
+              "regulation": "RoHS",
+              "revision": "unstated",
+              "status": "RoHS Compliant",
+              "asserted_at": "2026-11-24",
+              "source": "mouser"
+            }
+          ],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "mouser API, EUR. MOQ 490, order multiple 490. Reel/tray minimum: stock does not mean one unit is purchasable. Vendor part number 777-CS43131-CNZ."
+        },
+        {
           "distributor": "tme",
           "distributor_pn": null,
           "stock": 0,
@@ -149,22 +166,6 @@
       "package": "40-QFN (5x5)",
       "satisfies": null,
       "offers": [
-        {
-          "distributor": "mouser",
-          "distributor_pn": null,
-          "stock": 0,
-          "moq": 1,
-          "order_multiple": 1,
-          "lead_time_days": null,
-          "price_breaks": [],
-          "currency": "EUR",
-          "lifecycle": "unknown",
-          "compliance": [],
-          "datasheet_url": null,
-          "source": "manual-research",
-          "retrieved_at": "2026-11-23",
-          "note": "NOT STOCKED at Mouser. Recorded deliberately: -CNZR is the same die as -CNZ, so a BOM naming it still builds \u2014 from Digi-Key only. The risk is single-sourcing, not unavailability, which is what preferred_parts_have_more_than_one_eu_source gates."
-        },
         {
           "distributor": "digikey",
           "distributor_pn": "598-2472-1-ND",
@@ -220,6 +221,35 @@
           "source": "api",
           "retrieved_at": "2026-11-24",
           "note": "digikey API, EUR. MOQ 1, order multiple 1. Vendor part number 598-2472-1-ND."
+        },
+        {
+          "distributor": "mouser",
+          "distributor_pn": "777-CS43131-CNZR",
+          "stock": 0,
+          "moq": 4000,
+          "order_multiple": 4000,
+          "lead_time_days": 0,
+          "price_breaks": [
+            {
+              "qty": 4000,
+              "unit_price": 10.6
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [
+            {
+              "regulation": "RoHS",
+              "revision": "unstated",
+              "status": "RoHS Compliant",
+              "asserted_at": "2026-11-24",
+              "source": "mouser"
+            }
+          ],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "mouser API, EUR. MOQ 4000, order multiple 4000. Reel/tray minimum: stock does not mean one unit is purchasable. Vendor part number 777-CS43131-CNZR."
         },
         {
           "distributor": "tme",
@@ -298,6 +328,55 @@
           "note": "digikey API, EUR. MOQ 1, order multiple 490. Vendor part number 598-2475-ND."
         },
         {
+          "distributor": "mouser",
+          "distributor_pn": "777-CS43198-CNZ",
+          "stock": 450,
+          "moq": 1,
+          "order_multiple": 1,
+          "lead_time_days": 0,
+          "price_breaks": [
+            {
+              "qty": 1,
+              "unit_price": 16.15
+            },
+            {
+              "qty": 10,
+              "unit_price": 12.85
+            },
+            {
+              "qty": 25,
+              "unit_price": 12.01
+            },
+            {
+              "qty": 100,
+              "unit_price": 11.11
+            },
+            {
+              "qty": 250,
+              "unit_price": 10.42
+            },
+            {
+              "qty": 490,
+              "unit_price": 10.39
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [
+            {
+              "regulation": "RoHS",
+              "revision": "unstated",
+              "status": "RoHS Compliant",
+              "asserted_at": "2026-11-24",
+              "source": "mouser"
+            }
+          ],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "mouser API, EUR. MOQ 1, order multiple 1. Vendor part number 777-CS43198-CNZ."
+        },
+        {
           "distributor": "tme",
           "distributor_pn": null,
           "stock": 0,
@@ -338,6 +417,22 @@
           "note": "NOT CARRIED BY DIGIKEY: looked up on 2026-11-24 by manufacturer part number, by the vendor's own symbol, and by keyword, with no match. Recorded rather than omitted so the negative result is not re-discovered; both snapshot gates filter on stock > 0, so this informs without counting as a source."
         },
         {
+          "distributor": "mouser",
+          "distributor_pn": null,
+          "stock": 0,
+          "moq": null,
+          "order_multiple": null,
+          "lead_time_days": null,
+          "price_breaks": [],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "NOT CARRIED BY MOUSER: looked up on 2026-11-24 by manufacturer part number, by the vendor's own symbol, and by keyword, with no match. Recorded rather than omitted so the negative result is not re-discovered; both snapshot gates filter on stock > 0, so this informs without counting as a source."
+        },
+        {
           "distributor": "tme",
           "distributor_pn": null,
           "stock": 0,
@@ -355,7 +450,7 @@
         }
       ],
       "sourcing_pending": {
-        "reason": "no stock at any distributor with an adapter (digikey, tme); Mouser is unfetched, so the EU sourcing question is still open rather than answered negatively.",
+        "reason": "no stock at any distributor with an adapter (digikey, mouser, tme); Mouser is unfetched, so the EU sourcing question is still open rather than answered negatively.",
         "since": "2026-11-24",
         "note": "Recorded from a real category sweep rather than guessed. A Hard lock does not accept sourcing_pending."
       }
@@ -425,6 +520,63 @@
           "source": "api",
           "retrieved_at": "2026-11-24",
           "note": "digikey API, EUR. MOQ 1, order multiple 1. Vendor part number 535-11187-1-ND."
+        },
+        {
+          "distributor": "mouser",
+          "distributor_pn": "815-ASDMB-24.5-LY-T",
+          "stock": 1988,
+          "moq": 1,
+          "order_multiple": 1,
+          "lead_time_days": 182,
+          "price_breaks": [
+            {
+              "qty": 1,
+              "unit_price": 3.92
+            },
+            {
+              "qty": 10,
+              "unit_price": 3.42
+            },
+            {
+              "qty": 25,
+              "unit_price": 3.08
+            },
+            {
+              "qty": 50,
+              "unit_price": 2.99
+            },
+            {
+              "qty": 100,
+              "unit_price": 2.87
+            },
+            {
+              "qty": 250,
+              "unit_price": 2.7
+            },
+            {
+              "qty": 500,
+              "unit_price": 2.63
+            },
+            {
+              "qty": 1000,
+              "unit_price": 2.47
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [
+            {
+              "regulation": "RoHS",
+              "revision": "unstated",
+              "status": "RoHS Compliant",
+              "asserted_at": "2026-11-24",
+              "source": "mouser"
+            }
+          ],
+          "datasheet_url": "https://www.mouser.com/datasheet/3/184/1/ASDMB.pdf",
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "mouser API, EUR. MOQ 1, order multiple 1. Vendor part number 815-ASDMB-24.5-LY-T."
         },
         {
           "distributor": "tme",
@@ -511,6 +663,22 @@
           "note": "digikey API, EUR. MOQ 1, order multiple None. Vendor lists this as 74LVC1G3157GW,125. Vendor part number 1727-6073-1-ND."
         },
         {
+          "distributor": "mouser",
+          "distributor_pn": "N/A",
+          "stock": 0,
+          "moq": 0,
+          "order_multiple": 0,
+          "lead_time_days": 0,
+          "price_breaks": [],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "mouser API, EUR. MOQ 0, order multiple 0. Vendor part number N/A."
+        },
+        {
           "distributor": "tme",
           "distributor_pn": null,
           "stock": 0,
@@ -593,6 +761,63 @@
           "source": "api",
           "retrieved_at": "2026-11-24",
           "note": "digikey API, EUR. MOQ 1, order multiple None. Vendor part number 296-14909-1-ND."
+        },
+        {
+          "distributor": "mouser",
+          "distributor_pn": "595-SN74LVC1G3157DCK",
+          "stock": 530597,
+          "moq": 1,
+          "order_multiple": 1,
+          "lead_time_days": 182,
+          "price_breaks": [
+            {
+              "qty": 1,
+              "unit_price": 0.213
+            },
+            {
+              "qty": 10,
+              "unit_price": 0.145
+            },
+            {
+              "qty": 25,
+              "unit_price": 0.128
+            },
+            {
+              "qty": 100,
+              "unit_price": 0.11
+            },
+            {
+              "qty": 250,
+              "unit_price": 0.101
+            },
+            {
+              "qty": 500,
+              "unit_price": 0.096
+            },
+            {
+              "qty": 1000,
+              "unit_price": 0.091
+            },
+            {
+              "qty": 3000,
+              "unit_price": 0.085
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [
+            {
+              "regulation": "RoHS",
+              "revision": "unstated",
+              "status": "RoHS Compliant",
+              "asserted_at": "2026-11-24",
+              "source": "mouser"
+            }
+          ],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "mouser API, EUR. MOQ 1, order multiple 1. Vendor part number 595-SN74LVC1G3157DCK."
         },
         {
           "distributor": "tme",
@@ -712,6 +937,55 @@
           "note": "digikey API, EUR. MOQ 1, order multiple 60. Vendor part number 497-STM32H7A3ZIT6-ND."
         },
         {
+          "distributor": "mouser",
+          "distributor_pn": "511-STM32H7A3ZIT6",
+          "stock": 8,
+          "moq": 1,
+          "order_multiple": 1,
+          "lead_time_days": 364,
+          "price_breaks": [
+            {
+              "qty": 1,
+              "unit_price": 13.52
+            },
+            {
+              "qty": 10,
+              "unit_price": 11.61
+            },
+            {
+              "qty": 25,
+              "unit_price": 10.19
+            },
+            {
+              "qty": 100,
+              "unit_price": 9.87
+            },
+            {
+              "qty": 250,
+              "unit_price": 9.83
+            },
+            {
+              "qty": 360,
+              "unit_price": 9.16
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [
+            {
+              "regulation": "RoHS",
+              "revision": "unstated",
+              "status": "RoHS Compliant",
+              "asserted_at": "2026-11-24",
+              "source": "mouser"
+            }
+          ],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "mouser API, EUR. MOQ 1, order multiple 1. Vendor part number 511-STM32H7A3ZIT6."
+        },
+        {
           "distributor": "tme",
           "distributor_pn": "STM32H7A3ZIT6",
           "stock": 0,
@@ -736,12 +1010,137 @@
           "retrieved_at": "2026-11-24",
           "note": "tme API, EUR. MOQ 1, order multiple 1. TME product_status=['BLOCKED_FOR_ZBL_BACKORDERS']. BLOCKED_FOR_ZBL_BACKORDERS is an ORDERING restriction, not a lifecycle state."
         }
-      ],
-      "sourcing_pending": {
-        "reason": "no stock at any distributor with an adapter (digikey, tme); Mouser is unfetched, so the EU sourcing question is still open rather than answered negatively.",
-        "since": "2026-11-24",
-        "note": "Recorded from a real category sweep rather than guessed. A Hard lock does not accept sourcing_pending."
-      }
+      ]
+    },
+    "STM32H7A3IIT6Q": {
+      "manufacturer": "STMicroelectronics",
+      "description": "Cortex-M7 280 MHz, 2 MB flash, 1.4 MB SRAM \u2014 the same die as STM32H7A3ZIT6 in a 176-pin LQFP, with internal SMPS",
+      "package": "176-LQFP",
+      "satisfies": "mcu",
+      "offers": [
+        {
+          "distributor": "digikey",
+          "distributor_pn": "497-STM32H7A3IIT6Q-ND",
+          "stock": 2339,
+          "moq": 1,
+          "order_multiple": 40,
+          "lead_time_days": 210,
+          "price_breaks": [
+            {
+              "qty": 1,
+              "unit_price": 17.56
+            },
+            {
+              "qty": 40,
+              "unit_price": 12.6195
+            },
+            {
+              "qty": 80,
+              "unit_price": 12.1385
+            },
+            {
+              "qty": 120,
+              "unit_price": 11.89767
+            },
+            {
+              "qty": 520,
+              "unit_price": 11.22365
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "active",
+          "compliance": [
+            {
+              "regulation": "RoHS",
+              "revision": "ROHS3",
+              "status": "ROHS3 Compliant",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            },
+            {
+              "regulation": "REACH",
+              "revision": "unstated",
+              "status": "REACH Unaffected",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            }
+          ],
+          "datasheet_url": "https://www.st.com/resource/en/datasheet/stm32h7a3ii.pdf",
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "digikey API, EUR. MOQ 1, order multiple 40. Vendor part number 497-STM32H7A3IIT6Q-ND."
+        },
+        {
+          "distributor": "mouser",
+          "distributor_pn": "511-STM32H7A3IIT6Q",
+          "stock": 1770,
+          "moq": 1,
+          "order_multiple": 1,
+          "lead_time_days": 210,
+          "price_breaks": [
+            {
+              "qty": 1,
+              "unit_price": 16.1
+            },
+            {
+              "qty": 10,
+              "unit_price": 12.64
+            },
+            {
+              "qty": 25,
+              "unit_price": 11.33
+            },
+            {
+              "qty": 100,
+              "unit_price": 10.79
+            },
+            {
+              "qty": 250,
+              "unit_price": 9.7
+            },
+            {
+              "qty": 400,
+              "unit_price": 9.21
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [
+            {
+              "regulation": "RoHS",
+              "revision": "unstated",
+              "status": "RoHS Compliant",
+              "asserted_at": "2026-11-24",
+              "source": "mouser"
+            }
+          ],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "mouser API, EUR. MOQ 1, order multiple 1. Vendor part number 511-STM32H7A3IIT6Q."
+        },
+        {
+          "distributor": "tme",
+          "distributor_pn": "STM32H7A3IIT6Q",
+          "stock": 0,
+          "moq": 1,
+          "order_multiple": 1,
+          "lead_time_days": null,
+          "price_breaks": [
+            {
+              "qty": 1,
+              "unit_price": 11.59
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": "https://www.tme.eu/Document/94f850c15a2fb003c4530843ceba6dfc/stm32h7a3ag.pdf",
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "tme API, EUR. MOQ 1, order multiple 1. TME product_status=['BLOCKED_FOR_ZBL_BACKORDERS']. BLOCKED_FOR_ZBL_BACKORDERS is an ORDERING restriction, not a lifecycle state."
+        }
+      ]
     },
     "STM32H7B3ZIT6": {
       "manufacturer": "STMicroelectronics",
@@ -786,6 +1185,51 @@
           "note": "digikey API, EUR. MOQ 360, order multiple 360. Reel/tray minimum: stock does not mean one unit is purchasable. Vendor part number 497-STM32H7B3ZIT6-ND."
         },
         {
+          "distributor": "mouser",
+          "distributor_pn": "511-STM32H7B3ZIT6",
+          "stock": 0,
+          "moq": 1,
+          "order_multiple": 1,
+          "lead_time_days": 364,
+          "price_breaks": [
+            {
+              "qty": 1,
+              "unit_price": 15.59
+            },
+            {
+              "qty": 10,
+              "unit_price": 12.22
+            },
+            {
+              "qty": 25,
+              "unit_price": 11.31
+            },
+            {
+              "qty": 100,
+              "unit_price": 10.44
+            },
+            {
+              "qty": 250,
+              "unit_price": 9.78
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [
+            {
+              "regulation": "RoHS",
+              "revision": "unstated",
+              "status": "RoHS Compliant",
+              "asserted_at": "2026-11-24",
+              "source": "mouser"
+            }
+          ],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "mouser API, EUR. MOQ 1, order multiple 1. Vendor part number 511-STM32H7B3ZIT6."
+        },
+        {
           "distributor": "tme",
           "distributor_pn": "STM32H7B3ZIT6",
           "stock": 0,
@@ -824,7 +1268,7 @@
         }
       ],
       "sourcing_pending": {
-        "reason": "no stock at any distributor with an adapter (digikey, tme); Mouser is unfetched, so the EU sourcing question is still open rather than answered negatively.",
+        "reason": "no stock at any distributor with an adapter (digikey, mouser, tme); Mouser is unfetched, so the EU sourcing question is still open rather than answered negatively.",
         "since": "2026-11-24",
         "note": "Recorded from a real category sweep rather than guessed. A Hard lock does not accept sourcing_pending."
       }
@@ -850,6 +1294,22 @@
           "source": "api",
           "retrieved_at": "2026-11-24",
           "note": "NOT CARRIED BY DIGIKEY: looked up on 2026-11-24 by manufacturer part number, by the vendor's own symbol, and by keyword, with no match. Recorded rather than omitted so the negative result is not re-discovered; both snapshot gates filter on stock > 0, so this informs without counting as a source."
+        },
+        {
+          "distributor": "mouser",
+          "distributor_pn": null,
+          "stock": 0,
+          "moq": null,
+          "order_multiple": null,
+          "lead_time_days": null,
+          "price_breaks": [],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "NOT CARRIED BY MOUSER: looked up on 2026-11-24 by manufacturer part number, by the vendor's own symbol, and by keyword, with no match. Recorded rather than omitted so the negative result is not re-discovered; both snapshot gates filter on stock > 0, so this informs without counting as a source."
         },
         {
           "distributor": "tme",
@@ -909,6 +1369,22 @@
           "note": "NOT CARRIED BY DIGIKEY: looked up on 2026-11-24 by manufacturer part number, by the vendor's own symbol, and by keyword, with no match. Recorded rather than omitted so the negative result is not re-discovered; both snapshot gates filter on stock > 0, so this informs without counting as a source."
         },
         {
+          "distributor": "mouser",
+          "distributor_pn": null,
+          "stock": 0,
+          "moq": null,
+          "order_multiple": null,
+          "lead_time_days": null,
+          "price_breaks": [],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "NOT CARRIED BY MOUSER: looked up on 2026-11-24 by manufacturer part number, by the vendor's own symbol, and by keyword, with no match. Recorded rather than omitted so the negative result is not re-discovered; both snapshot gates filter on stock > 0, so this informs without counting as a source."
+        },
+        {
           "distributor": "tme",
           "distributor_pn": null,
           "stock": 0,
@@ -926,7 +1402,7 @@
         }
       ],
       "sourcing_pending": {
-        "reason": "no stock at any distributor with an adapter (digikey, tme); Mouser is unfetched, so the EU sourcing question is still open rather than answered negatively.",
+        "reason": "no stock at any distributor with an adapter (digikey, mouser, tme); Mouser is unfetched, so the EU sourcing question is still open rather than answered negatively.",
         "since": "2026-11-24",
         "note": "Recorded from a real category sweep rather than guessed. A Hard lock does not accept sourcing_pending."
       }
@@ -996,6 +1472,63 @@
           "source": "api",
           "retrieved_at": "2026-11-24",
           "note": "digikey API, EUR. MOQ 1, order multiple None. Vendor part number 535-ASV-22.5792MHZ-LR-TCT-ND."
+        },
+        {
+          "distributor": "mouser",
+          "distributor_pn": "815-ASV225792MHZLRT",
+          "stock": 0,
+          "moq": 1,
+          "order_multiple": 1,
+          "lead_time_days": 84,
+          "price_breaks": [
+            {
+              "qty": 1,
+              "unit_price": 2.06
+            },
+            {
+              "qty": 10,
+              "unit_price": 1.78
+            },
+            {
+              "qty": 25,
+              "unit_price": 1.66
+            },
+            {
+              "qty": 100,
+              "unit_price": 1.55
+            },
+            {
+              "qty": 250,
+              "unit_price": 1.47
+            },
+            {
+              "qty": 500,
+              "unit_price": 1.41
+            },
+            {
+              "qty": 1000,
+              "unit_price": 1.12
+            },
+            {
+              "qty": 5000,
+              "unit_price": 1.1
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [
+            {
+              "regulation": "RoHS",
+              "revision": "unstated",
+              "status": "RoHS Compliant",
+              "asserted_at": "2026-11-24",
+              "source": "mouser"
+            }
+          ],
+          "datasheet_url": "https://www.mouser.com/datasheet/3/184/1/ASV.pdf",
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "mouser API, EUR. MOQ 1, order multiple 1. Vendor part number 815-ASV225792MHZLRT."
         },
         {
           "distributor": "tme",
@@ -1091,6 +1624,31 @@
           "note": "digikey API, EUR. MOQ 1, order multiple 1. Vendor part number 478-KC2016Z22.5792C1KX00CT-ND."
         },
         {
+          "distributor": "mouser",
+          "distributor_pn": "346-2016Z22.5792C1KX",
+          "stock": 0,
+          "moq": 2000,
+          "order_multiple": 2000,
+          "lead_time_days": 126,
+          "price_breaks": [
+            {
+              "qty": 2000,
+              "unit_price": 0.645
+            },
+            {
+              "qty": 4000,
+              "unit_price": 0.613
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": "https://www.mouser.com/datasheet/3/5926/1/clock_z_x_e.pdf",
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "mouser API, EUR. MOQ 2000, order multiple 2000. Reel/tray minimum: stock does not mean one unit is purchasable. Vendor part number 346-2016Z22.5792C1KX."
+        },
+        {
           "distributor": "tme",
           "distributor_pn": "KC2016Z22.5792C1KX",
           "stock": 0,
@@ -1184,6 +1742,59 @@
           "note": "digikey API, EUR. MOQ 1, order multiple 1. Vendor part number 478-KC2016Z24.5760C1KX00CT-ND."
         },
         {
+          "distributor": "mouser",
+          "distributor_pn": "346-2016Z24.5760C1KX",
+          "stock": 0,
+          "moq": 1,
+          "order_multiple": 1,
+          "lead_time_days": 126,
+          "price_breaks": [
+            {
+              "qty": 1,
+              "unit_price": 1.08
+            },
+            {
+              "qty": 10,
+              "unit_price": 0.941
+            },
+            {
+              "qty": 25,
+              "unit_price": 0.871
+            },
+            {
+              "qty": 100,
+              "unit_price": 0.818
+            },
+            {
+              "qty": 250,
+              "unit_price": 0.773
+            },
+            {
+              "qty": 500,
+              "unit_price": 0.739
+            },
+            {
+              "qty": 1000,
+              "unit_price": 0.71
+            },
+            {
+              "qty": 2000,
+              "unit_price": 0.655
+            },
+            {
+              "qty": 4000,
+              "unit_price": 0.623
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": "https://www.mouser.com/datasheet/3/5926/1/clock_z_x_e.pdf",
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "mouser API, EUR. MOQ 1, order multiple 1. Vendor part number 346-2016Z24.5760C1KX."
+        },
+        {
           "distributor": "tme",
           "distributor_pn": "KC2016Z24.5760C1KX",
           "stock": 0,
@@ -1247,6 +1858,22 @@
           "source": "api",
           "retrieved_at": "2026-11-24",
           "note": "digikey API, EUR. MOQ 1, order multiple 1. Vendor part number 4214-AKY0107-ND."
+        },
+        {
+          "distributor": "mouser",
+          "distributor_pn": null,
+          "stock": 0,
+          "moq": null,
+          "order_multiple": null,
+          "lead_time_days": null,
+          "price_breaks": [],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "NOT CARRIED BY MOUSER: looked up on 2026-11-24 by manufacturer part number, by the vendor's own symbol, and by keyword, with no match. Recorded rather than omitted so the negative result is not re-discovered; both snapshot gates filter on stock > 0, so this informs without counting as a source."
         },
         {
           "distributor": "tme",
@@ -1354,6 +1981,22 @@
           "note": "digikey API, EUR. MOQ 1, order multiple 1. Vendor part number 644-NSC5083D-22.5792MCT-ND."
         },
         {
+          "distributor": "mouser",
+          "distributor_pn": null,
+          "stock": 0,
+          "moq": null,
+          "order_multiple": null,
+          "lead_time_days": null,
+          "price_breaks": [],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "NOT CARRIED BY MOUSER: looked up on 2026-11-24 by manufacturer part number, by the vendor's own symbol, and by keyword, with no match. Recorded rather than omitted so the negative result is not re-discovered; both snapshot gates filter on stock > 0, so this informs without counting as a source."
+        },
+        {
           "distributor": "tme",
           "distributor_pn": null,
           "stock": 0,
@@ -1442,6 +2085,22 @@
           "note": "digikey API, EUR. MOQ 1, order multiple None. Vendor part number 644-NSC5083D-24.576MCT-ND."
         },
         {
+          "distributor": "mouser",
+          "distributor_pn": null,
+          "stock": 0,
+          "moq": null,
+          "order_multiple": null,
+          "lead_time_days": null,
+          "price_breaks": [],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "NOT CARRIED BY MOUSER: looked up on 2026-11-24 by manufacturer part number, by the vendor's own symbol, and by keyword, with no match. Recorded rather than omitted so the negative result is not re-discovered; both snapshot gates filter on stock > 0, so this informs without counting as a source."
+        },
+        {
           "distributor": "tme",
           "distributor_pn": null,
           "stock": 0,
@@ -1522,6 +2181,55 @@
           "note": "digikey API, EUR. MOQ 1, order multiple 25. Vendor part number 744-1456-ND."
         },
         {
+          "distributor": "mouser",
+          "distributor_pn": "549-CCHD-957-25-22.5",
+          "stock": 59,
+          "moq": 1,
+          "order_multiple": 1,
+          "lead_time_days": 84,
+          "price_breaks": [
+            {
+              "qty": 1,
+              "unit_price": 28.7
+            },
+            {
+              "qty": 10,
+              "unit_price": 24.94
+            },
+            {
+              "qty": 25,
+              "unit_price": 23.59
+            },
+            {
+              "qty": 50,
+              "unit_price": 22.63
+            },
+            {
+              "qty": 101,
+              "unit_price": 21.8
+            },
+            {
+              "qty": 202,
+              "unit_price": 21.27
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [
+            {
+              "regulation": "RoHS",
+              "revision": "unstated",
+              "status": "RoHS Compliant",
+              "asserted_at": "2026-11-24",
+              "source": "mouser"
+            }
+          ],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "mouser API, EUR. MOQ 1, order multiple 1. Vendor part number 549-CCHD-957-25-22.5."
+        },
+        {
           "distributor": "tme",
           "distributor_pn": null,
           "stock": 0,
@@ -1544,6 +2252,7 @@
     "readme": "Per-requirement TME sweep sizes behind this snapshot. The catalogue DB itself (hardware/bom/catalogue.db) is rebuildable and NOT committed; this is the part of it the gates depend on. A category marked as a sample was capped by a --limit and is not the whole category.",
     "vendors": [
       "digikey",
+      "mouser",
       "tme"
     ],
     "by_requirement": {
@@ -1558,29 +2267,29 @@
         "with_datasheet": 99
       },
       "dac": {
-        "parts_swept": 136,
-        "stocked": 98,
+        "parts_swept": 138,
+        "stocked": 99,
         "with_datasheet": 126
       },
       "mclk-mux": {
-        "parts_swept": 362,
-        "stocked": 131,
+        "parts_swept": 364,
+        "stocked": 132,
         "with_datasheet": 305
       },
       "mclk-osc-44k1": {
-        "parts_swept": 124,
-        "stocked": 94,
-        "with_datasheet": 124
+        "parts_swept": 127,
+        "stocked": 95,
+        "with_datasheet": 126
       },
       "mclk-osc-48k": {
-        "parts_swept": 162,
-        "stocked": 102,
-        "with_datasheet": 161
+        "parts_swept": 164,
+        "stocked": 103,
+        "with_datasheet": 163
       },
       "mcu": {
-        "parts_swept": 104,
-        "stocked": 57,
-        "with_datasheet": 99
+        "parts_swept": 109,
+        "stocked": 60,
+        "with_datasheet": 101
       }
     }
   }

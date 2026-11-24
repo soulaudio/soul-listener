@@ -379,3 +379,144 @@ fn the_bluetooth_requirement_filters_real_modules_and_defers_certification() {
          tell those from a Bluetooth module is not filtering."
     );
 }
+
+/// Mouser must stay a commerce source: no parametric attributes, no prose parsing.
+///
+/// # The finding this pins
+///
+/// Mouser's Search API publishes exactly two attribute names — `Packaging` and
+/// `Standard Pack Qty` — on both the part-number and keyword endpoints. Every
+/// parametric fact is inside `Description`, as an unlabelled positional blob:
+///
+/// ```text
+/// Standard Clock Oscillators MultiVolt ECS-2520MVLC,Active,XO (Standard),
+/// 22.5792MHz,Enable/Disable,CMOS,1.8V, 2.5V, 3.3V, 50ppm,-40 C   85 C,
+/// Surface Mount,4-SMD,
+/// ```
+///
+/// # Why a gate and not a comment
+///
+/// "Mouser returns no attributes" looks like an unfinished adapter, and the
+/// obvious fix is to split that string on commas. That change would be a
+/// SILENT-WRONG-ANSWER change: the field order varies by product category and
+/// one value ("1.8V, 2.5V, 3.3V") contains the separator, so a shifted index
+/// maps `50ppm` onto a supply voltage and the constraint then PASSES on a
+/// fabricated number. A constraint that runs on invented data is worse than one
+/// that never runs, because only the second is visible.
+///
+/// Value interpretation belongs in `dap_hw_spec::parametric`, which is the one
+/// tested implementation, and it needs a NAMED field to interpret. Mouser does
+/// not provide one, so Mouser contributes source depth, price, MOQ, lead time
+/// and datasheet links instead — none of which require a parametric field.
+#[test]
+fn mouser_contributes_no_parametrics_and_never_parses_description() {
+    let src = include_str!("../../../tools/sourcing/adapters/mouser.py");
+
+    assert!(
+        src.contains("ATTR_MAP: dict[str, str] = {}"),
+        "mouser.py must declare an EMPTY ATTR_MAP. If Mouser has started publishing named \
+         parameters, map them here and delete this assertion — but an entry that maps a \
+         position in `Description` is not a name mapping."
+    );
+    assert!(
+        src.contains("contributes_parametrics = False"),
+        "mouser.py must declare `contributes_parametrics = False`, so a vendor's attribute \
+         silence is a stated property rather than something a reader infers from an empty \
+         export."
+    );
+
+    // The forbidden operation is "slice Description into fields", and a blocklist
+    // of spellings does not catch it — a first draft of this gate listed
+    // `Description").split` and was defeated by
+    // `(p.get("Description") or "").split(",")`, which is the same operation one
+    // character apart. So the invariant is stated positively instead.
+    //
+    // 1. Attributes may come from exactly one place: `map_attrs` over
+    //    `ProductAttributes`. Any other producer of `attrs_raw` is inventing data.
+    let producers = src.matches("attrs_raw=").count();
+    assert_eq!(
+        producers, 1,
+        "mouser.py has {producers} producers of `attrs_raw`; there must be exactly one, \
+         `self.map_attrs([... ProductAttributes ...])`. A second producer is a second \
+         source of truth for what a part IS, and the one that reads Description is \
+         fabricating it."
+    );
+    assert!(
+        src.contains("attrs_raw=self.map_attrs("),
+        "mouser.py's single `attrs_raw` producer must be `self.map_attrs(...)`, so the \
+         vendor's parameter NAMES are what get mapped — `map_attrs` cannot be fed anything \
+         that has no name."
+    );
+    let attrs_block = &src[src.find("attrs_raw=self.map_attrs(").unwrap()..];
+    assert!(
+        attrs_block[..240.min(attrs_block.len())].contains("ProductAttributes"),
+        "mouser.py must feed `map_attrs` from `ProductAttributes` — the only container \
+         Mouser gives field NAMES in. Feeding it anything derived from `Description` maps a \
+         POSITION, not a name."
+    );
+
+    // 2. No string splitting anywhere. This adapter needs none: every extraction
+    //    it does (stock, lead time, MPN normalisation) uses an anchored regex.
+    //    So a `.split(` appearing at all is the forbidden operation arriving,
+    //    whatever it is spelled like.
+    assert!(
+        !src.contains(".split("),
+        "mouser.py contains `.split(`. This adapter has no legitimate need to split a \
+         string — stock, lead time and MPN normalisation all use anchored regexes — so a \
+         split is Mouser's comma-separated `Description` being carved into positional \
+         fields. The field order varies by product category and one value (\"1.8V, 2.5V, \
+         3.3V\") contains the separator, so this assigns meaning by index and the \
+         constraint then PASSES on a fabricated number."
+    );
+
+    // An unresolved lookup must never be recorded as a stock-out. Mouser 503s in
+    // clusters that outlast four retries, and the parts affected ROTATE between
+    // runs — so a zero written for a failed lookup is indistinguishable from a
+    // real shortage, which is the false negative this pipeline keeps finding.
+    assert!(
+        src.contains("self.unresolved"),
+        "mouser.py must keep unresolved lookups separate from absence: a part whose lookup \
+         FAILED is not a part the vendor does not carry, and writing a 0-stock row for it \
+         would read as a shortage forever."
+    );
+    assert!(
+        src.contains("except OSError as e:"),
+        "mouser.py must retry on OSError, not just urllib.error.URLError: a READ timeout \
+         arrives as a bare TimeoutError straight from the socket and otherwise escapes the \
+         retry loop and aborts the whole run."
+    );
+}
+
+/// Every vendor's request pacing must be declared, including "no published cap".
+///
+/// Mouser allows 30 requests/minute and 1000/day — the tightest of the three by
+/// an order of magnitude. A sweep paced politely for Digi-Key gets throttled
+/// halfway through Mouser, and a 429 counted as absence reads exactly like a
+/// vendor that does not carry the part.
+///
+/// The daily budget specifically cannot live in process memory: the cap is per
+/// calendar day and a refresh runs several times a day, so an in-process counter
+/// starts at zero each time and discovers the cap by being refused.
+#[test]
+fn every_vendor_declares_its_rate_limit() {
+    let src = include_str!("../../../tools/sourcing/throttle.py");
+    for vendor in ["mouser", "digikey", "tme"] {
+        assert!(
+            src.contains(&format!("\"{vendor}\": RateLimit(")),
+            "throttle.py has no declared RateLimit for {vendor:?}. A vendor with no entry \
+             silently gets the default interval, which makes an unknown cap look like a \
+             decision."
+        );
+    }
+    assert!(
+        src.contains("per_minute=30, per_day=1000"),
+        "throttle.py must carry Mouser's published 30/minute and 1000/day verbatim, so the \
+         numbers can be checked against the vendor's documentation rather than reverse \
+         engineered from the pacing."
+    );
+    assert!(
+        include_str!("../../../tools/sourcing/db.py").contains("def calls_today"),
+        "db.py must be able to report calls already spent today per vendor. Without it the \
+         daily budget resets every process and the cap is discovered by being refused."
+    );
+}

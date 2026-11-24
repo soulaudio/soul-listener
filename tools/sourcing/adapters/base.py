@@ -88,6 +88,17 @@ class Adapter(abc.ABC):
     display_name: str
     #: Which warehouse ships, as an ISO country code — the EU-sourcing question.
     warehouse: str
+    #: Whether this vendor publishes NAMED parametric fields the constraints can
+    #: judge, as opposed to commerce data only.
+    #:
+    #: Measured, not assumed. Mouser publishes exactly two attribute names
+    #: (`Packaging`, `Standard Pack Qty`) and hides frequency, supply, mounting
+    #: and temperature inside an unlabelled `Description` blob — so it declares
+    #: `False` and contributes source depth, price, MOQ and datasheet links
+    #: instead. Stating it here makes a vendor's attribute silence a property of
+    #: the adapter rather than something a reader must infer from an empty
+    #: export, and lets a gate pin it so nobody "fixes" it by parsing prose.
+    contributes_parametrics: bool = True
 
     @abc.abstractmethod
     def available(self) -> bool:

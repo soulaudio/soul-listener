@@ -24,6 +24,7 @@
 //! Functional equivalence is what `PartReq.what` is for, and it stays a human
 //! judgement.
 
+use dap_hw_spec::v2::SINGLE_SOURCE_ACCEPTED;
 use dap_hw_spec::{Preference, ACTIVE};
 use serde_json::Value;
 
@@ -285,10 +286,16 @@ fn preferred_parts_are_orderable_from_an_eu_warehouse() {
 /// This is the gate the `-CNZR` case actually calls for, and writing it
 /// corrected a claim of mine. I had described CS43131-CNZR as a "sourcing trap"
 /// that would make a BOM unbuildable. It is not: Digi-Key stocks it (221 units),
-/// so a BOM naming it can be built. The real difference is DEPTH — `-CNZ` is
-/// stocked at two EU distributors, `-CNZR` at one. Single-sourcing is a single
-/// point of failure, and research puts the cost concretely: an AVL with 2-3
-/// second sources cuts shortage delays by roughly 80%.
+/// so a BOM naming it can be built. Single-sourcing is a single point of
+/// failure, and research puts the cost concretely: an AVL with 2-3 second
+/// sources cuts shortage delays by roughly 80%.
+///
+/// CORRECTION 2026-11-24: this docstring used to add "`-CNZ` is stocked at two
+/// EU distributors, `-CNZR` at one". The Mouser API refutes it — Mouser stocks
+/// NEITHER variant (reel-only, zero on hand), so both are single-sourced and the
+/// suffix carries no sourcing difference. The second source was a hand-researched
+/// 141-unit figure that no API ever confirmed, which is precisely the kind of
+/// number this gate exists to stop the spec resting on.
 ///
 /// Depth is counted across DISTRIBUTORS for one MPN, which is a different axis
 /// from the spec's `Alternate` candidates (different MPNs for one requirement).
@@ -308,6 +315,16 @@ fn preferred_parts_have_more_than_one_eu_source() {
             continue;
         };
         if part["sourcing_pending"].is_object() && ACTIVE.is_soft() {
+            continue;
+        }
+        // An explicitly declared acceptance — resolution (c) below. Skipped here
+        // rather than asserted away, and kept honest by
+        // `accepted_single_sourcing_is_still_warranted`, which fails the build if
+        // an entry stops being true.
+        if SINGLE_SOURCE_ACCEPTED
+            .iter()
+            .any(|(mpn, _)| *mpn == preferred.mpn)
+        {
             continue;
         }
 
@@ -335,7 +352,9 @@ fn preferred_parts_have_more_than_one_eu_source() {
              (a) prefer a variant with broader stock — a tray/tube suffix is often stocked where \
              tape-and-reel is not, and vice versa, for the SAME die;\n  \
              (b) re-fetch, since this may be a transient stock-out;\n  \
-             (c) accept single-sourcing explicitly, and record why in the spec candidate note.",
+             (c) accept it explicitly by adding (mpn, reason) to \
+             `v2::SINGLE_SOURCE_ACCEPTED` — the reason is the audit record, and the entry \
+             must be deleted once a second distributor stocks the part.",
             req.id,
             preferred.mpn,
             sources.len(),
@@ -406,5 +425,71 @@ fn compliance_claims_are_dated_and_versioned() {
                 }
             }
         }
+    }
+}
+
+/// Every accepted single-sourcing entry must still be warranted.
+///
+/// An exception list is only safe if it cannot outlive its reason. This asserts
+/// each entry is still a **Preferred** candidate and still has fewer than two
+/// stocking EU distributors, so the list shrinks by itself as sourcing improves
+/// instead of quietly excusing a part that no longer needs excusing — and a
+/// typo'd MPN fails loudly rather than silently exempting nothing.
+#[test]
+fn accepted_single_sourcing_is_still_warranted() {
+    let s = snapshot();
+    let dists = s["distributors"].as_object().unwrap();
+    let parts = s["parts"].as_object().unwrap();
+
+    for (mpn, reason) in SINGLE_SOURCE_ACCEPTED {
+        assert!(
+            reason.len() > 80,
+            "SINGLE_SOURCE_ACCEPTED entry {mpn} has a {}-char reason. This field IS the \
+             audit record — it has to say which distributors were checked and why the \
+             alternatives are worse, or a reviewer cannot tell an accepted risk from an \
+             unexamined one.",
+            reason.len()
+        );
+
+        let req = ACTIVE
+            .parts
+            .iter()
+            .find(|r| r.preferred().is_some_and(|c| c.mpn == *mpn));
+        assert!(
+            req.is_some(),
+            "SINGLE_SOURCE_ACCEPTED names {mpn}, which is not the Preferred candidate of any \
+             requirement. Either the MPN is a typo — in which case it exempts nothing and the \
+             real part is unguarded — or the preference moved on and the entry is stale. \
+             Delete it."
+        );
+
+        let Some(part) = parts.get(*mpn) else {
+            panic!(
+                "SINGLE_SOURCE_ACCEPTED names {mpn}, which the sourcing snapshot does not \
+                 contain. An acceptance has to be checkable against real offers."
+            )
+        };
+        let empty = vec![];
+        let stocking: Vec<&str> = part["offers"]
+            .as_array()
+            .unwrap_or(&empty)
+            .iter()
+            .filter(|o| {
+                let d = o["distributor"].as_str().unwrap_or("");
+                dists
+                    .get(d)
+                    .and_then(|x| x["eu"].as_bool())
+                    .unwrap_or(false)
+                    && o["stock"].as_i64().unwrap_or(0) > 0
+            })
+            .filter_map(|o| o["distributor"].as_str())
+            .collect();
+        assert!(
+            stocking.len() < 2,
+            "SINGLE_SOURCE_ACCEPTED still excuses {mpn}, but {} EU distributors now stock it \
+             ({stocking:?}). The exception has outlived its reason: DELETE the entry so the \
+             real gate guards the part again.",
+            stocking.len()
+        );
     }
 }

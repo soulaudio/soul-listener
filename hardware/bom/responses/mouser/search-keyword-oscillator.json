@@ -1,0 +1,433 @@
+{
+ "Errors": [],
+ "SearchResults": {
+  "NumberOfResult": 21,
+  "Parts": [
+   {
+    "Availability": "216 In Stock",
+    "DataSheetUrl": "https://www.mouser.com/datasheet/3/1460/1/LFSPXO023492.pdf",
+    "Description": "Standard Clock Oscillators 22.5792MHz 3.3V 25ppm 0C +70C",
+    "FactoryStock": "0",
+    "ImagePath": "https://www.mouser.com/images/iqdfrequencyproducts/images/LFSPXO018567329_SPL.jpg",
+    "Category": "Standard Clock Oscillators",
+    "LeadTime": "70 Days",
+    "LifecycleStatus": null,
+    "Manufacturer": "IQD",
+    "ManufacturerPartNumber": "LFSPXO023492",
+    "Min": "1",
+    "Mult": "1",
+    "MouserPartNumber": "449-LFSPXO023492",
+    "ProductAttributes": [
+     {
+      "AttributeName": "Packaging",
+      "AttributeValue": "Reel"
+     },
+     {
+      "AttributeName": "Packaging",
+      "AttributeValue": "Cut Tape"
+     },
+     {
+      "AttributeName": "Packaging",
+      "AttributeValue": "MouseReel",
+      "AttributeCost": "A MouseReel\u2122 fee of 5,00 \u20ac will be added and calculated in your basket. All MouseReel\u2122 orders are non-cancellable and non-returnable."
+     },
+     {
+      "AttributeName": "Standard Pack Qty",
+      "AttributeValue": "1000"
+     }
+    ],
+    "PriceBreaks": [
+     {
+      "Quantity": 1,
+      "Price": "1,84 \u20ac",
+      "RawPrice": 1.84,
+      "Currency": "EUR"
+     },
+     {
+      "Quantity": 10,
+      "Price": "1,59 \u20ac",
+      "RawPrice": 1.59,
+      "Currency": "EUR"
+     },
+     {
+      "Quantity": 25,
+      "Price": "1,50 \u20ac",
+      "RawPrice": 1.5,
+      "Currency": "EUR"
+     },
+     {
+      "Quantity": 100,
+      "Price": "1,39 \u20ac",
+      "RawPrice": 1.39,
+      "Currency": "EUR"
+     },
+     {
+      "Quantity": 250,
+      "Price": "1,31 \u20ac",
+      "RawPrice": 1.31,
+      "Currency": "EUR"
+     },
+     {
+      "Quantity": 500,
+      "Price": "1,25 \u20ac",
+      "RawPrice": 1.25,
+      "Currency": "EUR"
+     },
+     {
+      "Quantity": 1000,
+      "Price": "1,19 \u20ac",
+      "RawPrice": 1.19,
+      "Currency": "EUR"
+     },
+     {
+      "Quantity": 2000,
+      "Price": "1,16 \u20ac",
+      "RawPrice": 1.16,
+      "Currency": "EUR"
+     },
+     {
+      "Quantity": 5000,
+      "Price": "1,13 \u20ac",
+      "RawPrice": 1.13,
+      "Currency": "EUR"
+     }
+    ],
+    "AlternatePackagings": null,
+    "ProductDetailUrl": "https://cz.mouser.com/en/ProductDetail/IQD/LFSPXO023492?qs=ZcfC38r4PovWodqqAm%2FIxw%3D%3D",
+    "Reeling": true,
+    "ROHSStatus": "RoHS Compliant",
+    "SuggestedReplacement": "",
+    "MultiSimBlue": 0,
+    "AvailabilityInStock": "216",
+    "AvailabilityOnOrder": [],
+    "InfoMessages": [],
+    "SurchargeMessages": null,
+    "ProductCompliance": [
+     {
+      "ComplianceName": "TARIC",
+      "ComplianceValue": "8541600000"
+     },
+     {
+      "ComplianceName": "CAHTS",
+      "ComplianceValue": "8541600020"
+     },
+     {
+      "ComplianceName": "USHTS",
+      "ComplianceValue": "8541600060"
+     },
+     {
+      "ComplianceName": "JPHTS",
+      "ComplianceValue": "854160010"
+     },
+     {
+      "ComplianceName": "MXHTS",
+      "ComplianceValue": "8541600100"
+     },
+     {
+      "ComplianceName": "ECCN",
+      "ComplianceValue": "EAR99"
+     }
+    ],
+    "TradeCompliance": [
+     {
+      "ComplianceName": "Country of Origin",
+      "ComplianceValue": "Taiwan",
+      "ComplianceDescription": "The country in which a product was manufactured, produced or substantially transformed."
+     },
+     {
+      "ComplianceName": "Assembly Country of Origin",
+      "ComplianceValue": "Not available",
+      "ComplianceDescription": "The country in which the final product is physically assembled from its components."
+     },
+     {
+      "ComplianceName": "Country of Diffusion",
+      "ComplianceValue": "Not available",
+      "ComplianceDescription": "The country in which the wafer used in a semiconductor was made."
+     }
+    ]
+   },
+   {
+    "Availability": "111 In Stock",
+    "DataSheetUrl": "",
+    "Description": "Standard Clock Oscillators WE-SPXO 22.5792MHz 25ppm 3.2 x 2.5mm",
+    "FactoryStock": "0",
+    "ImagePath": "https://www.mouser.com/images/wurthelectronics/images/Single_WE-SPXO_CFPS-39_83102xxxx_SPL.jpg",
+    "Category": "Standard Clock Oscillators",
+    "LeadTime": "175 Days",
+    "LifecycleStatus": null,
+    "Manufacturer": "Wurth Elektronik",
+    "ManufacturerPartNumber": "830207659009",
+    "Min": "1",
+    "Mult": "1",
+    "MouserPartNumber": "710-830207659009",
+    "ProductAttributes": [
+     {
+      "AttributeName": "Packaging",
+      "AttributeValue": "Reel"
+     },
+     {
+      "AttributeName": "Packaging",
+      "AttributeValue": "Cut Tape"
+     },
+     {
+      "AttributeName": "Standard Pack Qty",
+      "AttributeValue": "3000"
+     }
+    ],
+    "PriceBreaks": [
+     {
+      "Quantity": 1,
+      "Price": "1,44 \u20ac",
+      "RawPrice": 1.44,
+      "Currency": "EUR"
+     },
+     {
+      "Quantity": 10,
+      "Price": "1,34 \u20ac",
+      "RawPrice": 1.34,
+      "Currency": "EUR"
+     },
+     {
+      "Quantity": 50,
+      "Price": "1,28 \u20ac",
+      "RawPrice": 1.28,
+      "Currency": "EUR"
+     },
+     {
+      "Quantity": 100,
+      "Price": "1,22 \u20ac",
+      "RawPrice": 1.22,
+      "Currency": "EUR"
+     },
+     {
+      "Quantity": 500,
+      "Price": "1,13 \u20ac",
+      "RawPrice": 1.13,
+      "Currency": "EUR"
+     },
+     {
+      "Quantity": 1000,
+      "Price": "1,03 \u20ac",
+      "RawPrice": 1.03,
+      "Currency": "EUR"
+     },
+     {
+      "Quantity": 3000,
+      "Price": "0,86 \u20ac",
+      "RawPrice": 0.86,
+      "Currency": "EUR"
+     }
+    ],
+    "AlternatePackagings": null,
+    "ProductDetailUrl": "https://cz.mouser.com/en/ProductDetail/Wurth-Elektronik/830207659009?qs=hWgE7mdIu5Q4izALvYZfyg%3D%3D",
+    "Reeling": true,
+    "ROHSStatus": "RoHS Compliant",
+    "SuggestedReplacement": "",
+    "MultiSimBlue": 0,
+    "AvailabilityInStock": "111",
+    "AvailabilityOnOrder": [
+     {
+      "Quantity": 9000,
+      "Date": "2027-05-03T00:00:00"
+     }
+    ],
+    "InfoMessages": [],
+    "SurchargeMessages": null,
+    "ProductCompliance": [
+     {
+      "ComplianceName": "TARIC",
+      "ComplianceValue": "8541600000"
+     },
+     {
+      "ComplianceName": "CNHTS",
+      "ComplianceValue": "8542391090"
+     },
+     {
+      "ComplianceName": "CAHTS",
+      "ComplianceValue": "8541600020"
+     },
+     {
+      "ComplianceName": "USHTS",
+      "ComplianceValue": "8541600060"
+     },
+     {
+      "ComplianceName": "JPHTS",
+      "ComplianceValue": "854160010"
+     },
+     {
+      "ComplianceName": "MXHTS",
+      "ComplianceValue": "8541600100"
+     },
+     {
+      "ComplianceName": "ECCN",
+      "ComplianceValue": "EAR99"
+     }
+    ],
+    "TradeCompliance": [
+     {
+      "ComplianceName": "Country of Origin",
+      "ComplianceValue": "Taiwan",
+      "ComplianceDescription": "The country in which a product was manufactured, produced or substantially transformed."
+     },
+     {
+      "ComplianceName": "Assembly Country of Origin",
+      "ComplianceValue": "Not available",
+      "ComplianceDescription": "The country in which the final product is physically assembled from its components."
+     },
+     {
+      "ComplianceName": "Country of Diffusion",
+      "ComplianceValue": "Not available",
+      "ComplianceDescription": "The country in which the wafer used in a semiconductor was made."
+     }
+    ]
+   },
+   {
+    "Availability": "1317 In Stock",
+    "DataSheetUrl": "https://www.mouser.com/datasheet/3/294/1/ECS_2520MVLC.pdf",
+    "Description": "Standard Clock Oscillators MultiVolt ECS-2520MVLC,Active,XO (Standard),22.5792MHz,Enable/Disable,CMOS,1.8V, 2.5V, 3.3V, 50ppm,-40 C   85 C,Surface Mount,4-SMD, No Lead,0.098\" L x 0.079\" W (2.50mm x 2.00mm),0.035\" (0.90mm)",
+    "FactoryStock": "0",
+    "ImagePath": "https://www.mouser.com/images/ecs/images/ECS-2520MVLC_t.jpg",
+    "Category": "Standard Clock Oscillators",
+    "LeadTime": "133 Days",
+    "LifecycleStatus": null,
+    "Manufacturer": "ECS",
+    "ManufacturerPartNumber": "ECS-2520MVLC-225.792-BN-TR",
+    "Min": "1",
+    "Mult": "1",
+    "MouserPartNumber": "520-2520MV225792BNTR",
+    "ProductAttributes": [
+     {
+      "AttributeName": "Packaging",
+      "AttributeValue": "Reel"
+     },
+     {
+      "AttributeName": "Packaging",
+      "AttributeValue": "Cut Tape"
+     },
+     {
+      "AttributeName": "Packaging",
+      "AttributeValue": "MouseReel",
+      "AttributeCost": "A MouseReel\u2122 fee of 5,00 \u20ac will be added and calculated in your basket. All MouseReel\u2122 orders are non-cancellable and non-returnable."
+     },
+     {
+      "AttributeName": "Standard Pack Qty",
+      "AttributeValue": "1000"
+     }
+    ],
+    "PriceBreaks": [
+     {
+      "Quantity": 1,
+      "Price": "1,27 \u20ac",
+      "RawPrice": 1.27,
+      "Currency": "EUR"
+     },
+     {
+      "Quantity": 10,
+      "Price": "1,10 \u20ac",
+      "RawPrice": 1.1,
+      "Currency": "EUR"
+     },
+     {
+      "Quantity": 25,
+      "Price": "1,04 \u20ac",
+      "RawPrice": 1.04,
+      "Currency": "EUR"
+     },
+     {
+      "Quantity": 100,
+      "Price": "0,959 \u20ac",
+      "RawPrice": 0.959,
+      "Currency": "EUR"
+     },
+     {
+      "Quantity": 250,
+      "Price": "0,906 \u20ac",
+      "RawPrice": 0.906,
+      "Currency": "EUR"
+     },
+     {
+      "Quantity": 500,
+      "Price": "0,872 \u20ac",
+      "RawPrice": 0.872,
+      "Currency": "EUR"
+     },
+     {
+      "Quantity": 1000,
+      "Price": "0,826 \u20ac",
+      "RawPrice": 0.826,
+      "Currency": "EUR"
+     },
+     {
+      "Quantity": 2000,
+      "Price": "0,79 \u20ac",
+      "RawPrice": 0.79,
+      "Currency": "EUR"
+     },
+     {
+      "Quantity": 5000,
+      "Price": "0,749 \u20ac",
+      "RawPrice": 0.749,
+      "Currency": "EUR"
+     }
+    ],
+    "AlternatePackagings": null,
+    "ProductDetailUrl": "https://cz.mouser.com/en/ProductDetail/ECS/ECS-2520MVLC-225.792-BN-TR?qs=DPoM0jnrROV2%252B81rvzzbrw%3D%3D",
+    "Reeling": true,
+    "ROHSStatus": "RoHS Compliant",
+    "SuggestedReplacement": "",
+    "MultiSimBlue": 0,
+    "AvailabilityInStock": "1317",
+    "AvailabilityOnOrder": [],
+    "InfoMessages": [],
+    "SurchargeMessages": null,
+    "ProductCompliance": [
+     {
+      "ComplianceName": "TARIC",
+      "ComplianceValue": "8541600000"
+     },
+     {
+      "ComplianceName": "CNHTS",
+      "ComplianceValue": "8542391000"
+     },
+     {
+      "ComplianceName": "CAHTS",
+      "ComplianceValue": "8541600020"
+     },
+     {
+      "ComplianceName": "USHTS",
+      "ComplianceValue": "8541600060"
+     },
+     {
+      "ComplianceName": "JPHTS",
+      "ComplianceValue": "854160010"
+     },
+     {
+      "ComplianceName": "MXHTS",
+      "ComplianceValue": "8541600100"
+     },
+     {
+      "ComplianceName": "ECCN",
+      "ComplianceValue": "EAR99"
+     }
+    ],
+    "TradeCompliance": [
+     {
+      "ComplianceName": "Country of Origin",
+      "ComplianceValue": "Taiwan",
+      "ComplianceDescription": "The country in which a product was manufactured, produced or substantially transformed."
+     },
+     {
+      "ComplianceName": "Assembly Country of Origin",
+      "ComplianceValue": "Not available",
+      "ComplianceDescription": "The country in which the final product is physically assembled from its components."
+     },
+     {
+      "ComplianceName": "Country of Diffusion",
+      "ComplianceValue": "Not available",
+      "ComplianceDescription": "The country in which the wafer used in a semiconductor was made."
+     }
+    ]
+   }
+  ]
+ }
+}
