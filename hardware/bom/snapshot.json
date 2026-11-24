@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-23",
+  "generated_at": "2026-11-24",
   "generator": "tools/bom-fetch-tme.py + tools/bom-snapshot-merge-tme.py (TME API v2); Mouser and Digi-Key offers are still manual-research",
   "readme": [
     "Committed sourcing snapshot: price, stock, lifecycle and compliance per (MPN, distributor).",
@@ -488,6 +488,103 @@
         "reason": "TME has been fetched and reports no stock for this part (and does not carry it); Mouser and Digi-Key have not been fetched yet, so the EU sourcing question is still open rather than answered negatively.",
         "since": "2026-11-23",
         "note": "No offers recorded on purpose: stock and price were NOT retrieved, and inventing them would be worse than admitting the gap. Run the fetcher with distributor credentials to replace this with real offers. A Hard lock does not accept sourcing_pending."
+      }
+    },
+    "ASV-22.5792MHZ-LR-T": {
+      "manufacturer": "Abracon",
+      "description": "3.3Vdc HCMOS SMD crystal clock oscillator, 22.5792 MHz, +/-25ppm, -40..+85C, 7.0x5.08x1.8 mm",
+      "package": "SMD",
+      "satisfies": "mclk-osc-44k1",
+      "offers": [
+        {
+          "distributor": "tme",
+          "distributor_pn": null,
+          "stock": 17000,
+          "moq": 1000,
+          "order_multiple": 1000,
+          "lead_time_days": null,
+          "price_breaks": [
+            {
+              "qty": 1000,
+              "unit_price": 0.7
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "TME category sweep of 'Resonators and Generators' (100269). MOQ 1000 with order multiple 1000: this part is REEL-ONLY, so stock 17000 does not mean one is purchasable. Every active oscillator TME carries at this frequency has the same shape."
+        }
+      ]
+    },
+    "KC2016Z22.5792C1KX00": {
+      "manufacturer": "Kyocera AVX",
+      "description": "Active oscillator, 22.5792 MHz, +/-20ppm, 3.3VDC, -40..+85C, CMOS, 2.0x1.6x0.8 mm",
+      "package": "SMD",
+      "satisfies": "mclk-osc-44k1",
+      "offers": [
+        {
+          "distributor": "tme",
+          "distributor_pn": null,
+          "stock": 0,
+          "moq": 2000,
+          "order_multiple": 2000,
+          "lead_time_days": null,
+          "price_breaks": [
+            {
+              "qty": 2000,
+              "unit_price": 1.38
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "TME category sweep of 'Resonators and Generators' (100269). MOQ 2000 with order multiple 2000: this part is REEL-ONLY, so stock 0 does not mean one is purchasable. Every active oscillator TME carries at this frequency has the same shape."
+        }
+      ],
+      "sourcing_pending": {
+        "reason": "zero stock at TME, which is true of EVERY active oscillator TME carries at this frequency; Mouser and Digi-Key are unfetched and both break reels for most of this category",
+        "since": "2026-11-24",
+        "note": "Recorded from a real category sweep rather than guessed. A Hard lock does not accept sourcing_pending."
+      }
+    },
+    "KC2016Z24.5760C1KX00": {
+      "manufacturer": "Kyocera AVX",
+      "description": "Active oscillator, 24.576 MHz, +/-20ppm, 3.3VDC, -40..+85C, CMOS, 2.0x1.6x0.8 mm",
+      "package": "SMD",
+      "satisfies": "mclk-osc-48k",
+      "offers": [
+        {
+          "distributor": "tme",
+          "distributor_pn": null,
+          "stock": 0,
+          "moq": 2000,
+          "order_multiple": 2000,
+          "lead_time_days": null,
+          "price_breaks": [
+            {
+              "qty": 2000,
+              "unit_price": 1.38
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "TME category sweep of 'Resonators and Generators' (100269). MOQ 2000 with order multiple 2000: this part is REEL-ONLY, so stock 0 does not mean one is purchasable. Every active oscillator TME carries at this frequency has the same shape."
+        }
+      ],
+      "sourcing_pending": {
+        "reason": "zero stock at TME, which is true of EVERY active oscillator TME carries at this frequency; Mouser and Digi-Key are unfetched and both break reels for most of this category",
+        "since": "2026-11-24",
+        "note": "Recorded from a real category sweep rather than guessed. A Hard lock does not accept sourcing_pending."
       }
     }
   }

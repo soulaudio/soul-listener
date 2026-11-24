@@ -655,34 +655,91 @@ const PARTS: &[PartReq] = &[
         id: "mclk-osc-44k1",
         what: "22.5792 MHz fixed oscillator, operating range covering 3.3 V, low phase noise, SMD",
         constraints: OSC_44K1_CONSTRAINTS,
-        candidates: &[Candidate {
-            mpn: "ASDMB-22.5792MHZ-LY-T",
-            preference: Preference::Evaluating,
-            note: "placeholder: the frequency is the requirement, the part is not chosen. \
+        candidates: &[
+            Candidate {
+                mpn: "ASV-22.5792MHZ-LR-T",
+                preference: Preference::Evaluating,
+                note: "DATASHEET-CONFIRMED 2026-11-24 (abracon.com/Oscillators/ASV.pdf, see \
+                       docs/sourcing/datasheet-confirmations/). An ACTIVE 3.3Vdc HCMOS clock \
+                       oscillator — not a crystal — suffixes decoding to 3.3 V +/-10% \
+                       (2.97-3.63 V), -40..+85 C, +/-25 ppm, 1000/reel, corroborated \
+                       independently by TME's own parameters. 17000 in stock, the ONLY active XO \
+                       TME stocks at this frequency. \
                        \
-                       MARKET FACT, measured 2026-11-24 across all 24 parts TME carries at this \
-                       frequency: EVERY ONE is reel-only, minimum order 1000-3000 pieces. There \
-                       is no singly-orderable 22.5792 MHz oscillator at TME. So a prototype \
-                       either budgets ~700 EUR for a 1000-piece reel (Abracon \
-                       ASV-22.5792MHZ-LR-T, 17000 in stock at 0.70 EUR) or sources from a \
-                       distributor that breaks reels. Mouser and Digi-Key both sell ones for \
-                       most of this category, which is now the main reason to fetch them. \
+                       Not Preferred, for two measured reasons. Jitter is 3.2 ps RMS period \
+                       jitter for the band containing 22.5792 MHz, roughly an order of magnitude \
+                       worse than dedicated low-phase-noise audio oscillators — and this design's \
+                       stated premise is that MCLK jitter is the one thing to avoid. And it is \
+                       reel-only: MOQ 1000 at 0.70 EUR is a ~700 EUR minimum order for a part a \
+                       prototype needs one of.",
+            },
+            Candidate {
+                mpn: "KC2016Z22.5792C1KX00",
+                preference: Preference::Evaluating,
+                note: "CATALOGUE-CONFIRMED: active oscillator, 22.5792 MHz, +/-20 ppm, 3.3 VDC, \
+                       -40..+85 C, CMOS, 2.0x1.6x0.8 mm. \
                        \
-                       A hard MOQ constraint was tried and removed: it rejected the entire \
-                       category, and `the_oscillator_category_yields_candidates_and_explains_\
-                       the_rest` caught it. A reel is expensive, not impossible, so it belongs in \
-                       the cost conversation rather than in the filter.",
-        }],
+                       The reason to take this series seriously is that KC2016Z offers a MATCHED \
+                       PAIR — KC2016Z24.5760C1KX00 is the same series, package, supply, \
+                       temperature range and stability at 24.576 MHz. A dual-oscillator design \
+                       wants exactly that: two clocks whose only intended difference is \
+                       frequency. No other series TME carries covers both families. \
+                       \
+                       Against it: zero stock, MOQ 2000, and a 2.0x1.6 mm package that is \
+                       markedly harder to hand-place than the ASV's 7.0x5.08 mm. Phase noise \
+                       still needs a datasheet read.",
+            },
+            Candidate {
+                mpn: "ASDMB-22.5792MHZ-LY-T",
+                preference: Preference::Rejected(
+                    "MEMS, and measurably the wrong trade for this design. Datasheet \
+                     (abracon.com/Oscillators/ASDMB.pdf): 5-10 ps RMS period jitter against the \
+                     ASV quartz part's 3.2 ps; 0..+70 C commercial temperature, which a PORTABLE \
+                     device leaves behind outdoors in winter; and a supply range topping out at \
+                     exactly 3.3 V, so no margin on the rail it has to run from. Worse on every \
+                     axis that matters here",
+                ),
+                note: "was the spec's placeholder for this requirement until it was actually \
+                       read. Kept Rejected so the MEMS-vs-quartz question is not re-opened from \
+                       scratch",
+            },
+        ],
     },
     PartReq {
         id: "mclk-osc-48k",
-        what: "24.576 MHz fixed oscillator, <=3.3 V, low phase noise, SMD",
+        what: "24.576 MHz fixed oscillator, operating range covering 3.3 V, low phase noise, SMD",
         constraints: OSC_48K_CONSTRAINTS,
-        candidates: &[Candidate {
-            mpn: "ASDMB-24.576MHZ-LY-T",
-            preference: Preference::Evaluating,
-            note: "placeholder, as above",
-        }],
+        candidates: &[
+            Candidate {
+                mpn: "KC2016Z24.5760C1KX00",
+                preference: Preference::Evaluating,
+                note: "CATALOGUE-CONFIRMED: active oscillator, 24.576 MHz, +/-20 ppm, 3.3 VDC, \
+                       -40..+85 C, CMOS, 2.0x1.6x0.8 mm — the 48 kHz half of the KC2016Z matched \
+                       pair, identical to KC2016Z22.5792C1KX00 in every respect but frequency. \
+                       \
+                       Zero stock and MOQ 2000, like every active oscillator TME carries at this \
+                       frequency. Phase noise needs a datasheet read.",
+            },
+            Candidate {
+                mpn: "ASDMB-24.576MHZ-LY-T",
+                preference: Preference::Rejected(
+                    "MEMS — see the 44.1 kHz family for the measured reasons (5-10 ps jitter, \
+                 0..+70 C, no supply margin)",
+                ),
+                note: "NO VALIDATED CANDIDATE REMAINS for this requirement, and that is the \
+                   finding. A sweep of 40 parts TME carries at 24.576 MHz on 2026-11-24 found \
+                   eight-plus ACTIVE oscillators and every single one at ZERO stock, MOQ \
+                   1000-2000; the only stocked parts in the category are passive crystals. \
+                   \
+                   So TME alone cannot supply this clock tree: 22.5792 MHz has exactly one \
+                   reel-only XO in stock and 24.576 MHz has none. The dual-oscillator design \
+                   needs BOTH, which makes fetching Mouser and Digi-Key a prerequisite for the \
+                   clock tree rather than a nice-to-have. Abracon's ASV series covers 24.576 MHz \
+                   per its datasheet, so an ASV part is the obvious thing to look for there — \
+                   deliberately not named here, because an unvalidated MPN is what this \
+                   requirement just finished removing.",
+            },
+        ],
     },
     PartReq {
         id: "mclk-mux",
@@ -692,13 +749,30 @@ const PARTS: &[PartReq] = &[
             Candidate {
                 mpn: "74LVC1G3157GW",
                 preference: Preference::Preferred,
-                note: "passive analog mux, break-before-make guarantees no contention between \
-                       the two oscillators during a switch; 6-7.5 ohm Ron",
+                note: "DATASHEET-CONFIRMED 2026-11-24 (nexperia.com product page, retrieved \
+                       with a headed browser — the site 403s a plain GET): \
+                       'Break-before-make switching', Ron 6.5 ohm typical at VCC = 3.3 V and 7.5 \
+                       ohm at 2.7 V, so the spec's 6-7.5 ohm claim is accurate. \
+                       \
+                       NOT carried by TME, which is the live problem with preferring it.",
             },
             Candidate {
                 mpn: "SN74LVC1G3157DCKR",
                 preference: Preference::Alternate,
-                note: "TI equivalent of the same function",
+                note: "DATASHEET-CONFIRMED 2026-11-24 (TI SCES424O): 'Specified break-before-make \
+                       switching' as a front-page feature, with a characterised T_B-M parameter \
+                       in four timing tables and a dedicated internal-timing figure — so the \
+                       Datasheet-evidence constraint is satisfied with more rigour than a bare \
+                       claim. Operating frequency typically 340 MHz (14x the 24.576 MHz needed), \
+                       1.65-5.5 V VCC matching TME's catalogue value exactly, SPDT, SC70-6. \
+                       \
+                       Ron is 7-9 ohm MAXIMUM at VCC = 3 V and 25 C. Note TI publishes maximums \
+                       where Nexperia publishes typicals, so the two are the same class and Ron \
+                       does not actually separate them — an earlier reading of this comparison \
+                       was unfair to Nexperia. \
+                       \
+                       What does separate them is availability: 6916 in stock at TME, MOQ 1, \
+                       0.189 EUR, against a Preferred part TME does not carry at all.",
             },
             Candidate {
                 mpn: "NB3N511",

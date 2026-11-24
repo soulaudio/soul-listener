@@ -71,3 +71,63 @@ low-phase-noise part and source it from a distributor that breaks reels.
 - A hard MOQ constraint was tried and **removed**: it rejected the entire category, and
   `the_oscillator_category_yields_candidates_and_explains_the_rest` caught it immediately. A reel is
   expensive, not impossible.
+
+---
+
+# Validation sweep of the remaining candidates — 2026-11-24
+
+Primary sources, Playwright where sites refuse a plain GET.
+
+## Confirmed
+
+**TI `SN74LVC1G3157DCKR`** (mux Alternate, 6916 in stock) — datasheet SCES424O:
+*"Specified break-before-make switching"* as a front-page feature, with a `T_B-M` **Break before
+make time** parameter in four timing tables and a dedicated *"Figure 6-10. Break-Before-Make
+Internal Timing"*. Operating frequency **typically 340 MHz** (14× the 24.576 MHz required).
+**1.65–5.5 V VCC**, matching TME's catalogue value exactly. SPDT. Ron **7–9 Ω max** at VCC = 3 V,
+25 °C.
+
+**Nexperia `74LVC1G3157GW`** (mux Preferred, not carried by TME) — product page retrieved with a
+*headed* browser, since the site 403s a plain GET: *"Break-before-make switching"*, Ron
+**6.5 Ω typical at VCC = 3.3 V** and 7.5 Ω at 2.7 V. The spec's "6–7.5 Ω Ron" claim is accurate.
+
+**Both mux candidates satisfy the `Evidence::Datasheet` constraints.** Note that TI publishes
+*maximums* where Nexperia publishes *typicals*, so Ron does not actually separate them — they are
+the same class. The difference that matters is availability.
+
+**Abracon `ASDMB` series** (the spec's former placeholder for *both* oscillator requirements) —
+datasheet `abracon.com/Oscillators/ASDMB.pdf`. A **MEMS** clock oscillator:
+
+| | ASDMB (MEMS) | ASV (quartz) |
+|---|---|---|
+| period jitter RMS | **5–10 ps** | **3.2 ps** |
+| operating temperature | **0…+70 °C** | −40…+85 °C |
+| supply | 1.8–3.3 V (no margin) | 2.97–3.63 V |
+
+Worse on every axis that matters in a design whose stated premise is that MCLK jitter is the one
+thing to avoid — and a 0 °C floor is a real limitation on a *portable* device. **Rejected.**
+
+## The availability finding
+
+| family | active oscillators at TME | stocked |
+|---|---|---|
+| 22.5792 MHz | 24 parts swept | **one** (ASV, 17000) — reel-only, MOQ 1000 |
+| 24.576 MHz | 40 parts swept, 8+ active | **none**; only passive crystals are stocked |
+
+**TME alone cannot supply this clock tree.** The dual-oscillator design needs both frequencies, so
+fetching Mouser and Digi-Key is a prerequisite rather than an improvement.
+
+The one bright spot: **Kyocera AVX `KC2016Z` is a matched pair** — `KC2016Z22.5792C1KX00` and
+`KC2016Z24.5760C1KX00` are the same series, package, supply, temperature range and ±20 ppm
+stability, differing only in frequency. That is precisely what a dual-oscillator design wants, and
+no other series TME carries covers both families. Both are zero-stock with MOQ 2000, and the
+2.0 × 1.6 mm package is markedly harder to hand-place than the ASV's 7.0 × 5.08 mm.
+
+## Could NOT be validated
+
+- **Mouser / Digi-Key stock for `CS43131-CNZ`** (snapshot claims 141 / 401 from manual research).
+  Both sites return HTTP 403 to Playwright even headed; Digi-Key sits behind a Cloudflare
+  interstitial. Scraping them further would be fragile and contrary to their terms — **the API is
+  the supported path**, which is one more reason those two keys matter.
+- **Akyga `AKY-LP623255`** — no reachable product page found (404 on the paths tried), so the cell's
+  dimensions, integrated PCM and per-model certification documents remain unconfirmed.
