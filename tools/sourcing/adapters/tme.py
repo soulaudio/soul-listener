@@ -168,7 +168,16 @@ class TmeAdapter(Adapter):
                 }:
                     elements.append(e)
 
-        return self._hydrate(elements)
+        parts = self._hydrate(elements)
+        # Tie each result back to the identifier asked for, matching on either of
+        # the vendor's two identities.
+        wanted = {m.upper(): m for m in mpns}
+        for part in parts:
+            for ident in (part.mpn, part.vendor_pn):
+                if ident and ident.upper() in wanted:
+                    part.queried_as = wanted[ident.upper()]
+                    break
+        return parts
 
     def search_category(
         self, category: str, limit: int, phrase: str | None = None

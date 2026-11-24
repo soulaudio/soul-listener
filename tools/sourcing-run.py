@@ -50,7 +50,11 @@ def build_adapters(env: dict[str, str]):
     return [
         TmeAdapter(env.get("TME_TOKEN", ""), env.get("TME_APP_SECRET", "")),
         MouserAdapter(),
-        DigikeyAdapter(),
+        DigikeyAdapter(
+            env.get("DIGIKEY_CLIENT_ID", ""),
+            env.get("DIGIKEY_CLIENT_SECRET", ""),
+            host=env.get("DIGIKEY_API_HOST") or "api.digikey.com",
+        ),
     ]
 
 
@@ -106,7 +110,9 @@ def cmd_fetch(args) -> int:
         parts = a.lookup_mpns(mpns)
         found = {p.mpn.upper() for p in parts}
         for p in parts:
-            db.upsert(p, run, category=spec_category_of(p.mpn, p.vendor_pn))
+            db.upsert(
+                p, run, category=spec_category_of(p.queried_as, p.mpn, p.vendor_pn)
+            )
         db.finish_run(run, getattr(a, "calls", 0), len(parts))
         print(f"{a.display_name}: resolved {len(parts)} of {len(mpns)}")
         for m in mpns:
@@ -114,11 +120,15 @@ def cmd_fetch(args) -> int:
             # manufacturer part number are different strings for one part, and
             # reporting "not carried" because the wrong one was compared is how a
             # stocked part gets written off.
+            # `queried_as` first: it is the only identifier guaranteed to match
+            # what was asked for. Vendors return their own PN, which may carry a
+            # packaging suffix or be their internal symbol.
             hit = next(
                 (
                     p
                     for p in parts
-                    if m.upper() in {p.mpn.upper(), p.vendor_pn.upper()}
+                    if (p.queried_as or "").upper() == m.upper()
+                    or m.upper() in {p.mpn.upper(), p.vendor_pn.upper()}
                 ),
                 None,
             )

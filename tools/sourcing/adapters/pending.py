@@ -49,13 +49,3 @@ class MouserAdapter(_Unavailable):
         "MOUSER_SEARCH_API_KEY, plus one recorded response to write the field mapping "
         "against — the Swagger spec is not retrievable unauthenticated"
     )
-
-
-class DigikeyAdapter(_Unavailable):
-    name = "digikey"
-    display_name = "Digi-Key"
-    warehouse = "NL"
-    needs = (
-        "DIGIKEY_CLIENT_ID and DIGIKEY_CLIENT_SECRET (OAuth2 two-legged); start against "
-        "sandbox-api.digikey.com so the mapping is proven before spending production quota"
-    )

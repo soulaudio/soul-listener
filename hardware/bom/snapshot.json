@@ -54,7 +54,7 @@
     "CS43131-CNZ": {
       "manufacturer": "Cirrus Logic",
       "description": "Stereo DAC with integrated ground-centred Class-H headphone amplifier",
-      "package": "QFN-32",
+      "package": "40-QFN (5x5)",
       "satisfies": "dac",
       "offers": [
         {
@@ -75,19 +75,55 @@
         },
         {
           "distributor": "digikey",
-          "distributor_pn": null,
-          "stock": 401,
+          "distributor_pn": "598-2473-ND",
+          "stock": 347,
           "moq": 1,
-          "order_multiple": 1,
-          "lead_time_days": null,
-          "price_breaks": [],
+          "order_multiple": 490,
+          "lead_time_days": 140,
+          "price_breaks": [
+            {
+              "qty": 1,
+              "unit_price": 16.44
+            },
+            {
+              "qty": 10,
+              "unit_price": 13.072
+            },
+            {
+              "qty": 25,
+              "unit_price": 12.232
+            },
+            {
+              "qty": 100,
+              "unit_price": 11.3085
+            },
+            {
+              "qty": 490,
+              "unit_price": 10.60996
+            }
+          ],
           "currency": "EUR",
-          "lifecycle": "unknown",
-          "compliance": [],
+          "lifecycle": "active",
+          "compliance": [
+            {
+              "regulation": "RoHS",
+              "revision": "ROHS3",
+              "status": "ROHS3 Compliant",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            },
+            {
+              "regulation": "REACH",
+              "revision": "unstated",
+              "status": "REACH Unaffected",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            }
+          ],
           "datasheet_url": "https://statics.cirrus.com/pubs/proDatasheet/CS43131_DS1155F2.pdf",
-          "source": "manual-research",
-          "retrieved_at": "2026-11-23",
-          "note": "stock read from the product page during research"
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "digikey API, EUR. MOQ 1, order multiple 490. Vendor part number 598-2473-ND."
         },
         {
           "distributor": "tme",
@@ -103,14 +139,14 @@
           "datasheet_url": null,
           "source": "api",
           "retrieved_at": "2026-11-24",
-          "note": "NOT CARRIED BY TME: looked up by both manufacturer part number and TME symbol on 2026-11-24 with no match. Recorded rather than omitted so the negative result is not re-discovered; both snapshot gates filter on stock > 0, so this counts as information and not as a source."
+          "note": "NOT CARRIED BY TME: looked up on 2026-11-24 by manufacturer part number, by the vendor's own symbol, and by keyword, with no match. Recorded rather than omitted so the negative result is not re-discovered; both snapshot gates filter on stock > 0, so this informs without counting as a source."
         }
       ]
     },
     "CS43131-CNZR": {
       "manufacturer": "Cirrus Logic",
       "description": "Same die as CS43131-CNZ, tape-and-reel packaging",
-      "package": "QFN-32",
+      "package": "40-QFN (5x5)",
       "satisfies": null,
       "offers": [
         {
@@ -131,19 +167,59 @@
         },
         {
           "distributor": "digikey",
-          "distributor_pn": null,
+          "distributor_pn": "598-2472-1-ND",
           "stock": 221,
           "moq": 1,
           "order_multiple": 1,
-          "lead_time_days": null,
-          "price_breaks": [],
+          "lead_time_days": 140,
+          "price_breaks": [
+            {
+              "qty": 1,
+              "unit_price": 16.44
+            },
+            {
+              "qty": 10,
+              "unit_price": 13.072
+            },
+            {
+              "qty": 25,
+              "unit_price": 12.232
+            },
+            {
+              "qty": 100,
+              "unit_price": 11.3085
+            },
+            {
+              "qty": 250,
+              "unit_price": 10.86824
+            },
+            {
+              "qty": 500,
+              "unit_price": 10.60296
+            }
+          ],
           "currency": "EUR",
-          "lifecycle": "unknown",
-          "compliance": [],
-          "datasheet_url": null,
-          "source": "manual-research",
-          "retrieved_at": "2026-11-23",
-          "note": "stocked here, which is why single-distributor sourcing hides the problem"
+          "lifecycle": "active",
+          "compliance": [
+            {
+              "regulation": "RoHS",
+              "revision": "ROHS3",
+              "status": "ROHS3 Compliant",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            },
+            {
+              "regulation": "REACH",
+              "revision": "unstated",
+              "status": "REACH Unaffected",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            }
+          ],
+          "datasheet_url": "https://statics.cirrus.com/pubs/proDatasheet/CS43131_DS1155F2.pdf",
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "digikey API, EUR. MOQ 1, order multiple 1. Vendor part number 598-2472-1-ND."
         },
         {
           "distributor": "tme",
@@ -159,7 +235,7 @@
           "datasheet_url": null,
           "source": "api",
           "retrieved_at": "2026-11-24",
-          "note": "NOT CARRIED BY TME: looked up by both manufacturer part number and TME symbol on 2026-11-24 with no match. Recorded rather than omitted so the negative result is not re-discovered; both snapshot gates filter on stock > 0, so this counts as information and not as a source."
+          "note": "NOT CARRIED BY TME: looked up on 2026-11-24 by manufacturer part number, by the vendor's own symbol, and by keyword, with no match. Recorded rather than omitted so the negative result is not re-discovered; both snapshot gates filter on stock > 0, so this informs without counting as a source."
         }
       ]
     },
@@ -170,34 +246,57 @@
       "satisfies": "dac",
       "offers": [
         {
-          "distributor": "tme",
-          "distributor_pn": null,
-          "stock": 0,
-          "moq": null,
-          "order_multiple": null,
-          "lead_time_days": null,
-          "price_breaks": [],
+          "distributor": "digikey",
+          "distributor_pn": "598-2475-ND",
+          "stock": 346,
+          "moq": 1,
+          "order_multiple": 490,
+          "lead_time_days": 140,
+          "price_breaks": [
+            {
+              "qty": 1,
+              "unit_price": 16.15
+            },
+            {
+              "qty": 10,
+              "unit_price": 12.838
+            },
+            {
+              "qty": 25,
+              "unit_price": 12.01
+            },
+            {
+              "qty": 100,
+              "unit_price": 11.1005
+            },
+            {
+              "qty": 490,
+              "unit_price": 10.41261
+            }
+          ],
           "currency": "EUR",
-          "lifecycle": "unknown",
-          "compliance": [],
-          "datasheet_url": null,
+          "lifecycle": "active",
+          "compliance": [
+            {
+              "regulation": "RoHS",
+              "revision": "ROHS3",
+              "status": "ROHS3 Compliant",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            },
+            {
+              "regulation": "REACH",
+              "revision": "unstated",
+              "status": "REACH Unaffected",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            }
+          ],
+          "datasheet_url": "https://statics.cirrus.com/pubs/proDatasheet/CS43198_F1.pdf",
           "source": "api",
           "retrieved_at": "2026-11-24",
-          "note": "NOT CARRIED BY TME: looked up by both manufacturer part number and TME symbol on 2026-11-24 with no match. Recorded rather than omitted so the negative result is not re-discovered; both snapshot gates filter on stock > 0, so this counts as information and not as a source."
-        }
-      ],
-      "sourcing_pending": {
-        "reason": "TME has been fetched and reports no stock (and does not carry this part); Mouser and Digi-Key are unfetched, so the EU sourcing question is still open rather than answered negatively.",
-        "since": "2026-11-24",
-        "note": "Recorded from a real category sweep rather than guessed. A Hard lock does not accept sourcing_pending."
-      }
-    },
-    "ASDMB-22.5792MHZ-LY-T": {
-      "manufacturer": "Abracon",
-      "description": "22.5792 MHz fixed MEMS/XO oscillator (placeholder)",
-      "package": "SMD",
-      "satisfies": "mclk-osc-44k1",
-      "offers": [
+          "note": "digikey API, EUR. MOQ 1, order multiple 490. Vendor part number 598-2475-ND."
+        },
         {
           "distributor": "tme",
           "distributor_pn": null,
@@ -212,11 +311,51 @@
           "datasheet_url": null,
           "source": "api",
           "retrieved_at": "2026-11-24",
-          "note": "NOT CARRIED BY TME: looked up by both manufacturer part number and TME symbol on 2026-11-24 with no match. Recorded rather than omitted so the negative result is not re-discovered; both snapshot gates filter on stock > 0, so this counts as information and not as a source."
+          "note": "NOT CARRIED BY TME: looked up on 2026-11-24 by manufacturer part number, by the vendor's own symbol, and by keyword, with no match. Recorded rather than omitted so the negative result is not re-discovered; both snapshot gates filter on stock > 0, so this informs without counting as a source."
+        }
+      ]
+    },
+    "ASDMB-22.5792MHZ-LY-T": {
+      "manufacturer": "Abracon",
+      "description": "22.5792 MHz fixed MEMS/XO oscillator (placeholder)",
+      "package": "SMD",
+      "satisfies": "mclk-osc-44k1",
+      "offers": [
+        {
+          "distributor": "digikey",
+          "distributor_pn": null,
+          "stock": 0,
+          "moq": null,
+          "order_multiple": null,
+          "lead_time_days": null,
+          "price_breaks": [],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "NOT CARRIED BY DIGIKEY: looked up on 2026-11-24 by manufacturer part number, by the vendor's own symbol, and by keyword, with no match. Recorded rather than omitted so the negative result is not re-discovered; both snapshot gates filter on stock > 0, so this informs without counting as a source."
+        },
+        {
+          "distributor": "tme",
+          "distributor_pn": null,
+          "stock": 0,
+          "moq": null,
+          "order_multiple": null,
+          "lead_time_days": null,
+          "price_breaks": [],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "NOT CARRIED BY TME: looked up on 2026-11-24 by manufacturer part number, by the vendor's own symbol, and by keyword, with no match. Recorded rather than omitted so the negative result is not re-discovered; both snapshot gates filter on stock > 0, so this informs without counting as a source."
         }
       ],
       "sourcing_pending": {
-        "reason": "TME has been fetched and reports no stock (and does not carry this part); Mouser and Digi-Key are unfetched, so the EU sourcing question is still open rather than answered negatively.",
+        "reason": "no stock at any distributor with an adapter (digikey, tme); Mouser is unfetched, so the EU sourcing question is still open rather than answered negatively.",
         "since": "2026-11-24",
         "note": "Recorded from a real category sweep rather than guessed. A Hard lock does not accept sourcing_pending."
       }
@@ -228,34 +367,65 @@
       "satisfies": "mclk-osc-48k",
       "offers": [
         {
-          "distributor": "tme",
-          "distributor_pn": null,
-          "stock": 0,
-          "moq": null,
-          "order_multiple": null,
-          "lead_time_days": null,
-          "price_breaks": [],
+          "distributor": "digikey",
+          "distributor_pn": "535-11187-1-ND",
+          "stock": 979,
+          "moq": 1,
+          "order_multiple": 1,
+          "lead_time_days": 182,
+          "price_breaks": [
+            {
+              "qty": 1,
+              "unit_price": 3.92
+            },
+            {
+              "qty": 10,
+              "unit_price": 3.413
+            },
+            {
+              "qty": 25,
+              "unit_price": 3.228
+            },
+            {
+              "qty": 50,
+              "unit_price": 3.0946
+            },
+            {
+              "qty": 100,
+              "unit_price": 2.9668
+            },
+            {
+              "qty": 250,
+              "unit_price": 2.80588
+            },
+            {
+              "qty": 500,
+              "unit_price": 2.76798
+            }
+          ],
           "currency": "EUR",
-          "lifecycle": "unknown",
-          "compliance": [],
-          "datasheet_url": null,
+          "lifecycle": "active",
+          "compliance": [
+            {
+              "regulation": "RoHS",
+              "revision": "ROHS3",
+              "status": "ROHS3 Compliant",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            },
+            {
+              "regulation": "REACH",
+              "revision": "unstated",
+              "status": "REACH Unaffected",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            }
+          ],
+          "datasheet_url": "https://abracon.com/Oscillators/ASDMB.pdf",
           "source": "api",
           "retrieved_at": "2026-11-24",
-          "note": "NOT CARRIED BY TME: looked up by both manufacturer part number and TME symbol on 2026-11-24 with no match. Recorded rather than omitted so the negative result is not re-discovered; both snapshot gates filter on stock > 0, so this counts as information and not as a source."
-        }
-      ],
-      "sourcing_pending": {
-        "reason": "TME has been fetched and reports no stock (and does not carry this part); Mouser and Digi-Key are unfetched, so the EU sourcing question is still open rather than answered negatively.",
-        "since": "2026-11-24",
-        "note": "Recorded from a real category sweep rather than guessed. A Hard lock does not accept sourcing_pending."
-      }
-    },
-    "74LVC1G3157GW": {
-      "manufacturer": "Nexperia",
-      "description": "2-channel analog mux/demux, break-before-make",
-      "package": "TSSOP-6",
-      "satisfies": "mclk-mux",
-      "offers": [
+          "note": "digikey API, EUR. MOQ 1, order multiple 1. Vendor part number 535-11187-1-ND."
+        },
         {
           "distributor": "tme",
           "distributor_pn": null,
@@ -270,14 +440,93 @@
           "datasheet_url": null,
           "source": "api",
           "retrieved_at": "2026-11-24",
-          "note": "NOT CARRIED BY TME: looked up by both manufacturer part number and TME symbol on 2026-11-24 with no match. Recorded rather than omitted so the negative result is not re-discovered; both snapshot gates filter on stock > 0, so this counts as information and not as a source."
+          "note": "NOT CARRIED BY TME: looked up on 2026-11-24 by manufacturer part number, by the vendor's own symbol, and by keyword, with no match. Recorded rather than omitted so the negative result is not re-discovered; both snapshot gates filter on stock > 0, so this informs without counting as a source."
         }
-      ],
-      "sourcing_pending": {
-        "reason": "TME has been fetched and reports no stock (and does not carry this part); Mouser and Digi-Key are unfetched, so the EU sourcing question is still open rather than answered negatively.",
-        "since": "2026-11-24",
-        "note": "Recorded from a real category sweep rather than guessed. A Hard lock does not accept sourcing_pending."
-      }
+      ]
+    },
+    "74LVC1G3157GW": {
+      "manufacturer": "Nexperia",
+      "description": "2-channel analog mux/demux, break-before-make",
+      "package": "TSSOP-6",
+      "satisfies": "mclk-mux",
+      "offers": [
+        {
+          "distributor": "digikey",
+          "distributor_pn": "1727-6073-1-ND",
+          "stock": 40729,
+          "moq": 1,
+          "order_multiple": null,
+          "lead_time_days": 140,
+          "price_breaks": [
+            {
+              "qty": 1,
+              "unit_price": 0.12
+            },
+            {
+              "qty": 10,
+              "unit_price": 0.084
+            },
+            {
+              "qty": 25,
+              "unit_price": 0.074
+            },
+            {
+              "qty": 100,
+              "unit_price": 0.0622
+            },
+            {
+              "qty": 250,
+              "unit_price": 0.05676
+            },
+            {
+              "qty": 500,
+              "unit_price": 0.05348
+            },
+            {
+              "qty": 1000,
+              "unit_price": 0.05075
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "active",
+          "compliance": [
+            {
+              "regulation": "RoHS",
+              "revision": "ROHS3",
+              "status": "ROHS3 Compliant",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            },
+            {
+              "regulation": "REACH",
+              "revision": "unstated",
+              "status": "REACH Unaffected",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            }
+          ],
+          "datasheet_url": "https://assets.nexperia.com/documents/data-sheet/74LVC1G3157.pdf",
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "digikey API, EUR. MOQ 1, order multiple None. Vendor lists this as 74LVC1G3157GW,125. Vendor part number 1727-6073-1-ND."
+        },
+        {
+          "distributor": "tme",
+          "distributor_pn": null,
+          "stock": 0,
+          "moq": null,
+          "order_multiple": null,
+          "lead_time_days": null,
+          "price_breaks": [],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "NOT CARRIED BY TME: looked up on 2026-11-24 by manufacturer part number, by the vendor's own symbol, and by keyword, with no match. Recorded rather than omitted so the negative result is not re-discovered; both snapshot gates filter on stock > 0, so this informs without counting as a source."
+        }
+      ]
     },
     "SN74LVC1G3157DCKR": {
       "manufacturer": "Texas Instruments",
@@ -285,6 +534,66 @@
       "package": "SC-70-6",
       "satisfies": "mclk-mux",
       "offers": [
+        {
+          "distributor": "digikey",
+          "distributor_pn": "296-14909-1-ND",
+          "stock": 895727,
+          "moq": 1,
+          "order_multiple": null,
+          "lead_time_days": 182,
+          "price_breaks": [
+            {
+              "qty": 1,
+              "unit_price": 0.22
+            },
+            {
+              "qty": 10,
+              "unit_price": 0.154
+            },
+            {
+              "qty": 25,
+              "unit_price": 0.1356
+            },
+            {
+              "qty": 100,
+              "unit_price": 0.1158
+            },
+            {
+              "qty": 250,
+              "unit_price": 0.10644
+            },
+            {
+              "qty": 500,
+              "unit_price": 0.1008
+            },
+            {
+              "qty": 1000,
+              "unit_price": 0.09615
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "active",
+          "compliance": [
+            {
+              "regulation": "RoHS",
+              "revision": "ROHS3",
+              "status": "ROHS3 Compliant",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            },
+            {
+              "regulation": "REACH",
+              "revision": "unstated",
+              "status": "REACH Unaffected",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            }
+          ],
+          "datasheet_url": "https://www.ti.com/lit/ds/symlink/sn74lvc1g3157.pdf?ts=1744712889436&ref_url=https%253A%252F%252Fwww.ti.com%252Fsitesearch%252Fen-us%252Fdocs%252Funiversalsearch.tsp%253FlangPref%253Den-US%2526nr%253D26%2526searchTerm%253DSN74LVC1G3157DCKR",
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "digikey API, EUR. MOQ 1, order multiple None. Vendor part number 296-14909-1-ND."
+        },
         {
           "distributor": "tme",
           "distributor_pn": "SN74LVC1G3157DCKR",
@@ -340,7 +649,7 @@
           "datasheet_url": "https://www.ti.com/lit/ds/symlink/sn74lvc1g3157.pdf?ts=1728540283477&ref_url=https%253A%252F%252Fwww.ti.com%252Fproduct%252FSN74LVC1G3157",
           "source": "api",
           "retrieved_at": "2026-11-24",
-          "note": "TME API v2, country=SK, currency=EUR. MOQ 1, order multiple 1: stock 6903 does not mean one unit is purchasable."
+          "note": "tme API, EUR. MOQ 1, order multiple 1."
         }
       ]
     },
@@ -350,6 +659,58 @@
       "package": "LQFP-144",
       "satisfies": "mcu",
       "offers": [
+        {
+          "distributor": "digikey",
+          "distributor_pn": "497-STM32H7A3ZIT6-ND",
+          "stock": 0,
+          "moq": 1,
+          "order_multiple": 60,
+          "lead_time_days": 364,
+          "price_breaks": [
+            {
+              "qty": 1,
+              "unit_price": 16.18
+            },
+            {
+              "qty": 10,
+              "unit_price": 12.788
+            },
+            {
+              "qty": 60,
+              "unit_price": 11.31133
+            },
+            {
+              "qty": 120,
+              "unit_price": 10.91183
+            },
+            {
+              "qty": 540,
+              "unit_price": 10.27126
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "active",
+          "compliance": [
+            {
+              "regulation": "RoHS",
+              "revision": "ROHS3",
+              "status": "ROHS3 Compliant",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            },
+            {
+              "regulation": "REACH",
+              "revision": "unstated",
+              "status": "REACH Unaffected",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            }
+          ],
+          "datasheet_url": "https://www.st.com/resource/en/datasheet/stm32h7a3zi.pdf",
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "digikey API, EUR. MOQ 1, order multiple 60. Vendor part number 497-STM32H7A3ZIT6-ND."
+        },
         {
           "distributor": "tme",
           "distributor_pn": "STM32H7A3ZIT6",
@@ -373,11 +734,11 @@
           "datasheet_url": "https://www.tme.eu/Document/94f850c15a2fb003c4530843ceba6dfc/stm32h7a3ag.pdf",
           "source": "api",
           "retrieved_at": "2026-11-24",
-          "note": "TME API v2, country=SK, currency=EUR. MOQ 1, order multiple 1: stock 0 does not mean one unit is purchasable. TME product_status=['BLOCKED_FOR_ZBL_BACKORDERS']. BLOCKED_FOR_ZBL_BACKORDERS is an ORDERING restriction (no zero-balance backorders accepted), not a lifecycle state, which is why lifecycle stays 'unknown' rather than being inferred from it."
+          "note": "tme API, EUR. MOQ 1, order multiple 1. TME product_status=['BLOCKED_FOR_ZBL_BACKORDERS']. BLOCKED_FOR_ZBL_BACKORDERS is an ORDERING restriction, not a lifecycle state."
         }
       ],
       "sourcing_pending": {
-        "reason": "TME has been fetched and reports no stock; Mouser and Digi-Key are unfetched, so the EU sourcing question is still open rather than answered negatively.",
+        "reason": "no stock at any distributor with an adapter (digikey, tme); Mouser is unfetched, so the EU sourcing question is still open rather than answered negatively.",
         "since": "2026-11-24",
         "note": "Recorded from a real category sweep rather than guessed. A Hard lock does not accept sourcing_pending."
       }
@@ -388,6 +749,42 @@
       "package": "LQFP-144",
       "satisfies": "mcu",
       "offers": [
+        {
+          "distributor": "digikey",
+          "distributor_pn": "497-STM32H7B3ZIT6-ND",
+          "stock": 0,
+          "moq": 360,
+          "order_multiple": 360,
+          "lead_time_days": 364,
+          "price_breaks": [
+            {
+              "qty": 360,
+              "unit_price": 10.44825
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "active",
+          "compliance": [
+            {
+              "regulation": "RoHS",
+              "revision": "ROHS3",
+              "status": "ROHS3 Compliant",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            },
+            {
+              "regulation": "REACH",
+              "revision": "unstated",
+              "status": "REACH Unaffected",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            }
+          ],
+          "datasheet_url": "https://www.st.com/resource/en/datasheet/stm32h7b3vi.pdf",
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "digikey API, EUR. MOQ 360, order multiple 360. Reel/tray minimum: stock does not mean one unit is purchasable. Vendor part number 497-STM32H7B3ZIT6-ND."
+        },
         {
           "distributor": "tme",
           "distributor_pn": "STM32H7B3ZIT6",
@@ -423,11 +820,11 @@
           "datasheet_url": "https://www.tme.eu/Document/af07a4430bb69abe691d1a5e438381e0/stm32h7b3zi.pdf",
           "source": "api",
           "retrieved_at": "2026-11-24",
-          "note": "TME API v2, country=SK, currency=EUR. MOQ 1, order multiple 1: stock 0 does not mean one unit is purchasable. TME product_status=['BLOCKED_FOR_ZBL_BACKORDERS']. BLOCKED_FOR_ZBL_BACKORDERS is an ORDERING restriction (no zero-balance backorders accepted), not a lifecycle state, which is why lifecycle stays 'unknown' rather than being inferred from it."
+          "note": "tme API, EUR. MOQ 1, order multiple 1. TME product_status=['BLOCKED_FOR_ZBL_BACKORDERS']. BLOCKED_FOR_ZBL_BACKORDERS is an ORDERING restriction, not a lifecycle state."
         }
       ],
       "sourcing_pending": {
-        "reason": "TME has been fetched and reports no stock; Mouser and Digi-Key are unfetched, so the EU sourcing question is still open rather than answered negatively.",
+        "reason": "no stock at any distributor with an adapter (digikey, tme); Mouser is unfetched, so the EU sourcing question is still open rather than answered negatively.",
         "since": "2026-11-24",
         "note": "Recorded from a real category sweep rather than guessed. A Hard lock does not accept sourcing_pending."
       }
@@ -438,6 +835,22 @@
       "package": "pouch cell",
       "satisfies": "battery",
       "offers": [
+        {
+          "distributor": "digikey",
+          "distributor_pn": null,
+          "stock": 0,
+          "moq": null,
+          "order_multiple": null,
+          "lead_time_days": null,
+          "price_breaks": [],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "NOT CARRIED BY DIGIKEY: looked up on 2026-11-24 by manufacturer part number, by the vendor's own symbol, and by keyword, with no match. Recorded rather than omitted so the negative result is not re-discovered; both snapshot gates filter on stock > 0, so this informs without counting as a source."
+        },
         {
           "distributor": "tme",
           "distributor_pn": "AKY-LP623255",
@@ -469,7 +882,7 @@
           "datasheet_url": "https://www.tme.eu/Document/e47080e29ae26da2feed951f4827cf75/AKY0646.pdf",
           "source": "api",
           "retrieved_at": "2026-11-24",
-          "note": "TME API v2, country=SK, currency=EUR. MOQ 1, order multiple 1: stock 1298 does not mean one unit is purchasable. TME product_status=['DANGEROUS']. BLOCKED_FOR_ZBL_BACKORDERS is an ORDERING restriction (no zero-balance backorders accepted), not a lifecycle state, which is why lifecycle stays 'unknown' rather than being inferred from it."
+          "note": "tme API, EUR. MOQ 1, order multiple 1. Vendor lists this as AKY0646. TME product_status=['DANGEROUS']. BLOCKED_FOR_ZBL_BACKORDERS is an ORDERING restriction, not a lifecycle state."
         }
       ]
     },
@@ -479,6 +892,22 @@
       "package": "module",
       "satisfies": "bluetooth",
       "offers": [
+        {
+          "distributor": "digikey",
+          "distributor_pn": null,
+          "stock": 0,
+          "moq": null,
+          "order_multiple": null,
+          "lead_time_days": null,
+          "price_breaks": [],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "NOT CARRIED BY DIGIKEY: looked up on 2026-11-24 by manufacturer part number, by the vendor's own symbol, and by keyword, with no match. Recorded rather than omitted so the negative result is not re-discovered; both snapshot gates filter on stock > 0, so this informs without counting as a source."
+        },
         {
           "distributor": "tme",
           "distributor_pn": null,
@@ -493,11 +922,11 @@
           "datasheet_url": null,
           "source": "api",
           "retrieved_at": "2026-11-24",
-          "note": "NOT CARRIED BY TME: looked up by both manufacturer part number and TME symbol on 2026-11-24 with no match. Recorded rather than omitted so the negative result is not re-discovered; both snapshot gates filter on stock > 0, so this counts as information and not as a source."
+          "note": "NOT CARRIED BY TME: looked up on 2026-11-24 by manufacturer part number, by the vendor's own symbol, and by keyword, with no match. Recorded rather than omitted so the negative result is not re-discovered; both snapshot gates filter on stock > 0, so this informs without counting as a source."
         }
       ],
       "sourcing_pending": {
-        "reason": "TME has been fetched and reports no stock (and does not carry this part); Mouser and Digi-Key are unfetched, so the EU sourcing question is still open rather than answered negatively.",
+        "reason": "no stock at any distributor with an adapter (digikey, tme); Mouser is unfetched, so the EU sourcing question is still open rather than answered negatively.",
         "since": "2026-11-24",
         "note": "Recorded from a real category sweep rather than guessed. A Hard lock does not accept sourcing_pending."
       }
@@ -508,6 +937,66 @@
       "package": "SMD",
       "satisfies": "mclk-osc-44k1",
       "offers": [
+        {
+          "distributor": "digikey",
+          "distributor_pn": "535-ASV-22.5792MHZ-LR-TCT-ND",
+          "stock": 1319,
+          "moq": 1,
+          "order_multiple": null,
+          "lead_time_days": 84,
+          "price_breaks": [
+            {
+              "qty": 1,
+              "unit_price": 2.11
+            },
+            {
+              "qty": 10,
+              "unit_price": 1.837
+            },
+            {
+              "qty": 25,
+              "unit_price": 1.7368
+            },
+            {
+              "qty": 50,
+              "unit_price": 1.665
+            },
+            {
+              "qty": 100,
+              "unit_price": 1.596
+            },
+            {
+              "qty": 250,
+              "unit_price": 1.50936
+            },
+            {
+              "qty": 500,
+              "unit_price": 1.447
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "active",
+          "compliance": [
+            {
+              "regulation": "RoHS",
+              "revision": "ROHS3",
+              "status": "ROHS3 Compliant",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            },
+            {
+              "regulation": "REACH",
+              "revision": "unstated",
+              "status": "REACH Unaffected",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            }
+          ],
+          "datasheet_url": "https://abracon.com/Oscillators/ASV.pdf",
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "digikey API, EUR. MOQ 1, order multiple None. Vendor part number 535-ASV-22.5792MHZ-LR-TCT-ND."
+        },
         {
           "distributor": "tme",
           "distributor_pn": "ASV22.5792MHZLRT-0",
@@ -527,7 +1016,7 @@
           "datasheet_url": "https://abracon.com/Oscillators/ASV.pdf",
           "source": "api",
           "retrieved_at": "2026-11-24",
-          "note": "TME API v2, country=SK, currency=EUR. MOQ 1000, order multiple 1000: stock 17000 does not mean one unit is purchasable. TME product_status=['EXTERNAL_WAREHOUSE', 'BLOCKED_FOR_ZBL_MP']. BLOCKED_FOR_ZBL_BACKORDERS is an ORDERING restriction (no zero-balance backorders accepted), not a lifecycle state, which is why lifecycle stays 'unknown' rather than being inferred from it. TME indexes this part as symbol ASV22.5792MHZLRT-0."
+          "note": "tme API, EUR. MOQ 1000, order multiple 1000. Reel/tray minimum: stock does not mean one unit is purchasable. Vendor part number ASV22.5792MHZLRT-0. TME product_status=['EXTERNAL_WAREHOUSE', 'BLOCKED_FOR_ZBL_MP']. BLOCKED_FOR_ZBL_BACKORDERS is an ORDERING restriction, not a lifecycle state."
         }
       ]
     },
@@ -537,6 +1026,70 @@
       "package": "SMD",
       "satisfies": "mclk-osc-44k1",
       "offers": [
+        {
+          "distributor": "digikey",
+          "distributor_pn": "478-KC2016Z22.5792C1KX00CT-ND",
+          "stock": 1871,
+          "moq": 1,
+          "order_multiple": 1,
+          "lead_time_days": 126,
+          "price_breaks": [
+            {
+              "qty": 1,
+              "unit_price": 1.09
+            },
+            {
+              "qty": 10,
+              "unit_price": 0.945
+            },
+            {
+              "qty": 25,
+              "unit_price": 0.894
+            },
+            {
+              "qty": 50,
+              "unit_price": 0.8572
+            },
+            {
+              "qty": 100,
+              "unit_price": 0.8217
+            },
+            {
+              "qty": 250,
+              "unit_price": 0.77704
+            },
+            {
+              "qty": 500,
+              "unit_price": 0.74492
+            },
+            {
+              "qty": 1000,
+              "unit_price": 0.71412
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "active",
+          "compliance": [
+            {
+              "regulation": "RoHS",
+              "revision": "ROHS3",
+              "status": "ROHS3 Compliant",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            },
+            {
+              "regulation": "REACH",
+              "revision": "unstated",
+              "status": "REACH Unaffected",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            }
+          ],
+          "datasheet_url": "//media.digikey.com/pdf/Data%20Sheets/Kyocera%20International/Z_Series_X_Type.pdf",
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "digikey API, EUR. MOQ 1, order multiple 1. Vendor part number 478-KC2016Z22.5792C1KX00CT-ND."
+        },
         {
           "distributor": "tme",
           "distributor_pn": "KC2016Z22.5792C1KX",
@@ -556,14 +1109,9 @@
           "datasheet_url": "https://www.tme.eu/Document/7eb6aaa55749803a470dbb69fd33d76a/clock_z_x_e.pdf",
           "source": "api",
           "retrieved_at": "2026-11-24",
-          "note": "TME API v2, country=SK, currency=EUR. MOQ 2000, order multiple 2000: stock 0 does not mean one unit is purchasable. TME product_status=['BLOCKED_FOR_ZBL_BACKORDERS']. BLOCKED_FOR_ZBL_BACKORDERS is an ORDERING restriction (no zero-balance backorders accepted), not a lifecycle state, which is why lifecycle stays 'unknown' rather than being inferred from it. TME indexes this part as symbol KC2016Z22.5792C1KX."
+          "note": "tme API, EUR. MOQ 2000, order multiple 2000. Reel/tray minimum: stock does not mean one unit is purchasable. Vendor part number KC2016Z22.5792C1KX. TME product_status=['BLOCKED_FOR_ZBL_BACKORDERS']. BLOCKED_FOR_ZBL_BACKORDERS is an ORDERING restriction, not a lifecycle state."
         }
-      ],
-      "sourcing_pending": {
-        "reason": "TME has been fetched and reports no stock; Mouser and Digi-Key are unfetched, so the EU sourcing question is still open rather than answered negatively.",
-        "since": "2026-11-24",
-        "note": "Recorded from a real category sweep rather than guessed. A Hard lock does not accept sourcing_pending."
-      }
+      ]
     },
     "KC2016Z24.5760C1KX00": {
       "manufacturer": "Kyocera AVX",
@@ -571,6 +1119,70 @@
       "package": "SMD",
       "satisfies": "mclk-osc-48k",
       "offers": [
+        {
+          "distributor": "digikey",
+          "distributor_pn": "478-KC2016Z24.5760C1KX00CT-ND",
+          "stock": 1062,
+          "moq": 1,
+          "order_multiple": 1,
+          "lead_time_days": 126,
+          "price_breaks": [
+            {
+              "qty": 1,
+              "unit_price": 1.1
+            },
+            {
+              "qty": 10,
+              "unit_price": 0.96
+            },
+            {
+              "qty": 25,
+              "unit_price": 0.908
+            },
+            {
+              "qty": 50,
+              "unit_price": 0.8704
+            },
+            {
+              "qty": 100,
+              "unit_price": 0.8343
+            },
+            {
+              "qty": 250,
+              "unit_price": 0.78904
+            },
+            {
+              "qty": 500,
+              "unit_price": 0.75638
+            },
+            {
+              "qty": 1000,
+              "unit_price": 0.7251
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "active",
+          "compliance": [
+            {
+              "regulation": "RoHS",
+              "revision": "ROHS3",
+              "status": "ROHS3 Compliant",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            },
+            {
+              "regulation": "REACH",
+              "revision": "unstated",
+              "status": "REACH Unaffected",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            }
+          ],
+          "datasheet_url": "//media.digikey.com/pdf/Data%20Sheets/Kyocera%20International/Z_Series_X_Type.pdf",
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "digikey API, EUR. MOQ 1, order multiple 1. Vendor part number 478-KC2016Z24.5760C1KX00CT-ND."
+        },
         {
           "distributor": "tme",
           "distributor_pn": "KC2016Z24.5760C1KX",
@@ -590,14 +1202,9 @@
           "datasheet_url": "https://www.tme.eu/Document/7eb6aaa55749803a470dbb69fd33d76a/clock_z_x_e.pdf",
           "source": "api",
           "retrieved_at": "2026-11-24",
-          "note": "TME API v2, country=SK, currency=EUR. MOQ 2000, order multiple 2000: stock 0 does not mean one unit is purchasable. TME product_status=['BLOCKED_FOR_ZBL_BACKORDERS']. BLOCKED_FOR_ZBL_BACKORDERS is an ORDERING restriction (no zero-balance backorders accepted), not a lifecycle state, which is why lifecycle stays 'unknown' rather than being inferred from it. TME indexes this part as symbol KC2016Z24.5760C1KX."
+          "note": "tme API, EUR. MOQ 2000, order multiple 2000. Reel/tray minimum: stock does not mean one unit is purchasable. Vendor part number KC2016Z24.5760C1KX. TME product_status=['BLOCKED_FOR_ZBL_BACKORDERS']. BLOCKED_FOR_ZBL_BACKORDERS is an ORDERING restriction, not a lifecycle state."
         }
-      ],
-      "sourcing_pending": {
-        "reason": "TME has been fetched and reports no stock; Mouser and Digi-Key are unfetched, so the EU sourcing question is still open rather than answered negatively.",
-        "since": "2026-11-24",
-        "note": "Recorded from a real category sweep rather than guessed. A Hard lock does not accept sourcing_pending."
-      }
+      ]
     },
     "AKY0107": {
       "manufacturer": "Akyga Battery",
@@ -605,6 +1212,42 @@
       "package": "pouch cell",
       "satisfies": "battery",
       "offers": [
+        {
+          "distributor": "digikey",
+          "distributor_pn": "4214-AKY0107-ND",
+          "stock": 55,
+          "moq": 1,
+          "order_multiple": 1,
+          "lead_time_days": null,
+          "price_breaks": [
+            {
+              "qty": 1,
+              "unit_price": 4.3
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "active",
+          "compliance": [
+            {
+              "regulation": "RoHS",
+              "revision": "ROHS",
+              "status": "RoHS Compliant",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            },
+            {
+              "regulation": "REACH",
+              "revision": "unstated",
+              "status": "REACH Affected",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            }
+          ],
+          "datasheet_url": "https://www.akyga.com/app_products_attachments/product-cards/symbol/AKY0107/code/en",
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "digikey API, EUR. MOQ 1, order multiple 1. Vendor part number 4214-AKY0107-ND."
+        },
         {
           "distributor": "tme",
           "distributor_pn": "AKY-LP503759",
@@ -636,44 +1279,47 @@
           "datasheet_url": "https://www.tme.eu/Document/d09d785c980e096e8a2305b0492fc05e/AKY0107.pdf",
           "source": "api",
           "retrieved_at": "2026-11-24",
-          "note": "From the TME rechargeable-battery sweep. Ranks 1st of the 31 cells that pass the battery constraints, on stock depth. Bay fit unconfirmed: TME publishes no dimensions for cells."
+          "note": "tme API, EUR. MOQ 1, order multiple 1. Vendor part number AKY-LP503759. TME product_status=['DANGEROUS']. BLOCKED_FOR_ZBL_BACKORDERS is an ORDERING restriction, not a lifecycle state."
         }
       ]
     }
   },
   "catalogue_coverage": {
     "readme": "Per-requirement TME sweep sizes behind this snapshot. The catalogue DB itself (hardware/bom/catalogue.db) is rebuildable and NOT committed; this is the part of it the gates depend on. A category marked as a sample was capped by a --limit and is not the whole category.",
-    "vendor": "tme",
+    "vendors": [
+      "digikey",
+      "tme"
+    ],
     "by_requirement": {
       "battery": {
-        "parts_swept": 70,
-        "stocked": 66,
-        "with_datasheet": 70
+        "parts_swept": 71,
+        "stocked": 67,
+        "with_datasheet": 71
       },
       "dac": {
-        "parts_swept": 100,
-        "stocked": 82,
-        "with_datasheet": 94
+        "parts_swept": 102,
+        "stocked": 84,
+        "with_datasheet": 96
       },
       "mclk-mux": {
-        "parts_swept": 261,
-        "stocked": 34,
-        "with_datasheet": 204
+        "parts_swept": 263,
+        "stocked": 36,
+        "with_datasheet": 206
       },
       "mclk-osc-44k1": {
-        "parts_swept": 24,
-        "stocked": 3,
-        "with_datasheet": 24
+        "parts_swept": 26,
+        "stocked": 5,
+        "with_datasheet": 26
       },
       "mclk-osc-48k": {
-        "parts_swept": 40,
-        "stocked": 2,
-        "with_datasheet": 1
+        "parts_swept": 42,
+        "stocked": 4,
+        "with_datasheet": 3
       },
       "mcu": {
-        "parts_swept": 102,
+        "parts_swept": 104,
         "stocked": 57,
-        "with_datasheet": 97
+        "with_datasheet": 99
       }
     }
   }
