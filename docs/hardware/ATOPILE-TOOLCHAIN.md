@@ -368,6 +368,50 @@ nix shell nixpkgs#stdenv.cc.cc.lib --command bash -c '
   cargo xtask hardware check'
 ```
 
+## One source of truth for pins
+
+A component's pin assignment exists in exactly **one** authoritative place: the
+`.ato` definition, written by a person against a datasheet.
+
+```
+hardware/elec/src/**/*.ato          <- written by hand, the source of truth
+        |  tools/ato-pinmap.py
+        +--> hardware/elec/pinmap.json      for tools and review
+        +--> dap/hw-spec/src/pinmap.rs      no_std const table, for firmware
+```
+
+The firmware never declares a pin. It reads `dap_hw_spec::pinmap`, and two gates
+keep the direction fixed:
+
+- `the_firmware_core_names_no_pin_or_peripheral` — `dap-core` may not name a pin
+  at all; pins are board facts.
+- `the_board_takes_its_pins_from_the_generated_map` — `board-h7a3` *may* name
+  pins, since choosing them is its job, but only via `pinmap`.
+
+**Why the generated Rust is committed rather than built.** A pin change should
+appear in review: a committed table puts `("CS_NEG", "1")` into the diff, where
+a reviewer with the datasheet open can catch a transposition. Pin errors are the
+most expensive class of board defect and the cheapest to catch by reading. A
+build-time generator would hide exactly that. Two lesser reasons: `dap-hw-spec`
+is `no_std` and dependency-free, so parsing at build time would mean a `build.rs`
+and a parser dependency in the crate the whole firmware pins itself against; and
+the arch tests can compare a committed file but not one that exists only inside
+a build directory.
+
+`the_pinmap_is_current` runs the generator with `--check` rather than
+re-implementing the parse in Rust — a second parser would be a second opinion
+about what the sources say, and the two would disagree eventually.
+
+Component *identity* flows the same way and is checked the same way:
+`Preference::Preferred` in the spec → `selected.json` → the vendored part's
+`is_atomic_part` trait, with `vendored_parts_match_the_specs_picks` asserting a
+vendored part never outlives the pick it was generated from. That identity is
+what reaches the netlist, the BOM and the assembly house.
+
+Mutation-tested, all three caught: changing a pin in a `.ato` without
+regenerating, a vendored part claiming a manufacturer the spec disagrees with,
+and a hand-written pin constant in the board crate.
+
 ## Gates that keep this honest
 
 In `dap/arch-tests/tests/hardware_slices.rs`, all text assertions over committed
@@ -381,3 +425,12 @@ files so they run without the toolchain:
   `component_lib`, and the pin itself being 0.15.8+.
 - `the_hardware_check_is_wired_into_the_hook_and_ci` — the hook and workflow
   actually invoke the check.
+- `the_pinmap_is_current` — the generated pin map matches the `.ato` sources.
+- `the_board_takes_its_pins_from_the_generated_map` — no hand-written pin
+  constants in the board crate.
+- `vendored_parts_match_the_specs_picks` — a vendored part's identity still
+  agrees with the spec's preference.
+- `board_outline_matches_the_floorplan` and
+  `the_outline_is_owned_by_the_design_not_the_tool` — the outline is declared in
+  `main.ato` and the two size numbers agree.
+- `every_module_has_a_placement_zone` and `the_pcb_is_locked_against_rebuild_drift`.

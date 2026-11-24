@@ -36,6 +36,8 @@ pre-commit:
     #
     # Skips with a notice when `ato` is not installed, since most contributors
     # here touch firmware and have no reason to carry a Python 3.14 toolchain.
+    # Also covers the generated pin map: editing a .ato changes the component
+    # pin assignments, and `hardware check` fails until the map is regenerated.
     hardware:
       glob: "hardware/**/*.{ato,yaml}"
       run: cargo xtask hardware check-changed {staged_files}

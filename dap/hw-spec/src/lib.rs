@@ -49,6 +49,13 @@ pub mod budget;
 pub mod invariants;
 pub mod licensing;
 pub mod parametric;
+/// Pin assignments, generated from the atopile sources.
+///
+/// The `.ato` component definitions are the single source of truth; this module
+/// is derived from them by `tools/ato-pinmap.py`, and `the_pinmap_is_current`
+/// fails the build if the two disagree. Firmware reads pins from here rather
+/// than declaring its own, so the schematic and the firmware cannot drift.
+pub mod pinmap;
 pub mod select;
 pub mod v1;
 pub mod v2;

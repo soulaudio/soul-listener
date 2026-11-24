@@ -56,6 +56,7 @@ on:
       - 'hardware/ato-lock.yaml'
       - 'xtask/src/hardware.rs'
       - 'tools/ato-placement.py'
+      - 'tools/ato-pinmap.py'
       - 'tools/ato-diagram.py'
       - '.github/workflows/hardware.yml'
   pull_request:
@@ -66,6 +67,7 @@ on:
       - 'hardware/ato-lock.yaml'
       - 'xtask/src/hardware.rs'
       - 'tools/ato-placement.py'
+      - 'tools/ato-pinmap.py'
       - 'tools/ato-diagram.py'
       - '.github/workflows/hardware.yml'
 
@@ -104,6 +106,13 @@ jobs:
       # point building anything.
       - name: Check the declared floorplan
         run: python3 tools/ato-placement.py
+
+      # The pin map is generated from the .ato component definitions and
+      # committed, so a pin change shows up in review. This fails when the
+      # committed copy is stale, which is the only way the schematic and the
+      # firmware can drift.
+      - name: Check the generated pin map is current
+        run: python3 tools/ato-pinmap.py --check
 
       # Through xtask rather than calling `ato` directly, so the rule deciding
       # what counts as a pass — "every stage green, blocked at part picking on

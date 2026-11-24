@@ -376,6 +376,12 @@ fn hw_check() -> Result<()> {
     if !run_tool("tools/ato-vendor-part.py", &["--check"], "vendored parts")? {
         failed.push("vendored parts");
     }
+    // The generated pin map. Checked here as well as in the arch tests because
+    // this is the command a person runs after editing a .ato file, and a stale
+    // map is exactly what that edit causes.
+    if !run_tool("tools/ato-pinmap.py", &["--check"], "pin map")? {
+        failed.push("pin map");
+    }
 
     println!();
     if !failed.is_empty() {

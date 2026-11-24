@@ -268,3 +268,170 @@ fn the_outline_is_owned_by_the_design_not_the_tool() {
          a RectangularBoardShape is declared. The tool must annotate Dwgs.User/Cmts.User only."
     );
 }
+
+/// The pin map must be regenerated whenever the `.ato` sources change.
+///
+/// # The property this protects
+///
+/// A component's pin assignment exists in exactly one authoritative place — the
+/// `.ato` definition, written by a person against a datasheet — and reaches the
+/// firmware only as a generated table. There is no second declaration to drift.
+///
+/// Running the generator here rather than re-implementing the parse: a second
+/// parser in Rust would be a second opinion about what the sources say, and the
+/// two would disagree eventually. The tool exits non-zero when either generated
+/// file is stale, and that is the whole assertion.
+///
+/// Skipped when `python3` is unavailable rather than failed, since the Rust test
+/// suite must run on a machine with no Python; CI has it and gates there.
+#[test]
+fn the_pinmap_is_current() {
+    let root = concat!(env!("CARGO_MANIFEST_DIR"), "/../..");
+    let out = match std::process::Command::new("python3")
+        .arg("tools/ato-pinmap.py")
+        .arg("--check")
+        .current_dir(root)
+        .output()
+    {
+        Ok(o) => o,
+        Err(_) => {
+            eprintln!("python3 unavailable — skipping the pin-map freshness check");
+            return;
+        }
+    };
+    assert!(
+        out.status.success(),
+        "{}{}",
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+}
+
+/// Firmware and board code must read pins from the generated map, not declare them.
+///
+/// `the_firmware_core_names_no_pin_or_peripheral` already forbids pin literals
+/// inside `dap-core`. This covers the other half: the board crate is *allowed*
+/// to name pins — choosing them is its job — but it must take them from
+/// `dap_hw_spec::pinmap`, so the schematic stays the single source.
+///
+/// Trivially satisfied today: `board-h7a3` has no drivers yet and names no pins
+/// at all. That is the right time to fix the direction, because the alternative
+/// is discovering a hand-written `const CS: Pin = PA4` after the board is
+/// fabricated and the schematic says PA5.
+#[test]
+fn the_board_takes_its_pins_from_the_generated_map() {
+    let board = concat!(env!("CARGO_MANIFEST_DIR"), "/../board-h7a3/src");
+    let mut offenders = Vec::new();
+    for entry in std::fs::read_dir(board).expect("board-h7a3/src must exist") {
+        let path = entry.expect("dir entry").path();
+        if path.extension().and_then(|e| e.to_str()) != Some("rs") {
+            continue;
+        }
+        let src = std::fs::read_to_string(&path).expect("readable");
+        let code: String = src
+            .lines()
+            .filter(|l| !l.trim_start().starts_with("//"))
+            .collect::<Vec<_>>()
+            .join("\n");
+        let names_a_pin = code.lines().any(|l| {
+            let b = l.as_bytes();
+            l.char_indices().any(|(i, c)| {
+                c == 'P'
+                    && (i == 0 || !(b[i - 1].is_ascii_alphanumeric() || b[i - 1] == b'_'))
+                    && l[i + 1..]
+                        .chars()
+                        .next()
+                        .is_some_and(|p| ('A'..='K').contains(&p))
+                    && l[i + 2..]
+                        .chars()
+                        .next()
+                        .is_some_and(|d| d.is_ascii_digit())
+            })
+        });
+        if names_a_pin && !code.contains("pinmap") {
+            offenders.push(
+                path.file_name()
+                    .and_then(|n| n.to_str())
+                    .unwrap_or("?")
+                    .to_string(),
+            );
+        }
+    }
+    assert!(
+        offenders.is_empty(),
+        "these board files name a pin without reading dap_hw_spec::pinmap: {offenders:?}\n\
+         Pins live in the .ato component definitions and reach Rust only through the \
+         generated map. A hand-written pin constant is a second source of truth, and the \
+         copy that loses is the one that is not driving the netlist."
+    );
+}
+
+/// A vendored part's identity must match the spec's pick.
+///
+/// `tools/ato-vendor-part.py` generates the trait block from
+/// `hardware/bom/selected.json`, which is itself generated from
+/// `Preference::Preferred` in the spec. That makes the chain one-directional at
+/// the moment of generation — and nothing kept it that way afterwards. Changing
+/// the pick in the spec left a vendored part claiming the old manufacturer and
+/// MPN, which is the identity that would reach the BOM and the assembly house.
+#[test]
+fn vendored_parts_match_the_specs_picks() {
+    let parts_dir = concat!(env!("CARGO_MANIFEST_DIR"), "/../../hardware/elec/src/parts");
+    let selected: serde_json::Value =
+        serde_json::from_str(include_str!("../../../hardware/bom/selected.json"))
+            .expect("selected.json must be valid JSON");
+    let picks = selected["selected"].as_array().cloned().unwrap_or_default();
+
+    let mut problems = Vec::new();
+    for entry in std::fs::read_dir(parts_dir).expect("parts dir must exist") {
+        let dir = entry.expect("dir entry").path();
+        if !dir.is_dir() {
+            continue;
+        }
+        let Some(ato) = std::fs::read_dir(&dir).ok().and_then(|rd| {
+            rd.filter_map(Result::ok)
+                .map(|e| e.path())
+                .find(|p| p.extension().and_then(|x| x.to_str()) == Some("ato"))
+        }) else {
+            continue;
+        };
+        let src = std::fs::read_to_string(&ato).expect("readable");
+        // Only vendored parts carry an identity; the V1 pin-map-only parts do not.
+        let Some(mpn) = between(&src, "partnumber=\"", "\"") else {
+            continue;
+        };
+        let mfr = between(&src, "manufacturer=\"", "\"").unwrap_or_default();
+
+        match picks.iter().find(|p| p["mpn"].as_str() == Some(&mpn)) {
+            None => problems.push(format!(
+                "{}: claims MPN {mpn}, which is not a current pick. Either the spec's \
+                 preference moved and this part is stale, or it was vendored for a part \
+                 nobody selected.",
+                dir.file_name().and_then(|n| n.to_str()).unwrap_or("?")
+            )),
+            Some(p) => {
+                let want = p["manufacturer"].as_str().unwrap_or_default();
+                if want != mfr {
+                    problems.push(format!(
+                        "{mpn}: vendored as {mfr:?} but the spec says {want:?}"
+                    ));
+                }
+            }
+        }
+    }
+    assert!(
+        problems.is_empty(),
+        "vendored parts disagree with the spec:\n  {}\n\n\
+         A vendored part's identity is what reaches the netlist, the BOM and the assembly \
+         house. Regenerate with tools/ato-vendor-part.py, or delete the part if the pick \
+         changed.",
+        problems.join("\n  ")
+    );
+}
+
+fn between(src: &str, start: &str, end: &str) -> Option<String> {
+    let i = src.find(start)? + start.len();
+    let rest = &src[i..];
+    let j = rest.find(end)?;
+    Some(rest[..j].to_string())
+}

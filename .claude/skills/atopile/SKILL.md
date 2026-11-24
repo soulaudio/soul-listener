@@ -156,7 +156,27 @@ Two constraints that are easy to trip:
 `--keep-picked-parts` is **not** an offline mechanism: it pins the choice via
 `is_pickable_*`, so the picker still runs and still needs the API.
 
-## 7. When a build fails
+## 7. Pins: one source, two consumers
+
+A component's pin assignment lives **only** in its `.ato` definition. After
+editing any `~ pin` line, run:
+
+```sh
+tools/ato-pinmap.py          # regenerates pinmap.json + dap/hw-spec/src/pinmap.rs
+```
+
+Both generated files are committed on purpose, so a pin change appears in the
+diff where a reviewer with the datasheet open can catch a transposition.
+`the_pinmap_is_current` fails the build when they are stale.
+
+Never declare a pin in Rust. `dap-core` may not name one at all; `board-h7a3`
+reads `dap_hw_spec::pinmap`. Both are gated.
+
+Component identity flows the same way: the spec's `Preference::Preferred` →
+`selected.json` → the vendored part's `is_atomic_part` trait, and
+`vendored_parts_match_the_specs_picks` fails if a vendored part outlives its pick.
+
+## 8. When a build fails
 
 1. `Multiple build targets share the same entry point` — two builds in
    `ato.yaml` point at the same module. One build per entry point; use
