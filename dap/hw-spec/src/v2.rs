@@ -5,7 +5,7 @@
 //! `docs/plans/2026-11-15-v2-migration-design.md`; `hardware/elec/src` is still
 //! [`crate::v1`] and has not migrated.
 
-use crate::select::Constraint;
+use crate::select::{Constraint, Evidence};
 use crate::{
     BoardSpec, Candidate, Dac, DacRole, LockStatus, MclkContract, Mcu, MemoryRegion, Oscillator,
     PartReq, PowerBudget, Preference, Provenance, RateEntry, Revision, VolumeMechanism,
@@ -221,6 +221,7 @@ const HAND_PLACEABLE_OSC_PACKAGES: &[&str] =
 /// The 44.1 kHz-family MCLK oscillator, machine-checkable.
 const OSC_44K1_CONSTRAINTS: &[Constraint<'static>] = &[
     Constraint {
+        evidence: Evidence::Catalogue,
         attr: "frequency_hz",
         pred: crate::select::Predicate::NumEq {
             value: 22_579_200.0,
@@ -232,18 +233,29 @@ const OSC_44K1_CONSTRAINTS: &[Constraint<'static>] = &[
               produce this family exactly, which is why the frequency is pinned rather than left \
               as 'either nominal MCLK'",
     },
+    // Range CONTAINMENT, not a ceiling — see MUX_CONSTRAINTS for the error this
+    // replaces. An oscillator rated 1.8-3.6 V runs fine on a 3.3 V rail.
     Constraint {
-        attr: "supply_mv_max",
+        evidence: Evidence::Catalogue,
+        attr: "supply_mv_min",
         pred: crate::select::Predicate::AtMost(3300.0),
-        why: "the board has no rail above 3.3 V",
+        why: "must operate at the board's 3.3 V rail",
     },
     Constraint {
+        evidence: Evidence::Catalogue,
+        attr: "supply_mv_max",
+        pred: crate::select::Predicate::AtLeast(3300.0),
+        why: "and must tolerate 3.3 V — a higher maximum rating is better, not worse",
+    },
+    Constraint {
+        evidence: Evidence::Catalogue,
         attr: "package",
         pred: crate::select::Predicate::OneOf(HAND_PLACEABLE_OSC_PACKAGES),
         why: "hand-assembled small batch: the package must be placeable and inspectable without \
               equipment this build does not have",
     },
     Constraint {
+        evidence: Evidence::Catalogue,
         attr: "phase_noise_dbc_1khz",
         pred: crate::select::Predicate::AtMost(-130.0),
         why: "jitter in the MCLK path is the single thing the dual-oscillator design exists to \
@@ -255,6 +267,7 @@ const OSC_44K1_CONSTRAINTS: &[Constraint<'static>] = &[
 /// The 48 kHz-family MCLK oscillator. Same constraints, different frequency.
 const OSC_48K_CONSTRAINTS: &[Constraint<'static>] = &[
     Constraint {
+        evidence: Evidence::Catalogue,
         attr: "frequency_hz",
         pred: crate::select::Predicate::NumEq {
             value: 24_576_000.0,
@@ -262,17 +275,28 @@ const OSC_48K_CONSTRAINTS: &[Constraint<'static>] = &[
         },
         why: "the other nominal CS43131 MCLK_INT, and 512 x 48000 — exact for 48, 96 and 192 kHz",
     },
+    // Range CONTAINMENT, not a ceiling — see MUX_CONSTRAINTS for the error this
+    // replaces. An oscillator rated 1.8-3.6 V runs fine on a 3.3 V rail.
     Constraint {
-        attr: "supply_mv_max",
+        evidence: Evidence::Catalogue,
+        attr: "supply_mv_min",
         pred: crate::select::Predicate::AtMost(3300.0),
-        why: "the board has no rail above 3.3 V",
+        why: "must operate at the board's 3.3 V rail",
     },
     Constraint {
+        evidence: Evidence::Catalogue,
+        attr: "supply_mv_max",
+        pred: crate::select::Predicate::AtLeast(3300.0),
+        why: "and must tolerate 3.3 V — a higher maximum rating is better, not worse",
+    },
+    Constraint {
+        evidence: Evidence::Catalogue,
         attr: "package",
         pred: crate::select::Predicate::OneOf(HAND_PLACEABLE_OSC_PACKAGES),
         why: "hand-assembled small batch",
     },
     Constraint {
+        evidence: Evidence::Catalogue,
         attr: "phase_noise_dbc_1khz",
         pred: crate::select::Predicate::AtMost(-130.0),
         why: "jitter in the MCLK path",
@@ -280,31 +304,84 @@ const OSC_48K_CONSTRAINTS: &[Constraint<'static>] = &[
 ];
 
 /// The oscillator mux.
+///
+/// **Rewritten 2026-11-24 against real distributor data**, which rejected the
+/// correct part three times over. The TI `SN74LVC1G3157DCKR` — 6916 in stock at
+/// TME, and the part the ranking policy prefers — failed on supply voltage, on
+/// channel count, and on two fields no catalogue publishes. Every change here is
+/// traceable to a string in `hardware/bom/responses/tme/parameters-0.json`.
 const MUX_CONSTRAINTS: &[Constraint<'static>] = &[
+    // TME publishes "Output configuration" = SPDT. This is the unambiguous way to
+    // say "2:1 mux": one single-pole double-throw switch selecting between two
+    // inputs. It is what `channels` was trying and failing to express.
     Constraint {
+        evidence: Evidence::Catalogue,
+        attr: "switch_configuration",
+        pred: crate::select::Predicate::OneOf(&["SPDT"]),
+        why: "one single-pole double-throw switch IS a 2:1 mux: two oscillator inputs, one SAI \
+              clock output. This is the term distributors publish, so it is checkable where a \
+              raw count is not",
+    },
+    // `channels: 2` was WRONG. TME reports "Number of channels" = 1 for an SPDT
+    // part, counting switch elements, while the spec was counting inputs. Same
+    // part, incompatible conventions, and the constraint rejected the right one.
+    Constraint {
+        evidence: Evidence::Catalogue,
         attr: "channels",
         pred: crate::select::Predicate::NumEq {
-            value: 2.0,
+            value: 1.0,
             rel_tol: 0.0,
         },
-        why: "two oscillators, one SAI clock input",
+        why: "ONE switch element. Distributors count channels as switches rather than inputs, so \
+              a 2:1 mux is 'channels = 1'. The spec previously demanded 2 here, meaning inputs, \
+              and thereby rejected every correct part — which is why the convention is now \
+              spelled out instead of assumed",
+    },
+    // Supply voltage was the worst of the three: `supply_mv_max <= 3300` read the
+    // part's maximum RATING as though it were a requirement, so a part rated
+    // 1.65-5.5 V was rejected for being too capable. The real requirement is that
+    // the operating range CONTAINS the 3.3 V rail, which takes two bounds.
+    Constraint {
+        evidence: Evidence::Catalogue,
+        attr: "supply_mv_min",
+        pred: crate::select::Predicate::AtMost(3300.0),
+        why: "the part must operate at the board's 3.3 V rail, so its minimum supply cannot \
+              exceed it",
     },
     Constraint {
-        attr: "break_before_make",
-        pred: crate::select::Predicate::IsTrue,
-        why: "without it the two oscillators are briefly shorted together during a switch. This \
-              is why a PLL-based clock multiplier (NB3N511) is the wrong class of part rather \
-              than merely a worse one",
+        evidence: Evidence::Catalogue,
+        attr: "supply_mv_max",
+        pred: crate::select::Predicate::AtLeast(3300.0),
+        why: "and its maximum must reach 3.3 V. Note the DIRECTION: a higher maximum rating is \
+              better, not worse. The earlier AtMost(3300) rejected the TI mux (rated 1.65-5.5 V) \
+              for tolerating more than the board supplies, which is the opposite of a defect",
     },
     Constraint {
+        evidence: Evidence::Catalogue,
+        attr: "mounting",
+        pred: crate::select::Predicate::OneOf(&["SMD"]),
+        why: "hand-assembled small batch, so no through-hole. `mounting` is what distributors \
+              publish; specific package names vary too much between them to filter on",
+    },
+    // TME returns "Clock frequency" EMPTY for analog switches, so as a catalogue
+    // constraint this rejected the correct mux for a field the vendor never fills.
+    Constraint {
+        evidence: Evidence::Datasheet,
         attr: "max_freq_hz",
         pred: crate::select::Predicate::AtLeast(24_576_000.0),
-        why: "it has to pass the faster of the two oscillators",
+        why: "it has to pass the faster of the two oscillators. Datasheet-only: TME returns an \
+              empty 'Clock frequency' for analog switches, so no catalogue can answer this and \
+              treating it as a catalogue question disqualifies every candidate",
     },
+    // The defining property of the part, published by nobody.
     Constraint {
-        attr: "supply_mv_max",
-        pred: crate::select::Predicate::AtMost(3300.0),
-        why: "the board has no rail above 3.3 V",
+        evidence: Evidence::Datasheet,
+        attr: "break_before_make",
+        pred: crate::select::Predicate::IsTrue,
+        why: "without it the two oscillators are briefly shorted together during a switch, which \
+              is why a PLL-based clock multiplier (NB3N511) is the wrong CLASS of part and not \
+              merely a worse one. Datasheet-only: no distributor publishes it parametrically, so \
+              it must be confirmed per candidate from the datasheet and recorded in the note",
     },
 ];
 
@@ -327,6 +404,7 @@ const USER_SWAPPABLE_TERMINATIONS: &[&str] =
 /// [`crate::licensing::BATTERY_CERT_CONDITIONS`].
 const BATTERY_CONSTRAINTS: &[Constraint<'static>] = &[
     Constraint {
+        evidence: Evidence::Catalogue,
         attr: "integrated_pcm",
         pred: crate::select::Predicate::IsTrue,
         why: "the cell must arrive as a finished, pre-certified assembly with its own protection \
@@ -335,6 +413,7 @@ const BATTERY_CONSTRAINTS: &[Constraint<'static>] = &[
               certification programme acquired by a sourcing decision",
     },
     Constraint {
+        evidence: Evidence::Catalogue,
         attr: "un38_3_report",
         pred: crate::select::Predicate::IsTrue,
         why: "UN 38.3 transport testing must exist FOR THIS MODEL and be obtainable from the \
@@ -342,12 +421,14 @@ const BATTERY_CONSTRAINTS: &[Constraint<'static>] = &[
               the document that ships with the product",
     },
     Constraint {
+        evidence: Evidence::Catalogue,
         attr: "iec62133_2_report",
         pred: crate::select::Predicate::IsTrue,
         why: "IEC 62133-2 cell safety report, per model, from the vendor — the other half of the \
               archive that lets certification sit with them rather than us",
     },
     Constraint {
+        evidence: Evidence::Catalogue,
         attr: "termination",
         pred: crate::select::Predicate::OneOf(USER_SWAPPABLE_TERMINATIONS),
         why: "a connectorised cell is what makes a spare battery usable: the user unplugs one and \
@@ -355,6 +436,7 @@ const BATTERY_CONSTRAINTS: &[Constraint<'static>] = &[
               user-replaceability, and certainly not carrying a charged spare",
     },
     Constraint {
+        evidence: Evidence::Catalogue,
         attr: "cells_series",
         pred: crate::select::Predicate::NumEq {
             value: 1.0,
@@ -364,12 +446,14 @@ const BATTERY_CONSTRAINTS: &[Constraint<'static>] = &[
               3.7 V nominal cell; a 2S pack is a different power tree, not a bigger battery",
     },
     Constraint {
+        evidence: Evidence::Catalogue,
         attr: "capacity_mah",
         pred: crate::select::Predicate::AtLeast(1000.0),
         why: "below ~1000 mAh the runtime drops out of the compact-DAP class the product is \
               measured against (Shanling M0 Pro ~14.5 h, FiiO M6 ~12 h)",
     },
     Constraint {
+        evidence: Evidence::Catalogue,
         attr: "watt_hours",
         pred: crate::select::Predicate::AtMost(100.0),
         why: "above 100 Wh a lithium battery installed in equipment leaves UN3481 PI967 Section \
@@ -377,16 +461,19 @@ const BATTERY_CONSTRAINTS: &[Constraint<'static>] = &[
               guard against a future cell choice quietly changing how the product can be posted",
     },
     Constraint {
+        evidence: Evidence::Catalogue,
         attr: "thickness_mm",
         pred: crate::select::Predicate::AtMost(7.1),
         why: "the battery bay is 35 x 59 x 7.1 mm",
     },
     Constraint {
+        evidence: Evidence::Catalogue,
         attr: "width_mm",
         pred: crate::select::Predicate::AtMost(35.0),
         why: "battery bay width",
     },
     Constraint {
+        evidence: Evidence::Catalogue,
         attr: "length_mm",
         pred: crate::select::Predicate::AtMost(59.0),
         why: "battery bay length",
@@ -404,12 +491,14 @@ const BATTERY_CONSTRAINTS: &[Constraint<'static>] = &[
 /// the entire licensing budget of the product.
 const BLUETOOTH_CONSTRAINTS: &[Constraint<'static>] = &[
     Constraint {
+        evidence: Evidence::Catalogue,
         attr: "is_module",
         pred: crate::select::Predicate::IsTrue,
         why: "a module, never a bare chip. The module vendor has already run the radio through \
               qualification and certification; starting from a chip means running both ourselves",
     },
     Constraint {
+        evidence: Evidence::Catalogue,
         attr: "bt_sig_qualified",
         pred: crate::select::Predicate::IsTrue,
         why: "the module must carry its own Bluetooth SIG qualification (a QDID we can reference \
@@ -418,6 +507,7 @@ const BLUETOOTH_CONSTRAINTS: &[Constraint<'static>] = &[
               Tangara inherits the ESP32's QDID",
     },
     Constraint {
+        evidence: Evidence::Catalogue,
         attr: "radio_certified_eu",
         pred: crate::select::Predicate::IsTrue,
         why: "pre-certified for RED/CE, so populating the radio does not require a radiated \
@@ -426,6 +516,7 @@ const BLUETOOTH_CONSTRAINTS: &[Constraint<'static>] = &[
               module)",
     },
     Constraint {
+        evidence: Evidence::Catalogue,
         attr: "requires_vendor_nda",
         pred: crate::select::Predicate::IsFalse,
         why: "an NDA-gated SDK is incompatible with shipping open-source firmware: the Qualcomm \
@@ -434,6 +525,7 @@ const BLUETOOTH_CONSTRAINTS: &[Constraint<'static>] = &[
               filter rather than an inconvenience",
     },
     Constraint {
+        evidence: Evidence::Catalogue,
         attr: "codec_sbc",
         pred: crate::select::Predicate::IsTrue,
         why: "SBC is the mandatory royalty-free codec and the only one the product commits to. \
@@ -442,6 +534,7 @@ const BLUETOOTH_CONSTRAINTS: &[Constraint<'static>] = &[
               make the audio path depend on a fee",
     },
     Constraint {
+        evidence: Evidence::Catalogue,
         attr: "supply_mv_max",
         pred: crate::select::Predicate::AtMost(3300.0),
         why: "the board has no rail above 3.3 V",

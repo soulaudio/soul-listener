@@ -57,6 +57,12 @@ pub enum Dimension {
     PhaseNoise,
     /// A plain count with no unit (channels, cells in series).
     Count,
+    /// Bytes, binary-prefixed. Memory sizes are conventionally powers of two and
+    /// catalogues write them that way, so `MB` here is 1024^2 rather than 10^6.
+    /// The distinction does not change any `AtLeast(1 MB)` style answer, but
+    /// recording which convention is in use costs nothing and prevents a later
+    /// reader assuming the other one.
+    Bytes,
 }
 
 /// An SI prefix and its multiplier.
@@ -81,6 +87,10 @@ const PREFIXES: &[(char, f64)] = &[
 /// that converts it to that dimension's canonical unit.
 const UNITS: &[(&str, Dimension, f64)] = &[
     ("dBc/Hz", Dimension::PhaseNoise, 1.0),
+    ("GB", Dimension::Bytes, 1024.0 * 1024.0 * 1024.0),
+    ("MB", Dimension::Bytes, 1024.0 * 1024.0),
+    ("kB", Dimension::Bytes, 1024.0),
+    ("KB", Dimension::Bytes, 1024.0),
     ("dbc/hz", Dimension::PhaseNoise, 1.0),
     ("Wh", Dimension::Energy, 1.0),
     ("wh", Dimension::Energy, 1.0),
@@ -120,7 +130,7 @@ pub struct Quantity {
 /// guessing is how a 5 V oscillator reaches a 3.3 V board.
 #[must_use]
 pub fn parse_quantity(s: &str) -> Option<Quantity> {
-    let t = s.trim();
+    let t = strip_trailing_qualifiers(s);
     if t.is_empty() {
         return None;
     }
@@ -192,6 +202,39 @@ fn is_range(t: &str) -> bool {
     t.contains('~') || t.contains(" - ") || t.contains(" to ") || t.contains("..")
 }
 
+/// Drop trailing descriptor words that are not units.
+///
+/// Required by real data rather than anticipated: TME publishes supply voltage as
+/// `"1.65...5.5V DC"` and memory as `"2MB FLASH"`. The `DC` and `FLASH` are
+/// descriptors, and without removing them nothing matches a unit suffix and the
+/// whole value is refused — which is how the first run against live data produced
+/// `None` for every parametric string.
+///
+/// A token is only dropped when it is purely alphabetic, is not itself a known
+/// unit, and is not the only token left. So `"3.3 V"` keeps its `V`, and `"SMD"`
+/// is returned untouched rather than emptied.
+fn strip_trailing_qualifiers(t: &str) -> &str {
+    let mut cur = t.trim();
+    loop {
+        let Some((head, last)) = cur.rsplit_once(char::is_whitespace) else {
+            return cur;
+        };
+        let head = head.trim_end();
+        if head.is_empty()
+            || !last.chars().all(|c| c.is_ascii_alphabetic())
+            // `ends_with`, not equality: a token is usually PREFIX+UNIT, so
+            // "MHz" and "mAh" must be recognised as units even though neither
+            // string is in UNITS. Comparing for equality here stripped them as
+            // descriptors and made every prefixed quantity unparseable — caught
+            // by the existing frequency and charge tests.
+            || UNITS.iter().any(|(u, _, _)| last.ends_with(u))
+        {
+            return cur;
+        }
+        cur = head;
+    }
+}
+
 /// The upper bound of a range like `"1.8 V ~ 3.3 V"`.
 ///
 /// Separate from [`parse_quantity`] on purpose. Supply voltages are routinely
@@ -202,14 +245,36 @@ fn is_range(t: &str) -> bool {
 /// site rather than hidden in a parser.
 #[must_use]
 pub fn parse_range_max(s: &str) -> Option<Quantity> {
-    let t = s.trim();
+    range_bound(s, Bound::Max)
+}
+
+/// The lower bound of a range. See [`parse_range_max`] — the two exist
+/// separately so a caller cannot get the bound it did not mean.
+#[must_use]
+pub fn parse_range_min(s: &str) -> Option<Quantity> {
+    range_bound(s, Bound::Min)
+}
+
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum Bound {
+    Min,
+    Max,
+}
+
+fn range_bound(s: &str, want: Bound) -> Option<Quantity> {
+    let t = strip_trailing_qualifiers(s);
     if !is_range(t) {
         return None;
     }
+    // Longest separator first: "..." must be tried before "..", or TME's
+    // `1.65...5.5V` splits into `1.65` and `.5.5V` and the second side is
+    // unparseable.
     let sep = if t.contains('~') {
         "~"
     } else if t.contains(" to ") {
         " to "
+    } else if t.contains("...") {
+        "..."
     } else if t.contains("..") {
         ".."
     } else {
@@ -238,8 +303,9 @@ pub fn parse_range_max(s: &str) -> Option<Quantity> {
                 }
             }
         };
-        best = match best {
-            Some(b) if b.value >= q.value => Some(b),
+        best = match (best, want) {
+            (Some(b), Bound::Max) if b.value >= q.value => Some(b),
+            (Some(b), Bound::Min) if b.value <= q.value => Some(b),
             _ => Some(q),
         };
     }
@@ -364,7 +430,9 @@ pub fn expected_dimension(attr: &str) -> Option<Dimension> {
     let a = attr;
     Some(match () {
         _ if eq(a, "frequency_hz") || eq(a, "max_freq_hz") => Dimension::Frequency,
-        _ if eq(a, "supply_mv_max") => Dimension::Voltage,
+        _ if eq(a, "supply_mv_max") || eq(a, "supply_mv_min") => Dimension::Voltage,
+        _ if eq(a, "sram_bytes") || eq(a, "flash_bytes") => Dimension::Bytes,
+        _ if eq(a, "core_clock_hz") => Dimension::Frequency,
         _ if eq(a, "phase_noise_dbc_1khz") => Dimension::PhaseNoise,
         _ if eq(a, "capacity_mah") => Dimension::Charge,
         _ if eq(a, "watt_hours") => Dimension::Energy,
@@ -575,6 +643,123 @@ mod tests {
                 }
             }
         }
+    }
+
+    /// **Every parametric string TME actually returned**, pinned.
+    ///
+    /// Not invented examples: these are lifted verbatim from
+    /// `hardware/bom/responses/tme/parameters-0.json`, which is a recorded live
+    /// response. The first run of the parser against them returned `None` for
+    /// every single one — the separator was `...` rather than `~`, and values
+    /// carried trailing descriptors (`DC`, `FLASH`, `SRAM`) that no unit suffix
+    /// could match.
+    ///
+    /// That failure is the reason this test exists in this form. A parser tested
+    /// only against strings its author imagined will pass and then read nothing.
+    #[test]
+    fn the_strings_a_real_distributor_returned_all_parse() {
+        // Supply voltage, both parts. `...` separator plus a ` DC` qualifier.
+        assert_eq!(
+            parse_range_max("1.65...5.5V DC").map(|q| q.value),
+            Some(5500.0),
+            "the TI mux is rated 1.65-5.5 V; the MAXIMUM is 5500 mV"
+        );
+        assert_eq!(
+            parse_range_min("1.65...5.5V DC").map(|q| q.value),
+            Some(1650.0),
+            "and the minimum is 1650 mV — needed because the real constraint is \
+             that the operating range CONTAINS 3.3 V"
+        );
+        assert_eq!(
+            parse_range_max("1.62...3.6V DC").map(|q| q.value),
+            Some(3600.0)
+        );
+        assert_eq!(
+            parse_range_min("1.62...3.6V DC").map(|q| q.value),
+            Some(1620.0)
+        );
+
+        // The STM32's clock and memory, which make the MCU requirement
+        // machine-checkable instead of prose-only.
+        assert_eq!(parse_quantity("280MHz").map(|q| q.value), Some(280e6));
+        assert_eq!(
+            parse_quantity("1.4MB SRAM").map(|q| q.value),
+            Some(1.4 * 1024.0 * 1024.0),
+            "the trailing descriptor must be dropped, and MB is binary here"
+        );
+        assert_eq!(
+            parse_quantity("2MB FLASH").map(|q| q.value),
+            Some(2.0 * 1024.0 * 1024.0)
+        );
+
+        // Counts.
+        assert_eq!(parse_count("1").map(|q| q.value), Some(1.0));
+        assert_eq!(parse_count("112").map(|q| q.value), Some(112.0));
+
+        // Text values must NOT be mistaken for quantities. `SMD` is a single
+        // alphabetic token, so the qualifier stripper has to leave it alone
+        // rather than reducing it to nothing.
+        for text in [
+            "SMD",
+            "SPDT",
+            "SC70-6",
+            "LQFP144",
+            "Cortex M7",
+            "analog switch",
+        ] {
+            assert_eq!(
+                parse_quantity(text),
+                None,
+                "{text:?} is a text attribute and must not parse as a number"
+            );
+        }
+    }
+
+    /// Stripping qualifiers must not eat a real unit.
+    #[test]
+    fn a_trailing_unit_is_never_stripped_as_a_qualifier() {
+        assert_eq!(parse_quantity("3.3 V").map(|q| q.value), Some(3300.0));
+        assert_eq!(
+            parse_quantity("22.5792 MHz").map(|q| q.value),
+            Some(22_579_200.0)
+        );
+        assert_eq!(parse_quantity("1100 mAh").map(|q| q.value), Some(1100.0));
+        // And a lone qualifier is returned untouched rather than emptied.
+        assert_eq!(strip_trailing_qualifiers("SMD"), "SMD");
+        assert_eq!(strip_trailing_qualifiers("1.65...5.5V DC"), "1.65...5.5V");
+        assert_eq!(strip_trailing_qualifiers("2MB FLASH"), "2MB");
+    }
+
+    /// `...` must be tried before `..`, or the right side is unparseable.
+    #[test]
+    fn the_three_dot_separator_is_matched_before_the_two_dot_one() {
+        // Splitting "1.65...5.5V" on ".." yields "1.65" and ".5.5V" — the second
+        // is not a number, so the whole range would be refused.
+        assert_eq!(
+            parse_range_max("1.65...5.5V").map(|q| q.value),
+            Some(5500.0)
+        );
+        // The two-dot form still works for anything that uses it.
+        assert_eq!(parse_range_max("1.8..3.3V").map(|q| q.value), Some(3300.0));
+    }
+
+    /// Byte sizes use the binary convention, and say so.
+    #[test]
+    fn memory_sizes_are_binary() {
+        assert_eq!(parse_quantity("1kB").map(|q| q.value), Some(1024.0));
+        assert_eq!(parse_quantity("2MB").map(|q| q.value), Some(2_097_152.0));
+        assert_eq!(
+            parse_quantity("1GB").map(|q| q.value),
+            Some(1_073_741_824.0)
+        );
+        assert_eq!(
+            parse_quantity("2MB").map(|q| q.dimension),
+            Some(Dimension::Bytes)
+        );
+        // A byte size must not be coerced into a frequency attribute.
+        let q = parse_quantity("2MB").expect("parses");
+        assert_eq!(attribute_value("core_clock_hz", q), None);
+        assert_eq!(attribute_value("flash_bytes", q), Some(2_097_152.0));
     }
 
     /// Catalogue booleans, and the refusal that matters.

@@ -78,6 +78,31 @@ pub enum Predicate<'a> {
     IsFalse,
 }
 
+/// Who publishes the fact a constraint tests.
+///
+/// This distinction was forced by real data. The first filter run against live
+/// TME responses would have rejected the *correct* mux three times over, and one
+/// of the three reasons was `break_before_make` — a property **no distributor
+/// publishes**, because it is a datasheet characteristic rather than a
+/// parametric search field.
+///
+/// The engine treats a missing attribute as a rejection, which is right when the
+/// attribute is one a catalogue should supply (an oscillator with no published
+/// phase noise really is disqualified). Applied to a fact no catalogue carries,
+/// the same rule makes the requirement unsatisfiable by construction: every part
+/// in the category is rejected, and the output reads like a sourcing problem
+/// rather than a specification bug.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Evidence {
+    /// Distributors publish this as a parametric field. The filter checks it, and
+    /// its absence from a part is a rejection.
+    Catalogue,
+    /// Only the datasheet states it. The filter CANNOT check it and must not
+    /// reject a part for its absence — it has to be confirmed by a human and
+    /// recorded against the candidate.
+    Datasheet,
+}
+
 /// A requirement expressed so a machine can reject a part.
 #[derive(Debug, Clone, Copy)]
 pub struct Constraint<'a> {
@@ -87,6 +112,8 @@ pub struct Constraint<'a> {
     /// Why this constraint exists. Carried into the rejection so a filtered-out
     /// part explains itself rather than merely disappearing.
     pub why: &'a str,
+    /// Whether a catalogue can answer this at all. See [`Evidence`].
+    pub evidence: Evidence,
 }
 
 /// A catalogue part: identity plus parametric attributes.
@@ -149,6 +176,13 @@ impl Rejection<'_> {
 
 /// Apply one constraint.
 fn check<'a>(part: &CataloguePart<'a>, c: &Constraint<'a>) -> Result<(), Rejection<'a>> {
+    // A datasheet-only fact is not a catalogue question. Checking it here would
+    // reject every part in the category for a field no distributor publishes;
+    // `a_requirement_cannot_be_all_datasheet_constraints` keeps this from
+    // quietly becoming "no filtering at all".
+    if c.evidence == Evidence::Datasheet {
+        return Ok(());
+    }
     let Some(v) = part.attr(c.attr) else {
         return Err(Rejection::MissingAttribute {
             attr: c.attr,
@@ -329,6 +363,7 @@ mod tests {
     #[test]
     fn an_exact_frequency_tolerates_representation_but_not_a_different_part() {
         let c = Constraint {
+            evidence: Evidence::Catalogue,
             attr: "frequency_hz",
             pred: Predicate::NumEq {
                 value: 22_579_200.0,
@@ -356,6 +391,7 @@ mod tests {
     #[test]
     fn a_missing_attribute_is_a_rejection_not_a_pass() {
         let c = Constraint {
+            evidence: Evidence::Catalogue,
             attr: "phase_noise_dbc_1khz",
             pred: Predicate::AtMost(-130.0),
             why: "jitter in the MCLK path is the one thing the dual-oscillator design exists to \
@@ -374,6 +410,7 @@ mod tests {
     #[test]
     fn a_rejection_carries_the_reason_the_constraint_exists() {
         let c = Constraint {
+            evidence: Evidence::Catalogue,
             attr: "supply_mv_max",
             pred: Predicate::AtMost(3300.0),
             why: "the board has no rail above 3.3 V",
@@ -391,6 +428,7 @@ mod tests {
     #[test]
     fn text_predicates_ignore_case_because_catalogues_do_not_agree_on_it() {
         let c = Constraint {
+            evidence: Evidence::Catalogue,
             attr: "package",
             pred: Predicate::OneOf(&["SC-70-6", "TSSOP-6"]),
             why: "hand-assembly needs a package with reachable leads",
@@ -403,6 +441,7 @@ mod tests {
     fn evaluate_reports_the_first_failing_constraint_per_part() {
         let cs = [
             Constraint {
+                evidence: Evidence::Catalogue,
                 attr: "frequency_hz",
                 pred: Predicate::NumEq {
                     value: 22_579_200.0,
@@ -411,6 +450,7 @@ mod tests {
                 why: "family",
             },
             Constraint {
+                evidence: Evidence::Catalogue,
                 attr: "supply_mv_max",
                 pred: Predicate::AtMost(3300.0),
                 why: "rail",
