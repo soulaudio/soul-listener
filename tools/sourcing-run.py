@@ -162,6 +162,40 @@ def cmd_status(args) -> int:
     return 0
 
 
+def cmd_selftest(args) -> int:
+    """Exercise the pure helpers. No network, no credentials.
+
+    The repo has no Python test runner, and these two helpers guard failures that
+    are SILENT rather than loud, so they get checked here rather than trusted.
+    """
+    from sourcing.adapters.tme import DOC_TYPE_PREFERENCE, SYMBOL_MAX_LEN, _queryable
+
+    failures = []
+
+    def check(name, cond, detail=""):
+        print(f"  {'ok  ' if cond else 'FAIL'} {name}{'  ' + detail if detail else ''}")
+        if not cond:
+            failures.append(name)
+
+    ok, bad = _queryable(["ASV22.5792MHZLRT-0", "ASV-22.5792MHZ-LR-T", "X", "KC2016Z22.5792C1KX"])
+    check("18-char symbols accepted", "ASV22.5792MHZLRT-0" in ok)
+    check("19-char symbol rejected", "ASV-22.5792MHZ-LR-T" in bad,
+          "this is the MPN, and passing it where the symbol belongs is the recurring trap")
+    check("1-char symbol rejected", "X" in bad)
+    check(f"limit is {SYMBOL_MAX_LEN}", SYMBOL_MAX_LEN == 18)
+    check("nothing silently vanishes", len(ok) + len(bad) == 4)
+
+    # A hosted datasheet must win over a manufacturer link, and YouTube must
+    # never be considered a datasheet at all.
+    check("DTE preferred over LNK", DOC_TYPE_PREFERENCE.index("DTE")
+          < DOC_TYPE_PREFERENCE.index("LNK"))
+    check("YTB is not a datasheet type", "YTB" not in DOC_TYPE_PREFERENCE,
+          "the TI part's second document is a product video")
+
+    print(f"\n{'selftest OK' if not failures else 'FAILURES: ' + str(failures)}")
+    return 1 if failures else 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -185,6 +219,9 @@ def main() -> int:
 
     s = sub.add_parser("status", help="what the catalogue DB holds")
     s.set_defaults(func=cmd_status)
+
+    t = sub.add_parser("selftest", help="check the pure helpers; no network")
+    t.set_defaults(func=cmd_selftest)
 
     args = ap.parse_args()
     return args.func(args)
