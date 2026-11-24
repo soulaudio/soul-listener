@@ -34,6 +34,16 @@ import urllib.request
 
 from .base import Adapter, PriceBreak, VendorPart
 
+def _absolute(url: str | None) -> str | None:
+    """Make a protocol-relative datasheet URL openable."""
+    if not url:
+        return None
+    u = url.strip()
+    if u.startswith("//"):
+        return "https:" + u
+    return u if u.startswith("http") else None
+
+
 def _weeks_to_days(weeks) -> int | None:
     """Digi-Key reports `ManufacturerLeadWeeks` as a string; 0 means unstated."""
     try:
@@ -336,7 +346,10 @@ class DigikeyAdapter(Adapter):
             # vendor that can answer `no_preferred_part_is_end_of_life`.
             lifecycle_raw=(p.get("ProductStatus") or {}).get("Status"),
             status_raw=compliance,
-            datasheet_url=p.get("DatasheetUrl") or None,
+            # Absolutised here: Digi-Key returns protocol-relative paths
+            # (//media.digikey.com/...) exactly as TME does, and a URL nobody can
+            # open is not a datasheet link. Caught by the slice gate.
+            datasheet_url=_absolute(p.get("DatasheetUrl")),
         )
 
     def _authenticate(self) -> None:

@@ -11,8 +11,9 @@ use crate::{
     PartReq, PowerBudget, Preference, Provenance, RateEntry, Revision, VolumeMechanism,
 };
 
-/// No machine-checkable constraints yet — the requirement is prose-only.
-const NO_CONSTRAINTS: &[Constraint<'static>] = &[];
+// NO_CONSTRAINTS used to live here, as the placeholder for a prose-only
+// requirement. It is gone because every requirement in this revision now has a
+// constraint set — the compiler noticing it was unused is the milestone.
 
 /// Soft lock. Everything below may still change; this says what has to happen
 /// before it should not.
@@ -210,30 +211,22 @@ const POWER: PowerBudget = PowerBudget {
     provenance: Provenance::Datasheet("Cirrus CS43131 DS1155F2 + ST DS13677 + GDEM0397T81P"),
 };
 
-/// What TME calls an *active* clock source, in both spellings it uses.
+/// An *active* clock source, in the pipeline's canonical vocabulary.
 ///
-/// The "Resonators and Generators" category mixes passive parts (`crystal`,
-/// `ceramic`, `resonator` — a quartz element with no output driver) with active
-/// ones (`oscillator`, `XO`). Only an active part can drive the CS43131's
-/// XTI/MCLK pin *and* the SAI's clock input from one output, which is the whole
-/// topology; a crystal would need an oscillator circuit built around it and could
-/// not present a clock to two consumers.
+/// The oscillator category mixes passive parts (`crystal`, `ceramic`,
+/// `resonator` — a quartz element with no output driver) with active ones. Only
+/// an active part can drive the CS43131's XTI/MCLK pin *and* the SAI's clock
+/// input from one output, which is the whole topology; a crystal would need an
+/// oscillator circuit built around it and could not present a clock to two
+/// consumers.
 ///
-/// Both spellings are listed because the vendor uses both for the same thing —
-/// in one query, 9 parts labelled `oscillator` and 4 labelled `XO`.
-const ACTIVE_CLOCK_TYPES: &[&str] = &[
-    // TME's vocabulary.
-    "oscillator",
-    "XO",
-    // Digi-Key's, which is a different string for the same thing. Listed
-    // explicitly rather than matched loosely because the neighbouring values are
-    // traps: Digi-Key also publishes `Base Resonator: 'Crystal'` for this very
-    // part (the element inside the XO) and `Function: 'Standby (Power Down)'`.
-    // A substring search for "crystal" or a guess at which field means "type"
-    // rejects a correct oscillator as passive quartz.
-    "XO (Standard)",
-    "XO (Standard) with Standby",
-];
+/// One value, not four. Vendors disagree on spelling — TME says `oscillator` and
+/// `XO`, Digi-Key says `XO (Standard)` — and this list briefly carried all of
+/// them. That was the wrong place to absorb it: `tools/sourcing/canon.py` now
+/// translates vendor vocabulary at export, so the spec names the concept once and
+/// adding a third distributor means adding a synonym rather than editing a
+/// requirement.
+const ACTIVE_CLOCK_TYPES: &[&str] = &["oscillator"];
 
 /// The 44.1 kHz-family MCLK oscillator, machine-checkable.
 const OSC_44K1_CONSTRAINTS: &[Constraint<'static>] = &[
@@ -671,7 +664,7 @@ const MCU_CONSTRAINTS: &[Constraint<'static>] = &[
     Constraint {
         evidence: Evidence::Catalogue,
         attr: "cpu_core",
-        pred: crate::select::Predicate::Contains("Cortex M7"),
+        pred: crate::select::Predicate::Contains("Cortex-M7"),
         why: "the firmware is built for Cortex-M7: it depends on the double-precision FPU and the \
               AXI/AHB memory layout the placement doc reasons about. An M4 or M33 part is not a \
               slower option, it is a different target",
@@ -720,6 +713,81 @@ const MCU_CONSTRAINTS: &[Constraint<'static>] = &[
     },
 ];
 
+/// The DAC, machine-checkable.
+///
+/// Added 2026-11-24, once Digi-Key was fetched: it publishes 15 parametric fields
+/// for the CS43131 where TME carries the part at all. This was the last
+/// requirement still filtering nothing.
+///
+/// The audio figures that actually decide the part — dynamic range, THD+N, the
+/// integrated Class-H amp, and which MCLK frequencies it accepts — are datasheet
+/// characteristics that no distributor publishes, so they are marked as such
+/// rather than silently dropped. What a catalogue *can* answer is whether the
+/// part is the right shape: stereo, I2S, high-resolution, surface mount.
+const DAC_CONSTRAINTS: &[Constraint<'static>] = &[
+    Constraint {
+        evidence: Evidence::Catalogue,
+        attr: "channels",
+        pred: crate::select::Predicate::NumEq {
+            value: 2.0,
+            rel_tol: 0.0,
+        },
+        why: "stereo. Digi-Key publishes this as 'Number of D/A Converters', and a mono or \
+              4-channel part is a different product rather than a worse one",
+    },
+    Constraint {
+        evidence: Evidence::Catalogue,
+        attr: "data_interface",
+        pred: crate::select::Predicate::Contains("I2S"),
+        why: "I2S, because the SAI drives it and the whole native-rate design depends on the DAC \
+              being an I2S slave. A substring match since vendors publish compound values like \
+              'I2S/TDM'",
+    },
+    Constraint {
+        evidence: Evidence::Catalogue,
+        attr: "resolution_bits",
+        pred: crate::select::Predicate::AtLeast(24.0),
+        why: "24-bit minimum: the decode path is 24/32-bit throughout and a 16-bit converter \
+              would throw away resolution the rest of the chain preserves",
+    },
+    Constraint {
+        evidence: Evidence::Catalogue,
+        attr: "mounting",
+        pred: crate::select::Predicate::OneOf(&["SMD"]),
+        why: "hand-assembled small batch, so surface mount",
+    },
+    // --- Datasheet-only ---------------------------------------------------
+    //
+    // None of the following is a parametric field at any distributor fetched so
+    // far. Left as catalogue constraints they would reject every real DAC for
+    // fields nobody publishes — the trap break_before_make and phase noise both
+    // fell into.
+    Constraint {
+        evidence: Evidence::Datasheet,
+        attr: "dynamic_range_db",
+        pred: crate::select::Predicate::AtLeast(120.0),
+        why: ">=120 dB(A) dynamic range is the headline audio requirement, and the reason this \
+              part was chosen over cheaper codecs. Datasheet-only: distributors publish bit depth \
+              and interface, never measured DR",
+    },
+    Constraint {
+        evidence: Evidence::Datasheet,
+        attr: "integrated_headphone_amp",
+        pred: crate::select::Predicate::IsTrue,
+        why: "an integrated ground-centred Class-H amp is what removes the separate amp stage, \
+              the output DC-blocking capacitors and most of the playback current — the single \
+              biggest reason V2 exists. Datasheet-only",
+    },
+    Constraint {
+        evidence: Evidence::Datasheet,
+        attr: "accepts_both_mclk_families",
+        pred: crate::select::Predicate::IsTrue,
+        why: "the part must accept both nominal MCLK frequencies (22.5792 and 24.576 MHz), or the \
+              dual-oscillator clock tree cannot work. Datasheet-only, and the fact a careless \
+              reading of it already cost one wrong oscillator pair — see MclkContract",
+    },
+];
+
 /// Requirements with candidates — the soft lock in practice.
 ///
 /// Stock figures are from the committed sourcing snapshot
@@ -729,7 +797,7 @@ const PARTS: &[PartReq] = &[
     PartReq {
         id: "dac",
         what: "stereo DAC + headphone amp, I2S slave, both MCLK families, >=120 dB(A) DR",
-        constraints: NO_CONSTRAINTS,
+        constraints: DAC_CONSTRAINTS,
         candidates: &[
             Candidate {
                 mpn: "CS43131-CNZ",

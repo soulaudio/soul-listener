@@ -1,0 +1,2437 @@
+{
+  "kind": "candidates",
+  "category": "dac",
+  "generated_at": "2026-11-24",
+  "note": "Values are RAW vendor strings; dap_hw_spec::parametric::derive interprets them. Rebuild with tools/sourcing-run.py export.",
+  "parts": [
+    {
+      "mpn": "AD420ARZ-32",
+      "manufacturer": "Analog Devices",
+      "eu_sources": 1,
+      "eu_stock": 52,
+      "unit_price_cents": 4114,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/c5ba9cab5bedb8bd47f8f67cee4ad453/ad420.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "Analog Devices",
+        "mounting": "SMD",
+        "package": "SO24-W",
+        "part_type": "D/A converter",
+        "supply_mv": "12...32V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AD421BRZ",
+      "manufacturer": "Analog Devices",
+      "eu_sources": 1,
+      "eu_stock": 43,
+      "unit_price_cents": 1280,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/b6512dca2469da23fdcca60372e5b0d6/AD421BRZ-Analog-Devices.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "Analog Devices",
+        "mounting": "SMD",
+        "package": "SO16",
+        "part_type": "D/A converter",
+        "supply_mv": "2.95...5.05V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AD7524JNZ",
+      "manufacturer": "Analog Devices",
+      "eu_sources": 1,
+      "eu_stock": 44,
+      "unit_price_cents": 2103,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/f2304756afc40a55ec78610cc9363094/ad7524jnz.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "manufacturer_name": "Analog Devices",
+        "mounting": "THT",
+        "package": "DIP16",
+        "part_type": "D/A converter",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AD9832BRUZ",
+      "manufacturer": "Analog Devices",
+      "eu_sources": 1,
+      "eu_stock": 187,
+      "unit_price_cents": 1984,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/8e123428e3d73e89965beeb3f33c5247/ad9832bruz.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "Analog Devices",
+        "mounting": "SMD",
+        "package": "TSSOP16",
+        "part_type": "DDS/DAC converter",
+        "supply_mv": "2.97...5.5V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AD9833BRMZ",
+      "manufacturer": "Analog Devices",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 1316,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/06f269dd69c75b93183e2ecaecfa0c99/AD9833.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "frequency_hz": "0.1...25MHz",
+        "manufacturer_name": "Analog Devices",
+        "mounting": "SMD",
+        "package": "MSOP10",
+        "part_type": "DDS/DAC converter",
+        "supply_mv": "2.3...5.5V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AD9850BRSZ",
+      "manufacturer": "Analog Devices",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 3291,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/655fb2b4b4e42f46a792d93a6f63d89c/ad9850brsz.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "manufacturer_name": "Analog Devices",
+        "mounting": "SMD",
+        "package": "SSOP28",
+        "part_type": "DDS/DAC converter",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "CS43131-CNZ",
+      "manufacturer": "Cirrus Logic Inc.",
+      "eu_sources": 1,
+      "eu_stock": 347,
+      "unit_price_cents": 1644,
+      "moq": 1,
+      "lead_time_days": 140,
+      "datasheet_url": "https://statics.cirrus.com/pubs/proDatasheet/CS43131_DS1155F2.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "channels": "2",
+        "converter_architecture": "Sigma-Delta",
+        "data_interface": "I2S",
+        "mounting": "SMD",
+        "operating_temp_c": "-10\u00b0C ~ 70\u00b0C",
+        "package": "40-WFQFN Exposed Pad",
+        "resolution_bits": "32",
+        "supplier_package": "40-QFN (5x5)",
+        "supply_digital_mv": "1.66V ~ 1.94V",
+        "supply_mv": "1.66V ~ 1.94V",
+        "moq": "1",
+        "order_multiple": "490"
+      }
+    },
+    {
+      "mpn": "CS43198-CNZ",
+      "manufacturer": "Cirrus Logic Inc.",
+      "eu_sources": 1,
+      "eu_stock": 346,
+      "unit_price_cents": 1615,
+      "moq": 1,
+      "lead_time_days": 140,
+      "datasheet_url": "https://statics.cirrus.com/pubs/proDatasheet/CS43198_F1.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "channels": "2",
+        "converter_architecture": "Sigma-Delta",
+        "data_interface": "I2S",
+        "mounting": "SMD",
+        "operating_temp_c": "-10\u00b0C ~ 70\u00b0C",
+        "package": "40-WFQFN Exposed Pad",
+        "resolution_bits": "32",
+        "supplier_package": "40-QFN (5x5)",
+        "supply_digital_mv": "1.66V ~ 1.94V",
+        "supply_mv": "1.66V ~ 1.94V",
+        "moq": "1",
+        "order_multiple": "490"
+      }
+    },
+    {
+      "mpn": "CS4335-KSZ",
+      "manufacturer": "CIRRUS LOGIC",
+      "eu_sources": 1,
+      "eu_stock": 16,
+      "unit_price_cents": 293,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "2",
+        "frequency_hz": "96kHz",
+        "manufacturer_name": "CIRRUS LOGIC",
+        "mounting": "SMD",
+        "package": "SO8",
+        "part_type": "D/A converter",
+        "supply_mv": "4.75...5.5V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "CS4398-CZZ",
+      "manufacturer": "CIRRUS LOGIC",
+      "eu_sources": 1,
+      "eu_stock": 88,
+      "unit_price_cents": 2066,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/400fbb36a33a369cca4a4b44fc9b7550/CS4398_F1.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "2",
+        "frequency_hz": "192kHz",
+        "manufacturer_name": "CIRRUS LOGIC",
+        "mounting": "SMD",
+        "package": "TSSOP28",
+        "part_type": "D/A converter",
+        "supply_mv": "1.7...5.25V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "CS4398K-CZZ",
+      "manufacturer": "CIRRUS LOGIC",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 1572,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "2",
+        "frequency_hz": "192kHz",
+        "manufacturer_name": "CIRRUS LOGIC",
+        "mounting": "SMD",
+        "package": "TSSOP28",
+        "part_type": "D/A converter",
+        "supply_mv": "1.7...5.25V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC0800LCM/NOPB",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 459,
+      "unit_price_cents": 317,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac0800.pdf?ts=1728488293902&ref_url=https%253A%252F%252Fwww.ti.com%252Fsitesearch%252Fen-us%252Fdocs%252Funiversalsearch.tsp%253FlangPref%253Den-US%2526nr%253D9%2526searchTerm%253DDAC0800LCM%252FNOPB",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "package": "SO16",
+        "part_type": "D/A converter",
+        "supply_mv": "4.5...18V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC0808LCM/NOPB",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 240,
+      "unit_price_cents": 230,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac0808.pdf?ts=1728407714045&ref_url=https%253A%252F%252Fwww.mouser.com%252F",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "package": "SOP16",
+        "part_type": "D/A converter",
+        "supply_mv": "4.5...18V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC0808LCN/NOPB",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 47,
+      "unit_price_cents": 290,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac0808.pdf?ts=1728488306693&ref_url=https%253A%252F%252Fwww.ti.com%252Fsitesearch%252Fen-us%252Fdocs%252Funiversalsearch.tsp%253FlangPref%253Den-US%2526nr%253D7%2526searchTerm%253DDAC0808LCM%252FNOPB",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "THT",
+        "package": "DIP16",
+        "part_type": "D/A converter",
+        "supply_mv": "4.5...18V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC081C081CIMK/NOPB",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 984,
+      "unit_price_cents": 126,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac081c081.pdf?ts=1728488318735&ref_url=https%253A%252F%252Fwww.ti.com%252Fsitesearch%252Fen-us%252Fdocs%252Funiversalsearch.tsp%253FlangPref%253Den-US%2526nr%253D10%2526searchTerm%253DDAC081C081CIMK%252FNOPB",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "SOT23-THN-6",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC081C085CIMMX/NOPB",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 813,
+      "unit_price_cents": 125,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac081c085.pdf?ts=1728488330224&ref_url=https%253A%252F%252Fwww.ti.com%252Fsitesearch%252Fen-us%252Fdocs%252Funiversalsearch.tsp%253FlangPref%253Den-US%2526nr%253D10%2526searchTerm%253DDAC081C085CIMM%252FNOPB",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "VSSOP8",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC081S101CIMK/NOPB",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 849,
+      "unit_price_cents": 149,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac081s101.pdf?ts=1728488338898&ref_url=https%253A%252F%252Fwww.ti.com%252Fsitesearch%252Fen-us%252Fdocs%252Funiversalsearch.tsp%253FlangPref%253Den-US%2526nr%253D13%2526searchTerm%253DDAC081S101CIMK%252FNOPB",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...105\u00b0C",
+        "package": "SOT23-THN-6",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC081S101CIMKX/NOPB",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 1080,
+      "unit_price_cents": 125,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac081s101.pdf?ts=1728488338898&ref_url=https%253A%252F%252Fwww.ti.com%252Fsitesearch%252Fen-us%252Fdocs%252Funiversalsearch.tsp%253FlangPref%253Den-US%2526nr%253D13%2526searchTerm%253DDAC081S101CIMK%252FNOPB",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...105\u00b0C",
+        "package": "SOT23-THN-6",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC081S101CIMM/NOPB",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 622,
+      "unit_price_cents": 139,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac081s101.pdf?ts=1728488338898&ref_url=https%253A%252F%252Fwww.ti.com%252Fsitesearch%252Fen-us%252Fdocs%252Funiversalsearch.tsp%253FlangPref%253Den-US%2526nr%253D13%2526searchTerm%253DDAC081S101CIMK%252FNOPB",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...105\u00b0C",
+        "package": "VSSOP8",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC088S085CIMT/NOPB",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 228,
+      "unit_price_cents": 548,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac088s085.pdf?ts=1728463724334&ref_url=https%253A%252F%252Fwww.mouser.cn%252F",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "8",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "TSSOP16",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC08EPZ",
+      "manufacturer": "Analog Devices",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 516,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/f8fbcefdca9de4274cb6a66002fba0fc/DAC08EPZ.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "manufacturer_name": "Analog Devices",
+        "mounting": "THT",
+        "package": "DIP16",
+        "part_type": "D/A converter",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC101C081CIMK/NOPB",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 971,
+      "unit_price_cents": 167,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac101c081.pdf?ts=1728488384059&ref_url=https%253A%252F%252Fwww.ti.com%252Fsitesearch%252Fen-us%252Fdocs%252Funiversalsearch.tsp%253FlangPref%253Den-US%2526nr%253D11%2526searchTerm%253DDAC101C081CIMK%252FNOPB",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "SOT23-THN-6",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC101S101CIMK/NOPB",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 1017,
+      "unit_price_cents": 182,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac101s101.pdf?ts=1728488400977&ref_url=https%253A%252F%252Fwww.ti.com%252Fsitesearch%252Fen-us%252Fdocs%252Funiversalsearch.tsp%253FlangPref%253Den-US%2526nr%253D10%2526searchTerm%253DDAC101S101CIMK%252FNOPB",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...105\u00b0C",
+        "package": "SOT23-THN-6",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC121C085CIMM/NOPB",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 5,
+      "unit_price_cents": 252,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac121c085.pdf?ts=1728426070691&ref_url=https%253A%252F%252Fwww.ti.com%252Fproduct%252FDAC121C085%253Futm_source%253Dgoogle%2526utm_medium%253Dcpc%2526utm_campaign%253Dasc-null-null-GPN_EN-cpc-pf-google-wwe%2526utm_content%253DDAC121C085%2526ds_k%253DDAC121C085%2526DCM%253Dyes%2526gad_source%253D1%2526gclid%253DEAIaIQobChMIhI6j6uj_iAMVWgutBh2O9RELEAAYASAAEgL-tPD_BwE%2526gclsrc%253Daw.ds",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "VSSOP8",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC121S101CIMKX/NOPB",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 215,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac121s101.pdf?ts=1728472186033&ref_url=https%253A%252F%252Fwww.mouser.de%252F",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...105\u00b0C",
+        "package": "SOT23-THN-6",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC121S101CIMM/NOPB",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 124,
+      "unit_price_cents": 222,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac121s101.pdf?ts=1728472186033&ref_url=https%253A%252F%252Fwww.mouser.de%252F",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...105\u00b0C",
+        "package": "VSSOP8",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC128S085CIMT/NOPB",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 81,
+      "unit_price_cents": 1137,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac128s085.pdf?ts=1728462610734",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "8",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "TSSOP16",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC43401DSGR",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 989,
+      "unit_price_cents": 113,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac43401.pdf?ts=1728488650137&ref_url=https%253A%252F%252Fwww.ti.com%252Fsitesearch%252Fen-us%252Fdocs%252Funiversalsearch.tsp%253FlangPref%253Den-US%2526nr%253D6%2526searchTerm%253DDAC43401DSGR",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "WSON8",
+        "part_type": "D/A converter",
+        "supply_mv": "1.8...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC43608RTET",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 250,
+      "unit_price_cents": 571,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac43608.pdf?ts=1728451545365&ref_url=https%253A%252F%252Fwww.mouser.cn%252F",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "8",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "WQFN16",
+        "part_type": "D/A converter",
+        "supply_mv": "1.8...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC5311IDCKT",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 245,
+      "unit_price_cents": 130,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac5311.pdf?ts=1728484754520&ref_url=https%253A%252F%252Fwww.ti.com%252Fproduct%252FDAC5311",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "SC70-6",
+        "part_type": "D/A converter",
+        "supply_mv": "2...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC5571IDBVR",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 430,
+      "unit_price_cents": 253,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac5571.pdf?ts=1728422333222",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...105\u00b0C",
+        "package": "SOT23-6",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC5571IDBVT",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 244,
+      "unit_price_cents": 266,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac5571.pdf?ts=1728422333222",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "package": "SOT23-6",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC5573IPW",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 180,
+      "unit_price_cents": 681,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac5573.pdf?ts=1728422308934",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "4",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...105\u00b0C",
+        "package": "TSSOP16",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC5574IDGS",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 170,
+      "unit_price_cents": 462,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac5574.pdf?ts=1728488749920&ref_url=https%253A%252F%252Fwww.ti.com%252Fsitesearch%252Fen-us%252Fdocs%252Funiversalsearch.tsp%253FlangPref%253Den-US%2526nr%253D5%2526searchTerm%253DDAC5574IDGS",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "4",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...105\u00b0C",
+        "package": "VSSOP10",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC5578SPW",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 99,
+      "unit_price_cents": 833,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac5578.pdf?ts=1728422211018",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "8",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "TSSOP16",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC6574IDGS",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 238,
+      "unit_price_cents": 687,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac6574.pdf?ts=1728417741814&ref_url=https%253A%252F%252Fwww.mouser.fr%252F",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "4",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...105\u00b0C",
+        "package": "VSSOP10",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC7311IDCKR",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 29,
+      "unit_price_cents": 182,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac7311.pdf?ts=1728475944500&ref_url=https%253A%252F%252Fwww.ti.com%252Fproduct%252FDAC7311",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "SC70-6",
+        "part_type": "D/A converter",
+        "supply_mv": "2...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC7311IDCKT",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 236,
+      "unit_price_cents": 268,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac7311.pdf?ts=1728475944500&ref_url=https%253A%252F%252Fwww.ti.com%252Fproduct%252FDAC7311",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "SC70-6",
+        "part_type": "D/A converter",
+        "supply_mv": "2...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC7512N/250",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 260,
+      "unit_price_cents": 542,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac7512.pdf?ts=1728420743940",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...105\u00b0C",
+        "package": "SOT23-6",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC7513E/2K5",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 153,
+      "unit_price_cents": 346,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac7513.pdf?ts=1728489047715&ref_url=https%253A%252F%252Fwww.ti.com%252Fsitesearch%252Fen-us%252Fdocs%252Funiversalsearch.tsp%253FlangPref%253Den-US%2526nr%253D8%2526searchTerm%253DDAC7513E%252F250",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "frequency_hz": "30MHz",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...105\u00b0C",
+        "package": "VSSOP8",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC7552IRGTT",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 250,
+      "unit_price_cents": 535,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac7552.pdf?ts=1728481122563&ref_url=https%253A%252F%252Fwww.mouser.es%252F",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "2",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...105\u00b0C",
+        "package": "VQFN16",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC7554IDGS",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 133,
+      "unit_price_cents": 885,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac7554.pdf?ts=1728458372274&ref_url=www.mouser.com",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "4",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...105\u00b0C",
+        "package": "VSSOP10",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC7571IDBVR",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 264,
+      "unit_price_cents": 211,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac7571.pdf?ts=1728489154093&ref_url=https%253A%252F%252Fwww.ti.com%252Fsitesearch%252Fen-us%252Fdocs%252Funiversalsearch.tsp%253FlangPref%253Den-US%2526nr%253D9%2526searchTerm%253DDAC7571IDBVR",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...105\u00b0C",
+        "package": "SOT23-6",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC7571IDBVT",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 564,
+      "unit_price_cents": 293,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac7571.pdf?ts=1728489154093&ref_url=https%253A%252F%252Fwww.ti.com%252Fsitesearch%252Fen-us%252Fdocs%252Funiversalsearch.tsp%253FlangPref%253Den-US%2526nr%253D9%2526searchTerm%253DDAC7571IDBVR",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...105\u00b0C",
+        "package": "SOT23-6",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC7574IDGS",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 1430,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac7574.pdf?ts=1728489170943&ref_url=https%253A%252F%252Fwww.ti.com%252Fsitesearch%252Fen-us%252Fdocs%252Funiversalsearch.tsp%253FlangPref%253Den-US%2526nr%253D8%2526searchTerm%253DDAC7574IDGS",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "4",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...105\u00b0C",
+        "package": "VSSOP10",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC7611U",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 1463,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac7611.pdf?ts=1728407587295",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "package": "SO8",
+        "part_type": "D/A converter",
+        "supply_mv": "4.75...5.25V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC7612U",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 253,
+      "unit_price_cents": 1520,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac7612.pdf?ts=1728489204631&ref_url=https%253A%252F%252Fwww.ti.com%252Fsitesearch%252Fen-us%252Fdocs%252Funiversalsearch.tsp%253FlangPref%253Den-US%2526nr%253D6%2526searchTerm%253DDAC7612U",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "2",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "package": "SO8",
+        "part_type": "D/A converter",
+        "supply_mv": "4.75...5.25V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC80004IPW",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 57,
+      "unit_price_cents": 2121,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac80004.pdf?ts=1728489434814&ref_url=https%253A%252F%252Fwww.ti.com%252Fsitesearch%252Fen-us%252Fdocs%252Funiversalsearch.tsp%253FlangPref%253Den-US%2526nr%253D7%2526searchTerm%253DDAC80004IPW",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "4",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "TSSOP14",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC8165IDPW",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 104,
+      "unit_price_cents": 869,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac8165.pdf?ts=1728489543616&ref_url=https%253A%252F%252Fwww.ti.com%252Fsitesearch%252Fen-us%252Fdocs%252Funiversalsearch.tsp%253FlangPref%253Den-US%2526nr%253D4%2526searchTerm%253DDAC8165IBPW",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "4",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...105\u00b0C",
+        "package": "TSSOP16",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC8411IDCKT",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 22,
+      "unit_price_cents": 787,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac8411.pdf?ts=1728472381372&ref_url=https%253A%252F%252Fwww.bing.com%252F",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "SC70-6",
+        "part_type": "D/A converter",
+        "supply_mv": "2...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC8531E/250G4",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 423,
+      "unit_price_cents": 667,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac8531.pdf?ts=1728489602664&ref_url=https%253A%252F%252Fwww.ti.com%252Fsitesearch%252Fen-us%252Fdocs%252Funiversalsearch.tsp%253FlangPref%253Den-US%2526nr%253D8%2526searchTerm%253DDAC8531E%252F250",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "package": "MSOP8",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC8532IDGK",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 21,
+      "unit_price_cents": 1219,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac8532.pdf?ts=1728433418793&ref_url=https%253A%252F%252Fwww.google.com%252F",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "2",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...105\u00b0C",
+        "package": "VSSOP8",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC8550IDGKT",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 213,
+      "unit_price_cents": 868,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac8550.pdf?ts=1728489643601&ref_url=https%253A%252F%252Fwww.ti.com%252Fsitesearch%252Fen-us%252Fdocs%252Funiversalsearch.tsp%253FlangPref%253Den-US%2526nr%253D14%2526searchTerm%253DDAC8550IBDGKT",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...105\u00b0C",
+        "package": "VSSOP8",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC8554IPW",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 84,
+      "unit_price_cents": 1719,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac8554.pdf?ts=1728415655986&ref_url=https%253A%252F%252Fwww.ti.com%252Fproduct%252FDAC8554",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "4",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...105\u00b0C",
+        "package": "TSSOP16",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC8571IDGK",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 80,
+      "unit_price_cents": 676,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac8571.pdf?ts=1728486931457&ref_url=https%253A%252F%252Fwww.ti.com%252Fproduct%252FDAC8571",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...105\u00b0C",
+        "package": "VSSOP8",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC8574IPW",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 23,
+      "unit_price_cents": 1894,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac8574.pdf?ts=1728489792069&ref_url=https%253A%252F%252Fwww.ti.com%252Fsitesearch%252Fen-us%252Fdocs%252Funiversalsearch.tsp%253FlangPref%253Den-US%2526nr%253D7%2526searchTerm%253DDAC8574IPW",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "4",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...105\u00b0C",
+        "package": "TSSOP16",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DAC8831ICD",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 88,
+      "unit_price_cents": 2069,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/dac8831.pdf?ts=1728410980363",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "SOIC14",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "LMP92066PWP",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 274,
+      "unit_price_cents": 4340,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/lmp92066.pdf?ts=1728506199369&ref_url=https%253A%252F%252Fwww.ti.com%252Fsitesearch%252Fen-us%252Fdocs%252Funiversalsearch.tsp%253FlangPref%253Den-US%2526nr%253D4%2526searchTerm%253DLMP92066PWP",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "2",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "HTSSOP16",
+        "part_type": "D/A converter",
+        "supply_mv": "4.75...5.25V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "MCP4706A0T-E/CH",
+      "manufacturer": "MICROCHIP TECHNOLOGY",
+      "eu_sources": 1,
+      "eu_stock": 1137,
+      "unit_price_cents": 81,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/14d224497af2df2b855031b91972df1b/mcp4706.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "MICROCHIP TECHNOLOGY",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "SOT23-6",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "MCP4716A0T-E/CH",
+      "manufacturer": "MICROCHIP TECHNOLOGY",
+      "eu_sources": 1,
+      "eu_stock": 126,
+      "unit_price_cents": 102,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDocuments/DataSheets/22272C.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "MICROCHIP TECHNOLOGY",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "SOT23-6",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "MCP4725A0T-E/CH",
+      "manufacturer": "MICROCHIP TECHNOLOGY",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 106,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/MCP4725-12-Bit-Digital-to-Analog-Converter-with-EEPROM-Memory-DS20002039.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "MICROCHIP TECHNOLOGY",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "SOT23-6",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "MCP4725A1T-E/CH",
+      "manufacturer": "MICROCHIP TECHNOLOGY",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 106,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "MICROCHIP TECHNOLOGY",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "SOT23-6",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "MCP4725A2T-E/CH",
+      "manufacturer": "MICROCHIP TECHNOLOGY",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 108,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "MICROCHIP TECHNOLOGY",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "SOT23-6",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "MCP4725A3T-E/CH",
+      "manufacturer": "MICROCHIP TECHNOLOGY",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 108,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "MICROCHIP TECHNOLOGY",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "SOT23-6",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "MCP4726A0T-E/CH",
+      "manufacturer": "MICROCHIP TECHNOLOGY",
+      "eu_sources": 1,
+      "eu_stock": 357,
+      "unit_price_cents": 132,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDocuments/DataSheets/22272C.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "MICROCHIP TECHNOLOGY",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "SOT23-6",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "MCP4726A1T-E/CH",
+      "manufacturer": "MICROCHIP TECHNOLOGY",
+      "eu_sources": 1,
+      "eu_stock": 127,
+      "unit_price_cents": 148,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDocuments/DataSheets/22272C.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "MICROCHIP TECHNOLOGY",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "SOT23-6",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "MCP4728-E/UN",
+      "manufacturer": "MICROCHIP TECHNOLOGY",
+      "eu_sources": 1,
+      "eu_stock": 481,
+      "unit_price_cents": 187,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDocuments/DataSheets/22187E.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "4",
+        "manufacturer_name": "MICROCHIP TECHNOLOGY",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "MSOP10",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "MCP4728A1-E/UN",
+      "manufacturer": "MICROCHIP TECHNOLOGY",
+      "eu_sources": 1,
+      "eu_stock": 88,
+      "unit_price_cents": 234,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDocuments/DataSheets/22187E.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "4",
+        "manufacturer_name": "MICROCHIP TECHNOLOGY",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "MSOP10",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "MCP47CVB02-E/UN",
+      "manufacturer": "MICROCHIP TECHNOLOGY",
+      "eu_sources": 1,
+      "eu_stock": 868,
+      "unit_price_cents": 133,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDocuments/DataSheets/MCP47CXBXX-Data-Sheet-DS20006089B.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "2",
+        "manufacturer_name": "MICROCHIP TECHNOLOGY",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "MSOP10",
+        "part_type": "D/A converter",
+        "supply_mv": "1.8...5.5V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "MCP47FEB12A0-E/ST",
+      "manufacturer": "MICROCHIP TECHNOLOGY",
+      "eu_sources": 1,
+      "eu_stock": 92,
+      "unit_price_cents": 147,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDocuments/DataSheets/20005375A.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "2",
+        "manufacturer_name": "MICROCHIP TECHNOLOGY",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "TSSOP8",
+        "part_type": "D/A converter",
+        "supply_mv": "1.8...5.5V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "MCP47FEB18-E/MQ",
+      "manufacturer": "MICROCHIP TECHNOLOGY",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 612,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://ww1.microchip.com/downloads/aemDocuments/documents/MSLD/ProductDocuments/DataSheets/MCP47FXBX48-Data-Sheet-DS200006368A.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "8",
+        "manufacturer_name": "MICROCHIP TECHNOLOGY",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "VQFN20",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "MCP4801-E/MS",
+      "manufacturer": "MICROCHIP TECHNOLOGY",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 99,
+      "moq": 300,
+      "lead_time_days": null,
+      "datasheet_url": "https://ww1.microchip.com/downloads/aemDocuments/documents/MSLD/ProductDocuments/DataSheets/MCP47FXBX48-Data-Sheet-DS200006368A.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "MICROCHIP TECHNOLOGY",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "MSOP8",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V",
+        "moq": "300",
+        "order_multiple": "60"
+      }
+    },
+    {
+      "mpn": "MCP4802-E/MS",
+      "manufacturer": "MICROCHIP TECHNOLOGY",
+      "eu_sources": 1,
+      "eu_stock": 115,
+      "unit_price_cents": 164,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDocuments/DataSheets/22244B.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "2",
+        "manufacturer_name": "MICROCHIP TECHNOLOGY",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "MSOP8",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "MCP4802-E/P",
+      "manufacturer": "MICROCHIP TECHNOLOGY",
+      "eu_sources": 1,
+      "eu_stock": 91,
+      "unit_price_cents": 176,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDocuments/DataSheets/20002249B.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "2",
+        "manufacturer_name": "MICROCHIP TECHNOLOGY",
+        "mounting": "THT",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "DIP8",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "MCP4811-E/MS",
+      "manufacturer": "MICROCHIP TECHNOLOGY",
+      "eu_sources": 1,
+      "eu_stock": 338,
+      "unit_price_cents": 179,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDocuments/DataSheets/20002249B.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "MICROCHIP TECHNOLOGY",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "MSOP8",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "MCP4822-E/P",
+      "manufacturer": "MICROCHIP TECHNOLOGY",
+      "eu_sources": 1,
+      "eu_stock": 107,
+      "unit_price_cents": 356,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDocuments/DataSheets/20002249B.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "2",
+        "manufacturer_name": "MICROCHIP TECHNOLOGY",
+        "mounting": "THT",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "DIP8",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "MCP4822-E/SN",
+      "manufacturer": "MICROCHIP TECHNOLOGY",
+      "eu_sources": 1,
+      "eu_stock": 381,
+      "unit_price_cents": 331,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDocuments/DataSheets/20002249B.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "2",
+        "manufacturer_name": "MICROCHIP TECHNOLOGY",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "SO8",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "MCP48CVB02-E/UN",
+      "manufacturer": "MICROCHIP TECHNOLOGY",
+      "eu_sources": 1,
+      "eu_stock": 389,
+      "unit_price_cents": 135,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDocuments/DataSheets/MCP48CXBXX-Data-Sheet-DS20006160A.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "2",
+        "manufacturer_name": "MICROCHIP TECHNOLOGY",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "MSOP10",
+        "part_type": "D/A converter",
+        "supply_mv": "1.8...5.5V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "MCP48FVB02T-E/UN",
+      "manufacturer": "MICROCHIP TECHNOLOGY",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 60,
+      "moq": 2500,
+      "lead_time_days": null,
+      "datasheet_url": "https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDocuments/DataSheets/20005440A.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "2",
+        "manufacturer_name": "MICROCHIP TECHNOLOGY",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "MSOP10",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V; 1.8...5.5V",
+        "moq": "2500",
+        "order_multiple": "2500"
+      }
+    },
+    {
+      "mpn": "MCP48FVB22-E/UN",
+      "manufacturer": "MICROCHIP TECHNOLOGY",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 208,
+      "moq": 200,
+      "lead_time_days": null,
+      "datasheet_url": "https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDocuments/DataSheets/20005440A.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "2",
+        "manufacturer_name": "MICROCHIP TECHNOLOGY",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "MSOP10",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V; 1.8...5.5V",
+        "moq": "200",
+        "order_multiple": "100"
+      }
+    },
+    {
+      "mpn": "MCP4901-E/MS",
+      "manufacturer": "MICROCHIP TECHNOLOGY",
+      "eu_sources": 1,
+      "eu_stock": 120,
+      "unit_price_cents": 106,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://ww1.microchip.com/downloads/aemDocuments/documents/MSLD/ProductDocuments/DataSheets/MCP48FXBX4-8-Family-Data-Sheet-DS20006362A.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "MICROCHIP TECHNOLOGY",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "MSOP8",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "MCP4902-E/P",
+      "manufacturer": "MICROCHIP TECHNOLOGY",
+      "eu_sources": 1,
+      "eu_stock": 200,
+      "unit_price_cents": 154,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDocuments/DataSheets/22248a.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "2",
+        "manufacturer_name": "MICROCHIP TECHNOLOGY",
+        "mounting": "THT",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "DIP14",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "MCP4911-E/P",
+      "manufacturer": "MICROCHIP TECHNOLOGY",
+      "eu_sources": 1,
+      "eu_stock": 234,
+      "unit_price_cents": 166,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDocuments/DataSheets/22248a.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "MICROCHIP TECHNOLOGY",
+        "mounting": "THT",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "DIP8",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "MCP4921-E/P",
+      "manufacturer": "MICROCHIP TECHNOLOGY",
+      "eu_sources": 1,
+      "eu_stock": 131,
+      "unit_price_cents": 237,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDocuments/DataSheets/22250A.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "MICROCHIP TECHNOLOGY",
+        "mounting": "THT",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "DIP8",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "MCP4921-E/SN",
+      "manufacturer": "MICROCHIP TECHNOLOGY",
+      "eu_sources": 1,
+      "eu_stock": 212,
+      "unit_price_cents": 223,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDocuments/DataSheets/22248a.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "MICROCHIP TECHNOLOGY",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "SO8",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "MCP4922-E/P",
+      "manufacturer": "MICROCHIP TECHNOLOGY",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 310,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDocuments/DataSheets/22248a.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "2",
+        "manufacturer_name": "MICROCHIP TECHNOLOGY",
+        "mounting": "THT",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "DIP14",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "MCP4922-E/SL",
+      "manufacturer": "MICROCHIP TECHNOLOGY",
+      "eu_sources": 1,
+      "eu_stock": 106,
+      "unit_price_cents": 320,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDocuments/DataSheets/22250A.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "2",
+        "manufacturer_name": "MICROCHIP TECHNOLOGY",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "SO14",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "MCP4922T-E/SL",
+      "manufacturer": "MICROCHIP TECHNOLOGY",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 242,
+      "moq": 2600,
+      "lead_time_days": null,
+      "datasheet_url": "https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDocuments/DataSheets/22250A.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "2",
+        "manufacturer_name": "MICROCHIP TECHNOLOGY",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "SOIC14",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V",
+        "moq": "2600",
+        "order_multiple": "2600"
+      }
+    },
+    {
+      "mpn": "PCM5101APW",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 372,
+      "moq": 70,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "2",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-25...85\u00b0C",
+        "package": "TSSOP20",
+        "part_type": "D/A converter",
+        "moq": "70",
+        "order_multiple": "70"
+      }
+    },
+    {
+      "mpn": "TLC5620CD",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 245,
+      "unit_price_cents": 598,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/tlc5620.pdf?ts=1728555973369&ref_url=https%253A%252F%252Fwww.ti.com%252Fsitesearch%252Fen-us%252Fdocs%252Funiversalsearch.tsp%253FlangPref%253Den-US%2526nr%253D5%2526searchTerm%253DTLC5620CD",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "4",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "0...70\u00b0C",
+        "package": "SOIC14",
+        "part_type": "D/A converter",
+        "supply_mv": "4.75...5.25V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "TLC7226CDW",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 248,
+      "unit_price_cents": 946,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/tlc7226.pdf?ts=1728556288400&ref_url=https%253A%252F%252Fwww.ti.com%252Fsitesearch%252Fen-us%252Fdocs%252Funiversalsearch.tsp%253FlangPref%253Den-US%2526nr%253D4%2526searchTerm%253DTLC7226CDW",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "4",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "package": "SO20",
+        "part_type": "D/A converter",
+        "supply_mv": "4.5...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "TLC7524CD",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 164,
+      "unit_price_cents": 396,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/tlc7524.pdf?ts=1728556309100&ref_url=https%253A%252F%252Fwww.ti.com%252Fsitesearch%252Fen-us%252Fdocs%252Funiversalsearch.tsp%253FlangPref%253Den-US%2526nr%253D3%2526searchTerm%253DTLC7524CD",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "package": "SO16",
+        "part_type": "D/A converter",
+        "supply_mv": "4.75...4.25V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "TLC7524CN",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 154,
+      "unit_price_cents": 524,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/tlc7524.pdf?ts=1728556309100&ref_url=https%253A%252F%252Fwww.ti.com%252Fsitesearch%252Fen-us%252Fdocs%252Funiversalsearch.tsp%253FlangPref%253Den-US%2526nr%253D3%2526searchTerm%253DTLC7524CD",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "THT",
+        "package": "DIP16",
+        "part_type": "D/A converter",
+        "supply_mv": "4.75...4.25V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "TLC7528CDW",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 200,
+      "unit_price_cents": 800,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/tlc7528.pdf?ts=1728556337381&ref_url=https%253A%252F%252Fwww.ti.com%252Fsitesearch%252Fen-us%252Fdocs%252Funiversalsearch.tsp%253FlangPref%253Den-US%2526nr%253D3%2526searchTerm%253DTLC7528CDW",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "2",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "package": "SO20",
+        "part_type": "D/A converter",
+        "supply_mv": "4.75...15.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "TLV5606IDGK",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 1040,
+      "unit_price_cents": 426,
+      "moq": 80,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/tlv5606.pdf?ts=1728557782441&ref_url=https%253A%252F%252Fwww.ti.com%252Fsitesearch%252Fen-us%252Fdocs%252Funiversalsearch.tsp%253FlangPref%253Den-US%2526nr%253D3%2526searchTerm%253DTLV5606IDGK",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "VSSOP8",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...3.3V DC; 4.5...5.5V DC",
+        "moq": "80",
+        "order_multiple": "80"
+      }
+    },
+    {
+      "mpn": "TLV5608IDW",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 250,
+      "unit_price_cents": 1710,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/tlv5608.pdf?ts=1728557787856&ref_url=https%253A%252F%252Fwww.ti.com%252Fsitesearch%252Fen-us%252Fdocs%252Funiversalsearch.tsp%253FlangPref%253Den-US%2526nr%253D6%2526searchTerm%253DTLV5608IDW",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "8",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "SOIC20",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...3.3V DC; 4.5...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "TLV5614CD",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 118,
+      "unit_price_cents": 2583,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/tlv5614.pdf?ts=1728523833808",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "4",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "0...70\u00b0C",
+        "package": "SOIC16",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "TLV5620CD",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 164,
+      "unit_price_cents": 314,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/tlv5620.pdf?ts=1728557871318&ref_url=https%253A%252F%252Fwww.ti.com%252Fsitesearch%252Fen-us%252Fdocs%252Funiversalsearch.tsp%253FlangPref%253Den-US%2526nr%253D4%2526searchTerm%253DTLV5620CD",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "4",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "0...70\u00b0C",
+        "package": "SOIC14",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...5.25V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "TLV5624CD",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 290,
+      "unit_price_cents": 477,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/tlv5624.pdf?ts=1728557904205&ref_url=https%253A%252F%252Fwww.ti.com%252Fsitesearch%252Fen-us%252Fdocs%252Funiversalsearch.tsp%253FlangPref%253Den-US%2526nr%253D2%2526searchTerm%253DTLV5624CD",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "0...70\u00b0C",
+        "package": "SOIC8",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...3.3V DC; 4.5...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "TLV5624ID",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 1050,
+      "unit_price_cents": 610,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/tlv5624.pdf?ts=1728557904205&ref_url=https%253A%252F%252Fwww.ti.com%252Fsitesearch%252Fen-us%252Fdocs%252Funiversalsearch.tsp%253FlangPref%253Den-US%2526nr%253D2%2526searchTerm%253DTLV5624CD",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "1",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "SOIC8",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...3.3V DC; 4.5...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "TLV5625ID",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 250,
+      "unit_price_cents": 806,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/tlv5625.pdf?ts=1728517245316",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "2",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "SOIC8",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...3.3V DC; 4.5...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "TLV5637CD",
+      "manufacturer": "TEXAS INSTRUMENTS",
+      "eu_sources": 1,
+      "eu_stock": 3,
+      "unit_price_cents": 1375,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/tlv5637.pdf?ts=1728557991950&ref_url=https%253A%252F%252Fwww.ti.com%252Fsitesearch%252Fen-us%252Fdocs%252Funiversalsearch.tsp%253FlangPref%253Den-US%2526nr%253D4%2526searchTerm%253DTLV5637CD",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "channels": "2",
+        "manufacturer_name": "TEXAS INSTRUMENTS",
+        "mounting": "SMD",
+        "operating_temp_c": "0...70\u00b0C",
+        "package": "SOIC8",
+        "part_type": "D/A converter",
+        "supply_mv": "2.7...3.3V DC; 4.5...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    }
+  ]
+}

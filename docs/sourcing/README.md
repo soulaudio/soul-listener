@@ -96,6 +96,7 @@ oscillator reaches a 3.3 V board.
 ## Commands
 
 ```sh
+tools/sourcing-run.py refresh                          # EVERYTHING: fetch, export, snapshot
 tools/sourcing-run.py selftest                         # pure helpers, no network
 tools/sourcing-run.py fetch  --vendor tme              # the MPNs the snapshot names
 tools/sourcing-run.py fetch  --vendor tme --category 100269 \
@@ -103,6 +104,16 @@ tools/sourcing-run.py fetch  --vendor tme --category 100269 \
 tools/sourcing-run.py export --category mclk-osc-44k1  # -> candidates/<id>.json
 tools/sourcing-run.py status                           # what the DB holds
 ```
+
+`refresh` is the one command that matters day to day. The category sweeps it performs are declared
+in `SWEEPS` at the top of the script rather than remembered, so a refresh is reproducible and
+"which categories is this conclusion based on?" has an answer. A vendor without credentials is
+skipped and reported — a partial refresh is normal, not an error.
+
+Vendor vocabulary is reconciled at export by `tools/sourcing/canon.py`: TME says
+`mounting = 'SMD'` where Digi-Key says `'Surface Mount'` for the same part, and the spec names each
+concept once. Conflicts that survive canonicalisation are **reported**, never silently resolved —
+two vendors disagreeing about one component means one of them is wrong.
 
 A sweep is **checked for completeness** against TME's own `counters.count`: if fewer parts come
 back than the vendor says match, the run fails rather than reporting a partial category. An

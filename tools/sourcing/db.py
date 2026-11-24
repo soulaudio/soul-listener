@@ -38,6 +38,8 @@ from __future__ import annotations
 import pathlib
 import sqlite3
 
+from .canon import merge_values
+
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS fetch_runs (
     id           INTEGER PRIMARY KEY,
@@ -195,17 +197,34 @@ class Catalogue:
         ).fetchall()
 
         out = []
+        conflicts: list[str] = []
         for mpn, manufacturer, eu_sources, eu_stock, vendors in rows:
-            attrs = dict(
-                self.conn.execute(
-                    """
-                    SELECT a.name, a.value_raw
-                    FROM attributes a JOIN parts p ON p.id = a.part_id
-                    WHERE p.mpn = ? AND p.category = ?
-                    """,
-                    (mpn, category),
-                ).fetchall()
-            )
+            # Per-vendor values, then a deterministic canonical merge.
+            #
+            # A plain dict() over these rows let SQL row order decide the winner,
+            # and the winner mattered: TME says mounting='SMD' where Digi-Key says
+            # 'Surface Mount' for the SAME part, and the spec constrains "SMD". So
+            # whether a part qualified depended on which row came back last.
+            per_attr: dict[str, dict[str, str]] = {}
+            for name, vendor, raw in self.conn.execute(
+                """
+                SELECT a.name, p.vendor, a.value_raw
+                FROM attributes a JOIN parts p ON p.id = a.part_id
+                WHERE p.mpn = ? AND p.category = ?
+                """,
+                (mpn, category),
+            ):
+                per_attr.setdefault(name, {})[vendor] = raw
+
+            attrs: dict[str, str] = {}
+            for name, by_vendor in per_attr.items():
+                value, conflict = merge_values(name, by_vendor)
+                if value:
+                    attrs[name] = value
+                if conflict:
+                    # A real disagreement about one part: reported, never
+                    # silently resolved.
+                    conflicts.append(f"{mpn}.{name}: " + ", ".join(conflict))
             # The price at the LOWEST break the vendor publishes, not the qty-1
             # price. `qty <= 1` was returning NULL for every reel-only part — so
             # the entire oscillator category exported as unpriced and ranked last
@@ -266,6 +285,12 @@ class Catalogue:
                     },
                 }
             )
+        if conflicts:
+            print(f"  WARNING: {len(conflicts)} cross-vendor value conflict(s) — two vendors "
+                  f"describe the same part differently AFTER canonicalisation, so one of them "
+                  f"is wrong:")
+            for c in conflicts[:10]:
+                print(f"      {c}")
         return out
 
     def summary(self) -> list[tuple]:

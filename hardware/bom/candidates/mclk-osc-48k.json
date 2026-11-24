@@ -12,7 +12,7 @@
       "unit_price_cents": 39,
       "moq": 2,
       "lead_time_days": null,
-      "datasheet_url": null,
+      "datasheet_url": "https://www.tme.eu/Document/9cb2d0edad968d8543e7bc99995fd180/3235.pdf",
       "vendors": [
         "tme"
       ],
@@ -35,7 +35,7 @@
       "unit_price_cents": 106,
       "moq": 1000,
       "lead_time_days": null,
-      "datasheet_url": null,
+      "datasheet_url": "https://www.tme.eu/Document/9e45982e9e903fe2b6134c8b113dc300/7c.pdf",
       "vendors": [
         "tme"
       ],
@@ -59,7 +59,7 @@
       "unit_price_cents": 43,
       "moq": 1000,
       "lead_time_days": null,
-      "datasheet_url": null,
+      "datasheet_url": "https://www.tme.eu/Document/a4d736310cb04f5ccd0f03f407faf329/7m.pdf",
       "vendors": [
         "tme"
       ],
@@ -82,7 +82,7 @@
       "unit_price_cents": 24,
       "moq": 1000,
       "lead_time_days": null,
-      "datasheet_url": null,
+      "datasheet_url": "https://www.tme.eu/Document/fc14ffcc8ecf3369c6ead6a937869cec/7v.pdf",
       "vendors": [
         "tme"
       ],
@@ -105,7 +105,7 @@
       "unit_price_cents": 25,
       "moq": 1000,
       "lead_time_days": null,
-      "datasheet_url": null,
+      "datasheet_url": "https://www.tme.eu/Document/fc14ffcc8ecf3369c6ead6a937869cec/7v.pdf",
       "vendors": [
         "tme"
       ],
@@ -128,7 +128,7 @@
       "unit_price_cents": 27,
       "moq": 1000,
       "lead_time_days": null,
-      "datasheet_url": null,
+      "datasheet_url": "https://www.tme.eu/Document/fc14ffcc8ecf3369c6ead6a937869cec/7v.pdf",
       "vendors": [
         "tme"
       ],
@@ -151,7 +151,7 @@
       "unit_price_cents": 27,
       "moq": 1000,
       "lead_time_days": null,
-      "datasheet_url": null,
+      "datasheet_url": "https://www.tme.eu/Document/fc14ffcc8ecf3369c6ead6a937869cec/7v.pdf",
       "vendors": [
         "tme"
       ],
@@ -174,7 +174,7 @@
       "unit_price_cents": 93,
       "moq": 1000,
       "lead_time_days": null,
-      "datasheet_url": null,
+      "datasheet_url": "https://www.tme.eu/Document/334a020629cdc6c34c4597257397d129/7x.pdf",
       "vendors": [
         "tme"
       ],
@@ -199,7 +199,7 @@
       "unit_price_cents": 112,
       "moq": 1000,
       "lead_time_days": null,
-      "datasheet_url": null,
+      "datasheet_url": "https://www.tme.eu/Document/b185f56b82a8240bebfc75bef1f072ea/8ne.pdf",
       "vendors": [
         "tme"
       ],
@@ -224,7 +224,7 @@
       "unit_price_cents": 112,
       "moq": 1000,
       "lead_time_days": null,
-      "datasheet_url": null,
+      "datasheet_url": "https://www.tme.eu/Document/955f057898c57de5992d9b3b5162b048/8we.pdf",
       "vendors": [
         "tme"
       ],
@@ -249,7 +249,7 @@
       "unit_price_cents": 112,
       "moq": 1000,
       "lead_time_days": null,
-      "datasheet_url": null,
+      "datasheet_url": "https://www.tme.eu/Document/955f057898c57de5992d9b3b5162b048/8we.pdf",
       "vendors": [
         "tme"
       ],
@@ -274,7 +274,7 @@
       "unit_price_cents": 59,
       "moq": 1000,
       "lead_time_days": null,
-      "datasheet_url": null,
+      "datasheet_url": "https://www.tme.eu/Document/28eb764f41ad7e1d99a5054a8421ad3e/8z.pdf",
       "vendors": [
         "tme"
       ],
@@ -287,6 +287,34 @@
         "part_type": "crystal",
         "moq": "1000",
         "order_multiple": "1000"
+      }
+    },
+    {
+      "mpn": "ASDMB-24.576MHZ-LY-T",
+      "manufacturer": "Abracon LLC",
+      "eu_sources": 1,
+      "eu_stock": 979,
+      "unit_price_cents": 392,
+      "moq": 1,
+      "lead_time_days": 182,
+      "datasheet_url": "https://abracon.com/Oscillators/ASDMB.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b110ppm",
+        "height_mm": "0.035\" (0.90mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "output_signal": "LVCMOS",
+        "package": "4-SMD, No Lead",
+        "part_type": "oscillator",
+        "supplier_package": "4-SMD (2.5x2)",
+        "supply_mv": "1.8V ~ 3.3V",
+        "moq": "1",
+        "order_multiple": "1"
       }
     },
     {
@@ -318,7 +346,7 @@
       "unit_price_cents": 138,
       "moq": 2000,
       "lead_time_days": null,
-      "datasheet_url": null,
+      "datasheet_url": "https://www.tme.eu/Document/7eb6aaa55749803a470dbb69fd33d76a/clock_z_x_e.pdf",
       "vendors": [
         "tme"
       ],
@@ -337,9 +365,62 @@
     {
       "mpn": "KC2016Z24.5760C1KX00",
       "manufacturer": "KYOCERA AVX",
+      "eu_sources": 1,
+      "eu_stock": 1062,
+      "unit_price_cents": 110,
+      "moq": 1,
+      "lead_time_days": 126,
+      "datasheet_url": "https://media.digikey.com/pdf/Data%20Sheets/Kyocera%20International/Z_Series_X_Type.pdf",
+      "vendors": [
+        "tme",
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576 MHz",
+        "manufacturer_name": "KYOCERA AVX",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "output_signal": "CMOS",
+        "part_type": "oscillator",
+        "supply_mv": "1.71V ~ 3.63V",
+        "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
+        "frequency_stability_ppm": "\u00b120ppm",
+        "height_mm": "0.031\" (0.80mm)",
+        "package": "4-SMD, No Lead",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "KC2520Z24.5760C15XXK",
+      "manufacturer": "KYOCERA AVX",
       "eu_sources": 0,
       "eu_stock": 0,
-      "unit_price_cents": 138,
+      "unit_price_cents": 119,
+      "moq": 2000,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/7eb6aaa55749803a470dbb69fd33d76a/clock_z_x_e.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "manufacturer_name": "KYOCERA AVX",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...105\u00b0C",
+        "output_signal": "CMOS",
+        "part_type": "oscillator",
+        "supply_mv": "3.3V DC",
+        "moq": "2000",
+        "order_multiple": "2000"
+      }
+    },
+    {
+      "mpn": "KC2520Z24.5760C1KX00",
+      "manufacturer": "KYOCERA AVX",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 119,
       "moq": 2000,
       "lead_time_days": null,
       "datasheet_url": "https://www.tme.eu/Document/7eb6aaa55749803a470dbb69fd33d76a/clock_z_x_e.pdf",
@@ -359,14 +440,38 @@
       }
     },
     {
-      "mpn": "KC2520Z24.5760C1KX00",
+      "mpn": "KC3225Z24.5760C15XXK",
       "manufacturer": "KYOCERA AVX",
       "eu_sources": 0,
       "eu_stock": 0,
       "unit_price_cents": 119,
       "moq": 2000,
       "lead_time_days": null,
-      "datasheet_url": null,
+      "datasheet_url": "https://www.tme.eu/Document/7eb6aaa55749803a470dbb69fd33d76a/clock_z_x_e.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "manufacturer_name": "KYOCERA AVX",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...105\u00b0C",
+        "output_signal": "CMOS",
+        "part_type": "oscillator",
+        "supply_mv": "3.3V DC",
+        "moq": "2000",
+        "order_multiple": "2000"
+      }
+    },
+    {
+      "mpn": "KC3225Z24.5760C1KX00",
+      "manufacturer": "KYOCERA AVX",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 119,
+      "moq": 2000,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/7eb6aaa55749803a470dbb69fd33d76a/clock_z_x_e.pdf",
       "vendors": [
         "tme"
       ],
@@ -390,7 +495,7 @@
       "unit_price_cents": 73,
       "moq": 100,
       "lead_time_days": null,
-      "datasheet_url": null,
+      "datasheet_url": "https://www.tme.eu/Document/ffb86abad0d953c3c4486d5cdd1368c5/LFSPXO025915Cutt.pdf",
       "vendors": [
         "tme"
       ],
@@ -415,7 +520,7 @@
       "unit_price_cents": 190,
       "moq": 1,
       "lead_time_days": null,
-      "datasheet_url": null,
+      "datasheet_url": "https://www.tme.eu/Document/6a44b74d6b685d9ef3d1dbbf97b27153/LFXTAL003386BULK.pdf",
       "vendors": [
         "tme"
       ],
@@ -437,7 +542,7 @@
       "unit_price_cents": 154,
       "moq": 1,
       "lead_time_days": null,
-      "datasheet_url": null,
+      "datasheet_url": "https://www.tme.eu/Document/a3e1c0f450f15dfaeb760753538fed68/LFXTAL026396REEL.pdf",
       "vendors": [
         "tme"
       ],
@@ -458,7 +563,7 @@
       "unit_price_cents": 130,
       "moq": 1,
       "lead_time_days": null,
-      "datasheet_url": null,
+      "datasheet_url": "https://www.tme.eu/Document/de4a788b209b3f28315ba5b3b238465a/LFXTAL033644BULK.pdf",
       "vendors": [
         "tme"
       ],
@@ -481,7 +586,7 @@
       "unit_price_cents": 117,
       "moq": 1,
       "lead_time_days": null,
-      "datasheet_url": null,
+      "datasheet_url": "https://www.tme.eu/Document/71fedfc0da74675a09f87288a557b1f1/LFXTAL071258CUTT.pdf",
       "vendors": [
         "tme"
       ],
@@ -504,7 +609,31 @@
       "unit_price_cents": 119,
       "moq": 2000,
       "lead_time_days": null,
-      "datasheet_url": null,
+      "datasheet_url": "https://www.tme.eu/Document/056ce0afb3335d42268702a2b3108af8/clock_mcz_x_e.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "manufacturer_name": "KYOCERA AVX",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "output_signal": "CMOS",
+        "part_type": "oscillator",
+        "supply_mv": "3.3V DC",
+        "moq": "2000",
+        "order_multiple": "2000"
+      }
+    },
+    {
+      "mpn": "MC2520Z24.5760C19XSH",
+      "manufacturer": "KYOCERA AVX",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 136,
+      "moq": 2000,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/056ce0afb3335d42268702a2b3108af8/clock_mcz_x_e.pdf",
       "vendors": [
         "tme"
       ],
@@ -528,7 +657,7 @@
       "unit_price_cents": 24,
       "moq": 1000,
       "lead_time_days": null,
-      "datasheet_url": null,
+      "datasheet_url": "https://www.tme.eu/Document/2c64acfc0be68478bedb4cfd1912d059/QT216S.pdf",
       "vendors": [
         "tme"
       ],
@@ -551,7 +680,7 @@
       "unit_price_cents": 16,
       "moq": 1000,
       "lead_time_days": null,
-      "datasheet_url": null,
+      "datasheet_url": "https://www.tme.eu/Document/83e2567e4bdf50eddbdacfa1621a1c30/QT325G.pdf",
       "vendors": [
         "tme"
       ],
@@ -574,7 +703,7 @@
       "unit_price_cents": 16,
       "moq": 1000,
       "lead_time_days": null,
-      "datasheet_url": null,
+      "datasheet_url": "https://www.tme.eu/Document/83e2567e4bdf50eddbdacfa1621a1c30/QT325G.pdf",
       "vendors": [
         "tme"
       ],
@@ -597,7 +726,7 @@
       "unit_price_cents": 19,
       "moq": 1000,
       "lead_time_days": null,
-      "datasheet_url": null,
+      "datasheet_url": "https://www.tme.eu/Document/83e2567e4bdf50eddbdacfa1621a1c30/QT325G.pdf",
       "vendors": [
         "tme"
       ],
@@ -620,7 +749,7 @@
       "unit_price_cents": 19,
       "moq": 1000,
       "lead_time_days": null,
-      "datasheet_url": null,
+      "datasheet_url": "https://www.tme.eu/Document/83e2567e4bdf50eddbdacfa1621a1c30/QT325G.pdf",
       "vendors": [
         "tme"
       ],
@@ -643,7 +772,7 @@
       "unit_price_cents": 19,
       "moq": 1000,
       "lead_time_days": null,
-      "datasheet_url": null,
+      "datasheet_url": "https://www.tme.eu/Document/83e2567e4bdf50eddbdacfa1621a1c30/QT325G.pdf",
       "vendors": [
         "tme"
       ],
@@ -666,7 +795,7 @@
       "unit_price_cents": 20,
       "moq": 1000,
       "lead_time_days": null,
-      "datasheet_url": null,
+      "datasheet_url": "https://www.tme.eu/Document/2a355fca2633c2f5e99c1495843df179/QT325S.pdf",
       "vendors": [
         "tme"
       ],
@@ -689,7 +818,7 @@
       "unit_price_cents": 20,
       "moq": 1000,
       "lead_time_days": null,
-      "datasheet_url": null,
+      "datasheet_url": "https://www.tme.eu/Document/2a355fca2633c2f5e99c1495843df179/QT325S.pdf",
       "vendors": [
         "tme"
       ],
@@ -712,7 +841,7 @@
       "unit_price_cents": 21,
       "moq": 1000,
       "lead_time_days": null,
-      "datasheet_url": null,
+      "datasheet_url": "https://www.tme.eu/Document/2a355fca2633c2f5e99c1495843df179/QT325S.pdf",
       "vendors": [
         "tme"
       ],
@@ -735,7 +864,7 @@
       "unit_price_cents": 21,
       "moq": 1000,
       "lead_time_days": null,
-      "datasheet_url": null,
+      "datasheet_url": "https://www.tme.eu/Document/2a355fca2633c2f5e99c1495843df179/QT325S.pdf",
       "vendors": [
         "tme"
       ],
@@ -758,7 +887,7 @@
       "unit_price_cents": 17,
       "moq": 1000,
       "lead_time_days": null,
-      "datasheet_url": null,
+      "datasheet_url": "https://www.tme.eu/Document/7f9e87972a5b6404b8e13482c5b46637/QT49.pdf",
       "vendors": [
         "tme"
       ],
@@ -781,7 +910,7 @@
       "unit_price_cents": 21,
       "moq": 1000,
       "lead_time_days": null,
-      "datasheet_url": null,
+      "datasheet_url": "https://www.tme.eu/Document/34db9ec6608cb07d0e20b8eece6f6add/QT49S.pdf",
       "vendors": [
         "tme"
       ],
@@ -804,7 +933,7 @@
       "unit_price_cents": 25,
       "moq": 1000,
       "lead_time_days": null,
-      "datasheet_url": null,
+      "datasheet_url": "https://www.tme.eu/Document/e5803188b56a1e042211196d160c6224/QT532G.pdf",
       "vendors": [
         "tme"
       ],
@@ -827,7 +956,7 @@
       "unit_price_cents": 28,
       "moq": 1000,
       "lead_time_days": null,
-      "datasheet_url": null,
+      "datasheet_url": "https://www.tme.eu/Document/e5803188b56a1e042211196d160c6224/QT532G.pdf",
       "vendors": [
         "tme"
       ],
@@ -850,7 +979,7 @@
       "unit_price_cents": 24,
       "moq": 1000,
       "lead_time_days": null,
-      "datasheet_url": null,
+      "datasheet_url": "https://www.tme.eu/Document/e5803188b56a1e042211196d160c6224/QT532G.pdf",
       "vendors": [
         "tme"
       ],
@@ -873,7 +1002,7 @@
       "unit_price_cents": 28,
       "moq": 1000,
       "lead_time_days": null,
-      "datasheet_url": null,
+      "datasheet_url": "https://www.tme.eu/Document/6aed37de52b4541b19fe990a6c333efd/QT532S.pdf",
       "vendors": [
         "tme"
       ],
@@ -889,6 +1018,81 @@
       }
     },
     {
+      "mpn": "QTM216E-24.576MBM-T",
+      "manufacturer": "QST",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 93,
+      "moq": 1000,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/a8b7667cd59c04ed2c10a63bc936d6b7/QTM216E.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "manufacturer_name": "QST",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "output_signal": "CMOS",
+        "part_type": "oscillator",
+        "supply_mv": "3.3V DC",
+        "moq": "1000",
+        "order_multiple": "1000"
+      }
+    },
+    {
+      "mpn": "QTM252E-24.576MBM-T",
+      "manufacturer": "QST",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 93,
+      "moq": 1000,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/988bcf3d61debf8e480f15e62869e369/QTM252E.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "manufacturer_name": "QST",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "output_signal": "CMOS",
+        "part_type": "oscillator",
+        "supply_mv": "3.3V DC",
+        "moq": "1000",
+        "order_multiple": "1000"
+      }
+    },
+    {
+      "mpn": "QTM252E-24.576MDM-T",
+      "manufacturer": "QST",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 93,
+      "moq": 1000,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/988bcf3d61debf8e480f15e62869e369/QTM252E.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "manufacturer_name": "QST",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "output_signal": "CMOS",
+        "part_type": "oscillator",
+        "supply_mv": "1.8V DC",
+        "moq": "1000",
+        "order_multiple": "1000"
+      }
+    },
+    {
       "mpn": "QTM325-24.576MBE-T",
       "manufacturer": "QST",
       "eu_sources": 0,
@@ -896,7 +1100,7 @@
       "unit_price_cents": 72,
       "moq": 1000,
       "lead_time_days": null,
-      "datasheet_url": null,
+      "datasheet_url": "https://www.tme.eu/Document/6f456494569d1ec207a40fa54df8948a/QTM325.pdf",
       "vendors": [
         "tme"
       ],
@@ -921,7 +1125,7 @@
       "unit_price_cents": 9,
       "moq": 3000,
       "lead_time_days": null,
-      "datasheet_url": null,
+      "datasheet_url": "https://datasheet.wtlplus.com/tme/W1M24576000B12BC1N.pdf",
       "vendors": [
         "tme"
       ],
@@ -930,6 +1134,298 @@
         "frequency_stability_ppm": "\u00b110ppm",
         "manufacturer_name": "WTL",
         "operating_temp_c": "-20...70\u00b0C",
+        "part_type": "crystal",
+        "moq": "3000",
+        "order_multiple": "3000"
+      }
+    },
+    {
+      "mpn": "W2K24576000E33ZDCN",
+      "manufacturer": "WTL",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 56,
+      "moq": 3000,
+      "lead_time_days": null,
+      "datasheet_url": "https://datasheet.wtlplus.com/tme/W2K24576000E33ZDCN.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b125ppm",
+        "manufacturer_name": "WTL",
+        "operating_temp_c": "-40...85\u00b0C",
+        "part_type": "oscillator",
+        "supply_mv": "3.3V",
+        "moq": "3000",
+        "order_multiple": "3000"
+      }
+    },
+    {
+      "mpn": "W2K24576000E33ZKCN",
+      "manufacturer": "WTL",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 52,
+      "moq": 3000,
+      "lead_time_days": null,
+      "datasheet_url": "https://datasheet.wtlplus.com/tme/W2K24576000E33ZKCN.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b125ppm",
+        "manufacturer_name": "WTL",
+        "operating_temp_c": "-10...70\u00b0C",
+        "part_type": "oscillator",
+        "supply_mv": "3.3V",
+        "moq": "3000",
+        "order_multiple": "3000"
+      }
+    },
+    {
+      "mpn": "W3K24576000G33ZCCL",
+      "manufacturer": "WTL",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 38,
+      "moq": 3000,
+      "lead_time_days": null,
+      "datasheet_url": "https://datasheet.wtlplus.com/tme/W3K24576000G33ZCCL.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "manufacturer_name": "WTL",
+        "operating_temp_c": "-20...70\u00b0C",
+        "part_type": "oscillator",
+        "supply_mv": "3.3V",
+        "moq": "3000",
+        "order_multiple": "3000"
+      }
+    },
+    {
+      "mpn": "W3K24576000G33ZCCN",
+      "manufacturer": "WTL",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 38,
+      "moq": 3000,
+      "lead_time_days": null,
+      "datasheet_url": "https://datasheet.wtlplus.com/tme/W3K24576000G33ZCCN.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "manufacturer_name": "WTL",
+        "operating_temp_c": "-20...70\u00b0C",
+        "part_type": "oscillator",
+        "supply_mv": "3.3V",
+        "moq": "3000",
+        "order_multiple": "3000"
+      }
+    },
+    {
+      "mpn": "W3K24576000G33ZDCN",
+      "manufacturer": "WTL",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 38,
+      "moq": 3000,
+      "lead_time_days": null,
+      "datasheet_url": "https://datasheet.wtlplus.com/tme/W3K24576000G33ZDCN.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "manufacturer_name": "WTL",
+        "operating_temp_c": "-40...85\u00b0C",
+        "part_type": "oscillator",
+        "supply_mv": "3.3V",
+        "moq": "3000",
+        "order_multiple": "3000"
+      }
+    },
+    {
+      "mpn": "W3M24576000D18FD1N",
+      "manufacturer": "WTL",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 6,
+      "moq": 3000,
+      "lead_time_days": null,
+      "datasheet_url": "https://datasheet.wtlplus.com/tme/W3M24576000D18FD1N.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b130ppm",
+        "manufacturer_name": "WTL",
+        "operating_temp_c": "-40...85\u00b0C",
+        "part_type": "crystal",
+        "moq": "3000",
+        "order_multiple": "3000"
+      }
+    },
+    {
+      "mpn": "W3M24576000D20FC1N",
+      "manufacturer": "WTL",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 6,
+      "moq": 3000,
+      "lead_time_days": null,
+      "datasheet_url": "https://datasheet.wtlplus.com/tme/W3M24576000D20FC1N.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b130ppm",
+        "manufacturer_name": "WTL",
+        "operating_temp_c": "-20...70\u00b0C",
+        "part_type": "crystal",
+        "moq": "3000",
+        "order_multiple": "3000"
+      }
+    },
+    {
+      "mpn": "W3M24576000F20FC1N",
+      "manufacturer": "WTL",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 6,
+      "moq": 3000,
+      "lead_time_days": null,
+      "datasheet_url": "https://datasheet.wtlplus.com/tme/W3M24576000F20FC1N.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b130ppm",
+        "manufacturer_name": "WTL",
+        "operating_temp_c": "-20...70\u00b0C",
+        "part_type": "crystal",
+        "moq": "3000",
+        "order_multiple": "3000"
+      }
+    },
+    {
+      "mpn": "W7L24576000G33ZKCN",
+      "manufacturer": "WTL",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 62,
+      "moq": 1000,
+      "lead_time_days": null,
+      "datasheet_url": "https://datasheet.wtlplus.com/tme/W7L24576000G33ZKCN.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "manufacturer_name": "WTL",
+        "operating_temp_c": "-10...70\u00b0C",
+        "part_type": "oscillator",
+        "supply_mv": "3.3V",
+        "moq": "1000",
+        "order_multiple": "1000"
+      }
+    },
+    {
+      "mpn": "W9M24576000D20FC1N",
+      "manufacturer": "WTL",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 10,
+      "moq": 1000,
+      "lead_time_days": null,
+      "datasheet_url": "https://datasheet.wtlplus.com/tme/W9M24576000D20FC1N.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b130ppm",
+        "manufacturer_name": "WTL",
+        "operating_temp_c": "-20...70\u00b0C",
+        "part_type": "crystal",
+        "moq": "1000",
+        "order_multiple": "1000"
+      }
+    },
+    {
+      "mpn": "XRCGB24M576F0L00R0",
+      "manufacturer": "MURATA",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 14,
+      "moq": 3000,
+      "lead_time_days": null,
+      "datasheet_url": "https://pim.murata.com/asset/pim4/ceramicResonatorCrystalUnit/SPEC_XRCGB24M576F0L00R0_PDF_CERAMICRESONATORCRYSTALUNIT?lastModifiedDatetime=20250707191841",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "manufacturer_name": "MURATA",
+        "mounting": "SMD",
+        "operating_temp_c": "-30...85\u00b0C",
+        "part_type": "crystal",
+        "moq": "3000",
+        "order_multiple": "3000"
+      }
+    },
+    {
+      "mpn": "XRCGB24M576F0Z00R0",
+      "manufacturer": "MURATA",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 14,
+      "moq": 3000,
+      "lead_time_days": null,
+      "datasheet_url": "https://pim.murata.com/asset/pim4/ceramicResonatorCrystalUnit/SPEC_XRCGB24M576F0Z00R0_PDF_CERAMICRESONATORCRYSTALUNIT?lastModifiedDatetime=20250707192237",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "manufacturer_name": "MURATA",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...100\u00b0C",
+        "part_type": "crystal",
+        "moq": "3000",
+        "order_multiple": "3000"
+      }
+    },
+    {
+      "mpn": "XRCGB24M576F3M00R0",
+      "manufacturer": "MURATA",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 14,
+      "moq": 3000,
+      "lead_time_days": null,
+      "datasheet_url": "https://pim.murata.com/asset/pim4/ceramicResonatorCrystalUnit/SPEC_XRCGB24M576F3M00R0_PDF_CERAMICRESONATORCRYSTALUNIT?lastModifiedDatetime=20250707192213",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "manufacturer_name": "MURATA",
+        "mounting": "SMD",
+        "operating_temp_c": "-30...85\u00b0C",
         "part_type": "crystal",
         "moq": "3000",
         "order_multiple": "3000"

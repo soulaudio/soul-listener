@@ -93,24 +93,32 @@
     {
       "mpn": "ASV-22.5792MHZ-LR-T",
       "manufacturer": "ABRACON",
-      "eu_sources": 1,
-      "eu_stock": 17000,
-      "unit_price_cents": 70,
-      "moq": 1000,
-      "lead_time_days": null,
+      "eu_sources": 2,
+      "eu_stock": 18319,
+      "unit_price_cents": 211,
+      "moq": 1,
+      "lead_time_days": 84,
       "datasheet_url": "https://abracon.com/Oscillators/ASV.pdf",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
-        "frequency_hz": "22.579MHz",
+        "frequency_hz": "22.5792 MHz",
         "frequency_stability_ppm": "\u00b125ppm",
         "manufacturer_name": "ABRACON",
         "mounting": "SMD",
-        "operating_temp_c": "-40...85\u00b0C",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
         "series": "ASV",
-        "moq": "1000",
-        "order_multiple": "1000"
+        "body_size": "0.276\" L x 0.200\" W (7.00mm x 5.08mm)",
+        "height_mm": "0.071\" (1.80mm)",
+        "output_signal": "HCMOS",
+        "package": "4-SMD, No Lead",
+        "part_type": "oscillator",
+        "supplier_package": "4-SMD (7x5.08)",
+        "supply_mv": "3.3V",
+        "moq": "1",
+        "order_multiple": "1"
       }
     },
     {
@@ -140,25 +148,30 @@
     {
       "mpn": "KC2016Z22.5792C1KX00",
       "manufacturer": "KYOCERA AVX",
-      "eu_sources": 0,
-      "eu_stock": 0,
-      "unit_price_cents": 138,
-      "moq": 2000,
-      "lead_time_days": null,
-      "datasheet_url": "https://www.tme.eu/Document/7eb6aaa55749803a470dbb69fd33d76a/clock_z_x_e.pdf",
+      "eu_sources": 1,
+      "eu_stock": 1871,
+      "unit_price_cents": 109,
+      "moq": 1,
+      "lead_time_days": 126,
+      "datasheet_url": "https://media.digikey.com/pdf/Data%20Sheets/Kyocera%20International/Z_Series_X_Type.pdf",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
-        "frequency_hz": "22.5792MHz",
+        "frequency_hz": "22.5792 MHz",
         "manufacturer_name": "KYOCERA AVX",
         "mounting": "SMD",
-        "operating_temp_c": "-40...85\u00b0C",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
         "output_signal": "CMOS",
         "part_type": "oscillator",
-        "supply_mv": "3.3V DC",
-        "moq": "2000",
-        "order_multiple": "2000"
+        "supply_mv": "1.71V ~ 3.63V",
+        "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
+        "frequency_stability_ppm": "\u00b120ppm",
+        "height_mm": "0.031\" (0.80mm)",
+        "package": "4-SMD, No Lead",
+        "moq": "1",
+        "order_multiple": "1"
       }
     },
     {
@@ -438,7 +451,7 @@
         "frequency_stability_ppm": "\u00b125ppm",
         "manufacturer_name": "WTL",
         "operating_temp_c": "-10...60\u00b0C",
-        "part_type": "XO",
+        "part_type": "oscillator",
         "supply_mv": "3.3V",
         "moq": "3000",
         "order_multiple": "3000"
@@ -461,7 +474,7 @@
         "frequency_stability_ppm": "\u00b125ppm",
         "manufacturer_name": "WTL",
         "operating_temp_c": "-40...85\u00b0C",
-        "part_type": "XO",
+        "part_type": "oscillator",
         "supply_mv": "3.3V",
         "moq": "3000",
         "order_multiple": "3000"
@@ -484,7 +497,7 @@
         "frequency_stability_ppm": "\u00b125ppm",
         "manufacturer_name": "WTL",
         "operating_temp_c": "-10...70\u00b0C",
-        "part_type": "XO",
+        "part_type": "oscillator",
         "supply_mv": "3.3V",
         "moq": "3000",
         "order_multiple": "3000"
@@ -507,7 +520,7 @@
         "frequency_stability_ppm": "\u00b150ppm",
         "manufacturer_name": "WTL",
         "operating_temp_c": "-40...85\u00b0C",
-        "part_type": "XO",
+        "part_type": "oscillator",
         "supply_mv": "3.3V",
         "moq": "3000",
         "order_multiple": "3000"

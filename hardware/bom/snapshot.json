@@ -1085,7 +1085,7 @@
               "source": "digikey"
             }
           ],
-          "datasheet_url": "//media.digikey.com/pdf/Data%20Sheets/Kyocera%20International/Z_Series_X_Type.pdf",
+          "datasheet_url": "https://media.digikey.com/pdf/Data%20Sheets/Kyocera%20International/Z_Series_X_Type.pdf",
           "source": "api",
           "retrieved_at": "2026-11-24",
           "note": "digikey API, EUR. MOQ 1, order multiple 1. Vendor part number 478-KC2016Z22.5792C1KX00CT-ND."
@@ -1178,7 +1178,7 @@
               "source": "digikey"
             }
           ],
-          "datasheet_url": "//media.digikey.com/pdf/Data%20Sheets/Kyocera%20International/Z_Series_X_Type.pdf",
+          "datasheet_url": "https://media.digikey.com/pdf/Data%20Sheets/Kyocera%20International/Z_Series_X_Type.pdf",
           "source": "api",
           "retrieved_at": "2026-11-24",
           "note": "digikey API, EUR. MOQ 1, order multiple 1. Vendor part number 478-KC2016Z24.5760C1KX00CT-ND."
@@ -1312,9 +1312,9 @@
         "with_datasheet": 26
       },
       "mclk-osc-48k": {
-        "parts_swept": 42,
+        "parts_swept": 62,
         "stocked": 4,
-        "with_datasheet": 3
+        "with_datasheet": 61
       },
       "mcu": {
         "parts_swept": 104,

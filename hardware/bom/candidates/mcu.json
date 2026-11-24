@@ -225,7 +225,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "144MHz",
-        "cpu_core": "Cortex M33",
+        "cpu_core": "Cortex-M33",
         "gpio_count": "38",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -251,7 +251,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "144MHz",
-        "cpu_core": "Cortex M33",
+        "cpu_core": "Cortex-M33",
         "gpio_count": "25",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -277,7 +277,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "144MHz",
-        "cpu_core": "Cortex M33",
+        "cpu_core": "Cortex-M33",
         "gpio_count": "38",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -303,7 +303,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "144MHz",
-        "cpu_core": "Cortex M33",
+        "cpu_core": "Cortex-M33",
         "gpio_count": "25",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -329,7 +329,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "144MHz",
-        "cpu_core": "Cortex M33",
+        "cpu_core": "Cortex-M33",
         "gpio_count": "52",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -355,7 +355,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "144MHz",
-        "cpu_core": "Cortex M33",
+        "cpu_core": "Cortex-M33",
         "gpio_count": "25",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -381,7 +381,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "144MHz",
-        "cpu_core": "Cortex M33",
+        "cpu_core": "Cortex-M33",
         "gpio_count": "27",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -723,7 +723,7 @@
       "mpn": "STM32F103CBT6",
       "manufacturer": "STMicroelectronics",
       "eu_sources": 1,
-      "eu_stock": 295,
+      "eu_stock": 292,
       "unit_price_cents": 582,
       "moq": 1,
       "lead_time_days": null,
@@ -834,7 +834,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "72MHz",
-        "cpu_core": "Cortex M4",
+        "cpu_core": "Cortex-M4",
         "gpio_count": "37",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -860,7 +860,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "72MHz",
-        "cpu_core": "Cortex M4",
+        "cpu_core": "Cortex-M4",
         "gpio_count": "10",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -886,7 +886,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "72MHz",
-        "cpu_core": "Cortex M4",
+        "cpu_core": "Cortex-M4",
         "gpio_count": "26",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -912,7 +912,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "72MHz",
-        "cpu_core": "Cortex M4",
+        "cpu_core": "Cortex-M4",
         "gpio_count": "36",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -938,7 +938,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "84MHz",
-        "cpu_core": "Cortex M4",
+        "cpu_core": "Cortex-M4",
         "gpio_count": "50",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -963,7 +963,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "168MHz",
-        "cpu_core": "Cortex M4",
+        "cpu_core": "Cortex-M4",
         "gpio_count": "51",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -988,7 +988,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "168MHz",
-        "cpu_core": "Cortex M4",
+        "cpu_core": "Cortex-M4",
         "gpio_count": "82",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -1013,7 +1013,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "168MHz",
-        "cpu_core": "Cortex M4",
+        "cpu_core": "Cortex-M4",
         "gpio_count": "82",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -1038,7 +1038,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "168MHz",
-        "cpu_core": "Cortex M4",
+        "cpu_core": "Cortex-M4",
         "gpio_count": "114",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -1063,7 +1063,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "100MHz",
-        "cpu_core": "Cortex M4",
+        "cpu_core": "Cortex-M4",
         "gpio_count": "36",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -1088,7 +1088,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "100MHz",
-        "cpu_core": "Cortex M4",
+        "cpu_core": "Cortex-M4",
         "gpio_count": "50",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -1113,7 +1113,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "100MHz",
-        "cpu_core": "Cortex M4",
+        "cpu_core": "Cortex-M4",
         "gpio_count": "50",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -1138,7 +1138,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "180MHz",
-        "cpu_core": "Cortex M4",
+        "cpu_core": "Cortex-M4",
         "gpio_count": "114",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -1163,7 +1163,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "180MHz",
-        "cpu_core": "Cortex M4",
+        "cpu_core": "Cortex-M4",
         "gpio_count": "82",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -1189,7 +1189,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "180MHz",
-        "cpu_core": "Cortex M4",
+        "cpu_core": "Cortex-M4",
         "gpio_count": "50",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -1214,7 +1214,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "216MHz",
-        "cpu_core": "Cortex M7",
+        "cpu_core": "Cortex-M7",
         "gpio_count": "114",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -1333,7 +1333,7 @@
       "mpn": "STM32G030K6T6",
       "manufacturer": "STMicroelectronics",
       "eu_sources": 1,
-      "eu_stock": 466,
+      "eu_stock": 456,
       "unit_price_cents": 189,
       "moq": 1,
       "lead_time_days": null,
@@ -1385,7 +1385,7 @@
       "mpn": "STM32G031J6M6",
       "manufacturer": "STMicroelectronics",
       "eu_sources": 1,
-      "eu_stock": 114,
+      "eu_stock": 113,
       "unit_price_cents": 126,
       "moq": 1,
       "lead_time_days": null,
@@ -1601,7 +1601,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "170MHz",
-        "cpu_core": "Cortex M4",
+        "cpu_core": "Cortex-M4",
         "gpio_count": "38",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -1627,7 +1627,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "170MHz",
-        "cpu_core": "Cortex M4",
+        "cpu_core": "Cortex-M4",
         "gpio_count": "26",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -1653,7 +1653,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "170MHz",
-        "cpu_core": "Cortex M4",
+        "cpu_core": "Cortex-M4",
         "gpio_count": "42",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -1705,7 +1705,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "170MHz",
-        "cpu_core": "Cortex M4",
+        "cpu_core": "Cortex-M4",
         "gpio_count": "86",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -1731,7 +1731,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "170MHz",
-        "cpu_core": "Cortex M4",
+        "cpu_core": "Cortex-M4",
         "gpio_count": "38",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -1757,7 +1757,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "170MHz",
-        "cpu_core": "Cortex M4",
+        "cpu_core": "Cortex-M4",
         "gpio_count": "38",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -1783,7 +1783,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "250MHz",
-        "cpu_core": "Cortex M33",
+        "cpu_core": "Cortex-M33",
         "gpio_count": "35",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -1809,7 +1809,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "250MHz",
-        "cpu_core": "Cortex M33",
+        "cpu_core": "Cortex-M33",
         "gpio_count": "35",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -1835,7 +1835,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "250MHz",
-        "cpu_core": "Cortex M33",
+        "cpu_core": "Cortex-M33",
         "gpio_count": "35",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -1861,7 +1861,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "250MHz",
-        "cpu_core": "Cortex M33",
+        "cpu_core": "Cortex-M33",
         "gpio_count": "35",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -1887,7 +1887,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "250MHz",
-        "cpu_core": "Cortex M33",
+        "cpu_core": "Cortex-M33",
         "gpio_count": "49",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -1913,7 +1913,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "250MHz",
-        "cpu_core": "Cortex M33",
+        "cpu_core": "Cortex-M33",
         "gpio_count": "49",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -1938,7 +1938,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "250MHz",
-        "cpu_core": "Cortex M33",
+        "cpu_core": "Cortex-M33",
         "gpio_count": "49",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -1964,7 +1964,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "250MHz",
-        "cpu_core": "Cortex M33",
+        "cpu_core": "Cortex-M33",
         "gpio_count": "53",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -1990,7 +1990,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "250MHz",
-        "cpu_core": "Cortex M33",
+        "cpu_core": "Cortex-M33",
         "gpio_count": "80",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -2016,7 +2016,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "250MHz",
-        "cpu_core": "Cortex M33",
+        "cpu_core": "Cortex-M33",
         "gpio_count": "53",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -2042,7 +2042,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "250MHz",
-        "cpu_core": "Cortex M33",
+        "cpu_core": "Cortex-M33",
         "gpio_count": "80",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -2068,7 +2068,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "250MHz",
-        "cpu_core": "Cortex M33",
+        "cpu_core": "Cortex-M33",
         "gpio_count": "112",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -2094,7 +2094,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "250MHz",
-        "cpu_core": "Cortex M33",
+        "cpu_core": "Cortex-M33",
         "gpio_count": "112",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -2120,7 +2120,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "550MHz",
-        "cpu_core": "Cortex M7",
+        "cpu_core": "Cortex-M7",
         "gpio_count": "80",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -2146,7 +2146,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "480MHz",
-        "cpu_core": "Cortex M7",
+        "cpu_core": "Cortex-M7",
         "gpio_count": "82",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -2172,7 +2172,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "480MHz",
-        "cpu_core": "Cortex M7",
+        "cpu_core": "Cortex-M7",
         "gpio_count": "114",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -2198,7 +2198,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "480MHz",
-        "cpu_core": "Cortex M7",
+        "cpu_core": "Cortex-M7",
         "gpio_count": "140",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -2217,21 +2217,25 @@
       "eu_stock": 0,
       "unit_price_cents": 1300,
       "moq": 1,
-      "lead_time_days": null,
-      "datasheet_url": "https://www.tme.eu/Document/94f850c15a2fb003c4530843ceba6dfc/stm32h7a3ag.pdf",
+      "lead_time_days": 364,
+      "datasheet_url": "https://www.st.com/resource/en/datasheet/stm32h7a3zi.pdf",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
         "core_clock_hz": "280MHz",
-        "cpu_core": "Cortex M7",
+        "cpu_core": "Cortex-M7",
         "gpio_count": "112",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
-        "operating_temp_c": "-40...85\u00b0C",
-        "package": "LQFP144",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "144-LQFP",
         "part_type": "STM32 ARM microcontroller",
         "supply_mv": "1.62...3.6V DC",
+        "flash_bytes": "2MB (2M x 8)",
+        "sram_bytes": "1.4M x 8",
+        "supplier_package": "144-LQFP (20x20)",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -2243,21 +2247,25 @@
       "eu_stock": 0,
       "unit_price_cents": 1670,
       "moq": 1,
-      "lead_time_days": null,
-      "datasheet_url": "https://www.tme.eu/Document/af07a4430bb69abe691d1a5e438381e0/stm32h7b3zi.pdf",
+      "lead_time_days": 364,
+      "datasheet_url": "https://www.st.com/resource/en/datasheet/stm32h7b3vi.pdf",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
         "core_clock_hz": "280MHz",
-        "cpu_core": "Cortex M7",
+        "cpu_core": "Cortex-M7",
         "gpio_count": "112",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
-        "operating_temp_c": "-40...85\u00b0C",
-        "package": "LQFP144",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "144-LQFP",
         "part_type": "STM32 ARM microcontroller",
         "supply_mv": "1.62...3.6V DC",
+        "flash_bytes": "2MB (2M x 8)",
+        "sram_bytes": "1.4M x 8",
+        "supplier_package": "144-LQFP (20x20)",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -2276,7 +2284,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "600MHz",
-        "cpu_core": "Cortex M7",
+        "cpu_core": "Cortex-M7",
         "gpio_count": "98",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -2354,7 +2362,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "80MHz",
-        "cpu_core": "Cortex M4",
+        "cpu_core": "Cortex-M4",
         "gpio_count": "26",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -2380,7 +2388,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "80MHz",
-        "cpu_core": "Cortex M4",
+        "cpu_core": "Cortex-M4",
         "gpio_count": "38",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
@@ -2506,7 +2514,7 @@
       ],
       "attrs_raw": {
         "core_clock_hz": "160MHz",
-        "cpu_core": "Cortex M33",
+        "cpu_core": "Cortex-M33",
         "gpio_count": "82",
         "manufacturer_name": "STMicroelectronics",
         "mounting": "SMD",
