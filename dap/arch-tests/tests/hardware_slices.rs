@@ -132,3 +132,70 @@ fn the_hardware_check_is_wired_into_the_hook_and_ci() {
         "the Hardware workflow must run the design check."
     );
 }
+
+const PLACEMENT: &str = include_str!("../../../hardware/elec/placement.yaml");
+
+/// The floorplan must declare a zone for every atopile module, with a reason.
+///
+/// A module with no zone is a module whose parts can land anywhere on the board
+/// without `tools/ato-placement.py` noticing — which makes the floorplan look
+/// enforced while leaving a hole in it. The reasons are required because a
+/// floorplan without them can only be obeyed, not reviewed: the whole point is
+/// that `memory` sits beside `mcu` *because* the FMC bus has to stay under
+/// 10 mm, and that fact should not live only in a layout engineer's memory.
+#[test]
+fn every_module_has_a_placement_zone() {
+    let dir = concat!(env!("CARGO_MANIFEST_DIR"), "/../../hardware/elec/src");
+    let mut missing = Vec::new();
+    for entry in std::fs::read_dir(dir).expect("hardware/elec/src must exist") {
+        let path = entry.expect("readable dir entry").path();
+        if path.extension().and_then(|e| e.to_str()) != Some("ato") {
+            continue;
+        }
+        let name = path.file_stem().and_then(|n| n.to_str()).unwrap_or("");
+        if name == "main" || name == "interfaces" {
+            continue;
+        }
+        if !PLACEMENT.contains(&format!("\n  {name}:")) {
+            missing.push(name.to_string());
+        }
+    }
+    assert!(
+        missing.is_empty(),
+        "hardware/elec/placement.yaml declares no zone for: {missing:?}\n\
+         Add one with an `x`, `y`, `width`, `height` and a `why`. Without it the \
+         module's parts are unconstrained and the floorplan check cannot tell."
+    );
+}
+
+/// Placement and part identity must be locked against silent rebuild drift.
+///
+/// atopile has no netlist hand-off — it MODIFIES the `.kicad_pcb` in place on
+/// every build. So designators, net names and the picked parts themselves are
+/// all things a rebuild can change, and a changed part is invisible in a diff of
+/// the `.ato` sources. `keep_picked_parts` is the one that costs money: without
+/// it a rebuild can swap one maker's 100 nF 0402 for another's, after the reel
+/// is bought.
+#[test]
+fn the_pcb_is_locked_against_rebuild_drift() {
+    for (key, why) in [
+        (
+            "keep_designators: true",
+            "a renumbered board invalidates every assembly note",
+        ),
+        (
+            "keep_net_names: true",
+            "renamed nets break any netlist-based review",
+        ),
+        (
+            "keep_picked_parts: true",
+            "a rebuild can otherwise re-query the parts service and silently \
+             substitute a different manufacturer's equivalent",
+        ),
+    ] {
+        assert!(
+            ATO_YAML.contains(key),
+            "hardware/ato.yaml's `default` build must set `{key}` — {why}."
+        );
+    }
+}

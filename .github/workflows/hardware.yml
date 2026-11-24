@@ -55,6 +55,8 @@ on:
       - 'hardware/ato.yaml'
       - 'hardware/ato-lock.yaml'
       - 'xtask/src/hardware.rs'
+      - 'tools/ato-placement.py'
+      - 'tools/ato-diagram.py'
       - '.github/workflows/hardware.yml'
   pull_request:
     branches: [main]
@@ -63,6 +65,8 @@ on:
       - 'hardware/ato.yaml'
       - 'hardware/ato-lock.yaml'
       - 'xtask/src/hardware.rs'
+      - 'tools/ato-placement.py'
+      - 'tools/ato-diagram.py'
       - '.github/workflows/hardware.yml'
 
 permissions:
@@ -83,9 +87,9 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86 # v5.4.2
 
+      # 0.15.9 exactly, and Python 3.14 because 0.15.x declares
+      # `requires-python = ">=3.14,<3.15"` — there is no 3.13 fallback.
       - name: Install atopile
-            # 0.15.9 exactly, and Python 3.14 because 0.15.x declares
-            # `requires-python = ">=3.14,<3.15"` — there is no 3.13 fallback.
         run: |
           uv tool install --python 3.14 atopile==0.15.9
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
@@ -95,6 +99,12 @@ jobs:
           ato --version
           ato auth status || true
 
+      # The floorplan. Runs first and standalone because it needs neither
+      # atopile nor the network — if the zones contradict themselves there is no
+      # point building anything.
+      - name: Check the declared floorplan
+        run: python3 tools/ato-placement.py
+
       # Through xtask rather than calling `ato` directly, so the rule deciding
       # what counts as a pass — "every stage green, blocked at part picking on
       # sign-in" — has exactly one implementation, shared with the pre-commit
@@ -102,3 +112,16 @@ jobs:
       # silent in the permissive direction.
       - name: Check every module and the full board
         run: cargo xtask hardware check
+
+      # The committed PCB must not drift. atopile modifies the .kicad_pcb in
+      # place on every build, so `--frozen` is what turns "the board is an
+      # output" into "the board is a reviewed artefact": a build that would
+      # change it fails instead.
+      #
+      # It cannot run yet. --frozen compares a rebuilt PCB against the committed
+      # one, and rebuilding requires the picker, which requires sign-in. Left
+      # here, disabled, with the reason — because the alternative is forgetting
+      # that the one check protecting the layout is the one we cannot run.
+      - name: PCB must rebuild unchanged (blocked on sign-in)
+        if: false
+        run: ato build -b default --frozen

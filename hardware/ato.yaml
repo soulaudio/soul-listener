@@ -23,6 +23,24 @@ builds:
     entry: elec/src/main.ato:SoulAudioDAP
     targets:
       - default
+    # ── Locking ──────────────────────────────────────────────────────────────
+    #
+    # atopile MODIFIES the .kicad_pcb in place on every build — there is no
+    # netlist hand-off, the PCB is the output. So every placement, designator and
+    # net name is something a rebuild can change, and these three keys are what
+    # stop it doing so silently.
+    #
+    # keep_designators defaults to true already; it is stated explicitly because
+    # relying on an upstream default for something this consequential is how it
+    # changes under you in a minor release.
+    #
+    # keep_picked_parts matters most: without it a rebuild re-queries the parts
+    # service and can swap a 100 nF 0402 for a different maker's 100 nF 0402,
+    # which is invisible in a diff of the .ato sources and visible in a reel you
+    # have already bought.
+    keep_designators: true
+    keep_net_names: true
+    keep_picked_parts: true
     exclude_checks:
       # PCB layout is in progress — DRC will fail until routing is complete.
       # Remove this exclusion once the board is fully routed.

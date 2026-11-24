@@ -1,0 +1,178 @@
+# Floorplan — where each module goes, and why.
+#
+# WHY THIS FILE EXISTS
+#
+# atopile 0.15.9 has no in-language placement. There is no `has_pcb_position`,
+# no layout trait, nothing in the stdlib that lets a `.ato` file say where a part
+# belongs. Placement lives in the `.kicad_pcb`, which atopile modifies in place
+# and preserves across builds.
+#
+# That is workable but it leaves the INTENT nowhere. A reviewer opening the PCB
+# sees coordinates and cannot tell which are deliberate. Worse, the constraints
+# that drive those coordinates were written as prose comments in the `.ato`
+# sources — "Keep FMC traces short (< 10 mm)", "Place antenna at board edge" —
+# where nothing checks them and a later edit can quietly violate them.
+#
+# So this file states the intent, and `tools/ato-placement.py` checks it. Every
+# `why` below is traceable to a comment in the module it governs; none of it is
+# invented here.
+#
+# STATUS: the CONSTRAINTS are settled; the COORDINATES are a first floorplan.
+# No board has been routed, so expect the numbers to move. What should not move
+# without a stated reason is the adjacency: memory beside the MCU, clock beside
+# the MCU, audio away from the switching supply, radio on a board edge.
+
+board:
+  # ~100 x 60 mm, from hardware/README.md. Marked TBD there and still TBD here —
+  # it is the envelope the floorplan was drawn inside, not a mechanical
+  # commitment.
+  width_mm: 100
+  height_mm: 60
+  # Origin at the top-left, x right, y down: KiCad's own convention, so the
+  # numbers here can be compared with the PCB without transforming them.
+  origin: top-left
+  # The committed layout is 2-layer (F.Cu/B.Cu). A 4-layer stackup is very
+  # likely needed for the FMC bus and the radio ground plane; recorded as a
+  # known open question rather than silently assumed.
+  copper_layers: 2
+
+# One zone per atopile module. A module's components must all land inside its
+# zone — that is what makes the floorplan checkable rather than decorative.
+zones:
+  battery:
+    # Not an atopile module: a mechanical reservation. The cell is 6.2 x 32 x
+    # 55 mm (AKY-LP623255) in a 35 x 59 x 7.1 mm bay, which at 59 mm is almost
+    # the full height of the board, so it takes one end entirely.
+    x: 0
+    y: 0.5
+    width: 35
+    height: 59
+    keepout: true
+    why: >
+      Battery bay, 35 x 59 x 7.1 mm per the battery requirement in
+      dap/hw-spec/src/v2.rs. A keepout: no components, no copper, and the cell
+      is user-swappable so the bay must be reachable from outside the enclosure.
+
+  input:
+    x: 35
+    y: 0
+    width: 25
+    height: 17
+    why: >
+      Encoder and buttons are the user-facing edge, so they sit on the top rail
+      next to the battery bay where the enclosure can expose them. Away from the
+      radio corner to keep finger capacitance off the antenna.
+
+  power:
+    x: 60
+    y: 0
+    width: 25
+    height: 16
+    why: >
+      Three switching converters (buck, boost, inverting). Kept on the opposite
+      side of the board from the audio zone, because power.ato's own converters
+      are the loudest thing on the board and audio.ato is the quietest.
+
+  bluetooth:
+    x: 93
+    y: 0
+    width: 7
+    height: 14
+    edge: true
+    why: >
+      bluetooth.ato: "Place antenna at board edge; keep ground plane away from
+      radiating element." A corner zone gives two free edges. DO NOT POPULATE on
+      the shipped board, so this is a reserved footprint rather than a placement.
+
+  clock:
+    x: 37
+    y: 22
+    width: 9
+    height: 12
+    why: >
+      Abuts the MCU zone so the oscillator-to-XTI trace is as short as the
+      floorplan allows. clock.ato feeds the DAC's XTI pin directly and the SAI
+      clock input from one output, and phase noise is the whole reason the
+      design carries two oscillators.
+
+  mcu:
+    x: 46
+    y: 17
+    width: 26
+    height: 26
+    why: >
+      Centre of the board: it is the hub every bus terminates at, and the only
+      part whose adjacency requirements come from three other modules at once
+      (FMC to memory, SAI to audio, SPI to display).
+
+  memory:
+    x: 72
+    y: 17
+    width: 21
+    height: 29
+    why: >
+      memory.ato: "Keep FMC traces short (< 10 mm), matched length +/- 0.5 mm
+      within bus groups." Abuts the MCU zone, which is the only way a 16-bit
+      bus stays under 10 mm.
+
+  audio:
+    x: 35
+    y: 44
+    width: 25
+    height: 16
+    why: >
+      Diagonally opposite the switching supplies. The DAC is the reason this
+      board exists and the ground-centred headphone amp has no supply rejection
+      to spare; the 3.5 mm jack also wants the bottom edge.
+
+  display:
+    x: 85
+    y: 46
+    width: 15
+    height: 14
+    edge: true
+    why: >
+      display.ato: the panel arrives on a "24-pin 0.5 mm FPC cable", so the
+      connector must sit at the edge the cable folds over, and the FPC tail
+      length fixes which edge.
+
+# Adjacency and separation the floorplan must satisfy. Checked as zone-to-zone
+# distances, which is coarser than trace length but catches the mistake that
+# matters: a module drifting away from the one it has to be near.
+rules:
+  - kind: max_gap
+    between: [mcu, memory]
+    mm: 10
+    why: "FMC bus under 10 mm (memory.ato)"
+
+  - kind: max_gap
+    between: [mcu, clock]
+    mm: 10
+    why: "oscillator trace short enough to preserve phase noise (clock.ato)"
+
+  - kind: max_gap
+    between: [mcu, audio]
+    mm: 25
+    why: "SAI/I2S is a clocked bus; long runs need termination this design has not budgeted"
+
+  - kind: min_gap
+    between: [power, audio]
+    mm: 25
+    why: >
+      Switching-converter noise against the quietest analogue on the board. The
+      number is a floorplan heuristic, not a measured isolation figure — it is
+      here so the separation cannot silently collapse to zero during layout.
+
+  - kind: min_gap
+    between: [power, clock]
+    mm: 15
+    why: "switching ripple into an oscillator supply shows up as phase noise"
+
+# Components that must be at a specific spot rather than merely inside a zone.
+# Empty today and deliberately so: no board has been routed, and inventing
+# coordinates for parts nobody has placed would be fabricating precision. This
+# is where `mcu.c_vdd_1` and friends will go — mcu.ato already states the rule
+# ("Place 100 nF X7R 0402 capacitors as close as possible to each VDD pin"),
+# which needs a pin position to be checkable, which needs a picked footprint,
+# which needs a signed-in build.
+fixed: {}

@@ -182,6 +182,31 @@ fn run_check_build(build: &str) -> Result<bool> {
     Ok(false)
 }
 
+/// Check the declared floorplan (`hardware/elec/placement.yaml`).
+///
+/// Needs neither atopile nor the network: the spec-against-itself half is pure
+/// geometry, and the spec-against-PCB half is skipped while the board has no
+/// placed footprints. Run through Python because the spec is data and the check
+/// is arithmetic over it, not something that wants a Rust type.
+fn run_placement_check() -> Result<bool> {
+    let out = Command::new("python3")
+        .arg("tools/ato-placement.py")
+        .output()
+        .context("failed to run tools/ato-placement.py")?;
+    let text = format!(
+        "{}{}",
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+    if out.status.success() {
+        println!("  {} floorplan", "PASS".green().bold());
+        return Ok(true);
+    }
+    println!("  {} floorplan", "FAIL".red().bold());
+    eprintln!("{text}");
+    Ok(false)
+}
+
 fn hw_check() -> Result<()> {
     println!();
     println!("{}", "Atopile design check — every module".cyan().bold());
@@ -208,6 +233,13 @@ fn hw_check() -> Result<()> {
     // per-module check cannot see, and it is the slow one.
     if !run_check_build("default")? {
         failed.push("default");
+    }
+
+    // The floorplan. Separate from atopile entirely — it checks
+    // hardware/elec/placement.yaml, which exists because atopile 0.15.9 has no
+    // way to state placement in the language at all.
+    if !run_placement_check()? {
+        failed.push("floorplan");
     }
 
     println!();
@@ -244,10 +276,14 @@ fn hw_check_changed(files: &[String]) -> Result<()> {
 
     for f in files {
         let norm = f.replace('\\', "/");
-        if !norm.ends_with(".ato") && !norm.ends_with("ato.yaml") {
+        if !norm.ends_with(".ato")
+            && !norm.ends_with("ato.yaml")
+            && !norm.ends_with("placement.yaml")
+        {
             continue;
         }
         if norm.ends_with("ato.yaml")
+            || norm.ends_with("placement.yaml")
             || norm.ends_with("main.ato")
             || norm.ends_with("interfaces.ato")
             || norm.contains("/parts/")

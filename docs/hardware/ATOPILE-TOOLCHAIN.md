@@ -201,14 +201,93 @@ taken together with the V2 board migration, since that rewrites
 `hardware/elec/src` anyway — and doing both at once is cheaper than doing them a
 year apart.
 
+## Seeing the circuit
+
+`tools/ato-diagram.py` renders the design from the **sources** — board block
+diagram, per-module internals, passives and design rules — into
+`hardware/elec/CIRCUIT.md`, with `--html` for a standalone page.
+
+It reads the `.ato` files rather than asking atopile because atopile's own views
+(`pinout`, `power-tree`, `2d-image`, `glb`) are artifacts emitted *after* the
+picker, so on an unauthenticated machine there is no way to get a picture out of
+it at all. What the diagram gives up in exchange: it shows connections as
+written, follows no solver unification, and knows nothing of footprints,
+designators or placement. It is the structure, which is what a reviewer looks at.
+
+## Placement, and locking it down
+
+atopile 0.15.9 has **no in-language placement** — no `has_pcb_position`, no
+layout trait, nothing in the stdlib. Placement lives in the `.kicad_pcb`, which
+atopile modifies in place and preserves across builds.
+
+That works, but it leaves the intent nowhere: a reviewer opening the PCB sees
+coordinates and cannot tell which are deliberate. Worse, the constraints driving
+those coordinates were already written as prose in the `.ato` sources — *"Keep
+FMC traces short (< 10 mm)"*, *"Place antenna at board edge"* — where nothing
+checked them.
+
+So `hardware/elec/placement.yaml` states the floorplan: a zone per module, each
+with a `why` traceable to the module's own comment, plus adjacency and
+separation rules. `tools/ato-placement.py` checks it in two halves:
+
+| half | status |
+|---|---|
+| spec against itself — zones inside the outline, no overlaps, every module covered, every rule satisfied, every zone justified | **runs now**, in CI and the pre-commit hook |
+| spec against the PCB — each footprint inside its zone, and `locked` | waits for footprints, which wait for sign-in |
+
+The constraints are settled; the coordinates are a first floorplan and will move
+during layout. What should not move without a stated reason is the adjacency.
+
+Verified by mutation: moving `memory` 15 mm from `mcu` trips the FMC rule,
+overlapping two zones is caught, a zone crossing the board edge is caught, and
+deleting a `why` fails.
+
+### Three locks on the board
+
+atopile has no netlist hand-off; the PCB *is* the output and every build rewrites
+it. `hardware/ato.yaml`'s `default` build therefore sets:
+
+- `keep_designators` — a renumbered board invalidates every assembly note.
+- `keep_net_names` — renamed nets break netlist-based review.
+- `keep_picked_parts` — **the one that costs money.** Without it a rebuild
+  re-queries the parts service and can substitute a different manufacturer's
+  equivalent 100 nF 0402, invisibly in a source diff, after the reel is bought.
+
+`--frozen` is the fourth and cannot run yet: it compares a rebuilt PCB against
+the committed one, and rebuilding needs the picker. It sits in the workflow
+disabled with that reason attached, because the alternative is forgetting that
+the one check protecting the layout is the one we cannot run.
+
+## 3D rendering
+
+Blocked on the same thing, and worth being precise about why. A 3D view needs
+footprints with 3D models attached, which means picked parts, which means
+sign-in. The committed `default.kicad_pcb` is an empty 2-layer board with no
+footprints at all.
+
+Once you have run `ato auth login`:
+
+```sh
+ato build -b default -t glb     # .pcba.glb   — the model
+ato build -b default -t step    # .pcba.step  — for mechanical CAD
+ato build -b default -t 3d-image
+```
+
+Those three are the KiCad-tagged targets, so they additionally need `kicad-cli`
+on PATH (`nix shell nixpkgs#kicad`, a ~700 MB fetch). Everything in the
+`default` aggregate — bom, manifest, variable-report, pinout, stackup,
+power-tree, datasheets — needs no KiCad.
+
 ## Running it
 
 ```sh
 # once — Python 3.14 is mandatory
 uv tool install --python 3.14 atopile==0.15.9
 
-cargo xtask hardware check                       # every module, then the board
+cargo xtask hardware check                       # every module, the board, the floorplan
 cargo xtask hardware check-changed <files...>    # one slice (the pre-commit hook)
+tools/ato-diagram.py --html /tmp/circuit.html    # see the circuit
+tools/ato-placement.py                           # check the floorplan alone
 
 ato auth login                                   # then the assert rules and DRC work
 ato build -b default -t bom                      # a BOM, once signed in
