@@ -269,6 +269,49 @@ fn the_outline_is_owned_by_the_design_not_the_tool() {
     );
 }
 
+/// Every generated artifact must be drift-checked in the hook AND in CI.
+///
+/// # What the audit found
+///
+/// Three tools had a `--check` mode that nothing invoked: `ato-outline.py`,
+/// `ato-diagram.py` and (in CI) `ato-vendor-part.py`. The committed PCB
+/// floorplan, the circuit diagram and the vendored parts could therefore drift
+/// from their sources with nothing complaining — the checks existed and were
+/// never run, which is worse than not having them, because their existence
+/// reads as coverage.
+///
+/// Worse still, `check-changed` only ran the slice that changed. Editing
+/// `power.ato` alone makes the pin map and the diagram stale, so the pre-commit
+/// hook let exactly the common case through. All five data checks together cost
+/// ~1.2 s, so they now run on any hardware change.
+#[test]
+fn every_generated_artifact_is_drift_checked_in_both_paths() {
+    // (tool, the artifact it guards)
+    let tools = [
+        ("ato-placement.py", "the floorplan's self-consistency"),
+        ("ato-pinmap.py", "pinmap.json and dap/hw-spec/src/pinmap.rs"),
+        ("ato-outline.py", "the PCB's floorplan annotation"),
+        ("ato-diagram.py", "hardware/elec/CIRCUIT.md"),
+        ("ato-vendor-part.py", "the vendored parts"),
+    ];
+    for (tool, guards) in tools {
+        assert!(
+            HW_XTASK.contains(tool),
+            "`cargo xtask hardware check` does not run {tool}, which guards {guards}. A              --check mode nothing invokes is worse than no check: its existence reads as              coverage."
+        );
+        assert!(
+            HW_CI.contains(tool),
+            "the Hardware workflow does not run {tool}, which guards {guards}. The hook can              be bypassed with --no-verify; CI is the one that cannot."
+        );
+    }
+    // And the fast checks must run for ANY hardware change, not only when a
+    // shared file moves — the single-module case is the common one.
+    assert!(
+        HW_XTASK.contains("run_data_checks"),
+        "the data checks must be factored so `check-changed` runs them too. Editing one          module makes the pin map and the diagram stale, and a hook that only rebuilt that          module would let both through."
+    );
+}
+
 /// atopile must be reachable without any shell setup.
 ///
 /// Four things stop a bare `ato` working on this machine: atopile 0.15.9 needs

@@ -107,6 +107,17 @@ fn code_only(src: &str) -> String {
 }
 
 /// Which crate-internal modules a file actually references in code.
+///
+/// Counts BOTH spellings of a cross-module reference, because only counting one
+/// left a hole an audit found by walking through it: `power/dvfs.rs` with
+/// `use super::super::audio::AudioPlayer` compiles, couples two slices, and was
+/// invisible to a check that looked only for `crate::`.
+///
+/// `super::` is resolved by depth. A file at `power/dvfs.rs` is module
+/// `power::dvfs`, so one `super::` lands on `power` — its own slice, which is
+/// fine — and two land on the crate root, which is a cross-module reference
+/// spelled the long way round. `depth` is how many `super::`s stay inside the
+/// file's own module.
 fn deps_of(path: &Path) -> Vec<String> {
     let src = std::fs::read_to_string(path).expect("readable source file");
     let code = code_only(&src);
@@ -127,6 +138,40 @@ fn deps_of(path: &Path) -> Vec<String> {
             }
         }
         i = start;
+    }
+
+    // `super::`-chains that escape the file's own module.
+    //
+    // Depth is counted RELATIVE to core/src. A first attempt counted components
+    // of the absolute path, which is about ten deep, so `supers > depth` was
+    // never true and the check silently did nothing — the bypass it was written
+    // for still walked straight through. Caught by retrying the bypass instead
+    // of trusting that the fix worked.
+    let depth = path
+        .strip_prefix(core_src())
+        .ok()
+        .and_then(|rel| rel.parent().map(|p| p.components().count()))
+        .unwrap_or(0);
+    let mut j = 0;
+    while let Some(pos) = code[j..].find("super::") {
+        let mut k = j + pos;
+        let mut supers = 0;
+        while code[k..].starts_with("super::") {
+            supers += 1;
+            k += "super::".len();
+        }
+        // `depth` is the number of directory components below core/src, i.e.
+        // how many `super::`s remain inside the file's own module tree.
+        if supers > depth {
+            let end = code[k..]
+                .find(|c: char| !(c.is_ascii_alphanumeric() || c == '_'))
+                .map_or(code.len(), |n| k + n);
+            let name = code[k..end].to_string();
+            if !name.is_empty() && !out.contains(&name) {
+                out.push(name);
+            }
+        }
+        j = k.max(j + pos + 1);
     }
     out
 }
@@ -452,5 +497,127 @@ fn the_firmware_core_names_no_pin_or_peripheral() {
         "`power/peripherals.rs` is exempted from the pin/peripheral rule but no longer \
          names any peripheral. The roster has presumably moved to dap-hw-spec — delete \
          KNOWN_PIN_NAMING in this test so the rule covers the whole core again."
+    );
+}
+
+/// Every atopile module must have a declared firmware counterpart.
+///
+/// # Why not strict 1:1
+///
+/// Strict one-module-one-slice is the wrong target and asserting it would force
+/// a lie. `mcu.ato` is the application processor: the firmware does not have an
+/// "mcu slice", it IS the thing running on the MCU. `bluetooth.ato` is DO NOT
+/// POPULATE, so a firmware slice for it would be dead code maintained for a part
+/// that is not fitted.
+///
+/// What IS checkable, and what this asserts, is that the relationship is
+/// *declared*. Every `.ato` module names its firmware counterpart — a slice, a
+/// port, a submodule, or explicitly nothing with a reason. The failure this
+/// prevents is a hardware module quietly having no software owner, which is how
+/// a board grows a peripheral nobody drives.
+///
+/// The counterpart must also exist. A mapping to `power/clocks.rs` is only worth
+/// having if that file is there.
+const HARDWARE_FIRMWARE_MAP: &[(&str, &str, &str)] = &[
+    // (atopile module, firmware counterpart, why)
+    (
+        "audio",
+        "audio.rs",
+        "the decode/playback slice; Sink is its port",
+    ),
+    (
+        "display",
+        "display.rs",
+        "the rendering surface; Display is its port",
+    ),
+    ("power", "power.rs", "the power service; Power is its port"),
+    (
+        "clock",
+        "power/clocks.rs",
+        "clock/voltage sequencing lives inside the power slice because DVFS is \
+         what drives it — a separate slice would own one function and need the \
+         power slice's state to do anything",
+    ),
+    (
+        "input",
+        "ports.rs",
+        "PORT ONLY (Controls). No slice yet: the wheel/button handling is a \
+         board-side driver plus a port, and there is no board-independent logic \
+         to put in a slice until gestures or repeat-rate policy exist",
+    ),
+    (
+        "memory",
+        "ports.rs",
+        "PORT ONLY (Storage). The SDRAM/QSPI are board resources behind the \
+         Storage trait; the firmware has no memory-management slice because \
+         allocation is static and checked by dap-arch-tests::budget",
+    ),
+    (
+        "mcu",
+        "",
+        "NONE, and correctly so: the MCU is what the firmware runs ON. Its \
+         constants are pinned by dap-arch-tests::hw_spec_bridge rather than \
+         owned by a slice",
+    ),
+    (
+        "bluetooth",
+        "",
+        "NONE: DO NOT POPULATE on the shipped board. A slice would be dead code \
+         maintained for a part that is not fitted. The licensing posture depends \
+         on it staying unpopulated (licensing::regime_for)",
+    ),
+];
+
+#[test]
+fn every_atopile_module_has_a_declared_firmware_counterpart() {
+    let hw_src = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../hardware/elec/src");
+    let core = core_src();
+
+    let mut undeclared = Vec::new();
+    for entry in std::fs::read_dir(&hw_src).expect("hardware/elec/src must exist") {
+        let p = entry.expect("dir entry").path();
+        if p.extension().and_then(|e| e.to_str()) != Some("ato") {
+            continue;
+        }
+        let stem = p.file_stem().and_then(|n| n.to_str()).unwrap_or("");
+        // `main` is the composition root and `interfaces` declares bus types;
+        // neither is a capability needing a software owner.
+        if stem == "main" || stem == "interfaces" {
+            continue;
+        }
+        if !HARDWARE_FIRMWARE_MAP.iter().any(|(m, _, _)| *m == stem) {
+            undeclared.push(stem.to_string());
+        }
+    }
+    assert!(
+        undeclared.is_empty(),
+        "these atopile modules have no declared firmware counterpart: {undeclared:?}\n\
+         Add an entry to HARDWARE_FIRMWARE_MAP in this file naming the slice, port or \
+         submodule that owns them in software — or an empty counterpart with the reason \
+         there is none. A hardware module with no software owner is how a board grows a \
+         peripheral nobody drives."
+    );
+
+    // Every declared counterpart must exist, and every reason must say something.
+    let mut broken = Vec::new();
+    for (module, counterpart, why) in HARDWARE_FIRMWARE_MAP {
+        if why.len() < 30 {
+            broken.push(format!("{module}: the reason is too short to review"));
+        }
+        if counterpart.is_empty() {
+            // An explicit "none" must justify itself, which the length check above
+            // already forces.
+            continue;
+        }
+        if !core.join(counterpart).exists() {
+            broken.push(format!(
+                "{module} -> {counterpart}, which does not exist in dap-core"
+            ));
+        }
+    }
+    assert!(
+        broken.is_empty(),
+        "the hardware/firmware map is stale:\n  {}",
+        broken.join("\n  ")
     );
 }

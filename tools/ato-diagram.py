@@ -470,6 +470,11 @@ def main() -> int:
     ap.add_argument("--top", default="SoulAudioDAP")
     ap.add_argument("--out", default=str(ROOT / "hardware/elec/CIRCUIT.md"))
     ap.add_argument("--html", help="also write a standalone HTML copy here")
+    ap.add_argument(
+        "--check",
+        action="store_true",
+        help="exit non-zero if the committed CIRCUIT.md is stale (for CI and the hook)",
+    )
     args = ap.parse_args()
 
     blocks = parse_all()
@@ -477,7 +482,19 @@ def main() -> int:
         print(f"no top-level module {args.top!r}; found: {sorted(blocks)}", file=sys.stderr)
         return 1
     md = markdown(blocks, args.top)
-    pathlib.Path(args.out).write_text(md)
+    out = pathlib.Path(args.out)
+    if args.check:
+        have = out.read_text() if out.exists() else ""
+        if have != md:
+            print(
+                f"{out} is STALE — it is generated from hardware/elec/src/**/*.ato.\n"
+                f"Run tools/ato-diagram.py and commit the result.",
+                file=sys.stderr,
+            )
+            return 1
+        print(f"{out.name} is current ({len(blocks)} blocks)")
+        return 0
+    out.write_text(md)
     print(f"wrote {args.out} ({len(blocks)} blocks parsed)")
     if args.html:
         pathlib.Path(args.html).write_text(html_page(blocks, args.top))

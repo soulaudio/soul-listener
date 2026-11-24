@@ -114,6 +114,18 @@ jobs:
       - name: Check the generated pin map is current
         run: python3 tools/ato-pinmap.py --check
 
+      # Three more generated-artifact checks. An audit found each of these had a
+      # --check mode that nothing invoked, so the committed copy could drift
+      # from its source with no complaint.
+      - name: Check the PCB floorplan matches the spec
+        run: python3 tools/ato-outline.py --check
+
+      - name: Check the circuit diagram is current
+        run: python3 tools/ato-diagram.py --check
+
+      - name: Check the vendored parts
+        run: python3 tools/ato-vendor-part.py --check
+
       # Through xtask rather than calling `ato` directly, so the rule deciding
       # what counts as a pass — "every stage green, blocked at part picking on
       # sign-in" — has exactly one implementation, shared with the pre-commit
