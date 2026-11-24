@@ -388,6 +388,47 @@ mod tests {
         );
     }
 
+    /// A vendor truncating the frequency must not reject the part.
+    ///
+    /// Not hypothetical: TME publishes Abracon `ASV-22.5792MHZ-LR-T` — 17000 in
+    /// stock — with `Frequency: "22.579MHz"`, five significant figures where the
+    /// part has six. That is 8.86e-6 relative, which a 1e-6 tolerance rejects.
+    ///
+    /// The tolerance has to absorb vendor FORMATTING while still rejecting a
+    /// different part. These two assertions are the boundary.
+    #[test]
+    fn a_truncated_frequency_still_matches_but_a_different_one_does_not() {
+        let c = Constraint {
+            evidence: Evidence::Catalogue,
+            attr: "frequency_hz",
+            pred: Predicate::NumEq {
+                value: 22_579_200.0,
+                rel_tol: 1e-4,
+            },
+            why: "the 44.1 kHz family clock",
+        };
+        // TME's truncated value.
+        let truncated = [("frequency_hz", AttrValue::Num(22_579_000.0))];
+        assert!(
+            check(&part("asv", &truncated, 1, 17_000, Some(60)), &c).is_ok(),
+            "a frequency truncated to five significant figures is the SAME part; rejecting it \
+             loses the only deeply-stocked candidate in the category"
+        );
+        // And the nearest frequencies anyone might confuse it with must still fail.
+        for (name, hz) in [
+            ("22.1184 MHz UART crystal", 22_118_400.0),
+            ("the other MCLK family", 24_576_000.0),
+            ("a round 22 MHz", 22_000_000.0),
+        ] {
+            let other = [("frequency_hz", AttrValue::Num(hz))];
+            assert!(
+                check(&part("other", &other, 1, 1, None), &c).is_err(),
+                "{name} must still be rejected — widening the tolerance for formatting must not \
+                 make it accept a different frequency"
+            );
+        }
+    }
+
     #[test]
     fn a_missing_attribute_is_a_rejection_not_a_pass() {
         let c = Constraint {

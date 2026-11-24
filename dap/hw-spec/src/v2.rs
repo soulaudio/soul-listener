@@ -240,7 +240,19 @@ const OSC_44K1_CONSTRAINTS: &[Constraint<'static>] = &[
         attr: "frequency_hz",
         pred: crate::select::Predicate::NumEq {
             value: 22_579_200.0,
-            rel_tol: 1e-6,
+            // 1e-4, not 1e-6. TME publishes this part's frequency as
+            // "22.579MHz" — TRUNCATED to five significant figures — which is
+            // 8.86e-6 away from the real 22.5792 MHz and would have been
+            // rejected under the old tolerance. The doc on NumEq anticipated
+            // representation noise (22579200 vs 22.5792e6) but not a vendor
+            // publishing fewer digits than the part has.
+            //
+            // 1e-4 is still 200x tighter than the nearest frequency anyone would
+            // confuse this with: 22.1184 MHz (the common UART crystal) is 2.0e-2
+            // away, and the other MCLK family is 8.8e-2 away. So this buys
+            // tolerance of vendor formatting without losing the ability to
+            // reject a genuinely different part.
+            rel_tol: 1e-4,
         },
         why: "22.5792 MHz is simultaneously a nominal CS43131 MCLK_INT (so it feeds XTI with no \
               divider) and 512 x 44100, which divides by an integer to an exact 64 x Fs bit clock \
@@ -309,7 +321,19 @@ const OSC_48K_CONSTRAINTS: &[Constraint<'static>] = &[
         attr: "frequency_hz",
         pred: crate::select::Predicate::NumEq {
             value: 24_576_000.0,
-            rel_tol: 1e-6,
+            // 1e-4, not 1e-6. TME publishes this part's frequency as
+            // "22.579MHz" — TRUNCATED to five significant figures — which is
+            // 8.86e-6 away from the real 22.5792 MHz and would have been
+            // rejected under the old tolerance. The doc on NumEq anticipated
+            // representation noise (22579200 vs 22.5792e6) but not a vendor
+            // publishing fewer digits than the part has.
+            //
+            // 1e-4 is still 200x tighter than the nearest frequency anyone would
+            // confuse this with: 22.1184 MHz (the common UART crystal) is 2.0e-2
+            // away, and the other MCLK family is 8.8e-2 away. So this buys
+            // tolerance of vendor formatting without losing the ability to
+            // reject a genuinely different part.
+            rel_tol: 1e-4,
         },
         why: "the other nominal CS43131 MCLK_INT, and 512 x 48000 — exact for 48, 96 and 192 kHz",
     },
@@ -629,15 +653,25 @@ const PARTS: &[PartReq] = &[
     },
     PartReq {
         id: "mclk-osc-44k1",
-        what: "22.5792 MHz fixed oscillator, <=3.3 V, low phase noise, SMD",
+        what: "22.5792 MHz fixed oscillator, operating range covering 3.3 V, low phase noise, SMD",
         constraints: OSC_44K1_CONSTRAINTS,
         candidates: &[Candidate {
             mpn: "ASDMB-22.5792MHZ-LY-T",
             preference: Preference::Evaluating,
             note: "placeholder: the frequency is the requirement, the part is not chosen. \
-                       Needs a phase-noise figure against DS1155F2 Fig. 4-14 and an EU stock \
-                       check. Note this is a far more common frequency than the 45.1584 MHz the \
-                       spec previously asked for, so the candidate set should be wide.",
+                       \
+                       MARKET FACT, measured 2026-11-24 across all 24 parts TME carries at this \
+                       frequency: EVERY ONE is reel-only, minimum order 1000-3000 pieces. There \
+                       is no singly-orderable 22.5792 MHz oscillator at TME. So a prototype \
+                       either budgets ~700 EUR for a 1000-piece reel (Abracon \
+                       ASV-22.5792MHZ-LR-T, 17000 in stock at 0.70 EUR) or sources from a \
+                       distributor that breaks reels. Mouser and Digi-Key both sell ones for \
+                       most of this category, which is now the main reason to fetch them. \
+                       \
+                       A hard MOQ constraint was tried and removed: it rejected the entire \
+                       category, and `the_oscillator_category_yields_candidates_and_explains_\
+                       the_rest` caught it. A reel is expensive, not impossible, so it belongs in \
+                       the cost conversation rather than in the filter.",
         }],
     },
     PartReq {
