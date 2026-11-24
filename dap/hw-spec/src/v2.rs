@@ -476,6 +476,48 @@ const MUX_CONSTRAINTS: &[Constraint<'static>] = &[
 /// certification for a lithium cell belongs to whoever manufactures the battery,
 /// and buying bare cells to protect ourselves would make that us. See
 /// [`crate::licensing::BATTERY_CERT_CONDITIONS`].
+/// # Deferred: catalogue-level SIZE filtering
+///
+/// Requested, and deliberately not enabled yet. The attribute exists and is
+/// already mapped — Digi-Key publishes `Size / Dimension` as
+/// `'2.44" L x 1.50" W x 0.24" H (62.0mm x 38.1mm x 6.0mm)'` — so the gap is not
+/// the data model. It is three things, in order:
+///
+/// 1. **Coverage.** 5 of 627 candidates publish it, all of them Jauch cells from
+///    Digi-Key. TME publishes no dimensions for cells at all. Switching
+///    `thickness_mm` from `Evidence::Datasheet` to `Catalogue` today would
+///    reject 622 cells for a vendor data gap and leave the AKYGA parts — the
+///    only ones that actually qualify — rejected too, since TME is where they
+///    come from.
+/// 2. **A parse rule.** `parametric::derive` has no rule for a dual-unit,
+///    three-axis string. It needs to extract the millimetre triple specifically,
+///    because the inch figures are rounded (`0.24"` is 6.096 mm against a stated
+///    6.0 mm) and a 7.1 mm bay has no room for that error.
+/// 3. **Three attributes, not one.** A cell that fits 35 x 59 x 7.1 mm in one
+///    orientation may not in another, so `body_length_mm`, `body_width_mm` and
+///    `body_thickness_mm` are separate constraints — and whether the cell may be
+///    rotated is a mechanical decision, not an arithmetic one.
+///
+/// So the enabling order is: teach `derive` the triple, add the three
+/// dimensions, wait for (or add) a distributor that publishes cell dimensions,
+/// then flip the evidence. Until then `thickness_mm` stays datasheet-only and
+/// the bay is checked by a person against a drawing, which is what the
+/// constraint's own `why` already says.
+///
+/// # A note on "hot swappable"
+///
+/// The constraints below deliver a **user-swappable** cell: connectorised (JST),
+/// with its own protection circuit, obtainable as a spare. They do not deliver a
+/// *hot*-swappable one, and no cell attribute could.
+///
+/// With a single cell, unplugging it removes the only power source — the device
+/// loses state mid-swap regardless of which cell is fitted. Hot swap is a
+/// property of the POWER TREE, not of the battery: it needs a holdup source
+/// across the gap (a supercapacitor sized for the RTC and a clean shutdown, or
+/// USB present during the swap, or a second cell). That is a board decision for
+/// `power.ato` and the power model, and it is recorded here rather than in a
+/// commit message because the connector makes the stronger claim look already
+/// satisfied.
 const BATTERY_CONSTRAINTS: &[Constraint<'static>] = &[
     Constraint {
         evidence: Evidence::Catalogue,
@@ -602,6 +644,102 @@ const BATTERY_CONSTRAINTS: &[Constraint<'static>] = &[
 /// frequency, supply, temperature and package; it does not publish a QDID, a
 /// certification number, or whether an SDK is NDA-gated. Left as catalogue
 /// constraints these rejected all 100 modules for fields nobody carries.
+/// The microSD socket.
+///
+/// # Why this requirement exists at all
+///
+/// `interfaces.ato` has carried an `SDMMCBus` and `mcu.ato` an `mcu.sdcard`
+/// port since V1, and the firmware's whole storage path assumes a card — but no
+/// socket was ever sourced, so the one component the user physically touches
+/// most often was the only one with no part behind it. A bus with no connector
+/// is not a storage subsystem.
+///
+/// # microSD, not SD
+///
+/// Both vendors publish the distinction and they publish it in different
+/// fields: Digi-Key as `Card Type` ('microSD™', or 'Secure Digital - microSD™'),
+/// TME as `Kind of card` ('microSD'). A full-size SD socket is not a worse
+/// option here, it is the wrong part — the card cage alone is wider than the
+/// 35 mm bay the battery already shares.
+///
+/// The trademark glyph is the reason this is `Contains` rather than an exact
+/// match: `'microSD™' != 'microSD'`, and `canon.py` folds both spellings plus
+/// Digi-Key's `'Secure Digital - microSD™'` onto one token. `Contains` would
+/// also match `'microSDHC'`, which is correct — the socket is identical and the
+/// capacity class is a property of the card, not the connector.
+const MICROSD_CONSTRAINTS: &[Constraint<'static>] = &[
+    Constraint {
+        evidence: Evidence::Catalogue,
+        attr: "card_type",
+        pred: crate::select::Predicate::Contains("microSD"),
+        why: "microSD, not full-size SD. A full-size cage does not fit beside a 35 x 59 mm \
+              battery bay in a 7.1 mm-thick device, and the firmware's SDMMC path is 4-bit \
+              either way. Both distributors publish this — Digi-Key as 'Card Type', TME as \
+              'Kind of card' — so it is the one genuinely catalogue-checkable half of the \
+              requirement",
+    },
+    Constraint {
+        evidence: Evidence::Catalogue,
+        attr: "insertion_removal",
+        pred: crate::select::Predicate::Contains("push-"),
+        why: "the card must be removable by hand, repeatedly, without a tool. Matches both \
+              'push-push' (spring-ejected) and 'push-pull' (gripped), which are the two \
+              mechanisms that qualify; a bare 'with hinged cover' cage does not and is \
+              excluded. \
+              \
+              Contains rather than OneOf, and the first draft got this wrong: TME publishes \
+              this field MULTI-VALUED and joined, as 'push-push; top board mount', \
+              'bottom board mount; push-push' and 'push-pull; top board mount; with hinged \
+              cover'. An exact match against either token rejected all 398 sockets — the same \
+              mistake the battery requirement's 'Leads' and 'features' constraints were \
+              already written as Contains to avoid",
+    },
+    Constraint {
+        evidence: Evidence::Catalogue,
+        attr: "mounting",
+        pred: crate::select::Predicate::OneOf(&["SMD"]),
+        why: "hand-assembled small batch, so surface mount. TME publishes connector mounting as \
+              'SMT' and Digi-Key as 'Surface Mount, Right Angle'; both reach this as 'SMD' \
+              through canon.py, because the orientation is a layout choice and not a different \
+              mounting technology",
+    },
+    // --- Datasheet-only ---------------------------------------------------
+    Constraint {
+        evidence: Evidence::Datasheet,
+        attr: "card_detect_switch",
+        pred: crate::select::Predicate::IsTrue,
+        why: "a card-detect contact, so firmware learns a card has arrived instead of polling \
+              the bus for one. \
+              \
+              Datasheet rather than Catalogue, which the first draft got wrong: Digi-Key does \
+              publish 'Features' = 'Switch' for some sockets, but TME publishes no features \
+              list for card connectors AT ALL, so as a catalogue constraint it rejected all 400 \
+              TME parts for a vendor data gap rather than a design fault. Presence of a \
+              card-detect pin is on every socket's drawing, and the pin count hints at it \
+              ('9 (8 + 1)' is eight signal contacts plus one switch)",
+    },
+    // --- Datasheet-only ---------------------------------------------------
+    Constraint {
+        evidence: Evidence::Datasheet,
+        attr: "insertion_cycles",
+        pred: crate::select::Predicate::AtLeast(5000.0),
+        why: "the user-swappable storage promise is worthless if the socket wears out. 5000 \
+              cycles is the commodity figure for this class; distributors publish contact \
+              plating and current rating but never a cycle count, so this is read off the \
+              datasheet of whichever socket is chosen",
+    },
+    Constraint {
+        evidence: Evidence::Datasheet,
+        attr: "sd_logo_not_required",
+        pred: crate::select::Predicate::IsTrue,
+        why: "the SD Association licenses the LOGO and the full specification, not the \
+              electrical interface. This product uses SDMMC in SPI/4-bit mode with no SD mark \
+              on the artwork, which is the position licensing::EXPOSURES already records — this \
+              constraint exists so the socket choice cannot quietly reintroduce a branded part \
+              that implies membership we do not hold",
+    },
+];
+
 const BLUETOOTH_CONSTRAINTS: &[Constraint<'static>] = &[
     // The one certification-adjacent fact a catalogue DOES answer: Digi-Key
     // publishes `Package / Case: 'Module'`, which is precisely the
@@ -854,6 +992,49 @@ const DAC_CONSTRAINTS: &[Constraint<'static>] = &[
 /// quietly excusing a part that no longer needs excusing.
 ///
 /// A reason is required, and is the audit record a reviewer reads.
+/// Requirements whose part the USER is expected to buy and replace themselves.
+///
+/// # Why this is a list and not a property of the part
+///
+/// "Widely available" means something different for a cell than for a DAC. A
+/// converter needs two distributors so WE can build the board; a replaceable
+/// battery needs more than that — the owner has to be able to buy a spare, in
+/// three years, without this project's distributor accounts. That makes
+/// MANUFACTURER diversity the thing that matters, not distributor count: if one
+/// maker stops producing the cell, a second distributor stocking the same dead
+/// part helps nobody.
+///
+/// So the two properties are enforced separately rather than conflated:
+///
+/// - `preferred_parts_have_more_than_one_eu_source` — can we build it.
+/// - `user_swappable_requirements_span_two_manufacturers` — can the owner
+///   replace it.
+///
+/// The microSD socket is deliberately NOT here. The user swaps the *card*, which
+/// is not on this BOM at all; the socket is soldered down and is ours.
+pub const USER_SWAPPABLE_REQUIREMENTS: &[&str] = &["battery"];
+
+/// User-swappable requirements that do NOT yet span two manufacturers, and why.
+///
+/// Same discipline as [`SINGLE_SOURCE_ACCEPTED`]: the reason is the audit
+/// record, and `accepted_single_manufacturer_is_still_warranted` deletes an
+/// entry by failing the build once a second manufacturer qualifies.
+pub const SINGLE_MANUFACTURER_ACCEPTED: &[(&str, &str)] = &[(
+    "battery",
+    "AKYGA is the only manufacturer whose cells pass this requirement, and the sweep behind \
+     that statement is now large enough to mean something: 627 candidates across TME's whole \
+     446-part battery category and Digi-Key's Li-Po keyword sweep, of which 31 qualify and \
+     every one is AKYGA. Jauch Quartz is a genuine second maker and Digi-Key stocks it, but \
+     its closest cell (LP503759JU) is 62.0 x 38.1 mm against a 35 x 59 x 7.1 mm bay, so it \
+     fails on mechanics rather than on sourcing. \
+     \
+     This is accepted rather than resolved because the realistic fixes are both outside the \
+     sourcing pipeline: widen the bay, or buy direct from a pouch-cell maker (Farnell and RS \
+     stock more bare cells than either distributor fetched here). What is NOT acceptable is \
+     shipping a user-replaceable-battery promise whose spare has one maker — that is the \
+     exposure this entry exists to keep visible.",
+)];
+
 pub const SINGLE_SOURCE_ACCEPTED: &[(&str, &str)] = &[
     (
         "STM32H7A3ZIT6",
@@ -1190,6 +1371,72 @@ const PARTS: &[PartReq] = &[
                      power and a refresh-contention problem in the audio path",
                 ),
                 note: "",
+            },
+        ],
+    },
+    PartReq {
+        id: "microsd",
+        what: "microSD socket, push-push or push-pull, card-detect switch, SMD, >=5000 \
+               insertion cycles",
+        constraints: MICROSD_CONSTRAINTS,
+        // All three came out of the sweep rather than a catalogue hunt by hand —
+        // 173 of 601 sockets qualify, and these are the two-source ones with
+        // MOQ 1. Recorded as Evaluating, not Preferred: choosing between them is
+        // a mechanical decision about bezel cutout and board height that the
+        // sourcing pipeline has no standing to make.
+        //
+        // Height is the axis that will probably decide it, and it is the one the
+        // filter cannot yet judge: both vendors publish it, Digi-Key dual-unit
+        // as '0.104" (2.65mm)', which `parse_quantity` does not read. See
+        // MICROSD_CONSTRAINTS.
+        candidates: &[
+            Candidate {
+                mpn: "MEM2080-00-128-00-A",
+                preference: Preference::Evaluating,
+                note: "GCT, push-push, 10 (8 + 2) contacts so it has card-detect, and the \
+                       THINNEST qualifying socket found at 1.28 mm above board. In a 7.1 mm \
+                       device sharing its thickness budget with a 7.1 mm battery bay, 1.4 mm \
+                       against the Amphenol 10067099's 2.65 mm is the difference that matters \
+                       more than the 37 cents. 9963 across Digi-Key and TME, MOQ 1, 1.23 EUR.",
+            },
+            Candidate {
+                mpn: "1140084168",
+                preference: Preference::Evaluating,
+                note: "Amphenol, push-pull, 10 (8 + 2), 1.55 mm — nearly as thin as the GCT \
+                       part with far deeper stock (75365 across two distributors, MOQ 1, \
+                       1.53 EUR). Push-PULL rather than push-push: no ejector spring to fail, \
+                       but the card must be gripped, which needs the cutout to expose it.",
+            },
+            Candidate {
+                mpn: "10067099-200LF",
+                preference: Preference::Evaluating,
+                note: "Amphenol, push-pull, 10 (8 + 2), 41021 across two distributors at MOQ 1 \
+                       and 0.86 EUR — the cheapest two-source socket that qualifies. Kept \
+                       behind the other two on height alone: 2.65 mm is double the GCT part \
+                       and the worst of the shortlist.",
+            },
+            Candidate {
+                mpn: "2908-05WB-MG",
+                preference: Preference::Rejected(
+                    "8 contacts with no ninth: no card-detect switch, so firmware would have \
+                     to poll the bus to notice a card. Also 4.23 EUR against 0.86-1.53 for \
+                     the shortlist",
+                ),
+                note: "3M, push-push, two sources and 53053 in stock — it ranks highly on \
+                       sourcing and is wrong on function, which is exactly the case the \
+                       datasheet-only card_detect_switch constraint exists to catch. The pin \
+                       count is the tell: '8' where every shortlisted part reads '10 (8 + 2)'.",
+            },
+            Candidate {
+                mpn: "105027-0001",
+                preference: Preference::Rejected(
+                    "MOQ 2000. 150000 in stock at two distributors and unbuyable for a \
+                     five-board prototype run — 3020 EUR for the first batch",
+                ),
+                note: "Molex, push-pull, 1.70 mm, 1.51 EUR per piece in a reel. Recorded \
+                       because it ranks SECOND on raw stock and would otherwise keep \
+                       resurfacing; Rank::AcquisitionCost is what demotes it, and this note \
+                       is why.",
             },
         ],
     },

@@ -65,6 +65,14 @@ class VendorPart:
     queried_as: str | None = None
     status_raw: list[str] = field(default_factory=list)
     datasheet_url: str | None = None
+    #: The distributor's own product page.
+    #:
+    #: Carried because a ranked proposal nobody can click is a proposal nobody
+    #: checks. The datasheet answers "is this the right part"; this answers "is
+    #: this the right ORDER" — packaging, price breaks, lead time and the
+    #: vendor's own stock figure, which is the one number that goes stale fastest
+    #: in a committed artefact.
+    product_url: str | None = None
 
     def unit_price_cents(self) -> int | None:
         """Cheapest single-unit price, in cents, for ranking.

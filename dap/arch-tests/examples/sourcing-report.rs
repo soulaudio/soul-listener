@@ -59,6 +59,10 @@ const EXPORTS: &[(&str, &str)] = &[
         include_str!("../../../hardware/bom/candidates/mcu.json"),
     ),
     (
+        "microsd",
+        include_str!("../../../hardware/bom/candidates/microsd.json"),
+    ),
+    (
         "battery",
         include_str!("../../../hardware/bom/candidates/battery.json"),
     ),

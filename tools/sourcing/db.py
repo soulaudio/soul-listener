@@ -79,6 +79,7 @@ CREATE TABLE IF NOT EXISTS parts (
     lifecycle_raw TEXT,
     status_raw    TEXT,                    -- JSON array, vendor's own wording
     datasheet_url TEXT,
+    product_url   TEXT,   -- the distributor's own product page
     run_id        INTEGER NOT NULL REFERENCES fetch_runs(id),
     UNIQUE (vendor, vendor_pn)
 );
@@ -131,6 +132,9 @@ class Catalogue:
         calls a day. Migrating in place keeps a schema change from spending it.
         """
         have = {r[1] for r in self.conn.execute("PRAGMA table_info(parts)")}
+        if "product_url" not in have:
+            self.conn.execute("ALTER TABLE parts ADD COLUMN product_url TEXT")
+            self.conn.commit()
         if "queried_as" not in have:
             self.conn.execute("ALTER TABLE parts ADD COLUMN queried_as TEXT")
             self.conn.commit()
@@ -172,8 +176,8 @@ class Catalogue:
             INSERT INTO parts (vendor, vendor_pn, mpn, queried_as, manufacturer,
                                description, category,
                                stock, moq, order_multiple, lead_time_days, lifecycle_raw,
-                               status_raw, datasheet_url, run_id)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+                               status_raw, datasheet_url, product_url, run_id)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
             ON CONFLICT (vendor, vendor_pn) DO UPDATE SET
                 mpn=excluded.mpn,
                 -- COALESCE, not overwrite: a later category sweep re-touches a
@@ -188,13 +192,15 @@ class Catalogue:
                 order_multiple=excluded.order_multiple,
                 lead_time_days=excluded.lead_time_days,
                 lifecycle_raw=excluded.lifecycle_raw, status_raw=excluded.status_raw,
-                datasheet_url=excluded.datasheet_url, run_id=excluded.run_id
+                datasheet_url=excluded.datasheet_url,
+                product_url=excluded.product_url, run_id=excluded.run_id
             """,
             (
                 part.vendor, part.vendor_pn, part.mpn, part.queried_as,
                 part.manufacturer, part.description,
                 category, part.stock, part.moq, part.order_multiple, part.lead_time_days,
-                part.lifecycle_raw, _json.dumps(part.status_raw), part.datasheet_url, run_id,
+                part.lifecycle_raw, _json.dumps(part.status_raw), part.datasheet_url,
+                part.product_url, run_id,
             ),
         )
         # Always re-read the id. `cur.lastrowid` is only meaningful for a real
@@ -364,6 +370,23 @@ class Catalogue:
                 """,
                 (mpn, category),
             ).fetchone()
+            # Per-vendor product links, so a proposal can be checked at the
+            # distributor it would actually be ordered from. Keyed by vendor
+            # rather than reduced to one, because the price and stock a reader
+            # wants to verify differ per vendor — which is the whole reason the
+            # pipeline fetches more than one.
+            links = {
+                v: u
+                for v, u in self.conn.execute(
+                    """
+                    SELECT vendor, MIN(product_url) FROM parts
+                    WHERE COALESCE(queried_as, mpn)=? AND category=?
+                      AND product_url IS NOT NULL AND product_url <> ''
+                    GROUP BY vendor
+                    """,
+                    (mpn, category),
+                )
+            }
             # Any vendor's datasheet link will do; MIN is just determinism.
             ds = self.conn.execute(
                 """
@@ -384,6 +407,7 @@ class Catalogue:
                     "lead_time_days": lead,
                     "datasheet_url": ds,
                     "vendors": (vendors or "").split(","),
+                    "product_urls": links,
                     "conflicts": sorted(conflicted),
                     "attrs_raw": {
                         **attrs,

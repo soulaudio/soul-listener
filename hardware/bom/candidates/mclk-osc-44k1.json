@@ -16,6 +16,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suzhou-hangjing-elec-tech-co-ltd/0121M4-22-5792F10DTNLK/27738135"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -43,6 +46,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suzhou-hangjing-elec-tech-co-ltd/0132M4-22-5792F10DTNJK/20144140"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -70,6 +76,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suzhou-hangjing-elec-tech-co-ltd/0132M4-22-5792F20DTNJK/26699654"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -97,6 +106,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suzhou-hangjing-elec-tech-co-ltd/1522H-22-5792J33DTSK/26699423"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -124,6 +136,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suzhou-hangjing-elec-tech-co-ltd/1522H-22-5792KWVDTSK/29820303"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -152,6 +167,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/skyworks-solutions-inc/545CCA22M5792CCG/29731667"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -181,6 +199,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/skyworks-solutions-inc/546CCA000230CCG/29731668"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -210,6 +231,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/skyworks-solutions-inc/570CBC000306DG/8730306"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -239,6 +263,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/7C22500002/5955125"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -267,6 +294,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/7CL-22-5792MBD-T/17129159"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -295,6 +325,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/7CL-22-5792MDD-T/17128978"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -323,6 +356,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/7M-22-5792MAAJ-T/17839576"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -350,6 +386,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/7M-22-5792MAHJ-T/17839697"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -377,6 +416,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/7M-22-5792MEEQ-T/7906283"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -405,6 +447,10 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/7V-22-5792MAAV-T/11587508",
+        "tme": "https://www.tme.eu/en/details/7v-22.5792maav/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "22.5792 MHz",
@@ -434,6 +480,10 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/7V-22-5792MAHV-T/6130670",
+        "tme": "https://www.tme.eu/en/details/7v-22.5792mahv/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "22.5792 MHz",
@@ -462,6 +512,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/7V-22-5792MDHV-T/17839742"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -489,6 +542,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/7X-22-5792MBA-T/17839591"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -517,6 +573,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/7X-22-5792MBB-T/17839370"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -545,6 +604,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/7X-22-5792MBD-T/6553985"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -573,6 +635,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/7X-22-5792MBE-T/17839587"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -601,6 +666,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/7X-22-5792MDB-T/7906421"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -629,6 +697,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/7XL-22-5792MBD-T/17128920"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -657,6 +728,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/7XL-22-5792MDD-T/17129082"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -685,6 +759,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/w\u00fcrth-elektronik/830207659009/13900167"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -713,6 +790,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/8W-22-5792MBA-T/17839743"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -741,6 +821,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/8W-22-5792MDA-T/17839740"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -769,6 +852,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/8W-22-5792MDB-T/17839713"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -797,6 +883,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/8W-22-5792MDE-T/17839881"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -825,6 +914,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/8WL-22-5792MBD-T/17129145"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -853,6 +945,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/8WL-22-5792MDD-T/17129124"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -881,6 +976,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/8Y-22-5792MEEQ-T/17839668"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -908,6 +1006,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/9C-22-5792MAAJ-T/4475361"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.449\" L x 0.189\" W (11.40mm x 4.80mm)",
@@ -935,6 +1036,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/AB308-22-5792MHZ/26473892"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.118\" Dia x 0.315\" L (3.00mm x 8.00mm)",
@@ -961,6 +1065,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ABM10W-22-5792MHZ-7-B1U-T3/7165619"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -988,6 +1095,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ABM10W-22-5792MHZ-8-D1X-T3/7165629"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -1016,6 +1126,10 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ABM10W-22-5792MHZ-8-K1Z-T3/7165633",
+        "tme": "https://www.tme.eu/en/details/abm10w22.5792m-0/"
+      },
       "conflicts": [
         "part_type"
       ],
@@ -1046,6 +1160,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ABM8-22-5792MHZ-D2Y-T/8582016"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -1074,6 +1191,10 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ABM8-22-5792MHZ-R60-N2Y-T/15995945",
+        "tme": "https://www.tme.eu/en/details/abm822.5792mhzr6-0/"
+      },
       "conflicts": [
         "part_type"
       ],
@@ -1104,6 +1225,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ABM8W-22-5792MHZ-6-J1Z-T3/7170602"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -1131,6 +1255,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ASDLJ-E-22-5792MHZ-L-R-T/24387247"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -1160,6 +1287,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ASELJ-E-22-5792MHZ-L-R-T/24387250"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -1191,6 +1321,11 @@
         "digikey",
         "mouser"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ASV-22-5792MHZ-LR-T/15995980",
+        "mouser": "https://cz.mouser.com/en/ProductDetail/ABRACON/ASV-22.5792MHZ-LR-T?qs=fnpEE5GccuOy%2FTECAxvETg%3D%3D",
+        "tme": "https://www.tme.eu/en/details/asv22.5792mhzlrt-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "22.5792 MHz",
@@ -1222,6 +1357,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/cts-frequency-controls/ATS225BSM-1/5228224"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.437\" L x 0.190\" W (11.10mm x 4.83mm)",
@@ -1249,6 +1387,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/cts-frequency-controls/ATS225BSM-1E/5228225"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.437\" L x 0.190\" W (11.10mm x 4.83mm)",
@@ -1276,6 +1417,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/AU-22-5792MDE-T/5873406"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -1301,6 +1445,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/AV-22-5792MAHV-T/7906710"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -1328,6 +1475,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/AV-22-5792MDHV-T/5873350"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -1355,6 +1505,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/AV-22-5792MENQ-T/5873351"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -1382,6 +1535,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/cts-frequency-controls/CB3LV-3C-22M579200/5228516"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -1411,6 +1567,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/cts-frequency-controls/CB3LV-3I-22M579200/5228624"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -1440,6 +1599,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/crystek-corporation/CCHD-575-25-22-5792/5423298"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.295\" L x 0.200\" W (7.50mm x 5.08mm)",
@@ -1468,6 +1630,10 @@
         "digikey",
         "mouser"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/crystek-corporation/CCHD-957-25-22-5792/2742155",
+        "mouser": "https://cz.mouser.com/en/ProductDetail/Crystek-Corporation/CCHD-957-25-22.5792?qs=0ahj2ebvT2%2FMyeJwq3kSsA%3D%3D"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.559\" L x 0.360\" W (14.20mm x 9.14mm)",
@@ -1496,6 +1662,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/citizen-finedevice-co-ltd/CMX-309FAB-22-5792MB/529850"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.547\" L x 0.341\" W (13.90mm x 8.65mm)",
@@ -1524,6 +1693,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/CX3225GB22579D0HEQCC/4453872"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -1551,6 +1723,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/CX3225GB22579D0HEQZ1/2810208"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -1578,6 +1753,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/CX3225GB22579D0HPQCC/4453893"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -1605,6 +1783,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/CX3225GB22579D0HPQZ1/2810218"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -1632,6 +1813,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/CX3225GB22579P0HPQCC/4453917"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -1659,6 +1843,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSA1001DL3-022-5792TVAO/9608108"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -1688,6 +1875,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSA1001DL3-022-5792VAO/9608109"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -1717,6 +1907,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSA1101DA1-022-5792TVAO/12812212"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -1746,6 +1939,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSA1101DA1-022-5792VAO/12812000"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -1775,6 +1971,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSA1101DL1-022-5792TVAO/22610891"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -1804,6 +2003,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSA1101DL1-022-5792VAO/22610683"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -1833,6 +2035,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSA1105DA1-022-5792TVAO/12811619"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -1862,6 +2067,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSA1105DA1-022-5792VAO/12811311"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -1891,6 +2099,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSA6101JL3B-022-5792TVAO/22610928"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -1920,6 +2131,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSA6101JL3B-022-5792VAO/22610931"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -1949,6 +2163,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1001AE5-022-5792/22466843"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -1978,6 +2195,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1001AE5-022-5792T/22207936"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -2007,6 +2227,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1001BE5-022-5792/22468111"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -2036,6 +2259,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1001BE5-022-5792T/22211724"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -2065,6 +2291,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1001BI3-022-5792/24625594"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -2094,6 +2323,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1001BI3-022-5792T/22212209"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -2123,6 +2355,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1001CE2-022-5792/22466672"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -2152,6 +2387,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1001CE2-022-5792T/22211553"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -2181,6 +2419,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1001CI2-022-5792/22468291"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -2210,6 +2451,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1001CI2-022-5792T/22211753"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -2239,6 +2483,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1001CI5-022-5792/22466204"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -2268,6 +2515,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1001CI5-022-5792T/22211091"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -2297,6 +2547,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1001CL2-022-5792/22467228"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -2326,6 +2579,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1001CL2-022-5792T/22212510"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -2355,6 +2611,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1001DI2-022-5792/22467847"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -2384,6 +2643,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1001DI2-022-5792T/22210826"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -2413,6 +2675,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1001DI5-022-5792/22466559"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -2442,6 +2707,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1001DI5-022-5792T/22211596"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -2471,6 +2739,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1101AE5-022-5792/22466471"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -2500,6 +2771,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1101AE5-022-5792T/22210088"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -2529,6 +2803,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1101BE5-022-5792/22466964"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -2558,6 +2835,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1101BE5-022-5792T/22212317"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -2587,6 +2867,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1101BI5-022-5792/22467299"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -2616,6 +2899,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1101BI5-022-5792T/22212975"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -2645,6 +2931,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1101CE1-022-5792/22466779"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -2674,6 +2963,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1101CE1-022-5792T/22212329"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -2703,6 +2995,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1101CE5-022-5792/22466160"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -2732,6 +3027,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1101CE5-022-5792T/22209842"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -2761,6 +3059,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1101DE2-022-5792/22467239"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -2790,6 +3091,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1101DE2-022-5792T/22210580"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -2819,6 +3123,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1121AE5-022-5792/22468537"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -2848,6 +3155,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1121AE5-022-5792T/22210804"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -2877,6 +3187,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1121AI5-022-5792/22467598"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -2906,6 +3219,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1121AI5-022-5792T/22209954"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -2935,6 +3251,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1121AL5-022-5792/22467111"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -2964,6 +3283,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1121AL5-022-5792T/22211526"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -2993,6 +3315,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1121BI2-022-5792/22466198"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -3022,6 +3347,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1121BI2-022-5792T/22210740"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -3051,6 +3379,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1121BI5-022-5792/22468266"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -3080,6 +3411,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1121BI5-022-5792T/22213110"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -3109,6 +3443,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1121DI2-022-5792/22467195"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -3138,6 +3475,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1121DI2-022-5792T/22210160"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -3167,6 +3507,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1201BE3-22M57920/22467270"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -3196,6 +3539,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1201BE3-22M57920T/22210496"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -3225,6 +3571,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC6001JI2A-022-5792/8639184"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -3254,6 +3603,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC6001JI2A-022-5792T/8639052"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -3283,6 +3635,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC6001JI2B-022-5792/24626321"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -3312,6 +3667,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC6001JI2B-022-5792T/22212139"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -3341,6 +3699,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/eaton-electronics-division/E3X225081X08/25655899"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -3368,6 +3729,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ecliptek/EA5070FA16-22-5792M-TR/30322079"
+      },
       "conflicts": [],
       "attrs_raw": {
         "moq": "1000",
@@ -3386,6 +3750,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ecs-inc/ECS-225-792-18-33-JGN-TR/8023254"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -3413,6 +3780,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ecs-inc/ECS-225-792-6-33B2-CGP-TR/29953153"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -3439,6 +3809,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ecs-inc/ECS-2520MVLC-225-792-BN-TR/12746101"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -3468,6 +3841,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ecs-inc/ECS-2520MVLC-225-792-CN-TR/16688146"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -3497,6 +3873,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/FA-238-22-5792MB30V-K/7727035"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -3524,6 +3903,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/FA-238-22-5792MB30V-K0/25599789"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -3551,6 +3933,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/FA-238-22-5792MB30V-K3/7727036"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -3578,6 +3963,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/diodes-incorporated/FD2250003/9765918"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -3605,6 +3993,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/diodes-incorporated/FJ2250002/9766251"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -3632,6 +4023,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/diodes-incorporated/FJ2250007/9766252"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -3659,6 +4053,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/diodes-incorporated/FK2250002/9766370"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -3687,6 +4084,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/diodes-incorporated/FL2250005/9766790"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -3714,6 +4114,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/diodes-incorporated/FL2250013Q/9766791"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -3741,6 +4144,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/fox-electronics/FO7HSCDM22-5792-T2/12159331"
+      },
       "conflicts": [],
       "attrs_raw": {
         "moq": "2000",
@@ -3759,6 +4165,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/diodes-incorporated/FY2250003/9768195"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -3786,6 +4195,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/citizen-finedevice-co-ltd/HC-49-U-S22579200ABIB/5970800"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.453\" L x 0.183\" W (11.50mm x 4.65mm)",
@@ -3812,6 +4224,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC2016K22-5792C10E00/5323294"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -3840,6 +4255,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC2016K22-5792C1GE00/5322514"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -3868,6 +4286,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC2016Z22-5792C14X00/22614388"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -3897,6 +4318,10 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC2016Z22-5792C15XXK/11610119",
+        "tme": "https://www.tme.eu/en/details/kc2016z22.5792c15x/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "22.5792 MHz",
@@ -3926,6 +4351,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC2016Z22-5792C16X00/22613697"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -3954,6 +4382,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC2016Z22-5792C19X00/22613637"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -3982,6 +4413,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC2016Z22-5792C1GX00/22614495"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -4010,6 +4444,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC2016Z22-5792C1GXNH/22613877"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -4038,6 +4475,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC2016Z22-5792C1HX00/22614238"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -4066,6 +4506,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC2016Z22-5792C1HXNH/22615164"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -4094,6 +4537,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC2016Z22-5792C1JX00/22614752"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -4122,6 +4568,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC2016Z22-5792C1JXNH/22613960"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -4152,6 +4601,11 @@
         "digikey",
         "mouser"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC2016Z22-5792C1KX00/11610237",
+        "mouser": "https://cz.mouser.com/en/ProductDetail/KYOCERA-AVX/KC2016Z22.5792C1KX00?qs=vHuUswq2%252Bsyy8b7qGKjAYg%3D%3D",
+        "tme": "https://www.tme.eu/en/details/kc2016z22.5792c1kx/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "22.5792 MHz",
@@ -4181,6 +4635,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC2016Z22-5792C1KXNH/22613676"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -4209,6 +4666,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC2016Z22-5792C1SX00/22614812"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -4237,6 +4697,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC2016Z22-5792C1UX00/22614813"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -4265,6 +4728,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC2016Z22-5792C1WX00/22614010"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -4293,6 +4759,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC2016Z22-5792C1XX00/22614712"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -4321,6 +4790,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC2016Z22-5792C1ZX00/22614449"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -4349,6 +4821,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC2520K22-5792C10E00/5323260"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -4377,6 +4852,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC2520K22-5792C1GE00/5322480"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -4405,6 +4883,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC2520Z22-5792C14X00/22612385"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -4434,6 +4915,10 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC2520Z22-5792C15XXK/11610231",
+        "tme": "https://www.tme.eu/en/details/kc2520z22.5792c15x/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "22.5792 MHz",
@@ -4463,6 +4948,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC2520Z22-5792C16X00/22612865"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -4491,6 +4979,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC2520Z22-5792C19X00/22612844"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -4519,6 +5010,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC2520Z22-5792C1GXNH/22612756"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -4547,6 +5041,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC2520Z22-5792C1HX00/22612966"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -4575,6 +5072,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC2520Z22-5792C1HXNH/22612267"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -4603,6 +5103,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC2520Z22-5792C1JX00/22612096"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -4631,6 +5134,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC2520Z22-5792C1JXNH/22612917"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -4660,6 +5166,10 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC2520Z22-5792C1KX00/11610125",
+        "tme": "https://www.tme.eu/en/details/kc2520z22.5792c1kx/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "22.5792 MHz",
@@ -4689,6 +5199,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC2520Z22-5792C1KXNH/22612101"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -4717,6 +5230,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC2520Z22-5792C1SX00/22612238"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -4745,6 +5261,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC2520Z22-5792C1UX00/22612498"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -4773,6 +5292,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC2520Z22-5792C1WX00/22612168"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -4801,6 +5323,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC2520Z22-5792C1XX00/22612628"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -4829,6 +5354,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC2520Z22-5792C1ZX00/22612523"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -4857,6 +5385,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC3225K22-5792C10E00/5323226"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -4885,6 +5416,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC3225K22-5792C1GE00/5322454"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -4913,6 +5447,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC3225Z22-5792C14X00/22613814"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -4942,6 +5479,10 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC3225Z22-5792C15XXK/11610175",
+        "tme": "https://www.tme.eu/en/details/kc3225z22.5792c15x/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "22.5792 MHz",
@@ -4971,6 +5512,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC3225Z22-5792C16X00/22612669"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -4999,6 +5543,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC3225Z22-5792C19X00/22612963"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -5027,6 +5574,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC3225Z22-5792C1GXNH/22612610"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -5055,6 +5605,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC3225Z22-5792C1HX00/22613453"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -5083,6 +5636,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC3225Z22-5792C1HXNH/22614147"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -5111,6 +5667,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC3225Z22-5792C1JX00/22614871"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -5139,6 +5698,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC3225Z22-5792C1JXNH/22614047"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -5168,6 +5730,10 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC3225Z22-5792C1KX00/11610039",
+        "tme": "https://www.tme.eu/en/details/kc3225z22.5792c1kx/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "22.5792 MHz",
@@ -5197,6 +5763,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC3225Z22-5792C1KXNH/22614298"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -5225,6 +5794,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC3225Z22-5792C1SX00/22614990"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -5253,6 +5825,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC3225Z22-5792C1UX00/22613594"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -5281,6 +5856,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC3225Z22-5792C1WX00/22614881"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -5309,6 +5887,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC3225Z22-5792C1XX00/22614412"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -5337,6 +5918,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC3225Z22-5792C1ZX00/22613513"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -5365,6 +5949,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC5032K22-5792C10E00/5323192"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -5393,6 +5980,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC5032K22-5792C1GE00/5322421"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -5421,6 +6011,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC5032Z22-5792C14X00/22614550"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -5449,6 +6042,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC5032Z22-5792C15XXK/22614171"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -5477,6 +6073,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC5032Z22-5792C16X00/22613248"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -5505,6 +6104,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC5032Z22-5792C19X00/22613251"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -5533,6 +6135,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC5032Z22-5792C1GX00/22614785"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -5561,6 +6166,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC5032Z22-5792C1GXNH/22613765"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -5589,6 +6197,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC5032Z22-5792C1HX00/22612838"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -5617,6 +6228,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC5032Z22-5792C1HXNH/22612683"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -5645,6 +6259,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC5032Z22-5792C1JX00/22205201"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -5673,6 +6290,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC5032Z22-5792C1JXNH/22612719"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -5701,6 +6321,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC5032Z22-5792C1KX00/22615095"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -5729,6 +6352,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC5032Z22-5792C1KXNH/22614152"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -5757,6 +6383,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC5032Z22-5792C1SX00/22613689"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -5785,6 +6414,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC5032Z22-5792C1UX00/22613308"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -5813,6 +6445,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC5032Z22-5792C1WX00/22614624"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -5841,6 +6476,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC5032Z22-5792C1XX00/22613500"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -5869,6 +6507,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC5032Z22-5792C1ZX00/22615161"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -5897,6 +6538,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC7050K22-5792C10E00/5323157"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -5925,6 +6569,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC7050K22-5792C1GE00/5322396"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -5953,6 +6600,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC7050Z22-5792C14X00/22612330"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -5981,6 +6631,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC7050Z22-5792C15XXK/22612355"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -6009,6 +6662,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC7050Z22-5792C16X00/22612785"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -6037,6 +6693,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC7050Z22-5792C19X00/22612354"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -6065,6 +6724,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC7050Z22-5792C1GX00/22612326"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -6093,6 +6755,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC7050Z22-5792C1GXNH/22612279"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -6121,6 +6786,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC7050Z22-5792C1HX00/22612080"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -6149,6 +6817,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC7050Z22-5792C1HXNH/22612465"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -6177,6 +6848,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC7050Z22-5792C1JX00/22612067"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -6205,6 +6879,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC7050Z22-5792C1JXNH/22612246"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -6233,6 +6910,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC7050Z22-5792C1KX00/22612250"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -6261,6 +6941,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC7050Z22-5792C1KXNH/22612449"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -6289,6 +6972,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC7050Z22-5792C1SX00/22613056"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -6317,6 +7003,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC7050Z22-5792C1UX00/22615083"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -6345,6 +7034,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC7050Z22-5792C1WX00/22614530"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -6373,6 +7065,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC7050Z22-5792C1XX00/22613304"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -6401,6 +7096,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC7050Z22-5792C1ZX00/22614196"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -6429,6 +7127,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/iqd-frequency-products/LFSPXO023492/10106837"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -6457,6 +7158,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/iqd-frequency-products/LFSPXO076590/10240420"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -6486,6 +7190,10 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/MC2016Z22-5792C19XSH/11609967",
+        "tme": "https://www.tme.eu/en/details/mc2016z22.5792c19x/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "22.5792 MHz",
@@ -6516,6 +7224,10 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/MC2520Z22-5792C19XSH/11610061",
+        "tme": "https://www.tme.eu/en/details/mc2520z22.5792c19x/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "22.5792 MHz",
@@ -6546,6 +7258,10 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/MC3225Z22-5792C19XSH/11610162",
+        "tme": "https://www.tme.eu/en/details/mc3225z22.5792c19x/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "22.5792 MHz",
@@ -6575,6 +7291,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ndk-nihon-dempa-kogyo-co-ltd/NSC5004A-22-5792M/22209216"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -6604,6 +7323,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ndk-nihon-dempa-kogyo-co-ltd/NSC5021A-22-5792M/22209197"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -6633,6 +7355,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ndk-nihon-dempa-kogyo-co-ltd/NSC5021D-22-5792M/22209301"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -6662,6 +7387,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ndk-nihon-dempa-kogyo-co-ltd/NSC5083D-22-5792M/9172054"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -6691,6 +7419,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/yxc/O92ED8K5EI-112YXC-22-5792M/29712076"
+      },
       "conflicts": [],
       "attrs_raw": {
         "moq": "200",
@@ -6709,6 +7440,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/yxc/O93ED8K5EI-112YXC-22-5792M/29712291"
+      },
       "conflicts": [],
       "attrs_raw": {
         "moq": "200",
@@ -6727,6 +7461,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/yxc/O98ED8K5EI-112YXC-22-5792M/29712891"
+      },
       "conflicts": [],
       "attrs_raw": {
         "moq": "200",
@@ -6745,6 +7482,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/yxc/OG8ED8K5EI-112YXC-22-5792M/29713271"
+      },
       "conflicts": [],
       "attrs_raw": {
         "moq": "200",
@@ -6763,6 +7503,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/yxc/OT2ED8K5JI-111YXC-22-5792M/29713506"
+      },
       "conflicts": [],
       "attrs_raw": {
         "moq": "200",
@@ -6781,6 +7524,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/yxc/OT3ED8K5JI-111YXC-22-5792M/29711930"
+      },
       "conflicts": [],
       "attrs_raw": {
         "moq": "200",
@@ -6799,6 +7545,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/yxc/OT8ED8K5JI-111YXC-22-5792M/29711953"
+      },
       "conflicts": [],
       "attrs_raw": {
         "moq": "200",
@@ -6817,6 +7566,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/taitien/PYETGLJANF-22-579200/6110279"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -6845,6 +7597,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/325g-22.5792maav/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "22.5792MHz",
@@ -6869,6 +7624,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/325g-22.5792mahv/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "22.5792MHz",
@@ -6893,6 +7651,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/325s-22.5792maaq/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "22.5792MHz",
@@ -6917,6 +7678,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/325s-22.5792mahj/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "22.5792MHz",
@@ -6941,6 +7705,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/qst/QTM325-22-5792MBD-T/29206237"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -6969,6 +7736,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/cts-frequency-controls/SA204225F35HAR/12172317"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -6996,6 +7766,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/cts-frequency-controls/SA254225F35HAR/12172223"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -7023,6 +7796,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/cts-frequency-controls/SA324225F35HLR/12172271"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -7050,6 +7826,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/cts-frequency-controls/SA532225F35HLR/12172428"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -7077,6 +7856,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/cts-frequency-controls/SA534225F35HLR/12172219"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -7104,6 +7886,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-210STF-22-5792ML0/4437388"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -7133,6 +7918,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-210STF-22-5792ML3/4437332"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -7162,6 +7950,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-8018CA-22-5792M-TJHPA0/13638850"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -7191,6 +7982,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-8018CA-22-5792M-TJHSA0/13638893"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -7220,6 +8014,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-8018CB-22-5792M-TJHPA0/13642203"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -7249,6 +8046,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-8018CE-22-5792M-TJHPA0/13650528"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -7278,6 +8078,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-8018CE-22-5792M-TJHSA0/13654015"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -7307,6 +8110,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-8018CG-22-5792M-TJHPA0/13637340"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -7336,6 +8142,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-8018CG-22-5792M-TJHSA0/13645913"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -7365,6 +8174,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-8018CG-22-5792M-TJHSA3/13645781"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -7394,6 +8206,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-8018CG-22-5792M-TJHSAB/13646981"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -7423,6 +8238,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-8101CA-22-5792M-TBGPA0/17076524"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -7452,6 +8270,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-8101CA-22-5792M-TBGSA0/17075318"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -7481,6 +8302,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-8101CA-22-5792M-TCHPA0/17080894"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -7510,6 +8334,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-8101CA-22-5792M-TCHSA0/17060742"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -7539,6 +8366,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-8101CB-22-5792M-TBGPA0/17082332"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -7568,6 +8398,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-8101CB-22-5792M-TBGSA0/17061553"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -7597,6 +8430,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-8101CB-22-5792M-TCHPA0/17070720"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -7626,6 +8462,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-8101CB-22-5792M-TCHSA0/17061150"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -7655,6 +8494,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-8101CE-22-5792M-TBGPA0/17110336"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -7684,6 +8526,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-8101CE-22-5792M-TBGSA0/17110880"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -7713,6 +8558,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-8101CE-22-5792M-TCHPA0/17107546"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -7742,6 +8590,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-8101CE-22-5792M-TCHSA0/17112372"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -7771,6 +8622,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-8101CG-22-5792M-TBGPA0/17104617"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -7800,6 +8654,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-8101CG-22-5792M-TBGSA0/17105505"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -7829,6 +8686,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-8101CG-22-5792M-TCHPA0/17106948"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -7858,6 +8718,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-8101CG-22-5792M-TCHSA0/17106499"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -7887,6 +8750,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG5032CAN-22-579200M-TJGA3/5174903"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -7916,6 +8782,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/sitime/SIT2001BC-S1-33E-22-579200/11279085"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.114\" L x 0.063\" W (2.90mm x 1.60mm)",
@@ -7945,6 +8814,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/rochester-electronics-llc/SIT8003AC-28-18S-22-57920Y/15643478"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -7974,6 +8846,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/sitime/SIT8008AC-13-33E-22-579200/11448587"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -8003,6 +8878,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/sitime/SIT8008AC-23-18E-22-579200/11380970"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -8032,6 +8910,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/sitime/SIT8008AI-72-18E-22-579200/10773162"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -8061,6 +8942,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/sitime/SIT8008AI-72-18S-22-579200/10773220"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -8090,6 +8974,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/sitime/SIT8008AI-73-18E-22-579200/10810159"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -8119,6 +9006,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/sitime/SIT8008BC-13-33E-22-579200/11418365"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -8148,6 +9038,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/rochester-electronics-llc/SIT8008BC-21-33E-22-579200E/13487199"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -8177,6 +9070,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/sitime/SIT8008BC-22-18E-22-579200/11345925"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -8206,6 +9102,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/sitime/SIT8008BC-23-18E-22-579200/11359293"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -8235,6 +9134,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/sitime/SIT8008BCA13-33S-22-579200/11444808"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -8264,6 +9166,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/rochester-electronics-llc/SIT8008BI-22-33S-22-579200E/13506910"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -8293,6 +9198,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/sitime/SIT8008BI-23-33S-22-579200/11388146"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -8322,6 +9230,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/sitime/SIT8008BI-72-18E-22-579200/11588207"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -8351,6 +9262,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/sitime/SIT8008BI-72-18S-22-579200/10786437"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -8380,6 +9294,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/sitime/SIT8008BI-73-18E-22-579200/10770694"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -8409,6 +9326,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/sitime/SIT8021AC-J4-18S-22-579200/13545157"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.061\" L x 0.033\" W (1.54mm x 0.84mm)",
@@ -8438,6 +9358,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SUO32C3C481-22-5792M/24366492"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -8467,6 +9390,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX2M22-5792B10F20TNN/25699736"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -8495,6 +9421,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX2M22-5792B20F30TNF/25573898"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -8523,6 +9452,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX2M22-5792B20F30TNN/25699566"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -8551,6 +9483,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX2M22-5792D10F20TNN/25699842"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -8579,6 +9514,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX2M22-5792D20F30TNN/25699676"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -8607,6 +9545,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX2M22-5792M20F30TNN/25572909"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -8635,6 +9576,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX3B22-5792F1010F30/25574053"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -8662,6 +9606,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX3M22-5792A10F20TNN/25700132"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -8690,6 +9637,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX3M22-5792A20F30TNN/25700273"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -8718,6 +9668,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX3M22-5792B10F20TNN/25573811"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -8747,6 +9700,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX3M22-5792B20F30TNF/25573904"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -8776,6 +9732,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX3M22-5792B20F30TNN/25700692"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -8804,6 +9763,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX3M22-5792D10F20TNN/25700843"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -8832,6 +9794,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX3M22-5792D20F30TNN/25700206"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -8860,6 +9825,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX3M22-5792M20F30TNN/25572973"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -8889,6 +9857,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX3V22-5792B10080F20TNNS/26761752"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -8917,6 +9888,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX5M22-5792A10F20TNN/25699342"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -8945,6 +9919,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX5M22-5792A20F30TNN/25699407"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -8973,6 +9950,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX5M22-5792B10F20TNN/25573143"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -9001,6 +9981,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX5M22-5792B20F30TNF/25573878"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -9029,6 +10012,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX5M22-5792B20F30TNN/25699473"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -9057,6 +10043,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX5M22-5792D10F20TNN/25699808"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -9085,6 +10074,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX5M22-5792D20F30TNN/25699499"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -9113,6 +10105,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX5M22-5792M20F30TNN/25572838"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -9141,6 +10136,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX5V22-5792B10080F20TNNS/26761686"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -9169,6 +10167,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX7M22-5792A10F20TNN/25699005"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -9197,6 +10198,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX7M22-5792A20F30TNN/25698641"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -9225,6 +10229,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX7M22-5792B10F20TNN/25573116"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -9253,6 +10260,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX7M22-5792B20F30TNF/25573884"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -9281,6 +10291,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX7M22-5792B20F30TNN/25699259"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -9309,6 +10322,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX7M22-5792D10F20TNN/25698799"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -9337,6 +10353,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX7M22-5792D20F30TNN/25698808"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -9365,6 +10384,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX7V22-5792B10080F20TNNS/26761757"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -9393,6 +10415,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/TA-22-5792MBD-T/5129599"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -9421,6 +10446,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/TB-22-5792MBD-T/5129671"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -9449,6 +10477,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/TC-22-5792MBD-T/4914189"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -9477,6 +10508,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/TC-22-5792MDE-T/3138599"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -9505,6 +10539,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/TD-22-5792MBD-T/5129809"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -9533,6 +10570,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/TD-22-5792MCD-T/3139032"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -9561,6 +10601,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/TSX-3225-22-5792MF18X-C/17123028"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -9588,6 +10631,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/TSX-3225-22-5792MF18X-C0/17124638"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -9615,6 +10661,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/TSX-3225-22-5792MF18X-C3/17124295"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -9642,6 +10691,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/TSX-3225-22-5792MF18X-C6/17122977"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -9669,6 +10721,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/w2k22579200e33zbcn/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "22.5792MHz",
@@ -9693,6 +10748,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/w2k22579200e33zdcn/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "22.5792MHz",
@@ -9717,6 +10775,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/w2k22579200e33zkcn/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "22.5792MHz",
@@ -9741,6 +10802,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/w3k22579200g33zdcn/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "22.5792MHz",
@@ -9765,6 +10829,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/w3m22579200d18fd1n/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "22.5792MHz",
@@ -9788,6 +10855,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/w3m22579200f20fc16/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "22.5792MHz",
@@ -9811,6 +10881,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/connor-winfield/XK372-022-5792M/7927891"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -9839,6 +10912,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/sitime-tpd/XLH326022-579200X/18160686"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -9867,6 +10943,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/sitime-tpd/XLH335022-579200I/12755992"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -9895,6 +10974,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/sitime-tpd/XLH535022-579200I/12755416"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -9923,6 +11005,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/sitime-tpd/XLH536022-579200I/12755181"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -9951,6 +11036,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/sitime-tpd/XLH536022-579200X/2155257"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.203\" L x 0.132\" W (5.15mm x 3.35mm)",
@@ -9979,6 +11067,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/sitime-tpd/XLH735022-579200I/12755138"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -10007,6 +11098,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/sitime-tpd/XLH735022-579200X/2156159"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.295\" L x 0.205\" W (7.50mm x 5.20mm)",
@@ -10035,6 +11129,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/sitime-tpd/XLH736022-579200I/3189602"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.295\" L x 0.205\" W (7.50mm x 5.20mm)",
@@ -10063,6 +11160,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/sitime-tpd/XLH736022-579200X/2156634"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.295\" L x 0.205\" W (7.50mm x 5.20mm)",
@@ -10091,6 +11191,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/sitime-tpd/XLH738022-579200X/12755499"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -10119,6 +11222,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/sitime-tpd/XLH73V022-579200I/3189625"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.295\" L x 0.205\" W (7.50mm x 5.20mm)",
@@ -10146,6 +11252,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/sitime-tpd/XLH73V022-579200X/2154084"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.295\" L x 0.205\" W (7.50mm x 5.20mm)",
@@ -10173,6 +11282,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/sitime-tpd/XLL735022-579200X/24557327"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -10201,6 +11313,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/sitime-tpd/XLL736022-579200X/12753472"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -10229,6 +11344,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/sitime-tpd/XLM335022-579200I/12754462"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -10257,6 +11375,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/sitime-tpd/XUH538022-579200X/12753586"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -10285,6 +11406,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/sitime-tpd/XUH736022-579200X/12752660"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -10313,6 +11437,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/sitime-tpd/XUH738022-579200X/12753417"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -10341,6 +11468,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/sitime-tpd/XUP535022-579200X/12754108"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",

@@ -35,6 +35,12 @@ pub struct Raw {
     pub datasheet_url: Option<String>,
     pub vendors: Vec<String>,
     pub attrs_raw: Vec<(String, String)>,
+    /// Distributor product pages, keyed by vendor.
+    ///
+    /// Per vendor rather than reduced to one, because the price and stock a
+    /// reader wants to verify differ per vendor — which is the reason the
+    /// pipeline fetches more than one in the first place.
+    pub product_urls: Vec<(String, String)>,
     /// Attributes this part's vendors disagree about, after canonicalisation.
     ///
     /// The export still has to pick one value and picks the
@@ -74,6 +80,14 @@ pub fn load(doc: &str, category: &str) -> Vec<Raw> {
             moq: p["moq"].as_u64().map(|x| x as u32),
             lead_time_days: p["lead_time_days"].as_u64().map(|x| x as u32),
             datasheet_url: p["datasheet_url"].as_str().map(str::to_string),
+            product_urls: p["product_urls"]
+                .as_object()
+                .map(|o| {
+                    o.iter()
+                        .filter_map(|(k, v)| v.as_str().map(|u| (k.clone(), u.to_string())))
+                        .collect()
+                })
+                .unwrap_or_default(),
             conflicts: p["conflicts"]
                 .as_array()
                 .map(|a| {
@@ -171,5 +185,99 @@ pub fn part<'a>(raw: &'a Raw, attrs: &'a [(&'static str, AttrValue<'a>)]) -> Cat
         unit_price_cents: raw.unit_price_cents,
         moq: raw.moq,
         lead_time_days: raw.lead_time_days,
+    }
+}
+
+/// Comparison key for a MANUFACTURER name, for counting distinct makers.
+///
+/// # Why this is needed
+///
+/// `user_swappable_requirements_span_two_manufacturers` asks whether two
+/// companies make a qualifying part. The first run reported two for the battery
+/// — `"AKYGA"` and `"AKYGA BATTERY"` — which is one company written down twice,
+/// and would have deleted an accepted exposure on a spelling.
+///
+/// # Deliberately conservative
+///
+/// The failure modes are not symmetric. Treating one maker as two **weakens** a
+/// gate and does it silently; treating two makers as one only makes the gate
+/// stricter than reality, which fails loudly and gets looked at. So this
+/// normalises only what is unambiguous:
+///
+/// 1. Case and punctuation, which vendors disagree about freely.
+/// 2. A trailing corporate form or product-line word from a NAMED list. Not a
+///    general "strip the last word" rule, which would merge `MOLEX` with a
+///    hypothetical `MOLEX SOMETHINGELSE` that was genuinely separate.
+///
+/// A prefix rule is deliberately NOT applied. `TE` (TE Connectivity) is a prefix
+/// of `TEXAS INSTRUMENTS`, and those are emphatically different companies — so
+/// prefix matching would merge two real manufacturers and quietly satisfy a gate
+/// that exists to catch exactly that.
+#[must_use]
+pub fn maker_key(name: &str) -> String {
+    /// Trailing words that describe a corporate form or a product line rather
+    /// than identifying a different company. Each one is here because it was
+    /// observed in real vendor data.
+    const TRAILING: &[&str] = &[
+        "BATTERY", // TME: 'AKYGA BATTERY' vs Digi-Key: 'AKYGA'
+        "INC",
+        "INC.",
+        "CORP",
+        "CORPORATION",
+        "CO",
+        "LTD",
+        "LIMITED",
+        "GMBH",
+        "AG",
+        "SA",
+        "BV",
+        "LLC",
+        "TECHNOLOGY",
+        "TECHNOLOGIES",
+        "ELECTRONICS",
+        "ELECTRONIC",
+        "SEMICONDUCTOR",
+        "SEMICONDUCTORS",
+    ];
+
+    let upper = name.trim().to_uppercase();
+    // Vendors append acquisition notes: 'Same Sky (Formerly CUI Devices)'.
+    // Everything from the first parenthesis is dropped — it names the company's
+    // history, not the company.
+    let upper = upper.split('(').next().unwrap_or(&upper).trim().to_string();
+    let mut words: Vec<&str> = upper
+        .split(|c: char| !c.is_ascii_alphanumeric())
+        .filter(|w| !w.is_empty())
+        .collect();
+    while words.len() > 1 && TRAILING.contains(words.last().unwrap()) {
+        words.pop();
+    }
+    words.join("")
+}
+
+#[cfg(test)]
+mod tests {
+    use super::maker_key;
+
+    #[test]
+    fn one_company_spelled_two_ways_is_one_maker() {
+        // The live case: this pair was reported as two manufacturers and would
+        // have deleted an accepted single-manufacturer exposure.
+        assert_eq!(maker_key("AKYGA"), maker_key("AKYGA BATTERY"));
+        assert_eq!(maker_key("Cirrus Logic"), maker_key("Cirrus Logic Inc."));
+        assert_eq!(
+            maker_key("Same Sky (Formerly CUI Devices)"),
+            maker_key("Same Sky")
+        );
+    }
+
+    #[test]
+    fn genuinely_different_makers_stay_different() {
+        // The reason there is no prefix rule: TE is a prefix of TEXAS.
+        assert_ne!(maker_key("TE Connectivity"), maker_key("Texas Instruments"));
+        assert_ne!(maker_key("Molex"), maker_key("Amphenol"));
+        assert_ne!(maker_key("AKYGA"), maker_key("Jauch Quartz"));
+        // A trailing word is only stripped when something identifying remains.
+        assert_eq!(maker_key("Battery"), "BATTERY");
     }
 }

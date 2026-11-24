@@ -32,6 +32,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
+from ..throttle import Throttle
 from .base import Adapter, PriceBreak, VendorPart
 
 def _absolute(url: str | None) -> str | None:
@@ -152,6 +153,22 @@ class DigikeyAdapter(Adapter):
         "Voltage - Supply (Vcc/Vdd)": "supply_mv",
         "RAM Size": "sram_bytes",
         "Program Memory Size": "flash_bytes",
+        # --- Card connectors --------------------------------------------------
+        #
+        # Verified against 25 real microSD sockets, where `Card Type` appears on
+        # 25 of 25 and the rest on 23-24. `Card Type` is the microSD-vs-full-SD
+        # discriminator and the only field that answers the requirement at all.
+        "Card Type": "card_type",
+        "Insertion, Removal Method": "insertion_removal",
+        # Carries 'Switch' for a socket with a card-detect contact, which is what
+        # lets firmware notice a card arriving rather than polling for it.
+        "Features": "connector_features",
+        # Mapped but NOT constrained — see MICROSD_CONSTRAINTS. Digi-Key states
+        # it as '0.071" (1.80mm)', dual-unit, which is exactly the kind of string
+        # that needs `parametric::derive` to be taught a rule before a constraint
+        # can safely rest on it.
+        "Height Above Board": "height_mm",
+        "Number of Positions": "pin_count",
         # --- Battery ----------------------------------------------------------
         #
         # Mapped hopefully rather than observed: Digi-Key returns ZERO parametric
@@ -165,7 +182,8 @@ class DigikeyAdapter(Adapter):
     }
 
     def __init__(self, client_id: str, client_secret: str,
-                 host: str = "api.digikey.com", site: str = "NL", currency: str = "EUR"):
+                 host: str = "api.digikey.com", site: str = "NL", currency: str = "EUR",
+                 spent_today: int = 0):
         self._id = client_id
         self._secret = client_secret
         self.host = host
@@ -173,7 +191,15 @@ class DigikeyAdapter(Adapter):
         self.currency = currency
         self._bearer: str | None = None
         self._expires_at = 0.0
-        self.calls = 0
+        # Paced and budgeted through the shared throttle, like Mouser.
+        #
+        # This was missing and it cost a run: `throttle.py` was written for
+        # Mouser's 30/minute cap and only Mouser was wired to it, so Digi-Key
+        # made unpaced calls with no daily accounting and a sweep hit HTTP 429
+        # mid-run. Seven sweeps then failed at offset 0, correctly refusing to
+        # report a partial category — but the whole point of having a limiter was
+        # not to get there.
+        self.throttle = Throttle(self.name, spent_today=spent_today)
 
     # --- Adapter surface ------------------------------------------------
 
@@ -310,7 +336,14 @@ class DigikeyAdapter(Adapter):
                 # malformed request only spends quota), so claiming "after 4
                 # retries" for a 400 sent me looking for a flaky endpoint when
                 # the request shape was simply wrong.
-                tried = f"after {SEARCH_RETRIES} retries" if code >= 500 else "not retried (4xx)"
+                tried = (
+                    f"after {SEARCH_RETRIES} retries"
+                    if code >= 500
+                    else "rate limited — retried with Retry-After backoff and still refused; "
+                    "this is usually the DAILY cap, which no backoff can wait out"
+                    if code == 429
+                    else "not retried (4xx)"
+                )
                 raise RuntimeError(
                     f"Digi-Key keyword search failed at offset {offset}: HTTP "
                     f"{code} {tried}: "
@@ -426,6 +459,7 @@ class DigikeyAdapter(Adapter):
             # (//media.digikey.com/...) exactly as TME does, and a URL nobody can
             # open is not a datasheet link. Caught by the slice gate.
             datasheet_url=_absolute(p.get("DatasheetUrl")),
+            product_url=_absolute(p.get("ProductUrl")),
         )
 
     def _authenticate(self) -> None:
@@ -448,7 +482,7 @@ class DigikeyAdapter(Adapter):
             d = json.loads(r.read())
         self._bearer = d["access_token"]
         self._expires_at = time.monotonic() + float(d.get("expires_in", 600))
-        self.calls += 1
+        self.throttle.calls += 1
 
     def _headers(self) -> dict[str, str]:
         import time
@@ -466,25 +500,59 @@ class DigikeyAdapter(Adapter):
             "Accept": "application/json",
         }
 
-    def _get(self, path: str) -> dict:
-        req = urllib.request.Request(f"https://{self.host}{path}", headers=self._headers())
-        self.calls += 1
-        try:
-            with urllib.request.urlopen(req, timeout=45) as r:
-                return json.loads(r.read())
-        except urllib.error.HTTPError as e:
-            # A 404 for a part Digi-Key does not carry is an ANSWER.
-            return {"_http_error": e.code, "_detail": e.read().decode(errors="replace")[:300]}
+    @property
+    def calls(self) -> int:
+        """Calls made, read from the throttle so budget and log agree."""
+        return self.throttle.calls
 
-    def _post(self, path: str, body: dict) -> dict:
-        headers = {**self._headers(), "Content-Type": "application/json"}
-        req = urllib.request.Request(
-            f"https://{self.host}{path}", data=json.dumps(body).encode(), headers=headers,
-            method="POST",
-        )
-        self.calls += 1
-        try:
-            with urllib.request.urlopen(req, timeout=60) as r:
-                return json.loads(r.read())
-        except urllib.error.HTTPError as e:
-            return {"_http_error": e.code, "_detail": e.read().decode(errors="replace")[:300]}
+    def _retry_429(self, e) -> float | None:
+        """Backoff for a rate-limited call, or None if it must not be retried.
+
+        **429 is retryable and was not being retried.** The search path only
+        retried `>= 500`, so a rate-limited sweep died at offset 0 and the error
+        message even called it "not retried (4xx)" — true, and the wrong
+        behaviour. Mouser's adapter had honoured `Retry-After` from the start;
+        this is the same rule.
+        """
+        if e.code != 429:
+            return None
+        return self.throttle.backoff(0, e.headers.get("Retry-After"))
+
+    def _get(self, path: str, attempts: int = 3) -> dict:
+        for attempt in range(attempts):
+            self.throttle.acquire()
+            req = urllib.request.Request(f"https://{self.host}{path}", headers=self._headers())
+            try:
+                with urllib.request.urlopen(req, timeout=45) as r:
+                    self.throttle.note_headers(r.headers)
+                    return json.loads(r.read())
+            except urllib.error.HTTPError as e:
+                wait = self._retry_429(e)
+                if wait is not None and attempt + 1 < attempts:
+                    time.sleep(wait)
+                    continue
+                # A 404 for a part Digi-Key does not carry is an ANSWER.
+                return {"_http_error": e.code,
+                        "_detail": e.read().decode(errors="replace")[:300]}
+        return {"_http_error": 429, "_detail": "rate limited after retries"}
+
+    def _post(self, path: str, body: dict, attempts: int = 3) -> dict:
+        for attempt in range(attempts):
+            self.throttle.acquire()
+            headers = {**self._headers(), "Content-Type": "application/json"}
+            req = urllib.request.Request(
+                f"https://{self.host}{path}", data=json.dumps(body).encode(), headers=headers,
+                method="POST",
+            )
+            try:
+                with urllib.request.urlopen(req, timeout=60) as r:
+                    self.throttle.note_headers(r.headers)
+                    return json.loads(r.read())
+            except urllib.error.HTTPError as e:
+                wait = self._retry_429(e)
+                if wait is not None and attempt + 1 < attempts:
+                    time.sleep(wait)
+                    continue
+                return {"_http_error": e.code,
+                        "_detail": e.read().decode(errors="replace")[:300]}
+        return {"_http_error": 429, "_detail": "rate limited after retries"}

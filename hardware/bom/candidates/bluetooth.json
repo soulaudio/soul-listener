@@ -16,6 +16,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "mounting": "Snap-In",
@@ -36,6 +37,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -56,6 +58,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "mounting": "Module Socket",
@@ -76,6 +79,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.36GHz ~ 2.5GHz",
@@ -99,6 +103,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.36GHz ~ 2.5GHz",
@@ -122,6 +127,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -141,6 +147,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "mounting": "Panel Mount",
@@ -161,6 +168,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -183,6 +191,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "mounting": "Adhesive",
@@ -203,6 +212,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "mounting": "Adhesive",
@@ -223,6 +233,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402GHz ~ 2.48GHz",
@@ -246,6 +257,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402GHz ~ 2.48GHz",
@@ -269,6 +281,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -292,6 +305,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -315,6 +329,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -338,6 +353,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -361,6 +377,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -384,6 +401,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402GHz ~ 2.48GHz",
@@ -407,6 +425,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402GHz ~ 2.48GHz",
@@ -430,6 +449,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402GHz ~ 2.48GHz",
@@ -453,6 +473,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402GHz ~ 2.48GHz",
@@ -476,6 +497,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402GHz ~ 2.48GHz",
@@ -499,6 +521,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -522,6 +545,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.412GHz ~ 2.484GHz, 5.15GHz ~ 5.825GHz",
@@ -545,6 +569,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -568,6 +593,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.412GHz ~ 2.484GHz, 5.15GHz ~ 5.825GHz",
@@ -591,6 +617,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -614,6 +641,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.412GHz ~ 2.484GHz, 5.15GHz ~ 5.825GHz",
@@ -637,6 +665,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -660,6 +689,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -683,6 +713,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -706,6 +737,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -729,6 +761,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -752,6 +785,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -772,6 +806,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -795,6 +830,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -818,6 +854,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -841,6 +878,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.41GHz ~ 7.13GHz",
@@ -864,6 +902,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -887,6 +926,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -910,6 +950,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -933,6 +974,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -956,6 +998,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -979,6 +1022,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -1002,6 +1046,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -1025,6 +1070,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -1048,6 +1094,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -1071,6 +1118,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -1094,6 +1142,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -1117,6 +1166,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -1140,6 +1190,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -1163,6 +1214,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -1186,6 +1238,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -1209,6 +1262,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -1232,6 +1286,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz, 6GHz",
@@ -1255,6 +1310,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz, 6GHz",
@@ -1278,6 +1334,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz, 6GHz",
@@ -1301,6 +1358,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz, 6GHz",
@@ -1324,6 +1382,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz, 6GHz",
@@ -1347,6 +1406,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz, 6GHz",
@@ -1370,6 +1430,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -1391,6 +1452,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -1412,6 +1474,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -1435,6 +1498,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -1458,6 +1522,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -1481,6 +1546,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -1504,6 +1570,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -1527,6 +1594,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -1550,6 +1618,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -1573,6 +1642,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz, 6GHz",
@@ -1596,6 +1666,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz, 6GHz",
@@ -1619,6 +1690,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz, 6GHz",
@@ -1642,6 +1714,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz, 6GHz",
@@ -1665,6 +1738,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/abbtmnvcmdcs42-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -1687,31 +1763,12 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "ARM\u00ae Cortex\u00ae-M0+",
         "mounting": "Fixed",
         "part_type": "MCU 32-Bit",
-        "moq": "1",
-        "order_multiple": "1"
-      }
-    },
-    {
-      "mpn": "ABX00063",
-      "manufacturer": "Arduino",
-      "eu_sources": 1,
-      "eu_stock": 846,
-      "unit_price_cents": 6178,
-      "moq": 1,
-      "lead_time_days": 70,
-      "datasheet_url": "https://docs.arduino.cc/resources/datasheets/ABX00063-datasheet.pdf",
-      "vendors": [
-        "digikey"
-      ],
-      "conflicts": [],
-      "attrs_raw": {
-        "frequency_hz": "2.4GHz",
-        "part_type": "Transceiver; 802.11 b/g/n (Wi-Fi, WiFi, WLAN), Bluetooth\u00ae 5.x (BLE)",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -1728,6 +1785,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -1748,6 +1806,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/an54l15q/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M33",
@@ -1769,6 +1830,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/an54l15q-tr/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M33",
@@ -1790,6 +1854,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/an54l15q-p/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M33",
@@ -1811,6 +1878,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/an54l15q-p-tr/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M33",
@@ -1832,6 +1902,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/an54l15q-u/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M33",
@@ -1853,6 +1926,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/an54l15q-u-tr/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M33",
@@ -1874,6 +1950,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/anna-b112-00b/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -1900,6 +1979,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/anna-b112-02b/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -1927,6 +2009,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -1950,6 +2033,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402GHz ~ 2.48GHz",
@@ -1972,6 +2056,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/atavrble-iot/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "MICROCHIP TECHNOLOGY",
@@ -1991,6 +2078,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/w25h18-mr210pb1954/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.412...2.427GHz",
@@ -2014,6 +2104,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/mw25h18mr210pb1961/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -2037,6 +2130,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/wilc1000-mr110pb/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.412...2.427GHz",
@@ -2060,6 +2156,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/atwilc1000mr110pbt/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -2083,6 +2182,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/wilc1000-mr110ub/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.412...2.427GHz",
@@ -2106,6 +2208,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/atwilc1000b-mu-t/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -2130,6 +2235,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/atwilc1000bmut042/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -2154,6 +2262,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/atwilc1000b-mu-y/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -2178,6 +2289,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/atwilc1000bmuy042/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -2203,6 +2317,9 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/wilc3000-mr110ca/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.412...2.427GHz",
@@ -2227,6 +2344,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/atwilc3000-mr110ua/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -2250,6 +2370,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/atwilc3000a-mu-t/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -2273,6 +2396,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/atwilc3000amut042/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -2297,6 +2423,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/atwilc3000a-mu-y/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -2320,6 +2449,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/atwilc3000amuy042/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -2344,6 +2476,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/c1500mr210pb1952/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -2367,6 +2502,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/c1500mr210pb1952t/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -2390,6 +2528,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/c1500mr210pb1954/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -2413,6 +2554,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/winc1500-mr210pb61/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.412...2.427GHz",
@@ -2436,6 +2580,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/winc1500-mr210pb76/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.412...2.427GHz",
@@ -2459,6 +2606,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/c1500mr210pb1977/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -2482,6 +2632,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/c1500mr210ub1954/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -2505,6 +2658,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/winc1500-mr210ub61/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.412...2.427GHz",
@@ -2528,6 +2684,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/winc1500-mr210ub76/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.412...2.427GHz",
@@ -2551,6 +2710,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/c1500mr210ub1977/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -2574,6 +2736,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/atwinc1500b-mu-t/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -2598,6 +2763,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/atwinc1500bmut042/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -2622,6 +2790,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/atwinc1500b-mu-y/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -2646,6 +2817,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/atwinc1500bmuy042/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -2670,6 +2844,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/winc1510-mr210pb61/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.412...2.427GHz",
@@ -2693,6 +2870,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/winc1510-mr210pb76/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.412...2.427GHz",
@@ -2716,6 +2896,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/winc1510-mr210ub61/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.412...2.427GHz",
@@ -2739,6 +2922,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/winc1510-mr210ub76/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.412...2.427GHz",
@@ -2762,6 +2948,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/atwinc1510b-mu-t/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -2785,6 +2974,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/atwinc1510bmut042/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -2809,6 +3001,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/atwinc1510b-mu-y/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -2832,6 +3027,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/atwinc1510bmuy042/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -2856,6 +3054,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -2880,6 +3079,9 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/winc3400mr210ca143/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -2905,6 +3107,9 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/c3400mr210ca143t/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -2930,6 +3135,9 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/winc3400mr210ca144/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -2954,6 +3162,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/c3400mr210ca144t/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -2978,6 +3189,9 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/winc3400mr210ca147/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.412...2.472GHz",
@@ -3002,6 +3216,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/c3400mr210ca147t/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.412...2.472GHz",
@@ -3026,6 +3243,9 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/winc3400mr210ua143/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -3051,6 +3271,9 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/c3400mr210ua143t/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -3076,6 +3299,9 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/winc3400mr210ua144/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -3100,6 +3326,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/c3400mr210ua144t/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -3123,6 +3352,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/winc3400mr210ua147/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -3145,6 +3377,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/c3400mr210ua147t/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -3167,6 +3402,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/winc3400mr210ua148/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "MICROCHIP TECHNOLOGY",
@@ -3188,6 +3426,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/wnc3400mr210ua148t/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "MICROCHIP TECHNOLOGY",
@@ -3209,6 +3450,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/atwinc3400a-mu-t/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -3232,6 +3476,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/atwinc3400amut042/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "MICROCHIP TECHNOLOGY",
@@ -3253,6 +3500,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/atwinc3400amuy042/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "MICROCHIP TECHNOLOGY",
@@ -3274,6 +3524,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -3297,6 +3548,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -3320,6 +3572,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -3343,6 +3596,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -3366,6 +3620,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -3389,6 +3644,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -3412,6 +3668,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -3435,6 +3692,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -3458,6 +3716,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -3481,6 +3740,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -3504,6 +3764,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -3525,6 +3786,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -3548,6 +3810,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -3571,6 +3834,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -3594,6 +3858,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -3617,6 +3882,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -3640,6 +3906,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -3663,6 +3930,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz ~ 2.4835GHz",
@@ -3686,6 +3954,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz ~ 2.4835GHz",
@@ -3709,6 +3978,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz ~ 2.4835GHz",
@@ -3732,6 +4002,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz ~ 2.4835GHz",
@@ -3755,6 +4026,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz ~ 2.4835GHz",
@@ -3778,6 +4050,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz ~ 2.4835GHz",
@@ -3801,6 +4074,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz ~ 2.4835GHz",
@@ -3824,6 +4098,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz ~ 2.4835GHz",
@@ -3847,6 +4122,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz ~ 2.4835GHz",
@@ -3870,6 +4146,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -3893,6 +4170,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -3916,6 +4194,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -3939,6 +4218,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -3962,6 +4242,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -3985,6 +4266,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -4008,6 +4290,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -4031,6 +4314,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/bluenrg-132/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -4056,6 +4342,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/bluenrg232-stm-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "STMicroelectronics",
@@ -4077,6 +4366,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/bluenrg345ac-stm-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -4100,6 +4392,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/bluenrg355mc-stm-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -4124,6 +4419,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/bluenrgm0a-stm-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz ~ 2.4835GHz",
@@ -4148,6 +4446,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz ~ 2.4835GHz",
@@ -4171,6 +4470,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz ~ 2.4835GHz",
@@ -4194,6 +4494,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/bluenrg-msqtr/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -4219,6 +4522,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -4242,6 +4546,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -4265,6 +4570,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/bm20spks1nbc-0001a/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402...2.48GHz",
@@ -4288,6 +4596,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/bm23spks1nb9-b2aa/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402...2.48GHz",
@@ -4311,6 +4622,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -4334,6 +4646,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/bm62spks1mc2-01aa/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402...2.48GHz",
@@ -4358,6 +4673,9 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/bm64spks1mc10003aa/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402GHz ~ 2.48GHz",
@@ -4382,6 +4700,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/bm64spks1mc100m2aa/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402...2.48GHz",
@@ -4404,6 +4725,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/bm64spks1mc2-01aa/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402...2.48GHz",
@@ -4427,6 +4751,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402GHz ~ 2.48GHz",
@@ -4450,6 +4775,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/bm64spks1mc20003aa/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402...2.48GHz",
@@ -4472,6 +4800,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402GHz ~ 2.48GHz",
@@ -4495,6 +4824,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/bm70ble01fc20b05ba/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "MICROCHIP TECHNOLOGY",
@@ -4517,6 +4849,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -4540,6 +4873,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -4564,6 +4898,9 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/bm70bles1fc20b05ba/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "MICROCHIP TECHNOLOGY",
@@ -4588,6 +4925,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -4611,6 +4949,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/bm71ble01fc20b05ba/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "MICROCHIP TECHNOLOGY",
@@ -4634,6 +4975,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/bm71bles1fc20b02aa/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402...2.48GHz",
@@ -4658,6 +5002,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -4681,6 +5026,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/bm71bles1fc20b05ba/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "MICROCHIP TECHNOLOGY",
@@ -4703,6 +5051,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/bm78spp05mc20002aa/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -4727,6 +5078,9 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/bm78spp05mc2-004aa/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402...2.48GHz",
@@ -4751,6 +5105,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/bm78spp05mc2-006aa/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402...2.48GHz",
@@ -4774,6 +5131,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/bm78spp05mc20b06aa/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402...2.48GHz",
@@ -4798,6 +5158,9 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/bm78spp05nc20002aa/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -4823,6 +5186,9 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/bm78spps5mc2-0002a/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402...2.48GHz",
@@ -4848,6 +5214,9 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/bm78spps5mc2-004aa/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402...2.48GHz",
@@ -4872,6 +5241,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/bm78spps5mc2-006aa/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402...2.48GHz",
@@ -4895,6 +5267,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/bm78spps5mc20b06aa/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402...2.48GHz",
@@ -4918,6 +5293,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/bm78spps5nc2-0002a/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402...2.48GHz",
@@ -4941,6 +5319,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -4964,6 +5343,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -4987,6 +5367,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -5010,6 +5391,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -5033,6 +5415,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -5056,6 +5439,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz ~ 2.48GHz",
@@ -5079,6 +5463,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/bm83sm1-00ab/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.48GHz",
@@ -5103,6 +5490,9 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/bm83sm1-00tb/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -5127,6 +5517,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -5150,6 +5541,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -5173,6 +5565,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.3GHz ~ 2.5GHz",
@@ -5196,6 +5589,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.36GHz ~ 2.5GHz",
@@ -5219,6 +5613,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -5241,6 +5636,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -5264,6 +5660,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -5287,6 +5684,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.36GHz ~ 2.5GHz",
@@ -5310,6 +5708,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.36GHz ~ 2.5GHz",
@@ -5333,6 +5732,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -5356,6 +5756,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -5379,6 +5780,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -5402,6 +5804,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -5425,6 +5828,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -5448,6 +5852,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -5471,6 +5876,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -5494,6 +5900,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -5517,6 +5924,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -5540,6 +5948,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -5563,6 +5972,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -5586,6 +5996,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -5609,6 +6020,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -5632,6 +6044,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -5655,6 +6068,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -5678,6 +6092,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -5701,6 +6116,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -5724,6 +6140,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -5747,6 +6164,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "mounting": "SMD",
@@ -5769,6 +6187,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "mounting": "SMD",
@@ -5791,6 +6210,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -5814,6 +6234,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -5837,6 +6258,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402GHz ~ 2.48GHz",
@@ -5860,6 +6282,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402GHz ~ 2.48GHz",
@@ -5883,6 +6306,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402GHz ~ 2.48GHz",
@@ -5906,6 +6330,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402GHz ~ 2.48GHz",
@@ -5929,6 +6354,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402GHz ~ 2.48GHz",
@@ -5952,6 +6378,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/btm-112/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "RAYSON",
@@ -5974,6 +6403,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/btm-162/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "RAYSON",
@@ -5996,6 +6428,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/btm-182/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "RAYSON",
@@ -6018,6 +6453,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/btm-630/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "RAYSON",
@@ -6038,6 +6476,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/btm-238/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "RAYSON",
@@ -6060,6 +6501,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.412GHz ~ 2.484GHz, 4.9GHz ~ 5.85GHz",
@@ -6082,6 +6524,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "528MHz",
@@ -6105,6 +6548,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "528MHz",
@@ -6128,6 +6572,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "800MHz",
@@ -6150,6 +6595,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -6173,6 +6619,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -6196,6 +6643,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.36GHz ~ 2.5GHz",
@@ -6219,6 +6667,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -6242,6 +6691,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -6265,6 +6715,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/clrc66303hny-nxp-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "NXP",
@@ -6286,6 +6739,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "mounting": "SMD",
@@ -6307,6 +6761,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "mounting": "SMD",
@@ -6328,6 +6783,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/cmwc1zzabr10-mur-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "MURATA",
@@ -6350,6 +6808,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402GHz ~ 2.48GHz",
@@ -6373,6 +6832,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/cyble-212020-01/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -6395,6 +6857,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz ~ 2.5GHz",
@@ -6418,6 +6881,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/cyble-222014-01/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -6440,6 +6906,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/cyble-333073-02/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "INFINEON TECHNOLOGIES",
@@ -6460,6 +6929,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/cyble-333074-02/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "INFINEON TECHNOLOGIES",
@@ -6480,6 +6952,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz ~ 2.5GHz",
@@ -6503,6 +6976,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/cybt-273063-02/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "INFINEON TECHNOLOGIES",
@@ -6523,6 +6999,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402GHz ~ 2.48GHz",
@@ -6546,6 +7023,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402GHz ~ 2.48GHz",
@@ -6570,6 +7048,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/cybt-343026-01/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402GHz ~ 2.48GHz",
@@ -6594,6 +7075,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402GHz ~ 2.48GHz",
@@ -6618,6 +7100,9 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/cybt-413061-02/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "INFINEON TECHNOLOGIES",
@@ -6643,6 +7128,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/cybt-423054-02/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "INFINEON TECHNOLOGIES",
@@ -6663,6 +7151,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/cybt-423060-02/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "INFINEON TECHNOLOGIES",
@@ -6683,6 +7174,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/cybt-483062-02/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "INFINEON TECHNOLOGIES",
@@ -6703,6 +7197,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/cyw20706ua2kffb4g/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "INFINEON TECHNOLOGIES",
@@ -6723,6 +7220,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/cyw20721b2kwb9gt/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "INFINEON TECHNOLOGIES",
@@ -6743,6 +7243,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/cyw20730a2kml2gt/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "INFINEON TECHNOLOGIES",
@@ -6763,6 +7266,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/cyw20736a1kml2g/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "INFINEON TECHNOLOGIES",
@@ -6783,6 +7289,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/cyw20736a1kwbgt/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "INFINEON TECHNOLOGIES",
@@ -6803,6 +7312,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/cyw20820a1kfbgt/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "INFINEON TECHNOLOGIES",
@@ -6823,6 +7335,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "mounting": "SMD",
@@ -6845,6 +7358,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/cyw20829b0lkmlxq-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M33",
@@ -6866,6 +7382,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -6889,6 +7406,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/cyw20835pb1kml1g-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -6912,6 +7432,9 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/cyw43012c0wkwbgt/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "INFINEON TECHNOLOGIES",
@@ -6935,6 +7458,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -6957,6 +7481,9 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/cyw43012tc0kffbh/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "INFINEON TECHNOLOGIES",
@@ -6980,6 +7507,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/cyw43438lkubgt/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "INFINEON TECHNOLOGIES",
@@ -7000,6 +7530,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/cyw43732xkubgt/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "INFINEON TECHNOLOGIES",
@@ -7020,6 +7553,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/cyw4373iubgt/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "INFINEON TECHNOLOGIES",
@@ -7040,6 +7576,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/cyw54590rkubgt/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "INFINEON TECHNOLOGIES",
@@ -7060,6 +7599,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/cyw54591rkubgt/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "INFINEON TECHNOLOGIES",
@@ -7080,6 +7622,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/cyw55513iubgt/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "INFINEON TECHNOLOGIES",
@@ -7100,6 +7645,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz, 6GHz",
@@ -7120,6 +7666,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/cyw55572miffbg/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "INFINEON TECHNOLOGIES",
@@ -7140,6 +7689,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -7162,6 +7712,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz, 6GHz",
@@ -7182,6 +7733,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz, 6GHz",
@@ -7202,6 +7754,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/cyw88359cubgt/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "INFINEON TECHNOLOGIES",
@@ -7222,6 +7777,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/cyw89359cubgt/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "INFINEON TECHNOLOGIES",
@@ -7242,6 +7800,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/cyw89373cubgt/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "INFINEON TECHNOLOGIES",
@@ -7262,6 +7823,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/cyw89820bwmlgt/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "INFINEON TECHNOLOGIES",
@@ -7282,6 +7846,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/da1453300a02rn2-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "RENESAS",
@@ -7303,6 +7870,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/da1470600000hz2-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M33",
@@ -7326,6 +7896,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/da1470600hzdevkt-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "RENESAS",
@@ -7345,6 +7918,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -7367,6 +7941,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/dap142/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "TELTONIKA",
@@ -7388,6 +7965,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -7408,6 +7986,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 6.5GHz",
@@ -7430,6 +8009,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "6.25GHz ~ 8.25GHz",
@@ -7453,6 +8033,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "6.25GHz ~ 8.25GHz",
@@ -7476,6 +8057,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -7499,6 +8081,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/ct-m2-mgm240p-wp/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M33",
@@ -7520,6 +8105,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/ct-pcie-mgm240p-wp/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M33",
@@ -7541,6 +8129,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/ct-pcie-52840-wp/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -7562,6 +8153,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/ct-m2-52840-wp/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -7583,6 +8177,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -7606,6 +8201,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -7629,6 +8225,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -7648,6 +8245,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -7671,6 +8269,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -7694,6 +8293,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/enw89829c2kf-pan-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.44GHz",
@@ -7716,6 +8318,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/enw89842a2kf-pan-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "PANASONIC",
@@ -7737,6 +8342,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -7760,6 +8366,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "mounting": "SMD",
@@ -7782,6 +8389,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "mounting": "SMD",
@@ -7804,6 +8412,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "mounting": "SMD",
@@ -7825,6 +8434,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -7848,6 +8458,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -7871,6 +8482,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -7894,6 +8506,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/pan9520/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "PANASONIC",
@@ -7916,6 +8531,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/enw89854c2kf-pan-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -7938,6 +8556,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -7961,6 +8580,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -7976,7 +8596,7 @@
       "mpn": "ESP-WROOM-02D-N2",
       "manufacturer": "ESPRESSIF",
       "eu_sources": 1,
-      "eu_stock": 2665,
+      "eu_stock": 2015,
       "unit_price_cents": 306,
       "moq": 1,
       "lead_time_days": null,
@@ -7984,6 +8604,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp-wroom-02d/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -8005,6 +8628,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp-wroom-02d-4/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -8026,6 +8652,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp-wroom-02u/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -8047,6 +8676,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp-wroom-02u-4/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -8069,6 +8701,9 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32c3/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -8094,6 +8729,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -8114,6 +8750,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32c3-mini-1-h4/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -8136,6 +8775,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32c3-mini-1-n4/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -8158,6 +8800,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -8182,6 +8825,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32c3-mini-1-n4x/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -8206,6 +8852,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32c3-mini-1u-h4/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -8228,6 +8877,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -8251,6 +8901,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32c3-mini-1u-n4/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -8273,6 +8926,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -8297,6 +8951,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32c3-wroom-02h4/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -8313,7 +8970,7 @@
       "mpn": "ESP32-C3-WROOM-02-N4",
       "manufacturer": "ESPRESSIF",
       "eu_sources": 2,
-      "eu_stock": 6498,
+      "eu_stock": 6502,
       "unit_price_cents": 300,
       "moq": 1,
       "lead_time_days": 56,
@@ -8322,6 +8979,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32c3-wroom-02n4/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -8347,6 +9007,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32c3-wroom02un4/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -8372,6 +9035,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32c3fh4/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402GHz ~ 2.48GHz",
@@ -8397,6 +9063,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.412GHz ~ 2.484GHz, 5.18GHz ~ 5.885GHz",
@@ -8420,6 +9087,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32-c6/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -8445,6 +9115,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -8465,6 +9136,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32-c6-mini-1-h4/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -8489,6 +9163,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32-c6-mini-1-n4/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -8515,6 +9192,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32c6-mini-1u-h4/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -8540,6 +9220,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -8563,6 +9244,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32c6-wroom-1-h4/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -8586,6 +9270,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32c6-wroom-1n16/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -8601,7 +9288,7 @@
       "mpn": "ESP32-C6-WROOM-1-N4",
       "manufacturer": "ESPRESSIF",
       "eu_sources": 2,
-      "eu_stock": 3608,
+      "eu_stock": 3587,
       "unit_price_cents": 453,
       "moq": 1,
       "lead_time_days": 56,
@@ -8610,6 +9297,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32c6-wroom-1-n4/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -8636,6 +9326,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32c6-wroom-1-n8/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -8661,6 +9354,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32c6-wroom1un16/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -8685,6 +9381,9 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32c6-wroom1u-n4/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -8711,6 +9410,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32c6-wroom1u-n8/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -8736,6 +9438,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -8759,6 +9462,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -8781,6 +9485,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "mounting": "SMD",
@@ -8804,6 +9509,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32-c6fh4/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -8829,6 +9537,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32-d0wd/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -8852,6 +9563,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32-d0wd-v3/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -8872,6 +9586,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32-d0wdq6-v3/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -8892,6 +9609,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -8912,6 +9630,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -8935,6 +9654,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -8955,6 +9675,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -8975,6 +9696,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -8995,6 +9717,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -9015,6 +9738,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.412GHz ~ 2.484GHz",
@@ -9038,6 +9762,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.412GHz ~ 2.484GHz",
@@ -9061,6 +9786,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -9085,6 +9811,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32-pico-d4/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz ~ 2.5GHz",
@@ -9110,6 +9839,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32-pico-min-02/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -9133,6 +9865,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32-pico-min-02u/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -9157,6 +9892,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.412GHz ~ 2.484GHz",
@@ -9181,6 +9917,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32-pico-v3-02/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -9206,6 +9945,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32-s0wd/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -9229,6 +9971,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32s2/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -9253,6 +9998,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32s2-mini-1/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -9274,6 +10022,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32s2-mini-1u/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -9295,6 +10046,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32s2-mini2-4/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -9317,6 +10071,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32s2-mini2-4r2/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -9339,6 +10096,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32s2-mini2u-4/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -9361,6 +10121,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32s2-mini2u-4r2/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -9383,6 +10146,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32s2-solo2-4/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -9405,6 +10171,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32s2-solo2-4r2/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -9427,6 +10196,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32s2-solo2u-4/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -9449,6 +10221,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32s2-solo2u-4r2/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -9471,6 +10246,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32s2-wrover-i32/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -9492,6 +10270,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32-s2fh2/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -9516,6 +10297,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32s2fh4/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -9540,6 +10324,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32-s2r2/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -9564,6 +10351,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32-s3/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -9588,6 +10378,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -9612,6 +10403,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32s3-mini-1-8/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -9637,6 +10431,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32s3-mini-1u-8/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -9661,6 +10458,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -9676,7 +10474,7 @@
       "mpn": "ESP32-S3-WROOM-1-N16",
       "manufacturer": "ESPRESSIF",
       "eu_sources": 1,
-      "eu_stock": 831,
+      "eu_stock": 731,
       "unit_price_cents": 519,
       "moq": 1,
       "lead_time_days": null,
@@ -9684,6 +10482,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32s3-wrm1-16/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -9707,6 +10508,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32s3-wrm1-16r2/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -9723,7 +10527,7 @@
       "mpn": "ESP32-S3-WROOM-1-N16R8",
       "manufacturer": "ESPRESSIF",
       "eu_sources": 1,
-      "eu_stock": 4364,
+      "eu_stock": 4363,
       "unit_price_cents": 576,
       "moq": 1,
       "lead_time_days": null,
@@ -9731,6 +10535,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32s3-wrm1-16r8/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -9745,7 +10552,7 @@
       "mpn": "ESP32-S3-WROOM-1-N4",
       "manufacturer": "ESPRESSIF",
       "eu_sources": 2,
-      "eu_stock": 1521,
+      "eu_stock": 1421,
       "unit_price_cents": 462,
       "moq": 1,
       "lead_time_days": 56,
@@ -9754,6 +10561,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32s3-wrm1-4/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -9778,6 +10588,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32s3-wrm1-4r2/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -9801,6 +10614,9 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32s3-wrm1-4r8/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -9825,6 +10641,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32s3-wrm1-8/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -9847,6 +10666,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32s3-wrm1-8r2/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -9861,7 +10683,7 @@
       "mpn": "ESP32-S3-WROOM-1-N8R8",
       "manufacturer": "ESPRESSIF",
       "eu_sources": 1,
-      "eu_stock": 2311,
+      "eu_stock": 2308,
       "unit_price_cents": 539,
       "moq": 1,
       "lead_time_days": null,
@@ -9869,6 +10691,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32s3-wrm1-8r8/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -9883,7 +10708,7 @@
       "mpn": "ESP32-S3-WROOM-1U-N16",
       "manufacturer": "ESPRESSIF",
       "eu_sources": 2,
-      "eu_stock": 1392,
+      "eu_stock": 1388,
       "unit_price_cents": 541,
       "moq": 1,
       "lead_time_days": 56,
@@ -9892,6 +10717,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32s3-wrm1u-16/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -9917,6 +10745,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32s3-wrm1u-16r2/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -9933,7 +10764,7 @@
       "mpn": "ESP32-S3-WROOM-1U-N16R8",
       "manufacturer": "ESPRESSIF",
       "eu_sources": 2,
-      "eu_stock": 2755,
+      "eu_stock": 2754,
       "unit_price_cents": 600,
       "moq": 1,
       "lead_time_days": 56,
@@ -9942,6 +10773,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32s3-wrm1u-16r8/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -9966,6 +10800,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32s3-wrm1u-4/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -9989,6 +10826,9 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32s3-wrm1u-4r2/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -10014,6 +10854,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32s3-wrm1u-4r8/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -10039,6 +10882,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32s3-wrm1u-8/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -10055,7 +10901,7 @@
       "mpn": "ESP32-S3-WROOM-1U-N8R2",
       "manufacturer": "ESPRESSIF",
       "eu_sources": 1,
-      "eu_stock": 631,
+      "eu_stock": 630,
       "unit_price_cents": 500,
       "moq": 1,
       "lead_time_days": null,
@@ -10063,6 +10909,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32s3-wrm1u-8r2/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -10086,6 +10935,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32s3-wrm1u-8r8/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -10111,6 +10963,9 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32s3-wrm2-32r6v/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -10135,6 +10990,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32-s3fh4r2/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -10159,6 +11017,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32-s3fn8/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -10183,6 +11044,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32-s3r2/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -10207,6 +11071,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32-s3r8/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -10231,6 +11098,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32-solo-1/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -10252,6 +11122,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32-wroom-32d-16/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -10273,6 +11146,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32-wroom-32d/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -10294,6 +11170,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32-wroom-32d-8/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -10315,6 +11194,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz ~ 2.5GHz",
@@ -10338,6 +11218,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32-wroom-32e-16/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -10359,6 +11242,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32-wroom-32e/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -10380,6 +11266,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32-wroom-32e-8/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -10401,6 +11290,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32-wroom-32u16s/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -10422,6 +11314,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32-wroom-32u-16/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -10443,6 +11338,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32-wroom-32u-8/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -10465,6 +11363,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32-wroom-32ue16/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz ~ 2.5GHz",
@@ -10490,6 +11391,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32-wroom-32ue/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz ~ 2.5GHz",
@@ -10515,6 +11419,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32-wroom-32ue-8/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz ~ 2.5GHz",
@@ -10540,6 +11447,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32-wrover-e-16/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz ~ 2.5GHz",
@@ -10565,6 +11475,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32-wrover-e/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz ~ 2.5GHz",
@@ -10581,7 +11494,7 @@
       "mpn": "ESP32-WROVER-E-N8R8",
       "manufacturer": "ESPRESSIF",
       "eu_sources": 2,
-      "eu_stock": 12685,
+      "eu_stock": 12680,
       "unit_price_cents": 522,
       "moq": 1,
       "lead_time_days": 56,
@@ -10590,6 +11503,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32-wrover-e-8/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz ~ 2.5GHz",
@@ -10606,7 +11522,7 @@
       "mpn": "ESP32-WROVER-IE-N16R8",
       "manufacturer": "ESPRESSIF",
       "eu_sources": 1,
-      "eu_stock": 3071,
+      "eu_stock": 3061,
       "unit_price_cents": 532,
       "moq": 1,
       "lead_time_days": null,
@@ -10614,6 +11530,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32-wrover-ie-16/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -10636,6 +11555,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32-wrover-ie/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz ~ 2.5GHz",
@@ -10661,6 +11583,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp32-wrover-ie-8/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz ~ 2.5GHz",
@@ -10685,6 +11610,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp8266/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -10708,6 +11636,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp8285h16/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -10732,6 +11663,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/esp8285n08/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ESPRESSIF",
@@ -10756,6 +11690,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -10776,6 +11711,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -10799,6 +11735,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -10822,6 +11759,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -10845,6 +11783,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -10868,6 +11807,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -10891,6 +11831,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -10914,6 +11855,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -10937,6 +11879,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz, 6GHz",
@@ -10960,6 +11903,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -10983,6 +11927,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -11006,6 +11951,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -11029,6 +11975,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -11052,6 +11999,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -11075,6 +12023,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -11098,6 +12047,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -11121,6 +12071,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -11142,6 +12093,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -11165,6 +12117,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz ~ 2.48GHz",
@@ -11184,6 +12137,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "mounting": "Panel Mount",
@@ -11204,6 +12158,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "mounting": "Adhesive",
@@ -11224,6 +12179,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/hda209/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "H&D Wireless",
@@ -11243,6 +12201,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/hda228-pcie/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "H&D Wireless",
@@ -11262,6 +12223,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -11285,6 +12247,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "mounting": "SMD",
@@ -11307,6 +12270,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -11330,6 +12294,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -11353,6 +12318,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -11376,6 +12342,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -11399,6 +12366,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -11422,6 +12390,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -11445,6 +12414,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -11468,6 +12438,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -11491,6 +12462,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/is1870sf-102/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402...2.48GHz",
@@ -11514,6 +12488,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/is1870sf-102-tray/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402...2.48GHz",
@@ -11537,6 +12514,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/is1870sf-202/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -11561,6 +12541,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/is1870sf-202-tray/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402...2.48GHz",
@@ -11585,6 +12568,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/is1871sf-102/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "MICROCHIP TECHNOLOGY",
@@ -11607,6 +12593,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/is1871sf-202/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -11631,6 +12620,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/is1871sf-202-tray/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402...2.48GHz",
@@ -11655,6 +12647,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/is2083bm-232/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402...2.48GHz",
@@ -11679,6 +12674,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/is2083bm-232-tray/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -11703,6 +12701,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -11727,6 +12726,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/isp1507-ax-rs/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -11752,6 +12754,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/isp1507-ax-tb/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "INSIGHT SIP",
@@ -11771,6 +12776,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/isp1807-lr-jt/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex M4F",
@@ -11795,6 +12803,9 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/isp1807-lr-rs/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex M4F",
@@ -11820,6 +12831,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/isp1907-ht-jt/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex M4F",
@@ -11843,6 +12857,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/isp1907-ht-rs/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex M4F",
@@ -11866,6 +12883,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/isp1907-ll-jt/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex M4F",
@@ -11889,6 +12909,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/isp1907-ll-rs/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex M4F",
@@ -11912,6 +12935,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/isp2053-ax-jt/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M33",
@@ -11933,6 +12959,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/isp2053-ax-rs/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M33",
@@ -11954,6 +12983,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -11977,6 +13007,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/isp4520-as-rs/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex M4F",
@@ -12000,6 +13033,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/isp4520-eu-rs/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex M4F",
@@ -12023,6 +13059,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/isp4520-us-rs/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex M4F",
@@ -12046,6 +13085,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -12069,6 +13109,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -12092,6 +13133,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/jody-w374-00b/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "u-blox",
@@ -12115,6 +13159,9 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/jody-w377-00b/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "u-blox",
@@ -12139,6 +13186,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -12162,6 +13210,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -12185,6 +13234,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -12208,6 +13258,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -12231,6 +13282,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz, 6GHz",
@@ -12254,6 +13306,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.412GHz ~ 2.472GHz, 5.18GHz ~ 5.825GHz",
@@ -12277,6 +13330,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.412GHz ~ 2.472GHz, 5.18GHz ~ 5.825GHz",
@@ -12300,6 +13354,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402GHz ~ 2.472GHz, 2.412GHz ~ 2.48GHz, 5.18GHz ~ 5.24GHz, 5.19GHz ~ 5.32GHz, 5.21GHz ~ 5.72GHz, 5.26GHz ~ 5.775GHz, 5.5GHz ~ 5.795GHz, 5.745GHz ~ 5.825GHz",
@@ -12324,6 +13379,9 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/lbee5xv1xa54-mur-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "MURATA",
@@ -12348,6 +13406,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -12371,6 +13430,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz, 6GHz",
@@ -12394,6 +13454,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz ~ 2.47GHz, 5.18GHz ~ 5.24GHz, 5.26GHz ~ 5.32GHz, 5.5GHz ~ 5.72GHz, 5.745GHz ~ 5.825GHz",
@@ -12417,6 +13478,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -12440,6 +13502,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/lbeh5hmzpc86-mur-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "MURATA",
@@ -12459,6 +13524,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -12482,6 +13548,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -12505,6 +13572,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Transceiver; 802.15.4 (UWB), Bluetooth\u00ae Smart 4.x Low Energy (BLE)",
@@ -12524,6 +13592,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "6.25GHz ~ 8.25GHz",
@@ -12547,6 +13616,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "6.25GHz ~ 8.25GHz",
@@ -12567,6 +13637,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/lbua2zz2dk-smp/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "gpio_count": "20",
@@ -12589,6 +13662,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -12612,6 +13686,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/lily-w132-00b/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "u-blox",
@@ -12635,6 +13712,9 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/m2-jody-w263-00c/"
+      },
       "conflicts": [
         "mounting"
       ],
@@ -12661,6 +13741,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/m2-jody-w377-00c/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "u-blox",
@@ -12684,6 +13767,9 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/m2-maya-w161-00c/"
+      },
       "conflicts": [
         "mounting"
       ],
@@ -12710,6 +13796,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -12731,6 +13818,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -12753,6 +13841,9 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/maya-w160-00b/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "u-blox",
@@ -12778,6 +13869,9 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/maya-w161-00b/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "u-blox",
@@ -12803,6 +13897,9 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/maya-w166-00b/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "u-blox",
@@ -12827,6 +13924,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -12850,6 +13948,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz ~ 5GHz",
@@ -12873,6 +13972,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz ~ 5GHz",
@@ -12896,6 +13996,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -12919,6 +14020,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -12942,6 +14044,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -12965,6 +14068,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -12988,6 +14092,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz, 6GHz",
@@ -13011,6 +14116,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz, 6GHz",
@@ -13034,6 +14140,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -13057,6 +14164,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/mdbt42q-512kv2/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex M4F",
@@ -13081,6 +14191,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/mdbt42q-512kv2-tr/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex M4F",
@@ -13105,6 +14218,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/mdbt42q-at2/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -13129,6 +14245,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/mdbt42q-at2-tr/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -13153,6 +14272,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/mdbt42q-p512kv2/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex M4F",
@@ -13177,6 +14299,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/mdbt42q-p512kv2-tr/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex M4F",
@@ -13201,6 +14326,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/mdbt42q-pat2/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -13225,6 +14353,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/mdbt42q-pat2-tr/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -13249,6 +14380,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/mdbt42q-u512kv2/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex M4F",
@@ -13273,6 +14407,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/mdbt42q-u512kv2-tr/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex M4F",
@@ -13297,6 +14434,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/mdbt42t-192k/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -13321,6 +14461,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/mdbt42t-192k-tr/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -13345,6 +14488,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/mdbt42t-at/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -13368,6 +14514,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/mdbt42t-at-tr/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -13391,6 +14540,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/mdbt42t-p192k/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -13415,6 +14567,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/mdbt42t-p192k-tr/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -13439,6 +14594,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/mdbt42t-pat/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -13462,6 +14620,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/mdbt42t-pat-tr/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -13485,6 +14646,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/mdbt50-512k/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -13509,6 +14673,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/mdbt50-512k-tr/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -13533,6 +14700,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/mdbt50-p512k/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -13557,6 +14727,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/mdbt50-p512k-tr/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -13581,6 +14754,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/mdbt50q-1mv2/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -13605,6 +14781,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/mdbt50q-1mv2-tr/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -13629,6 +14808,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/mdbt50q-512k/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -13653,6 +14835,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/mdbt50q-512k-tr/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -13677,6 +14862,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/mdbt50q-p1mv2/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -13701,6 +14889,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/mdbt50q-p1mv2-tr/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -13725,6 +14916,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/mdbt50q-p512k/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -13749,6 +14943,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/mdbt50q-p512k-tr/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -13773,6 +14970,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/mdbt50q-u1mv2/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -13797,6 +14997,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/mdbt50q-u1mv2-tr/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -13821,6 +15024,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/mdbt50q-u512k/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -13845,6 +15051,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/mdbt50q-u512k-tr/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -13869,6 +15078,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -13892,6 +15102,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -13915,6 +15126,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -13938,6 +15150,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -13961,6 +15174,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -13984,6 +15198,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/mod-nrf8001/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "OLIMEX",
@@ -14004,6 +15221,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/mod-wifi-esp8266/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -14025,6 +15245,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/wifi-rtl8188eusant/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -14045,6 +15268,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.36GHz ~ 2.5GHz",
@@ -14070,6 +15294,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/nina-b111-05b/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -14096,6 +15323,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/nina-b112-05b/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -14123,6 +15353,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/nina-b221-03b/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "gpio_count": "16",
@@ -14147,6 +15380,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/nina-b222-04b/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "u-blox",
@@ -14168,6 +15404,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/nina-b301-00b/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -14195,6 +15434,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/nina-b302-00b/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -14221,6 +15463,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/nina-b306-00b/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -14248,6 +15493,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -14271,6 +15517,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/nina-b311-02b/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -14296,6 +15545,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/nina-b312-02b/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -14321,6 +15573,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/nina-b400-00b/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -14346,6 +15601,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/nina-b401-00b/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -14372,6 +15630,9 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/nina-b406-00b/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -14399,6 +15660,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -14423,6 +15685,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/nina-b410-01b/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -14450,6 +15715,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/nina-b411-01b/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -14475,6 +15743,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/nina-b416-01b/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -14500,6 +15771,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/nina-w101-00b/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "gpio_count": "24",
@@ -14523,6 +15797,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -14546,6 +15821,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -14569,6 +15845,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -14592,6 +15869,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/nina-w131-00b/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "u-blox",
@@ -14614,6 +15894,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/nora-b100-00b/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M33",
@@ -14639,6 +15922,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/nora-b101-00b/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M33",
@@ -14665,6 +15951,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/nora-b106-00b/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -14692,6 +15981,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/nora-b120-00b/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M33",
@@ -14717,6 +16009,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/nora-b121-00b/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M33",
@@ -14742,6 +16037,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/nora-b126-00b/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M33",
@@ -14767,6 +16065,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -14790,6 +16089,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -14813,6 +16113,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -14836,6 +16137,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -14859,6 +16161,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -14882,6 +16185,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -14905,6 +16209,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "mounting": "SMD",
@@ -14928,6 +16233,9 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/nora-w101-00b/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "u-blox",
@@ -14952,6 +16260,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -14975,6 +16284,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -14998,6 +16308,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -15021,6 +16332,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -15044,6 +16356,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/nrf52811-caaa-r7/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -15069,6 +16384,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/nrf52811-qcaa-r/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -15094,6 +16412,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/nrf52811-qcaa-t/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -15119,6 +16440,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/nrf52811-qfaa-r7/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -15143,6 +16467,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/nrf52811-qfaa-t/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M4",
@@ -15168,6 +16495,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/nrf54l10-qfaa-r7/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M33",
@@ -15193,6 +16523,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/nrf54l15-qgaa-r7/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M33",
@@ -15215,6 +16548,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/nrf54lm20a-paaa-r7/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M33",
@@ -15237,6 +16573,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/nrf54lm20a-qgaa-r7/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M33",
@@ -15259,6 +16598,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/nrf54lm20b-paaa-r7/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M33",
@@ -15281,6 +16623,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/nrf54lm20b-qgaa-r7/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M33",
@@ -15303,6 +16648,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/nrf7002-qfaa-r7/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "NORDIC SEMICONDUCTOR",
@@ -15324,6 +16672,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/nrf9151-laca-r7/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M33",
@@ -15346,6 +16697,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M33",
@@ -15367,6 +16719,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M33",
@@ -15388,6 +16741,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/enw-89820a1kf/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "PANASONIC",
@@ -15411,6 +16767,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/enw-89847a1kf/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "PANASONIC",
@@ -15434,6 +16793,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/pic32wm-bz6204ue-i/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "MICROCHIP TECHNOLOGY",
@@ -15454,6 +16816,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/okdo-ra007-a1/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "OKDO",
@@ -15473,6 +16838,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/okdo-ra007-a2/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "OKDO",
@@ -15492,6 +16860,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/rc-cc2340/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex M0+",
@@ -15515,6 +16886,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/rc-cc2640-a/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "RADIOCONTROLLI",
@@ -15537,6 +16911,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/rc-cc2640-b/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "RADIOCONTROLLI",
@@ -15559,6 +16936,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/rc-cc3200/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "RADIOCONTROLLI",
@@ -15581,6 +16961,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/rn131c/rm475/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -15603,6 +16986,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/rn131c/rm481/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -15626,6 +17012,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/rn131g-i/rm475/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -15649,6 +17038,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/rn171-i/rm475/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.405...2.48GHz",
@@ -15672,6 +17064,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/rn171-i/rm481/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.405...2.48GHz",
@@ -15695,6 +17090,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/rn171xvs-i/rm/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402...2.48GHz",
@@ -15718,6 +17116,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/rn171xvu-i/rm/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402...2.48GHz",
@@ -15741,6 +17142,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/rn171xvw-i/rm/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402...2.48GHz",
@@ -15764,6 +17168,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/rn1723-i/rm100/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.412...2.462GHz",
@@ -15787,6 +17194,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/rn1810-i/rm110/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.412...2.472GHz",
@@ -15810,6 +17220,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -15833,6 +17244,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -15856,6 +17268,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/rn4020-v/rm123/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402...2.48GHz",
@@ -15880,6 +17295,9 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/rn4020-v/rmbec133/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402...2.48GHz",
@@ -15904,6 +17322,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/rn42-i/rm630/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402...2.48GHz",
@@ -15927,6 +17348,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/rn4678-v/rm111/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.44GHz",
@@ -15950,6 +17374,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/rn4678-v/rm113/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402...2.48GHz",
@@ -15973,6 +17400,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/rn4678-v/rm122/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402...2.48GHz",
@@ -15996,6 +17426,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/rn4678-v/rm124/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -16018,6 +17451,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/rn4678-vb/rm122/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402...2.48GHz",
@@ -16040,6 +17476,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/rn4678apl-v/rm113/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.44GHz",
@@ -16063,6 +17502,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/rn4678apl-v/rm120/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -16085,6 +17527,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/rn4678apl-v/rm122/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402...2.48GHz",
@@ -16108,6 +17553,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/rn4678apl-v/rm124/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -16130,6 +17578,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/rn4870-i/rm128/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402...2.48GHz",
@@ -16153,6 +17604,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/rn4870-i/rm130/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "MICROCHIP TECHNOLOGY",
@@ -16176,6 +17630,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/rn4870-i/rm140/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402GHz ~ 2.48GHz",
@@ -16200,6 +17657,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/rn4870-v/rm118/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402...2.48GHz",
@@ -16215,7 +17675,7 @@
       "mpn": "RN4870-V/RM140",
       "manufacturer": "MICROCHIP TECHNOLOGY",
       "eu_sources": 2,
-      "eu_stock": 814,
+      "eu_stock": 809,
       "unit_price_cents": 820,
       "moq": 1,
       "lead_time_days": 119,
@@ -16224,6 +17684,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/rn4870-v/rm140/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402GHz ~ 2.48GHz",
@@ -16249,6 +17712,9 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/rn4870u-v/rm118/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402...2.48GHz",
@@ -16274,6 +17740,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/rn4871-i/rm130/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402...2.48GHz",
@@ -16299,6 +17768,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/rn4871-i/rm140/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402GHz ~ 2.48GHz",
@@ -16323,6 +17795,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/rn4871-v/rm118/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402...2.48GHz",
@@ -16347,6 +17822,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/rn4871-v/rm140/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402GHz ~ 2.48GHz",
@@ -16372,6 +17850,9 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/rn4871u-v/rm118/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402...2.48GHz",
@@ -16396,6 +17877,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/rnbd350pe-i100/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "MICROCHIP TECHNOLOGY",
@@ -16419,6 +17903,9 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/rnbd350ue-i100/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "MICROCHIP TECHNOLOGY",
@@ -16444,6 +17931,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/rnbd451pe-i100/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.402...2.48GHz",
@@ -16468,6 +17958,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/rnbd451pe-i110/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "MICROCHIP TECHNOLOGY",
@@ -16491,6 +17984,9 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/rnwf02pe-i/100/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.412...2.427GHz",
@@ -16515,6 +18011,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/rnwf02ue-i/100/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.412...2.427GHz",
@@ -16537,6 +18036,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -16560,6 +18060,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/scs0119/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "LOGILINK",
@@ -16581,6 +18084,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -16604,6 +18108,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz ~ 2.48GHz",
@@ -16625,6 +18130,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz ~ 2.483GHz",
@@ -16646,6 +18152,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz ~ 2.48GHz",
@@ -16667,6 +18174,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -16688,6 +18196,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz ~ 2.4835GHz",
@@ -16709,6 +18218,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/spb209a-lrnmq-1/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "H&D Wireless",
@@ -16731,6 +18243,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/spb228-d-1/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "H&D Wireless",
@@ -16753,6 +18268,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/spbtle-rf0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -16776,6 +18294,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/spbtle-rftr/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -16799,6 +18320,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -16822,6 +18344,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -16845,6 +18368,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -16868,6 +18392,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -16891,6 +18416,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -16914,6 +18440,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -16937,6 +18464,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -16960,6 +18488,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -16983,6 +18512,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -17008,6 +18538,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex-M33",
@@ -17029,6 +18560,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "mounting": "SMD",
@@ -17049,6 +18581,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/tap400/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "TELTONIKA",
@@ -17069,6 +18604,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/twr00153-yag-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -17091,6 +18629,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/twr0083-yag-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "YAGEO",
@@ -17111,6 +18652,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/wbz350pe-i/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex M4F",
@@ -17135,6 +18679,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/wbz350ue-i/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex M4F",
@@ -17159,6 +18706,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/wbz351pe-i/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex M4F",
@@ -17183,6 +18733,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/wbz351ue-i/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "cpu_core": "Cortex M4F",
@@ -17207,6 +18760,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/wbz450pe-i/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -17229,6 +18785,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/wbz450ue-i/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -17251,6 +18810,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/wbz451hpe-i/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "MICROCHIP TECHNOLOGY",
@@ -17273,6 +18835,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/wbz451hue-i/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "MICROCHIP TECHNOLOGY",
@@ -17295,6 +18860,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/wbz451pe-e/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -17319,6 +18887,9 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/wbz451pe-i/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -17343,6 +18914,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/wbz451ue-i/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -17365,6 +18939,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "mounting": "Connector Mount",
@@ -17385,6 +18960,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "mounting": "Connector Mount",
@@ -17405,6 +18981,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -17428,6 +19005,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -17451,6 +19029,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -17474,6 +19053,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/wfi32e01ue-i/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.412...2.427GHz",
@@ -17497,6 +19079,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/wfi32e02ue-i/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "MICROCHIP TECHNOLOGY",
@@ -17519,6 +19104,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/wfi32e03pe-i/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -17542,6 +19130,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/wfi32e03ue-i/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -17565,6 +19156,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/wfi32e04ue-i/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -17588,6 +19182,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -17611,6 +19206,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -17634,6 +19230,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/wilcs02ic-i/zzx/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.412...2.427GHz",
@@ -17657,6 +19256,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/wilcs02ic-v/zzx/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.412...2.427GHz",
@@ -17680,6 +19282,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/wilcs02ict-i/zzx/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.412...2.427GHz",
@@ -17703,6 +19308,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/wilcs02ict-v/zzx/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.412...2.427GHz",
@@ -17726,6 +19334,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/wilcs02pe-i/100/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.412...2.427GHz",
@@ -17748,6 +19359,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/wilcs02ue-i/100/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.412...2.427GHz",
@@ -17770,6 +19384,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/wincs02pe-i/100/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.412...2.427GHz",
@@ -17792,6 +19409,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/wincs02ue-i/100/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.412...2.427GHz",
@@ -17814,6 +19434,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/wizfi360-con/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "WIZNET",
@@ -17835,6 +19458,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/wizfi360-pa/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "WIZNET",
@@ -17856,6 +19482,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/wizfi360io-c/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "WIZNET",
@@ -17877,6 +19506,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/wizfi360io-h/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "WIZNET",
@@ -17898,6 +19530,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/wizfi630s/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "WIZNET",
@@ -17918,6 +19553,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -17941,6 +19577,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -17964,6 +19601,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -17987,6 +19625,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -18009,6 +19648,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -18031,6 +19671,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -18053,6 +19694,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -18076,6 +19718,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/wt12-a-hci21/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "SILICON LABS",
@@ -18096,6 +19741,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "moq": "500",
@@ -18114,6 +19760,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/wt5010-s2/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "WIRELESS-TAG",
@@ -18135,6 +19784,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/wt51822-s2/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "WIRELESS-TAG",
@@ -18156,6 +19808,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/wt51822-s4at/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "WIRELESS-TAG",
@@ -18177,6 +19832,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/wt52810-s1/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "WIRELESS-TAG",
@@ -18198,6 +19856,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/wt52832-s2/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "WIRELESS-TAG",
@@ -18219,6 +19880,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/wt52840-s1/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "WIRELESS-TAG",
@@ -18240,6 +19904,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/wt8266-s1/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "WIRELESS-TAG",
@@ -18261,6 +19928,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "mounting": "SMD",
@@ -18283,6 +19951,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -18306,6 +19975,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -18329,6 +19999,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -18352,6 +20023,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz, 5GHz",
@@ -18371,6 +20043,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz ~ 2.4835GHz",

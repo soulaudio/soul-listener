@@ -386,4 +386,5 @@ class MouserAdapter(Adapter):
             queried_as=queried_as,
             status_raw=compliance,
             datasheet_url=(p.get("DataSheetUrl") or "").strip() or None,
+            product_url=(p.get("ProductDetailUrl") or "").strip() or None,
         )

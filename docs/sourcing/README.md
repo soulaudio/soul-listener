@@ -113,7 +113,22 @@ tools/sourcing-run.py export --category mclk-osc-44k1  # -> candidates/<id>.json
 tools/sourcing-run.py status                           # what the DB holds
 
 cargo run -p dap-arch-tests --example sourcing-report  # what the FILTER makes of it
+cargo run -p dap-arch-tests --example propose          # ranked proposals, with links
+tools/sourcing-run.py sweep --vendor digikey           # one vendor's sweeps, nothing else
 ```
+
+### `propose` — the shortlist you pick from
+
+Writes `hardware/bom/PROPOSALS.md` (read this), `proposals.json` (the decision record,
+including the alternatives) and `selected.json` (the handoff: what is actually picked).
+
+Ranked by the spec's own `DEFAULT_RANKING`, with a clickable distributor link per row, and
+parts the spec has already **ruled out** marked as such with the reason — a two-source socket
+with 73 000 in stock and no card-detect switch otherwise keeps getting re-offered, because
+the missing switch is datasheet evidence the filter cannot see.
+
+Picking a part, and how it reaches firmware and the board, is
+[`PICKING-AND-HANDOFF.md`](PICKING-AND-HANDOFF.md).
 
 ### `plan` — size a sweep before running it
 

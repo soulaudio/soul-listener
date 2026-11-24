@@ -48,7 +48,8 @@ def load_env() -> dict[str, str]:
 
 
 def build_adapters(env: dict[str, str]):
-    # Mouser's daily cap is 1000 calls, so what it has already spent TODAY is
+    # Every vendor's daily cap is per CALENDAR DAY, so what each has already
+    # spent today is part of its construction.
     # part of its construction. An in-process counter starts at zero every run
     # and the fourth refresh of the morning would discover the cap by being
     # refused; `fetch_runs.api_calls` has recorded it all along.
@@ -61,7 +62,11 @@ def build_adapters(env: dict[str, str]):
         # from zero, which is what the old behaviour was everywhere.
         pass
     return [
-        TmeAdapter(env.get("TME_TOKEN", ""), env.get("TME_APP_SECRET", "")),
+        TmeAdapter(
+            env.get("TME_TOKEN", ""),
+            env.get("TME_APP_SECRET", ""),
+            spent_today=spent.get("tme", 0),
+        ),
         MouserAdapter(
             env.get("MOUSER_SEARCH_API_KEY", ""),
             spent_today=spent.get("mouser", 0),
@@ -70,6 +75,7 @@ def build_adapters(env: dict[str, str]):
             env.get("DIGIKEY_CLIENT_ID", ""),
             env.get("DIGIKEY_CLIENT_SECRET", ""),
             host=env.get("DIGIKEY_API_HOST") or "api.digikey.com",
+            spent_today=spent.get("digikey", 0),
         ),
     ]
 
@@ -109,13 +115,23 @@ def cmd_fetch(args) -> int:
     db = Catalogue(DB_PATH)
     started = time.strftime("%Y-%m-%d")
 
-    if args.category:
+    # `args.category OR args.phrase`, not `args.category` alone.
+    #
+    # Digi-Key's sweeps are keyword-scoped and pass `category=""`, which is
+    # FALSY — so `fetch --vendor digikey --category "" --phrase "microSD card
+    # connector"` fell through to the named-MPN branch, spent 26 calls looking up
+    # the snapshot's parts, printed "API calls: 26", and stored nothing for the
+    # category asked for. A command that silently does a different job and
+    # reports success is worse than one that errors.
+    if args.category or args.phrase:
         run = db.start_run(
             a.name, "category", f"{args.category}{' ~ ' + args.phrase if args.phrase else ''}",
             started,
         )
-        parts = a.search_category(str(args.category), args.limit, phrase=args.phrase)
-        label = args.category_as or f"tme-cat-{args.category}"
+        parts = a.search_category(str(args.category or ""), args.limit, phrase=args.phrase)
+        label = args.category_as or (
+            f"tme-cat-{args.category}" if args.category else f"kw-{args.phrase}"
+        )
         for p in parts:
             db.upsert(p, run, category=label)
         db.finish_run(run, getattr(a, "calls", 0), len(parts))
@@ -269,6 +285,9 @@ SWEEPS = [
     # returns a category breakdown with ids. That is how a category id should be
     # obtained; the earlier ones were read off website URLs.
     ("tme", "113196", None, "bluetooth", 500),                  # total 444
+    # microSD sockets. TME category 100432 is 'Card connectors', found via a
+    # phrase search whose `counters` payload returns a category breakdown.
+    ("tme", "100432", None, "microsd", 400),
     # --- Digi-Key: unioned relevance angles ---------------------------
     #
     # **Every limit here is <= 300 because Digi-Key will not paginate past it.**
@@ -311,6 +330,8 @@ SWEEPS = [
     # phrasing with usable precision, so it is swept exhaustively and the gap is
     # recorded rather than papered over with 72 calls of charger ICs.
     ("digikey", "", "Li-Po battery", "battery", 250),            # total 197, exhaustive
+    ("digikey", "", "microSD card connector", "microsd", 250),   # total 242, exhaustive
+    ("digikey", "", "micro SD memory card socket", "microsd", 200),  # total 188, exhaustive
     # Mouser is DELIBERATELY absent from this list, and the reason is not quota
     # alone. Mouser publishes no named parametric fields at all — only
     # `Packaging` and `Standard Pack Qty` — so a part discovered only there
@@ -323,7 +344,10 @@ SWEEPS = [
     # lead time and datasheet links. See `adapters/mouser.py`.
 ]
 
-CATEGORIES = ["dac", "mclk-osc-44k1", "mclk-osc-48k", "mclk-mux", "mcu", "battery", "bluetooth"]
+CATEGORIES = [
+    "dac", "mclk-osc-44k1", "mclk-osc-48k", "mclk-mux", "mcu", "battery", "bluetooth",
+    "microsd",
+]
 
 
 def cmd_plan(args) -> int:

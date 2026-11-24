@@ -16,6 +16,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/geyer-electronic-america-inc/12-94242/25853721"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.200\" W (7.00mm x 5.08mm)",
@@ -44,6 +47,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/geyer-electronic-america-inc/12-94420/25963148"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.200\" W (7.00mm x 5.08mm)",
@@ -72,6 +78,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suzhou-hangjing-elec-tech-co-ltd/1208H-24-576G50DTSTK/22207995"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.512\" L x 0.512\" W (13.00mm x 13.00mm)",
@@ -99,6 +108,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suzhou-hangjing-elec-tech-co-ltd/1214H-24-576G33DTSTK/22486840"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.787\" L x 0.512\" W (20.00mm x 13.00mm)",
@@ -126,6 +138,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/cts-frequency-controls/139VGEVS24M576/28722011"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.800\" L x 0.500\" W (20.32mm x 12.70mm)",
@@ -154,6 +169,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suzhou-hangjing-elec-tech-co-ltd/1521H-24-576G33DTSK/22517845"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -182,6 +200,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suzhou-hangjing-elec-tech-co-ltd/1521H-24-576KWVDTSK/29479533"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -210,6 +231,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suzhou-hangjing-elec-tech-co-ltd/1532H-24-576G33DTSK/22078926"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -239,6 +263,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suzhou-hangjing-elec-tech-co-ltd/1532H-24-576J18DTSK/26699446"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -267,6 +294,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suzhou-hangjing-elec-tech-co-ltd/1575H-24-576KWVDTSK/27738057"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" Dia x 0.197\" L (7.00mm x 5.00mm)",
@@ -295,6 +325,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/yic/24-576M20PI-49US/26811082"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.453\" L x 0.183\" W (11.50mm x 4.65mm)",
@@ -322,6 +355,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/3225-24.576m-sr/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -346,6 +382,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/skyworks-solutions-inc/514CBC001037BAG/9991330"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -375,6 +414,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/skyworks-solutions-inc/514CCC000148AAG/6109861"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -404,6 +446,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suzhou-hangjing-elec-tech-co-ltd/5220H5-24-576R33DTNOK/26905374"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.787\" L x 0.787\" W (20.00mm x 20.00mm)",
@@ -431,6 +476,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/skyworks-solutions-inc/545CCA24M5760CCG/29731657"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -460,6 +508,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suzhou-hangjing-elec-tech-co-ltd/5797H4-24-576N33DTNOK/27738352"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.382\" L x 0.295\" W (9.70mm x 7.50mm)",
@@ -487,6 +538,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/cts-frequency-controls/632L3I024M57600/4308734"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -516,6 +570,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/cts-frequency-controls/636L3C024M57600/2640219"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -545,6 +602,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/cts-frequency-controls/636L3I024M57600/4308679"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -575,6 +635,10 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/7C-24-576MBA-T/2207808",
+        "tme": "https://www.tme.eu/en/details/7c-24.576mba/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576 MHz",
@@ -604,6 +668,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/7CL-24-576MBD-T/17129453"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -632,6 +699,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/7CL-24-576MDD-T/17129390"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -652,7 +722,7 @@
       "mpn": "7M-24.576MAAJ-T",
       "manufacturer": "TXC",
       "eu_sources": 1,
-      "eu_stock": 1377,
+      "eu_stock": 1402,
       "unit_price_cents": 79,
       "moq": 1,
       "lead_time_days": 119,
@@ -661,6 +731,10 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/7M-24-576MAAJ-T/2118815",
+        "tme": "https://www.tme.eu/en/details/7m-24.576maaj/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576 MHz",
@@ -690,6 +764,10 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/7V-24-576MAAE-T/2626982",
+        "tme": "https://www.tme.eu/en/details/7v-24.576maae/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576 MHz",
@@ -718,6 +796,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/7v-24.576mahv/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -743,6 +824,10 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/7V-24-576MDDE-T/11587512",
+        "tme": "https://www.tme.eu/en/details/7v-24.576mdde/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576 MHz",
@@ -771,6 +856,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/7v-24.576mddq/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -796,6 +884,10 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/7X-24-576MBB-T/2118902",
+        "tme": "https://www.tme.eu/en/details/7x-24.576mbb/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576 MHz",
@@ -825,6 +917,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/7XL-24-576MBD-T/17129480"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -853,6 +948,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/7XL-24-576MDD-T/17129556"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -881,6 +979,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/w\u00fcrth-elektronik/830035267/13979300"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -908,6 +1009,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/w\u00fcrth-elektronik/830069387/13979360"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -935,6 +1039,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/w\u00fcrth-elektronik/830207659209/13900478"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -963,6 +1070,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/w\u00fcrth-elektronik/830208215209/13900230"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -991,6 +1101,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/w\u00fcrth-elektronik/830208217409/13900440"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -1019,6 +1132,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/w\u00fcrth-elektronik/831025496/13979291"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -1047,6 +1163,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/w\u00fcrth-elektronik/831056217/13979252"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -1075,6 +1194,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/w\u00fcrth-elektronik/831056243/13979310"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -1103,6 +1225,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/w\u00fcrth-elektronik/831056268/13900151"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -1131,6 +1256,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/w\u00fcrth-elektronik/831056295/13900235"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -1159,6 +1287,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suzhou-hangjing-elec-tech-co-ltd/8875HA-T24-576NV33DTK/30483861"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" Dia x 0.197\" L (7.00mm x 5.00mm)",
@@ -1187,6 +1318,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/8ne-24.576mbm/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -1213,6 +1347,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/8NE-24-576MDM-T/13181181"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -1241,6 +1378,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/8NJ-24-576MBE-T/17129575"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -1269,6 +1409,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/8NJ-24-576MBJ-T/17129573"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -1297,6 +1440,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/8NJ-24-576MDE-T/17129600"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -1325,6 +1471,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/8NJ-24-576MDJ-T/17129474"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -1354,6 +1503,10 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/8WE-24-576MBM-T/13181078",
+        "tme": "https://www.tme.eu/en/details/8we-24.576mbm/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576 MHz",
@@ -1383,6 +1536,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/8we-24.576mdm/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -1409,6 +1565,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/8WJ-24-576MBE-T/17129504"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -1437,6 +1596,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/8WJ-24-576MBJ-T/17129466"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -1465,6 +1627,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/8WJ-24-576MDE-T/17129402"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -1493,6 +1658,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/8WJ-24-576MDJ-T/17129399"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -1521,6 +1689,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/8WL-24-576MBD-T/17129501"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -1549,6 +1720,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/8WL-24-576MDD-T/17129599"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -1577,6 +1751,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/8z-24.576maaj/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -1601,6 +1778,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suzhou-hangjing-elec-tech-co-ltd/9214H-24-576N50HP0JK/25606058"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.787\" L x 0.512\" W (20.00mm x 13.00mm)",
@@ -1628,6 +1808,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/abl24.576mhzb2-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -1653,6 +1836,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/abm1024.576mhz-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ABRACON",
@@ -1674,6 +1860,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ABM10W-24-5760MHZ-4-D1X-T3/7172490"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -1701,6 +1890,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ABM10W-24-5760MHZ-6-B1U-T3/7172491"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -1728,6 +1920,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ABM10W-24-5760MHZ-6-D1X-T3/7172492"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -1755,6 +1950,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ABM10W-24-5760MHZ-7-B1U-T3/7172493"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -1782,6 +1980,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ABM10W-24-5760MHZ-7-D1X-T3/7172494"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -1809,6 +2010,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ABM10W-24-5760MHZ-8-B1U-T3/7172495"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -1836,6 +2040,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ABM10W-24-5760MHZ-8-R60-D7G-T3/15908992"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -1864,6 +2071,10 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ABM11AIG-24-576MHZ-4Z-T3/5817572",
+        "tme": "https://www.tme.eu/en/details/abm11aig24.576mh-0/"
+      },
       "conflicts": [
         "part_type"
       ],
@@ -1894,6 +2105,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ABM11W-24-5760MHZ-6-B1U-T3/7172609"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -1921,6 +2135,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ABM11W-24-5760MHZ-6-D1X-T3/7172610"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -1948,6 +2165,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ABM11W-24-5760MHZ-7-B1U-T3/7172611"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -1975,6 +2195,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ABM11W-24-5760MHZ-8-B1U-T3/7172613"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -2002,6 +2225,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ABM12W-24-5760MHZ-8-D1X-T3/7168499"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.063\" L x 0.047\" W (1.60mm x 1.20mm)",
@@ -2029,6 +2255,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/abm324.576mhzd2y-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ABRACON",
@@ -2050,6 +2279,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/abm3b24.576mhz-1/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ABRACON",
@@ -2072,6 +2304,10 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ABM3B-24-576MHZ-B2-T/675322",
+        "tme": "https://www.tme.eu/en/details/abm3b24.576mhz-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -2101,6 +2337,10 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ABM7-24-576MHZ-D2Y-T/2001213",
+        "tme": "https://www.tme.eu/en/details/abm724.576mhzd-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.236\" L x 0.138\" W (6.00mm x 3.50mm)",
@@ -2129,6 +2369,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/abm822624.576mhz-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ABRACON",
@@ -2149,6 +2392,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ABM8-24-576MHZ-B2-T/675334"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -2176,6 +2422,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ABM8AIG-24-576MHZ-12-2Z-T3/5817593"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -2203,6 +2452,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ABM8AIG-24-576MHZ-12-R40-D2Z-T3/15908898"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -2230,6 +2482,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ABM8G-24-576MHZ-18-D2Y-T/2218020"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -2258,6 +2513,10 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ABM8G-24-576MHZ-18-D2Y-T3/2637894",
+        "tme": "https://www.tme.eu/en/details/abm8g24.576mhz-0/"
+      },
       "conflicts": [
         "part_type"
       ],
@@ -2288,6 +2547,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ABM8G-24-576MHZ-4Y-T3/2623796"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -2316,6 +2578,10 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ABMM-24-576MHZ-B2-T/675355",
+        "tme": "https://www.tme.eu/en/details/abmm24.576mhzb2t-0/"
+      },
       "conflicts": [
         "part_type"
       ],
@@ -2346,6 +2612,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/abmm224.576mhz-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -2369,6 +2638,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ACH-24-576MHZ-EK/675369"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.500\" L x 0.500\" W (12.70mm x 12.70mm)",
@@ -2397,6 +2669,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ACO-24-576MHZ-EK/675405"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.795\" L x 0.496\" W (20.20mm x 12.60mm)",
@@ -2426,6 +2701,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/raltron-electronics/AS-24-576-20-F-3030-SMD-TR/13150943"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.472\" L x 0.189\" W (12.00mm x 4.80mm)",
@@ -2452,6 +2730,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ASA-24-576MHZ-L-T/2809878"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -2481,6 +2762,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ASA2-24-576MHZ-L-T/2803223"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -2510,6 +2794,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ASA2-24-576MHZ-L-T3/2805123"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -2539,6 +2826,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ASCO-24-576MHZ-EK-T3/4092551"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.063\" L x 0.047\" W (1.60mm x 1.20mm)",
@@ -2568,6 +2858,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/asd24.576mhzlc-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -2591,6 +2884,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ASD1-24-576MHZ-EC-T/1236909"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -2620,6 +2916,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ASD3-24-576MHZ-EC-T/1236923"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -2650,6 +2949,10 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ASDDV-24-576MHZ-LC-T3/15771176",
+        "tme": "https://www.tme.eu/en/details/asddv24.576mhzlc-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576 MHz",
@@ -2680,6 +2983,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ASDLJ-E-24-576MHZ-L-R-T/24387242"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -2709,6 +3015,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ASDMB-24-576MHZ-LC-T/2809941"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -2739,6 +3048,10 @@
         "digikey",
         "mouser"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ASDMB-24-576MHZ-LY-T/2623831",
+        "mouser": "https://cz.mouser.com/en/ProductDetail/ABRACON/ASDMB-24.576MHZ-LY-T?qs=CnD89xF1VSmmkEgUdf3hMQ%3D%3D"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -2769,6 +3082,10 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ASDTDV-24-576MHZ-LY-T/20838402",
+        "tme": "https://www.tme.eu/en/details/asdtdv24.576mhzl-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576 MHz",
@@ -2799,6 +3116,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ASE-24-576MHZ-E-T/2001353"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -2828,6 +3148,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/ase24.576mhzer-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ABRACON",
@@ -2847,6 +3170,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/ase24.576mhzet-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -2871,6 +3197,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ASE-24-576MHZ-L-C-T/1236884"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -2900,6 +3229,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ASE-24-576MHZ-L-R-T/2637769"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -2929,6 +3261,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ASE3-24-576MHZ-K-T/1236865"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -2958,6 +3293,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ASEDV-24-576MHZ-LC-T3/21702904"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -2987,6 +3325,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ASELJ-E-24-576MHZ-L-R-T/24387243"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -3017,6 +3358,10 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ASEM1-24-576MHZ-LC-T/1873210",
+        "tme": "https://www.tme.eu/en/details/asem124.576mhz-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576 MHz",
@@ -3048,6 +3393,10 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ASEMB-24-576MHZ-LC-T/2810001",
+        "tme": "https://www.tme.eu/en/details/asemb24.576mhzlc-0/"
+      },
       "conflicts": [
         "part_type"
       ],
@@ -3080,6 +3429,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ASEMB-24-576MHZ-LY-T/2623895"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -3110,6 +3462,10 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ASETDV-24-576MHZ-LY-T/20838474",
+        "tme": "https://www.tme.eu/en/details/asetdv24.576mhzl-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576 MHz",
@@ -3141,6 +3497,10 @@
         "digikey",
         "tme"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ASFL1-24-576MHZ-EC-T/687864",
+        "tme": "https://www.tme.eu/en/details/asfl124.576mhzec-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -3171,6 +3531,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ASFL1-24-576MHZ-EK-T/675456"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -3200,6 +3563,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ASFL1-24-576MHZ-L-T/2623945"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -3230,6 +3596,10 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ASFLMB-24-576MHZ-LR-T/2624014",
+        "tme": "https://www.tme.eu/en/details/asflmb24.576mhzl-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576 MHz",
@@ -3260,6 +3630,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ASFLMB-24-576MHZ-LY-T/2624015"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -3289,6 +3662,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/AST3TQ-T-24-576MHZ-50-C/5233582"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -3317,6 +3693,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/AST3TQ-V-24-576MHZ-50-C/5233583"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -3345,6 +3724,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/astmhta24.576m-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -3368,6 +3750,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ASTX-H11-24-576MHZ-T/3906605"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -3397,6 +3782,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ASV-24-576MHZ-E-T/2060839"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.200\" W (7.00mm x 5.08mm)",
@@ -3428,6 +3816,11 @@
         "tme",
         "mouser"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ASV-24-576MHZ-EJ-T/675513",
+        "mouser": "https://cz.mouser.com/en/ProductDetail/ABRACON/ASV-24.576MHZ-EJ-T?qs=GgB7MJ%2FTIsRYewXBpNiXkA%3D%3D",
+        "tme": "https://www.tme.eu/en/details/asv24.576mhzejt-0/"
+      },
       "conflicts": [
         "part_type"
       ],
@@ -3460,6 +3853,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/asv224.576mhzrt-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -3481,6 +3877,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/abracon-llc/ASVV-24-576MHZ-L50-N102-T/2637802"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -3510,6 +3909,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/AW-24-576MBE-T/5873410"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -3535,6 +3937,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/cts-frequency-controls/CB3-3I-24M576000/4308698"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -3564,6 +3969,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/cts-frequency-controls/CB3LV-3C-24M576000/4308704"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -3593,6 +4001,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/cts-frequency-controls/CB3LV-3I-24M576000/686957"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -3622,6 +4033,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/crystek-corporation/CCHD-575-25-24-576/5423299"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.295\" L x 0.200\" W (7.50mm x 5.08mm)",
@@ -3641,7 +4055,7 @@
       "mpn": "CCHD-957-25-24.576",
       "manufacturer": "Crystek Corporation",
       "eu_sources": 1,
-      "eu_stock": 68,
+      "eu_stock": 67,
       "unit_price_cents": 2759,
       "moq": 1,
       "lead_time_days": 63,
@@ -3649,6 +4063,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/crystek-corporation/CCHD-957-25-24-576/2742156"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.559\" L x 0.360\" W (14.20mm x 9.14mm)",
@@ -3677,6 +4094,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/texas-instruments/CDC6CE024576ADLXR/29184734"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -3706,6 +4126,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/raltron-electronics/CO2016-24-576-3-3-50-TR/12686253"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -3734,6 +4157,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suzhou-hangjing-elec-tech-co-ltd/CO22H4-24-576-33JDTSNK/16604640"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -3762,6 +4188,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/raltron-electronics/CO2520-24-576-1-8-50-X-T-TR/12686188"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -3790,6 +4219,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/raltron-electronics/CO2520-24-576-3-3-50-T-TR/12686309"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -3818,6 +4250,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suzhou-hangjing-elec-tech-co-ltd/CO32H4-24-576-33GDTSNK/16508804"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -3839,7 +4274,7 @@
       "mpn": "CO4305-24.576-EXT-T-TR",
       "manufacturer": "Raltron Electronics",
       "eu_sources": 1,
-      "eu_stock": 2146,
+      "eu_stock": 2141,
       "unit_price_cents": 123,
       "moq": 1,
       "lead_time_days": 98,
@@ -3847,6 +4282,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/raltron-electronics/CO4305-24-576-EXT-T-TR/10272013"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -3875,6 +4313,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/raltron-electronics/COM1305-24-576-EXT-T-TR/12686219"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -3903,6 +4344,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/raltron-electronics/COM2305-24-576-EXT-T-TR/12686306"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -3931,6 +4375,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ndk-nihon-dempa-kogyo-co-ltd/CS14523-24-576M/1128835"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -3958,6 +4405,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/citizen-finedevice-co-ltd/CSX-750FBC24576000T/482008"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -3986,6 +4436,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/citizen-finedevice-co-ltd/CSX-750FCC24576000T/481978"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -4014,6 +4467,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/connor-winfield/CWX813-024-576M/695522"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -4042,6 +4498,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/connor-winfield/CWX823-024-576M/695443"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -4070,6 +4529,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/CX2016DB24576D0GPSC1/6123516"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -4097,6 +4559,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/CX2016DB24576H0FLJC1/6123269"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -4124,6 +4589,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/CX2016SA24576B0QLSG1/21703041"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -4151,6 +4619,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/cx2016sa24576d0flj/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -4173,6 +4644,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/CX2016SA24576D0FPLG1/16820347"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -4199,6 +4673,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/CX2016SA24576H0FLJG1/16820374"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -4226,6 +4703,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/CX2016SA24576H0FPLG1/16820330"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -4252,6 +4732,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/CX3225SB24576D0FLJCC/6123309"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -4279,6 +4762,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/CX3225SB24576H0FLJCC/6123310"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -4306,6 +4792,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/connor-winfield/DOCAT020V-024-576M/9463665"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.555\" L x 0.358\" W (14.10mm x 9.10mm)",
@@ -4334,6 +4823,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/connor-winfield/DOCSC012F-024-576M/7100176"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.555\" L x 0.358\" W (14.10mm x 9.10mm)",
@@ -4362,6 +4854,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/connor-winfield/DOCSC022F-024-576M/5399015"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.555\" L x 0.358\" W (14.10mm x 9.10mm)",
@@ -4390,6 +4885,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/analog-devices-inc-maxim-integrated/DS1089LU-22F/1769331"
+      },
       "conflicts": [],
       "attrs_raw": {
         "channels": "1",
@@ -4416,6 +4914,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSA1221BL2-24M57600VAO/25617222"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -4445,6 +4946,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSA6001MI1B-024-5760TVAO/10674056"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -4474,6 +4978,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSA6001MI1B-024-5760VAO/10674041"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -4503,6 +5010,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1001CI1-024-5760/22466498"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -4532,6 +5042,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1001DE1-024-5760/22468299"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -4561,6 +5074,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1001DE1-024-5760T/22211238"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -4590,6 +5106,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1001DI1-024-5760/22467764"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -4619,6 +5138,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1001DI1-024-5760T/22211349"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -4648,6 +5170,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1001DI2-024-5760/22468223"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -4677,6 +5202,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1001DI2-024-5760B/26339696"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -4706,6 +5234,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1001DI2-024-5760T/22213018"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -4735,6 +5266,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1001DI5-024-5760/22467321"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -4764,6 +5298,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1003DI2-024-5760/22467464"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -4793,6 +5330,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC1003DI2-024-5760T/22210768"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -4822,6 +5362,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC6001CI2A-024-5760T/7795666"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -4851,6 +5394,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC6001JI3B-024-5760/22468220"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -4880,6 +5426,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC6001JI3B-024-5760T/22210542"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -4909,6 +5458,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC6011JI2B-024-5760/24626301"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -4938,6 +5490,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC6011JI2B-024-5760T/22211538"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -4967,6 +5522,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC6111HI1B-024-5760/21572873"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.063\" L x 0.047\" W (1.60mm x 1.20mm)",
@@ -4996,6 +5554,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC6111HI1B-024-5760T/21573043"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.063\" L x 0.047\" W (1.60mm x 1.20mm)",
@@ -5025,6 +5586,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC6111JI1B-024-5760/24626585"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -5054,6 +5618,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/DSC6111JI1B-024-5760T/22211749"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -5083,6 +5650,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ecliptek/EB13E2H2H-24-576M-TR/12619905"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -5111,6 +5681,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ecliptek/EB2532YA12-24-576M-TR/12617252"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -5138,6 +5711,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ecliptek/EC2600TS-24-576M-TR/16028207"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -5166,6 +5742,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ecliptek/EC2620TS-24-576M-TR/12610334"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -5194,6 +5773,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ecs-inc/ECS-1612MV-245-7-CN-TR/22464866"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.063\" L x 0.047\" W (1.60mm x 1.20mm)",
@@ -5223,6 +5805,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ecs-inc/ECS-2033-245-7-B-TR/9838830"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -5252,6 +5837,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ecs-inc/ECS-2033-245-7-BN-TR/9838829"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -5281,6 +5869,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ecs-inc/ECS-2333-245-7-BN-TR/3927381"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -5310,6 +5901,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ecs-inc/ECS-245-20-30B-TR/813210"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -5337,6 +5931,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ecs-inc/ECS-245-7-10-36-JTM-TR/9648914"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -5364,6 +5961,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ecs-inc/ECS-245-7-10-36B2-CTM-TR/14548831"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -5391,6 +5991,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ecs-inc/ECS-245-7-10-36Q-ES-TR/6049639"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -5418,6 +6021,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ecs-inc/ECS-245-7-12-33Q-JEN-TR/9597492"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -5445,6 +6051,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ecs-inc/ECS-245-7-18-33-JGN-TR/6821631"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -5472,6 +6081,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ecs-inc/ECS-245-7-18-7SX-TR/4976613"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.492\" L x 0.181\" W (12.50mm x 4.60mm)",
@@ -5498,6 +6110,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ecs-inc/ECS-245-7-20-20A-TR/15777835"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -5525,6 +6140,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ecs-inc/ECS-245-7-20-3X-EN-TR/2676627"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.161\" W (7.00mm x 4.10mm)",
@@ -5551,6 +6169,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ecs-inc/ECS-245-7-20-4X/827532"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.447\" L x 0.183\" W (11.35mm x 4.65mm)",
@@ -5577,6 +6198,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ecs-inc/ECS-245-7-20-5PX-TR/827410"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.449\" L x 0.189\" W (11.40mm x 4.80mm)",
@@ -5603,6 +6227,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ecs-inc/ECS-245-7-8-36-RWN-TR/6821600"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -5630,6 +6257,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ecs-inc/ECS-2520MVLC-245-7-BN-TR/13968069"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -5659,6 +6289,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ecs-inc/ECS-2520MVLC-245-7-CN-TR/16688187"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -5688,6 +6321,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ecs-inc/ECS-2520SMVQ-245-7-DS-TR/22464853"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -5717,6 +6353,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ecs-inc/ECS-3225MV-245-7-BN-TR3/15777836"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -5746,6 +6385,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ecs-inc/ECS-3225MVLC-245-7-CN-TR/16351623"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -5775,6 +6417,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ecs-inc/ECS-3953M-245-7-TR/15777840"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -5804,6 +6449,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ecs-inc/ECS-5032MV-245-7-BN-TR/9953238"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -5833,6 +6481,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ecs-inc/ECS-7050MV-245-7-BN-TR/13665259"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -5862,6 +6513,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ecs-inc/ECS-TXO-3225MV-245-7-TR/16578392"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -5891,6 +6545,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ecs-inc/ECS-VXO-73-245-76/3198105"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -5920,6 +6577,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/ecx661724.576m-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -5942,6 +6602,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ecliptek/EV32C6A3A1-24-576M-TR/12617540"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -5970,6 +6633,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/FA-238-24-5760MB-C3/5261064"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -5997,6 +6663,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/FA-238-24-5760MB-K3/2403382"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -6024,6 +6693,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/fox-electronics/FC5BQCCMC24-576-T1/1024619"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -6051,6 +6723,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/raltron-electronics/H130B-24-576-18-F-3030-TR/13150800"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -6078,6 +6753,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/citizen-finedevice-co-ltd/HC-49-U-S24576000ABJB/284235"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.453\" L x 0.183\" W (11.50mm x 4.65mm)",
@@ -6104,6 +6782,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/citizen-finedevice-co-ltd/HCM4924576000ABJT/284295"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.449\" L x 0.185\" W (11.40mm x 4.70mm)",
@@ -6130,6 +6811,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/connor-winfield/HSM613-024-576M/5267380"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.295\" L x 0.197\" W (7.50mm x 5.00mm)",
@@ -6158,6 +6842,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ilsi/I538-2O7-24-576-MHZ/15517010"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -6186,6 +6873,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/i5472y324.576m-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ABRACON",
@@ -6205,6 +6895,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/ilcx19ff5f1024-1/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ABRACON",
@@ -6226,6 +6919,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/ism973251bh24.57-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ABRACON",
@@ -6245,6 +6941,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/ixa10fbff1024.-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -6268,6 +6967,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/ixa10fbff824.576-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ABRACON",
@@ -6288,6 +6990,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ilsi/IXA10-HF5F10-24-576-MHZ/12619604"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.063\" L x 0.047\" W (1.60mm x 1.20mm)",
@@ -6315,6 +7020,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/ixa20fbff1024.57-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ABRACON",
@@ -6335,6 +7043,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/ixa20fbff1224.57-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ABRACON",
@@ -6355,6 +7066,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/ixa20fbff824.576-0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "manufacturer_name": "ABRACON",
@@ -6376,6 +7090,10 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC2016Z24-5760C15XXK/11610049",
+        "tme": "https://www.tme.eu/en/details/kc2016z24.5760c15x/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576 MHz",
@@ -6407,6 +7125,11 @@
         "digikey",
         "mouser"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC2016Z24-5760C1KX00/11610181",
+        "mouser": "https://cz.mouser.com/en/ProductDetail/KYOCERA-AVX/KC2016Z24.5760C1KX00?qs=vHuUswq2%252BszEzyiIMnqf8Q%3D%3D",
+        "tme": "https://www.tme.eu/en/details/kc2016z24.5760c1kx/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576 MHz",
@@ -6436,6 +7159,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC2520K24-5760C1GE00/5322482"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -6465,6 +7191,10 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC2520Z24-5760C15XXK/11610154",
+        "tme": "https://www.tme.eu/en/details/kc2520z24.5760c15x/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576 MHz",
@@ -6495,6 +7225,10 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC2520Z24-5760C1KX00/11610025",
+        "tme": "https://www.tme.eu/en/details/kc2520z24.5760c1kx/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576 MHz",
@@ -6524,6 +7258,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC3225K24-5760C1GE00/5253656"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -6553,6 +7290,10 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC3225Z24-5760C15XXK/11610183",
+        "tme": "https://www.tme.eu/en/details/kc3225z24.5760c15x/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576 MHz",
@@ -6583,6 +7324,10 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC3225Z24-5760C1KX00/11610083",
+        "tme": "https://www.tme.eu/en/details/kc3225z24.5760c1kx/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576 MHz",
@@ -6612,6 +7357,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC5032Z24-5760C1JX00/22205185"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -6640,6 +7388,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC5032Z24-5760C1SX00/22612196"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -6668,6 +7419,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC5032Z24-5760C1UX00/22612165"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -6696,6 +7450,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC5032Z24-5760C1WX00/22612542"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -6724,6 +7481,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/KC7050K24-5760C1GE00/5253666"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -6752,6 +7512,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/iqd-frequency-products/LFSPXO025496/8633339"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -6780,6 +7543,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/24.5760m-cfps-32/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -6806,6 +7572,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/iqd-frequency-products/LFSPXO100273/29721962"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -6835,6 +7604,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/iqd-frequency-products/LFSPXO100296/29721943"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -6864,6 +7636,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/iqd-frequency-products/LFTVXO072344/8634009"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -6892,6 +7667,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/24.576m-hc49/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -6916,6 +7694,10 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/iqd-frequency-products/LFXTAL026396/8633302",
+        "tme": "https://www.tme.eu/en/details/24.576m-12smxr/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576 MHz",
@@ -6944,6 +7726,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/24.576m-cfpx104/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -6968,6 +7753,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/iqd-frequency-products/LFXTAL059531/8633566"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -6995,6 +7783,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/24.5760m-iqxc-42a/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -7019,6 +7810,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/iqd-frequency-products/LFXTAL100309/29721971"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.134\" L x 0.106\" W (3.40mm x 2.70mm)",
@@ -7046,6 +7840,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/iqd-frequency-products/LFXTAL100314/29721938"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.134\" L x 0.106\" W (3.40mm x 2.70mm)",
@@ -7073,6 +7870,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/iqd-frequency-products/LFXTAL100349/29721983"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -7100,6 +7900,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/connor-winfield/M200F-024-576M/5641643"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -7128,6 +7931,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/mc2016z24.5760c19x/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -7154,6 +7960,10 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/MC2520Z24-5760C19XSH/11610227",
+        "tme": "https://www.tme.eu/en/details/mc2520z24.5760c19x/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576 MHz",
@@ -7183,6 +7993,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/kyocera-avx/MC3225Z24-5760C19XSH/11610018"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -7211,6 +8024,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/connor-winfield/ML602-024-576M/5641648"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -7239,6 +8055,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ndk-nihon-dempa-kogyo-co-ltd/NSC5004A-24-576M/22209253"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -7268,6 +8087,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ndk-nihon-dempa-kogyo-co-ltd/NSC5021A-24-576M/22209245"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -7297,6 +8119,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ndk-nihon-dempa-kogyo-co-ltd/NSC5021D-24-576M/22209224"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -7326,6 +8151,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ndk-nihon-dempa-kogyo-co-ltd/NSC5083D-24-576M/13982370"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -7355,6 +8183,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/connor-winfield/OH200-61003CF-024-576M/5399006"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "1.417\" L x 1.063\" W (36.00mm x 27.00mm)",
@@ -7383,6 +8214,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/connor-winfield/OH4610LF-024-576M/5641633"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.800\" L x 0.500\" W (20.32mm x 12.70mm)",
@@ -7411,6 +8245,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/yxc/OT2ED8K5JI-111YXC-24-576M/24769659"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -7440,6 +8277,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/yxc/OT8ED8K5JI-111YXC-24-576M/24769559"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -7468,6 +8308,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/taitien/OXETGCJANF-24-576000/6127741"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -7496,6 +8339,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/taitien/OXETGLJANF-24-576000/6110240"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -7524,6 +8370,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/microchip-technology/PL611-01-N12MC-R/7898437"
+      },
       "conflicts": [],
       "attrs_raw": {
         "channels": "1",
@@ -7550,6 +8399,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/252s-24.576maaj/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -7574,6 +8426,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/325g-24.576maae/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -7598,6 +8453,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/325g-24.576maav/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -7623,6 +8481,10 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/qst/QT325G-24-576MAHV-T/27009287",
+        "tme": "https://www.tme.eu/en/details/325g-24.576mahv/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576 MHz",
@@ -7651,6 +8513,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/325g-24.576mdde/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -7675,6 +8540,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/325g-24.576mddq/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -7699,6 +8567,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/325s-24.576maae/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -7723,6 +8594,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/325s-24.576maaj/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -7747,6 +8621,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/325s-24.576mahe/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -7771,6 +8648,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/325s-24.576mahj/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -7795,6 +8675,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/49-24.576maaj-b/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -7819,6 +8702,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/49s-24.576meej-t/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -7843,6 +8729,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/532g-24.576maaj/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -7867,6 +8756,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/532g-24.576mahe/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -7891,6 +8783,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/532g-24.576mbbk/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -7915,6 +8810,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/532s-24.576maaj/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -7939,6 +8837,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/qst/QTM216-24-576MDE-T/29206606"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -7968,6 +8869,10 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/qst/QTM216E-24-576MBM-T/29206542",
+        "tme": "https://www.tme.eu/en/details/m216e-24.576mbm/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576 MHz",
@@ -7997,6 +8902,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/qst/QTM216E-24-576MDM-T/29206468"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -8025,6 +8933,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/qst/QTM216J-24-576MBJ-T/27224949"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -8054,6 +8965,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/qst/QTM216J-24-576MDJ-T/27225019"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -8084,6 +8998,10 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/qst/QTM252E-24-576MBM-T/29206608",
+        "tme": "https://www.tme.eu/en/details/m252e-24.576mbm/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576 MHz",
@@ -8114,6 +9032,10 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/qst/QTM252E-24-576MDM-T/29206574",
+        "tme": "https://www.tme.eu/en/details/m252e-24.576mdm/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576 MHz",
@@ -8143,6 +9065,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/qst/QTM252J-24-576MBJ-T/27225020"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -8172,6 +9097,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/qst/QTM252J-24-576MDJ-T/27224989"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -8201,6 +9129,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/m325-24.576mbe/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -8227,6 +9158,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/qst/QTM750-24-576MBE-T/28263139"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -8255,6 +9189,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/qst/QTS750C-24-576MBP-T/29206499"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -8283,6 +9220,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/raltron-electronics/R2520-24-576-10-F-1020-EXT-TR-NS1/22531223"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -8310,6 +9250,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/nextgen-components/RA24M57600L515/17126430"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.803\" L x 0.504\" W (20.40mm x 12.80mm)",
@@ -8338,6 +9281,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/nextgen-components/RC24M57600S100/26601506"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -8366,6 +9312,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/nextgen-components/RC24M57600S302/26601529"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -8394,6 +9343,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/nextgen-components/RE24M57600S321/26482998"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -8423,6 +9375,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/nextgen-components/RE24M57600S351/26482984"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -8452,6 +9407,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/nextgen-components/RF24M57600S302/26598581"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -8480,6 +9438,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/raltron-electronics/RH100-24-576-10-F-3030-TR/22531245"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -8507,6 +9468,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/raltron-electronics/RH100-24-576-18-F-2030-EXT-TR/22531244"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -8534,6 +9498,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/raltron-electronics/RTXE-104EF133-C-24-576-TR/14558686"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -8562,6 +9529,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/aker-technology-corp/S118025T-24-576-R/12734678"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -8590,6 +9560,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/aker-technology-corp/S11805T-24-576-R/12738651"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -8618,6 +9591,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/aker-technology-corp/S11805T-24-576-X-R/12730680"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -8646,6 +9622,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/aker-technology-corp/S125025T-24-576-R/12729791"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -8674,6 +9653,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/aker-technology-corp/S12505T-24-576-X-R/12743206"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -8702,6 +9684,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/aker-technology-corp/S133025T-24-576-R/12733660"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -8730,6 +9715,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/aker-technology-corp/S13305T-24-576-R/12737616"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -8758,6 +9746,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/aker-technology-corp/S13305T-24-576-X-R/12729584"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -8787,6 +9778,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/aker-technology-corp/S1M05T-24-576-X-R/12729062"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -8815,6 +9809,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/aker-technology-corp/S218025T-24-576-R/12742013"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -8843,6 +9840,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/aker-technology-corp/S21805T-24-576-X-R/12740714"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -8871,6 +9871,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/aker-technology-corp/S225025T-24-576-R/12731817"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -8899,6 +9902,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/aker-technology-corp/S22505T-24-576-X-R/12730152"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -8927,6 +9933,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/aker-technology-corp/S233025T-24-576-R/12739199"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -8955,6 +9964,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/aker-technology-corp/S23305-24-576-X-R/12734700"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -8983,6 +9995,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/aker-technology-corp/S23305T-24-576-X-R/12742560"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -9011,6 +10026,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/aker-technology-corp/S318025T-24-576-R/12734589"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -9040,6 +10058,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/aker-technology-corp/S31805T-24-576-X-R/12733876"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -9069,6 +10090,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/aker-technology-corp/S325025T-24-576-R/12734552"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -9098,6 +10122,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/aker-technology-corp/S32505T-24-576-X-R/12729307"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -9127,6 +10154,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/aker-technology-corp/S333025T-24-576-R/12743544"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -9156,6 +10186,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/aker-technology-corp/S33305-24-576-X-R/12733931"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -9185,6 +10218,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/aker-technology-corp/S33305T-24-576-X-R/12739472"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -9214,6 +10250,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/aker-technology-corp/S518025T-24-576-R/12728550"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -9242,6 +10281,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/aker-technology-corp/S51805T-24-576-X-R/12729668"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -9270,6 +10312,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/aker-technology-corp/S533025T-24-576-R/12742317"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -9298,6 +10343,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/aker-technology-corp/S53305-24-576-X-R/12742659"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -9326,6 +10374,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/aker-technology-corp/S53305T-24-576-X-R/12742872"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -9354,6 +10405,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/aker-technology-corp/S733025T-24-576-15-R/12739511"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -9382,6 +10436,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/aker-technology-corp/S73305-24-576-X-15-R/12738981"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -9410,6 +10467,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/aker-technology-corp/S73305T-24-576-X-15-R/12729582"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -9438,6 +10498,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-210STF-24-5760ML/4692615"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -9467,6 +10530,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-210STF-24-5760ML0/4437391"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -9496,6 +10562,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-210STF-24-5760ML5/17062341"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -9525,6 +10594,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-210STF-24-5760MS0/6217664"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -9554,6 +10626,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-210STF-24-5760MS3/6217455"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -9583,6 +10658,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-210STF-24-5760MS5/6217665"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -9612,6 +10690,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-310SEF-24-5760MB0/5260445"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -9641,6 +10722,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-8018CA-24-5760M-TJHPA0/13649999"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -9670,6 +10754,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-8018CA-24-5760M-TJHSA0/7697098"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -9699,6 +10786,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-8018CB-24-5760M-TJHPA0/13645351"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -9728,6 +10818,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-8018CB-24-5760M-TJHSA0/7697005"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -9757,6 +10850,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-8018CE-24-5760M-TJHPA0/13648416"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -9786,6 +10882,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-8018CE-24-5760M-TJHSA0/7696912"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -9815,6 +10914,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-8018CG-24-5760M-TJHPA0/13644886"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -9844,6 +10946,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-8018CG-24-5760M-TJHSA0/7696819"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -9873,6 +10978,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-8018CG-24-5760M-TJHSA3/17840908"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -9902,6 +11010,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-8101CE-24-5760M-TBGSA0/17079751"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -9931,6 +11042,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG-8101CE-24-5760M-TCHSA0/17083576"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -9960,6 +11074,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG2016CAN-24-5760M-TJGA5/25598182"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -9989,6 +11106,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG2016CAN-24-5760M-TJHA0/25598377"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -10018,6 +11138,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG3225CAN-24-5760M-TJGA3/13627742"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -10047,6 +11170,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG3225CAN-24-5760M-TJGA6/17111881"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -10076,6 +11202,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG5032CAN-24-576000M-TJGA3/5260478"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -10105,6 +11234,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG7050CAN-24-576000M-TJGA0/17112330"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -10134,6 +11266,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/epson/SG7050CAN-24-576000M-TJGA3/5174957"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -10163,6 +11298,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/rochester-electronics-llc/SIT1602AI-22-33E-24-576000E/13510418"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -10192,6 +11330,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/sitime/SIT1602BI-13-18S-24-576000/11430070"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -10221,6 +11362,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/sitime/SIT3907AI-22-33NH-24-576000X/6080782"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -10250,6 +11394,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/sitime/SIT5001AICGE-33E0-24-576000X/5848434"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.106\" L x 0.094\" W (2.70mm x 2.40mm)",
@@ -10279,6 +11426,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/sitime/SIT5356AC-FQ033IX-24-576000/13562906"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -10308,6 +11458,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/rochester-electronics-llc/SIT8008BI-22-33S-24-576000E/13442181"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -10337,6 +11490,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/sitime/SIT8021AC-J4-18S-24-576000/13545159"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.061\" L x 0.033\" W (1.54mm x 0.84mm)",
@@ -10366,6 +11522,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/rochester-electronics-llc/SIT8103AC-83-33E-24-57600T/13526102"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -10395,6 +11554,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/sitime/SIT8208AC-8F-25E-24-576000Y/6080570"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -10424,6 +11586,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/rochester-electronics-llc/SIT8924AE-13-33E-24-576000G/13499495"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -10452,6 +11617,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/pletronics-inc/SM4444AE-24-576M-T3K/30387949"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -10481,6 +11649,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/pletronics-inc/SM4445AE-24-576M-T3K/30387956"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -10510,6 +11681,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/harmony-electronics-corp-h-ele/SSW024576F3CHC-T/14555661"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -10537,6 +11711,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/ndk-nihon-dempa-kogyo-co-ltd/STDCSW2-24-576M/1128844"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -10564,6 +11741,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SUO32C3C481-24-576M/24366493"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -10593,6 +11773,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX1M24-576M10F30TNN/25573027"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -10621,6 +11804,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX2M24-576B10F20TNN/25699578"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -10649,6 +11835,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX2M24-576B20F30TNF/25573873"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -10677,6 +11866,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX2M24-576B20F30TNN/25699701"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -10705,6 +11897,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX2M24-576D10F20TNN/25699964"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -10733,6 +11928,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX2M24-576D20F30TNN/25699571"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -10761,6 +11959,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX2M24-576M20F30TNN/25572898"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -10789,6 +11990,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX3M24-576A10F20TNN/25700175"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -10817,6 +12021,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX3M24-576A20F30TNN/25700666"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -10845,6 +12052,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX3M24-576B10F20TNN/25573793"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -10874,6 +12084,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX3M24-576B20F30TNF/25573870"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -10903,6 +12116,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX3M24-576B20F30TNN/25700693"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -10931,6 +12147,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX3M24-576D10F20TNN/25700448"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -10959,6 +12178,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX3M24-576D20F30TNN/25700113"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -10987,6 +12209,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX3M24-576M20F30TNN/25573000"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -11016,6 +12241,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX3V24-576B20100F30TNNS/26761859"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -11044,6 +12272,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX5M24-576A10F20TNN/25699938"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -11072,6 +12303,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX5M24-576A20F30TNN/25699933"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -11100,6 +12334,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX5M24-576B10F20TNN/25573129"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -11128,6 +12365,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX5M24-576B20F30TNF/25573865"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -11156,6 +12396,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX5M24-576B20F30TNN/25699720"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -11184,6 +12427,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX5M24-576D10F20TNN/25699978"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -11212,6 +12458,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX5M24-576D20F30TNN/25699475"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -11240,6 +12489,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX5M24-576M20F30TNN/25572858"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -11268,6 +12520,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX5V24-576B20100F30TNNS/26761712"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -11296,6 +12551,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX7M24-576A10F20TNN/25699115"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -11324,6 +12582,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX7M24-576A20F30TNN/25698724"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -11352,6 +12613,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX7M24-576B10F20TNN/25573114"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -11380,6 +12644,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX7M24-576B20F30TNF/25573894"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -11408,6 +12675,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX7M24-576B20F30TNN/25699140"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -11436,6 +12706,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX7M24-576D10F20TNN/25699152"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -11464,6 +12737,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX7M24-576D20F30TNN/25699117"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -11492,6 +12768,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX7M24-576M20F30TNN/24818638"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -11520,6 +12799,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SX7V24-576B20100F30TNNS/26761704"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -11548,6 +12830,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXO32C3A071-24-576M/14617042"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -11577,6 +12862,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXO32C3A161-24-576M/14604403"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -11606,6 +12894,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXO32C3A171-24-576M/14611209"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -11635,6 +12926,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXO32C3A271-24-576M/14611509"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -11664,6 +12958,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXO32C3A381-24-576M/14599444"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -11693,6 +12990,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXO32C3A481-24-576M/14600153"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -11722,6 +13022,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXO32C3B071-24-576M/14611014"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -11751,6 +13054,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXO32C3B161-24-576M/14604131"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -11780,6 +13086,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXO32C3B171-24-576M/14613948"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -11809,6 +13118,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXO32C3B271-24-576M/14617786"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -11838,6 +13150,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXO32C3B381-24-576M/14614964"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -11867,6 +13182,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXO32C3B481-24-576M/14617997"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -11896,6 +13214,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXO32C3C071-24-576M/14619353"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -11925,6 +13246,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXO32C3C161-24-576M/14619069"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -11954,6 +13278,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXO32C3C171-24-576M/14619386"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -11983,6 +13310,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXO32C3C271-24-576M/14618584"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -12012,6 +13342,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXO32C3C381-24-576M/14619713"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -12041,6 +13374,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXO32C3C481-24-576M/14618435"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -12070,6 +13406,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SXOA24-576A20F30TNN/25795988"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.500\" L x 0.500\" W (12.70mm x 12.70mm)",
@@ -12098,6 +13437,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SXOA24-576B20F30TNN/25795799"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.500\" L x 0.500\" W (12.70mm x 12.70mm)",
@@ -12126,6 +13468,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SXOB24-576A20F30TNN/25796064"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.803\" L x 0.504\" W (20.40mm x 12.80mm)",
@@ -12154,6 +13499,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/shenzhen-sctf-electronics/SXOB24-576B20F30TNN/25795887"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.803\" L x 0.504\" W (20.40mm x 12.80mm)",
@@ -12182,6 +13530,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT22410BB27-24-576M/12290891"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -12209,6 +13560,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT22410BB48-24-576M/12294267"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -12236,6 +13590,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT22410DA48-24-576M/12288111"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -12263,6 +13620,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT22410DB48-24-576M/12313186"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -12290,6 +13650,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT22410DD27-24-576M/12281476"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -12317,6 +13680,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT22410DD48-24-576M/12291585"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -12344,6 +13710,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT22410ED27-24-576M/12306546"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -12371,6 +13740,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT22410FD27-24-576M/12297661"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -12398,6 +13770,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT22410FD48-24-576M/12309330"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -12425,6 +13800,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT22416BB48-24-576M/12306050"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -12452,6 +13830,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT22418BB27-24-576M/12282008"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -12479,6 +13860,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT2248EE48-24-576M/12281769"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -12506,6 +13890,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT2248FD48-24-576M/12300232"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -12533,6 +13920,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32410AA07-24-576M/12294502"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -12560,6 +13950,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32410AA16-24-576M/12295352"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -12587,6 +13980,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32410AA17-24-576M/12290620"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -12614,6 +14010,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32410AA27-24-576M/12293361"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -12641,6 +14040,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32410AA38-24-576M/12312182"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -12668,6 +14070,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32410AA48-24-576M/12305280"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -12695,6 +14100,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32410BA07-24-576M/12294716"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -12722,6 +14130,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32410BA17-24-576M/12301083"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -12749,6 +14160,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32410BA38-24-576M/12294863"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -12776,6 +14190,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32411AA07-24-576M/12303766"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -12803,6 +14220,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32411BA07-24-576M/12304245"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -12830,6 +14250,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32412AA07-24-576M/12310631"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -12857,6 +14280,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32412AA16-24-576M/12293215"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -12884,6 +14310,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32412AA17-24-576M/12309948"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -12911,6 +14340,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32412AA27-24-576M/12306788"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -12938,6 +14370,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32412AA38-24-576M/12309904"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -12965,6 +14400,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32412AA48-24-576M/12307204"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -12992,6 +14430,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32412BA07-24-576M/12297036"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -13019,6 +14460,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32412BA16-24-576M/12291431"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -13046,6 +14490,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32412BA27-24-576M/12297901"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -13073,6 +14520,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32412BA38-24-576M/12295884"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -13100,6 +14550,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32412BA48-24-576M/12295948"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -13127,6 +14580,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32413AA07-24-576M/12309808"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -13154,6 +14610,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32413AA16-24-576M/12295446"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -13181,6 +14640,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32414AA07-24-576M/12299534"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -13208,6 +14670,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32414AA38-24-576M/12290042"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -13235,6 +14700,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32415AA07-24-576M/12311711"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -13262,6 +14730,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32416AA07-24-576M/12283939"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -13289,6 +14760,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32416AA16-24-576M/12292403"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -13316,6 +14790,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32416AA17-24-576M/12308171"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -13343,6 +14820,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32417AA07-24-576M/12298622"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -13370,6 +14850,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32417AA16-24-576M/12310813"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -13397,6 +14880,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32417AA17-24-576M/12289155"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -13424,6 +14910,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32417AA27-24-576M/12295670"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -13451,6 +14940,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32417AA38-24-576M/12313387"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -13478,6 +14970,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32417AA48-24-576M/12303728"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -13505,6 +15000,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32417BA07-24-576M/12302978"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -13532,6 +15030,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32417BA16-24-576M/12286369"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -13559,6 +15060,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32417BA17-24-576M/12311370"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -13586,6 +15090,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32417BB38-24-576M/12281326"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -13613,6 +15120,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32418AA07-24-576M/12281191"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -13640,6 +15150,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32418AA16-24-576M/12301667"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -13667,6 +15180,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32418AA17-24-576M/12305293"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -13694,6 +15210,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32418AA27-24-576M/12291471"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -13721,6 +15240,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32418AA38-24-576M/12289135"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -13748,6 +15270,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32418AA48-24-576M/12306448"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -13775,6 +15300,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32418BA07-24-576M/12280026"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -13802,6 +15330,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32418BA16-24-576M/12293012"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -13829,6 +15360,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32418BA17-24-576M/12294926"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -13856,6 +15390,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32418BA38-24-576M/12312883"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -13883,6 +15420,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32418BA48-24-576M/12287876"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -13910,6 +15450,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32418BB07-24-576M/12281437"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -13937,6 +15480,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32418BB16-24-576M/12282947"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -13964,6 +15510,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32418BB17-24-576M/12307722"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -13991,6 +15540,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32418BB27-24-576M/12298667"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -14018,6 +15570,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32418BB38-24-576M/12311554"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -14045,6 +15600,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32418BB48-24-576M/12288963"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -14072,6 +15630,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32418CA07-24-576M/12282820"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -14099,6 +15660,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32418CC17-24-576M/12295160"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -14126,6 +15690,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32418DA48-24-576M/12285067"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -14153,6 +15720,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32419AA07-24-576M/12303104"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -14180,6 +15750,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32419AA16-24-576M/12312376"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -14207,6 +15780,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32419AA27-24-576M/12297609"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -14234,6 +15810,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32419AA38-24-576M/12304037"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -14261,6 +15840,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32419AA48-24-576M/12305781"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -14288,6 +15870,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32419BA16-24-576M/12309287"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -14315,6 +15900,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32419BA17-24-576M/12306414"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -14342,6 +15930,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32419BB38-24-576M/12283292"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -14369,6 +15960,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32420AA07-24-576M/12300159"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -14396,6 +15990,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32420AA16-24-576M/12283299"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -14423,6 +16020,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32420AA17-24-576M/12290486"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -14450,6 +16050,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32421AA16-24-576M/12301470"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -14477,6 +16080,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXT32422AA16-24-576M/12290761"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -14504,6 +16110,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXTHM216AA074-24-576M/12313409"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.524\" L x 0.197\" W (13.30mm x 5.00mm)",
@@ -14531,6 +16140,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXTHM216AA164-24-576M/12305397"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.524\" L x 0.197\" W (13.30mm x 5.00mm)",
@@ -14558,6 +16170,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXTHM216AA174-24-576M/12305087"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.524\" L x 0.197\" W (13.30mm x 5.00mm)",
@@ -14585,6 +16200,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXTHM216AA274-24-576M/12311817"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.524\" L x 0.197\" W (13.30mm x 5.00mm)",
@@ -14612,6 +16230,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXTHM217AA074-24-576M/12304295"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.524\" L x 0.197\" W (13.30mm x 5.00mm)",
@@ -14639,6 +16260,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXTHM217AA164-24-576M/12307182"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.524\" L x 0.197\" W (13.30mm x 5.00mm)",
@@ -14666,6 +16290,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXTHM217AA174-24-576M/12311864"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.524\" L x 0.197\" W (13.30mm x 5.00mm)",
@@ -14693,6 +16320,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXTHM217AA274-24-576M/12307438"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.524\" L x 0.197\" W (13.30mm x 5.00mm)",
@@ -14720,6 +16350,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXTHM217AA384-24-576M/12307322"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.524\" L x 0.197\" W (13.30mm x 5.00mm)",
@@ -14747,6 +16380,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXTHM217AA484-24-576M/12311813"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.524\" L x 0.197\" W (13.30mm x 5.00mm)",
@@ -14774,6 +16410,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXTHM217BA074-24-576M/12313391"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.524\" L x 0.197\" W (13.30mm x 5.00mm)",
@@ -14801,6 +16440,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXTHM217BA164-24-576M/12303266"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.524\" L x 0.197\" W (13.30mm x 5.00mm)",
@@ -14828,6 +16470,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXTHM217BA174-24-576M/12303403"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.524\" L x 0.197\" W (13.30mm x 5.00mm)",
@@ -14855,6 +16500,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXTHM218AA074-24-576M/12281715"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.524\" L x 0.197\" W (13.30mm x 5.00mm)",
@@ -14882,6 +16530,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXTHM218AA164-24-576M/12300935"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.524\" L x 0.197\" W (13.30mm x 5.00mm)",
@@ -14909,6 +16560,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXTHM218AA174-24-576M/12286663"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.524\" L x 0.197\" W (13.30mm x 5.00mm)",
@@ -14936,6 +16590,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXTHM218AA274-24-576M/12302443"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.524\" L x 0.197\" W (13.30mm x 5.00mm)",
@@ -14963,6 +16620,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXTHM218AA384-24-576M/12309480"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.524\" L x 0.197\" W (13.30mm x 5.00mm)",
@@ -14990,6 +16650,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXTHM218AA484-24-576M/12287263"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.524\" L x 0.197\" W (13.30mm x 5.00mm)",
@@ -15017,6 +16680,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXTHM218BA074-24-576M/12312979"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.524\" L x 0.197\" W (13.30mm x 5.00mm)",
@@ -15044,6 +16710,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXTHM218BA164-24-576M/12294463"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.524\" L x 0.197\" W (13.30mm x 5.00mm)",
@@ -15071,6 +16740,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXTHM218BA274-24-576M/12285552"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.524\" L x 0.197\" W (13.30mm x 5.00mm)",
@@ -15098,6 +16770,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXTHM218BA384-24-576M/12304778"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.524\" L x 0.197\" W (13.30mm x 5.00mm)",
@@ -15125,6 +16800,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXTHM218BA484-24-576M/12296177"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.524\" L x 0.197\" W (13.30mm x 5.00mm)",
@@ -15152,6 +16830,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXTHM218BB074-24-576M/12283540"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.524\" L x 0.197\" W (13.30mm x 5.00mm)",
@@ -15179,6 +16860,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXTHM218BB164-24-576M/12298656"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.524\" L x 0.197\" W (13.30mm x 5.00mm)",
@@ -15206,6 +16890,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXTHM218BB174-24-576M/12311279"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.524\" L x 0.197\" W (13.30mm x 5.00mm)",
@@ -15233,6 +16920,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXTHM218BB384-24-576M/12298585"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.524\" L x 0.197\" W (13.30mm x 5.00mm)",
@@ -15260,6 +16950,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXTHM218BB484-24-576M/12299331"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.524\" L x 0.197\" W (13.30mm x 5.00mm)",
@@ -15287,6 +16980,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXTHM218CA074-24-576M/12303855"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.524\" L x 0.197\" W (13.30mm x 5.00mm)",
@@ -15314,6 +17010,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXTHM218CA164-24-576M/12303681"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.524\" L x 0.197\" W (13.30mm x 5.00mm)",
@@ -15341,6 +17040,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXTHM218CA174-24-576M/12307638"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.524\" L x 0.197\" W (13.30mm x 5.00mm)",
@@ -15368,6 +17070,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXTHM218CA274-24-576M/12307551"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.524\" L x 0.197\" W (13.30mm x 5.00mm)",
@@ -15395,6 +17100,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXTHM218CA384-24-576M/12303851"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.524\" L x 0.197\" W (13.30mm x 5.00mm)",
@@ -15422,6 +17130,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXTHM218CA484-24-576M/12303640"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.524\" L x 0.197\" W (13.30mm x 5.00mm)",
@@ -15449,6 +17160,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXTHM218CB074-24-576M/12304116"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.524\" L x 0.197\" W (13.30mm x 5.00mm)",
@@ -15476,6 +17190,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXTHM218CB164-24-576M/12302613"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.524\" L x 0.197\" W (13.30mm x 5.00mm)",
@@ -15503,6 +17220,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXTHM219AA074-24-576M/12303416"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.524\" L x 0.197\" W (13.30mm x 5.00mm)",
@@ -15530,6 +17250,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXTHM219AA164-24-576M/12303918"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.524\" L x 0.197\" W (13.30mm x 5.00mm)",
@@ -15557,6 +17280,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXTHM219AA174-24-576M/12303630"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.524\" L x 0.197\" W (13.30mm x 5.00mm)",
@@ -15584,6 +17310,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXTHM219AA274-24-576M/12303881"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.524\" L x 0.197\" W (13.30mm x 5.00mm)",
@@ -15611,6 +17340,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXTHM219AA384-24-576M/12304926"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.524\" L x 0.197\" W (13.30mm x 5.00mm)",
@@ -15638,6 +17370,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXTHM220AA074-24-576M/12299612"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.524\" L x 0.197\" W (13.30mm x 5.00mm)",
@@ -15665,6 +17400,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/suntsu-electronics-inc/SXTHM220AA164-24-576M/12307624"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.524\" L x 0.197\" W (13.30mm x 5.00mm)",
@@ -15692,6 +17430,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/connor-winfield/T200F-024-576M/5171442"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -15720,6 +17461,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/connor-winfield/T602-024-576M/8258087"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -15748,6 +17492,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/TA-24-576MBE-T/3137735"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -15776,6 +17523,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/TC-24-576MBE-T/3138607"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
@@ -15804,6 +17554,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/TD-24-576MBE-T/3139043"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -15832,6 +17585,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/txc-corporation/TD-24-576MDE-T/3139047"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
@@ -15860,6 +17616,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/connor-winfield/TJ6F-024-576M/9817149"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -15888,6 +17647,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/connor-winfield/TL602-024-576M/5171440"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -15916,6 +17678,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/taitien/TTETTCJANF-24-576000/6127022"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -15944,6 +17709,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/aker-technology-corp/V53305100T-24-576-R/16399111"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
@@ -15972,6 +17740,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/aker-technology-corp/V733025150-24-576-R/16399129"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -16000,6 +17771,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/aker-technology-corp/V73305100-24-576-R/16399132"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
@@ -16028,6 +17802,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/connor-winfield/VKB51B2-024-576M/7927885"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.295\" L x 0.197\" W (7.50mm x 5.00mm)",
@@ -16055,6 +17832,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/connor-winfield/VKB61B2-024-576M/7927888"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.295\" L x 0.197\" W (7.50mm x 5.00mm)",
@@ -16082,6 +17862,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/w1m24576000b12bc1n/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -16105,6 +17888,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/w2k24576000e33zdcn/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -16129,6 +17915,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/w2k24576000e33zkcn/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -16153,6 +17942,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/w3k24576000g33zccl/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -16177,6 +17969,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/w3k24576000g33zccn/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -16201,6 +17996,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/w3k24576000g33zdcn/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -16225,6 +18023,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/w3m24576000d18fd1n/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -16248,6 +18049,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/w3m24576000d20fc1n/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -16271,6 +18075,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/w3m24576000f20fc1n/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -16294,6 +18101,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/w7l24576000g33zkcn/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -16318,6 +18128,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/w9m24576000d20fc1n/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -16341,6 +18154,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/sitime-tpd/XLH536024-576000I/2074683"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.203\" L x 0.132\" W (5.15mm x 3.35mm)",
@@ -16369,6 +18185,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/sitime-tpd/XLH735024-576000X/1244075"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.295\" L x 0.205\" W (7.50mm x 5.20mm)",
@@ -16397,6 +18216,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/sitime-tpd/XLH736024-576000I/2074634"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.295\" L x 0.205\" W (7.50mm x 5.20mm)",
@@ -16425,6 +18247,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/sitime-tpd/XLH73V024-576000I/2154188"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.295\" L x 0.205\" W (7.50mm x 5.20mm)",
@@ -16452,6 +18277,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/xrcgb24m576f0l00r0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -16475,6 +18303,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/xrcgb24m576f0z00r0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -16498,6 +18329,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/murata-electronics/XRCGB24M576F2C2BR0/27527072"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
@@ -16525,6 +18359,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/xrcgb24m576f3m00r0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -16548,6 +18385,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/xrcgb24m576f3m01r0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -16571,6 +18411,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/xrcgb24m576f3m02r0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -16594,6 +18437,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/xrcgb24m576f3n00r0/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "24.576MHz",
@@ -16617,6 +18463,9 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/murata-electronics/XRCPB24M576F0L00R0/6036163"
+      },
       "conflicts": [],
       "attrs_raw": {
         "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",

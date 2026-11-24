@@ -28,6 +28,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
+from ..throttle import Throttle
 from .base import Adapter, PriceBreak, VendorPart
 
 BASE = "https://api.tme.eu"
@@ -114,16 +115,37 @@ class TmeAdapter(Adapter):
         "Rated voltage": "rated_voltage_mv",
         "Leads": "termination",
         "Rechargeable batteries features": "battery_features",
+        # --- Card connectors --------------------------------------------------
+        #
+        # Verified against 30 real sockets from category 100432 ('Card
+        # connectors'), where `Kind of card` and `Connector variant` appear on 27
+        # of them.
+        "Kind of card": "card_type",
+        "Connector variant": "insertion_removal",
+        # TME publishes connector mounting under its OWN name rather than the
+        # `Mounting` it uses for semiconductors, and its value is 'SMT' where
+        # everything else says 'SMD'. Both are reconciled in canon.py.
+        "Electrical mounting": "mounting",
+        # Mapped, not constrained: TME states it as '12 (8+4)' — total followed
+        # by the signal/mechanical split — which no numeric rule reads correctly
+        # today.
+        "Number of pins": "pin_count",
     }
 
-    def __init__(self, token: str, secret: str, country: str = "SK", currency: str = "EUR"):
+    def __init__(self, token: str, secret: str, country: str = "SK", currency: str = "EUR",
+                 spent_today: int = 0):
         self._token = token
         self._secret = secret
         self.country = country
         self.currency = currency
         self._bearer: str | None = None
         self._expires_at = 0.0
-        self.calls = 0
+        self.throttle = Throttle(self.name, spent_today=spent_today)
+
+    @property
+    def calls(self) -> int:
+        """Calls made, read from the throttle so budget and run log agree."""
+        return self.throttle.calls
 
     # --- Adapter surface ------------------------------------------------
 
@@ -398,6 +420,7 @@ class TmeAdapter(Adapter):
                     lifecycle_raw=None,
                     status_raw=e.get("product_status") or [],
                     datasheet_url=datasheets.get(sym),
+                    product_url=_product_url(sym, self.country),
                 )
             )
         return out
@@ -417,21 +440,61 @@ class TmeAdapter(Adapter):
             d = json.loads(r.read())
         self._bearer = d["access_token"]
         self._expires_at = time.monotonic() + float(d.get("expires_in", 300))
-        self.calls += 1
+        self.throttle.calls += 1
 
-    def _get(self, path: str, params: list[tuple[str, str]]) -> dict:
-        if self._bearer is None or time.monotonic() > self._expires_at - TOKEN_REFRESH_MARGIN_S:
-            self._authenticate()
-        url = f"{BASE}{path}?{urllib.parse.urlencode(params)}"
-        req = urllib.request.Request(url, headers={"Authorization": f"Bearer {self._bearer}"})
-        self.calls += 1
-        try:
-            with urllib.request.urlopen(req, timeout=45) as r:
-                return json.loads(r.read())
-        except urllib.error.HTTPError as e:
-            # A 404 for a part the vendor does not stock is an ANSWER, not a
-            # failure, so errors are returned rather than raised.
-            return {"_http_error": e.code, "_detail": e.read().decode(errors="replace")[:400]}
+    def _get(self, path: str, params: list[tuple[str, str]], attempts: int = 3) -> dict:
+        """One paced GET, retrying a 429.
+
+        TME publishes no numeric per-minute cap, which is NOT the same as having
+        none — a sweep of its 1383-part DAC category makes ~110 calls back to
+        back. So the default pacing applies, and a 429 is retried with the
+        vendor's own `Retry-After` honoured. Digi-Key's unpaced sweeps hit 429
+        and lost seven categories before all three adapters were put behind the
+        same limiter.
+        """
+        for attempt in range(attempts):
+            if self._bearer is None or time.monotonic() > self._expires_at - TOKEN_REFRESH_MARGIN_S:
+                self._authenticate()
+            self.throttle.acquire()
+            url = f"{BASE}{path}?{urllib.parse.urlencode(params)}"
+            req = urllib.request.Request(url, headers={"Authorization": f"Bearer {self._bearer}"})
+            try:
+                with urllib.request.urlopen(req, timeout=45) as r:
+                    self.throttle.note_headers(r.headers)
+                    return json.loads(r.read())
+            except urllib.error.HTTPError as e:
+                if e.code == 429 and attempt + 1 < attempts:
+                    time.sleep(self.throttle.backoff(attempt, e.headers.get("Retry-After")))
+                    continue
+                # A 404 for a part the vendor does not stock is an ANSWER, not a
+                # failure, so errors are returned rather than raised.
+                return {"_http_error": e.code,
+                        "_detail": e.read().decode(errors="replace")[:400]}
+        return {"_http_error": 429, "_detail": "rate limited after retries"}
+
+
+def _product_url(symbol: str, country: str) -> str | None:
+    """TME's product page for a symbol.
+
+    CONSTRUCTED, not published. TME's `/products` response carries no URL field
+    at all — `assets` holds images, and there is no product-page key — so this is
+    built from the symbol, which is TME's own primary identifier.
+
+    Verified rather than assumed: `HEAD https://www.tme.eu/en/details/<symbol>/`
+    returns 200 for both `SN74LVC1G3157DCKR` and `AKY-LP623255`, which are a
+    semiconductor and a battery filed in different categories.
+
+    It is the English page rather than the account's country page on purpose: the
+    link goes into a committed artefact that someone other than this account's
+    holder will open, and `/en/` is the one locale that does not depend on who is
+    reading. Prices on the page may therefore differ from the EUR figures the API
+    returned for a Slovak account — the artefact carries the API's numbers, and
+    the link is for checking the part, not the price.
+    """
+    sym = (symbol or "").strip()
+    if not sym:
+        return None
+    return f"https://www.tme.eu/en/details/{sym.lower()}/"
 
 
 def _chunks(xs: list, n: int):

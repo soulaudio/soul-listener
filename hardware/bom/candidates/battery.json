@@ -16,6 +16,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/scangrip-03.5959/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -40,6 +43,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/scangrip-03.5962/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "powerbank",
@@ -64,6 +70,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-r3-1.2vx6r/gp/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -89,6 +98,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-r3/1000regpb2/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -114,6 +126,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/xtar-1.5v0.7ah-aaa/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -130,7 +145,7 @@
       "mpn": "10440-1.5V BOX",
       "manufacturer": "XTAR",
       "eu_sources": 1,
-      "eu_stock": 9,
+      "eu_stock": 6,
       "unit_price_cents": 1837,
       "moq": 1,
       "lead_time_days": null,
@@ -138,6 +153,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/xtar1.5vaaa1ah-box/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -161,6 +179,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -180,6 +199,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-d/11000-gp/st/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -204,6 +226,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-d/11000-gp/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -228,6 +253,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-d/11000dh-gp/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -252,6 +280,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Lipo Battery Management with Switch",
@@ -271,6 +300,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-r6/1300rngpb4/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -296,6 +328,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -315,6 +348,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-14500-0.8-2a/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -339,6 +375,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/xtar-1.5v2ah-aa/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -363,6 +402,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/xtar-1.5v1.8ah-aa/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -387,6 +429,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/xtar-1.5v2.5ah-aa/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -403,7 +448,7 @@
       "mpn": "14500-120PCM",
       "manufacturer": "XTAR",
       "eu_sources": 1,
-      "eu_stock": 553,
+      "eu_stock": 554,
       "unit_price_cents": 507,
       "moq": 1,
       "lead_time_days": null,
@@ -411,6 +456,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/xtar-14500-1.2ah/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -435,6 +483,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/xtar-16340-0.85ah/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -459,6 +510,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/xt-16340-90pcm-usb/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -484,6 +538,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-1/3aaa-st-gp/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -508,6 +565,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -527,6 +585,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-aa1800/gp/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -551,6 +612,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-aa1800/gp-bl/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -575,6 +639,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-18650-2.6-25a/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -599,6 +666,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-18650-2.6-4a/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -623,6 +693,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-18650-3.5-10a/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -647,6 +720,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/xt-18650-350pcmusb/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -672,6 +748,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/xtar-18650-3.5ah10/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -688,7 +767,7 @@
       "mpn": "18650-4000",
       "manufacturer": "Far East Battery",
       "eu_sources": 1,
-      "eu_stock": 776,
+      "eu_stock": 772,
       "unit_price_cents": 465,
       "moq": 2,
       "lead_time_days": null,
@@ -696,6 +775,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/feb-18650-4ah/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -720,6 +802,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/xtar-18650-4ah-10a/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -744,6 +829,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-gh-2/3aaa/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -768,6 +856,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -787,6 +876,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-6f22/gp-re/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -812,6 +904,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-r6/2000gppron/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -837,6 +932,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-210aahcb-eb2/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -862,6 +960,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-210aahcb-eb4/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -887,6 +988,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-r6-1.2vx6r/gp/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -913,6 +1017,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-4/5a/2100-gp/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -929,7 +1036,7 @@
       "mpn": "21700-500PCM",
       "manufacturer": "XTAR",
       "eu_sources": 1,
-      "eu_stock": 105,
+      "eu_stock": 100,
       "unit_price_cents": 937,
       "moq": 1,
       "lead_time_days": null,
@@ -937,6 +1044,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/xtar-21700-5ah-10a/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -961,6 +1071,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/xt-21700-500pcm-us/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -986,6 +1099,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/xtar-21700-6ah-10a/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -1010,6 +1126,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/xt-21700hp-500pcm/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -1034,6 +1153,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-aa/2200-gp/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -1058,6 +1180,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-aa/2200std-gp/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -1082,6 +1207,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "moq": "1",
@@ -1100,6 +1226,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-250aahc-2eb2/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -1125,6 +1254,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-26650-5.2-7a/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -1149,6 +1281,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-26650-7ah-10a/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -1173,6 +1308,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/bak-26650pfs2/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-FePO4",
@@ -1197,6 +1335,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/bak-26700fb4/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-FePO4",
@@ -1220,6 +1361,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-r6/2700renwgp/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -1245,6 +1389,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-270aahce-b4/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -1270,6 +1417,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-sc-3ah-1.2v/g/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -1292,6 +1442,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -1311,6 +1462,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/bak-32140fs/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-FePO4",
@@ -1334,6 +1488,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -1353,6 +1508,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -1372,6 +1528,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-380afh-bl/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -1396,6 +1555,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-3.2v-10ah/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-FePO4",
@@ -1419,6 +1581,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-2/3aaa/400-gp/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -1443,6 +1608,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "moq": "1",
@@ -1461,6 +1627,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-4/3a/4500-gp/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -1485,6 +1654,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-65aaahce-gpb4/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -1510,6 +1682,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-r6/2500-v/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -1534,6 +1709,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-r3/750/dr/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -1558,6 +1736,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-53711/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-FePO4",
@@ -1582,6 +1763,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "moq": "1",
@@ -1600,6 +1782,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/goobay-53934/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "powerbank",
@@ -1622,6 +1807,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/goobay-53935/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "powerbank",
@@ -1644,6 +1832,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/goobay-53936/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "powerbank",
@@ -1666,6 +1857,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/goobay-53939/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "powerbank",
@@ -1687,6 +1881,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -1706,6 +1901,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-a/vh2700/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -1730,6 +1928,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-aa/vh1800/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -1754,6 +1955,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-vh700/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -1778,6 +1982,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-v15h/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -1801,6 +2008,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-v40h/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -1824,6 +2034,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-v80h/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -1847,6 +2060,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-2/v80hpcbd/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -1870,6 +2086,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-v150h/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -1893,6 +2112,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-140/3e/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -1917,6 +2139,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-140/4e/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -1941,6 +2166,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-140/2e/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -1965,6 +2193,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-150/2mem/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -1988,6 +2219,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-150/3mem/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -2011,6 +2245,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-v200h/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -2034,6 +2271,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-2/v200hskspsb/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -2057,6 +2297,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-v250h/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -2080,6 +2323,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-1/v500ht/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -2103,6 +2349,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-4/v500htlswc/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -2126,6 +2375,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -2145,6 +2395,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-v18hrt/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -2168,6 +2421,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-1/v450hr/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -2191,6 +2447,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-1/v600hr/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -2214,6 +2473,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-v600hr/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -2237,6 +2499,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-r3/800-v/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -2262,6 +2527,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-r6/2100-v/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -2287,6 +2555,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/goobay-60656/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "powerbank",
@@ -2308,6 +2579,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-r6/2300-eg/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -2332,6 +2606,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/goobay-64961/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "powerbank",
@@ -2353,6 +2630,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/goobay-65868/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "powerbank",
@@ -2374,6 +2654,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/goobay-65869/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "powerbank",
@@ -2395,6 +2678,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-r3/650-gp-b2n/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -2420,6 +2706,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/goobay-70182/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "powerbank",
@@ -2441,6 +2730,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/goobay-70183/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "powerbank",
@@ -2462,6 +2754,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-aaa/700-bl-gp/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -2478,7 +2773,7 @@
       "mpn": "75AAH",
       "manufacturer": "GP",
       "eu_sources": 1,
-      "eu_stock": 713,
+      "eu_stock": 703,
       "unit_price_cents": 174,
       "moq": 1,
       "lead_time_days": null,
@@ -2486,6 +2781,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-75aah-bl-gp/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -2510,6 +2808,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/goobay-76250/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "powerbank",
@@ -2531,6 +2832,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/goobay-76251/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "powerbank",
@@ -2552,6 +2856,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/goobay-76252/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "powerbank",
@@ -2573,6 +2880,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-r14/2500/eg-b/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -2597,6 +2907,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-r20/2500/eg-b/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -2621,6 +2934,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-r22/175-eg/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -2645,6 +2961,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-r3/700-eg-b2/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -2669,6 +2988,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-r3/700-eg-b4/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -2693,6 +3015,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-r6/2000-eg-b/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -2717,6 +3042,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-aa2000bulk/eg/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -2732,7 +3060,7 @@
       "mpn": "80/3",
       "manufacturer": "JJJ",
       "eu_sources": 1,
-      "eu_stock": 6500,
+      "eu_stock": 6468,
       "unit_price_cents": 170,
       "moq": 1,
       "lead_time_days": null,
@@ -2740,6 +3068,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-80/3/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -2765,6 +3096,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-80/3-2p/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -2789,6 +3123,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-aaa/800-st-gp/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -2813,6 +3150,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-aaa/800-bl-gp/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -2836,6 +3176,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-lr3/tesla-b4/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -2860,6 +3203,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-r3x6/rcpro-gp/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -2885,6 +3231,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-85aaahcb-eb2/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -2910,6 +3259,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-r3/800gprepro/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -2935,6 +3287,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-r3/800re-gpb4/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -2960,6 +3315,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-r6/1300-eg/b4/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -2984,6 +3342,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-aa130ht-st/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -3008,6 +3369,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-aa130ht-bl/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -3032,6 +3396,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-aa1800/jjj/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -3056,6 +3423,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-aa1800/jjj-bl/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -3080,6 +3450,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-aa2000e-st/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -3104,6 +3477,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-aa2000e-bl/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -3128,6 +3504,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-aa220/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -3151,6 +3530,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-aa220-st/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -3175,6 +3557,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-aaa800/jjj/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -3199,6 +3584,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-aaa800/jjj-bl/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -3223,6 +3611,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "frequency_hz": "2.4GHz",
@@ -3243,6 +3632,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-r6/4-b17/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -3266,6 +3658,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp623255/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -3290,6 +3685,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp573450/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -3314,6 +3712,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp903450/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -3338,6 +3739,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp584070/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -3362,6 +3766,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp502030/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -3387,6 +3794,10 @@
         "tme",
         "digikey"
       ],
+      "product_urls": {
+        "digikey": "https://www.digikey.nl/en/products/detail/akyga/AKY0107/26848639",
+        "tme": "https://www.tme.eu/en/details/aky-lp503759/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -3411,6 +3822,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp603048/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -3435,6 +3849,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp402036/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -3459,6 +3876,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp803759-2s1p/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -3475,7 +3895,7 @@
       "mpn": "AKY0153",
       "manufacturer": "AKYGA BATTERY",
       "eu_sources": 1,
-      "eu_stock": 113,
+      "eu_stock": 109,
       "unit_price_cents": 433,
       "moq": 1,
       "lead_time_days": null,
@@ -3483,6 +3903,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp402025/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -3507,6 +3930,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp475085/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -3531,6 +3957,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp584174/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -3555,6 +3984,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp503040/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -3579,6 +4011,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp303040/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -3603,6 +4038,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp443450/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -3627,6 +4065,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp601730/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -3651,6 +4092,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp352745/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -3675,6 +4119,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp403035/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -3699,6 +4146,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp453350/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -3723,6 +4173,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp903759/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -3747,6 +4200,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp301020/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -3763,7 +4219,7 @@
       "mpn": "AKY0472",
       "manufacturer": "AKYGA BATTERY",
       "eu_sources": 1,
-      "eu_stock": 96,
+      "eu_stock": 94,
       "unit_price_cents": 355,
       "moq": 1,
       "lead_time_days": null,
@@ -3771,6 +4227,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp301525/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -3795,6 +4254,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp351120/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -3819,6 +4281,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp401230/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -3843,6 +4308,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp401235/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -3867,6 +4335,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp401520/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -3883,7 +4354,7 @@
       "mpn": "AKY0477",
       "manufacturer": "AKYGA BATTERY",
       "eu_sources": 1,
-      "eu_stock": 1069,
+      "eu_stock": 1067,
       "unit_price_cents": 384,
       "moq": 1,
       "lead_time_days": null,
@@ -3891,6 +4362,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp402030/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -3915,6 +4389,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp502248/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -3939,6 +4416,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp654290/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -3963,6 +4443,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp405063/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -3987,6 +4470,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp503448/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -4011,6 +4497,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp653454/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -4035,6 +4524,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp803040/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -4059,6 +4551,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp803040-mx/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -4083,6 +4578,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp805080/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -4107,6 +4605,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp523450/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -4131,6 +4632,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp883440/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -4155,6 +4659,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp103058/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -4179,6 +4686,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp675568/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -4203,6 +4713,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp603450/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -4227,6 +4740,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp674261/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -4251,6 +4767,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp803450/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -4275,6 +4794,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp103740/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -4299,6 +4821,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp654060/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -4323,6 +4848,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp602158/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -4347,6 +4875,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp703048/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -4363,7 +4894,7 @@
       "mpn": "AKY0657",
       "manufacturer": "AKYGA BATTERY",
       "eu_sources": 1,
-      "eu_stock": 143,
+      "eu_stock": 123,
       "unit_price_cents": 413,
       "moq": 1,
       "lead_time_days": null,
@@ -4371,6 +4902,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp752030/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -4395,6 +4929,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp753636/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -4419,6 +4956,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp783442/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -4443,6 +4983,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp804050/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -4467,6 +5010,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp852040/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -4491,6 +5037,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp852040-mx/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -4515,6 +5064,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp103035/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -4539,6 +5091,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp103040/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -4563,6 +5118,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp103451/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -4587,6 +5145,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp704452/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -4611,6 +5172,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp293441/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -4635,6 +5199,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp542439/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -4659,6 +5226,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp304050/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -4683,6 +5253,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp405090/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -4707,6 +5280,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp123497/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -4731,6 +5307,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp503040ntc/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -4755,6 +5334,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp8970129/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -4779,6 +5361,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp903759-2s1p/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -4803,6 +5388,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp501745/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -4827,6 +5415,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-mh3.6v/3p/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -4852,6 +5443,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp805080-2s1p/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -4876,6 +5470,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp403035-2s1p/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -4900,6 +5497,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp503040-2s1p/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -4924,6 +5524,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp503759-2s1p/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -4948,6 +5551,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-mh4.8v/3p/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -4973,6 +5579,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/aky-lp613381/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -4997,6 +5606,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-mh3.6v/2p/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -5021,6 +5633,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-lir2032h/a/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -5046,6 +5661,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-lir3048/a/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -5071,6 +5689,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/bat-ml2032/a/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Mn",
@@ -5094,6 +5715,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-lir1040/a/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -5119,6 +5743,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-lir2450h/a/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -5144,6 +5771,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-lir2016/a/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -5169,6 +5799,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-lir2025/a/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -5194,6 +5827,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-lir1654/a/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -5219,6 +5855,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/inr18650-26m-pcm/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -5243,6 +5882,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/inr18650-29m-pcm/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -5267,6 +5909,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/inr18650-20m-pcm/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -5291,6 +5936,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/inr18650-22m-pcm/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -5315,6 +5963,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/inr18650-32m-pcm/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -5339,6 +5990,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/inr18650-33.5m-pcm/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -5363,6 +6017,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/inr18650-35m-pcm/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -5387,6 +6044,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/bat-ml1220/a/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Mn",
@@ -5410,6 +6070,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-lir2477/a/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -5435,6 +6098,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/bat-ml1225/a/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -5457,6 +6123,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/bat-ml2016/a/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Mn",
@@ -5480,6 +6149,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/bat-ml2020/a/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Mn",
@@ -5503,6 +6175,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/inr18650-32m-1s1p/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -5528,6 +6203,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/inr18650-64m-1s2p/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -5553,6 +6231,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/inr18650-96m-1s3p/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -5578,6 +6259,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/inr18650-128m-1s4p/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -5603,6 +6287,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/inr18650-32m-2s1p/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -5628,6 +6315,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/inr18650-32m-3s1p/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -5653,6 +6343,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-18650/a123/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-FePO4",
@@ -5676,6 +6369,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-gh-2/3aaa-cnr/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -5699,6 +6395,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-r6/2450-b2/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -5724,6 +6423,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-r6/2450-b4/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -5749,6 +6451,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-r6/2500-b4-c/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -5773,6 +6478,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-r3/6-b8/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -5788,7 +6496,7 @@
       "mpn": "BK-3MCDE/2CP",
       "manufacturer": "PANASONIC",
       "eu_sources": 1,
-      "eu_stock": 3,
+      "eu_stock": 2,
       "unit_price_cents": 751,
       "moq": 1,
       "lead_time_days": null,
@@ -5796,6 +6504,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-r6/2000-b2/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -5820,6 +6531,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-r6/2000-b4/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -5844,6 +6558,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-r6/2000-b4-c/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -5868,6 +6585,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-r6/2000-b8/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -5892,6 +6612,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-hr3/930-b2/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -5916,6 +6639,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-hr3/930-b4/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -5940,6 +6666,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-r3/930-b4-c/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -5964,6 +6693,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-hr3/550-b2/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -5988,6 +6720,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-hr3/550-b4/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -6012,6 +6747,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-r3/800-b2/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -6036,6 +6774,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-r3/800-b4/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -6060,6 +6801,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-r3/800-b4-c/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -6084,6 +6828,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-r3/800-b8/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -6108,6 +6855,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/hhr-210aab3b/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -6132,6 +6882,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6151,6 +6902,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6170,6 +6922,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6189,6 +6942,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6208,6 +6962,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6227,6 +6982,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6246,6 +7002,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6265,6 +7022,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6284,6 +7042,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6303,6 +7062,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6322,6 +7082,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6341,6 +7102,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6360,6 +7122,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6379,6 +7142,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6398,6 +7162,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6417,6 +7182,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6436,6 +7202,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6455,6 +7222,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6474,6 +7242,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6493,6 +7262,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6512,6 +7282,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6531,6 +7302,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6550,6 +7322,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6569,6 +7342,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6588,6 +7362,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6607,6 +7382,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6626,6 +7402,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6645,6 +7422,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6664,6 +7442,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6683,6 +7462,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6702,6 +7482,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6721,6 +7502,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6740,6 +7522,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6759,6 +7542,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6778,6 +7562,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6797,6 +7582,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6816,6 +7602,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6835,6 +7622,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6854,6 +7642,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6873,6 +7662,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6892,6 +7682,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6911,6 +7702,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6930,6 +7722,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6949,6 +7742,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6968,6 +7762,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -6987,6 +7782,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -7006,6 +7802,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -7025,6 +7822,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -7044,6 +7842,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -7063,6 +7862,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -7082,6 +7882,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -7101,6 +7902,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -7120,6 +7922,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -7139,6 +7942,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -7158,6 +7962,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -7177,6 +7982,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -7196,6 +8002,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -7215,6 +8022,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -7234,6 +8042,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -7253,6 +8062,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -7272,6 +8082,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -7291,6 +8102,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -7310,6 +8122,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -7329,6 +8142,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -7348,6 +8162,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -7367,6 +8182,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -7386,6 +8202,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Lead Acid, Li-Ion/Li-Polymer, Lithium Phosphate/LiFePO4, NiCd, NiMH, SuperCap",
@@ -7409,6 +8226,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Lead Acid, Li-Ion/Li-Polymer, Lithium Phosphate/LiFePO4, NiCd, NiMH, SuperCap",
@@ -7432,6 +8250,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -7451,6 +8270,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -7470,6 +8290,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -7489,6 +8310,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -7508,6 +8330,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -7527,6 +8350,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -7546,6 +8370,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Lithium Ion/Polymer",
@@ -7569,6 +8394,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Lithium Ion/Polymer",
@@ -7592,6 +8418,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -7611,6 +8438,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Lithium Ion/Polymer",
@@ -7634,6 +8462,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -7653,6 +8482,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -7672,6 +8502,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -7691,6 +8522,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -7710,6 +8542,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -7729,6 +8562,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -7748,6 +8582,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -7767,6 +8602,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -7786,6 +8622,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Headlight, Clip-On",
@@ -7805,6 +8642,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/gc-cjsgc03/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "powerbank",
@@ -7827,6 +8667,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/cl-18650-mh1/1s3p/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -7843,7 +8686,7 @@
       "mpn": "CL-18650-MH1/1S4P",
       "manufacturer": "CELLEVIA BATTERIES",
       "eu_sources": 1,
-      "eu_stock": 12,
+      "eu_stock": 9,
       "unit_price_cents": 2540,
       "moq": 1,
       "lead_time_days": null,
@@ -7851,6 +8694,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/cl-18650-mh1/1s4p/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -7875,6 +8721,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/cl-c/ht4.8v/l/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -7899,6 +8748,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/cl-r6/2s1p-1500b/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -7922,6 +8774,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/cl-r6/2x3-1500b/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -7945,6 +8800,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/cl-r6/2x4-1500b/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -7968,6 +8826,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/cl-r6/4s1p-1500b/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -7991,6 +8852,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -8010,6 +8872,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -8029,6 +8892,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -8048,6 +8912,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -8067,6 +8932,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -8086,6 +8952,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -8105,6 +8972,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -8124,6 +8992,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -8143,6 +9012,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -8162,6 +9032,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -8181,6 +9052,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -8200,6 +9072,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -8219,6 +9092,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-r6/2500/dr/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -8243,6 +9119,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-r6-1300/dr-b4/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -8267,6 +9146,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-r3-850/dr-b4/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -8291,6 +9173,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/egp1278/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-FePO4",
@@ -8316,6 +9201,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Standard",
@@ -8335,6 +9221,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Standard",
@@ -8354,6 +9241,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Headlight, Clip-On",
@@ -8373,6 +9261,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -8392,6 +9281,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -8411,6 +9301,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -8430,6 +9321,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -8449,6 +9341,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -8468,6 +9361,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -8487,6 +9381,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -8506,6 +9401,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -8525,6 +9421,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -8544,6 +9441,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -8563,6 +9461,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -8582,6 +9481,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -8601,6 +9501,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -8620,6 +9521,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -8639,6 +9541,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -8658,6 +9561,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -8677,6 +9581,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -8696,6 +9601,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -8715,6 +9621,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -8734,6 +9641,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -8753,6 +9661,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -8772,6 +9681,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -8791,6 +9701,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -8810,6 +9721,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -8829,6 +9741,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -8848,6 +9761,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -8867,6 +9781,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -8886,6 +9801,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -8905,6 +9821,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -8924,6 +9841,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -8943,6 +9861,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -8962,6 +9881,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -8981,6 +9901,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -9000,6 +9921,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -9019,6 +9941,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Standard",
@@ -9038,6 +9961,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Flexible, Clip-On",
@@ -9057,6 +9981,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Headlight, Clip-On",
@@ -9076,6 +10001,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Flexible, Clip-On",
@@ -9095,6 +10021,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-gp210afht/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -9119,6 +10048,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-gp210afht-bl/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -9143,6 +10075,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/gp-b10b/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "powerbank",
@@ -9165,6 +10100,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-sc/2200gpbulk/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -9181,7 +10119,7 @@
       "mpn": "GP220SCH BL",
       "manufacturer": "GP",
       "eu_sources": 1,
-      "eu_stock": 342,
+      "eu_stock": 292,
       "unit_price_cents": 332,
       "moq": 1,
       "lead_time_days": null,
@@ -9189,6 +10127,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-sc/2200-gp/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -9213,6 +10154,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-r14/3000-gp/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -9238,6 +10182,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-gp400laht/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -9263,6 +10210,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-d/3000-gp-b2/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -9287,6 +10237,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "moq": "1",
@@ -9305,6 +10256,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-haaa850/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -9329,6 +10283,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-haaa850cnr/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -9352,6 +10309,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/hhr-80aaab3b/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -9376,6 +10336,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-4/5a/l/2/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -9399,6 +10362,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-4/5sc-n-p/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -9422,6 +10388,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-4/3a/l/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -9445,6 +10414,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-3.2v-15ah/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-FePO4",
@@ -9468,6 +10440,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-3.2v-17ah/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-FePO4",
@@ -9491,6 +10466,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-icr14500/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -9515,6 +10493,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/kp-icr14500-130pcm/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -9539,6 +10520,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/icr14500-150pcm/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -9563,6 +10547,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/icr14500-310pcmusb/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -9587,6 +10574,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-icr14650/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -9611,6 +10601,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/kp-icr14650-150pcm/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -9634,6 +10627,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-icr16340/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -9658,6 +10654,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/icr16340-100pcm/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -9683,6 +10682,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/icr16340-85pcm-sp/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -9706,6 +10708,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-icr17500/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -9730,6 +10735,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/icr18350-160pcmusb/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -9754,6 +10762,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-icr18350/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -9778,6 +10789,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-icr18500/pcb/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -9802,6 +10816,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-18650-15a2.6p/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -9826,6 +10843,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-icr18650-26v/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -9849,6 +10869,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/icr18650-26v/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -9872,6 +10895,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-18650-15a/pcb/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -9896,6 +10922,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/icr18650-320pcm/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -9920,6 +10949,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/icr18650-350pcmusb/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -9936,7 +10968,7 @@
       "mpn": "ICR18650-380PCM (+)/(-)",
       "manufacturer": "KEEPPOWER",
       "eu_sources": 1,
-      "eu_stock": 24,
+      "eu_stock": 22,
       "unit_price_cents": 857,
       "moq": 2,
       "lead_time_days": null,
@@ -9944,6 +10976,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/icr18650-380pcm-sp/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -9968,6 +11003,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-icr26650-usb/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -9992,6 +11030,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/icr26650-600pcm/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -10017,6 +11058,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/icr26650-700pcm/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -10042,6 +11086,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/kp-imr18350-1600/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -10065,6 +11112,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-imr18350-pcb/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -10089,6 +11139,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-imr18350-10a/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -10113,6 +11166,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-imr18350/pcb/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -10137,6 +11193,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-imr18500/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -10161,6 +11220,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-imr18650-10a/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -10185,6 +11247,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Headlight, Clip-On",
@@ -10204,6 +11267,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Standard",
@@ -10223,6 +11287,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-inr18650-m29/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -10247,6 +11314,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/dmegc-inr18650-29e/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -10270,6 +11340,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/inr18650-29e/box/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -10293,6 +11366,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-inr18650-29e/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -10316,6 +11392,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-inr18650-33v/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -10340,6 +11419,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/inr18650-33v/box/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -10364,6 +11446,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-18650-3.5lg/p/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -10388,6 +11473,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-inr18650-hj2/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -10412,6 +11500,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-18650-3.2lg/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -10428,7 +11519,7 @@
       "mpn": "INR18650-MJ1",
       "manufacturer": "LG Energy Solution",
       "eu_sources": 1,
-      "eu_stock": 4890,
+      "eu_stock": 4866,
       "unit_price_cents": 691,
       "moq": 2,
       "lead_time_days": null,
@@ -10436,6 +11527,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-inr18650-mj1/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -10460,6 +11554,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/bak-inr21700-40d/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -10483,6 +11580,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-inr21700-50s/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -10507,6 +11607,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/eve-inr21700/40pl/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -10531,6 +11634,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/inr21700/40pl/box/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -10555,6 +11661,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -10574,6 +11681,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -10593,6 +11701,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -10612,6 +11721,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -10631,6 +11741,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -10650,6 +11761,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -10669,6 +11781,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -10688,6 +11801,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-1/2a110/jjj/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -10712,6 +11828,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-1/2a110/jjjbl/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -10735,6 +11854,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-4/3a-4500jjj/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -10759,6 +11881,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-4/3a-4500-bl/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -10783,6 +11908,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-2/3aa60/jjj/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -10807,6 +11935,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-2/3aa60/jjjbl/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -10830,6 +11961,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-4/5aa120/jjj/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -10854,6 +11988,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-4/5aa/jjj-bl/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -10877,6 +12014,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-4/5sc2000p/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -10901,6 +12041,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-4/5sc2000p-bl/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -10925,6 +12068,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-7/5a-3800jjj/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -10949,6 +12095,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-7/5a-3800-bl/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -10973,6 +12122,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-j-sc2400/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -10997,6 +12149,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-j-sc2400-bl/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -11021,6 +12176,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-sc/300hp/st/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -11045,6 +12203,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-sc/300hp/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -11069,6 +12230,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-18650/spcb/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -11093,6 +12257,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-18650h/spcb/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -11109,7 +12276,7 @@
       "mpn": "KP IMR18650 3500MAH LI-ION 3,7V 10A",
       "manufacturer": "KEEPPOWER",
       "eu_sources": 1,
-      "eu_stock": 196,
+      "eu_stock": 186,
       "unit_price_cents": 808,
       "moq": 2,
       "lead_time_days": null,
@@ -11117,6 +12284,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-18650-3.5/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -11141,6 +12311,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-18650/pcb/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -11165,6 +12338,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -11187,6 +12361,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -11209,6 +12384,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -11231,6 +12407,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -11253,6 +12430,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -11272,6 +12450,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -11291,6 +12470,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -11310,6 +12490,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -11329,6 +12510,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -11348,6 +12530,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -11367,6 +12550,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -11386,6 +12570,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -11405,6 +12590,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -11424,6 +12610,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -11443,6 +12630,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "moq": "1",
@@ -11461,6 +12649,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -11480,6 +12669,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -11499,6 +12689,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Lithium Ion/Polymer",
@@ -11522,6 +12713,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Standard",
@@ -11541,6 +12733,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Standard",
@@ -11560,6 +12753,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/n18650ch-2.6ah/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -11584,6 +12780,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/n18650cl-2.9ah/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -11600,7 +12799,7 @@
       "mpn": "N18650COP",
       "manufacturer": "BAK BATTERY",
       "eu_sources": 1,
-      "eu_stock": 320,
+      "eu_stock": 310,
       "unit_price_cents": 391,
       "moq": 2,
       "lead_time_days": null,
@@ -11608,6 +12807,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/n18650cop-2.5ah/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -11624,7 +12826,7 @@
       "mpn": "N18650CP-34E",
       "manufacturer": "BAK BATTERY",
       "eu_sources": 1,
-      "eu_stock": 1552,
+      "eu_stock": 1548,
       "unit_price_cents": 272,
       "moq": 2,
       "lead_time_days": null,
@@ -11632,6 +12834,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/bak-n18650cp-34e/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -11656,6 +12861,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/n18650cqp-3ah/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -11680,6 +12888,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/n18650cr-35t-3.5ah/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -11704,6 +12915,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/bak-n21700-45d/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -11728,6 +12942,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/n21700cd-53e-5.3ah/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -11752,6 +12969,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/n21700cg-50e-5ah/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -11776,6 +12996,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/n21700cgp-4ah/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -11800,6 +13023,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/bak-n21700ch-58e/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -11824,6 +13050,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/bak-n21700ck-55e/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -11848,6 +13077,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/nca103450/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -11871,6 +13103,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/nca103450a/1s1p/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -11894,6 +13129,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-ncr18650b-box/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -11917,6 +13155,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-ncr18650ga/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -11941,6 +13182,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-ncr2270a/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -11965,6 +13209,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-ncr2270a/box/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -11989,6 +13236,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/nh1825/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -12005,7 +13255,7 @@
       "mpn": "NH1830",
       "manufacturer": "KEEPPOWER",
       "eu_sources": 1,
-      "eu_stock": 434,
+      "eu_stock": 430,
       "unit_price_cents": 570,
       "moq": 2,
       "lead_time_days": null,
@@ -12013,6 +13263,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/nh1830/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -12037,6 +13290,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/nh1831/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -12061,6 +13317,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/nh2400-aa1.5vx4usb/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -12085,6 +13344,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/kp-icr14430-95pcm/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -12101,7 +13363,7 @@
       "mpn": "P1450C2",
       "manufacturer": "KEEPPOWER",
       "eu_sources": 1,
-      "eu_stock": 98,
+      "eu_stock": 96,
       "unit_price_cents": 534,
       "moq": 2,
       "lead_time_days": null,
@@ -12109,6 +13371,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/p1450c2/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -12133,6 +13398,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/p1450i-x4/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -12156,6 +13424,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/p1450i2-x4/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -12179,6 +13450,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/p1450tc-usb/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -12203,6 +13477,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/kp-icr14500-195pcm/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -12227,6 +13504,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/p1450u2-usb/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -12251,6 +13531,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/kp-icr16340-85pcm/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -12275,6 +13558,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/p1634tc-usb/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -12299,6 +13585,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/kp-icr16340-86pcm/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -12323,6 +13612,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/p1826c/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -12346,6 +13638,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/p1831r/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -12369,6 +13664,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/kp-icr18650-320pcm/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -12393,6 +13691,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/p1834j/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -12416,6 +13717,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/p1835c4/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -12432,7 +13736,7 @@
       "mpn": "P1835J/P1835K",
       "manufacturer": "KEEPPOWER",
       "eu_sources": 1,
-      "eu_stock": 116,
+      "eu_stock": 114,
       "unit_price_cents": 906,
       "moq": 2,
       "lead_time_days": null,
@@ -12440,6 +13744,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/p1835j/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -12463,6 +13770,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/icr18650-380pcm/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -12487,6 +13797,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/icr18650-400pcm/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -12511,6 +13824,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/p1840tc-usb/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -12534,6 +13850,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/kp-icr18500-200pcm/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -12558,6 +13877,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/p2140r/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -12581,6 +13903,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/p2150k/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -12604,6 +13929,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/kp-icr21700-pcmusb/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -12628,6 +13956,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/p2155c/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -12651,6 +13982,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/p2160c/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -12674,6 +14008,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/p2160tc-usb/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -12698,6 +14035,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/p2652c/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -12720,6 +14060,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/kp-icr26650-550pcm/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -12744,6 +14087,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -12763,6 +14107,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/gc-pbgc04/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "powerbank",
@@ -12785,6 +14132,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -12804,6 +14152,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -12823,6 +14172,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/rcr123a/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -12845,6 +14197,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/scb-epni-2500-400/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -12868,6 +14223,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/stl-sfmcb202-xj/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -12891,6 +14249,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/stl-sfmcb204-xj/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -12914,6 +14275,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/scangrip-03.6121/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -12936,6 +14300,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-sl20x/6v/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -12959,6 +14326,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-sl20xp/led-6v/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -12982,6 +14352,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/slb03070lr351bt/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -13005,6 +14378,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/slb03090hr801bt/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -13028,6 +14404,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/slb03090lr801bt/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -13051,6 +14430,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/slb04150h0201ed/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -13074,6 +14456,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/slb04255l0401ed/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -13097,6 +14482,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/slb08115h1001ct/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -13120,6 +14508,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/slb08115l1401ct/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -13143,6 +14534,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/slb12400h1311cx/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -13166,6 +14560,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/slb12400l1511cn/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -13189,6 +14586,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -13208,6 +14606,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -13227,6 +14626,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -13246,6 +14646,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -13265,6 +14666,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -13284,6 +14686,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -13303,6 +14706,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -13322,6 +14726,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -13341,6 +14746,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -13360,6 +14766,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -13379,6 +14786,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "part_type": "Power Management",
@@ -13398,6 +14806,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/uh2652/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -13420,6 +14831,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/kp-imr26650-hd/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -13443,6 +14857,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-us18650vtc6/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -13467,6 +14884,7 @@
       "vendors": [
         "digikey"
       ],
+      "product_urls": {},
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Po",
@@ -13489,6 +14907,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-r6/l-1500s/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -13513,6 +14934,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-r6/l-1700/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -13537,6 +14961,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-vh/dl-9500/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -13560,6 +14987,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-vh/fl-15000/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -13583,6 +15013,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-vht/cs/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -13608,6 +15041,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-vht/f/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Ni-MH",
@@ -13633,6 +15069,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/vl-1220/fcn/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li",
@@ -13658,6 +15097,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/vl-1220/hfn/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li",
@@ -13683,6 +15125,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/vl-1220/vcn/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li",
@@ -13700,7 +15145,7 @@
       "mpn": "VL-2020/HFN",
       "manufacturer": "PANASONIC",
       "eu_sources": 1,
-      "eu_stock": 1485,
+      "eu_stock": 1459,
       "unit_price_cents": 277,
       "moq": 1,
       "lead_time_days": null,
@@ -13708,6 +15153,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/vl-2020/hfn/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li",
@@ -13725,7 +15173,7 @@
       "mpn": "VL-2020/VCN",
       "manufacturer": "PANASONIC",
       "eu_sources": 1,
-      "eu_stock": 1189,
+      "eu_stock": 1185,
       "unit_price_cents": 316,
       "moq": 1,
       "lead_time_days": null,
@@ -13733,6 +15181,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/vl-2020/vcn/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li",
@@ -13758,6 +15209,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/vl-2330/f3n/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li",
@@ -13775,7 +15229,7 @@
       "mpn": "VL-2330/HFN",
       "manufacturer": "PANASONIC",
       "eu_sources": 1,
-      "eu_stock": 1505,
+      "eu_stock": 1502,
       "unit_price_cents": 360,
       "moq": 1,
       "lead_time_days": null,
@@ -13783,6 +15237,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/vl-2330/hfn/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li",
@@ -13800,7 +15257,7 @@
       "mpn": "VL-2330/VCN",
       "manufacturer": "PANASONIC",
       "eu_sources": 1,
-      "eu_stock": 1599,
+      "eu_stock": 1594,
       "unit_price_cents": 337,
       "moq": 1,
       "lead_time_days": null,
@@ -13808,6 +15265,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/vl-2330/vcn/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li",
@@ -13833,6 +15293,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/vl-3032/f2n/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li",
@@ -13858,6 +15321,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/vl-3032/gufn/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li",
@@ -13884,6 +15350,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/vl-3032/hf5n/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li",
@@ -13909,6 +15378,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/vl-3032/vcn/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li",
@@ -13934,6 +15406,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/xtar-1.5v2.45ah-aa/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -13958,6 +15433,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/xtar-1.5v2.5ahaacs/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -13981,6 +15459,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/accu-18650-360pcm/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",
@@ -14005,6 +15486,9 @@
       "vendors": [
         "tme"
       ],
+      "product_urls": {
+        "tme": "https://www.tme.eu/en/details/xtar-21700-500pcm/"
+      },
       "conflicts": [],
       "attrs_raw": {
         "battery_chemistry": "Li-Ion",

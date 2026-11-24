@@ -445,6 +445,21 @@ pub fn expected_dimension(attr: &str) -> Option<Dimension> {
         // ranking criterion — see the oscillator requirement for why a 1000-piece
         // reel is not merely "worse" for a hand-assembled batch.
         _ if eq(a, "moq") || eq(a, "order_multiple") => Dimension::Count,
+        // Mechanical durability of a connector, as a plain count of mating
+        // cycles. Datasheet-only on the microSD requirement — no distributor
+        // publishes it — but the dimension is still required, because
+        // `every_numeric_constraint_attribute_has_a_known_dimension` refuses a
+        // numeric constraint whose string a fetcher could never convert. That
+        // gate is the reason this entry exists rather than being noticed later
+        // by a constraint silently rejecting every part.
+        _ if eq(a, "insertion_cycles") => Dimension::Count,
+        // Height above board, for a card connector. Mapped from both vendors
+        // but NOT yet constrained: Digi-Key states it dual-unit as
+        // '0.104" (2.65mm)', which `parse_quantity` does not read, so a
+        // constraint resting on it today would reject every Digi-Key socket for
+        // an unparseable value. This is the hook the deferred size filtering
+        // needs — see MICROSD_CONSTRAINTS and the battery's thickness_mm.
+        _ if eq(a, "height_mm") => Dimension::Length,
         _ => return None,
     })
 }

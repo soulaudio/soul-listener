@@ -24,6 +24,7 @@ const DAC_CANDIDATES: &str = include_str!("../../../hardware/bom/candidates/dac.
 const BT_CANDIDATES: &str = include_str!("../../../hardware/bom/candidates/bluetooth.json");
 const MUX_CANDIDATES: &str = include_str!("../../../hardware/bom/candidates/mclk-mux.json");
 const OSC_CANDIDATES: &str = include_str!("../../../hardware/bom/candidates/mclk-osc-44k1.json");
+const MICROSD_CANDIDATES: &str = include_str!("../../../hardware/bom/candidates/microsd.json");
 
 /// **Source depth is a real join across two distributors.**
 ///
@@ -434,6 +435,44 @@ fn every_vendor_declares_its_rate_limit() {
          numbers can be checked against the vendor's documentation rather than reverse \
          engineered from the pacing."
     );
+    // EVERY adapter must go through the limiter, not just the one it was written
+    // for. `throttle.py` was added for Mouser's 30/minute cap and only Mouser was
+    // wired to it; Digi-Key kept making unpaced calls with no daily accounting,
+    // hit HTTP 429 mid-run, and lost seven categories — which it reported
+    // loudly, but the limiter existed precisely so that would not happen.
+    for (vendor, src) in [
+        (
+            "mouser",
+            include_str!("../../../tools/sourcing/adapters/mouser.py"),
+        ),
+        (
+            "digikey",
+            include_str!("../../../tools/sourcing/adapters/digikey.py"),
+        ),
+        (
+            "tme",
+            include_str!("../../../tools/sourcing/adapters/tme.py"),
+        ),
+    ] {
+        assert!(
+            src.contains("self.throttle = Throttle("),
+            "{vendor}'s adapter does not construct a Throttle. An unpaced adapter spends quota \
+             nothing is counting, and the first symptom is a 429 the sweep cannot distinguish \
+             from a vendor refusing the request."
+        );
+        assert!(
+            src.contains("self.throttle.acquire()"),
+            "{vendor}'s adapter never calls throttle.acquire(), so constructing the Throttle \
+             paces nothing."
+        );
+        assert!(
+            src.contains("Retry-After"),
+            "{vendor}'s adapter must honour the vendor's Retry-After header on a 429. Digi-Key \
+             classified 429 as a non-retryable 4xx and died at offset 0 on a rate limit that a \
+             few seconds of backoff would have cleared."
+        );
+    }
+
     assert!(
         include_str!("../../../tools/sourcing/db.py").contains("def calls_today"),
         "db.py must be able to report calls already spent today per vendor. Without it the \
@@ -512,5 +551,89 @@ fn no_spec_candidate_depends_on_a_conflicted_attribute() {
                 );
             }
         }
+    }
+}
+
+/// A PICKED part must pass the requirement it was picked for.
+///
+/// # Why this is the gate that makes switching components cheap
+///
+/// Choosing a part means setting `Preference::Preferred` in the spec. Nothing
+/// else — there is no second place to update, which is the whole point of the
+/// requirement/candidate split. But that only stays safe if changing the pick is
+/// immediately checked against the requirement's own constraints, otherwise a
+/// swap can quietly install a part that does not meet the spec it was swapped
+/// into, and the next thing to notice would be a board.
+///
+/// So: every Preferred and Alternate candidate is run through its own
+/// requirement's filter, from the same exported catalogue the gates and the
+/// proposals use. Swap an MPN, run the tests, and either it qualifies or you get
+/// told which constraint it fails and why that constraint exists.
+///
+/// A part missing from the catalogue entirely is NOT failed here — that is
+/// `every_viable_candidate_is_in_the_snapshot`'s job, and failing it twice would
+/// make one problem look like two.
+#[test]
+fn every_picked_part_qualifies_against_its_own_requirement() {
+    let exports: &[(&str, &str)] = &[
+        ("dac", DAC_CANDIDATES),
+        ("bluetooth", BT_CANDIDATES),
+        ("mclk-mux", MUX_CANDIDATES),
+        ("mclk-osc-44k1", OSC_CANDIDATES),
+        ("microsd", MICROSD_CANDIDATES),
+    ];
+
+    let mut checked = 0;
+    for req in ACTIVE.parts {
+        let Some((_, doc)) = exports.iter().find(|(id, _)| *id == req.id) else {
+            continue;
+        };
+        let raws = load(doc, req.id);
+        for cand in req.candidates {
+            if !matches!(
+                cand.preference,
+                Preference::Preferred | Preference::Alternate
+            ) {
+                continue;
+            }
+            let Some(raw) = raws.iter().find(|r| r.mpn == cand.mpn) else {
+                continue;
+            };
+            let attrs = typed(raw, req.constraints);
+            let p = dap_arch_tests::candidates::part(raw, &attrs);
+            let mut slot = [None];
+            evaluate(&[p], req.constraints, &mut slot);
+            let verdict = slot[0].expect("one verdict per part");
+            checked += 1;
+            assert!(
+                verdict.qualified(),
+                "requirement '{}' picks {} as {:?}, but it FAILS that requirement's own \
+                 constraints: {}\n\nA pick is made by setting Preference in the spec and \
+                 nothing else, so this is the check that makes swapping a component safe. \
+                 Either the part is wrong for the requirement, or the constraint is wrong \
+                 about the requirement — both are decisions, and neither should be discovered \
+                 from a fabricated board.",
+                req.id,
+                cand.mpn,
+                cand.preference,
+                verdict
+                    .rejection
+                    .as_ref()
+                    .map(|r| format!("{} — {}", r.attr(), rejection_why(r)))
+                    .unwrap_or_default()
+            );
+        }
+    }
+    assert!(
+        checked >= 4,
+        "only {checked} picked parts were checked against their own constraints — the export \
+         list in this test has gone stale, so the gate is guarding less than it appears to"
+    );
+}
+
+fn rejection_why<'a>(r: &Rejection<'a>) -> &'a str {
+    match r {
+        Rejection::MissingAttribute { why, .. } | Rejection::Failed { why, .. } => why,
+        Rejection::WrongType { .. } => "published but unparseable",
     }
 }

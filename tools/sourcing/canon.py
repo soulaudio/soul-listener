@@ -50,6 +50,12 @@ SYNONYMS: dict[str, dict[str, str]] = {
         "surface mount": "SMD",
         "surface mount technology": "SMD",
         "smd/smt": "SMD",
+        # TME's spelling for connectors ('Electrical mounting' = 'SMT').
+        "smt": "SMD",
+        # Digi-Key qualifies the orientation on connectors; the spec constrains
+        # surface-mount-vs-through-hole, and right-angle is an orientation.
+        "surface mount, right angle": "SMD",
+        "surface mount, vertical": "SMD",
         "tht": "THT",
         "through hole": "THT",
         "through-hole": "THT",
@@ -113,6 +119,43 @@ SYNONYMS: dict[str, dict[str, str]] = {
         "arm® cortex®-m4": "Cortex-M4",
         "cortex m33": "Cortex-M33",
         "arm® cortex®-m33": "Cortex-M33",
+    },
+    # microSD vs full-size SD, which is the whole point of the card requirement.
+    # Both vendors publish it, in different fields and with different
+    # decoration: Digi-Key as `Card Type` = 'microSD™' or
+    # 'Secure Digital - microSD™', TME as `Kind of card` = 'microSD'.
+    #
+    # The trademark glyph is why this cannot be an exact-match constraint
+    # upstream: 'microSD™' is not 'microSD', and a full-size socket on a
+    # pocket DAP is not a worse option, it is the wrong part.
+    "card_type": {
+        "microsd": "microSD",
+        "microsd™": "microSD",
+        "micro sd": "microSD",
+        "secure digital - microsd™": "microSD",
+        "secure digital - microsd": "microSD",
+        "microsdhc": "microSD",
+        "microsd/microsdhc": "microSD",
+        "transflash": "microSD",
+        "sd": "SD",
+        "sd™": "SD",
+        "secure digital - sd™": "SD",
+        "secure digital": "SD",
+        "sd/mmc": "SD",
+        "minisd": "miniSD",
+    },
+    # How the user gets the card out. Both mechanisms are user-removable, which
+    # is what the requirement needs; they differ in whether a spring ejects the
+    # card (push-push) or it is pulled (push-pull). Recorded as distinct values
+    # rather than collapsed, because the choice affects the bezel cutout.
+    "insertion_removal": {
+        "push-push": "push-push",
+        "push in, push out": "push-push",
+        "push in, auto eject out": "push-push",
+        "push-pull": "push-pull",
+        "push in, pull out": "push-pull",
+        "hinged": "hinged",
+        "hinged (flip)": "hinged",
     },
     "data_interface": {
         "i2s": "I2S",
