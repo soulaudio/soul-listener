@@ -90,6 +90,20 @@ pub enum HwCommand {
 /// PATH — and this machine's shell config is home-manager-managed in the
 /// read-only nix store, so "add it to .zshrc" is not a quick fix. Falling back
 /// to it means the hardware checks work with no shell setup at all.
+/// The repo root, resolved from the compiled-in manifest path rather than the
+/// working directory.
+///
+/// Everything below invokes `tools/...` and `hardware/`, and resolving those
+/// against the cwd meant `cargo run --manifest-path .../xtask/Cargo.toml` from
+/// another directory silently reported "ato not found" — the wrapper was right
+/// there, just not relative to where the command was typed.
+fn repo_root() -> std::path::PathBuf {
+    std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .map(std::path::Path::to_path_buf)
+        .unwrap_or_else(|| std::path::PathBuf::from("."))
+}
+
 fn ato_cmd() -> Option<String> {
     if Command::new("ato")
         .arg("--version")
@@ -98,9 +112,9 @@ fn ato_cmd() -> Option<String> {
     {
         return Some("ato".to_string());
     }
-    let wrapper = std::path::Path::new("tools/ato");
+    let wrapper = repo_root().join("tools/ato");
     if wrapper.exists() {
-        return Some("tools/ato".to_string());
+        return Some(wrapper.to_string_lossy().into_owned());
     }
     None
 }
@@ -170,7 +184,7 @@ fn run_check_build(build: &str) -> Result<bool> {
     let mut c = Command::new(&ato);
     c.args(["build", "--build", build]);
     if ato == "ato" {
-        c.current_dir("hardware");
+        c.current_dir(repo_root().join("hardware"));
     }
     let out = c
         .output()
@@ -244,9 +258,9 @@ fn hw_render() -> Result<()> {
         anyhow::bail!("kicad-cli not installed");
     }
 
-    let pcb = "hardware/elec/layouts/default/default.kicad_pcb";
-    let out_dir = std::path::Path::new("hardware/build/render");
-    std::fs::create_dir_all(out_dir).context("create hardware/build/render")?;
+    let pcb = repo_root().join("hardware/elec/layouts/default/default.kicad_pcb");
+    let out_dir = repo_root().join("hardware/build/render");
+    std::fs::create_dir_all(&out_dir).context("create hardware/build/render")?;
 
     println!();
     println!("{}", "Rendering the board".cyan().bold());
@@ -301,7 +315,7 @@ fn hw_render() -> Result<()> {
             .args(*args)
             .arg("--output")
             .arg(&out)
-            .arg(pcb)
+            .arg(&pcb)
             .output()
             .with_context(|| format!("kicad-cli {}", args.join(" ")))?;
         if status.status.success() && out.exists() {
@@ -346,8 +360,9 @@ fn run_placement_check() -> Result<bool> {
 /// output is only shown on failure, so a passing run stays one line.
 fn run_tool(script: &str, args: &[&str], label: &str) -> Result<bool> {
     let out = Command::new("python3")
-        .arg(script)
+        .arg(repo_root().join(script))
         .args(args)
+        .current_dir(repo_root())
         .output()
         .with_context(|| format!("failed to run {script}"))?;
     let text = format!(
