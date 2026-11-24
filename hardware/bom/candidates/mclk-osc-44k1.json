@@ -9,7 +9,8 @@
       "manufacturer": "TXC",
       "eu_sources": 0,
       "eu_stock": 0,
-      "unit_price_cents": null,
+      "unit_price_cents": 24,
+      "moq": 1000,
       "lead_time_days": null,
       "datasheet_url": "https://www.tme.eu/Document/fc14ffcc8ecf3369c6ead6a937869cec/7v.pdf",
       "vendors": [
@@ -31,7 +32,8 @@
       "manufacturer": "TXC",
       "eu_sources": 0,
       "eu_stock": 0,
-      "unit_price_cents": null,
+      "unit_price_cents": 31,
+      "moq": 1000,
       "lead_time_days": null,
       "datasheet_url": "https://www.tme.eu/Document/fc14ffcc8ecf3369c6ead6a937869cec/7v.pdf",
       "vendors": [
@@ -53,7 +55,8 @@
       "manufacturer": "ABRACON",
       "eu_sources": 1,
       "eu_stock": 6000,
-      "unit_price_cents": null,
+      "unit_price_cents": 30,
+      "moq": 3000,
       "lead_time_days": null,
       "datasheet_url": "https://abracon.com/datasheets/ABM10W.pdf",
       "vendors": [
@@ -72,7 +75,8 @@
       "manufacturer": "ABRACON",
       "eu_sources": 1,
       "eu_stock": 2000,
-      "unit_price_cents": null,
+      "unit_price_cents": 24,
+      "moq": 1000,
       "lead_time_days": null,
       "datasheet_url": "https://abracon.com/Resonators/abm8.pdf",
       "vendors": [
@@ -91,7 +95,8 @@
       "manufacturer": "ABRACON",
       "eu_sources": 1,
       "eu_stock": 17000,
-      "unit_price_cents": null,
+      "unit_price_cents": 70,
+      "moq": 1000,
       "lead_time_days": null,
       "datasheet_url": "https://abracon.com/Oscillators/ASV.pdf",
       "vendors": [
@@ -113,7 +118,8 @@
       "manufacturer": "KYOCERA AVX",
       "eu_sources": 0,
       "eu_stock": 0,
-      "unit_price_cents": null,
+      "unit_price_cents": 138,
+      "moq": 2000,
       "lead_time_days": null,
       "datasheet_url": "https://www.tme.eu/Document/7eb6aaa55749803a470dbb69fd33d76a/clock_z_x_e.pdf",
       "vendors": [
@@ -136,7 +142,8 @@
       "manufacturer": "KYOCERA AVX",
       "eu_sources": 0,
       "eu_stock": 0,
-      "unit_price_cents": null,
+      "unit_price_cents": 138,
+      "moq": 2000,
       "lead_time_days": null,
       "datasheet_url": "https://www.tme.eu/Document/7eb6aaa55749803a470dbb69fd33d76a/clock_z_x_e.pdf",
       "vendors": [
@@ -159,7 +166,8 @@
       "manufacturer": "KYOCERA AVX",
       "eu_sources": 0,
       "eu_stock": 0,
-      "unit_price_cents": null,
+      "unit_price_cents": 138,
+      "moq": 2000,
       "lead_time_days": null,
       "datasheet_url": "https://www.tme.eu/Document/7eb6aaa55749803a470dbb69fd33d76a/clock_z_x_e.pdf",
       "vendors": [
@@ -182,7 +190,8 @@
       "manufacturer": "KYOCERA AVX",
       "eu_sources": 0,
       "eu_stock": 0,
-      "unit_price_cents": null,
+      "unit_price_cents": 138,
+      "moq": 2000,
       "lead_time_days": null,
       "datasheet_url": "https://www.tme.eu/Document/7eb6aaa55749803a470dbb69fd33d76a/clock_z_x_e.pdf",
       "vendors": [
@@ -205,7 +214,8 @@
       "manufacturer": "KYOCERA AVX",
       "eu_sources": 0,
       "eu_stock": 0,
-      "unit_price_cents": null,
+      "unit_price_cents": 119,
+      "moq": 2000,
       "lead_time_days": null,
       "datasheet_url": "https://www.tme.eu/Document/7eb6aaa55749803a470dbb69fd33d76a/clock_z_x_e.pdf",
       "vendors": [
@@ -228,7 +238,8 @@
       "manufacturer": "KYOCERA AVX",
       "eu_sources": 0,
       "eu_stock": 0,
-      "unit_price_cents": null,
+      "unit_price_cents": 119,
+      "moq": 2000,
       "lead_time_days": null,
       "datasheet_url": "https://www.tme.eu/Document/7eb6aaa55749803a470dbb69fd33d76a/clock_z_x_e.pdf",
       "vendors": [
@@ -251,7 +262,8 @@
       "manufacturer": "KYOCERA AVX",
       "eu_sources": 0,
       "eu_stock": 0,
-      "unit_price_cents": null,
+      "unit_price_cents": 119,
+      "moq": 2000,
       "lead_time_days": null,
       "datasheet_url": "https://www.tme.eu/Document/056ce0afb3335d42268702a2b3108af8/clock_mcz_x_e.pdf",
       "vendors": [
@@ -274,7 +286,8 @@
       "manufacturer": "KYOCERA AVX",
       "eu_sources": 0,
       "eu_stock": 0,
-      "unit_price_cents": null,
+      "unit_price_cents": 136,
+      "moq": 2000,
       "lead_time_days": null,
       "datasheet_url": "https://www.tme.eu/Document/056ce0afb3335d42268702a2b3108af8/clock_mcz_x_e.pdf",
       "vendors": [
@@ -297,7 +310,8 @@
       "manufacturer": "KYOCERA AVX",
       "eu_sources": 0,
       "eu_stock": 0,
-      "unit_price_cents": null,
+      "unit_price_cents": 136,
+      "moq": 2000,
       "lead_time_days": null,
       "datasheet_url": "https://www.tme.eu/Document/056ce0afb3335d42268702a2b3108af8/clock_mcz_x_e.pdf",
       "vendors": [
@@ -320,7 +334,8 @@
       "manufacturer": "QST",
       "eu_sources": 0,
       "eu_stock": 0,
-      "unit_price_cents": null,
+      "unit_price_cents": 16,
+      "moq": 1000,
       "lead_time_days": null,
       "datasheet_url": "https://www.tme.eu/Document/83e2567e4bdf50eddbdacfa1621a1c30/QT325G.pdf",
       "vendors": [
@@ -342,7 +357,8 @@
       "manufacturer": "QST",
       "eu_sources": 0,
       "eu_stock": 0,
-      "unit_price_cents": null,
+      "unit_price_cents": 17,
+      "moq": 1000,
       "lead_time_days": null,
       "datasheet_url": "https://www.tme.eu/Document/83e2567e4bdf50eddbdacfa1621a1c30/QT325G.pdf",
       "vendors": [
@@ -364,7 +380,8 @@
       "manufacturer": "QST",
       "eu_sources": 0,
       "eu_stock": 0,
-      "unit_price_cents": null,
+      "unit_price_cents": 20,
+      "moq": 1000,
       "lead_time_days": null,
       "datasheet_url": "https://www.tme.eu/Document/2a355fca2633c2f5e99c1495843df179/QT325S.pdf",
       "vendors": [
@@ -386,7 +403,8 @@
       "manufacturer": "QST",
       "eu_sources": 0,
       "eu_stock": 0,
-      "unit_price_cents": null,
+      "unit_price_cents": 21,
+      "moq": 1000,
       "lead_time_days": null,
       "datasheet_url": "https://www.tme.eu/Document/2a355fca2633c2f5e99c1495843df179/QT325S.pdf",
       "vendors": [
@@ -408,7 +426,8 @@
       "manufacturer": "WTL",
       "eu_sources": 0,
       "eu_stock": 0,
-      "unit_price_cents": null,
+      "unit_price_cents": 56,
+      "moq": 3000,
       "lead_time_days": null,
       "datasheet_url": "https://datasheet.wtlplus.com/tme/W2K22579200E33ZBCN.pdf",
       "vendors": [
@@ -430,7 +449,8 @@
       "manufacturer": "WTL",
       "eu_sources": 0,
       "eu_stock": 0,
-      "unit_price_cents": null,
+      "unit_price_cents": 56,
+      "moq": 3000,
       "lead_time_days": null,
       "datasheet_url": "https://datasheet.wtlplus.com/tme/W2K22579200E33ZDCN.pdf",
       "vendors": [
@@ -452,7 +472,8 @@
       "manufacturer": "WTL",
       "eu_sources": 0,
       "eu_stock": 0,
-      "unit_price_cents": null,
+      "unit_price_cents": 74,
+      "moq": 3000,
       "lead_time_days": null,
       "datasheet_url": "https://datasheet.wtlplus.com/tme/W2K22579200E33ZKCN.pdf",
       "vendors": [
@@ -474,7 +495,8 @@
       "manufacturer": "WTL",
       "eu_sources": 0,
       "eu_stock": 0,
-      "unit_price_cents": null,
+      "unit_price_cents": 42,
+      "moq": 3000,
       "lead_time_days": null,
       "datasheet_url": "https://datasheet.wtlplus.com/tme/W3K22579200G33ZDCN.pdf",
       "vendors": [
@@ -496,7 +518,8 @@
       "manufacturer": "WTL",
       "eu_sources": 0,
       "eu_stock": 0,
-      "unit_price_cents": null,
+      "unit_price_cents": 7,
+      "moq": 3000,
       "lead_time_days": null,
       "datasheet_url": "https://datasheet.wtlplus.com/tme/W3M22579200D18FD1N.pdf",
       "vendors": [
@@ -517,7 +540,8 @@
       "manufacturer": "WTL",
       "eu_sources": 0,
       "eu_stock": 0,
-      "unit_price_cents": null,
+      "unit_price_cents": 7,
+      "moq": 3000,
       "lead_time_days": null,
       "datasheet_url": "https://datasheet.wtlplus.com/tme/W3M22579200F20FC16.pdf",
       "vendors": [

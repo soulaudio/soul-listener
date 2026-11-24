@@ -766,6 +766,12 @@ const PARTS: &[PartReq] = &[
                        claim. Operating frequency typically 340 MHz (14x the 24.576 MHz needed), \
                        1.65-5.5 V VCC matching TME's catalogue value exactly, SPDT, SC70-6. \
                        \
+                       RANKED 1st OF 261 PARTS TME carries in the analog-switch category \
+                       (2026-11-24 sweep: 56 qualified, 205 rejected with named reasons). So the \
+                       Alternate is not merely available, it wins on merit against the whole \
+                       category. Runner-up was TS5A3157DBVR (TI, 1437 in stock, 26 cents), which \
+                       is the obvious second option if this part tightens. \
+                       \
                        Ron is 7-9 ohm MAXIMUM at VCC = 3 V and 25 C. Note TI publishes maximums \
                        where Nexperia publishes typicals, so the two are the same class and Ron \
                        does not actually separate them — an earlier reading of this comparison \

@@ -206,14 +206,21 @@ class Catalogue:
                     (mpn, category),
                 ).fetchall()
             )
+            # The price at the LOWEST break the vendor publishes, not the qty-1
+            # price. `qty <= 1` was returning NULL for every reel-only part — so
+            # the entire oscillator category exported as unpriced and ranked last
+            # on price while being the only thing available.
             price = self.conn.execute(
                 """
-                SELECT MIN(b.unit_price)
+                SELECT b.unit_price
                 FROM price_breaks b JOIN parts p ON p.id = b.part_id
-                WHERE p.mpn = ? AND p.category = ? AND b.qty <= 1
+                WHERE p.mpn = ? AND p.category = ?
+                ORDER BY b.qty ASC
+                LIMIT 1
                 """,
                 (mpn, category),
-            ).fetchone()[0]
+            ).fetchone()
+            price = price[0] if price else None
             lead = self.conn.execute(
                 "SELECT MAX(lead_time_days) FROM parts WHERE mpn=? AND category=?",
                 (mpn, category),
@@ -248,6 +255,7 @@ class Catalogue:
                     "eu_sources": eu_sources or 0,
                     "eu_stock": eu_stock or 0,
                     "unit_price_cents": None if price is None else round(price * 100),
+                    "moq": moq,
                     "lead_time_days": lead,
                     "datasheet_url": ds,
                     "vendors": (vendors or "").split(","),
