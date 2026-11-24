@@ -212,6 +212,21 @@ class Catalogue:
                 "SELECT MAX(lead_time_days) FROM parts WHERE mpn=? AND category=?",
                 (mpn, category),
             ).fetchone()[0]
+            # MOQ and order multiple are exported as ATTRIBUTES so the
+            # constraints can judge them. They are the cheapest vendor fields to
+            # ignore and among the most consequential: a part with 17000 in stock
+            # and a 1000-piece reel MOQ is not a cheap part, it is a 700 EUR
+            # minimum order for something a prototype needs one of.
+            #
+            # MIN across vendors: if any distributor will sell ones, that is the
+            # buyable truth for the MPN.
+            moq, mult = self.conn.execute(
+                """
+                SELECT MIN(COALESCE(moq, 1)), MIN(COALESCE(order_multiple, 1))
+                FROM parts WHERE mpn=? AND category=?
+                """,
+                (mpn, category),
+            ).fetchone()
             out.append(
                 {
                     "mpn": mpn,
@@ -221,7 +236,11 @@ class Catalogue:
                     "unit_price_cents": None if price is None else round(price * 100),
                     "lead_time_days": lead,
                     "vendors": (vendors or "").split(","),
-                    "attrs_raw": attrs,
+                    "attrs_raw": {
+                        **attrs,
+                        **({"moq": str(moq)} if moq is not None else {}),
+                        **({"order_multiple": str(mult)} if mult is not None else {}),
+                    },
                 }
             )
         return out

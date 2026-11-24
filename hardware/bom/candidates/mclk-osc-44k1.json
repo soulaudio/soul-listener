@@ -20,7 +20,9 @@
         "manufacturer_name": "TXC",
         "mounting": "SMD",
         "operating_temp_c": "-20...70\u00b0C",
-        "part_type": "crystal"
+        "part_type": "crystal",
+        "moq": "1000",
+        "order_multiple": "1000"
       }
     },
     {
@@ -39,7 +41,9 @@
         "manufacturer_name": "TXC",
         "mounting": "SMD",
         "operating_temp_c": "-40...85\u00b0C",
-        "part_type": "crystal"
+        "part_type": "crystal",
+        "moq": "1000",
+        "order_multiple": "1000"
       }
     },
     {
@@ -55,7 +59,9 @@
       "attrs_raw": {
         "manufacturer_name": "ABRACON",
         "mounting": "SMD",
-        "part_type": "ceramic"
+        "part_type": "ceramic",
+        "moq": "3000",
+        "order_multiple": "3000"
       }
     },
     {
@@ -71,7 +77,9 @@
       "attrs_raw": {
         "manufacturer_name": "ABRACON",
         "mounting": "SMD",
-        "part_type": "ceramic"
+        "part_type": "ceramic",
+        "moq": "1000",
+        "order_multiple": "1000"
       }
     },
     {
@@ -90,7 +98,9 @@
         "manufacturer_name": "ABRACON",
         "mounting": "SMD",
         "operating_temp_c": "-40...85\u00b0C",
-        "series": "ASV"
+        "series": "ASV",
+        "moq": "1000",
+        "order_multiple": "1000"
       }
     },
     {
@@ -110,7 +120,9 @@
         "operating_temp_c": "-40...105\u00b0C",
         "output_signal": "CMOS",
         "part_type": "oscillator",
-        "supply_mv": "3.3V DC"
+        "supply_mv": "3.3V DC",
+        "moq": "2000",
+        "order_multiple": "2000"
       }
     },
     {
@@ -130,7 +142,9 @@
         "operating_temp_c": "-40...85\u00b0C",
         "output_signal": "CMOS",
         "part_type": "oscillator",
-        "supply_mv": "3.3V DC"
+        "supply_mv": "3.3V DC",
+        "moq": "2000",
+        "order_multiple": "2000"
       }
     },
     {
@@ -150,7 +164,9 @@
         "operating_temp_c": "-40...105\u00b0C",
         "output_signal": "CMOS",
         "part_type": "oscillator",
-        "supply_mv": "3.3V DC"
+        "supply_mv": "3.3V DC",
+        "moq": "2000",
+        "order_multiple": "2000"
       }
     },
     {
@@ -170,7 +186,9 @@
         "operating_temp_c": "-40...85\u00b0C",
         "output_signal": "CMOS",
         "part_type": "oscillator",
-        "supply_mv": "3.3V DC"
+        "supply_mv": "3.3V DC",
+        "moq": "2000",
+        "order_multiple": "2000"
       }
     },
     {
@@ -190,7 +208,9 @@
         "operating_temp_c": "-40...105\u00b0C",
         "output_signal": "CMOS",
         "part_type": "oscillator",
-        "supply_mv": "3.3V DC"
+        "supply_mv": "3.3V DC",
+        "moq": "2000",
+        "order_multiple": "2000"
       }
     },
     {
@@ -210,7 +230,9 @@
         "operating_temp_c": "-40...85\u00b0C",
         "output_signal": "CMOS",
         "part_type": "oscillator",
-        "supply_mv": "3.3V DC"
+        "supply_mv": "3.3V DC",
+        "moq": "2000",
+        "order_multiple": "2000"
       }
     },
     {
@@ -230,7 +252,9 @@
         "operating_temp_c": "-40...125\u00b0C",
         "output_signal": "CMOS",
         "part_type": "oscillator",
-        "supply_mv": "3.3V DC"
+        "supply_mv": "3.3V DC",
+        "moq": "2000",
+        "order_multiple": "2000"
       }
     },
     {
@@ -250,7 +274,9 @@
         "operating_temp_c": "-40...125\u00b0C",
         "output_signal": "CMOS",
         "part_type": "oscillator",
-        "supply_mv": "3.3V DC"
+        "supply_mv": "3.3V DC",
+        "moq": "2000",
+        "order_multiple": "2000"
       }
     },
     {
@@ -270,7 +296,9 @@
         "operating_temp_c": "-40...125\u00b0C",
         "output_signal": "CMOS",
         "part_type": "oscillator",
-        "supply_mv": "3.3V DC"
+        "supply_mv": "3.3V DC",
+        "moq": "2000",
+        "order_multiple": "2000"
       }
     },
     {
@@ -289,7 +317,9 @@
         "manufacturer_name": "QST",
         "mounting": "SMD",
         "operating_temp_c": "-20...70\u00b0C",
-        "part_type": "crystal"
+        "part_type": "crystal",
+        "moq": "1000",
+        "order_multiple": "1000"
       }
     },
     {
@@ -308,7 +338,9 @@
         "manufacturer_name": "QST",
         "mounting": "SMD",
         "operating_temp_c": "-40...85\u00b0C",
-        "part_type": "crystal"
+        "part_type": "crystal",
+        "moq": "1000",
+        "order_multiple": "1000"
       }
     },
     {
@@ -327,7 +359,9 @@
         "manufacturer_name": "QST",
         "mounting": "SMD",
         "operating_temp_c": "-20...70\u00b0C",
-        "part_type": "crystal"
+        "part_type": "crystal",
+        "moq": "1000",
+        "order_multiple": "1000"
       }
     },
     {
@@ -346,7 +380,9 @@
         "manufacturer_name": "QST",
         "mounting": "SMD",
         "operating_temp_c": "-40...85\u00b0C",
-        "part_type": "crystal"
+        "part_type": "crystal",
+        "moq": "1000",
+        "order_multiple": "1000"
       }
     },
     {
@@ -365,7 +401,9 @@
         "manufacturer_name": "WTL",
         "operating_temp_c": "-10...60\u00b0C",
         "part_type": "XO",
-        "supply_mv": "3.3V"
+        "supply_mv": "3.3V",
+        "moq": "3000",
+        "order_multiple": "3000"
       }
     },
     {
@@ -384,7 +422,9 @@
         "manufacturer_name": "WTL",
         "operating_temp_c": "-40...85\u00b0C",
         "part_type": "XO",
-        "supply_mv": "3.3V"
+        "supply_mv": "3.3V",
+        "moq": "3000",
+        "order_multiple": "3000"
       }
     },
     {
@@ -403,7 +443,9 @@
         "manufacturer_name": "WTL",
         "operating_temp_c": "-10...70\u00b0C",
         "part_type": "XO",
-        "supply_mv": "3.3V"
+        "supply_mv": "3.3V",
+        "moq": "3000",
+        "order_multiple": "3000"
       }
     },
     {
@@ -422,7 +464,9 @@
         "manufacturer_name": "WTL",
         "operating_temp_c": "-40...85\u00b0C",
         "part_type": "XO",
-        "supply_mv": "3.3V"
+        "supply_mv": "3.3V",
+        "moq": "3000",
+        "order_multiple": "3000"
       }
     },
     {
@@ -440,7 +484,9 @@
         "frequency_stability_ppm": "\u00b130ppm",
         "manufacturer_name": "WTL",
         "operating_temp_c": "-40...85\u00b0C",
-        "part_type": "crystal"
+        "part_type": "crystal",
+        "moq": "3000",
+        "order_multiple": "3000"
       }
     },
     {
@@ -458,7 +504,9 @@
         "frequency_stability_ppm": "\u00b130ppm",
         "manufacturer_name": "WTL",
         "operating_temp_c": "-20...70\u00b0C",
-        "part_type": "crystal"
+        "part_type": "crystal",
+        "moq": "3000",
+        "order_multiple": "3000"
       }
     }
   ]
