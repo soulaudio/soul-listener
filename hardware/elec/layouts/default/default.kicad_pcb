@@ -57,4 +57,216 @@
 			(outputdirectory "")
 		)
 	)
+	(gr_text "ATO-FLOORPLAN-BEGIN"
+		(at 0.000 -6.000 0)
+		(layer "Cmts.User")
+		(effects
+			(font
+				(size 1.0 1.0)
+				(thickness 0.167)
+			)
+			(justify left top)
+		)
+	)
+	(gr_rect
+		(start 35.000 44.000)
+		(end 60.000 60.000)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "Dwgs.User")
+	)
+	(gr_text "audio"
+		(at 35.600 44.600 0)
+		(layer "Dwgs.User")
+		(effects
+			(font
+				(size 1.0 1.0)
+				(thickness 0.167)
+			)
+			(justify left top)
+		)
+	)
+	(gr_rect
+		(start 0.000 0.500)
+		(end 35.000 59.500)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(fill no)
+		(layer "Cmts.User")
+	)
+	(gr_text "battery (KEEPOUT)"
+		(at 0.600 1.100 0)
+		(layer "Cmts.User")
+		(effects
+			(font
+				(size 1.0 1.0)
+				(thickness 0.167)
+			)
+			(justify left top)
+		)
+	)
+	(gr_rect
+		(start 93.000 0.000)
+		(end 100.000 14.000)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "Dwgs.User")
+	)
+	(gr_text "bluetooth"
+		(at 93.600 0.600 0)
+		(layer "Dwgs.User")
+		(effects
+			(font
+				(size 1.0 1.0)
+				(thickness 0.167)
+			)
+			(justify left top)
+		)
+	)
+	(gr_rect
+		(start 37.000 22.000)
+		(end 46.000 34.000)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "Dwgs.User")
+	)
+	(gr_text "clock"
+		(at 37.600 22.600 0)
+		(layer "Dwgs.User")
+		(effects
+			(font
+				(size 1.0 1.0)
+				(thickness 0.167)
+			)
+			(justify left top)
+		)
+	)
+	(gr_rect
+		(start 85.000 46.000)
+		(end 100.000 60.000)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "Dwgs.User")
+	)
+	(gr_text "display"
+		(at 85.600 46.600 0)
+		(layer "Dwgs.User")
+		(effects
+			(font
+				(size 1.0 1.0)
+				(thickness 0.167)
+			)
+			(justify left top)
+		)
+	)
+	(gr_rect
+		(start 35.000 0.000)
+		(end 60.000 17.000)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "Dwgs.User")
+	)
+	(gr_text "input"
+		(at 35.600 0.600 0)
+		(layer "Dwgs.User")
+		(effects
+			(font
+				(size 1.0 1.0)
+				(thickness 0.167)
+			)
+			(justify left top)
+		)
+	)
+	(gr_rect
+		(start 46.000 17.000)
+		(end 72.000 43.000)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "Dwgs.User")
+	)
+	(gr_text "mcu"
+		(at 46.600 17.600 0)
+		(layer "Dwgs.User")
+		(effects
+			(font
+				(size 1.0 1.0)
+				(thickness 0.167)
+			)
+			(justify left top)
+		)
+	)
+	(gr_rect
+		(start 72.000 17.000)
+		(end 93.000 46.000)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "Dwgs.User")
+	)
+	(gr_text "memory"
+		(at 72.600 17.600 0)
+		(layer "Dwgs.User")
+		(effects
+			(font
+				(size 1.0 1.0)
+				(thickness 0.167)
+			)
+			(justify left top)
+		)
+	)
+	(gr_rect
+		(start 60.000 0.000)
+		(end 85.000 16.000)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "Dwgs.User")
+	)
+	(gr_text "power"
+		(at 60.600 0.600 0)
+		(layer "Dwgs.User")
+		(effects
+			(font
+				(size 1.0 1.0)
+				(thickness 0.167)
+			)
+			(justify left top)
+		)
+	)
+	(gr_text "ATO-FLOORPLAN-END"
+		(at 0.000 62.000 0)
+		(layer "Cmts.User")
+		(effects
+			(font
+				(size 1.0 1.0)
+				(thickness 0.167)
+			)
+			(justify left top)
+		)
+	)
+
 )

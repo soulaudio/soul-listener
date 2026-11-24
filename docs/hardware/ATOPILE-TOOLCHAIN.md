@@ -258,25 +258,92 @@ the committed one, and rebuilding needs the picker. It sits in the workflow
 disabled with that reason attached, because the alternative is forgetting that
 the one check protecting the layout is the one we cannot run.
 
-## 3D rendering
+## 3D rendering — and a correction
 
-Blocked on the same thing, and worth being precise about why. A 3D view needs
-footprints with 3D models attached, which means picked parts, which means
-sign-in. The committed `default.kicad_pcb` is an empty 2-layer board with no
-footprints at all.
+**An earlier version of this document said 3D was blocked on sign-in. That was
+wrong, and the correction matters because it changes what is possible today.**
 
-Once you have run `ato auth login`:
+A part carrying the `has_part_picked` trait is pruned from the pick tree
+entirely, so the picker never runs for it. Measured end to end on a two-part
+board with no credentials:
 
-```sh
-ato build -b default -t glb     # .pcba.glb   — the model
-ato build -b default -t step    # .pcba.step  — for mechanical CAD
-ato build -b default -t 3d-image
+```
+✓ Picking parts [0.06s]   ✓ bom [0.06s]
+✓ step [5.38s]            ✓ glb [4.14s]   ✓ 3d-image [17.44s]
 ```
 
-Those three are the KiCad-tagged targets, so they additionally need `kicad-cli`
-on PATH (`nix shell nixpkgs#kicad`, a ~700 MB fetch). Everything in the
-`default` aggregate — bom, manifest, variable-report, pinout, stackup,
-power-tree, datasheets — needs no KiCad.
+So the real rule is: **3D needs vendored parts, not an account.** What was true
+is narrower than what was written — *generic* components (`new Capacitor` with a
+capacitance) need the picker, and this design is almost entirely generic
+components, so nothing renders yet. The fix is vendoring, not authenticating.
+
+Two constraints found by testing rather than reading:
+
+- `supplier_id` must be the literal `"lcsc"`.
+- `supplier_partno` must be **non-empty**. With a blank one every stage passes
+  except `bom` — and the three 3D targets depend on `bom`, so the build stops
+  before rendering. That is why `tools/ato-vendor-part.py` writes a placeholder
+  and reports it rather than leaving the field empty.
+
+### Rendering what exists now
+
+`cargo xtask hardware render` drives `kicad-cli` against the committed PCB and
+needs neither atopile nor a sign-in. It currently shows the outline and the
+floorplan annotation, which is still the fastest way to check the board shape.
+
+Deliberately not `ato build -t glb`: atopile's 3D targets sit after the picker,
+so they need vendored parts even to render an outline.
+
+**Version note.** atopile writes KiCad 9 format (`version 20241229`) and nixpkgs
+ships KiCad 10.0.4. Exporting is safe — verified by hashing
+`default.kicad_pcb` before and after `export glb` and `export svg`: unchanged.
+Do not let KiCad 10 *write* the file; a format migration would break `--frozen`.
+
+### Where 3D models come from
+
+Downloaded from EasyEDA by `ato create part` and vendored into `parts/` as
+`.step` files, referenced from the `.kicad_mod` as
+`${KIPRJMOD}/../../parts/<Mfr_MPN>/<name>.step`. KiCad's own 3D library is never
+used and `KICAD*_3DMODEL_DIR` is never read — the only variable that matters is
+`KIPRJMOD`, which atopile passes itself.
+
+A part with no model, or a `(model …)` pointing at a missing file, is a **silent
+no-op**: the build succeeds and the component simply does not appear. Good for
+robustness, bad for noticing — check the `(model …)` paths yourself.
+
+## Routing
+
+atopile does **no routing**, and this is by design rather than omission.
+
+`update-pcb` writes footprints, `(net …)` declarations and net assignments on
+pads. Verified by counting s-expressions in a built two-part board:
+`footprint` 2, `net` 7, `property` 14, and `segment`/`via`/`zone`/`gr_line`
+**zero**. The transformer has `insert_track`/`insert_via`/`insert_zone` methods
+with no callers — dead code as far as `ato build` is concerned.
+
+So: **route by hand in KiCad; atopile preserves it.** The build is incremental,
+not regenerative — it parses the existing PCB, mutates it, writes it back.
+Preserved across builds: segments, arcs, vias, zones, footprint positions and
+rotations, non-atopile footprints, free graphics, groups.
+
+Net classes, trace widths, differential-pair rules, length matching and custom
+design rules are **not expressible in `.ato` at all**. `DifferentialPair` exists
+but its only PCB-visible effect is `_P`/`_N` net-name suffixes;
+`differential_impedance` is solver-only and constrains termination resistors, not
+trace geometry. Declare all of it in KiCad — atopile neither reads nor writes
+`.kicad_dru`, and no build step writes `.kicad_pro`.
+
+There *is* one real routing feature: **layout reuse.** A module that some build
+target's `entry` points at becomes reusable, and its instances get copied
+tracks, arcs, vias and zones with net numbers remapped. It is keyed off
+`ato.yaml` build entries rather than `.ato` syntax, it is undocumented upstream,
+and `_calculate_group_offset` carries `# TODO rotation?` — **translation only, no
+rotation**. Worth knowing before relying on it for the repeated channels in an
+audio path.
+
+An `atopile/autolayout/` package exists in the wheel and does AI place-and-route
+against a remote service (DeepPCB via `gateway.atopile.io`), but it has **zero
+callers in the CLI** — it is reachable only from `ato serve` and the hosted app.
 
 ## Running it
 

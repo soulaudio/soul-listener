@@ -5,6 +5,7 @@ This is a reading of the SOURCES, not a netlist. It shows connections as written
 ## Board
 ```mermaid
 flowchart LR
+  board["board<br/><i>RectangularBoardShape</i>"]
   mcu["mcu<br/><i>MCU</i>"]
   audio["audio<br/><i>Audio</i>"]
   power["power<br/><i>Power</i>"]
@@ -31,7 +32,7 @@ flowchart LR
   mcu ---|swd| swd_main
   memory ---|power_3v3| power
 ```
-`SoulAudioDAP` instantiates 10 modules with 22 connection statements between them.
+`SoulAudioDAP` instantiates 11 modules with 22 connection statements between them.
 
 ## Modules
 

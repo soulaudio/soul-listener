@@ -199,3 +199,72 @@ fn the_pcb_is_locked_against_rebuild_drift() {
         );
     }
 }
+
+const MAIN_ATO: &str = include_str!("../../../hardware/elec/src/main.ato");
+
+/// The declared board outline and the floorplan must agree.
+///
+/// Two files state the board's size: `main.ato` declares a
+/// `RectangularBoardShape`, which is what atopile actually draws on `Edge.Cuts`,
+/// and `placement.yaml` declares the envelope every zone is checked against. If
+/// they drift, the floorplan is validated against a board that is not the board.
+///
+/// They cannot be merged into one. atopile will only take the outline from the
+/// design, and the zone geometry has nowhere to live in `.ato` — the language has
+/// no placement concept at all. So there are two numbers and this is the check
+/// that keeps them equal.
+#[test]
+fn board_outline_matches_the_floorplan() {
+    fn mm(src: &str, pat: &str) -> Option<f64> {
+        let i = src.find(pat)? + pat.len();
+        let rest = &src[i..];
+        let end = rest.find("mm")?;
+        rest[..end].trim().parse().ok()
+    }
+    let ato_x = mm(MAIN_ATO, "board.x =").expect("main.ato must declare board.x");
+    let ato_y = mm(MAIN_ATO, "board.y =").expect("main.ato must declare board.y");
+
+    fn yaml_num(src: &str, key: &str) -> Option<f64> {
+        let i = src.find(key)? + key.len();
+        let line = src[i..].lines().next()?;
+        line.trim().parse().ok()
+    }
+    let spec_x = yaml_num(PLACEMENT, "width_mm:").expect("placement.yaml board.width_mm");
+    let spec_y = yaml_num(PLACEMENT, "height_mm:").expect("placement.yaml board.height_mm");
+
+    assert_eq!(
+        (ato_x, ato_y),
+        (spec_x, spec_y),
+        "main.ato declares a {ato_x} x {ato_y} mm board but placement.yaml says \
+         {spec_x} x {spec_y} mm. atopile draws Edge.Cuts from the .ato declaration, so the \
+         .ato number is the real board — update placement.yaml, or change both together. \
+         Every zone is checked against the placement.yaml envelope, so a mismatch validates \
+         the floorplan against a board that does not exist."
+    );
+}
+
+/// The outline must be declared in the design, not drawn into the PCB.
+///
+/// Both are possible and they are mutually destructive: when a
+/// `RectangularBoardShape` is present, atopile's `_clear_existing_outline`
+/// deletes every `Edge.Cuts` primitive on every build. A hand-drawn outline
+/// therefore survives exactly until the next build.
+///
+/// An earlier version of `tools/ato-outline.py` wrote the outline itself, which
+/// would have been silently erased. This pins the resolution: the design owns
+/// `Edge.Cuts`, the tool annotates the user layers only.
+#[test]
+fn the_outline_is_owned_by_the_design_not_the_tool() {
+    assert!(
+        MAIN_ATO.contains("new RectangularBoardShape"),
+        "main.ato must declare the board outline with RectangularBoardShape. Without it \
+         atopile leaves Edge.Cuts alone and the board has no outline at all, which kicad-cli \
+         reports as 'Board outline is malformed'."
+    );
+    let outline_tool = include_str!("../../../tools/ato-outline.py");
+    assert!(
+        !outline_tool.contains("\"Edge.Cuts\""),
+        "tools/ato-outline.py writes to Edge.Cuts, which atopile deletes on every build when \
+         a RectangularBoardShape is declared. The tool must annotate Dwgs.User/Cmts.User only."
+    );
+}

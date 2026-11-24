@@ -20,6 +20,8 @@
 # via the star-connected agnd node; both connect to the board GND plane at
 # the single star junction near the DAC.
 
+import RectangularBoardShape
+
 from "mcu.ato"       import MCU
 from "interfaces.ato" import I2CBus
 from "interfaces.ato" import SPIDevice
@@ -45,6 +47,21 @@ module SoulAudioDAP:
     SoulAudio DAP — complete board netlist.
     Connects MCU, audio chain, power management, display, BLE, memory, and input.
     """
+
+    # ── Mechanical envelope ───────────────────────────────────────────────────
+    #
+    # The board outline, declared HERE rather than drawn in KiCad, because
+    # atopile owns it once it is declared: `_clear_existing_outline` deletes
+    # every Edge.Cuts primitive on each build when a RectangularBoardShape is
+    # present. Hand-drawn edges and this declaration cannot coexist — one wipes
+    # the other — so the source is the single owner and
+    # `hardware/elec/placement.yaml` is checked against it.
+    #
+    # Keep these two numbers equal to `board.width_mm` / `board.height_mm` in
+    # placement.yaml; `board_outline_matches_the_floorplan` asserts it.
+    board = new RectangularBoardShape
+    board.x = 100mm
+    board.y = 60mm
 
     # ── Sub-module instances ──────────────────────────────────────────────────
     mcu       = new MCU

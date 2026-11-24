@@ -68,6 +68,8 @@ pub const MODULE_BUILDS: &[(&str, &str)] = &[
 pub enum HwCommand {
     /// Validate the Atopile design (ERC assert checks, no KiCad required)
     Check,
+    /// Render the board: 2D SVG and 3D GLB/PNG via kicad-cli
+    Render,
     /// Validate only the modules whose .ato files changed (the lefthook hook)
     CheckChanged {
         /// Changed file paths. Non-.ato paths and unmapped modules are ignored.
@@ -82,6 +84,13 @@ pub enum HwCommand {
 }
 
 pub fn run(cmd: HwCommand) -> Result<()> {
+    // `render` drives kicad-cli against the committed PCB and never invokes
+    // atopile, so requiring the atopile toolchain for it would block the one
+    // command that works on a machine with neither atopile nor a sign-in.
+    if matches!(cmd, HwCommand::Render) {
+        return hw_render();
+    }
+
     // Verify ato is installed
     let ato_check = Command::new("ato").arg("--version").output();
 
@@ -119,6 +128,7 @@ pub fn run(cmd: HwCommand) -> Result<()> {
 
     match cmd {
         HwCommand::Check => hw_check(),
+        HwCommand::Render => hw_render(),
         HwCommand::CheckChanged { files } => hw_check_changed(&files),
         HwCommand::Build => hw_build(),
         HwCommand::Sync => hw_sync(),
@@ -182,6 +192,118 @@ fn run_check_build(build: &str) -> Result<bool> {
     Ok(false)
 }
 
+/// Render the board with `kicad-cli`.
+///
+/// Deliberately NOT `ato build -t glb`. atopile's 3D targets are tagged
+/// `REQUIRES_KICAD` and sit after the part picker, so they need a sign-in even
+/// to render an outline. `kicad-cli` reads the committed `.kicad_pcb` directly,
+/// which works today and shows whatever the board actually contains.
+///
+/// Measured: exporting does NOT modify the input. The hash of
+/// `default.kicad_pcb` is unchanged across `export glb` and `export svg`, which
+/// matters because atopile writes the PCB in KiCad 9's format (version
+/// 20241229) while nixpkgs ships KiCad 10 — a read-write round trip through the
+/// newer tool could migrate the file and break the `--frozen` lock.
+///
+/// Components appear once parts are vendored under `hardware/elec/src/parts/`;
+/// until then this renders the outline and the floorplan annotation, which is
+/// still the fastest way to see whether the board shape is right.
+fn hw_render() -> Result<()> {
+    let kicad = Command::new("kicad-cli").arg("version").output();
+    if kicad.is_err() || !kicad.unwrap().status.success() {
+        eprintln!("{}", "kicad-cli not found in PATH.".red().bold());
+        eprintln!(
+            "{}",
+            "  nix shell nixpkgs#kicad --command cargo xtask hardware render".dimmed()
+        );
+        anyhow::bail!("kicad-cli not installed");
+    }
+
+    let pcb = "hardware/elec/layouts/default/default.kicad_pcb";
+    let out_dir = std::path::Path::new("hardware/build/render");
+    std::fs::create_dir_all(out_dir).context("create hardware/build/render")?;
+
+    println!();
+    println!("{}", "Rendering the board".cyan().bold());
+    println!();
+
+    // (target, kicad-cli args). SVG first: it is the one that works with no 3D
+    // models at all, so a board with no vendored parts still produces something
+    // a person can look at.
+    let jobs: &[(&str, &[&str])] = &[
+        (
+            "default.svg",
+            &[
+                "pcb",
+                "export",
+                "svg",
+                "--layers",
+                "F.Cu,B.Cu,F.SilkS,Edge.Cuts,Dwgs.User,Cmts.User",
+                "--exclude-drawing-sheet",
+            ],
+        ),
+        (
+            "default.glb",
+            &[
+                "pcb",
+                "export",
+                "glb",
+                "--include-tracks",
+                "--include-zones",
+            ],
+        ),
+        (
+            "default.png",
+            &[
+                "pcb",
+                "render",
+                "--width",
+                "1400",
+                "--height",
+                "900",
+                "--side",
+                "top",
+                "--quality",
+                "high",
+            ],
+        ),
+    ];
+
+    let mut made = Vec::new();
+    for (name, args) in jobs {
+        let out = out_dir.join(name);
+        let status = Command::new("kicad-cli")
+            .args(*args)
+            .arg("--output")
+            .arg(&out)
+            .arg(pcb)
+            .output()
+            .with_context(|| format!("kicad-cli {}", args.join(" ")))?;
+        if status.status.success() && out.exists() {
+            let bytes = std::fs::metadata(&out).map(|m| m.len()).unwrap_or(0);
+            println!("  {} {name}  ({bytes} bytes)", "OK".green().bold());
+            made.push(name.to_string());
+        } else {
+            println!("  {} {name}", "FAIL".red().bold());
+            eprintln!("{}", String::from_utf8_lossy(&status.stderr));
+        }
+    }
+    println!();
+    if made.is_empty() {
+        anyhow::bail!("no render produced");
+    }
+    println!(
+        "{}",
+        format!("wrote {} to hardware/build/render/", made.join(", ")).green()
+    );
+    println!(
+        "{}",
+        "  Components appear once parts are vendored — see tools/ato-vendor-part.py".dimmed()
+    );
+    println!();
+    Ok(())
+}
+
 /// Check the declared floorplan (`hardware/elec/placement.yaml`).
 ///
 /// Needs neither atopile nor the network: the spec-against-itself half is pure
@@ -189,20 +311,30 @@ fn run_check_build(build: &str) -> Result<bool> {
 /// placed footprints. Run through Python because the spec is data and the check
 /// is arithmetic over it, not something that wants a Rust type.
 fn run_placement_check() -> Result<bool> {
+    run_tool("tools/ato-placement.py", &[], "floorplan")
+}
+
+/// Run one of the repo's Python hardware checks and report pass/fail.
+///
+/// Python because these are data checks — geometry over a YAML spec, file
+/// inventory over a parts directory — not something that wants a Rust type. The
+/// output is only shown on failure, so a passing run stays one line.
+fn run_tool(script: &str, args: &[&str], label: &str) -> Result<bool> {
     let out = Command::new("python3")
-        .arg("tools/ato-placement.py")
+        .arg(script)
+        .args(args)
         .output()
-        .context("failed to run tools/ato-placement.py")?;
+        .with_context(|| format!("failed to run {script}"))?;
     let text = format!(
         "{}{}",
         String::from_utf8_lossy(&out.stdout),
         String::from_utf8_lossy(&out.stderr)
     );
     if out.status.success() {
-        println!("  {} floorplan", "PASS".green().bold());
+        println!("  {} {label}", "PASS".green().bold());
         return Ok(true);
     }
-    println!("  {} floorplan", "FAIL".red().bold());
+    println!("  {} {label}", "FAIL".red().bold());
     eprintln!("{text}");
     Ok(false)
 }
@@ -240,6 +372,9 @@ fn hw_check() -> Result<()> {
     // way to state placement in the language at all.
     if !run_placement_check()? {
         failed.push("floorplan");
+    }
+    if !run_tool("tools/ato-vendor-part.py", &["--check"], "vendored parts")? {
+        failed.push("vendored parts");
     }
 
     println!();
