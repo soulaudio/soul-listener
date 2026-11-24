@@ -93,6 +93,28 @@ refuses the ambiguous cases rather than guessing. A bare `"3.3"` returns `None`,
 with no unit cannot be told from the same number in another unit, and guessing is how a 5 V
 oscillator reaches a 3.3 V board.
 
+## Commands
+
+```sh
+tools/sourcing-run.py selftest                         # pure helpers, no network
+tools/sourcing-run.py fetch  --vendor tme              # the MPNs the snapshot names
+tools/sourcing-run.py fetch  --vendor tme --category 100269 \
+     --phrase 22.5792MHz --as mclk-osc-44k1 --limit 60 # a category sweep
+tools/sourcing-run.py export --category mclk-osc-44k1  # -> candidates/<id>.json
+tools/sourcing-run.py status                           # what the DB holds
+```
+
+A sweep is **checked for completeness** against TME's own `counters.count`: if fewer parts come
+back than the vendor says match, the run fails rather than reporting a partial category. An
+incomplete sweep presented as a whole category is how "nothing is sourceable" gets claimed on
+partial data.
+
+Use a **phrase**, not the API's `parameters[]` filter, to narrow a category. That is counter-
+intuitive and was measured: for 22.5792 MHz the phrase returns 24 parts and the parameter filter
+returns 21, a strict subset — because the filter keys on exact value-ids and the one in-stock part
+has its frequency recorded as the truncated `"22.579MHz"`. **The parameter filter would have missed
+it.**
+
 ## Rules
 
 - **CI never needs credentials.** It reads the committed snapshot. A gate that calls a live API

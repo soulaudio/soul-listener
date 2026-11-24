@@ -11,6 +11,7 @@
       "eu_stock": 6916,
       "unit_price_cents": 19,
       "lead_time_days": null,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/sn74lvc1g3157.pdf?ts=1728540283477&ref_url=https%253A%252F%252Fwww.ti.com%252Fproduct%252FSN74LVC1G3157",
       "vendors": [
         "tme"
       ],

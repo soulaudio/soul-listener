@@ -45,6 +45,7 @@ struct Raw {
     unit_price_cents: Option<u32>,
     lead_time_days: Option<u32>,
     attrs_raw: Vec<(String, String)>,
+    datasheet_url: Option<String>,
 }
 
 fn load(doc: &str, category: &str) -> Vec<Raw> {
@@ -70,6 +71,7 @@ fn load(doc: &str, category: &str) -> Vec<Raw> {
             eu_stock: p["eu_stock"].as_u64().unwrap_or(0) as u32,
             unit_price_cents: p["unit_price_cents"].as_u64().map(|x| x as u32),
             lead_time_days: p["lead_time_days"].as_u64().map(|x| x as u32),
+            datasheet_url: p["datasheet_url"].as_str().map(str::to_string),
             attrs_raw: p["attrs_raw"]
                 .as_object()
                 .map(|o| {
@@ -374,4 +376,79 @@ fn the_oscillator_category_yields_candidates_and_explains_the_rest() {
         "every part must be either qualified or rejected WITH a named attribute — a part that is \
          neither has fallen through the report"
     );
+}
+
+/// A datasheet-only constraint needs a datasheet, and the fetcher must supply one.
+///
+/// `Evidence::Datasheet` moves a constraint from the filter to a human. That is
+/// only honest if the human can actually reach the document — and for most of
+/// this session the answer was "guess the URL", which is how
+/// `abracon.com/Oscillators/ASV.pdf` came to be found by hand.
+///
+/// TME publishes the link on `/products/files`, so there is no excuse for a
+/// candidate arriving without one. This gate makes the omission fail rather than
+/// quietly turning every datasheet obligation into a research task.
+#[test]
+fn candidates_for_datasheet_constrained_requirements_carry_a_datasheet_link() {
+    use dap_hw_spec::select::Evidence;
+
+    for (id, doc) in [
+        ("mclk-mux", MUX_CANDIDATES),
+        ("mclk-osc-44k1", OSC_CANDIDATES),
+    ] {
+        let req = ACTIVE
+            .parts
+            .iter()
+            .find(|r| r.id == id)
+            .unwrap_or_else(|| panic!("spec must carry {id}"));
+        let datasheet_constraints: Vec<&str> = req
+            .constraints
+            .iter()
+            .filter(|c| c.evidence == Evidence::Datasheet)
+            .map(|c| c.attr)
+            .collect();
+        if datasheet_constraints.is_empty() {
+            continue;
+        }
+
+        let raws = load(doc, id);
+        let missing: Vec<&str> = raws
+            .iter()
+            .filter(|r| r.datasheet_url.as_deref().unwrap_or("").is_empty())
+            .map(|r| r.mpn.as_str())
+            .collect();
+        assert!(
+            missing.is_empty(),
+            "'{id}' has datasheet-only constraints {datasheet_constraints:?}, but {} candidate(s) \
+             arrived with no datasheet URL: {missing:?}.\n\n\
+             Those constraints can only be satisfied by a person reading a document, so a \
+             candidate without a link turns each one into a research task — which is how a URL \
+             ends up being guessed by hand. TME publishes these on /products/files; re-run \
+             `tools/sourcing-run.py fetch` and re-export.",
+            missing.len()
+        );
+
+        // And a video is not a datasheet. The TI part's second document on
+        // /products/files is a YouTube link, so "take the first document" would
+        // have produced exactly this.
+        for r in &raws {
+            let url = r.datasheet_url.as_deref().unwrap_or("");
+            assert!(
+                !url.contains("youtube") && !url.contains("youtu.be"),
+                "{}'s datasheet URL is a video: {url}",
+                r.mpn
+            );
+            assert!(
+                url.starts_with("http"),
+                "{}'s datasheet URL is not absolute: {url:?} — TME returns protocol-relative \
+                 paths (//www.tme.eu/...) that have to be made absolute before anyone can open \
+                 them",
+                r.mpn
+            );
+        }
+        println!(
+            "{id}: {} candidate(s), all with a reachable datasheet link",
+            raws.len()
+        );
+    }
 }

@@ -1,0 +1,899 @@
+{
+  "kind": "candidates",
+  "category": "mclk-osc-48k",
+  "generated_at": "2026-11-24",
+  "note": "Values are RAW vendor strings; dap_hw_spec::parametric::derive interprets them. Rebuild with tools/sourcing-run.py export.",
+  "parts": [
+    {
+      "mpn": "3225-24.576M-SR",
+      "manufacturer": "SR PASSIVES",
+      "eu_sources": 1,
+      "eu_stock": 5903,
+      "unit_price_cents": null,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b110ppm",
+        "manufacturer_name": "SR PASSIVES",
+        "mounting": "SMD",
+        "operating_temp_c": "-20...70\u00b0C",
+        "part_type": "crystal",
+        "moq": "2",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "7C-24.576MBA-T",
+      "manufacturer": "TXC",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": null,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "manufacturer_name": "TXC",
+        "mounting": "SMD",
+        "operating_temp_c": "-10...70\u00b0C",
+        "output_signal": "CMOS",
+        "part_type": "oscillator",
+        "supply_mv": "3.3V DC",
+        "moq": "1000",
+        "order_multiple": "1000"
+      }
+    },
+    {
+      "mpn": "7M-24.576MAAJ-T",
+      "manufacturer": "TXC",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": null,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b130ppm",
+        "manufacturer_name": "TXC",
+        "mounting": "SMD",
+        "operating_temp_c": "-20...70\u00b0C",
+        "part_type": "crystal",
+        "moq": "1000",
+        "order_multiple": "1000"
+      }
+    },
+    {
+      "mpn": "7V-24.576MAAE-T",
+      "manufacturer": "TXC",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": null,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b130ppm",
+        "manufacturer_name": "TXC",
+        "mounting": "SMD",
+        "operating_temp_c": "-20...70\u00b0C",
+        "part_type": "crystal",
+        "moq": "1000",
+        "order_multiple": "1000"
+      }
+    },
+    {
+      "mpn": "7V-24.576MAHV-T",
+      "manufacturer": "TXC",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": null,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b130ppm",
+        "manufacturer_name": "TXC",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "part_type": "crystal",
+        "moq": "1000",
+        "order_multiple": "1000"
+      }
+    },
+    {
+      "mpn": "7V-24.576MDDE-T",
+      "manufacturer": "TXC",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": null,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b120ppm",
+        "manufacturer_name": "TXC",
+        "mounting": "SMD",
+        "operating_temp_c": "-20...70\u00b0C",
+        "part_type": "crystal",
+        "moq": "1000",
+        "order_multiple": "1000"
+      }
+    },
+    {
+      "mpn": "7V-24.576MDDQ-T",
+      "manufacturer": "TXC",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": null,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b120ppm",
+        "manufacturer_name": "TXC",
+        "mounting": "SMD",
+        "operating_temp_c": "-20...70\u00b0C",
+        "part_type": "crystal",
+        "moq": "1000",
+        "order_multiple": "1000"
+      }
+    },
+    {
+      "mpn": "7X-24.576MBB-T",
+      "manufacturer": "TXC",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": null,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "manufacturer_name": "TXC",
+        "mounting": "SMD",
+        "operating_temp_c": "-10...70\u00b0C",
+        "output_signal": "CMOS",
+        "part_type": "oscillator",
+        "supply_mv": "3.3V DC",
+        "moq": "1000",
+        "order_multiple": "1000"
+      }
+    },
+    {
+      "mpn": "8NE-24.576MBM-T",
+      "manufacturer": "TXC",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": null,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "manufacturer_name": "TXC",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "output_signal": "CMOS",
+        "part_type": "oscillator",
+        "supply_mv": "3.3V DC",
+        "moq": "1000",
+        "order_multiple": "1000"
+      }
+    },
+    {
+      "mpn": "8WE-24.576MBM-T",
+      "manufacturer": "TXC",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": null,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "manufacturer_name": "TXC",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "output_signal": "CMOS",
+        "part_type": "oscillator",
+        "supply_mv": "3.3V DC",
+        "moq": "1000",
+        "order_multiple": "1000"
+      }
+    },
+    {
+      "mpn": "8WE-24.576MDM-T",
+      "manufacturer": "TXC",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": null,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "manufacturer_name": "TXC",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "output_signal": "CMOS",
+        "part_type": "oscillator",
+        "supply_mv": "1.8V DC",
+        "moq": "1000",
+        "order_multiple": "1000"
+      }
+    },
+    {
+      "mpn": "8Z-24.576MAAJ-T",
+      "manufacturer": "TXC",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": null,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b130ppm",
+        "manufacturer_name": "TXC",
+        "mounting": "SMD",
+        "operating_temp_c": "-20...70\u00b0C",
+        "part_type": "crystal",
+        "moq": "1000",
+        "order_multiple": "1000"
+      }
+    },
+    {
+      "mpn": "CX2016SA24576D0FLJG1",
+      "manufacturer": "KYOCERA AVX",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": null,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "manufacturer_name": "KYOCERA AVX",
+        "mounting": "SMD",
+        "part_type": "crystal",
+        "moq": "3000",
+        "order_multiple": "3000"
+      }
+    },
+    {
+      "mpn": "KC2016Z24.5760C15XXK",
+      "manufacturer": "KYOCERA AVX",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": null,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "manufacturer_name": "KYOCERA AVX",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...105\u00b0C",
+        "output_signal": "CMOS",
+        "part_type": "oscillator",
+        "supply_mv": "3.3V DC",
+        "moq": "2000",
+        "order_multiple": "2000"
+      }
+    },
+    {
+      "mpn": "KC2016Z24.5760C1KX00",
+      "manufacturer": "KYOCERA AVX",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": null,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "manufacturer_name": "KYOCERA AVX",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "output_signal": "CMOS",
+        "part_type": "oscillator",
+        "supply_mv": "3.3V DC",
+        "moq": "2000",
+        "order_multiple": "2000"
+      }
+    },
+    {
+      "mpn": "KC2520Z24.5760C1KX00",
+      "manufacturer": "KYOCERA AVX",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": null,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "manufacturer_name": "KYOCERA AVX",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "output_signal": "CMOS",
+        "part_type": "oscillator",
+        "supply_mv": "3.3V DC",
+        "moq": "2000",
+        "order_multiple": "2000"
+      }
+    },
+    {
+      "mpn": "LFSPXO025915CUTT",
+      "manufacturer": "IQD FREQUENCY PRODUCTS",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": null,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "manufacturer_name": "IQD FREQUENCY PRODUCTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "output_signal": "CMOS",
+        "part_type": "oscillator",
+        "supply_mv": "2.5V",
+        "moq": "100",
+        "order_multiple": "100"
+      }
+    },
+    {
+      "mpn": "LFXTAL003386",
+      "manufacturer": "IQD FREQUENCY PRODUCTS",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 190,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "manufacturer_name": "IQD FREQUENCY PRODUCTS",
+        "mounting": "THT",
+        "package": "HC49/U",
+        "part_type": "crystal",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "LFXTAL026396",
+      "manufacturer": "IQD FREQUENCY PRODUCTS",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 154,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "manufacturer_name": "IQD FREQUENCY PRODUCTS",
+        "mounting": "SMD",
+        "part_type": "crystal",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "LFXTAL033644BULK",
+      "manufacturer": "IQD FREQUENCY PRODUCTS",
+      "eu_sources": 1,
+      "eu_stock": 298,
+      "unit_price_cents": 130,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "manufacturer_name": "IQD FREQUENCY PRODUCTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-10...60\u00b0C",
+        "part_type": "crystal",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "LFXTAL071258CUTT",
+      "manufacturer": "IQD FREQUENCY PRODUCTS",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 117,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b1100ppm",
+        "manufacturer_name": "IQD FREQUENCY PRODUCTS",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "part_type": "crystal",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "MC2016Z24.5760C19XSH",
+      "manufacturer": "KYOCERA AVX",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": null,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "manufacturer_name": "KYOCERA AVX",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "output_signal": "CMOS",
+        "part_type": "oscillator",
+        "supply_mv": "3.3V DC",
+        "moq": "2000",
+        "order_multiple": "2000"
+      }
+    },
+    {
+      "mpn": "QT252S-24.576MAAJ-T",
+      "manufacturer": "QST",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": null,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b130ppm",
+        "manufacturer_name": "QST",
+        "mounting": "SMD",
+        "operating_temp_c": "-20...70\u00b0C",
+        "part_type": "crystal",
+        "moq": "1000",
+        "order_multiple": "1000"
+      }
+    },
+    {
+      "mpn": "QT325G-24.576MAAE-T",
+      "manufacturer": "QST",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": null,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b130ppm",
+        "manufacturer_name": "QST",
+        "mounting": "SMD",
+        "operating_temp_c": "-20...70\u00b0C",
+        "part_type": "crystal",
+        "moq": "1000",
+        "order_multiple": "1000"
+      }
+    },
+    {
+      "mpn": "QT325G-24.576MAAV-T",
+      "manufacturer": "QST",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": null,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b130ppm",
+        "manufacturer_name": "QST",
+        "mounting": "SMD",
+        "operating_temp_c": "-20...70\u00b0C",
+        "part_type": "crystal",
+        "moq": "1000",
+        "order_multiple": "1000"
+      }
+    },
+    {
+      "mpn": "QT325G-24.576MAHV-T",
+      "manufacturer": "QST",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": null,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b130ppm",
+        "manufacturer_name": "QST",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "part_type": "crystal",
+        "moq": "1000",
+        "order_multiple": "1000"
+      }
+    },
+    {
+      "mpn": "QT325G-24.576MDDE-T",
+      "manufacturer": "QST",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": null,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b120ppm",
+        "manufacturer_name": "QST",
+        "mounting": "SMD",
+        "operating_temp_c": "-20...70\u00b0C",
+        "part_type": "crystal",
+        "moq": "1000",
+        "order_multiple": "1000"
+      }
+    },
+    {
+      "mpn": "QT325G-24.576MDDQ-T",
+      "manufacturer": "QST",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": null,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b120ppm",
+        "manufacturer_name": "QST",
+        "mounting": "SMD",
+        "operating_temp_c": "-20...70\u00b0C",
+        "part_type": "crystal",
+        "moq": "1000",
+        "order_multiple": "1000"
+      }
+    },
+    {
+      "mpn": "QT325S-24.576MAAE-T",
+      "manufacturer": "QST",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": null,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b130ppm",
+        "manufacturer_name": "QST",
+        "mounting": "SMD",
+        "operating_temp_c": "-20...70\u00b0C",
+        "part_type": "crystal",
+        "moq": "1000",
+        "order_multiple": "1000"
+      }
+    },
+    {
+      "mpn": "QT325S-24.576MAAJ-T",
+      "manufacturer": "QST",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": null,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b130ppm",
+        "manufacturer_name": "QST",
+        "mounting": "SMD",
+        "operating_temp_c": "-20...70\u00b0C",
+        "part_type": "crystal",
+        "moq": "1000",
+        "order_multiple": "1000"
+      }
+    },
+    {
+      "mpn": "QT325S-24.576MAHE-T",
+      "manufacturer": "QST",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": null,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b130ppm",
+        "manufacturer_name": "QST",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "part_type": "crystal",
+        "moq": "1000",
+        "order_multiple": "1000"
+      }
+    },
+    {
+      "mpn": "QT325S-24.576MAHJ-T",
+      "manufacturer": "QST",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": null,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b130ppm",
+        "manufacturer_name": "QST",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "part_type": "crystal",
+        "moq": "1000",
+        "order_multiple": "1000"
+      }
+    },
+    {
+      "mpn": "QT49-24.576MAAJ-B",
+      "manufacturer": "QST",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": null,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b130ppm",
+        "manufacturer_name": "QST",
+        "mounting": "THT",
+        "operating_temp_c": "-20...70\u00b0C",
+        "part_type": "crystal",
+        "moq": "1000",
+        "order_multiple": "1000"
+      }
+    },
+    {
+      "mpn": "QT49S-24.576MEEJ-T",
+      "manufacturer": "QST",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": null,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b110ppm",
+        "manufacturer_name": "QST",
+        "mounting": "SMD",
+        "operating_temp_c": "-20...70\u00b0C",
+        "part_type": "crystal",
+        "moq": "1000",
+        "order_multiple": "1000"
+      }
+    },
+    {
+      "mpn": "QT532G-24.576MAAJ-T",
+      "manufacturer": "QST",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": null,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b130ppm",
+        "manufacturer_name": "QST",
+        "mounting": "SMD",
+        "operating_temp_c": "-20...70\u00b0C",
+        "part_type": "crystal",
+        "moq": "1000",
+        "order_multiple": "1000"
+      }
+    },
+    {
+      "mpn": "QT532G-24.576MAHE-T",
+      "manufacturer": "QST",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": null,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b130ppm",
+        "manufacturer_name": "QST",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "part_type": "crystal",
+        "moq": "1000",
+        "order_multiple": "1000"
+      }
+    },
+    {
+      "mpn": "QT532G-24.576MBBK-T",
+      "manufacturer": "QST",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": null,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "manufacturer_name": "QST",
+        "mounting": "SMD",
+        "operating_temp_c": "-20...70\u00b0C",
+        "part_type": "crystal",
+        "moq": "1000",
+        "order_multiple": "1000"
+      }
+    },
+    {
+      "mpn": "QT532S-24.576MAAJ-T",
+      "manufacturer": "QST",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": null,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b130ppm",
+        "manufacturer_name": "QST",
+        "mounting": "SMD",
+        "operating_temp_c": "-20...70\u00b0C",
+        "part_type": "crystal",
+        "moq": "1000",
+        "order_multiple": "1000"
+      }
+    },
+    {
+      "mpn": "QTM325-24.576MBE-T",
+      "manufacturer": "QST",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": null,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "manufacturer_name": "QST",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "output_signal": "CMOS",
+        "part_type": "oscillator",
+        "supply_mv": "3.3V DC",
+        "moq": "1000",
+        "order_multiple": "1000"
+      }
+    },
+    {
+      "mpn": "W1M24576000B12BC1N",
+      "manufacturer": "WTL",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": null,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576MHz",
+        "frequency_stability_ppm": "\u00b110ppm",
+        "manufacturer_name": "WTL",
+        "operating_temp_c": "-20...70\u00b0C",
+        "part_type": "crystal",
+        "moq": "3000",
+        "order_multiple": "3000"
+      }
+    }
+  ]
+}

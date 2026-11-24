@@ -144,13 +144,19 @@ class Catalogue:
                 part.lifecycle_raw, _json.dumps(part.status_raw), part.datasheet_url, run_id,
             ),
         )
-        pid = cur.lastrowid
-        if not pid:
-            row = self.conn.execute(
-                "SELECT id FROM parts WHERE vendor=? AND vendor_pn=?",
-                (part.vendor, part.vendor_pn),
-            ).fetchone()
-            pid = row[0]
+        # Always re-read the id. `cur.lastrowid` is only meaningful for a real
+        # INSERT: when ON CONFLICT DO UPDATE fires it can hold a STALE rowid from
+        # an earlier statement, and writing attributes against that id fails the
+        # foreign key — or worse, would attach them to another part.
+        #
+        # This only shows up on a RE-fetch, which is exactly the path the
+        # catalogue's "uncommitted but rebuildable" premise depends on, so
+        # trusting lastrowid broke the one property the design promises.
+        del cur
+        pid = self.conn.execute(
+            "SELECT id FROM parts WHERE vendor=? AND vendor_pn=?",
+            (part.vendor, part.vendor_pn),
+        ).fetchone()[0]
 
         self.conn.execute("DELETE FROM attributes WHERE part_id=?", (pid,))
         self.conn.executemany(
@@ -227,6 +233,14 @@ class Catalogue:
                 """,
                 (mpn, category),
             ).fetchone()
+            # Any vendor's datasheet link will do; MIN is just determinism.
+            ds = self.conn.execute(
+                """
+                SELECT MIN(datasheet_url) FROM parts
+                WHERE mpn=? AND category=? AND datasheet_url IS NOT NULL
+                """,
+                (mpn, category),
+            ).fetchone()[0]
             out.append(
                 {
                     "mpn": mpn,
@@ -235,6 +249,7 @@ class Catalogue:
                     "eu_stock": eu_stock or 0,
                     "unit_price_cents": None if price is None else round(price * 100),
                     "lead_time_days": lead,
+                    "datasheet_url": ds,
                     "vendors": (vendors or "").split(","),
                     "attrs_raw": {
                         **attrs,
