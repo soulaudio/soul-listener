@@ -237,17 +237,138 @@ fn ranking_prefers_the_double_sourced_oscillator_over_the_cheaper_one() {
     );
 }
 
-/// The mux category, where the discriminating constraint is a boolean.
+/// The mux category, in the vendor's own vocabulary.
+///
+/// This test was rewritten after the first live fetch, because the version before
+/// it asserted something the filter cannot do. It claimed the filter rejects a
+/// make-before-break part and a too-slow part — but **no distributor publishes
+/// either fact**. TME returns an empty "Clock frequency" for analog switches and
+/// nothing at all for break-before-make, so both are
+/// [`Evidence::Datasheet`](dap_hw_spec::select::Evidence::Datasheet) now and the
+/// catalogue filter correctly declines to judge them.
+///
+/// What remains is what a catalogue genuinely answers: switch configuration,
+/// channel count in the vendor's convention, supply-range containment, and
+/// mounting. Those reject four of the seven fixture parts.
 #[test]
-fn the_mux_filter_rejects_make_before_break_and_too_slow_parts() {
+fn the_mux_filter_rejects_what_a_catalogue_can_actually_judge() {
     let qualified = report("mclk-mux");
+
+    assert!(
+        !qualified.contains(&"FIXTURE-MUX-SP4T-WRONGCONFIG".to_string()),
+        "an SP4T is a different class of part: four throws where the design selects between two \
+         oscillators"
+    );
+    assert!(
+        !qualified.contains(&"FIXTURE-MUX-DUAL-CHANNEL".to_string()),
+        "a dual switch is two channels where one is needed — and 'channels' counts SWITCHES in \
+         the vendor's convention, which is the clash that made the old constraint reject the \
+         correct part"
+    );
+    assert!(
+        !qualified.contains(&"FIXTURE-MUX-5V-ONLY".to_string()),
+        "a part whose operating range starts at 4.5 V cannot run on the 3.3 V rail. Note this is \
+         the containment test: it rejects a range that does not REACH 3.3 V, and no longer \
+         rejects a part merely for tolerating more"
+    );
+    assert!(
+        !qualified.contains(&"FIXTURE-MUX-THROUGH-HOLE".to_string()),
+        "through-hole does not belong on this board"
+    );
+    assert!(
+        !qualified.contains(&"FIXTURE-MUX-NO-SUPPLY-SPEC".to_string()),
+        "the cheapest, deepest-stocked, triple-sourced mux publishes no supply range at all. \
+         Unknown is not a pass — that rule is still right where a catalogue SHOULD carry the \
+         field"
+    );
+
     assert_eq!(
         qualified,
-        vec!["FIXTURE-MUX-2CH-BBM".to_string()],
-        "only the break-before-make, fast-enough mux should survive: a make-before-break part \
-         briefly shorts the two oscillators together, and a 10 MHz part cannot pass a 24.576 MHz \
-         clock"
+        vec![
+            "FIXTURE-MUX-SPDT-A".to_string(),
+            "FIXTURE-MUX-SPDT-B".to_string()
+        ],
+        "both compliant SPDT parts should survive the catalogue filter, ranked by source depth"
     );
+}
+
+/// A part rated far above the rail must now QUALIFY, not be rejected.
+///
+/// The single most important assertion to come out of the first live fetch. The
+/// TI `SN74LVC1G3157DCKR` is rated 1.65-5.5 V, has 6916 in stock at TME, and is
+/// the part the ranking policy prefers — and the previous `supply_mv_max <=
+/// 3300` constraint rejected it for *tolerating more voltage than the board
+/// supplies*, which is the opposite of a defect.
+///
+/// This pins the direction so it cannot silently invert again.
+#[test]
+fn a_part_rated_above_the_rail_qualifies_rather_than_being_rejected() {
+    let owned = load("mclk-mux");
+    let parts = borrow(&owned);
+    let req = ACTIVE
+        .parts
+        .iter()
+        .find(|r| r.id == "mclk-mux")
+        .expect("spec must have mclk-mux");
+    let mut verdicts = vec![None; parts.len()];
+    evaluate(&parts, req.constraints, &mut verdicts);
+
+    let a = verdicts
+        .iter()
+        .flatten()
+        .find(|v| v.part.mpn == "FIXTURE-MUX-SPDT-A")
+        .expect("the compliant fixture part must be evaluated");
+    assert!(
+        a.rejection.is_none(),
+        "a mux rated 1.65-5.5 V was rejected ({:?}). A maximum supply rating ABOVE the rail is a \
+         capability, not a fault — this is the exact error that rejected the real TI part with \
+         6916 in stock.",
+        a.rejection
+    );
+}
+
+/// Datasheet-only constraints must be surfaced, not silently skipped.
+///
+/// The engine deliberately does not judge them, which creates a new risk: a
+/// requirement could look fully checked while its defining property — for the
+/// mux, break-before-make — was never confirmed by anyone. So the report has to
+/// name them as outstanding work.
+#[test]
+fn datasheet_only_constraints_are_reported_as_outstanding() {
+    use dap_hw_spec::select::Evidence;
+    let req = ACTIVE
+        .parts
+        .iter()
+        .find(|r| r.id == "mclk-mux")
+        .expect("spec must have mclk-mux");
+
+    let datasheet: Vec<&str> = req
+        .constraints
+        .iter()
+        .filter(|c| c.evidence == Evidence::Datasheet)
+        .map(|c| c.attr)
+        .collect();
+
+    assert!(
+        datasheet.contains(&"break_before_make"),
+        "break-before-make is the defining property of this part and no distributor publishes \
+         it, so it must be marked Datasheet rather than silently checked against a field that \
+         will always be missing"
+    );
+    for c in req
+        .constraints
+        .iter()
+        .filter(|c| c.evidence == Evidence::Datasheet)
+    {
+        assert!(
+            c.why.to_lowercase().contains("datasheet"),
+            "constraint on '{}' is Datasheet-only but its `why` does not say so. The reason text \
+             is what a reader sees in the report; without it, an unchecked requirement looks \
+             checked.",
+            c.attr
+        );
+    }
+    println!("mclk-mux needs datasheet confirmation for: {datasheet:?}");
 }
 
 /// A constraint set must not be self-contradictory.

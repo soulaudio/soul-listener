@@ -31,7 +31,17 @@
     "and the largest capacity, and it has to lose: solder tabs mean no spare battery and no",
     "Art. 11 user-replaceability. FIXTURE-CELL-1100-BARE is cheaper still and would transfer",
     "UN 38.3 and IEC 62133-2 certification from the cell vendor to us. FIXTURE-BT-BARE-SOC is",
-    "half the price of the qualified module and costs a full Bluetooth qualification programme."
+    "half the price of the qualified module and costs a full Bluetooth qualification programme.",
+    "",
+    "REWRITTEN 2026-11-24 to the vocabulary real distributors actually publish, after the first",
+    "live TME fetch showed the old fixture had invented its own. Supply voltage is a RANGE",
+    "(supply_mv_min/max) because that is how it is published, and the constraint is containment",
+    "of the 3.3 V rail rather than a ceiling. Mux parts are described by switch_configuration",
+    "(SPDT) and channels counted as SWITCHES, which is TME's convention.",
+    "",
+    "Note what is NO LONGER here: a part failing on break_before_make or max_freq_hz. Those are",
+    "datasheet facts that no distributor publishes, so the catalogue filter cannot test them and a",
+    "fixture part 'failing' on them tested nothing but the fixture's own invention."
   ],
   "categories": {
     "mclk-osc-44k1": [
@@ -44,9 +54,11 @@
         "lead_time_days": 0,
         "attrs": {
           "frequency_hz": 22579200,
-          "supply_mv_max": 3300,
           "package": "SMD-3225-4",
-          "phase_noise_dbc_1khz": -142
+          "phase_noise_dbc_1khz": -142,
+          "supply_mv_min": 1800,
+          "supply_mv_max": 3600,
+          "mounting": "SMD"
         }
       },
       {
@@ -58,9 +70,11 @@
         "lead_time_days": 0,
         "attrs": {
           "frequency_hz": 22579200,
-          "supply_mv_max": 3300,
           "package": "SMD-2520-4",
-          "phase_noise_dbc_1khz": -138
+          "phase_noise_dbc_1khz": -138,
+          "supply_mv_min": 1800,
+          "supply_mv_max": 3600,
+          "mounting": "SMD"
         }
       },
       {
@@ -72,9 +86,11 @@
         "lead_time_days": 0,
         "attrs": {
           "frequency_hz": 24576000,
-          "supply_mv_max": 3300,
           "package": "SMD-3225-4",
-          "phase_noise_dbc_1khz": -145
+          "phase_noise_dbc_1khz": -145,
+          "supply_mv_min": 1800,
+          "supply_mv_max": 3600,
+          "mounting": "SMD"
         }
       },
       {
@@ -86,9 +102,11 @@
         "lead_time_days": 0,
         "attrs": {
           "frequency_hz": 22579200,
-          "supply_mv_max": 5000,
           "package": "SMD-5032-4",
-          "phase_noise_dbc_1khz": -140
+          "phase_noise_dbc_1khz": -140,
+          "supply_mv_min": 4500,
+          "supply_mv_max": 5500,
+          "mounting": "SMD"
         }
       },
       {
@@ -100,9 +118,11 @@
         "lead_time_days": 0,
         "attrs": {
           "frequency_hz": 22579200,
-          "supply_mv_max": 3300,
           "package": "WLCSP-6",
-          "phase_noise_dbc_1khz": -150
+          "phase_noise_dbc_1khz": -150,
+          "supply_mv_min": 1800,
+          "supply_mv_max": 3600,
+          "mounting": "SMD"
         }
       },
       {
@@ -114,8 +134,10 @@
         "lead_time_days": 0,
         "attrs": {
           "frequency_hz": 22579200,
-          "supply_mv_max": 3300,
-          "package": "SMD-3225-4"
+          "package": "SMD-3225-4",
+          "supply_mv_min": 1800,
+          "supply_mv_max": 3600,
+          "mounting": "SMD"
         }
       },
       {
@@ -127,53 +149,116 @@
         "lead_time_days": 0,
         "attrs": {
           "frequency_hz": 22579200,
-          "supply_mv_max": 3300,
           "package": "SMD-3225-4",
-          "phase_noise_dbc_1khz": -118
+          "phase_noise_dbc_1khz": -118,
+          "supply_mv_min": 1800,
+          "supply_mv_max": 3600,
+          "mounting": "SMD"
         }
       }
     ],
     "mclk-mux": [
       {
-        "mpn": "FIXTURE-MUX-2CH-BBM",
+        "mpn": "FIXTURE-MUX-SPDT-A",
         "manufacturer": "Fixture Logic",
         "eu_sources": 3,
         "eu_stock": 120000,
         "unit_price_cents": 11,
         "lead_time_days": 0,
         "attrs": {
-          "channels": 2,
-          "break_before_make": true,
-          "max_freq_hz": 200000000,
-          "supply_mv_max": 3300
+          "switch_configuration": "SPDT",
+          "channels": 1,
+          "supply_mv_min": 1650,
+          "supply_mv_max": 5500,
+          "mounting": "SMD"
         }
       },
       {
-        "mpn": "FIXTURE-MUX-2CH-MAKEBEFOREBREAK",
+        "mpn": "FIXTURE-MUX-SPDT-B",
+        "manufacturer": "Fixture Logic",
+        "eu_sources": 2,
+        "eu_stock": 40000,
+        "unit_price_cents": 14,
+        "lead_time_days": 0,
+        "attrs": {
+          "switch_configuration": "SPDT",
+          "channels": 1,
+          "supply_mv_min": 1650,
+          "supply_mv_max": 5500,
+          "mounting": "SMD"
+        }
+      },
+      {
+        "mpn": "FIXTURE-MUX-SP4T-WRONGCONFIG",
         "manufacturer": "Fixture Logic",
         "eu_sources": 3,
         "eu_stock": 90000,
         "unit_price_cents": 9,
         "lead_time_days": 0,
         "attrs": {
-          "channels": 2,
-          "break_before_make": false,
-          "max_freq_hz": 200000000,
-          "supply_mv_max": 3300
+          "switch_configuration": "SP4T",
+          "channels": 1,
+          "supply_mv_min": 1650,
+          "supply_mv_max": 5500,
+          "mounting": "SMD"
         }
       },
       {
-        "mpn": "FIXTURE-MUX-2CH-SLOW",
+        "mpn": "FIXTURE-MUX-DUAL-CHANNEL",
+        "manufacturer": "Fixture Logic",
+        "eu_sources": 3,
+        "eu_stock": 70000,
+        "unit_price_cents": 10,
+        "lead_time_days": 0,
+        "attrs": {
+          "switch_configuration": "SPDT",
+          "channels": 2,
+          "supply_mv_min": 1650,
+          "supply_mv_max": 5500,
+          "mounting": "SMD"
+        }
+      },
+      {
+        "mpn": "FIXTURE-MUX-5V-ONLY",
+        "manufacturer": "Fixture Logic",
+        "eu_sources": 2,
+        "eu_stock": 20000,
+        "unit_price_cents": 8,
+        "lead_time_days": 0,
+        "attrs": {
+          "switch_configuration": "SPDT",
+          "channels": 1,
+          "supply_mv_min": 4500,
+          "supply_mv_max": 5500,
+          "mounting": "SMD"
+        }
+      },
+      {
+        "mpn": "FIXTURE-MUX-THROUGH-HOLE",
         "manufacturer": "Fixture Logic",
         "eu_sources": 2,
         "eu_stock": 5000,
         "unit_price_cents": 7,
         "lead_time_days": 0,
         "attrs": {
-          "channels": 2,
-          "break_before_make": true,
-          "max_freq_hz": 10000000,
-          "supply_mv_max": 3300
+          "switch_configuration": "SPDT",
+          "channels": 1,
+          "supply_mv_min": 1650,
+          "supply_mv_max": 5500,
+          "mounting": "THT"
+        }
+      },
+      {
+        "mpn": "FIXTURE-MUX-NO-SUPPLY-SPEC",
+        "manufacturer": "Fixture Logic",
+        "eu_sources": 3,
+        "eu_stock": 200000,
+        "unit_price_cents": 6,
+        "lead_time_days": 0,
+        "attrs": {
+          "switch_configuration": "SPDT",
+          "channels": 1,
+          "mounting": "SMD"
         }
       }
     ],
