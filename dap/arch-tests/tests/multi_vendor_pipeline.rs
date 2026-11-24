@@ -16,6 +16,7 @@ use dap_hw_spec::{Preference, ACTIVE};
 use serde_json::Value;
 
 const DAC_CANDIDATES: &str = include_str!("../../../hardware/bom/candidates/dac.json");
+const BT_CANDIDATES: &str = include_str!("../../../hardware/bom/candidates/bluetooth.json");
 const MUX_CANDIDATES: &str = include_str!("../../../hardware/bom/candidates/mclk-mux.json");
 const OSC_CANDIDATES: &str = include_str!("../../../hardware/bom/candidates/mclk-osc-44k1.json");
 
@@ -278,4 +279,103 @@ fn the_dac_requirement_filters_a_real_catalogue_and_keeps_its_own_part() {
         );
         println!("  candidate {} passes its own requirement", cand.mpn);
     }
+}
+
+/// The Bluetooth requirement, which had never had a candidate at all.
+///
+/// It carried constraints from the day it was written and nothing to apply them
+/// to: TME stocks no Feasycom part, and the Digi-Key sweep that found modules
+/// came later. 100 real pre-certified modules now exist in the catalogue —
+/// u-blox, Murata, Silicon Labs, Insight SIP.
+///
+/// The point of the test is the correction those modules forced. A distributor
+/// publishes a radio's frequency, supply, temperature and package; it does not
+/// publish a QDID, a certification number, or whether an SDK is NDA-gated. Those
+/// are the reason the requirement exists, so they are `Evidence::Datasheet` — and
+/// left as catalogue constraints they rejected all 100.
+#[test]
+fn the_bluetooth_requirement_filters_real_modules_and_defers_certification() {
+    use dap_hw_spec::select::Evidence;
+
+    let req = ACTIVE
+        .parts
+        .iter()
+        .find(|r| r.id == "bluetooth")
+        .expect("spec must carry bluetooth");
+
+    // The certification facts must be datasheet-only: no distributor carries
+    // them, and demanding them from a catalogue disqualifies every module.
+    for attr in [
+        "bt_sig_qualified",
+        "radio_certified_eu",
+        "requires_vendor_nda",
+        "codec_sbc",
+    ] {
+        let c = req
+            .constraints
+            .iter()
+            .find(|c| c.attr == attr)
+            .unwrap_or_else(|| panic!("bluetooth must still constrain '{attr}'"));
+        assert_eq!(
+            c.evidence,
+            Evidence::Datasheet,
+            "'{attr}' is marked as a catalogue field, but a QDID and an NDA status are \
+             certificates rather than parametric data. As a catalogue constraint it rejects every \
+             real module — the trap break_before_make and phase noise both fell into."
+        );
+    }
+
+    let raws = load(BT_CANDIDATES, "bluetooth");
+    assert!(
+        raws.len() >= 50,
+        "expected a real module sweep, got {} — this requirement having no candidates is what \
+         the sweep was for",
+        raws.len()
+    );
+
+    let typed_attrs: Vec<Vec<(&str, AttrValue)>> =
+        raws.iter().map(|r| typed(r, req.constraints)).collect();
+    let parts: Vec<CataloguePart<'_>> = raws
+        .iter()
+        .zip(&typed_attrs)
+        .map(|(r, a)| CataloguePart {
+            mpn: &r.mpn,
+            manufacturer: &r.manufacturer,
+            attrs: a.as_slice(),
+            eu_sources: r.eu_sources,
+            eu_stock: r.eu_stock,
+            unit_price_cents: r.unit_price_cents,
+            moq: r.moq,
+            lead_time_days: r.lead_time_days,
+        })
+        .collect();
+
+    let mut verdicts = vec![None; parts.len()];
+    evaluate(&parts, req.constraints, &mut verdicts);
+    let qualified: Vec<&str> = verdicts
+        .iter()
+        .flatten()
+        .filter(|v| v.rejection.is_none())
+        .map(|v| v.part.mpn)
+        .collect();
+    println!(
+        "\n=== bluetooth: {} of {} swept modules pass the catalogue-checkable constraints",
+        qualified.len(),
+        parts.len()
+    );
+    for m in qualified.iter().take(5) {
+        println!("  candidate {m}");
+    }
+
+    assert!(
+        !qualified.is_empty(),
+        "no module passed, so the catalogue-checkable half of this requirement rejects \
+         everything — which is the over-strict failure mode, not a sourcing finding"
+    );
+    assert!(
+        qualified.len() < parts.len(),
+        "EVERY swept part passed, so the constraints discriminate nothing. The sweep keyword \
+         pulls in adjacent parts (RF front-end modules and amplifiers), and a filter that cannot \
+         tell those from a Bluetooth module is not filtering."
+    );
 }

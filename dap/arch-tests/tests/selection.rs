@@ -557,42 +557,49 @@ fn every_qualifying_cell_can_be_unplugged_by_a_user() {
     }
 }
 
-/// The Bluetooth filter buys certification inheritance, not parts.
+/// The Bluetooth filter, limited to what a catalogue can judge.
 ///
-/// Every rejection here is a cost avoided rather than a specification missed: a
-/// bare SoC at half the price costs a Bluetooth qualification programme and an EU
-/// radio certification programme, and an NDA-gated module cannot ship with
-/// open-source firmware at all.
+/// Rewritten after 100 real modules arrived. The previous version asserted the
+/// filter rejects an NDA-gated module and one lacking SBC — but **no distributor
+/// publishes either fact**, so those are `Evidence::Datasheet` now and the
+/// catalogue filter correctly declines to judge them. The certification
+/// obligations themselves are pinned by
+/// `the_bluetooth_requirement_filters_real_modules_and_defers_certification`.
+///
+/// What remains is real and worth filtering: a keyword sweep for "bluetooth
+/// module" pulls in bare SoCs, RF front-end modules and through-hole dev kits,
+/// and telling those apart is exactly what package, supply range and mounting do.
 #[test]
-fn the_bluetooth_filter_requires_inheritable_qualification_and_no_nda() {
+fn the_bluetooth_filter_rejects_what_a_catalogue_can_actually_judge() {
     let qualified = report("bluetooth");
 
     assert!(
         !qualified.contains(&"FIXTURE-BT-BARE-SOC".to_string()),
-        "the bare SoC is half the price of the qualified module and triple-sourced. It must lose: \
-         with no module QDID and no pre-certified radio, Bluetooth qualification and EU radio \
-         certification both become ours to run"
+        "a bare SoC in a 48-QFN is half the price and triple-sourced, and must lose: with no \
+         module QDID and no pre-certified radio, Bluetooth qualification and EU radio \
+         certification both become ours to run. Digi-Key classifies a real module's package as \
+         'Module', which is what makes this checkable at all"
     );
     assert!(
-        !qualified.contains(&"FIXTURE-BT-MODULE-NO-QDID".to_string()),
-        "a module with no SIG qualification offers nothing to inherit — the end-product \
-         Declaration has to reference a QDID"
+        !qualified.contains(&"FIXTURE-RF-FRONTEND-5V".to_string()),
+        "an RF front-end module IS a module and still cannot run on the 3.3 V rail — the sweep \
+         keyword pulls these in, so the supply-range check is what separates them"
     );
     assert!(
-        !qualified.contains(&"FIXTURE-BT-MODULE-NDA".to_string()),
-        "an NDA-gated SDK is incompatible with shipping open-source firmware, which is why this \
-         is a hard filter and not a preference"
+        !qualified.contains(&"FIXTURE-BT-DEVKIT-THT".to_string()),
+        "a through-hole dev kit does not belong on this board"
     );
     assert!(
-        !qualified.contains(&"FIXTURE-BT-MODULE-LICENSED-CODECS-ONLY".to_string()),
-        "a module without SBC makes the audio path depend on a licensed codec; SBC is the \
-         royalty-free baseline the product commits to"
+        !qualified.contains(&"FIXTURE-BT-MODULE-NOSUPPLY".to_string()),
+        "a module publishing no supply range is unknown, not compatible — and distributors DO \
+         publish this field"
     );
 
     assert_eq!(
-        qualified,
-        vec!["FIXTURE-BT-MODULE-QUALIFIED".to_string()],
-        "only the pre-qualified, EU-certified, NDA-free, SBC-capable module should survive"
+        qualified.len(),
+        2,
+        "exactly the two compliant 3.3 V-capable surface-mount modules should qualify, got \
+         {qualified:?}"
     );
 }
 

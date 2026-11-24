@@ -3,5 +3,2194 @@
   "category": "bluetooth",
   "generated_at": "2026-11-24",
   "note": "Values are RAW vendor strings; dap_hw_spec::parametric::derive interprets them. Rebuild with tools/sourcing-run.py export.",
-  "parts": []
+  "parts": [
+    {
+      "mpn": "453-00005",
+      "manufacturer": "Ezurio",
+      "eu_sources": 1,
+      "eu_stock": 3781,
+      "unit_price_cents": 707,
+      "moq": 1,
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ezurio.com/documentation/datasheet-bl651",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.402GHz ~ 2.48GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "39-SMD Module",
+        "supply_mv": "1.7V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "453-00039C",
+      "manufacturer": "Ezurio",
+      "eu_sources": 1,
+      "eu_stock": 578,
+      "unit_price_cents": 877,
+      "moq": 1,
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ezurio.com/documentation/datasheet-bl653-series",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.402GHz ~ 2.48GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 105\u00b0C",
+        "package": "Module",
+        "supply_mv": "1.7V ~ 5.5V",
+        "moq": "1",
+        "order_multiple": "250"
+      }
+    },
+    {
+      "mpn": "453-00039R",
+      "manufacturer": "Ezurio",
+      "eu_sources": 1,
+      "eu_stock": 6639,
+      "unit_price_cents": 988,
+      "moq": 1,
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ezurio.com/documentation/datasheet-bl653-series",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.402GHz ~ 2.48GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 105\u00b0C",
+        "package": "Module",
+        "supply_mv": "1.7V ~ 5.5V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "453-00044R",
+      "manufacturer": "Ezurio",
+      "eu_sources": 1,
+      "eu_stock": 737,
+      "unit_price_cents": 493,
+      "moq": 1,
+      "lead_time_days": 182,
+      "datasheet_url": "https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/6925/453-00001-K1.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 105\u00b0C",
+        "package": "39-SMD Module",
+        "supply_mv": "1.7V ~ 3.5V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ANNA-B112-02B",
+      "manufacturer": "u-blox",
+      "eu_sources": 1,
+      "eu_stock": 491,
+      "unit_price_cents": 621,
+      "moq": 1,
+      "lead_time_days": 140,
+      "datasheet_url": "https://content.u-blox.com/sites/default/files/ANNA-B112_DataSheet_UBX-18011707.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "52-SMD Module",
+        "supply_mv": "1.7V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ANNA-B412-00B",
+      "manufacturer": "u-blox",
+      "eu_sources": 1,
+      "eu_stock": 776,
+      "unit_price_cents": 747,
+      "moq": 1,
+      "lead_time_days": 140,
+      "datasheet_url": "https://content.u-blox.com/sites/default/files/ANNA-B412_DataSheet_UBX-21028698.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 105\u00b0C",
+        "package": "56-SMD Module",
+        "supply_mv": "1.7V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "BC832",
+      "manufacturer": "Fanstel Corp.",
+      "eu_sources": 1,
+      "eu_stock": 674,
+      "unit_price_cents": 987,
+      "moq": 1,
+      "lead_time_days": 70,
+      "datasheet_url": "https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/40/BC832_V2.01_Dec-2017.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "16-SMD Module",
+        "supply_mv": "1.7V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "BC833M",
+      "manufacturer": "Fanstel Corp.",
+      "eu_sources": 1,
+      "eu_stock": 8673,
+      "unit_price_cents": 766,
+      "moq": 1,
+      "lead_time_days": 70,
+      "datasheet_url": "https://static1.squarespace.com/static/561459a2e4b0b39f5cefa12e/t/60270895e454bd0fb5d24793/1613170839894/BC833M_Product_Specifications.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 105\u00b0C",
+        "package": "24-SMD Module",
+        "supply_mv": "1.7V ~ 5.5V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "BGM220PC22HNA2",
+      "manufacturer": "Silicon Labs",
+      "eu_sources": 1,
+      "eu_stock": 683,
+      "unit_price_cents": 742,
+      "moq": 1,
+      "lead_time_days": 196,
+      "datasheet_url": "https://www.silabs.com/documents/public/data-sheets/bgm220p-datasheet.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz ~ 2.4835GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 105\u00b0C (TA)",
+        "package": "31-SMD Module",
+        "supply_mv": "1.8V ~ 3.8V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "BGM220PC22HNA2R",
+      "manufacturer": "Silicon Labs",
+      "eu_sources": 1,
+      "eu_stock": 1332,
+      "unit_price_cents": 875,
+      "moq": 1,
+      "lead_time_days": 196,
+      "datasheet_url": "https://www.silabs.com/documents/public/data-sheets/bgm220p-datasheet.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz ~ 2.4835GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 105\u00b0C (TA)",
+        "package": "31-SMD Module",
+        "supply_mv": "1.8V ~ 3.8V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "BGM220PC22WGA2R",
+      "manufacturer": "Silicon Labs",
+      "eu_sources": 1,
+      "eu_stock": 23244,
+      "unit_price_cents": 814,
+      "moq": 1,
+      "lead_time_days": 196,
+      "datasheet_url": "https://www.silabs.com/documents/public/data-sheets/bgm220p-datasheet.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz ~ 2.4835GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "31-SMD Module",
+        "supply_mv": "1.8V ~ 3.8V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "BGM220SC12WGA2R",
+      "manufacturer": "Silicon Labs",
+      "eu_sources": 1,
+      "eu_stock": 3799,
+      "unit_price_cents": 828,
+      "moq": 1,
+      "lead_time_days": 196,
+      "datasheet_url": "https://www.silabs.com/documents/public/data-sheets/bgm220s-datasheet.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz ~ 2.4835GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "31-SMD Module",
+        "supply_mv": "1.8V ~ 3.8V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "BGM220SC22HNA2R",
+      "manufacturer": "Silicon Labs",
+      "eu_sources": 1,
+      "eu_stock": 212,
+      "unit_price_cents": 1014,
+      "moq": 1,
+      "lead_time_days": 196,
+      "datasheet_url": "https://www.silabs.com/documents/public/data-sheets/bgm220s-datasheet.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz ~ 2.4835GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 105\u00b0C (TA)",
+        "package": "44-SMD Module",
+        "supply_mv": "1.8V ~ 3.8V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "BGM220SC22WGA2",
+      "manufacturer": "Silicon Labs",
+      "eu_sources": 1,
+      "eu_stock": 1604,
+      "unit_price_cents": 775,
+      "moq": 1,
+      "lead_time_days": 196,
+      "datasheet_url": "https://www.silabs.com/documents/public/data-sheets/bgm220s-datasheet.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz ~ 2.4835GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "44-SMD Module",
+        "supply_mv": "1.8V ~ 3.8V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "BGM240SA22VNA2",
+      "manufacturer": "Silicon Labs",
+      "eu_sources": 1,
+      "eu_stock": 9421,
+      "unit_price_cents": 890,
+      "moq": 1,
+      "lead_time_days": 196,
+      "datasheet_url": "https://www.silabs.com/documents/public/data-sheets/bgm240s-datasheet.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 105\u00b0C (TA)",
+        "package": "48-LFQFN Module, Exposed Pad",
+        "supply_mv": "1.8V ~ 3.8V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "BL652-SA-01-T/R",
+      "manufacturer": "Ezurio",
+      "eu_sources": 1,
+      "eu_stock": 12541,
+      "unit_price_cents": 1031,
+      "moq": 1,
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ezurio.com/documentation/datasheet-bl652",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "39-SMD Module",
+        "supply_mv": "1.7V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "BL652-SC-01-T/R",
+      "manufacturer": "Ezurio",
+      "eu_sources": 1,
+      "eu_stock": 12516,
+      "unit_price_cents": 971,
+      "moq": 1,
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ezurio.com/documentation/datasheet-bl652",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "39-SMD Module",
+        "supply_mv": "1.7V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "BLUENRG-M0A",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 127,
+      "unit_price_cents": 997,
+      "moq": 1,
+      "lead_time_days": 210,
+      "datasheet_url": "https://www.st.com/resource/en/brochure/brbtble1220_v3.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz ~ 2.4835GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "11-SMD Module",
+        "supply_mv": "1.7V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "BLUENRG-M2SA",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 438,
+      "unit_price_cents": 1054,
+      "moq": 1,
+      "lead_time_days": 210,
+      "datasheet_url": "https://www.st.com/resource/en/brochure/brbtble1220_v3.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz ~ 2.4835GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "23-SMD Module",
+        "supply_mv": "1.7V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "BM71BLES1FC2-0B02AA",
+      "manufacturer": "Microchip Technology",
+      "eu_sources": 1,
+      "eu_stock": 1412,
+      "unit_price_cents": 820,
+      "moq": 1,
+      "lead_time_days": 140,
+      "datasheet_url": "https://ww1.microchip.com/downloads/en/DeviceDoc/BM70-71-Bluetooth-Low-Energy-BLE-Module-Data-Sheet-DS60001372J.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "Module",
+        "supply_mv": "1.9V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "171"
+      }
+    },
+    {
+      "mpn": "BM71BLES1FC2-0B04AA",
+      "manufacturer": "Microchip Technology",
+      "eu_sources": 1,
+      "eu_stock": 626,
+      "unit_price_cents": 820,
+      "moq": 1,
+      "lead_time_days": 140,
+      "datasheet_url": "https://ww1.microchip.com/downloads/en/DeviceDoc/BM70-71-Bluetooth-Low-Energy-BLE-Module-Data-Sheet-DS60001372J.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "16-SMD Module",
+        "supply_mv": "1.9V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "171"
+      }
+    },
+    {
+      "mpn": "BM832",
+      "manufacturer": "Fanstel Corp.",
+      "eu_sources": 1,
+      "eu_stock": 14908,
+      "unit_price_cents": 743,
+      "moq": 1,
+      "lead_time_days": 70,
+      "datasheet_url": "https://static1.squarespace.com/static/561459a2e4b0b39f5cefa12e/t/5c1a1eaa0ebbe8ea63a1bf4c/1545215665821/BlueNor_BM832A_datasheets.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "47-SMD Module",
+        "supply_mv": "1.7V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "BM832A",
+      "manufacturer": "Fanstel Corp.",
+      "eu_sources": 1,
+      "eu_stock": 3390,
+      "unit_price_cents": 584,
+      "moq": 1,
+      "lead_time_days": 70,
+      "datasheet_url": "https://static1.squarespace.com/static/561459a2e4b0b39f5cefa12e/t/5c1a1eaa0ebbe8ea63a1bf4c/1545215665821/BlueNor_BM832A_datasheets.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "47-SMD Module",
+        "supply_mv": "1.7V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "BM833",
+      "manufacturer": "Fanstel Corp.",
+      "eu_sources": 1,
+      "eu_stock": 1904,
+      "unit_price_cents": 891,
+      "moq": 1,
+      "lead_time_days": 70,
+      "datasheet_url": "https://static1.squarespace.com/static/561459a2e4b0b39f5cefa12e/t/60218e821ee5037755726ad1/1612811918804/BM833_datasheets.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 105\u00b0C",
+        "package": "68-SMD Module",
+        "supply_mv": "1.7V ~ 5.5V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "BMD-300-A-R",
+      "manufacturer": "u-blox",
+      "eu_sources": 1,
+      "eu_stock": 25086,
+      "unit_price_cents": 599,
+      "moq": 1,
+      "lead_time_days": 140,
+      "datasheet_url": "https://content.u-blox.com/sites/default/files/BMD-300_DataSheet_UBX-19033350.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "Module",
+        "supply_mv": "1.7V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "BMD-301-A-R",
+      "manufacturer": "u-blox",
+      "eu_sources": 1,
+      "eu_stock": 3277,
+      "unit_price_cents": 669,
+      "moq": 1,
+      "lead_time_days": 140,
+      "datasheet_url": "https://content.u-blox.com/sites/default/files/BMD-301_DataSheet_UBX-19033351.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "Module",
+        "supply_mv": "1.7V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "BMD-340-A-R",
+      "manufacturer": "u-blox",
+      "eu_sources": 1,
+      "eu_stock": 7877,
+      "unit_price_cents": 852,
+      "moq": 1,
+      "lead_time_days": 140,
+      "datasheet_url": "https://content.u-blox.com/sites/default/files/BMD-340_DataSheet_UBX-19033353.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.36GHz ~ 2.5GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "Module",
+        "supply_mv": "1.7V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "BMD-341-A-R",
+      "manufacturer": "u-blox",
+      "eu_sources": 1,
+      "eu_stock": 1371,
+      "unit_price_cents": 932,
+      "moq": 1,
+      "lead_time_days": 140,
+      "datasheet_url": "https://content.u-blox.com/sites/default/files/BMD-341_DataSheet_UBX-19033643.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "package": "Module",
+        "supply_mv": "5.5V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "BMD-350-A-R",
+      "manufacturer": "u-blox",
+      "eu_sources": 1,
+      "eu_stock": 18431,
+      "unit_price_cents": 705,
+      "moq": 1,
+      "lead_time_days": 140,
+      "datasheet_url": "https://content.u-blox.com/sites/default/files/BMD-350_DataSheet_UBX-19033354.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "Module",
+        "supply_mv": "1.7V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "BMD-380-A-R",
+      "manufacturer": "u-blox",
+      "eu_sources": 1,
+      "eu_stock": 9548,
+      "unit_price_cents": 917,
+      "moq": 1,
+      "lead_time_days": 140,
+      "datasheet_url": "https://www.u-blox.com/en/docs/UBX-19039467",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.36GHz ~ 2.5GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "63-SMD Module",
+        "supply_mv": "1.7V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "BT832",
+      "manufacturer": "Fanstel Corp.",
+      "eu_sources": 1,
+      "eu_stock": 6132,
+      "unit_price_cents": 834,
+      "moq": 1,
+      "lead_time_days": 70,
+      "datasheet_url": "https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/40/BT832_A_F_AF_V2.04_Dec-2017.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "16-SMD Module",
+        "supply_mv": "1.7V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "BT832A",
+      "manufacturer": "Fanstel Corp.",
+      "eu_sources": 1,
+      "eu_stock": 12154,
+      "unit_price_cents": 621,
+      "moq": 1,
+      "lead_time_days": 70,
+      "datasheet_url": "https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/40/BT832_A_F_AF_V2.04_Dec-2017.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "16-SMD Module",
+        "supply_mv": "1.7V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "BT832F",
+      "manufacturer": "Fanstel Corp.",
+      "eu_sources": 1,
+      "eu_stock": 9303,
+      "unit_price_cents": 861,
+      "moq": 1,
+      "lead_time_days": 70,
+      "datasheet_url": "https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/40/BT832_A_F_AF_V2.04_Dec-2017.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "16-SMD Module",
+        "supply_mv": "1.7V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "CC3351MODENIAMOZR",
+      "manufacturer": "Texas Instruments",
+      "eu_sources": 1,
+      "eu_stock": 1000,
+      "unit_price_cents": 848,
+      "moq": 1,
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/cc3351mod.pdf?ts=1771220323216&ref_url=https%253A%252F%252Fwww.ti.com%252Fproduct%252FCC3351MOD%252Fpart-details%252FCC3351MODENIAMOZR",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz, 5GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "65-SMD Module",
+        "supply_mv": "1.62V ~ 1.98V, 2.97V ~ 3.63V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "CYBT-343026-01",
+      "manufacturer": "Infineon Technologies",
+      "eu_sources": 1,
+      "eu_stock": 8235,
+      "unit_price_cents": 771,
+      "moq": 1,
+      "lead_time_days": 203,
+      "datasheet_url": "https://www.infineon.com/dgdl/Infineon-CYBT-343026-01_EZ-BT_WICED_Module-DataSheet-v09_00-EN.pdf?fileId=8ac78c8c7d0d8da4017d0ee4bcdb6bec&utm_source=cypress&utm_medium=referral&utm_campaign=202110_globe_en_all_integration-files",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.402GHz ~ 2.48GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-30\u00b0C ~ 85\u00b0C (TA)",
+        "package": "24-SMD Module",
+        "supply_mv": "2.3V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ESP32-C3-MINI-1-N4X",
+      "manufacturer": "Espressif Systems",
+      "eu_sources": 1,
+      "eu_stock": 4276,
+      "unit_price_cents": 289,
+      "moq": 1,
+      "lead_time_days": 126,
+      "datasheet_url": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "61-SMD Module",
+        "supply_mv": "3V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ESP32-C3-MINI-1U-N4X",
+      "manufacturer": "Espressif Systems",
+      "eu_sources": 1,
+      "eu_stock": 7383,
+      "unit_price_cents": 300,
+      "moq": 1,
+      "lead_time_days": 126,
+      "datasheet_url": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "61-SMD Module",
+        "supply_mv": "3V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ESP32-C3-WROOM-02-H4",
+      "manufacturer": "Espressif Systems",
+      "eu_sources": 1,
+      "eu_stock": 287,
+      "unit_price_cents": 321,
+      "moq": 1,
+      "lead_time_days": 56,
+      "datasheet_url": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-wroom-02_datasheet_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 105\u00b0C (TA)",
+        "package": "32-SMD Module",
+        "supply_mv": "3V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ESP32-C3-WROOM-02-N4",
+      "manufacturer": "Espressif Systems",
+      "eu_sources": 1,
+      "eu_stock": 5691,
+      "unit_price_cents": 300,
+      "moq": 1,
+      "lead_time_days": 56,
+      "datasheet_url": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-wroom-02_datasheet_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "19-SMD Module",
+        "supply_mv": "3V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ESP32-C3-WROOM-02U-N4",
+      "manufacturer": "Espressif Systems",
+      "eu_sources": 1,
+      "eu_stock": 1125,
+      "unit_price_cents": 311,
+      "moq": 1,
+      "lead_time_days": 84,
+      "datasheet_url": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-wroom-02_datasheet_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 105\u00b0C (TA)",
+        "package": "19-SMD Module",
+        "supply_mv": "3V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ESP32-C3FH4",
+      "manufacturer": "Espressif Systems",
+      "eu_sources": 1,
+      "eu_stock": 852,
+      "unit_price_cents": 222,
+      "moq": 1,
+      "lead_time_days": 56,
+      "datasheet_url": "https://www.espressif.com/sites/default/files/documentation/esp32-c3_datasheet_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.402GHz ~ 2.48GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 105\u00b0C (TA)",
+        "package": "32-VFQFN Exposed Pad",
+        "supply_mv": "3V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ESP32-C5-WROOM-1-N8R8",
+      "manufacturer": "Espressif Systems",
+      "eu_sources": 1,
+      "eu_stock": 2266,
+      "unit_price_cents": 508,
+      "moq": 1,
+      "lead_time_days": 140,
+      "datasheet_url": "https://documentation.espressif.com/esp32-c5-wroom-1_wroom-1u_datasheet_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.412GHz ~ 2.484GHz, 5.18GHz ~ 5.885GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "28-SMD Module",
+        "supply_mv": "3V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ESP32-C6-DEVKITC-1-N8",
+      "manufacturer": "Espressif Systems",
+      "eu_sources": 1,
+      "eu_stock": 955,
+      "unit_price_cents": 799,
+      "moq": 1,
+      "lead_time_days": 84,
+      "datasheet_url": "https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/5528/ESP32-C6-DEVKITC-1-N8.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "part_type": "Transceiver; 802.11 b/g/n/ax (Wi-Fi, WiFi, WLAN), 802.15.4 (Thread, Zigbee\u00ae), Bluetooth\u00ae 5.x (BLE)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ESP32-C6-MINI-1-N4",
+      "manufacturer": "Espressif Systems",
+      "eu_sources": 1,
+      "eu_stock": 3761,
+      "unit_price_cents": 402,
+      "moq": 1,
+      "lead_time_days": 56,
+      "datasheet_url": "https://www.espressif.com/sites/default/files/documentation/esp32-c6-mini-1_mini-1u_datasheet_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "53-SMD Module",
+        "supply_mv": "3V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ESP32-C6-MINI-1U-H4",
+      "manufacturer": "Espressif Systems",
+      "eu_sources": 1,
+      "eu_stock": 622,
+      "unit_price_cents": 416,
+      "moq": 1,
+      "lead_time_days": 56,
+      "datasheet_url": "https://www.espressif.com/sites/default/files/documentation/esp32-c6-mini-1_mini-1u_datasheet_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 105\u00b0C (TA)",
+        "package": "61-SMD Module",
+        "supply_mv": "3V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ESP32-C6-WROOM-1-N4",
+      "manufacturer": "Espressif Systems",
+      "eu_sources": 1,
+      "eu_stock": 3026,
+      "unit_price_cents": 453,
+      "moq": 1,
+      "lead_time_days": 56,
+      "datasheet_url": "https://www.espressif.com/sites/default/files/documentation/esp32-c6-wroom-1-wroom-1u_datasheet_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "package": "28-SMD Module",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ESP32-C6-WROOM-1-N8",
+      "manufacturer": "Espressif Systems",
+      "eu_sources": 1,
+      "eu_stock": 1692,
+      "unit_price_cents": 493,
+      "moq": 1,
+      "lead_time_days": 56,
+      "datasheet_url": "https://www.espressif.com/sites/default/files/documentation/esp32-c6-wroom-1_wroom-1u_datasheet_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "package": "28-SMD Module",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ESP32-C6-WROOM-1U-N8",
+      "manufacturer": "Espressif Systems",
+      "eu_sources": 1,
+      "eu_stock": 1475,
+      "unit_price_cents": 496,
+      "moq": 1,
+      "lead_time_days": 56,
+      "datasheet_url": "https://www.espressif.com/sites/default/files/documentation/esp32-c6-wroom-1_wroom-1u_datasheet_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "37-SMD Module",
+        "supply_mv": "3V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ESP32-DEVKITC-32UE",
+      "manufacturer": "Espressif Systems",
+      "eu_sources": 1,
+      "eu_stock": 481,
+      "unit_price_cents": 888,
+      "moq": 1,
+      "lead_time_days": 56,
+      "datasheet_url": "https://docs.espressif.com/projects/esp-idf/en/latest/esp32/hw-reference/esp32/get-started-devkitc.html",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "part_type": "Transceiver; 802.11 b/g/n (Wi-Fi, WiFi, WLAN), Bluetooth\u00ae Smart Ready 4.x Dual Mode (BLE)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ESP32-H2-MINI-1-H4S",
+      "manufacturer": "Espressif Systems",
+      "eu_sources": 1,
+      "eu_stock": 305,
+      "unit_price_cents": 360,
+      "moq": 1,
+      "lead_time_days": 119,
+      "datasheet_url": "https://www.espressif.com/sites/default/files/documentation/esp32-h2-mini-1_mini-1u_datasheet_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 105\u00b0C (TA)",
+        "package": "61-SMD Module",
+        "supply_mv": "3V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ESP32-MINI-1-H4",
+      "manufacturer": "Espressif Systems",
+      "eu_sources": 1,
+      "eu_stock": 599,
+      "unit_price_cents": 406,
+      "moq": 1,
+      "lead_time_days": 56,
+      "datasheet_url": "https://www.espressif.com/sites/default/files/documentation/esp32-mini-1_datasheet_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.412GHz ~ 2.484GHz",
+        "mounting": "Chassis Mount",
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C (TA)",
+        "package": "Module",
+        "supply_mv": "2.3V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ESP32-MINI-1-N4",
+      "manufacturer": "Espressif Systems",
+      "eu_sources": 1,
+      "eu_stock": 5850,
+      "unit_price_cents": 372,
+      "moq": 1,
+      "lead_time_days": 56,
+      "datasheet_url": "https://www.espressif.com/sites/default/files/documentation/esp32-mini-1_datasheet_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.412GHz ~ 2.484GHz",
+        "mounting": "Chassis Mount",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "Module",
+        "supply_mv": "2.3V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ESP32-MINI-1U-N4",
+      "manufacturer": "Espressif Systems",
+      "eu_sources": 1,
+      "eu_stock": 6307,
+      "unit_price_cents": 372,
+      "moq": 1,
+      "lead_time_days": 84,
+      "datasheet_url": "https://www.espressif.com/sites/default/files/documentation/esp32-mini-1_datasheet_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "55-SMD Module",
+        "supply_mv": "3V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ESP32-PICO-D4",
+      "manufacturer": "Espressif Systems",
+      "eu_sources": 1,
+      "eu_stock": 2906,
+      "unit_price_cents": 621,
+      "moq": 1,
+      "lead_time_days": 56,
+      "datasheet_url": "https://www.espressif.com/sites/default/files/documentation/esp32-pico_series_datasheet_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz ~ 2.5GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "48-SMD Module",
+        "supply_mv": "2.7V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ESP32-PICO-MINI-02U-N8R2",
+      "manufacturer": "Espressif Systems",
+      "eu_sources": 1,
+      "eu_stock": 944,
+      "unit_price_cents": 571,
+      "moq": 1,
+      "lead_time_days": 84,
+      "datasheet_url": "https://www.espressif.com/sites/default/files/documentation/esp32-pico-mini-02_datasheet_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "53-SMD Module",
+        "supply_mv": "3V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ESP32-PICO-V3",
+      "manufacturer": "Espressif Systems",
+      "eu_sources": 1,
+      "eu_stock": 6237,
+      "unit_price_cents": 443,
+      "moq": 1,
+      "lead_time_days": 56,
+      "datasheet_url": "https://www.espressif.com/sites/default/files/documentation/esp32-pico_series_datasheet_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.412GHz ~ 2.484GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "48-TFQFN Exposed Pad",
+        "supply_mv": "3V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ESP32-PICO-V3-02",
+      "manufacturer": "Espressif Systems",
+      "eu_sources": 1,
+      "eu_stock": 3258,
+      "unit_price_cents": 522,
+      "moq": 1,
+      "lead_time_days": 56,
+      "datasheet_url": "https://www.espressif.com/sites/default/files/documentation/esp32-pico_series_datasheet_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "48-LFQFN Exposed Pad",
+        "supply_mv": "3V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ESP32-S3-MINI-1-N4R2",
+      "manufacturer": "Espressif Systems",
+      "eu_sources": 1,
+      "eu_stock": 136,
+      "unit_price_cents": 477,
+      "moq": 1,
+      "lead_time_days": 56,
+      "datasheet_url": null,
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "65-SMD Module",
+        "supply_mv": "3V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ESP32-S3-MINI-1-N8",
+      "manufacturer": "Espressif Systems",
+      "eu_sources": 1,
+      "eu_stock": 2397,
+      "unit_price_cents": 482,
+      "moq": 1,
+      "lead_time_days": 56,
+      "datasheet_url": "https://www.espressif.com/sites/default/files/documentation/esp32-s3-mini-1_mini-1u_datasheet_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "41-SMD Module",
+        "supply_mv": "3V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ESP32-S3-MINI-1U-N8",
+      "manufacturer": "Espressif Systems",
+      "eu_sources": 1,
+      "eu_stock": 443,
+      "unit_price_cents": 482,
+      "moq": 1,
+      "lead_time_days": 56,
+      "datasheet_url": "https://www.espressif.com/sites/default/files/documentation/esp32-s3-mini-1_mini-1u_datasheet_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 105\u00b0C",
+        "package": "65-SMD Module",
+        "supply_mv": "1.8V ~ 3.6V, 3V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ESP32-S3-WROOM-1-N16R2",
+      "manufacturer": "Espressif Systems",
+      "eu_sources": 1,
+      "eu_stock": 1749,
+      "unit_price_cents": 595,
+      "moq": 1,
+      "lead_time_days": 56,
+      "datasheet_url": "https://www.espressif.com/sites/default/files/documentation/esp32-s3-wroom-1_wroom-1u_datasheet_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "41-SMD Module",
+        "supply_mv": "3V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ESP32-S3-WROOM-1-N4",
+      "manufacturer": "Espressif Systems",
+      "eu_sources": 1,
+      "eu_stock": 401,
+      "unit_price_cents": 462,
+      "moq": 1,
+      "lead_time_days": 56,
+      "datasheet_url": "https://www.espressif.com/sites/default/files/documentation/esp32-s3-wroom-1_wroom-1u_datasheet_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "41-SMD Module",
+        "supply_mv": "3V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ESP32-S3-WROOM-1U-N16",
+      "manufacturer": "Espressif Systems",
+      "eu_sources": 1,
+      "eu_stock": 774,
+      "unit_price_cents": 541,
+      "moq": 1,
+      "lead_time_days": 56,
+      "datasheet_url": "https://www.espressif.com/sites/default/files/documentation/esp32-s3-wroom-1_wroom-1u_datasheet_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "41-SMD Module",
+        "supply_mv": "3V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ESP32-S3-WROOM-1U-N16R2",
+      "manufacturer": "Espressif Systems",
+      "eu_sources": 1,
+      "eu_stock": 3087,
+      "unit_price_cents": 595,
+      "moq": 1,
+      "lead_time_days": 56,
+      "datasheet_url": "https://www.espressif.com/sites/default/files/documentation/esp32-s3-wroom-1_wroom-1u_datasheet_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "41-SMD Module",
+        "supply_mv": "3V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ESP32-S3-WROOM-1U-N16R8",
+      "manufacturer": "Espressif Systems",
+      "eu_sources": 1,
+      "eu_stock": 1910,
+      "unit_price_cents": 600,
+      "moq": 1,
+      "lead_time_days": 56,
+      "datasheet_url": "https://www.espressif.com/sites/default/files/documentation/esp32-s3-wroom-1_wroom-1u_datasheet_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 65\u00b0C (TA)",
+        "package": "41-SMD Module",
+        "supply_mv": "3V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ESP32-S3-WROOM-1U-N4R8",
+      "manufacturer": "Espressif Systems",
+      "eu_sources": 1,
+      "eu_stock": 1289,
+      "unit_price_cents": 553,
+      "moq": 1,
+      "lead_time_days": 56,
+      "datasheet_url": "https://www.espressif.com/sites/default/files/documentation/esp32-s3-wroom-1_wroom-1u_datasheet_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 65\u00b0C (TA)",
+        "package": "41-SMD Module",
+        "supply_mv": "3V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ESP32-S3-WROOM-1U-N8",
+      "manufacturer": "Espressif Systems",
+      "eu_sources": 1,
+      "eu_stock": 1539,
+      "unit_price_cents": 502,
+      "moq": 1,
+      "lead_time_days": 56,
+      "datasheet_url": "https://www.espressif.com/sites/default/files/documentation/esp32-s3-wroom-1_wroom-1u_datasheet_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "41-SMD Module",
+        "supply_mv": "3V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ESP32-S3-WROOM-1U-N8R8",
+      "manufacturer": "Espressif Systems",
+      "eu_sources": 1,
+      "eu_stock": 2387,
+      "unit_price_cents": 561,
+      "moq": 1,
+      "lead_time_days": 56,
+      "datasheet_url": "https://www.espressif.com/sites/default/files/documentation/esp32-s3-wroom-1_wroom-1u_datasheet_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 65\u00b0C (TA)",
+        "package": "41-SMD Module",
+        "supply_mv": "3V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ESP32-WROOM-32E-H4",
+      "manufacturer": "Espressif Systems",
+      "eu_sources": 1,
+      "eu_stock": 196,
+      "unit_price_cents": 490,
+      "moq": 1,
+      "lead_time_days": 56,
+      "datasheet_url": "https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32e_esp32-wroom-32ue_datasheet_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz ~ 2.5GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 105\u00b0C",
+        "package": "38-SMD Module",
+        "supply_mv": "3V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ESP32-WROOM-32UE-N16",
+      "manufacturer": "Espressif Systems",
+      "eu_sources": 1,
+      "eu_stock": 12124,
+      "unit_price_cents": 522,
+      "moq": 1,
+      "lead_time_days": 56,
+      "datasheet_url": "https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32e_esp32-wroom-32ue_datasheet_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz ~ 2.5GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "38-SMD Module",
+        "supply_mv": "3V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ESP32-WROOM-32UE-N4",
+      "manufacturer": "Espressif Systems",
+      "eu_sources": 1,
+      "eu_stock": 2979,
+      "unit_price_cents": 443,
+      "moq": 1,
+      "lead_time_days": 56,
+      "datasheet_url": "https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32e_esp32-wroom-32ue_datasheet_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz ~ 2.5GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "38-SMD Module",
+        "supply_mv": "3V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ESP32-WROOM-32UE-N8",
+      "manufacturer": "Espressif Systems",
+      "eu_sources": 1,
+      "eu_stock": 3557,
+      "unit_price_cents": 482,
+      "moq": 1,
+      "lead_time_days": 56,
+      "datasheet_url": "https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32e_esp32-wroom-32ue_datasheet_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz ~ 2.5GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "38-SMD Module",
+        "supply_mv": "3V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ESP32-WROVER-E-N16R8",
+      "manufacturer": "Espressif Systems",
+      "eu_sources": 1,
+      "eu_stock": 436,
+      "unit_price_cents": 561,
+      "moq": 1,
+      "lead_time_days": 56,
+      "datasheet_url": "https://www.espressif.com/sites/default/files/documentation/esp32-wrover-e_esp32-wrover-ie_datasheet_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz ~ 2.5GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "38-SMD Module",
+        "supply_mv": "3V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ESP32-WROVER-E-N4R8",
+      "manufacturer": "Espressif Systems",
+      "eu_sources": 1,
+      "eu_stock": 198,
+      "unit_price_cents": 482,
+      "moq": 1,
+      "lead_time_days": 56,
+      "datasheet_url": "https://www.espressif.com/sites/default/files/documentation/esp32-wrover-e_esp32-wrover-ie_datasheet_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz ~ 2.5GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "38-SMD Module",
+        "supply_mv": "3V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ESP32-WROVER-E-N8R8",
+      "manufacturer": "Espressif Systems",
+      "eu_sources": 1,
+      "eu_stock": 12651,
+      "unit_price_cents": 522,
+      "moq": 1,
+      "lead_time_days": 56,
+      "datasheet_url": "https://www.espressif.com/sites/default/files/documentation/esp32-wrover-e_esp32-wrover-ie_datasheet_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz ~ 2.5GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "38-SMD Module",
+        "supply_mv": "3V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ESP32-WROVER-IE-N4R8",
+      "manufacturer": "Espressif Systems",
+      "eu_sources": 1,
+      "eu_stock": 1279,
+      "unit_price_cents": 482,
+      "moq": 1,
+      "lead_time_days": 56,
+      "datasheet_url": "https://www.espressif.com/sites/default/files/documentation/esp32-wrover-e_esp32-wrover-ie_datasheet_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz ~ 2.5GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "38-SMD Module",
+        "supply_mv": "3V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ESP32-WROVER-IE-N8R8",
+      "manufacturer": "Espressif Systems",
+      "eu_sources": 1,
+      "eu_stock": 7287,
+      "unit_price_cents": 522,
+      "moq": 1,
+      "lead_time_days": 56,
+      "datasheet_url": "https://www.espressif.com/sites/default/files/documentation/esp32-wrover-e_esp32-wrover-ie_datasheet_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz ~ 2.5GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "38-SMD Module",
+        "supply_mv": "3V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ISP1507-AX-RS",
+      "manufacturer": "Insight SIP",
+      "eu_sources": 1,
+      "eu_stock": 51784,
+      "unit_price_cents": 946,
+      "moq": 1,
+      "lead_time_days": 280,
+      "datasheet_url": "https://www.insightsip.com/fichiers_insightsip/pdf/ble/ISP1507/isp_ble_DS1507.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "Module",
+        "supply_mv": "1.7V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ISP2454-LX-RS",
+      "manufacturer": "Insight SIP",
+      "eu_sources": 1,
+      "eu_stock": 1982,
+      "unit_price_cents": 929,
+      "moq": 1,
+      "lead_time_days": 140,
+      "datasheet_url": "https://www.insightsip.com/fichiers_insightsip/pdf/ble/ISP2454/isp_ble_DS2454.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 105\u00b0C",
+        "package": "62-SMD Module",
+        "supply_mv": "1.7V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "NINA-B112-05B",
+      "manufacturer": "u-blox",
+      "eu_sources": 1,
+      "eu_stock": 371,
+      "unit_price_cents": 635,
+      "moq": 1,
+      "lead_time_days": 140,
+      "datasheet_url": "https://www.u-blox.com/en/ubx-viewer/view/NINA-B1_DataSheet_UBX-15019243?url=https%3A%2F%2Fwww.u-blox.com%2Fsites%2Fdefault%2Ffiles%2FNINA-B1_DataSheet_UBX-15019243.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "30-SMD Module",
+        "supply_mv": "1.7V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "NINA-B301-00B",
+      "manufacturer": "u-blox",
+      "eu_sources": 1,
+      "eu_stock": 13760,
+      "unit_price_cents": 854,
+      "moq": 1,
+      "lead_time_days": 140,
+      "datasheet_url": "https://www.u-blox.com/en/docs/UBX-17052099",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "55-SMD Module",
+        "supply_mv": "1.7V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "NINA-B306-00B",
+      "manufacturer": "u-blox",
+      "eu_sources": 1,
+      "eu_stock": 6116,
+      "unit_price_cents": 881,
+      "moq": 1,
+      "lead_time_days": 140,
+      "datasheet_url": "https://www.u-blox.com/en/docs/UBX-17052099",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "55-SMD Module",
+        "supply_mv": "1.7V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "NINA-B306-01B",
+      "manufacturer": "u-blox",
+      "eu_sources": 1,
+      "eu_stock": 291,
+      "unit_price_cents": 846,
+      "moq": 1,
+      "lead_time_days": 140,
+      "datasheet_url": "https://www.u-blox.com/en/docs/UBX-17052099",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "55-SMD Module",
+        "supply_mv": "1.7V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "NINA-B410-01B",
+      "manufacturer": "u-blox",
+      "eu_sources": 1,
+      "eu_stock": 1006,
+      "unit_price_cents": 819,
+      "moq": 1,
+      "lead_time_days": 140,
+      "datasheet_url": "https://content.u-blox.com/sites/default/files/NINA-B41_DataSheet_UBX-20035327.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 105\u00b0C",
+        "package": "55-SMD Module",
+        "supply_mv": "1.7V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "NORA-B106-00B",
+      "manufacturer": "u-blox",
+      "eu_sources": 1,
+      "eu_stock": 8488,
+      "unit_price_cents": 967,
+      "moq": 1,
+      "lead_time_days": 140,
+      "datasheet_url": "https://www.u-blox.com/en/docs/UBX-20027119",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 105\u00b0C",
+        "package": "Module",
+        "supply_mv": "1.7V ~ 5.5V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "NORA-B206-00B",
+      "manufacturer": "u-blox",
+      "eu_sources": 1,
+      "eu_stock": 361,
+      "unit_price_cents": 571,
+      "moq": 1,
+      "lead_time_days": 140,
+      "datasheet_url": "https://content.u-blox.com/sites/default/files/documents/NORA-B2_DataSheet_UBXDOC-1023859458-38975_0.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "82-SMD Module",
+        "supply_mv": "1.7V ~ 3.5V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "NORA-W106-00B",
+      "manufacturer": "u-blox",
+      "eu_sources": 1,
+      "eu_stock": 928,
+      "unit_price_cents": 546,
+      "moq": 1,
+      "lead_time_days": 140,
+      "datasheet_url": "https://content.u-blox.com/sites/default/files/documents/NORA-W10_DataSheet_UBX-21036702.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "82-SMD Module",
+        "supply_mv": "3V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "RN4870-I/RM140",
+      "manufacturer": "Microchip Technology",
+      "eu_sources": 1,
+      "eu_stock": 1210,
+      "unit_price_cents": 820,
+      "moq": 1,
+      "lead_time_days": 119,
+      "datasheet_url": "https://ww1.microchip.com/downloads/aemDocuments/documents/WSG/ProductDocuments/DataSheets/RN4870-71-Bluetooth-Low-Energy-Module-DS50002489.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.402GHz ~ 2.48GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "33-SMD Module",
+        "supply_mv": "1.9V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "88"
+      }
+    },
+    {
+      "mpn": "RN4870-V/RM140",
+      "manufacturer": "Microchip Technology",
+      "eu_sources": 1,
+      "eu_stock": 775,
+      "unit_price_cents": 820,
+      "moq": 1,
+      "lead_time_days": 119,
+      "datasheet_url": "https://ww1.microchip.com/downloads/aemDocuments/documents/WSG/ProductDocuments/DataSheets/RN4870-71-Bluetooth-Low-Energy-Module-DS50002489.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.402GHz ~ 2.48GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
+        "package": "33-SMD Module",
+        "supply_mv": "1.9V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "88"
+      }
+    },
+    {
+      "mpn": "RN4871-I/RM130",
+      "manufacturer": "Microchip Technology",
+      "eu_sources": 1,
+      "eu_stock": 2697,
+      "unit_price_cents": 870,
+      "moq": 1,
+      "lead_time_days": 84,
+      "datasheet_url": "https://ww1.microchip.com/downloads/aemDocuments/documents/WSG/ProductDocuments/DataSheets/RN4870-71-Bluetooth-Low-Energy-Module-DS50002489.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "16-SMD Module",
+        "supply_mv": "1.9V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "171"
+      }
+    },
+    {
+      "mpn": "RN4871-I/RM140",
+      "manufacturer": "Microchip Technology",
+      "eu_sources": 1,
+      "eu_stock": 13602,
+      "unit_price_cents": 820,
+      "moq": 1,
+      "lead_time_days": 84,
+      "datasheet_url": "https://ww1.microchip.com/downloads/aemDocuments/documents/WSG/ProductDocuments/DataSheets/RN4870-71-Bluetooth-Low-Energy-Module-DS50002489.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.402GHz ~ 2.48GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "16-SMD Module",
+        "supply_mv": "1.9V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "RN4871-V/RM140",
+      "manufacturer": "Microchip Technology",
+      "eu_sources": 1,
+      "eu_stock": 3922,
+      "unit_price_cents": 820,
+      "moq": 1,
+      "lead_time_days": 84,
+      "datasheet_url": "https://ww1.microchip.com/downloads/aemDocuments/documents/WSG/ProductDocuments/DataSheets/RN4870-71-Bluetooth-Low-Energy-Module-DS50002489.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.402GHz ~ 2.48GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
+        "package": "16-SMD Module",
+        "supply_mv": "1.9V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "171"
+      }
+    },
+    {
+      "mpn": "RNBD451PE-I100",
+      "manufacturer": "Microchip Technology",
+      "eu_sources": 1,
+      "eu_stock": 2361,
+      "unit_price_cents": 380,
+      "moq": 1,
+      "lead_time_days": 84,
+      "datasheet_url": "https://ww1.microchip.com/downloads/aemDocuments/documents/WSG/ProductDocuments/DataSheets/RNBD451-Bluetooth-Low-Energy-Module-Data-Sheet-DS70005514.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "30-SMD Module",
+        "supply_mv": "1.9V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "72"
+      }
+    },
+    {
+      "mpn": "SC1169",
+      "manufacturer": "Raspberry Pi",
+      "eu_sources": 1,
+      "eu_stock": 700,
+      "unit_price_cents": 407,
+      "moq": 1,
+      "lead_time_days": 154,
+      "datasheet_url": "https://datasheets.raspberrypi.com/rm2/rm2-datasheet.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-30\u00b0C ~ 70\u00b0C",
+        "package": "21-SMD Module",
+        "supply_mv": "1.8V, 3.3V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "SKY66403-11",
+      "manufacturer": "Skyworks Solutions Inc.",
+      "eu_sources": 1,
+      "eu_stock": 55872,
+      "unit_price_cents": 334,
+      "moq": 1,
+      "lead_time_days": 231,
+      "datasheet_url": "https://www.skyworksinc.com/-/media/FB83B1D3269B40A88D16018B478414BC.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz ~ 2.48GHz",
+        "package": "22-SMD Module",
+        "supplier_package": "22-MCM (3.5x3)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ST67W611M1A6BTR",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 2566,
+      "unit_price_cents": 664,
+      "moq": 1,
+      "lead_time_days": 182,
+      "datasheet_url": "https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/7049/DB5452_ST67W611M1.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "32-LGA Module",
+        "supply_mv": "1.62V ~ 1.98V, 2.97V ~ 3.63V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ST67W611M1A6PTR",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 579,
+      "unit_price_cents": 664,
+      "moq": 1,
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.st.com/resource/en/datasheet/st67w611m1.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "32-LGA Module",
+        "supply_mv": "1.65V ~ 3.6V, 2.97V ~ 3.63V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32WB1MMCH6TR",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 1622,
+      "unit_price_cents": 1027,
+      "moq": 1,
+      "lead_time_days": 364,
+      "datasheet_url": "https://www.st.com/resource/en/datasheet/stm32wb1mmc.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "77-LGA Module",
+        "part_type": "TxRx + MCU",
+        "supplier_package": "77-LGA (10x6.5)",
+        "supply_mv": "1.71V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "WBZ451PE-I",
+      "manufacturer": "Microchip Technology",
+      "eu_sources": 1,
+      "eu_stock": 3481,
+      "unit_price_cents": 367,
+      "moq": 1,
+      "lead_time_days": 112,
+      "datasheet_url": "https://ww1.microchip.com/downloads/aemDocuments/documents/WSG/ProductDocuments/DataSheets/PIC32CX-BZ2-and-WBZ45-Family-Data-Sheet-DS70005504.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "39-SMD Module",
+        "supply_mv": "1.9V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "72"
+      }
+    },
+    {
+      "mpn": "WSM-BL241-ADA-008",
+      "manufacturer": "Murata Electronics",
+      "eu_sources": 1,
+      "eu_stock": 53642,
+      "unit_price_cents": 966,
+      "moq": 1,
+      "lead_time_days": 245,
+      "datasheet_url": "https://pim.murata.com/asset/pim4/bluetoothModule/MBN52832_PDF_BLUETOOTHMODULE",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "2.4GHz",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "Module",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    }
+  ]
 }

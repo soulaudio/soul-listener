@@ -200,8 +200,14 @@ SWEEPS = [
     ("digikey", "", "22.5792MHz oscillator", "mclk-osc-44k1", 100),
     ("digikey", "", "24.576MHz oscillator", "mclk-osc-48k", 100),
     ("digikey", "", "SPDT analog switch", "mclk-mux", 100),
-    ("digikey", "", "CS43131", "dac", 50),
-    ("digikey", "", "Li-Po battery 3.7V", "battery", 100),
+    # Broadened 2026-11-24. The first versions of these two were too narrow —
+    # "CS43131" and "Li-Po battery 3.7V" returned 5 and 5 parts, so the
+    # requirements had an exercised Digi-Key path but no Digi-Key COVERAGE.
+    # Digi-Key is the deepest audio-DAC source, and the battery is the one open
+    # blocker a second distributor could actually close.
+    ("digikey", "", "stereo audio DAC I2S", "dac", 150),
+    ("digikey", "", "lithium polymer battery pack", "battery", 150),
+    ("digikey", "", "bluetooth module", "bluetooth", 100),
 ]
 
 CATEGORIES = ["dac", "mclk-osc-44k1", "mclk-osc-48k", "mclk-mux", "mcu", "battery", "bluetooth"]

@@ -63,7 +63,16 @@
     "",
     "Note what is NO LONGER here: a cell failing on dimensions or on UN 38.3 / IEC 62133-2 docs.",
     "TME publishes neither, so those are datasheet obligations and a fixture part 'failing' on",
-    "them tested nothing but the fixture's own invention."
+    "them tested nothing but the fixture's own invention.",
+    "",
+    "Bluetooth rewritten 2026-11-24 after sweeping 100 real pre-certified modules from Digi-Key \u2014",
+    "the first candidates this requirement ever had. The failure modes are now the ones a",
+    "CATALOGUE can judge: package ('Module' versus a bare QFN), supply-range containment of the",
+    "3.3 V rail, and mounting.",
+    "",
+    "Gone: parts failing on bt_sig_qualified, requires_vendor_nda or codec_sbc. A QDID and an NDA",
+    "status are certificates, not parametric fields \u2014 no distributor publishes them, so those are",
+    "datasheet obligations and a fixture part 'failing' on them tested only the fixture."
   ],
   "categories": {
     "mclk-osc-44k1": [
@@ -463,12 +472,26 @@
         "unit_price_cents": 410,
         "lead_time_days": 0,
         "attrs": {
-          "is_module": true,
-          "bt_sig_qualified": true,
-          "radio_certified_eu": true,
-          "requires_vendor_nda": false,
-          "codec_sbc": true,
-          "supply_mv_max": 3300
+          "package": "Module",
+          "supply_mv_min": 1700,
+          "supply_mv_max": 3600,
+          "mounting": "SMD",
+          "moq": 1
+        }
+      },
+      {
+        "mpn": "FIXTURE-BT-MODULE-B",
+        "manufacturer": "Fixture Radio",
+        "eu_sources": 1,
+        "eu_stock": 900,
+        "unit_price_cents": 455,
+        "lead_time_days": 0,
+        "attrs": {
+          "package": "Module",
+          "supply_mv_min": 1700,
+          "supply_mv_max": 3600,
+          "mounting": "SMD",
+          "moq": 1
         }
       },
       {
@@ -479,60 +502,54 @@
         "unit_price_cents": 190,
         "lead_time_days": 0,
         "attrs": {
-          "is_module": false,
-          "bt_sig_qualified": false,
-          "radio_certified_eu": false,
-          "requires_vendor_nda": false,
-          "codec_sbc": true,
-          "supply_mv_max": 3300
+          "package": "48-QFN",
+          "supply_mv_min": 1700,
+          "supply_mv_max": 3600,
+          "mounting": "SMD",
+          "moq": 1
         }
       },
       {
-        "mpn": "FIXTURE-BT-MODULE-NO-QDID",
-        "manufacturer": "Fixture Radio",
-        "eu_sources": 3,
-        "eu_stock": 40000,
-        "unit_price_cents": 230,
-        "lead_time_days": 0,
-        "attrs": {
-          "is_module": true,
-          "bt_sig_qualified": false,
-          "radio_certified_eu": true,
-          "requires_vendor_nda": false,
-          "codec_sbc": true,
-          "supply_mv_max": 3300
-        }
-      },
-      {
-        "mpn": "FIXTURE-BT-MODULE-NDA",
-        "manufacturer": "Fixture Radio",
-        "eu_sources": 2,
-        "eu_stock": 20000,
-        "unit_price_cents": 330,
-        "lead_time_days": 0,
-        "attrs": {
-          "is_module": true,
-          "bt_sig_qualified": true,
-          "radio_certified_eu": true,
-          "requires_vendor_nda": true,
-          "codec_sbc": true,
-          "supply_mv_max": 3300
-        }
-      },
-      {
-        "mpn": "FIXTURE-BT-MODULE-LICENSED-CODECS-ONLY",
+        "mpn": "FIXTURE-RF-FRONTEND-5V",
         "manufacturer": "Fixture Radio",
         "eu_sources": 3,
         "eu_stock": 50000,
-        "unit_price_cents": 280,
+        "unit_price_cents": 120,
         "lead_time_days": 0,
         "attrs": {
-          "is_module": true,
-          "bt_sig_qualified": true,
-          "radio_certified_eu": true,
-          "requires_vendor_nda": false,
-          "codec_sbc": false,
-          "supply_mv_max": 3300
+          "package": "Module",
+          "supply_mv_min": 4500,
+          "supply_mv_max": 5500,
+          "mounting": "SMD",
+          "moq": 1
+        }
+      },
+      {
+        "mpn": "FIXTURE-BT-DEVKIT-THT",
+        "manufacturer": "Fixture Radio",
+        "eu_sources": 2,
+        "eu_stock": 400,
+        "unit_price_cents": 2500,
+        "lead_time_days": 0,
+        "attrs": {
+          "package": "Module",
+          "supply_mv_min": 1700,
+          "supply_mv_max": 3600,
+          "mounting": "THT",
+          "moq": 1
+        }
+      },
+      {
+        "mpn": "FIXTURE-BT-MODULE-NOSUPPLY",
+        "manufacturer": "Fixture Radio",
+        "eu_sources": 3,
+        "eu_stock": 20000,
+        "unit_price_cents": 300,
+        "lead_time_days": 0,
+        "attrs": {
+          "package": "Module",
+          "mounting": "SMD",
+          "moq": 1
         }
       }
     ]

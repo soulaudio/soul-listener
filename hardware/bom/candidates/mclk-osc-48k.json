@@ -154,7 +154,7 @@
         "manufacturer_name": "TXC",
         "mounting": "SMD",
         "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
-        "part_type": "MHz Crystal",
+        "part_type": "crystal",
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
         "height_mm": "0.031\" (0.80mm)",
         "package": "4-SMD, No Lead",
@@ -228,7 +228,7 @@
         "manufacturer_name": "TXC",
         "mounting": "SMD",
         "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
-        "part_type": "MHz Crystal",
+        "part_type": "crystal",
         "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
         "height_mm": "0.035\" (0.90mm)",
         "package": "4-SMD, No Lead",
@@ -305,7 +305,7 @@
         "mounting": "SMD",
         "operating_temp_c": "-10\u00b0C ~ 60\u00b0C",
         "package": "4-SMD, No Lead",
-        "part_type": "MHz Crystal",
+        "part_type": "crystal",
         "supplier_package": "4-SMD (3.2x2.5)",
         "moq": "1",
         "order_multiple": "1"
@@ -331,7 +331,7 @@
         "mounting": "SMD",
         "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
         "package": "4-SMD, No Lead",
-        "part_type": "MHz Crystal",
+        "part_type": "crystal",
         "supplier_package": "4-SMD (2.5x2)",
         "moq": "1",
         "order_multiple": "1"
@@ -482,7 +482,7 @@
         "mounting": "SMD",
         "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
         "package": "4-SMD, No Lead",
-        "part_type": "MHz Crystal",
+        "part_type": "crystal",
         "supplier_package": "4-SMD (2.5x2)",
         "moq": "1",
         "order_multiple": "1"
@@ -508,7 +508,7 @@
         "mounting": "SMD",
         "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
         "package": "4-SMD, No Lead",
-        "part_type": "MHz Crystal",
+        "part_type": "crystal",
         "supplier_package": "4-SMD (2.5x2)",
         "moq": "1",
         "order_multiple": "1"
@@ -534,7 +534,7 @@
         "mounting": "SMD",
         "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
         "package": "4-SMD, No Lead",
-        "part_type": "MHz Crystal",
+        "part_type": "crystal",
         "supplier_package": "4-SMD (2.5x2)",
         "moq": "1",
         "order_multiple": "1"
@@ -560,7 +560,7 @@
         "mounting": "SMD",
         "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
         "package": "4-SMD, No Lead",
-        "part_type": "MHz Crystal",
+        "part_type": "crystal",
         "supplier_package": "4-SMD (2.5x2)",
         "moq": "1",
         "order_multiple": "1"
@@ -586,7 +586,7 @@
         "mounting": "SMD",
         "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
         "package": "4-SMD, No Lead",
-        "part_type": "MHz Crystal",
+        "part_type": "crystal",
         "supplier_package": "4-SMD (2.5x2)",
         "moq": "1",
         "order_multiple": "1"
@@ -612,7 +612,7 @@
         "mounting": "SMD",
         "operating_temp_c": "-40\u00b0C ~ 125\u00b0C",
         "package": "4-SMD, No Lead",
-        "part_type": "MHz Crystal",
+        "part_type": "crystal",
         "supplier_package": "4-SMD (2x1.6)",
         "moq": "1",
         "order_multiple": "1"
@@ -638,7 +638,7 @@
         "mounting": "SMD",
         "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
         "package": "4-SMD, No Lead",
-        "part_type": "MHz Crystal",
+        "part_type": "crystal",
         "supplier_package": "4-SMD (2x1.6)",
         "moq": "1",
         "order_multiple": "1"
@@ -664,7 +664,7 @@
         "mounting": "SMD",
         "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
         "package": "4-SMD, No Lead",
-        "part_type": "MHz Crystal",
+        "part_type": "crystal",
         "supplier_package": "4-SMD (2x1.6)",
         "moq": "1",
         "order_multiple": "1"
@@ -690,7 +690,7 @@
         "mounting": "SMD",
         "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
         "package": "4-SMD, No Lead",
-        "part_type": "MHz Crystal",
+        "part_type": "crystal",
         "supplier_package": "4-SMD (2x1.6)",
         "moq": "1",
         "order_multiple": "1"
@@ -716,7 +716,7 @@
         "mounting": "SMD",
         "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
         "package": "4-SMD, No Lead",
-        "part_type": "MHz Crystal",
+        "part_type": "crystal",
         "supplier_package": "4-SMD (1.6x1.2)",
         "moq": "1",
         "order_multiple": "1"
@@ -742,7 +742,7 @@
         "mounting": "SMD",
         "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
         "package": "4-SMD, No Lead",
-        "part_type": "MHz Crystal",
+        "part_type": "crystal",
         "supplier_package": "4-SMD (5x3.2)",
         "moq": "1",
         "order_multiple": "1"
@@ -768,7 +768,7 @@
         "mounting": "SMD",
         "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
         "package": "2-SMD, No Lead",
-        "part_type": "MHz Crystal",
+        "part_type": "crystal",
         "supplier_package": "2-SMD (6x3.5)",
         "moq": "1",
         "order_multiple": "1"
@@ -794,7 +794,7 @@
         "mounting": "SMD",
         "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
         "package": "4-SMD, No Lead",
-        "part_type": "MHz Crystal",
+        "part_type": "crystal",
         "supplier_package": "4-SMD (3.2x2.5)",
         "moq": "1",
         "order_multiple": "1"
@@ -820,7 +820,7 @@
         "mounting": "SMD",
         "operating_temp_c": "-40\u00b0C ~ 125\u00b0C",
         "package": "4-SMD, No Lead",
-        "part_type": "MHz Crystal",
+        "part_type": "crystal",
         "supplier_package": "4-SMD (3.2x2.5)",
         "moq": "1",
         "order_multiple": "1"
@@ -846,7 +846,7 @@
         "mounting": "SMD",
         "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
         "package": "4-SMD, No Lead",
-        "part_type": "MHz Crystal",
+        "part_type": "crystal",
         "supplier_package": "4-SMD (3.2x2.5)",
         "moq": "1",
         "order_multiple": "1"
@@ -872,7 +872,7 @@
         "mounting": "SMD",
         "operating_temp_c": "-10\u00b0C ~ 60\u00b0C",
         "package": "4-SMD, No Lead",
-        "part_type": "MHz Crystal",
+        "part_type": "crystal",
         "supplier_package": "4-SMD (3.2x2.5)",
         "moq": "1",
         "order_multiple": "1"
@@ -898,7 +898,7 @@
         "mounting": "SMD",
         "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
         "package": "4-SMD, No Lead",
-        "part_type": "MHz Crystal",
+        "part_type": "crystal",
         "supplier_package": "4-SMD (7x5)",
         "moq": "1",
         "order_multiple": "1"
@@ -979,7 +979,7 @@
         "mounting": "SMD",
         "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
         "package": "HC-49/US",
-        "part_type": "MHz Crystal",
+        "part_type": "crystal",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -1395,7 +1395,7 @@
         "mounting": "SMD",
         "operating_temp_c": "-10\u00b0C ~ 75\u00b0C",
         "package": "4-SMD, No Lead",
-        "part_type": "MHz Crystal",
+        "part_type": "crystal",
         "supplier_package": "4-SMD (3.2x2.5)",
         "moq": "1",
         "order_multiple": "1"
@@ -1502,7 +1502,7 @@
         "mounting": "SMD",
         "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
         "package": "4-SMD, No Lead",
-        "part_type": "MHz Crystal",
+        "part_type": "crystal",
         "supplier_package": "4-SMD (2x1.6)",
         "moq": "1",
         "order_multiple": "1"
@@ -1528,7 +1528,7 @@
         "mounting": "SMD",
         "operating_temp_c": "-30\u00b0C ~ 85\u00b0C",
         "package": "4-SMD, No Lead",
-        "part_type": "MHz Crystal",
+        "part_type": "crystal",
         "supplier_package": "4-SMD (2x1.6)",
         "moq": "1",
         "order_multiple": "1"
@@ -1574,7 +1574,7 @@
         "height_mm": "0.020\" (0.50mm)",
         "mounting": "SMD",
         "package": "4-SMD, No Lead",
-        "part_type": "MHz Crystal",
+        "part_type": "crystal",
         "supplier_package": "4-SMD (2x1.6)",
         "moq": "1",
         "order_multiple": "1"
@@ -1600,7 +1600,7 @@
         "mounting": "SMD",
         "operating_temp_c": "-30\u00b0C ~ 85\u00b0C",
         "package": "4-SMD, No Lead",
-        "part_type": "MHz Crystal",
+        "part_type": "crystal",
         "supplier_package": "4-SMD (2x1.6)",
         "moq": "1",
         "order_multiple": "1"
@@ -1626,7 +1626,7 @@
         "mounting": "SMD",
         "operating_temp_c": "-30\u00b0C ~ 85\u00b0C",
         "package": "4-SMD, No Lead",
-        "part_type": "MHz Crystal",
+        "part_type": "crystal",
         "supplier_package": "4-SMD (3.2x2.5)",
         "moq": "1",
         "order_multiple": "1"
@@ -1684,6 +1684,34 @@
       }
     },
     {
+      "mpn": "ECS-2033-245.7-B-TR",
+      "manufacturer": "ECS Inc.",
+      "eu_sources": 1,
+      "eu_stock": 1277,
+      "unit_price_cents": 125,
+      "moq": 1,
+      "lead_time_days": 133,
+      "datasheet_url": "https://ecsxtal.com/store/pdf/ecs-2025-2033.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
+        "frequency_hz": "24.57 MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "height_mm": "0.039\" (1.00mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-10\u00b0C ~ 70\u00b0C",
+        "output_signal": "CMOS",
+        "package": "4-SMD, No Lead",
+        "part_type": "oscillator",
+        "supplier_package": "4-SMD (2.5x2)",
+        "supply_mv": "3.3V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
       "mpn": "ECS-2033-245.7-BN-TR",
       "manufacturer": "ECS Inc.",
       "eu_sources": 1,
@@ -1731,7 +1759,7 @@
         "mounting": "SMD",
         "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
         "package": "4-SMD, No Lead",
-        "part_type": "MHz Crystal",
+        "part_type": "crystal",
         "supplier_package": "4-SMD (5x3.2)",
         "moq": "1",
         "order_multiple": "1"
@@ -1757,7 +1785,7 @@
         "mounting": "SMD",
         "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
         "package": "4-SMD, No Lead",
-        "part_type": "MHz Crystal",
+        "part_type": "crystal",
         "supplier_package": "4-SMD (2.5x2)",
         "moq": "1",
         "order_multiple": "1"
@@ -1783,7 +1811,7 @@
         "mounting": "SMD",
         "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
         "package": "4-SMD, No Lead",
-        "part_type": "MHz Crystal",
+        "part_type": "crystal",
         "supplier_package": "4-SMD (2.5x2)",
         "moq": "1",
         "order_multiple": "1"
@@ -1809,7 +1837,7 @@
         "mounting": "SMD",
         "operating_temp_c": "-40\u00b0C ~ 125\u00b0C",
         "package": "4-SMD, No Lead",
-        "part_type": "MHz Crystal",
+        "part_type": "crystal",
         "supplier_package": "4-SMD (2.5x2)",
         "moq": "1",
         "order_multiple": "1"
@@ -1835,7 +1863,7 @@
         "mounting": "SMD",
         "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
         "package": "4-SMD, No Lead",
-        "part_type": "MHz Crystal",
+        "part_type": "crystal",
         "supplier_package": "4-SMD (3.2x2.5)",
         "moq": "1",
         "order_multiple": "1"
@@ -1861,7 +1889,7 @@
         "mounting": "SMD",
         "operating_temp_c": "-10\u00b0C ~ 70\u00b0C",
         "package": "4-SOJ, 9.40mm pitch",
-        "part_type": "MHz Crystal",
+        "part_type": "crystal",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -1886,7 +1914,7 @@
         "mounting": "SMD",
         "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
         "package": "HC-49/US",
-        "part_type": "MHz Crystal",
+        "part_type": "crystal",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -1911,7 +1939,7 @@
         "mounting": "THT",
         "operating_temp_c": "-10\u00b0C ~ 70\u00b0C",
         "package": "HC-49/US",
-        "part_type": "MHz Crystal",
+        "part_type": "crystal",
         "moq": "1",
         "order_multiple": "200"
       }
@@ -1936,7 +1964,7 @@
         "mounting": "SMD",
         "operating_temp_c": "-10\u00b0C ~ 70\u00b0C",
         "package": "HC-49/US",
-        "part_type": "MHz Crystal",
+        "part_type": "crystal",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -2212,7 +2240,7 @@
         "mounting": "SMD",
         "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
         "package": "4-SMD, No Lead",
-        "part_type": "MHz Crystal",
+        "part_type": "crystal",
         "supplier_package": "4-SMD (3.2x2.5)",
         "moq": "1",
         "order_multiple": "1"
@@ -2238,7 +2266,7 @@
         "mounting": "SMD",
         "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
         "package": "4-SMD, No Lead",
-        "part_type": "MHz Crystal",
+        "part_type": "crystal",
         "supplier_package": "4-SMD (3.2x2.5)",
         "moq": "1",
         "order_multiple": "1"
@@ -2264,7 +2292,7 @@
         "mounting": "SMD",
         "operating_temp_c": "0\u00b0C ~ 70\u00b0C",
         "package": "4-SMD, No Lead",
-        "part_type": "MHz Crystal",
+        "part_type": "crystal",
         "supplier_package": "4-SMD (5x3.2)",
         "moq": "1",
         "order_multiple": "1"
@@ -2290,7 +2318,7 @@
         "mounting": "THT",
         "operating_temp_c": "-10\u00b0C ~ 60\u00b0C",
         "package": "HC-49/US",
-        "part_type": "MHz Crystal",
+        "part_type": "crystal",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -2315,7 +2343,7 @@
         "mounting": "SMD",
         "operating_temp_c": "-10\u00b0C ~ 60\u00b0C",
         "package": "HC-49/US",
-        "part_type": "MHz Crystal",
+        "part_type": "crystal",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -2340,7 +2368,7 @@
         "mounting": "SMD",
         "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
         "package": "4-SMD, No Lead",
-        "part_type": "MHz Crystal",
+        "part_type": "crystal",
         "supplier_package": "4-SMD (1.6x1.2)",
         "moq": "1",
         "order_multiple": "1"
@@ -3360,7 +3388,7 @@
         "mounting": "SMD",
         "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
         "package": "4-SMD, No Lead",
-        "part_type": "MHz Crystal",
+        "part_type": "crystal",
         "supplier_package": "4-SMD (3.2x2.5)",
         "moq": "1",
         "order_multiple": "1"

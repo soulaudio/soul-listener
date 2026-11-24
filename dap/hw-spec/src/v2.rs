@@ -589,61 +589,89 @@ const BATTERY_CONSTRAINTS: &[Constraint<'static>] = &[
 /// The Bluetooth module — **not populated on the shipped board**, and specified
 /// anyway.
 ///
-/// Specified because the constraints are the expensive part. Every one of these
-/// is a licensing or certification inheritance: a bare Bluetooth *chip* costs a
-/// SIG qualification programme and, for Qualcomm parts, an NDA and a gated SDK. A
-/// pre-qualified *module* costs neither, because its QDID and its RED/FCC radio
-/// approvals are inheritable. The difference between those two choices is roughly
-/// the entire licensing budget of the product.
+/// Specified because the constraints are the expensive part. A bare Bluetooth
+/// *chip* costs a SIG qualification programme and, for Qualcomm parts, an NDA
+/// and a gated SDK; a pre-qualified *module* costs neither because its QDID and
+/// RED/FCC approvals are inheritable. The difference between those two choices
+/// is roughly the entire licensing budget of the product.
+///
+/// **Re-evidenced 2026-11-24** against 100 real modules swept from Digi-Key —
+/// the first time this requirement had any candidates at all. The result is the
+/// same correction phase noise and break-before-make went through: almost
+/// nothing here is a parametric field. A distributor publishes the radio's
+/// frequency, supply, temperature and package; it does not publish a QDID, a
+/// certification number, or whether an SDK is NDA-gated. Left as catalogue
+/// constraints these rejected all 100 modules for fields nobody carries.
 const BLUETOOTH_CONSTRAINTS: &[Constraint<'static>] = &[
+    // The one certification-adjacent fact a catalogue DOES answer: Digi-Key
+    // publishes `Package / Case: 'Module'`, which is precisely the
+    // module-versus-bare-chip distinction the licensing argument turns on.
     Constraint {
         evidence: Evidence::Catalogue,
-        attr: "is_module",
-        pred: crate::select::Predicate::IsTrue,
+        attr: "package",
+        pred: crate::select::Predicate::Contains("Module"),
         why: "a module, never a bare chip. The module vendor has already run the radio through \
-              qualification and certification; starting from a chip means running both ourselves",
+              qualification and certification; starting from a chip means running both ourselves. \
+              Catalogue-checkable because distributors classify the package as 'Module'",
     },
     Constraint {
         evidence: Evidence::Catalogue,
-        attr: "bt_sig_qualified",
-        pred: crate::select::Predicate::IsTrue,
-        why: "the module must carry its own Bluetooth SIG qualification (a QDID we can reference \
-              in an end-product Declaration). Without one, using Bluetooth means a full \
-              qualification programme rather than a ~$5k Declaration — this is exactly how \
-              Tangara inherits the ESP32's QDID",
-    },
-    Constraint {
-        evidence: Evidence::Catalogue,
-        attr: "radio_certified_eu",
-        pred: crate::select::Predicate::IsTrue,
-        why: "pre-certified for RED/CE, so populating the radio does not require a radiated \
-              emissions programme on our own board. Note this is not a full exemption: the end \
-              product still needs its own EMC test (Tangara needed one despite a pre-certified \
-              module)",
-    },
-    Constraint {
-        evidence: Evidence::Catalogue,
-        attr: "requires_vendor_nda",
-        pred: crate::select::Predicate::IsFalse,
-        why: "an NDA-gated SDK is incompatible with shipping open-source firmware: the Qualcomm \
-              QCC route needs an NDA and ADK access. A pre-made module encapsulates the \
-              NDA-bound firmware behind a documented host interface, which is why this is a hard \
-              filter rather than an inconvenience",
-    },
-    Constraint {
-        evidence: Evidence::Catalogue,
-        attr: "codec_sbc",
-        pred: crate::select::Predicate::IsTrue,
-        why: "SBC is the mandatory royalty-free codec and the only one the product commits to. \
-              aptX is licensed through the module vendor and LDAC source has no off-the-shelf \
-              module, so neither is required — a module that offers ONLY licensed codecs would \
-              make the audio path depend on a fee",
+        attr: "supply_mv_min",
+        pred: crate::select::Predicate::AtMost(3300.0),
+        why: "must operate from the board's 3.3 V rail",
     },
     Constraint {
         evidence: Evidence::Catalogue,
         attr: "supply_mv_max",
-        pred: crate::select::Predicate::AtMost(3300.0),
-        why: "the board has no rail above 3.3 V",
+        pred: crate::select::Predicate::AtLeast(3300.0),
+        why: "and must tolerate 3.3 V",
+    },
+    Constraint {
+        evidence: Evidence::Catalogue,
+        attr: "mounting",
+        pred: crate::select::Predicate::OneOf(&["SMD"]),
+        why: "hand-assembled small batch, so surface mount",
+    },
+    // --- Datasheet / certification-only --------------------------------
+    //
+    // None of these is a parametric field at any distributor. They are the
+    // reason the requirement exists, and they can only be confirmed by reading a
+    // qualification record.
+    Constraint {
+        evidence: Evidence::Datasheet,
+        attr: "bt_sig_qualified",
+        pred: crate::select::Predicate::IsTrue,
+        why: "the module must carry its own Bluetooth SIG qualification — a QDID we can reference \
+              in an end-product Declaration. Without one, using Bluetooth means a full \
+              qualification programme rather than a ~EUR 5k Declaration, which is exactly how \
+              Tangara inherits the ESP32's QDID. Datasheet-only: a QDID is a certificate, not a \
+              parametric field",
+    },
+    Constraint {
+        evidence: Evidence::Datasheet,
+        attr: "radio_certified_eu",
+        pred: crate::select::Predicate::IsTrue,
+        why: "pre-certified for RED/CE, so populating the radio needs no radiated-emissions \
+              programme on our own board. Not a full exemption — the end product still needs its \
+              own EMC test, as Tangara found with a pre-certified ESP32. Datasheet-only",
+    },
+    Constraint {
+        evidence: Evidence::Datasheet,
+        attr: "requires_vendor_nda",
+        pred: crate::select::Predicate::IsFalse,
+        why: "an NDA-gated SDK is incompatible with shipping open-source firmware: the Qualcomm \
+              QCC route needs an NDA and ADK access. A pre-made module encapsulates the \
+              NDA-bound firmware behind a documented host interface. Datasheet-only, and a hard \
+              filter rather than an inconvenience",
+    },
+    Constraint {
+        evidence: Evidence::Datasheet,
+        attr: "codec_sbc",
+        pred: crate::select::Predicate::IsTrue,
+        why: "SBC is the mandatory royalty-free codec and the only one the product commits to. \
+              aptX is licensed through the module vendor and LDAC source has no off-the-shelf \
+              module, so a module offering ONLY licensed codecs would make the audio path depend \
+              on a fee. Datasheet-only",
     },
 ];
 
@@ -1072,7 +1100,17 @@ const PARTS: &[PartReq] = &[
                        but NOT 'from more than one manufacturer' — the property that survives a \
                        vendor leaving the market, and the one that matters most for the single \
                        component an END USER re-buys. Closing it needs a second distributor, not \
-                       a second Akyga model.",
+                       a second Akyga model. \
+                       \
+                       PARTIAL PROGRESS, 2026-11-24: a Digi-Key sweep found Jauch Quartz cells — \
+                       a genuine second manufacturer, with part numbers that state their own \
+                       construction (LP503759JU+PCM+2 WIRES 70MM). But neither FITS: that one is \
+                       62.0 x 38.1 x 6.0 mm against a 35 x 59 x 7.1 mm bay, and the other Jauch \
+                       cell is 330 mAh. So independence remains open, and it is now a MECHANICAL \
+                       question rather than a sourcing one — either a cell of the right size \
+                       appears, or the bay changes, or the single-manufacturer risk is accepted \
+                       explicitly. Digi-Key stocks few bare pouch cells generally; Farnell or \
+                       buying direct is the likelier route.",
             },
         ],
     },

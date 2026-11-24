@@ -400,7 +400,7 @@
       "mpn": "AKY0392",
       "manufacturer": "AKYGA BATTERY",
       "eu_sources": 1,
-      "eu_stock": 714,
+      "eu_stock": 713,
       "unit_price_cents": 421,
       "moq": 1,
       "lead_time_days": null,
@@ -653,7 +653,7 @@
       "mpn": "AKY0535",
       "manufacturer": "AKYGA BATTERY",
       "eu_sources": 1,
-      "eu_stock": 520,
+      "eu_stock": 516,
       "unit_price_cents": 698,
       "moq": 1,
       "lead_time_days": null,
@@ -1616,6 +1616,45 @@
       }
     },
     {
+      "mpn": "BQ27Z746YAHR",
+      "manufacturer": "Texas Instruments",
+      "eu_sources": 1,
+      "eu_stock": 857,
+      "unit_price_cents": 224,
+      "moq": 1,
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=http%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Fbq27z746",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Lithium Ion/Polymer",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "15-XFBGA, DSBGA",
+        "supplier_package": "15-DSBGA (1.7x2.6)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "GSK-819",
+      "manufacturer": "Global Specialties",
+      "eu_sources": 1,
+      "eu_stock": 3,
+      "unit_price_cents": 2397,
+      "moq": 1,
+      "lead_time_days": 84,
+      "datasheet_url": "https://ctemedia.s3-us-west-1.amazonaws.com/public/attachments/GSK-819_datasheet_20160816.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
       "mpn": "LP422339JU+PCM+2 WIRES 50MM",
       "manufacturer": "Jauch Quartz",
       "eu_sources": 1,
@@ -1628,7 +1667,7 @@
         "digikey"
       ],
       "attrs_raw": {
-        "battery_chemistry": "Lithium-Ion Polymer",
+        "battery_chemistry": "Li-Po",
         "body_size": "1.57\" L x 0.91\" W x 0.19\" H (40.0mm x 23.0mm x 4.8mm)",
         "capacity_mah": "330mAh",
         "rated_voltage_mv": "3.7 V",
@@ -1649,7 +1688,7 @@
         "digikey"
       ],
       "attrs_raw": {
-        "battery_chemistry": "Lithium-Ion Polymer",
+        "battery_chemistry": "Li-Po",
         "body_size": "2.50\" L x 1.42\" W x 0.23\" H (63.5mm x 36.0mm x 5.8mm)",
         "capacity_mah": "1.25Ah",
         "rated_voltage_mv": "3.7 V",
@@ -1670,7 +1709,7 @@
         "digikey"
       ],
       "attrs_raw": {
-        "battery_chemistry": "Lithium-Ion Polymer",
+        "battery_chemistry": "Li-Po",
         "body_size": "2.44\" L x 1.50\" W x 0.24\" H (62.0mm x 38.1mm x 6.0mm)",
         "capacity_mah": "1.3Ah",
         "rated_voltage_mv": "3.7 V",
@@ -1691,7 +1730,7 @@
         "digikey"
       ],
       "attrs_raw": {
-        "battery_chemistry": "Lithium-Ion Polymer",
+        "battery_chemistry": "Li-Po",
         "body_size": "2.07\" L x 1.50\" W x 0.28\" H (52.5mm x 38.1mm x 7.0mm)",
         "capacity_mah": "1.2Ah",
         "rated_voltage_mv": "3.7 V",

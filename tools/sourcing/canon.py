@@ -77,6 +77,9 @@ SYNONYMS: dict[str, dict[str, str]] = {
         "lipo": "Li-Po",
         "lithium polymer": "Li-Po",
         "lithium-polymer": "Li-Po",
+        # Digi-Key's spelling for the same chemistry, found in the Jauch cells.
+        "lithium-ion polymer": "Li-Po",
+        "lithium ion polymer": "Li-Po",
         "li-ion": "Li-Ion",
         "ni-mh": "Ni-MH",
         "nimh": "Ni-MH",
