@@ -80,8 +80,11 @@ def cmd_fetch(args) -> int:
     started = time.strftime("%Y-%m-%d")
 
     if args.category:
-        run = db.start_run(a.name, "category", str(args.category), started)
-        parts = a.search_category(str(args.category), args.limit)
+        run = db.start_run(
+            a.name, "category", f"{args.category}{' ~ ' + args.phrase if args.phrase else ''}",
+            started,
+        )
+        parts = a.search_category(str(args.category), args.limit, phrase=args.phrase)
         label = args.category_as or f"tme-cat-{args.category}"
         for p in parts:
             db.upsert(p, run, category=label)
@@ -168,6 +171,12 @@ def main() -> int:
     f.add_argument("--category", help="vendor category id (discovery path)")
     f.add_argument("--as", dest="category_as", help="spec requirement id to file it under")
     f.add_argument("--limit", type=int, default=200)
+    f.add_argument(
+        "--phrase",
+        help="narrow a category sweep at the vendor. Real categories are large "
+             "(TME's Resonators and Generators holds 6691 parts), so sweeping a whole "
+             "one to find two frequencies wastes quota for no extra information.",
+    )
     f.set_defaults(func=cmd_fetch)
 
     e = sub.add_parser("export", help="write a candidate file for the Rust filter")

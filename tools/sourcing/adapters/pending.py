@@ -33,7 +33,9 @@ class _Unavailable(Adapter):
             f"{self.display_name}: {self.needs}. See docs/sourcing/DISTRIBUTOR-API-SETUP.md"
         )
 
-    def search_category(self, category: str, limit: int) -> list[VendorPart]:
+    def search_category(
+        self, category: str, limit: int, phrase: str | None = None
+    ) -> list[VendorPart]:
         raise NotImplementedError(
             f"{self.display_name}: {self.needs}. See docs/sourcing/DISTRIBUTOR-API-SETUP.md"
         )

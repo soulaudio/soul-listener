@@ -100,12 +100,19 @@ class Adapter(abc.ABC):
         """
 
     @abc.abstractmethod
-    def search_category(self, category: str, limit: int) -> list[VendorPart]:
-        """Every part this vendor has in a category.
+    def search_category(
+        self, category: str, limit: int, phrase: str | None = None
+    ) -> list[VendorPart]:
+        """Parts this vendor has in a category, optionally narrowed by a phrase.
 
         The *discovery* path, and the one the selection engine exists for:
         filtering 400 candidates is where a constraint earns its keep, and
-        verification of 11 already-chosen parts never exercises it.
+        verifying 11 already-chosen parts never exercises it.
+
+        `phrase` matters because real categories are large — TME's "Resonators and
+        Generators" holds 6691 products — and sweeping a whole one to find two
+        frequencies wastes quota for no extra information. Narrowing at the vendor
+        is the cheap half of the funnel; the constraints still make the decision.
         """
 
     # --- Shared helpers -------------------------------------------------

@@ -34,6 +34,7 @@ use dap_hw_spec::ACTIVE;
 use serde_json::Value;
 
 const MUX_CANDIDATES: &str = include_str!("../../../hardware/bom/candidates/mclk-mux.json");
+const OSC_CANDIDATES: &str = include_str!("../../../hardware/bom/candidates/mclk-osc-44k1.json");
 
 /// Raw vendor strings for one part, owned so the engine can borrow them.
 struct Raw {
@@ -273,5 +274,104 @@ fn every_catalogue_constraint_was_actually_evaluated_against_a_real_value() {
     println!(
         "all {} catalogue constraints evaluated on real values",
         catalogue.len()
+    );
+}
+
+/// The discovery path, on a real category of 24 parts.
+///
+/// This is the case the whole selection engine exists for and that verifying
+/// already-chosen MPNs never exercises: a vendor category containing parts we did
+/// not pick, most of which should lose.
+///
+/// It asserts the shape of a *useful* answer rather than a specific winner,
+/// because the catalogue changes under us: at least one part must qualify, and
+/// every rejection must name an attribute. Zero qualifying is the failure mode
+/// worth guarding — it is what over-strict constraints look like, and it reads as
+/// "nothing is sourceable" rather than "the spec is wrong".
+#[test]
+fn the_oscillator_category_yields_candidates_and_explains_the_rest() {
+    let req = ACTIVE
+        .parts
+        .iter()
+        .find(|r| r.id == "mclk-osc-44k1")
+        .expect("spec must carry mclk-osc-44k1");
+    let raws = load(OSC_CANDIDATES, "mclk-osc-44k1");
+    assert!(
+        raws.len() >= 10,
+        "expected a real category sweep, got {} parts",
+        raws.len()
+    );
+
+    let typed_attrs: Vec<Vec<(&str, AttrValue)>> =
+        raws.iter().map(|r| typed(r, req.constraints)).collect();
+    let parts: Vec<CataloguePart<'_>> = raws
+        .iter()
+        .zip(&typed_attrs)
+        .map(|(r, a)| CataloguePart {
+            mpn: &r.mpn,
+            manufacturer: &r.manufacturer,
+            attrs: a.as_slice(),
+            eu_sources: r.eu_sources,
+            eu_stock: r.eu_stock,
+            unit_price_cents: r.unit_price_cents,
+            lead_time_days: r.lead_time_days,
+        })
+        .collect();
+
+    let mut verdicts = vec![None; parts.len()];
+    evaluate(&parts, req.constraints, &mut verdicts);
+
+    println!(
+        "\n=== mclk-osc-44k1, live TME sweep of {} parts",
+        parts.len()
+    );
+    let mut qualified: Vec<CataloguePart<'_>> = Vec::new();
+    let mut by_reason: Vec<(&str, &str)> = Vec::new();
+    for v in verdicts.iter().flatten() {
+        match v.rejection {
+            None => {
+                println!("  QUALIFIES {:<28} stock={}", v.part.mpn, v.part.eu_stock);
+                qualified.push(v.part);
+            }
+            Some(Rejection::MissingAttribute { attr, .. }) => {
+                println!("  reject    {:<28} no '{attr}' published", v.part.mpn);
+                by_reason.push((v.part.mpn, attr));
+            }
+            Some(Rejection::WrongType { attr }) => {
+                println!("  reject    {:<28} '{attr}' wrong type", v.part.mpn);
+                by_reason.push((v.part.mpn, attr));
+            }
+            Some(Rejection::Failed { attr, got, .. }) => {
+                println!("  reject    {:<28} {attr}={got:?}", v.part.mpn);
+                by_reason.push((v.part.mpn, attr));
+            }
+        }
+    }
+
+    rank(&mut qualified, DEFAULT_RANKING);
+    for (i, p) in qualified.iter().enumerate() {
+        println!(
+            "  RANK {} {:<28} {} source(s), {} stock, {:?} cents",
+            i + 1,
+            p.mpn,
+            p.eu_sources,
+            p.eu_stock,
+            p.unit_price_cents
+        );
+    }
+
+    assert!(
+        !qualified.is_empty(),
+        "NOT ONE of {} real parts qualified. That is the over-strict failure mode: the output \
+         reads as 'nothing is sourceable' when it actually means the constraints are wrong. \
+         Rejections were: {:?}",
+        parts.len(),
+        by_reason
+    );
+    assert_eq!(
+        qualified.len() + by_reason.len(),
+        parts.len(),
+        "every part must be either qualified or rejected WITH a named attribute — a part that is \
+         neither has fallen through the report"
     );
 }
