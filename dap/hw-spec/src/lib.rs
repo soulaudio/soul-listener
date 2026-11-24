@@ -413,4 +413,13 @@ impl BoardSpec {
 /// remains a first-class value and nothing here forbids revisiting a part, a
 /// rate or an oscillator. Hardening is a deliberate edit of
 /// [`v2::V2`]'s [`LockStatus`].
+/// How many boards the current build intends to make.
+///
+/// A policy number, and the one that decides whether a minimum order quantity
+/// matters. At five, a reel of 1000 costs 200x what the build needs; at a
+/// thousand it costs nothing extra. Raise it when the build quantity rises and
+/// the ranking follows automatically — which is the point of having it in one
+/// place rather than inlined into a comparator.
+pub const BUILD_QUANTITY: u32 = 5;
+
 pub const ACTIVE: &BoardSpec = &v2::V2;

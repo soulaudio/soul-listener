@@ -127,8 +127,13 @@ pub struct CataloguePart<'a> {
     pub eu_sources: u32,
     /// Total stock across EU distributors.
     pub eu_stock: u32,
-    /// Unit price in EUR cents at the ranking quantity, if known.
+    /// Unit price in EUR cents at the cheapest *reachable* break — the lowest
+    /// quantity the vendor will actually sell. NOT the qty-1 price, which does
+    /// not exist for a reel-only part.
     pub unit_price_cents: Option<u32>,
+    /// Minimum order quantity. `None` means the vendor did not say, which is
+    /// treated as unknown, never as 1.
+    pub moq: Option<u32>,
     /// Worst lead time in days across EU offers, if known.
     pub lead_time_days: Option<u32>,
 }
@@ -278,6 +283,23 @@ pub enum Rank {
     /// Cheaper first. Parts with no known price sort last — an unpriced part is
     /// not cheap, it is unknown.
     UnitPrice,
+    /// **What it costs to get the quantity the build needs**, cheapest first.
+    ///
+    /// `max(moq, build_qty) * unit_price`. This exists because unit price is
+    /// actively misleading wherever minimum order quantities bite — and a whole
+    /// category can be like that: every active oscillator TME carries at either
+    /// MCLK frequency is reel-only at 1000-3000 pieces, so a 0.70 EUR part is a
+    /// 700 EUR line item while a 0.19 EUR part with MOQ 1 costs 19 cents.
+    ///
+    /// Ranking on unit price treated those as the same kind of cheap. Worse, it
+    /// ranked the reel parts as *unpriced* and therefore last, because the only
+    /// break published starts at 1000 — so in the live oscillator report every
+    /// qualifying part sorted with no price at all, and the ranking was blind in
+    /// precisely the category where cost decides.
+    AcquisitionCost {
+        /// How many the build needs. A policy number, not a property of a part.
+        build_qty: u32,
+    },
     /// Shorter lead time first; unknown sorts last.
     LeadTime,
 }
@@ -294,6 +316,17 @@ fn cmp_by(a: &CataloguePart<'_>, b: &CataloguePart<'_>, r: Rank) -> Ordering {
             (None, Some(_)) => Ordering::Greater,
             (None, None) => Ordering::Equal,
         },
+        Rank::AcquisitionCost { build_qty } => {
+            match (
+                acquisition_cost(a, build_qty),
+                acquisition_cost(b, build_qty),
+            ) {
+                (Some(x), Some(y)) => x.cmp(&y),
+                (Some(_), None) => Ordering::Less,
+                (None, Some(_)) => Ordering::Greater,
+                (None, None) => Ordering::Equal,
+            }
+        }
         Rank::LeadTime => match (a.lead_time_days, b.lead_time_days) {
             (Some(x), Some(y)) => x.cmp(&y),
             (Some(_), None) => Ordering::Less,
@@ -313,6 +346,22 @@ fn cmp_by(a: &CataloguePart<'_>, b: &CataloguePart<'_>, r: Rank) -> Ordering {
 ///
 /// `sort_unstable_by` because this crate is `no_std` without `alloc`; the MPN
 /// tie-break makes the comparator total, so stability is not needed.
+/// What it costs to obtain `build_qty` of this part, in EUR cents.
+///
+/// `max(moq, build_qty) * unit_price`, because a vendor selling in reels of 1000
+/// charges for 1000 however many the board needs. `None` when either figure is
+/// unknown — an unknown cost must never sort as free.
+#[must_use]
+pub fn acquisition_cost(part: &CataloguePart<'_>, build_qty: u32) -> Option<u32> {
+    let unit = part.unit_price_cents?;
+    // A missing MOQ is unknown, not 1. Assuming 1 would price a reel-only part
+    // as if it could be bought singly, which is the error this criterion exists
+    // to avoid.
+    let moq = part.moq?;
+    let qty = if moq > build_qty { moq } else { build_qty };
+    unit.checked_mul(qty)
+}
+
 pub fn rank(parts: &mut [CataloguePart<'_>], by: &[Rank]) {
     parts.sort_unstable_by(|a, b| {
         for r in by {
@@ -334,7 +383,11 @@ pub fn rank(parts: &mut [CataloguePart<'_>], by: &[Rank]) {
 pub const DEFAULT_RANKING: &[Rank] = &[
     Rank::EuSourceDepth,
     Rank::EuStock,
-    Rank::UnitPrice,
+    // Acquisition cost, not unit price: this is a hand-assembled small batch and
+    // minimum order quantities dominate the bill. See [`Rank::AcquisitionCost`].
+    Rank::AcquisitionCost {
+        build_qty: crate::BUILD_QUANTITY,
+    },
     Rank::LeadTime,
 ];
 
@@ -356,7 +409,23 @@ mod tests {
             eu_sources,
             eu_stock,
             unit_price_cents: price,
+            // Singly orderable unless a test says otherwise; `part_moq` below
+            // builds the reel-only case.
+            moq: Some(1),
             lead_time_days: None,
+        }
+    }
+
+    /// A part with a minimum order quantity, for the acquisition-cost tests.
+    fn part_moq<'a>(
+        mpn: &'a str,
+        attrs: &'a [(&'a str, AttrValue<'a>)],
+        price: Option<u32>,
+        moq: Option<u32>,
+    ) -> CataloguePart<'a> {
+        CataloguePart {
+            moq,
+            ..part(mpn, attrs, 1, 1000, price)
         }
     }
 
@@ -386,6 +455,105 @@ mod tests {
             check(&part("wrong", &wrong, 1, 1, None), &c).is_err(),
             "22.5792 MHz is a different part, and the one that cannot reach 176.4 kHz"
         );
+    }
+
+    /// Unit price lies wherever a minimum order quantity bites.
+    ///
+    /// Measured, not hypothetical: every active oscillator TME carries at either
+    /// MCLK frequency is reel-only. The cheapest per unit is 24 cents with MOQ
+    /// 1000 (240 EUR to obtain any), and one at 30 cents has MOQ 3000 (900 EUR).
+    /// A unit-price ranking calls the 24-cent part cheaper than a 19-cent part
+    /// with MOQ 1 — which costs 95 cents for five.
+    #[test]
+    fn acquisition_cost_ranks_a_reel_below_a_singly_orderable_part() {
+        let none: [(&str, AttrValue); 0] = [];
+        // 19 cents, buy one: 5 x 19 = 95 cents for a build of five.
+        let singly = part_moq("singly-orderable", &none, Some(19), Some(1));
+        // 24 cents but reel-only: 1000 x 24 = 24000 cents.
+        let reel = part_moq("reel-only", &none, Some(24), Some(1000));
+
+        assert_eq!(acquisition_cost(&singly, 5), Some(95));
+        assert_eq!(acquisition_cost(&reel, 5), Some(24_000));
+
+        let mut parts = [reel, singly];
+        rank(&mut parts, &[Rank::AcquisitionCost { build_qty: 5 }]);
+        assert_eq!(
+            parts[0].mpn, "singly-orderable",
+            "a 19-cent part you can buy five of beats a 24-cent part you must buy 1000 of. \
+             Ranking on UNIT price gets this backwards, and the reel part is cheaper per unit."
+        );
+    }
+
+    /// `build_qty` has to be a parameter, because the answer inverts with scale.
+    ///
+    /// The inversion needs a reel that is genuinely cheaper PER UNIT — my first
+    /// attempt at this test used a reel costing more per unit and asserted it
+    /// would win at scale, which it never can: once the build is larger than
+    /// both MOQs, each part is bought in the same quantity and the cheaper unit
+    /// price simply wins. A high MOQ is only worth paying for if the unit price
+    /// is actually lower.
+    #[test]
+    fn the_cheapest_option_depends_on_the_build_quantity() {
+        let none: [(&str, AttrValue); 0] = [];
+        // Dearer per unit, but buy exactly what you need.
+        let flexible = part_moq("flexible", &none, Some(19), Some(1));
+        // Half the unit price, but 1000 minimum.
+        let bulk = part_moq("bulk", &none, Some(10), Some(1000));
+
+        // A prototype run of five: 95 cents vs 100 EUR.
+        assert_eq!(acquisition_cost(&flexible, 5), Some(95));
+        assert_eq!(acquisition_cost(&bulk, 5), Some(10_000));
+        let mut small = [bulk, flexible];
+        rank(&mut small, &[Rank::AcquisitionCost { build_qty: 5 }]);
+        assert_eq!(small[0].mpn, "flexible");
+
+        // A production run of 2000: 380 EUR vs 200 EUR, and the order flips.
+        assert_eq!(acquisition_cost(&flexible, 2000), Some(38_000));
+        assert_eq!(acquisition_cost(&bulk, 2000), Some(20_000));
+        let mut large = [flexible, bulk];
+        rank(&mut large, &[Rank::AcquisitionCost { build_qty: 2000 }]);
+        assert_eq!(
+            large[0].mpn, "bulk",
+            "at 2000 boards the MOQ is no longer a penalty and the lower unit price wins. This is \
+             why BUILD_QUANTITY lives in the spec as a stated policy rather than being inlined \
+             into the comparator"
+        );
+    }
+
+    /// An unknown MOQ must not be assumed to be 1.
+    #[test]
+    fn an_unknown_moq_makes_the_cost_unknown_rather_than_cheap() {
+        let none: [(&str, AttrValue); 0] = [];
+        let unknown = part_moq("moq-unpublished", &none, Some(10), None);
+        assert_eq!(
+            acquisition_cost(&unknown, 5),
+            None,
+            "assuming MOQ 1 would price a possibly reel-only part as if it could be bought \
+             singly — the exact error this criterion exists to prevent"
+        );
+
+        // And unknown must sort AFTER a known cost, not before.
+        let known = part_moq("moq-known", &none, Some(70), Some(1000));
+        let mut parts = [unknown, known];
+        rank(&mut parts, &[Rank::AcquisitionCost { build_qty: 5 }]);
+        assert_eq!(
+            parts[0].mpn, "moq-known",
+            "a 700 EUR known cost still beats an unknown one: unknown is not free"
+        );
+    }
+
+    /// The published price must be the lowest REACHABLE break.
+    ///
+    /// The export previously took `qty <= 1`, which is NULL for every reel-only
+    /// part — so the whole oscillator category exported as unpriced and sorted
+    /// last on price while being the only thing available. This pins the
+    /// consequence at the engine boundary: a part with a price and an MOQ is
+    /// comparable, and one without a price is not.
+    #[test]
+    fn a_part_with_no_published_price_cannot_be_costed() {
+        let none: [(&str, AttrValue); 0] = [];
+        let unpriced = part_moq("unpriced", &none, None, Some(1));
+        assert_eq!(acquisition_cost(&unpriced, 5), None);
     }
 
     /// A vendor truncating the frequency must not reject the part.

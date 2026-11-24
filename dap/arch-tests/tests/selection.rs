@@ -104,6 +104,13 @@ fn borrow(owned: &[Owned]) -> Vec<CataloguePart<'_>> {
                     .collect::<Vec<_>>()
                     .into_boxed_slice(),
             ),
+            // The fixture carries moq as an attribute; the engine wants it as a
+            // field, because acquisition cost is a property of the OFFER rather
+            // than of the component.
+            moq: o.attrs.iter().find_map(|(k, v)| match v {
+                OwnedVal::Num(n) if k.eq_ignore_ascii_case("moq") => Some(*n as u32),
+                _ => None,
+            }),
             eu_sources: o.eu_sources,
             eu_stock: o.eu_stock,
             unit_price_cents: o.unit_price_cents,
