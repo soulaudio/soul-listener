@@ -5,12 +5,2220 @@
   "note": "Values are RAW vendor strings; dap_hw_spec::parametric::derive interprets them. Rebuild with tools/sourcing-run.py export.",
   "parts": [
     {
+      "mpn": "MIMXRT1024DAG5B",
+      "manufacturer": "NXP",
+      "eu_sources": 1,
+      "eu_stock": 450,
+      "unit_price_cents": 808,
+      "moq": 60,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "500MHz",
+        "cpu_core": "ARM; Cortex M7",
+        "gpio_count": "90",
+        "manufacturer_name": "NXP",
+        "mounting": "SMD",
+        "operating_temp_c": "0...95\u00b0C",
+        "package": "LQFP144",
+        "part_type": "ARM microcontroller",
+        "moq": "60",
+        "order_multiple": "60"
+      }
+    },
+    {
+      "mpn": "STM32C011F4P6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 86,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/ee421fb798caa0b89b512de777012513/stm32c011f4.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "48MHz",
+        "cpu_core": "Cortex M0+",
+        "gpio_count": "18",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "TSSOP20",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "2...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32C011F6P6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 46,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/e168521bb5130263ebef99183d2106f4/stm32c011f6.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "48MHz",
+        "cpu_core": "Cortex M0+",
+        "gpio_count": "18",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "TSSOP20",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "2...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32C011J4M6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 1187,
+      "unit_price_cents": 94,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/034665d26a0fec15da9625e14fd0a596/stm32c011j4.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "48MHz",
+        "cpu_core": "Cortex M0+",
+        "gpio_count": "6",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "SO8",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "2...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32C011J6M6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 18,
+      "unit_price_cents": 64,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/656600b9ea35b5a5b2a859a2620419bd/stm32c011j6.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "48MHz",
+        "cpu_core": "Cortex M0+",
+        "gpio_count": "6",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "SO8",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "2...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32C031C4T6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 237,
+      "unit_price_cents": 105,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.st.com/content/ccc/resource/technical/document/datasheet/group3/a7/7c/72/8e/f3/31/41/4b/DM00836012/files/DM00836012.pdf/jcr:content/translations/en.DM00836012.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "48MHz",
+        "cpu_core": "Cortex M0+",
+        "gpio_count": "45",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "LQFP48",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "2...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32C031C6T6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 245,
+      "unit_price_cents": 164,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/e6ae7f91004f3b5ad2d76cd37484e439/stm32c031c6.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "48MHz",
+        "cpu_core": "Cortex M0+",
+        "gpio_count": "45",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "LQFP48",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "2...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32C031F6P6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 105,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/bde42a076391fd4bfeb5b6544efa829f/stm32c031f6.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "48MHz",
+        "cpu_core": "Cortex M0+",
+        "gpio_count": "18",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "TSSOP20",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "2...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32C542CCT6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 185,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.st.com/resource/en/datasheet/stm32c542cc.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "144MHz",
+        "cpu_core": "Cortex M33",
+        "gpio_count": "38",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...140\u00b0C",
+        "package": "LQFP48",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "2.7...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32C551KET6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 153,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.st.com/resource/en/datasheet/stm32c551cc.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "144MHz",
+        "cpu_core": "Cortex M33",
+        "gpio_count": "25",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...140\u00b0C",
+        "package": "LQFP32",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "2.7...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32C552CET6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 200,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.st.com/resource/en/datasheet/stm32c551cc.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "144MHz",
+        "cpu_core": "Cortex M33",
+        "gpio_count": "38",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...140\u00b0C",
+        "package": "LQFP48",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "2.7...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32C552KET6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 194,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.st.com/resource/en/datasheet/stm32c551cc.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "144MHz",
+        "cpu_core": "Cortex M33",
+        "gpio_count": "25",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...140\u00b0C",
+        "package": "LQFP32",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "2.7...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32C552RET6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 209,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.st.com/resource/en/datasheet/stm32c551cc.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "144MHz",
+        "cpu_core": "Cortex M33",
+        "gpio_count": "52",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...140\u00b0C",
+        "package": "LQFP64",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "2.7...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32C562KET6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 197,
+      "unit_price_cents": 172,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.st.com/resource/en/datasheet/stm32c562ce.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "144MHz",
+        "cpu_core": "Cortex M33",
+        "gpio_count": "25",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...140\u00b0C",
+        "package": "LQFP32",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "2.7...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32C562KEU6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 33,
+      "unit_price_cents": 185,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.st.com/resource/en/datasheet/stm32c562ce.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "144MHz",
+        "cpu_core": "Cortex M33",
+        "gpio_count": "27",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...140\u00b0C",
+        "package": "UFQFPN32",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "2.7...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32F030C8T6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 181,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/21f84f80c90f51ef225b72aa8602e29a/STM32F030C8T6.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "48MHz",
+        "cpu_core": "Cortex M0",
+        "gpio_count": "39",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "package": "LQFP48",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "2.4...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32F030CCT6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 60,
+      "unit_price_cents": 314,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/21f84f80c90f51ef225b72aa8602e29a/STM32F030C8T6.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "48MHz",
+        "cpu_core": "Cortex M0",
+        "gpio_count": "37",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "package": "LQFP48",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "2.4...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32F030F4P6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 932,
+      "unit_price_cents": 176,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/21f84f80c90f51ef225b72aa8602e29a/STM32F030C8T6.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "48MHz",
+        "cpu_core": "Cortex M0",
+        "gpio_count": "15",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "package": "TSSOP20",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "2.4...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32F030K6T6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 155,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/21f84f80c90f51ef225b72aa8602e29a/STM32F030C8T6.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "48MHz",
+        "cpu_core": "Cortex M0",
+        "gpio_count": "26",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "package": "LQFP32",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "2.4...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32F030RCT6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 283,
+      "unit_price_cents": 384,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/21f84f80c90f51ef225b72aa8602e29a/STM32F030C8T6.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "48MHz",
+        "cpu_core": "Cortex M0",
+        "gpio_count": "51",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "LQFP64",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "2.4...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32F042F6P6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 23,
+      "unit_price_cents": 223,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/e7c9c2f63c7be35821de32d9a740536e/STM32F042C6T6.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "48MHz",
+        "cpu_core": "Cortex M0",
+        "gpio_count": "16",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "package": "TSSOP20",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "2...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32F042K6T6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 123,
+      "unit_price_cents": 285,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/e7c9c2f63c7be35821de32d9a740536e/STM32F042C6T6.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "48MHz",
+        "cpu_core": "Cortex M0",
+        "gpio_count": "26",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "package": "LQFP32",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "2...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32F042K6U6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 933,
+      "unit_price_cents": 278,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/e7c9c2f63c7be35821de32d9a740536e/STM32F042C6T6.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "48MHz",
+        "cpu_core": "Cortex M0",
+        "gpio_count": "28",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "package": "UFQFN32",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "2...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32F051C8T6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 220,
+      "unit_price_cents": 297,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/44929c35040a10b3c0441ffd961a9f00/STM32F051C4T6.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "48MHz",
+        "cpu_core": "Cortex M0",
+        "gpio_count": "39",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "package": "LQFP48",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "2...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32F051K8T6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 59,
+      "unit_price_cents": 233,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/44929c35040a10b3c0441ffd961a9f00/STM32F051C4T6.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "48MHz",
+        "cpu_core": "Cortex M0",
+        "gpio_count": "25",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "package": "LQFP32",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "2...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32F072CBT6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 218,
+      "unit_price_cents": 464,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/b6bd0a2acb7cdfc7b353f3a2aa541006/STM32F072C8T6.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "48MHz",
+        "cpu_core": "Cortex M0",
+        "gpio_count": "37",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "package": "LQFP48",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "2...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32F100C8T6B",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 6,
+      "unit_price_cents": 303,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/1f806c517446ffd3c0baf113be5f8ee4/STM32F100C4T6B-DTE.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "24MHz",
+        "cpu_core": "Cortex M3",
+        "gpio_count": "37",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "package": "LQFP48",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "2...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32F103C8T6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 1221,
+      "unit_price_cents": 481,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/fe0050b04a35dcb40baa91bafd03a567/STM32F103x8_xB.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "72MHz",
+        "cpu_core": "Cortex M3",
+        "gpio_count": "37",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "package": "LQFP48",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "2...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32F103CBT6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 295,
+      "unit_price_cents": 582,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/fe0050b04a35dcb40baa91bafd03a567/STM32F103x8_xB.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "72MHz",
+        "cpu_core": "Cortex M3",
+        "gpio_count": "37",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "package": "LQFP48",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "2...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32F103RBT6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 68,
+      "unit_price_cents": 520,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/fe0050b04a35dcb40baa91bafd03a567/STM32F103x8_xB.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "72MHz",
+        "cpu_core": "Cortex M3",
+        "gpio_count": "51",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "package": "LQFP64",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "2...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32F103RET6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 139,
+      "unit_price_cents": 775,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/fb7c415b4c99be3d814655275d039285/stm32f103xd_xe.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "72MHz",
+        "cpu_core": "Cortex M3",
+        "gpio_count": "51",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "package": "LQFP64",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "2...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32F105RBT6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 197,
+      "unit_price_cents": 577,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/eee6c1b909f263682f2f5b2ccae344bc/stm32f105rb.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "72MHz",
+        "cpu_core": "Cortex M3",
+        "gpio_count": "51",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "LQFP64",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "2...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32F302CCT6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 736,
+      "unit_price_cents": 634,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/c905dd04ef2f9e680847c3385e87dee1/STM32F302CBT6.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "72MHz",
+        "cpu_core": "Cortex M4",
+        "gpio_count": "37",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "LQFP48",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "2...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32F303K8T6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 456,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/22f423643ca306651c3e9b4b2f6c6e2d/STM32F303K8T6.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "72MHz",
+        "cpu_core": "Cortex M4",
+        "gpio_count": "10",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "LQFP32",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "2...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32F303RET6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 157,
+      "unit_price_cents": 688,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/056036a90e093a2ee32d7e8e5e27b999/STM32F303RET6.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "72MHz",
+        "cpu_core": "Cortex M4",
+        "gpio_count": "26",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "LQFP64",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "2...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32F373CCT6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 1009,
+      "unit_price_cents": 658,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/43b5469864bfff2cf0380d51ab996145/STM32F373C8T6.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "72MHz",
+        "cpu_core": "Cortex M4",
+        "gpio_count": "36",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "LQFP48",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "2...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32F401RET6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 489,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/43c6f68196a460abdebd46cc259121b7/STM32F401RDT6.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "84MHz",
+        "cpu_core": "Cortex M4",
+        "gpio_count": "50",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "package": "LQFP64",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.7...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32F405RGT6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 870,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/7af1c9b17d9271092562e8ce15e3a58a/STM32F405RGT6.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "168MHz",
+        "cpu_core": "Cortex M4",
+        "gpio_count": "51",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "package": "LQFP64",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.8...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32F407VET6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 884,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/fe050b8f135d502e6bbd22755be2aa50/stm32f405XX_F407XX.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "168MHz",
+        "cpu_core": "Cortex M4",
+        "gpio_count": "82",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "package": "LQFP100",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.8...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32F407VGT6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 1153,
+      "unit_price_cents": 905,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/fe050b8f135d502e6bbd22755be2aa50/stm32f405XX_F407XX.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "168MHz",
+        "cpu_core": "Cortex M4",
+        "gpio_count": "82",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "package": "LQFP100",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.8...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32F407ZGT6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 48,
+      "unit_price_cents": 1315,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/105e6d8a464953c272c3da4a960e57dd/STM32F407ZET6.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "168MHz",
+        "cpu_core": "Cortex M4",
+        "gpio_count": "114",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "package": "LQFP144",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.8...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32F411CEU6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 102,
+      "unit_price_cents": 563,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/f397bb46203066b42d23d579456a2dc4/STM32F411CEU6.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "100MHz",
+        "cpu_core": "Cortex M4",
+        "gpio_count": "36",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "package": "UFQFPN48",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.7...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32F411RCT6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 6,
+      "unit_price_cents": 624,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/f397bb46203066b42d23d579456a2dc4/STM32F411CEU6.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "100MHz",
+        "cpu_core": "Cortex M4",
+        "gpio_count": "50",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "package": "LQFP64",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.7...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32F411RET6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 128,
+      "unit_price_cents": 790,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/f397bb46203066b42d23d579456a2dc4/STM32F411CEU6.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "100MHz",
+        "cpu_core": "Cortex M4",
+        "gpio_count": "50",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "package": "LQFP64",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.7...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32F429ZGT6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 1159,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/2e7649f34663b7995544ccf12e6208a0/STM32F427ZGT6.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "180MHz",
+        "cpu_core": "Cortex M4",
+        "gpio_count": "114",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "package": "LQFP144",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.7...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32F437VIT6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 1310,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/5741fea835fcef90d364b2e58eef3e44/stm32f437ii.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "180MHz",
+        "cpu_core": "Cortex M4",
+        "gpio_count": "82",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "LQFP100",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.8...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32F446RET6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 636,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/28cc07a358a043221095e5199eac5a29/STM32F446RET6.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "180MHz",
+        "cpu_core": "Cortex M4",
+        "gpio_count": "50",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "package": "LQFP64",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.7...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32F767ZIT6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 2069,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/30d4361d4be23db786a9685d1e397471/en.DM00273119.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "216MHz",
+        "cpu_core": "Cortex M7",
+        "gpio_count": "114",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "package": "LQFP144",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.7...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32G030C6T6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 120,
+      "unit_price_cents": 118,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/2b266aab99d3bc1b99b972cf5ab5232a/STM32G030K6T6.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "64MHz",
+        "cpu_core": "Cortex M0+",
+        "gpio_count": "44",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "LQFP48",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "2...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32G030C8T6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 84,
+      "unit_price_cents": 144,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/2b266aab99d3bc1b99b972cf5ab5232a/STM32G030K6T6.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "64MHz",
+        "cpu_core": "Cortex M0+",
+        "gpio_count": "44",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "LQFP48",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "2...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32G030F6P6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 391,
+      "unit_price_cents": 112,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/2b266aab99d3bc1b99b972cf5ab5232a/STM32G030K6T6.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "64MHz",
+        "cpu_core": "Cortex M0+",
+        "gpio_count": "18",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "TSSOP20",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "2...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32G030J6M6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 256,
+      "unit_price_cents": 142,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/2b266aab99d3bc1b99b972cf5ab5232a/STM32G030K6T6.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "64MHz",
+        "cpu_core": "Cortex M0+",
+        "gpio_count": "6",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "SO8",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "2...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32G030K6T6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 466,
+      "unit_price_cents": 189,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/2b266aab99d3bc1b99b972cf5ab5232a/STM32G030K6T6.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "64MHz",
+        "cpu_core": "Cortex M0+",
+        "gpio_count": "30",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "LQFP32",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "2...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32G030K8T6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 206,
+      "unit_price_cents": 178,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/2b266aab99d3bc1b99b972cf5ab5232a/STM32G030K6T6.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "64MHz",
+        "cpu_core": "Cortex M0+",
+        "gpio_count": "30",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "LQFP32",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "2...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32G031J6M6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 114,
+      "unit_price_cents": 126,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/b23652bfd39580bd1b459d2d56a21af3/STM32G031G6U6.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "64MHz",
+        "cpu_core": "Cortex M0+",
+        "gpio_count": "6",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "SO8",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.7...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32G051F8P6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 92,
+      "unit_price_cents": 183,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.st.com/content/ccc/resource/technical/document/datasheet/group3/d1/92/43/f3/93/6a/4e/7f/DM00698890/files/DM00698890.pdf/jcr:content/translations/en.DM00698890.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "64MHz",
+        "cpu_core": "Cortex M0+",
+        "gpio_count": "18",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "TSSOP20",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.7...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32G070CBT6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 637,
+      "unit_price_cents": 202,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/e404604b5a26bcc439adde42cf2d7dd1/stm32g070cb.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "64MHz",
+        "cpu_core": "Cortex M0+",
+        "gpio_count": "43",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "LQFP48",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "2...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32G071CBT6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 36,
+      "unit_price_cents": 264,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/d325ce79d429f2c6174f75f376309178/stm32g071cb.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "64MHz",
+        "cpu_core": "Cortex M0+",
+        "gpio_count": "44",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "package": "LQFP48",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.7...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32G071RBT6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 273,
+      "unit_price_cents": 355,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/d325ce79d429f2c6174f75f376309178/stm32g071cb.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "64MHz",
+        "cpu_core": "Cortex M0+",
+        "gpio_count": "60",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "package": "LQFP64",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.7...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32G0B0CET6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 315,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.st.com/content/ccc/resource/technical/document/datasheet/group3/a6/1e/21/be/b4/df/4e/bd/DM00748970/files/DM00748970.pdf/jcr:content/translations/en.DM00748970.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "64MHz",
+        "cpu_core": "Cortex M0+",
+        "gpio_count": "43",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "LQFP48",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "2...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32G0B0RET6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 377,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.st.com/content/ccc/resource/technical/document/datasheet/group3/a6/1e/21/be/b4/df/4e/bd/DM00748970/files/DM00748970.pdf/jcr:content/translations/en.DM00748970.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "64MHz",
+        "cpu_core": "Cortex M0+",
+        "gpio_count": "59",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "LQFP64",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "2...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32G0B1KEU6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 425,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.st.com/content/ccc/resource/technical/document/datasheet/group3/c8/e3/92/eb/da/59/4b/76/DM00748675/files/DM00748675.pdf/jcr:content/translations/en.DM00748675.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "64MHz",
+        "cpu_core": "Cortex M0+",
+        "gpio_count": "30",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "UFQFPN32",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.7...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32G431CBT6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 573,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.st.com/content/ccc/resource/technical/document/datasheet/group3/b3/c0/2c/31/d1/1c/40/27/DM00507199/files/DM00507199.pdf/jcr:content/translations/en.DM00507199.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "170MHz",
+        "cpu_core": "Cortex M4",
+        "gpio_count": "38",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "LQFP48",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.71...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32G431KBT6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 128,
+      "unit_price_cents": 435,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "170MHz",
+        "cpu_core": "Cortex M4",
+        "gpio_count": "26",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "LQFP32",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.71...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32G474CEU6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 732,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.st.com/content/ccc/resource/technical/document/datasheet/group3/ba/56/00/03/1d/08/4c/e3/DM00431551/files/DM00431551.pdf/jcr:content/translations/en.DM00431551.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "170MHz",
+        "cpu_core": "Cortex M4",
+        "gpio_count": "42",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "UFQFPN48",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.71...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32G474RET6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 654,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/05c78d9db6f24e6deacabe5ffefd716a/STM32G474CBU6.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "170MHz",
+        "cpu_core": "Cortex M4F",
+        "gpio_count": "52",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "LQFP64",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.71...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32G474VET3",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 812,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "170MHz",
+        "cpu_core": "Cortex M4",
+        "gpio_count": "86",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "LQFP100",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.71...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32G483CET3",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 508,
+      "moq": 250,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.st.com/content/ccc/resource/technical/document/datasheet/group3/78/d6/f4/72/46/99/41/10/DM00614796/files/DM00614796.pdf/jcr:content/translations/en.DM00614796.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "170MHz",
+        "cpu_core": "Cortex M4",
+        "gpio_count": "38",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...125\u00b0C",
+        "package": "LQFP48",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.71...3.6V DC",
+        "moq": "250",
+        "order_multiple": "250"
+      }
+    },
+    {
+      "mpn": "STM32G491CET6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 751,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.st.com/content/ccc/resource/technical/document/datasheet/group3/fa/89/fe/1f/f8/a1/4b/96/DM00654712/files/DM00654712.pdf/jcr:content/translations/en.DM00654712.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "170MHz",
+        "cpu_core": "Cortex M4",
+        "gpio_count": "38",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "LQFP48",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.71...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32H503CBT6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 276,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/e92fcde7cdebb20ebbd5639f57dc7863/stm32h503cb.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "250MHz",
+        "cpu_core": "Cortex M33",
+        "gpio_count": "35",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "LQFP48",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.71...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32H503CBU6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 172,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/e92fcde7cdebb20ebbd5639f57dc7863/stm32h503cb.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "250MHz",
+        "cpu_core": "Cortex M33",
+        "gpio_count": "35",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "UFQFPN48",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.71...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32H523CCT6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 355,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/7e1f81db8303d10d6466d011f1c88389/stm32h523cc.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "250MHz",
+        "cpu_core": "Cortex M33",
+        "gpio_count": "35",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "LQFP48",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.71...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32H523CET6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 240,
+      "unit_price_cents": 449,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/7e1f81db8303d10d6466d011f1c88389/stm32h523cc.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "250MHz",
+        "cpu_core": "Cortex M33",
+        "gpio_count": "35",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "LQFP48",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.71...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32H523RCT6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 291,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/7e1f81db8303d10d6466d011f1c88389/stm32h523cc.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "250MHz",
+        "cpu_core": "Cortex M33",
+        "gpio_count": "49",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "LQFP64",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.71...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32H523RCT7TR",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 21000,
+      "unit_price_cents": 276,
+      "moq": 1000,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "250MHz",
+        "cpu_core": "Cortex M33",
+        "gpio_count": "49",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...105\u00b0C",
+        "package": "LQFP64",
+        "part_type": "STM32 ARM microcontroller",
+        "moq": "1000",
+        "order_multiple": "1000"
+      }
+    },
+    {
+      "mpn": "STM32H523RET6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 347,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/7e1f81db8303d10d6466d011f1c88389/stm32h523cc.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "250MHz",
+        "cpu_core": "Cortex M33",
+        "gpio_count": "49",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "LQFP64",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.71...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32H562RGT6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 533,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/99460fadc5d1dfffa78d1f6739764452/stm32h562ii.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "250MHz",
+        "cpu_core": "Cortex M33",
+        "gpio_count": "53",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "LQFP64",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.71...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32H562VGT6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 420,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/99460fadc5d1dfffa78d1f6739764452/stm32h562ii.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "250MHz",
+        "cpu_core": "Cortex M33",
+        "gpio_count": "80",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "LQFP100",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.71...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32H563RIT6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 643,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/99460fadc5d1dfffa78d1f6739764452/stm32h562ii.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "250MHz",
+        "cpu_core": "Cortex M33",
+        "gpio_count": "53",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "LQFP64",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.71...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32H563VIT6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 793,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/99460fadc5d1dfffa78d1f6739764452/stm32h562ii.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "250MHz",
+        "cpu_core": "Cortex M33",
+        "gpio_count": "80",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "LQFP100",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.71...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32H563ZIT6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 884,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/99460fadc5d1dfffa78d1f6739764452/stm32h562ii.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "250MHz",
+        "cpu_core": "Cortex M33",
+        "gpio_count": "112",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "LQFP144",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.71...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32H573ZIT6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 836,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/b156253c1f02571a9d1f2e6b782ee2db/stm32h573ii.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "250MHz",
+        "cpu_core": "Cortex M33",
+        "gpio_count": "112",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "LQFP144",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.71...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32H723VET6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 1052,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/2adb3fcffa47503254fe88d8cf83f4cb/stm32h723vg.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "550MHz",
+        "cpu_core": "Cortex M7",
+        "gpio_count": "80",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "LQFP100",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.71...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32H743VIT6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 1356,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/537e4e89f9733480322b3adb059e9604/STM32H743BIT6.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "480MHz",
+        "cpu_core": "Cortex M7",
+        "gpio_count": "82",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "LQFP100",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.71...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32H743ZIT6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 1167,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/537e4e89f9733480322b3adb059e9604/STM32H743BIT6.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "480MHz",
+        "cpu_core": "Cortex M7",
+        "gpio_count": "114",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "LQFP144",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.62...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32H753IIT6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 11,
+      "unit_price_cents": 1411,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/22baab99f2698d3591c06edccceae5d8/stm32h753ai.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "480MHz",
+        "cpu_core": "Cortex M7",
+        "gpio_count": "140",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "LQFP176",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.62...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
       "mpn": "STM32H7A3ZIT6",
       "manufacturer": "STMicroelectronics",
       "eu_sources": 0,
       "eu_stock": 0,
       "unit_price_cents": 1300,
+      "moq": 1,
       "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/94f850c15a2fb003c4530843ceba6dfc/stm32h7a3ag.pdf",
       "vendors": [
         "tme"
       ],
@@ -23,7 +2231,9 @@
         "operating_temp_c": "-40...85\u00b0C",
         "package": "LQFP144",
         "part_type": "STM32 ARM microcontroller",
-        "supply_mv": "1.62...3.6V DC"
+        "supply_mv": "1.62...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
       }
     },
     {
@@ -32,7 +2242,9 @@
       "eu_sources": 0,
       "eu_stock": 0,
       "unit_price_cents": 1670,
+      "moq": 1,
       "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/af07a4430bb69abe691d1a5e438381e0/stm32h7b3zi.pdf",
       "vendors": [
         "tme"
       ],
@@ -45,7 +2257,357 @@
         "operating_temp_c": "-40...85\u00b0C",
         "package": "LQFP144",
         "part_type": "STM32 ARM microcontroller",
-        "supply_mv": "1.62...3.6V DC"
+        "supply_mv": "1.62...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32H7S3Z8T6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 107,
+      "unit_price_cents": 714,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/6f2cb088920c5e8752afa6ca19560f83/stm32h7s3a8.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "600MHz",
+        "cpu_core": "Cortex M7",
+        "gpio_count": "98",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "LQFP144",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.71...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32L051C8T6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 39,
+      "unit_price_cents": 206,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/8153a4940683e7174c04490d86ca77b0/stm32l051c8.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "32MHz",
+        "cpu_core": "Cortex M0+",
+        "gpio_count": "37",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "LQFP48",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.65...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32L151C6T6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 1349,
+      "unit_price_cents": 509,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/00fbf4e9becc56d72808da85e4d4b198/stm32l151cb-a.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "32MHz",
+        "cpu_core": "Cortex M3",
+        "gpio_count": "37",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "LQFP48",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.8...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32L432KCU6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 102,
+      "unit_price_cents": 460,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/be68d2a4a5eaaab104606248191e7a3b/STM32L432KBU6.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "80MHz",
+        "cpu_core": "Cortex M4",
+        "gpio_count": "26",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "UFQFPN32",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.71...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32L433CCT6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 454,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/b22fa062a610cc3218b9c54fe58f7229/STM32L433CCT6.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "80MHz",
+        "cpu_core": "Cortex M4",
+        "gpio_count": "38",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "LQFP48",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.71...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32MP135FAE7T",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 25200,
+      "unit_price_cents": 509,
+      "moq": 1400,
+      "lead_time_days": null,
+      "datasheet_url": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...105\u00b0C",
+        "package": "LFBGA289",
+        "part_type": "ARM microprocessor",
+        "moq": "1400",
+        "order_multiple": "1400"
+      }
+    },
+    {
+      "mpn": "STM32U031K8U6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 335,
+      "unit_price_cents": 223,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/38b85fcc5956062dbfd303ff1d9a69e4/stm32u031c6.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "56MHz",
+        "cpu_core": "Cortex M0+",
+        "gpio_count": "27",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "UFQFN32",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.71...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32U073CCT6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 209,
+      "unit_price_cents": 324,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/9827c9fd24b9ae269433591fdcd9e778/stm32u073c8.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "56MHz",
+        "cpu_core": "Cortex M0+",
+        "gpio_count": "39",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "LQFP48",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.71...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32U083RCT6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 338,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/15da73551ed45905d865e0d56dff63b9/stm32u083cc.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "56MHz",
+        "cpu_core": "Cortex M0+",
+        "gpio_count": "53",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "LQFP64",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.71...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM32U575VIT6Q",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 65,
+      "unit_price_cents": 615,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/6db2e99da4394dde01de2a56ac7b65e7/stm32u575vi.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "160MHz",
+        "cpu_core": "Cortex M33",
+        "gpio_count": "82",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "LQFP100",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.71...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM8L051F3P6TR",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 2821,
+      "unit_price_cents": 80,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/955c7ab96c5be9569289a94ca9000604/STM8L051F3-DTE.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "16MHz",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "package": "TSSOP20",
+        "part_type": "STM8 microcontroller",
+        "supply_mv": "1.65...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM8L151K4T6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 962,
+      "unit_price_cents": 198,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/31e96790c514498f351738de160c6208/STM8L152C4-DTE.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "16MHz",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "package": "LQFP32",
+        "part_type": "STM8 microcontroller",
+        "supply_mv": "1.65...3.6V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM8S003F3P6TR",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 1410,
+      "unit_price_cents": 58,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/be6f45b2cc31335dcd67ad4062a3654f/STM8S003F3-DTE.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "16MHz",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "package": "TSSOP20",
+        "part_type": "STM8 microcontroller",
+        "supply_mv": "3...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "STM8S005K6T6C",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 1242,
+      "unit_price_cents": 112,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/f0e3b4894daf350d4155a2f6a522f1cb/STM8S005C6-DTE.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "16MHz",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "package": "LQFP32",
+        "part_type": "STM8 microcontroller",
+        "supply_mv": "3...5.5V DC",
+        "moq": "1",
+        "order_multiple": "1"
       }
     }
   ]

@@ -1,0 +1,1618 @@
+{
+  "kind": "candidates",
+  "category": "battery",
+  "generated_at": "2026-11-24",
+  "note": "Values are RAW vendor strings; dap_hw_spec::parametric::derive interprets them. Rebuild with tools/sourcing-run.py export.",
+  "parts": [
+    {
+      "mpn": "AKY0081",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 1121,
+      "unit_price_cents": 475,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/55795ea239d679d6262d75a152d3c002/AKY0081.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "980mAh",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0099",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 240,
+      "unit_price_cents": 684,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/1e726193fadb73e6cc6dbaf8ef8308ea/AKY0099.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "1600mAh",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0105",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 153,
+      "unit_price_cents": 729,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/d56df0ea6a733d80c1152b99e2d351e6/AKY0105.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "1.5Ah",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0106",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 1318,
+      "unit_price_cents": 346,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/b9e12bf26ad0ba929a22ab5d58f022cd/AKY0106.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "0.25Ah",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0107",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 2818,
+      "unit_price_cents": 671,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/d09d785c980e096e8a2305b0492fc05e/AKY0107.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "1350mAh",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0108",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 751,
+      "unit_price_cents": 536,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/43db02664ce86f6fea49a9a3db722648/AKY0108.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "850mAh",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0128",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 491,
+      "unit_price_cents": 318,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/786376f528c09b795b3d0eed1dbd631d/AKY0128.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "220mAh",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0131",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 13,
+      "unit_price_cents": 1508,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/dedf9a422b4975f462ff82266e0124b3/AKY0131.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "1.8Ah",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "7.4V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0153",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 113,
+      "unit_price_cents": 433,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/888e068142c838ba98b69ab15a224b43/AKY0153.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "150mAh",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0156",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 52,
+      "unit_price_cents": 1070,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/a2dfdbe7aa682ad4211a01833a74a346/AKY0156.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "2.5Ah",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0157",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 154,
+      "unit_price_cents": 748,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/3f8fc54d777ff6781b3162ec8bfa2574/AKY0157.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "1.8Ah",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0185",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 567,
+      "unit_price_cents": 417,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/c660b5b2ec7cd2ea12ef10c24c9ac081/AKY0185.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "550mAh",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0300",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 942,
+      "unit_price_cents": 356,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/8c29252acc2d2d1e54ddc4cad3b4ce60/AKY0300.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "320mAh",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0383",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 154,
+      "unit_price_cents": 457,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/d0d27f4275fea949a1f58cc11fbca835/AKY0383.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "0.75Ah",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0384",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 1437,
+      "unit_price_cents": 318,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/aa005ead2ddfeeda132df40236910882/AKY0384.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "0.25Ah",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0385",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 113,
+      "unit_price_cents": 346,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/3d16a40d6253ce7b635b307c6d0a2667/AKY0385.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "270mAh",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0386",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 1289,
+      "unit_price_cents": 402,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/ebe49c339d0e24ff3ae0104eb25a7f6d/AKY0386.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "400mAh",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0392",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 714,
+      "unit_price_cents": 421,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/519bc008f7c6eb4f85ab29877d705123/AKY0392.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "0.8Ah",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0393",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 1563,
+      "unit_price_cents": 839,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/be184e8236c8344a1924b4a606215879/AKY0393.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "2.2Ah",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0471",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 400,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/0ee490f069f93899e0171d427470ee31/AKY0471.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "40mAh",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0472",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 96,
+      "unit_price_cents": 355,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/9152d5af8f20367b4e3c34be3cc6924a/AKY-LP301525.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "85mAh",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0473",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 66,
+      "unit_price_cents": 442,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/11c0abc7493d0a6d637f0d1cff5f2106/AKY0473.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "50mAh",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0474",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 247,
+      "unit_price_cents": 435,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/f1985cd96d1668fab98ed8e4a76fac06/AKY0474.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "110mAh",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0475",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 87,
+      "unit_price_cents": 433,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/a60312df81341a52107f9952d74dfb1d/AKY0475.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "120mAh",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0476",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 69,
+      "unit_price_cents": 402,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/8cd86b5c677b3e478da689d0b6acbd83/AKY0476.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "70mAh",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0477",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 1069,
+      "unit_price_cents": 384,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/aa56ce5a5e32b302632353e520d40cb5/AKY0477.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "190mAh",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0486",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 302,
+      "unit_price_cents": 397,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/c2f81525e9dc33825d20900196d30cd1/AKY0486.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "450mAh",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0487",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 72,
+      "unit_price_cents": 1051,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/8ddf54b32393eff0e24c73431870bcc4/AKY0487.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "2.6Ah",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0535",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 521,
+      "unit_price_cents": 698,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/bd8c42013b7edbae35d1cac8327cf4e5/AKY0535.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "1400mAh",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0559",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 282,
+      "unit_price_cents": 516,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/bb2aa77d98d19f2e36185ea40deeb8c6/AKY0559.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "0.8Ah",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0563",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 69,
+      "unit_price_cents": 695,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/ef91a6d478d2d14d1741c7a3bd9800e7/AKY0563.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "1400mAh",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0571",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 1124,
+      "unit_price_cents": 636,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/32f348c6682811f6efe20c8179024c41/AKY0571.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "1Ah",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0571 + MOLEX 51021-0200",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 124,
+      "unit_price_cents": 594,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/8518e6f80c7c95dc96792c6f2286ce95/aky2417.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "1Ah",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; MOLEX 51021-0200 connector",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0580",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 1271,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/16d411d556cf33b295bee591729263f2/AKY0580.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "4Ah",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0620",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 324,
+      "unit_price_cents": 442,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/c84f0f9f72b1e7e34dc56355f7153030/AKY0620.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "0.9Ah",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0622",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 471,
+      "unit_price_cents": 556,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/39277f913093eeb85e72a29992fe122f/AKY0622.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "1.2Ah",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0623",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 153,
+      "unit_price_cents": 852,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/558890b37a84aba2bd4501648ed14d5d/AKY0623.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "1.7Ah",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0627",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 854,
+      "unit_price_cents": 1134,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/f83444b1af40d4800d74225134d28f27/AKY0627.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "3500mAh",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0638",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 896,
+      "unit_price_cents": 631,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/5dfadb0b1b1894756a6941a61a1c31c5/AKY0638.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "1.2Ah",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0640",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 839,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/b4836f1a759cded60adce04f9aa19fa4/AKY0640.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "2Ah",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; MOLEX 5264-2P socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0646",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 1298,
+      "unit_price_cents": 461,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/e47080e29ae26da2feed951f4827cf75/AKY0646.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "1100mAh",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0647",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 360,
+      "unit_price_cents": 695,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/9494e49bafab955c5f74b10aa5ca2244/AKY0647.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "1.5Ah",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0653",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 724,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/d3572550bc152ce37cf72c145f0b7a9b/AKY0653.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "1580mAh",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0654",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 66,
+      "unit_price_cents": 932,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/51e154444211358ea3386299174f833d/AKY0654.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "1950mAh",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0655",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 127,
+      "unit_price_cents": 517,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/bafab3ec3b4767bcaa5b20432abe9aaf/AKY0655.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "0.75Ah",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0656",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 178,
+      "unit_price_cents": 636,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/d6faf7fb63f1c5fb18f4f99bfd7f3a84/AKY0656.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "1Ah",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0657",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 143,
+      "unit_price_cents": 413,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/6e4d831001c4524097e9ebda229a761e/AKY0657.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "300mAh",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0658",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 208,
+      "unit_price_cents": 636,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/4311dbd4e3da49864433a0bec44c0e7e/AKY0658.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "1Ah",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0659",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 220,
+      "unit_price_cents": 711,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/ad62acecf47c43ba308d10dd0b9d7212/AKY0659.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "1150mAh",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0660",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 165,
+      "unit_price_cents": 978,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/44065c629a07fce05eddd301025bded0/AKY0660.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "1.8Ah",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0661",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 841,
+      "unit_price_cents": 536,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/dcaf3614f995034096293b4fad16b778/AKY0661.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "620mAh",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0661 + MOLEX 51021-0200",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 359,
+      "unit_price_cents": 494,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/47a9104098da7f130737c8c24c350f52/aky2416.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "620mAh",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; MOLEX 51021-0200 connector",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0662",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 905,
+      "unit_price_cents": 602,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/310a7cac95500880ea0e570a055441e1/AKY0662.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "1050mAh",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0663",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 228,
+      "unit_price_cents": 686,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/205a9d87e463f91074fe213c03e57c15/AKY0663.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "1.2Ah",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0664",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 357,
+      "unit_price_cents": 1024,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/40a2f339eb1f2680c3d4df24c1802f53/AKY0664.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "1850mAh",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0677",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 114,
+      "unit_price_cents": 821,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/6c2b32957b6060b78e93868f790dbc88/AKY0677.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "1850mAh",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0822",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 195,
+      "unit_price_cents": 370,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/310fa1e6d558d5822399876c409f73fc/AKY0822.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "400mAh",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; plug MOLEX MX-51021-0200",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0823",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 275,
+      "unit_price_cents": 450,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/b682621f5abcf27ac0ff4f722453b2cd/AKY0823.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "500mAh",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0826",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 169,
+      "unit_price_cents": 448,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/223b7c40a4c71f723511786ed7b55e48/AKY0826.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "600mAh",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0827",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 35,
+      "unit_price_cents": 777,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/8173514b8c4e829dd376d5f3b06d0b81/AKY0827.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "1.8Ah",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0829",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 91,
+      "unit_price_cents": 1454,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/d824028b1f305edb24e0c2e70770f988/AKY0829.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "4.5Ah",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0833",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 555,
+      "unit_price_cents": 488,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/e1dd1635d580f0f8599685972efc26d7/AKY0833.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "built-in NTC thermistor; PCB protection",
+        "capacity_mah": "560mAh",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; MOLEX 51021-0300 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0854",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 31,
+      "unit_price_cents": 2560,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/31ff2f1fea059f46f512244125682581/AKY0854.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "10Ah",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0929",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 75,
+      "unit_price_cents": 1316,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/50df40cb1f0cdf63e7b13205b673c3a6/AKY0929.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "2.2Ah",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "7.4V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY0972",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 119,
+      "unit_price_cents": 496,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/53e885085094d6d6c7ef94d0dfe4c752/aky0972.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "360mAh",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SHR-02V-S socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY1024",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 11,
+      "unit_price_cents": 2413,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/9e9409c08d52dacee8284d46cfd453dd/AKY1024.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "4Ah",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "7.4V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY1025",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 17,
+      "unit_price_cents": 790,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/077d55f4b053977595a06ffd4251b7f3/AKY1025.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "400mAh",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "7.4V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY1028",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 35,
+      "unit_price_cents": 730,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/768288acb3320332c8116e6f5db08c16/AKY1028.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "600mAh",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "7.4V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY1030",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 100,
+      "unit_price_cents": 864,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/a83a48811418abddb74838d8a470253b/AKY1030.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "1358mAh",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "7.4V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AKY1377",
+      "manufacturer": "AKYGA BATTERY",
+      "eu_sources": 1,
+      "eu_stock": 381,
+      "unit_price_cents": 806,
+      "moq": 1,
+      "lead_time_days": null,
+      "datasheet_url": "https://www.tme.eu/Document/e38f192ace14e6cc57ef62e081b5efb8/AKY1377.pdf",
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Li-Po",
+        "battery_features": "PCB protection",
+        "capacity_mah": "2.1Ah",
+        "manufacturer_name": "AKYGA BATTERY",
+        "rated_voltage_mv": "3.7V",
+        "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    }
+  ]
+}

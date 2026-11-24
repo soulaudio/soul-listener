@@ -52,7 +52,18 @@
     "",
     "moq added 2026-11-24. FIXTURE-OSC-22M5792-B is now reel-only (1000), modelled on the real",
     "Abracon ASV-22.5792MHZ-LR-T: 17000 in stock, 0.70 EUR each, and a 1000-piece minimum that",
-    "makes it a 700 EUR line item for a part a prototype needs one of."
+    "makes it a 700 EUR line item for a part a prototype needs one of.",
+    "",
+    "Batteries rewritten 2026-11-24 to TME's rechargeable-battery vocabulary, after sweeping all",
+    "70 Li-Po cells it carries. The discriminators are what the vendor actually publishes:",
+    "'Rechargeable batteries features' naming 'PCB protection' (the integrated-PCM condition the",
+    "certification argument rests on), 'Leads' naming the JST connector (what makes a spare",
+    "swappable), and 'Rated voltage' of 3.7 V which IS the 1S statement \u2014 a cells-in-series count",
+    "is published nowhere.",
+    "",
+    "Note what is NO LONGER here: a cell failing on dimensions or on UN 38.3 / IEC 62133-2 docs.",
+    "TME publishes neither, so those are datasheet obligations and a fixture part 'failing' on",
+    "them tested nothing but the fixture's own invention."
   ],
   "categories": {
     "mclk-osc-44k1": [
@@ -315,16 +326,13 @@
         "unit_price_cents": 480,
         "lead_time_days": 0,
         "attrs": {
-          "integrated_pcm": true,
-          "un38_3_report": true,
-          "iec62133_2_report": true,
-          "termination": "JST-PH-2.0",
-          "cells_series": 1,
+          "battery_chemistry": "Li-Po",
+          "battery_features": "PCB protection",
+          "termination": "cables; JST SYP-02T-1 socket",
+          "rated_voltage_mv": 3700,
           "capacity_mah": 1100,
-          "watt_hours": 4.07,
-          "thickness_mm": 6.2,
-          "width_mm": 32.0,
-          "length_mm": 55.0
+          "moq": 1,
+          "order_multiple": 1
         }
       },
       {
@@ -335,16 +343,13 @@
         "unit_price_cents": 390,
         "lead_time_days": 0,
         "attrs": {
-          "integrated_pcm": true,
-          "un38_3_report": true,
-          "iec62133_2_report": true,
-          "termination": "JST-PH-2.0",
-          "cells_series": 1,
+          "battery_chemistry": "Li-Po",
+          "battery_features": "PCB protection",
+          "termination": "cables; JST SYP-02T-1 socket",
+          "rated_voltage_mv": 3700,
           "capacity_mah": 1100,
-          "watt_hours": 4.07,
-          "thickness_mm": 6.2,
-          "width_mm": 32.0,
-          "length_mm": 55.0
+          "moq": 1,
+          "order_multiple": 1
         }
       },
       {
@@ -355,16 +360,13 @@
         "unit_price_cents": 210,
         "lead_time_days": 0,
         "attrs": {
-          "integrated_pcm": false,
-          "un38_3_report": true,
-          "iec62133_2_report": true,
-          "termination": "JST-PH-2.0",
-          "cells_series": 1,
+          "battery_chemistry": "Li-Po",
+          "battery_features": "bare cell",
+          "termination": "cables; JST SYP-02T-1 socket",
+          "rated_voltage_mv": 3700,
           "capacity_mah": 1100,
-          "watt_hours": 4.07,
-          "thickness_mm": 6.2,
-          "width_mm": 32.0,
-          "length_mm": 55.0
+          "moq": 1,
+          "order_multiple": 1
         }
       },
       {
@@ -375,36 +377,13 @@
         "unit_price_cents": 185,
         "lead_time_days": 0,
         "attrs": {
-          "integrated_pcm": true,
-          "un38_3_report": true,
-          "iec62133_2_report": true,
-          "termination": "solder-tab",
-          "cells_series": 1,
+          "battery_chemistry": "Li-Po",
+          "battery_features": "PCB protection",
+          "termination": "solder tabs",
+          "rated_voltage_mv": 3700,
           "capacity_mah": 1200,
-          "watt_hours": 4.44,
-          "thickness_mm": 6.2,
-          "width_mm": 32.0,
-          "length_mm": 55.0
-        }
-      },
-      {
-        "mpn": "FIXTURE-CELL-1100-NODOCS",
-        "manufacturer": "Fixture Power",
-        "eu_sources": 3,
-        "eu_stock": 60000,
-        "unit_price_cents": 240,
-        "lead_time_days": 0,
-        "attrs": {
-          "integrated_pcm": true,
-          "un38_3_report": false,
-          "iec62133_2_report": true,
-          "termination": "JST-PH-2.0",
-          "cells_series": 1,
-          "capacity_mah": 1100,
-          "watt_hours": 4.07,
-          "thickness_mm": 6.2,
-          "width_mm": 32.0,
-          "length_mm": 55.0
+          "moq": 1,
+          "order_multiple": 1
         }
       },
       {
@@ -415,36 +394,13 @@
         "unit_price_cents": 760,
         "lead_time_days": 0,
         "attrs": {
-          "integrated_pcm": true,
-          "un38_3_report": true,
-          "iec62133_2_report": true,
-          "termination": "JST-PH-2.0",
-          "cells_series": 2,
+          "battery_chemistry": "Li-Po",
+          "battery_features": "PCB protection",
+          "termination": "cables; JST SYP-02T-1 socket",
+          "rated_voltage_mv": 7400,
           "capacity_mah": 2000,
-          "watt_hours": 14.8,
-          "thickness_mm": 6.2,
-          "width_mm": 32.0,
-          "length_mm": 55.0
-        }
-      },
-      {
-        "mpn": "FIXTURE-CELL-1800-THICK",
-        "manufacturer": "Fixture Power",
-        "eu_sources": 2,
-        "eu_stock": 4000,
-        "unit_price_cents": 620,
-        "lead_time_days": 0,
-        "attrs": {
-          "integrated_pcm": true,
-          "un38_3_report": true,
-          "iec62133_2_report": true,
-          "termination": "JST-PH-2.0",
-          "cells_series": 1,
-          "capacity_mah": 1800,
-          "watt_hours": 6.66,
-          "thickness_mm": 9.0,
-          "width_mm": 32.0,
-          "length_mm": 55.0
+          "moq": 1,
+          "order_multiple": 1
         }
       },
       {
@@ -455,16 +411,46 @@
         "unit_price_cents": 150,
         "lead_time_days": 0,
         "attrs": {
-          "integrated_pcm": true,
-          "un38_3_report": true,
-          "iec62133_2_report": true,
-          "termination": "JST-PH-2.0",
-          "cells_series": 1,
+          "battery_chemistry": "Li-Po",
+          "battery_features": "PCB protection",
+          "termination": "cables; JST SYP-02T-1 socket",
+          "rated_voltage_mv": 3700,
           "capacity_mah": 600,
-          "watt_hours": 2.22,
-          "thickness_mm": 4.0,
-          "width_mm": 32.0,
-          "length_mm": 55.0
+          "moq": 1,
+          "order_multiple": 1
+        }
+      },
+      {
+        "mpn": "FIXTURE-CELL-NIMH-2000",
+        "manufacturer": "Fixture Power",
+        "eu_sources": 3,
+        "eu_stock": 60000,
+        "unit_price_cents": 300,
+        "lead_time_days": 0,
+        "attrs": {
+          "battery_chemistry": "Ni-MH",
+          "battery_features": "PCB protection",
+          "termination": "cables; JST SYP-02T-1 socket",
+          "rated_voltage_mv": 1200,
+          "capacity_mah": 2000,
+          "moq": 1,
+          "order_multiple": 1
+        }
+      },
+      {
+        "mpn": "FIXTURE-CELL-1100-NOFEATURES",
+        "manufacturer": "Fixture Power",
+        "eu_sources": 3,
+        "eu_stock": 70000,
+        "unit_price_cents": 190,
+        "lead_time_days": 0,
+        "attrs": {
+          "battery_chemistry": "Li-Po",
+          "termination": "cables; JST SYP-02T-1 socket",
+          "rated_voltage_mv": 3700,
+          "capacity_mah": 1100,
+          "moq": 1,
+          "order_multiple": 1
         }
       }
     ],

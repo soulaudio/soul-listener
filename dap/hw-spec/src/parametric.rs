@@ -431,6 +431,7 @@ pub fn expected_dimension(attr: &str) -> Option<Dimension> {
     Some(match () {
         _ if eq(a, "frequency_hz") || eq(a, "max_freq_hz") => Dimension::Frequency,
         _ if eq(a, "supply_mv_max") || eq(a, "supply_mv_min") => Dimension::Voltage,
+        _ if eq(a, "rated_voltage_mv") => Dimension::Voltage,
         _ if eq(a, "sram_bytes") || eq(a, "flash_bytes") => Dimension::Bytes,
         _ if eq(a, "core_clock_hz") => Dimension::Frequency,
         _ if eq(a, "phase_noise_dbc_1khz") => Dimension::PhaseNoise,

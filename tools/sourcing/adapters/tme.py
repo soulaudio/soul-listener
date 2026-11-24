@@ -98,6 +98,22 @@ class TmeAdapter(Adapter):
         "Output signal": "output_signal",
         "Frequency stability": "frequency_stability_ppm",
         "Manufacturer series": "series",
+        # --- Rechargeable batteries (category 100076) -------------------------
+        #
+        # Nearly the whole battery requirement turns out to be catalogue-
+        # checkable, which was not obvious until the category was read:
+        #
+        #  * "Rechargeable batteries features" carries 'PCB protection', which is
+        #    the integrated-PCM discriminator the certification argument rests on.
+        #  * "Leads" carries the connector ('cables; JST SYP-02T-1 socket'), which
+        #    is what makes a spare cell swappable.
+        #  * "Rated voltage" of 3.7 V IS the 1S statement — a count of cells in
+        #    series is not published, but the nominal voltage says it exactly.
+        "Type of rechargeable battery": "battery_chemistry",
+        "Capacity": "capacity_mah",
+        "Rated voltage": "rated_voltage_mv",
+        "Leads": "termination",
+        "Rechargeable batteries features": "battery_features",
     }
 
     def __init__(self, token: str, secret: str, country: str = "SK", currency: str = "EUR"):
@@ -115,11 +131,43 @@ class TmeAdapter(Adapter):
         return bool(self._token and self._secret)
 
     def lookup_mpns(self, mpns: list[str]) -> list[VendorPart]:
+        """Resolve identifiers, trying `mpns[]` and then `symbols[]`.
+
+        The fallback is not belt-and-braces; it fixes a FALSE NEGATIVE. TME
+        indexes the documented prototype cell with symbol `AKY-LP623255` and
+        manufacturer part number `AKY0646` — the reverse of the assumption — so
+        an `mpns[]`-only lookup reported "not carried" for a part with 1298 in
+        stock at MOQ 1.
+        
+        A "not carried" verdict is load-bearing: it is what justified calling TME
+        unable to supply the battery. Any lookup that can produce it wrongly has
+        to exhaust both indexes first.
+        """
         if not mpns:
             return []
+        elements: list[dict] = []
+        seen_ids: set[str] = set()
+
         products = self._get("/products", [("country", self.country)]
                              + [("mpns[]", m) for m in mpns])
-        elements = products.get("data", {}).get("elements", [])
+        for e in products.get("data", {}).get("elements", []):
+            elements.append(e)
+            seen_ids.update(x.upper() for x in (e.get("manufacturer_symbols") or []))
+            if e.get("symbol"):
+                seen_ids.add(e["symbol"].upper())
+
+        # Whatever did not resolve as a manufacturer part number may be a TME
+        # symbol instead. Only symbols within the length limit can be asked for.
+        unresolved, _ = _queryable([m for m in mpns if m.upper() not in seen_ids])
+        if unresolved:
+            by_symbol = self._get("/products", [("country", self.country)]
+                                  + [("symbols[]", m) for m in unresolved])
+            for e in by_symbol.get("data", {}).get("elements", []):
+                if e.get("symbol") and e["symbol"].upper() not in {
+                    x.get("symbol", "").upper() for x in elements
+                }:
+                    elements.append(e)
+
         return self._hydrate(elements)
 
     def search_category(

@@ -1,30 +1,44 @@
 #!/usr/bin/env python3
-"""Merge the recorded TME responses into `hardware/bom/snapshot.json`.
+"""Regenerate `hardware/bom/snapshot.json` from the committed catalogue DB.
 
     python3 tools/bom-snapshot-merge-tme.py
 
-Reads only the committed raw responses under `hardware/bom/responses/tme/` — it
-makes no network calls, so it is reproducible and reviewable. Run
-`tools/bom-fetch-tme.py` first to refresh those.
+Reads only `hardware/bom/catalogue.db` — no network — so it is reproducible and
+the result lands as a reviewable diff. Run `tools/sourcing-run.py fetch` first to
+refresh the DB.
+
+# What the snapshot is for, versus the DB
+
+The DB is the wide discovery surface: hundreds of parts per category, rebuildable,
+uncommitted. The snapshot is the **decision record**: only the parts the spec
+names, with the figures the gates assert, small enough to diff. When a part the
+design depends on drops to zero stock or goes reel-only, that has to show up in a
+pull request rather than change silently underneath CI.
+
+`catalogue_coverage` is the one place the two meet — a per-category summary of
+what was actually swept, so the committed artefact says how much of the market
+the conclusions rest on. Without it, "no stocked oscillator at 24.576 MHz" is an
+assertion; with it, it is an assertion plus the size of the search behind it.
 
 # Decisions this script makes, and why
 
-**A part TME does not carry gets a zero-stock offer, not silence.** "TME has no
-CS43131" is a sourcing *result*, and losing it means the next person re-runs the
-same query to learn the same thing. Both snapshot gates filter on `stock > 0`, so
-a zero-stock offer informs without being counted as a source.
+**A part the vendor does not carry gets a zero-stock offer, not silence.** "TME
+has no CS43131" is a sourcing *result*; dropping it means the next person re-runs
+the query to learn the same thing. Both snapshot gates filter on `stock > 0`, so a
+zero-stock offer informs without counting as a source.
 
-**`lifecycle` is recorded as `unknown`, not `active`.** The TME responses used
-here contain no lifecycle field. They do carry `product_status`, but
-`BLOCKED_FOR_ZBL_BACKORDERS` is an *ordering restriction* rather than a lifecycle
-state, and mapping it onto `lifecycle` would misreport the part. The raw status
-goes in the note instead, where it cannot be mistaken for a vendor lifecycle
-claim.
+**Identity is matched on either identifier.** TME holds the documented battery
+cell as symbol `AKY-LP623255` with manufacturer PN `AKY0646`. Matching one field
+only is what made an earlier run report "not carried" for a part with 1298 in
+stock.
 
-**`sourcing_pending` is kept wherever no EU distributor has stock.** The gap is
-real: TME has been asked and answered, and Mouser/Digi-Key have not been fetched.
-The reason string says exactly that, so the declaration stays honest rather than
-becoming a way to keep gates quiet.
+**`lifecycle` stays `unknown`.** These responses carry no lifecycle field.
+`product_status` is an *ordering* restriction (`BLOCKED_FOR_ZBL_BACKORDERS` means
+no zero-balance backorders), not a lifecycle state, so it goes in the note where
+it cannot be mistaken for a vendor lifecycle claim.
+
+**`sourcing_pending` is kept wherever nothing has stock**, with a reason saying
+what is actually true now rather than a generic placeholder.
 """
 
 from __future__ import annotations
@@ -32,47 +46,41 @@ from __future__ import annotations
 import collections
 import json
 import pathlib
+import sqlite3
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 SNAPSHOT = ROOT / "hardware/bom/snapshot.json"
-RESP = ROOT / "hardware/bom/responses/tme"
-RETRIEVED_AT = "2026-11-23"
+DB = ROOT / "hardware/bom/catalogue.db"
+RETRIEVED_AT = "2026-11-24"
 
-
-def load(name: str) -> dict:
-    p = RESP / name
-    if not p.exists():
-        raise SystemExit(f"missing {p.relative_to(ROOT)} — run tools/bom-fetch-tme.py first")
-    return json.loads(p.read_text())
+PENDING_NOTE = (
+    "Recorded from a real category sweep rather than guessed. A Hard lock does not accept "
+    "sourcing_pending."
+)
 
 
 def main() -> int:
-    products = load("products.json")
-    data = load("data-0.json")
-
-    identity = {e["symbol"]: e for e in products.get("data", {}).get("elements", [])}
-    pricing = {e["symbol"]: e for e in data.get("data", {}).get("elements", [])}
-
+    if not DB.exists():
+        raise SystemExit(f"no catalogue at {DB.relative_to(ROOT)} — run tools/sourcing-run.py fetch")
+    conn = sqlite3.connect(DB)
     snap = json.loads(SNAPSHOT.read_text(), object_pairs_hook=collections.OrderedDict)
-    parts = snap["parts"]
 
-    # TME resolves by manufacturer part number, so an MPN in the snapshot maps to
-    # a TME symbol only if the lookup returned it.
-    def tme_symbol_for(mpn: str) -> str | None:
-        for sym, e in identity.items():
-            if mpn.upper() in (s.upper() for s in (e.get("manufacturer_symbols") or [])):
-                return sym
-            if sym.upper() == mpn.upper():
-                return sym
-        return None
+    carried, absent = [], []
+    for mpn, part in snap["parts"].items():
+        row = conn.execute(
+            """
+            SELECT id, vendor_pn, stock, moq, order_multiple, lead_time_days,
+                   status_raw, datasheet_url
+            FROM parts
+            WHERE vendor = 'tme' AND (mpn = ? COLLATE NOCASE OR vendor_pn = ? COLLATE NOCASE)
+            LIMIT 1
+            """,
+            (mpn, mpn),
+        ).fetchone()
 
-    changed, carried, absent = [], [], []
-
-    for mpn, part in parts.items():
-        sym = tme_symbol_for(mpn)
         offers = [o for o in part.get("offers", []) if o.get("distributor") != "tme"]
 
-        if sym is None:
+        if row is None:
             offers.append(
                 collections.OrderedDict(
                     [
@@ -91,100 +99,116 @@ def main() -> int:
                         ("retrieved_at", RETRIEVED_AT),
                         (
                             "note",
-                            "NOT CARRIED BY TME: a GET /products lookup by mpns[] on "
-                            f"{RETRIEVED_AT} returned no element for this MPN. Recorded rather "
-                            "than omitted so the negative result is not re-discovered by the "
-                            "next person; both snapshot gates filter on stock > 0, so this "
-                            "counts as information and not as a source.",
+                            "NOT CARRIED BY TME: looked up by both manufacturer part number and "
+                            f"TME symbol on {RETRIEVED_AT} with no match. Recorded rather than "
+                            "omitted so the negative result is not re-discovered; both snapshot "
+                            "gates filter on stock > 0, so this counts as information and not as "
+                            "a source.",
                         ),
                     ]
                 )
             )
             absent.append(mpn)
         else:
-            ident = identity[sym]
-            price = pricing.get(sym, {})
+            pid, vendor_pn, stock, moq, mult, lead, status_raw, ds = row
             breaks = [
-                collections.OrderedDict([("qty", el["amount"]), ("unit_price", el["price"])])
-                for el in (price.get("prices", {}) or {}).get("elements", [])
+                collections.OrderedDict([("qty", q), ("unit_price", up)])
+                for q, up in conn.execute(
+                    "SELECT qty, unit_price FROM price_breaks WHERE part_id=? ORDER BY qty",
+                    (pid,),
+                )
             ]
-            prices_meta = price.get("prices", {}) or {}
-            status = ident.get("product_status") or []
-            special = any(
-                el.get("special") for el in prices_meta.get("elements", [])
-            )
+            status = json.loads(status_raw or "[]")
             note = (
-                f"GET /products + /products/data, country=SK, currency=EUR. Prices are "
-                f"{prices_meta.get('type', '?')} of tax "
-                f"{(prices_meta.get('tax') or {}).get('rate', '?')}% "
-                f"({(prices_meta.get('tax') or {}).get('type', '?')}). "
-                f"special={special} on every break, so these are LIST prices and not "
-                f"account-negotiated — reproducible by anyone with an API key."
+                f"TME API v2, country=SK, currency=EUR. MOQ {moq}, order multiple {mult}: "
+                f"stock {stock} does not mean one unit is purchasable."
             )
             if status:
                 note += (
-                    f" TME product_status={status}. Note BLOCKED_FOR_ZBL_BACKORDERS is an "
-                    "ORDERING restriction (no zero-balance backorders accepted), not a "
-                    "lifecycle state, which is why lifecycle stays 'unknown' rather than "
-                    "being inferred from it."
+                    f" TME product_status={status}. BLOCKED_FOR_ZBL_BACKORDERS is an ORDERING "
+                    "restriction (no zero-balance backorders accepted), not a lifecycle state, "
+                    "which is why lifecycle stays 'unknown' rather than being inferred from it."
                 )
+            if vendor_pn and vendor_pn.upper() != mpn.upper():
+                note += f" TME indexes this part as symbol {vendor_pn}."
             offers.append(
                 collections.OrderedDict(
                     [
                         ("distributor", "tme"),
-                        ("distributor_pn", sym),
-                        ("stock", price.get("stock_quantity", 0)),
-                        ("moq", ident.get("minimal_amount")),
-                        ("order_multiple", ident.get("multiples")),
-                        ("lead_time_days", None),
+                        ("distributor_pn", vendor_pn),
+                        ("stock", stock or 0),
+                        ("moq", moq),
+                        ("order_multiple", mult),
+                        ("lead_time_days", lead),
                         ("price_breaks", breaks),
-                        ("currency", (prices_meta.get("currency") or "EUR")),
-                        # TME returns no lifecycle field; see the module docstring.
+                        ("currency", "EUR"),
                         ("lifecycle", "unknown"),
                         ("compliance", []),
-                        ("datasheet_url", None),
+                        ("datasheet_url", ds),
                         ("source", "api"),
                         ("retrieved_at", RETRIEVED_AT),
                         ("note", note),
                     ]
                 )
             )
-            carried.append((mpn, price.get("stock_quantity", 0)))
+            carried.append((mpn, stock or 0, moq))
 
         part["offers"] = offers
-
-        # Is there now ANY EU-stocked offer? The snapshot's distributors are all
-        # EU-flagged, so stock > 0 anywhere is enough to retire the declared gap.
         stocked = [o for o in offers if (o.get("stock") or 0) > 0]
         if stocked and "sourcing_pending" in part:
             del part["sourcing_pending"]
-            changed.append(f"{mpn}: sourcing_pending cleared ({len(stocked)} stocked offer(s))")
         elif not stocked and "sourcing_pending" in part:
             part["sourcing_pending"]["reason"] = (
-                "TME has been fetched and reports no stock for this part"
-                + (" (and does not carry it)" if sym is None else "")
-                + "; Mouser and Digi-Key have not been fetched yet, so the EU sourcing question "
-                "is still open rather than answered negatively."
+                "TME has been fetched and reports no stock"
+                + ("" if row is not None else " (and does not carry this part)")
+                + "; Mouser and Digi-Key are unfetched, so the EU sourcing question is still open "
+                "rather than answered negatively."
             )
             part["sourcing_pending"]["since"] = RETRIEVED_AT
+            part["sourcing_pending"]["note"] = PENDING_NOTE
+
+    # How much of the market the conclusions rest on.
+    coverage = collections.OrderedDict()
+    for cat, n, stocked, with_ds in conn.execute(
+        """
+        SELECT category, COUNT(*), SUM(CASE WHEN stock > 0 THEN 1 ELSE 0 END),
+               SUM(CASE WHEN datasheet_url IS NOT NULL THEN 1 ELSE 0 END)
+        FROM parts WHERE vendor='tme' AND category IS NOT NULL
+        GROUP BY category ORDER BY category
+        """
+    ):
+        coverage[cat] = collections.OrderedDict(
+            [("parts_swept", n), ("stocked", stocked), ("with_datasheet", with_ds)]
+        )
 
     snap["generated_at"] = RETRIEVED_AT
     snap["generator"] = (
-        "tools/bom-fetch-tme.py + tools/bom-snapshot-merge-tme.py (TME API v2); "
+        "tools/sourcing-run.py fetch (TME API v2) + tools/bom-snapshot-merge-tme.py; "
         "Mouser and Digi-Key offers are still manual-research"
+    )
+    snap["catalogue_coverage"] = collections.OrderedDict(
+        [
+            (
+                "readme",
+                "Per-requirement TME sweep sizes behind this snapshot. The catalogue DB itself "
+                "(hardware/bom/catalogue.db) is rebuildable and NOT committed; this is the part "
+                "of it the gates depend on. A category marked as a sample was capped by a --limit "
+                "and is not the whole category.",
+            ),
+            ("vendor", "tme"),
+            ("by_requirement", coverage),
+        ]
     )
     SNAPSHOT.write_text(json.dumps(snap, indent=2) + "\n")
 
     print(f"carried by TME ({len(carried)}):")
-    for mpn, st in carried:
-        print(f"  {mpn:<26} stock={st}")
-    print(f"\nnot carried by TME ({len(absent)}):")
-    for mpn in absent:
-        print(f"  {mpn}")
-    if changed:
-        print("\nchanges:")
-        for c in changed:
-            print(f"  {c}")
+    for mpn, st, moq in carried:
+        print(f"  {mpn:<24} stock={st:<7} moq={moq}")
+    print(f"\nnot carried ({len(absent)}): {absent}")
+    print("\ncatalogue coverage:")
+    for cat, c in coverage.items():
+        print(f"  {cat:<16} swept={c['parts_swept']:<5} stocked={c['stocked']:<5} "
+              f"datasheets={c['with_datasheet']}")
     return 0
 
 

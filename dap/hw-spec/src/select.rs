@@ -66,6 +66,19 @@ pub enum Predicate<'a> {
     AtLeast(f64),
     /// Text equal to one of these, case-insensitively.
     OneOf(&'a [&'a str]),
+    /// Text *containing* this substring, case-insensitively.
+    ///
+    /// Needed because catalogue parameters are often multi-valued lists rather
+    /// than single tokens: a cell's leads come back as
+    /// `"cables; JST SYP-02T-1 socket"` and its features as
+    /// `"PCB protection"` among others. `OneOf` cannot match inside a joined
+    /// list, and splitting the list in the adapter would put interpretation on
+    /// the vendor side of the boundary.
+    ///
+    /// Deliberately a substring and not a regex: the engine is `no_std` with no
+    /// dependencies, and a requirement that needs a regex to express is probably
+    /// not a requirement anyone can review.
+    Contains(&'a str),
     IsTrue,
     /// The attribute must be present AND false.
     ///
@@ -114,6 +127,25 @@ pub struct Constraint<'a> {
     pub why: &'a str,
     /// Whether a catalogue can answer this at all. See [`Evidence`].
     pub evidence: Evidence,
+}
+
+/// Case-insensitive substring search, allocation-free.
+///
+/// `str::to_lowercase` would allocate and this crate has no `alloc`.
+fn contains_ci(haystack: &str, needle: &str) -> bool {
+    let (h, n) = (haystack.as_bytes(), needle.as_bytes());
+    if n.is_empty() {
+        return true;
+    }
+    if n.len() > h.len() {
+        return false;
+    }
+    (0..=h.len() - n.len()).any(|i| {
+        h[i..i + n.len()]
+            .iter()
+            .zip(n)
+            .all(|(a, b)| a.eq_ignore_ascii_case(b))
+    })
 }
 
 /// A catalogue part: identity plus parametric attributes.
@@ -209,6 +241,10 @@ fn check<'a>(part: &CataloguePart<'a>, c: &Constraint<'a>) -> Result<(), Rejecti
         },
         Predicate::OneOf(allowed) => match v {
             AttrValue::Text(t) => allowed.iter().any(|a| a.eq_ignore_ascii_case(t)),
+            _ => return Err(Rejection::WrongType { attr: c.attr }),
+        },
+        Predicate::Contains(needle) => match v {
+            AttrValue::Text(t) => contains_ci(t, needle),
             _ => return Err(Rejection::WrongType { attr: c.attr }),
         },
         Predicate::IsTrue => match v {

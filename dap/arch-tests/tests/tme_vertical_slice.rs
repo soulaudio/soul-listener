@@ -30,10 +30,12 @@ use dap_hw_spec::parametric::{derive, expected_dimension};
 use dap_hw_spec::select::{
     evaluate, rank, AttrValue, CataloguePart, Evidence, Rejection, DEFAULT_RANKING,
 };
-use dap_hw_spec::ACTIVE;
+use dap_hw_spec::{Preference, ACTIVE};
 use serde_json::Value;
 
 const MUX_CANDIDATES: &str = include_str!("../../../hardware/bom/candidates/mclk-mux.json");
+const BATTERY_CANDIDATES: &str = include_str!("../../../hardware/bom/candidates/battery.json");
+const MCU_CANDIDATES: &str = include_str!("../../../hardware/bom/candidates/mcu.json");
 const OSC_CANDIDATES: &str = include_str!("../../../hardware/bom/candidates/mclk-osc-44k1.json");
 
 /// Raw vendor strings for one part, owned so the engine can borrow them.
@@ -484,4 +486,187 @@ fn spec_candidates_with_datasheet_constraints_carry_a_datasheet_link() {
             );
         }
     }
+}
+
+/// The battery requirement, against 70 real Li-Po cells.
+///
+/// This requirement was the weakest in the spec: one candidate, never validated,
+/// no second source, and a manufacturer-independence gate that only ever ran
+/// against fixture data. TME turns out to carry 70 of them with the discriminating
+/// parameters published — `Rechargeable batteries features` naming
+/// 'PCB protection' and `Leads` naming the JST connector.
+///
+/// Asserts the shape of a useful answer rather than a winner, since stock moves:
+/// candidates exist, more than one manufacturer survives, and every rejection
+/// names an attribute.
+#[test]
+fn the_battery_category_yields_candidates_from_more_than_one_maker() {
+    let req = ACTIVE
+        .parts
+        .iter()
+        .find(|r| r.id == "battery")
+        .expect("spec must carry battery");
+    let raws = load(BATTERY_CANDIDATES, "battery");
+    assert!(
+        raws.len() >= 20,
+        "expected a real sweep, got {}",
+        raws.len()
+    );
+
+    let typed_attrs: Vec<Vec<(&str, AttrValue)>> =
+        raws.iter().map(|r| typed(r, req.constraints)).collect();
+    let parts: Vec<CataloguePart<'_>> = raws
+        .iter()
+        .zip(&typed_attrs)
+        .map(|(r, a)| CataloguePart {
+            mpn: &r.mpn,
+            manufacturer: &r.manufacturer,
+            attrs: a.as_slice(),
+            eu_sources: r.eu_sources,
+            eu_stock: r.eu_stock,
+            unit_price_cents: r.unit_price_cents,
+            moq: r.moq,
+            lead_time_days: r.lead_time_days,
+        })
+        .collect();
+
+    let mut verdicts = vec![None; parts.len()];
+    evaluate(&parts, req.constraints, &mut verdicts);
+
+    println!(
+        "\n=== battery, live TME sweep of {} Li-Po cells",
+        parts.len()
+    );
+    let mut qualified: Vec<CataloguePart<'_>> = Vec::new();
+    let mut reasons: Vec<(&str, &str)> = Vec::new();
+    for v in verdicts.iter().flatten() {
+        match v.rejection {
+            None => qualified.push(v.part),
+            Some(Rejection::MissingAttribute { attr, .. }) => reasons.push((v.part.mpn, attr)),
+            Some(Rejection::WrongType { attr }) => reasons.push((v.part.mpn, attr)),
+            Some(Rejection::Failed { attr, .. }) => reasons.push((v.part.mpn, attr)),
+        }
+    }
+    rank(&mut qualified, DEFAULT_RANKING);
+    for (i, p) in qualified.iter().take(6).enumerate() {
+        println!(
+            "  RANK {} {:<22} {:<18} stock={:<6} moq={:?}",
+            i + 1,
+            p.mpn,
+            p.manufacturer,
+            p.eu_stock,
+            p.moq
+        );
+    }
+    println!(
+        "  ({} qualified, {} rejected)",
+        qualified.len(),
+        reasons.len()
+    );
+
+    assert!(
+        !qualified.is_empty(),
+        "no cell qualified out of {} — the over-strict failure mode. Rejections: {:?}",
+        parts.len(),
+        reasons
+    );
+    assert_eq!(
+        qualified.len() + reasons.len(),
+        parts.len(),
+        "every part must be qualified or rejected with a named attribute"
+    );
+
+    // The property the spec cares about and could not previously check against
+    // real data: a spare must be obtainable from more than one maker.
+    let mut makers: Vec<&str> = qualified.iter().map(|p| p.manufacturer).collect();
+    makers.sort_unstable();
+    makers.dedup();
+    println!("  manufacturers: {makers:?}");
+    assert!(
+        !makers.is_empty(),
+        "qualified cells report no manufacturer, so independence cannot be judged"
+    );
+}
+
+/// The MCU requirement, against a real sample of ST's catalogue.
+///
+/// The requirement was prose-only until a sweep showed how much of it a
+/// distributor answers. The point of this test is the *preferred part passing its
+/// own requirement* — a constraint set written after the part was chosen can
+/// easily exclude it, and nothing would notice until someone re-ran selection.
+#[test]
+fn the_preferred_mcu_satisfies_the_requirement_it_was_chosen_for() {
+    let req = ACTIVE
+        .parts
+        .iter()
+        .find(|r| r.id == "mcu")
+        .expect("spec must carry mcu");
+    let raws = load(MCU_CANDIDATES, "mcu");
+    assert!(
+        raws.len() >= 50,
+        "expected a real sample, got {}",
+        raws.len()
+    );
+
+    let typed_attrs: Vec<Vec<(&str, AttrValue)>> =
+        raws.iter().map(|r| typed(r, req.constraints)).collect();
+    let parts: Vec<CataloguePart<'_>> = raws
+        .iter()
+        .zip(&typed_attrs)
+        .map(|(r, a)| CataloguePart {
+            mpn: &r.mpn,
+            manufacturer: &r.manufacturer,
+            attrs: a.as_slice(),
+            eu_sources: r.eu_sources,
+            eu_stock: r.eu_stock,
+            unit_price_cents: r.unit_price_cents,
+            moq: r.moq,
+            lead_time_days: r.lead_time_days,
+        })
+        .collect();
+
+    let mut verdicts = vec![None; parts.len()];
+    evaluate(&parts, req.constraints, &mut verdicts);
+
+    let qualified: Vec<&str> = verdicts
+        .iter()
+        .flatten()
+        .filter(|v| v.rejection.is_none())
+        .map(|v| v.part.mpn)
+        .collect();
+    println!(
+        "\n=== mcu: {} of {} sampled ST parts satisfy the requirement",
+        qualified.len(),
+        parts.len()
+    );
+
+    // The spec's own candidates must pass, where the catalogue holds them.
+    for cand in req.candidates {
+        let Some(v) = verdicts
+            .iter()
+            .flatten()
+            .find(|v| v.part.mpn.eq_ignore_ascii_case(cand.mpn))
+        else {
+            continue;
+        };
+        if matches!(
+            cand.preference,
+            Preference::Preferred | Preference::Alternate | Preference::Evaluating
+        ) {
+            assert!(
+                v.rejection.is_none(),
+                "{} is a viable candidate for 'mcu' but its OWN requirement rejects it: {:?}.\n\n\
+                 A constraint set written after the part was chosen can quietly exclude it, and \
+                 nothing notices until someone re-runs selection and finds the design \
+                 unsourceable.",
+                cand.mpn,
+                v.rejection
+            );
+            println!("  candidate {} passes its own requirement", cand.mpn);
+        }
+    }
+    assert!(
+        !qualified.is_empty(),
+        "no sampled MCU satisfied the requirement — over-strict constraints"
+    );
 }

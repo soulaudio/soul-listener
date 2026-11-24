@@ -461,60 +461,54 @@ fn constraints_are_not_self_contradictory() {
 
 /// The battery filter, where the cheapest, biggest, deepest-stocked cell loses.
 ///
-/// This is the licensing filter with the most money behind it. Two of the
-/// rejected cells are commercially the most attractive parts in the category:
+/// The licensing filter with the most money behind it. Two of the rejected cells
+/// are commercially the most attractive in the category:
 ///
-/// - `FIXTURE-CELL-1200-SOLDERTAB` is the cheapest, has the deepest stock AND the
-///   largest capacity. Solder tabs make a spare battery impossible and fail EU
-///   Battery Regulation Art. 11 user-replaceability.
-/// - `FIXTURE-CELL-1100-BARE` is cheaper than either survivor and triple-sourced.
-///   Buying bare cells and adding our own protection circuit makes *us* the
-///   battery manufacturer, inheriting UN 38.3 and IEC 62133-2 testing — a
-///   five-figure certification programme acquired by a sourcing decision.
+/// - `FIXTURE-CELL-1200-SOLDERTAB` is cheapest, deepest-stocked AND highest
+///   capacity. Soldered tabs make a spare impossible and fail EU Battery
+///   Regulation Art. 11 user-replaceability.
+/// - `FIXTURE-CELL-1100-BARE` is cheaper than either survivor and
+///   triple-sourced. Without its own protection circuit, buying it makes *us*
+///   the battery manufacturer, inheriting UN 38.3 and IEC 62133-2 testing.
 ///
-/// A price-first filter picks both. That is the whole argument for encoding these
-/// as constraints rather than leaving them in a document.
+/// A price-first filter picks both.
 #[test]
 fn the_battery_filter_rejects_the_cheapest_and_largest_cells_for_licensing_reasons() {
     let qualified = report("battery");
 
     assert!(
         !qualified.contains(&"FIXTURE-CELL-1200-SOLDERTAB".to_string()),
-        "the solder-tab cell is the cheapest, deepest-stocked and highest-capacity part in the \
-         category, and must lose: a user cannot unplug it, so there is no spare battery and no \
-         Art. 11 user-replaceability"
+        "the solder-tab cell is cheapest, deepest-stocked and highest-capacity, and must lose: a \
+         user cannot unplug it, so there is no spare battery and no Art. 11 user-replaceability"
     );
     assert!(
         !qualified.contains(&"FIXTURE-CELL-1100-BARE".to_string()),
-        "the bare cell without a protection circuit must lose even though it is cheap and \
-         triple-sourced: protecting it ourselves would transfer UN 38.3 and IEC 62133-2 \
-         certification from the vendor to us"
+        "the cell with no protection circuit must lose even though it is cheap and \
+         triple-sourced: protecting it ourselves transfers UN 38.3 and IEC 62133-2 certification \
+         from the vendor to us"
     );
     assert!(
-        !qualified.contains(&"FIXTURE-CELL-1100-NODOCS".to_string()),
-        "a vendor that will not issue the per-model transport report leaves us holding an \
-         undocumented battery; certification is per model, so a general compliance claim is not \
-         the document that ships"
+        !qualified.contains(&"FIXTURE-CELL-1100-NOFEATURES".to_string()),
+        "a cell publishing no features list at all is unknown, not compliant — and distributors \
+         DO publish this field, so its absence is a real disqualification"
     );
     assert!(
         !qualified.contains(&"FIXTURE-CELL-2S-2000".to_string()),
-        "a 2S pack is a different power tree, not a bigger battery — the charger, gauge and every \
-         rail in the power model assume one cell"
+        "7.4 V nominal is a 2S pack: a different power tree, not a bigger battery"
     );
     assert!(
-        !qualified.contains(&"FIXTURE-CELL-1800-THICK".to_string()),
-        "9 mm does not fit a 7.1 mm bay regardless of how good the cell is"
+        !qualified.contains(&"FIXTURE-CELL-NIMH-2000".to_string()),
+        "the category holds NiMH too, and the charger and power model assume Li-Po"
     );
     assert!(
         !qualified.contains(&"FIXTURE-CELL-600-SMALL".to_string()),
-        "600 mAh drops the runtime out of the compact-DAP class the product is measured against"
+        "600 mAh drops runtime out of the compact-DAP class the product is measured against"
     );
 
     assert_eq!(
         qualified.len(),
         2,
-        "exactly the two connectorised, PCM-equipped, documented 1S cells should qualify, got \
-         {qualified:?}"
+        "exactly the two compliant connectorised 1S Li-Po cells should qualify, got {qualified:?}"
     );
 }
 
@@ -681,19 +675,18 @@ fn a_spare_cell_is_obtainable_from_more_than_one_manufacturer() {
     );
 }
 
-/// Wide availability must not be bought by relaxing a licensing constraint.
+/// Wide availability must not be bought by relaxing the certification condition.
 ///
-/// The two requirements pull against each other on purpose: availability wants
-/// the broadest possible candidate set, and the certification constraints
-/// deliberately narrow it. The failure mode worth guarding is satisfying the
-/// first by weakening the second — admitting a bare cell or a solder-tab part to
-/// get the manufacturer count up.
+/// The two requirements pull against each other deliberately: availability wants
+/// the broadest candidate set, and the certification condition narrows it. The
+/// failure worth guarding is satisfying the first by weakening the second —
+/// admitting a bare cell to get the manufacturer count up.
 ///
-/// So this asserts both hold *at once*: every cell counted as available also
-/// carries its own protection circuit, its per-model reports, and a connector a
-/// user can unplug.
+/// Checked against the vendor's published field rather than an invented boolean.
+/// TME lists 'PCB protection' under its features parameter; `integrated_pcm` as a
+/// catalogue attribute never existed outside this fixture.
 #[test]
-fn every_available_cell_also_satisfies_the_certification_constraints() {
+fn every_available_cell_has_its_own_protection_circuit() {
     let owned = load("battery");
     let parts = borrow(&owned);
     let req = ACTIVE
@@ -709,59 +702,47 @@ fn every_available_cell_also_satisfies_the_certification_constraints() {
         .flatten()
         .filter(|v| v.rejection.is_none())
         .collect();
-
     assert!(
         !qualifying.is_empty(),
         "no cell qualifies at all — availability is moot if the constraint set admits nothing"
     );
 
     for v in qualifying {
-        for (attr, expect_true) in [
-            ("integrated_pcm", true),
-            ("un38_3_report", true),
-            ("iec62133_2_report", true),
-        ] {
-            let val = v
-                .part
-                .attrs
-                .iter()
-                .find(|(k, _)| k.eq_ignore_ascii_case(attr))
-                .map(|(_, val)| *val);
-            assert!(
-                matches!(val, Some(AttrValue::Bool(b)) if b == expect_true),
-                "{} is counted as an available spare but its '{attr}' is {val:?}. Widening the \
-                 candidate set must not come from relaxing the certification constraints: a bare \
-                 or undocumented cell makes US the battery manufacturer, which is a five-figure \
-                 certification programme rather than a sourcing inconvenience.",
-                v.part.mpn
-            );
-        }
+        let feats = v
+            .part
+            .attrs
+            .iter()
+            .find(|(k, _)| k.eq_ignore_ascii_case("battery_features"))
+            .map(|(_, val)| *val);
+        let ok =
+            matches!(feats, Some(AttrValue::Text(t)) if t.to_lowercase().contains("protection"));
+        assert!(
+            ok,
+            "{} is counted as available but its features are {feats:?} — no protection circuit. \
+             Widening the candidate set must not come from relaxing this: a bare cell makes US \
+             the battery manufacturer, which is a five-figure certification programme rather \
+             than a sourcing inconvenience.",
+            v.part.mpn
+        );
     }
 }
 
-/// The connector allow-list must contain only industry-standard connectors.
+/// The accepted connector must be an industry standard.
 ///
-/// This is what makes "widely available" achievable rather than aspirational.
-/// Availability of a spare depends on the *interface* being standard: a cell with
-/// a proprietary moulded connector can be the best cell in the world and still
-/// leave the user with exactly one supplier. JST PH 2.0 is the de-facto standard
-/// for single-cell Li-Po, which is why the board's connector choice is itself a
-/// sourcing decision.
+/// This is what makes "widely available" achievable rather than aspirational: a
+/// spare is only obtainable if the INTERFACE is standard. A proprietary moulded
+/// connector leaves exactly one supplier however good the cell is.
+///
+/// The predicate is a substring match because the vendor publishes leads as a
+/// multi-valued list (`"cables; JST SYP-02T-1 socket"`), so an exact-match
+/// allow-list cannot see the connector inside it.
 #[test]
-fn the_accepted_battery_connectors_are_industry_standards() {
+fn the_accepted_battery_connector_is_an_industry_standard() {
     use dap_hw_spec::select::Predicate;
 
-    // Deliberately a literal list rather than a reference to the spec's own
-    // constant: this test is asking "are these standards?", and importing the
-    // answer from the thing under test would make it tautological.
-    const INDUSTRY_STANDARD: &[&str] = &[
-        "JST-PH-2.0",
-        "JST-PH",
-        "JST-XH",
-        "molex-picoblade",
-        "molex-pico-ezmate",
-        "connector",
-    ];
+    // A literal list, deliberately: this test asks "is that a standard?", and
+    // importing the answer from the thing under test would be tautological.
+    const INDUSTRY_STANDARD: &[&str] = &["JST", "Molex", "PicoBlade", "PH 2.0", "ZH"];
 
     let req = ACTIVE
         .parts
@@ -774,25 +755,25 @@ fn the_accepted_battery_connectors_are_industry_standards() {
         .find(|c| c.attr.eq_ignore_ascii_case("termination"))
         .expect("the battery requirement must constrain termination");
 
-    let Predicate::OneOf(allowed) = termination.pred else {
-        panic!(
-            "the termination constraint is no longer a OneOf list, so the set of accepted \
-             connectors cannot be checked against the industry standards"
-        )
+    let needle = match termination.pred {
+        Predicate::Contains(n) => n,
+        Predicate::OneOf(list) => list.first().copied().unwrap_or(""),
+        other => panic!(
+            "the termination constraint is {other:?}, so the accepted connector cannot be \
+             compared against the industry standards"
+        ),
     };
-
-    for a in allowed {
-        assert!(
-            INDUSTRY_STANDARD.iter().any(|s| s.eq_ignore_ascii_case(a)),
-            "'{a}' is accepted as a battery termination but is not in the industry-standard list. \
-             A spare cell is only widely available if its connector is: a proprietary or \
-             vendor-specific termination leaves exactly one supplier, no matter how good the cell \
-             is. If '{a}' really is a standard, add it to INDUSTRY_STANDARD here with a note — do \
-             not widen only the spec side, because then nothing is comparing the two."
-        );
-    }
     assert!(
-        !allowed.is_empty(),
-        "the termination allow-list is empty, so no cell can qualify"
+        INDUSTRY_STANDARD
+            .iter()
+            .any(|s| needle.to_lowercase().contains(&s.to_lowercase())),
+        "the termination constraint accepts {needle:?}, which is not an industry-standard \
+         connector family. A spare cell is only widely available if its connector is: a \
+         proprietary or vendor-specific termination leaves exactly one supplier."
+    );
+    assert!(
+        !termination.why.is_empty(),
+        "the termination constraint must say why it exists, or a reader takes it for a connector \
+         preference rather than a user-replaceability requirement"
     );
 }

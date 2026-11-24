@@ -460,65 +460,63 @@ const MUX_CONSTRAINTS: &[Constraint<'static>] = &[
     },
 ];
 
-/// Terminations that let a user swap the cell with their hands.
-///
-/// Hot-swap and user-replaceability both come down to this: a connectorised cell
-/// can be unplugged, a solder-tab cell cannot. EU Battery Regulation Art. 11
-/// requires user-replaceability as a floor; being able to carry a charged spare
-/// is the stronger property the product wants, and it is the connector that
-/// delivers both.
-const USER_SWAPPABLE_TERMINATIONS: &[&str] =
-    &["JST-PH-2.0", "JST-PH", "connector", "molex-picoblade"];
-
 /// The battery cell, machine-checkable.
 ///
-/// Several of these are *licensing* constraints wearing electrical clothing. The
+/// **Re-evidenced 2026-11-24 against TME's rechargeable-battery category.** The
+/// first version of this set was written from the licensing research and assumed
+/// the certification documents were part attributes; reading 70 real Li-Po cells
+/// showed which of these a distributor answers and which only a human can.
+///
+/// Several of these are *licensing* constraints wearing electrical clothing: the
 /// certification for a lithium cell belongs to whoever manufactures the battery,
-/// and buying bare cells to protect ourselves would make that us — which is why
-/// `integrated_pcm` is a hard filter and not a preference. See
+/// and buying bare cells to protect ourselves would make that us. See
 /// [`crate::licensing::BATTERY_CERT_CONDITIONS`].
 const BATTERY_CONSTRAINTS: &[Constraint<'static>] = &[
     Constraint {
         evidence: Evidence::Catalogue,
-        attr: "integrated_pcm",
-        pred: crate::select::Predicate::IsTrue,
-        why: "the cell must arrive as a finished, pre-certified assembly with its own protection \
-              circuit. Buying bare cells and adding our own PCM makes US the battery \
-              manufacturer, inheriting UN 38.3 and IEC 62133-2 testing — a five-figure \
-              certification programme acquired by a sourcing decision",
+        attr: "battery_chemistry",
+        pred: crate::select::Predicate::OneOf(&["Li-Po", "Li-Pol", "LiPo"]),
+        why: "a lithium-polymer pouch cell. The category also holds NiMH, NiCd and lead-acid, \
+              none of which suit a 7 mm-thick portable device or the charger in the power model",
     },
+    // The condition the whole certification argument rests on, and it IS
+    // published: TME lists 'PCB protection' under the features parameter.
     Constraint {
         evidence: Evidence::Catalogue,
-        attr: "un38_3_report",
-        pred: crate::select::Predicate::IsTrue,
-        why: "UN 38.3 transport testing must exist FOR THIS MODEL and be obtainable from the \
-              vendor. Certification is per model, so a vendor's general compliance claim is not \
-              the document that ships with the product",
+        attr: "battery_features",
+        pred: crate::select::Predicate::Contains("PCB protection"),
+        why: "the cell must arrive as a finished assembly with its own protection circuit. \
+              Buying bare cells and adding our own PCM makes US the battery manufacturer, \
+              inheriting UN 38.3 and IEC 62133-2 testing — a five-figure certification programme \
+              acquired by a sourcing decision. A substring match because the vendor publishes a \
+              multi-valued feature list",
     },
-    Constraint {
-        evidence: Evidence::Catalogue,
-        attr: "iec62133_2_report",
-        pred: crate::select::Predicate::IsTrue,
-        why: "IEC 62133-2 cell safety report, per model, from the vendor — the other half of the \
-              archive that lets certification sit with them rather than us",
-    },
+    // What makes a spare cell usable, and also published — as part of a
+    // multi-valued 'Leads' list, which is why the predicate is Contains and why
+    // the adapter joins multiple values instead of keeping the first.
     Constraint {
         evidence: Evidence::Catalogue,
         attr: "termination",
-        pred: crate::select::Predicate::OneOf(USER_SWAPPABLE_TERMINATIONS),
+        pred: crate::select::Predicate::Contains("JST"),
         why: "a connectorised cell is what makes a spare battery usable: the user unplugs one and \
-              plugs in another. Solder tabs would satisfy nothing — not Art. 11 \
-              user-replaceability, and certainly not carrying a charged spare",
+              plugs in another. JST is the de-facto standard for single-cell Li-Po, so a spare is \
+              obtainable from more than one maker. Soldered tabs would satisfy neither that nor \
+              EU Battery Regulation Art. 11 user-replaceability",
     },
+    // 3.7 V nominal IS the 1S statement. A cells-in-series count is not
+    // published anywhere in this category; the rated voltage says it exactly,
+    // and a 2S pack reads 7.4 V.
     Constraint {
         evidence: Evidence::Catalogue,
-        attr: "cells_series",
+        attr: "rated_voltage_mv",
         pred: crate::select::Predicate::NumEq {
-            value: 1.0,
-            rel_tol: 0.0,
+            value: 3700.0,
+            rel_tol: 0.05,
         },
         why: "1S. The charger, the fuel gauge and every rail in the power model assume a single \
-              3.7 V nominal cell; a 2S pack is a different power tree, not a bigger battery",
+              3.7 V nominal cell; a 2S pack reads 7.4 V and is a different power tree rather than \
+              a bigger battery. The tolerance absorbs vendors quoting 3.6 V or 3.8 V for the same \
+              chemistry",
     },
     Constraint {
         evidence: Evidence::Catalogue,
@@ -527,31 +525,59 @@ const BATTERY_CONSTRAINTS: &[Constraint<'static>] = &[
         why: "below ~1000 mAh the runtime drops out of the compact-DAP class the product is \
               measured against (Shanling M0 Pro ~14.5 h, FiiO M6 ~12 h)",
     },
+    // --- Datasheet-only, on evidence ------------------------------------
+    //
+    // None of the following appear in the category's parametric data. They are
+    // vendor documents and mechanical drawings, so leaving them as catalogue
+    // constraints would reject all 70 real cells for fields no distributor
+    // publishes — the trap break_before_make and phase noise both fell into.
     Constraint {
-        evidence: Evidence::Catalogue,
+        evidence: Evidence::Datasheet,
+        attr: "un38_3_report",
+        pred: crate::select::Predicate::IsTrue,
+        why: "UN 38.3 transport testing must exist FOR THIS MODEL and be obtainable from the \
+              vendor. Datasheet-only: certification is a document, not a parametric field, and no \
+              distributor publishes it — confirm per candidate and archive it",
+    },
+    Constraint {
+        evidence: Evidence::Datasheet,
+        attr: "iec62133_2_report",
+        pred: crate::select::Predicate::IsTrue,
+        why: "IEC 62133-2 cell safety report, per model, from the vendor. Datasheet-only for the \
+              same reason as UN 38.3",
+    },
+    Constraint {
+        evidence: Evidence::Datasheet,
         attr: "watt_hours",
         pred: crate::select::Predicate::AtMost(100.0),
         why: "above 100 Wh a lithium battery installed in equipment leaves UN3481 PI967 Section \
-              II and needs Class 9 dangerous-goods shipping. The design is ~4 Wh, so this is a \
-              guard against a future cell choice quietly changing how the product can be posted",
+              II and needs Class 9 dangerous-goods shipping. Datasheet-only, though it is \
+              arithmetic on two published figures (capacity x rated voltage) — at ~4 Wh this \
+              design is nowhere near the threshold, so the guard is against a future cell choice \
+              quietly changing how the product can be posted",
     },
+    // Dimensions are not published in this category. The MPN encodes them
+    // (AKY-LP623255 is 6.2 x 32 x 55 mm) but parsing physical specs out of a
+    // part number is exactly the fragile inference this pipeline avoids.
     Constraint {
-        evidence: Evidence::Catalogue,
+        evidence: Evidence::Datasheet,
         attr: "thickness_mm",
         pred: crate::select::Predicate::AtMost(7.1),
-        why: "the battery bay is 35 x 59 x 7.1 mm",
+        why: "the battery bay is 35 x 59 x 7.1 mm. Datasheet-only: TME publishes no dimensions \
+              for cells, and although the Akyga part number encodes them, reading physical specs \
+              out of an MPN is the kind of inference that is right until it is silently wrong",
     },
     Constraint {
-        evidence: Evidence::Catalogue,
+        evidence: Evidence::Datasheet,
         attr: "width_mm",
         pred: crate::select::Predicate::AtMost(35.0),
-        why: "battery bay width",
+        why: "battery bay width; datasheet-only, as above",
     },
     Constraint {
-        evidence: Evidence::Catalogue,
+        evidence: Evidence::Datasheet,
         attr: "length_mm",
         pred: crate::select::Predicate::AtMost(59.0),
-        why: "battery bay length",
+        why: "battery bay length; datasheet-only, as above",
     },
 ];
 
@@ -613,6 +639,72 @@ const BLUETOOTH_CONSTRAINTS: &[Constraint<'static>] = &[
         attr: "supply_mv_max",
         pred: crate::select::Predicate::AtMost(3300.0),
         why: "the board has no rail above 3.3 V",
+    },
+];
+
+/// The MCU, machine-checkable.
+///
+/// Added 2026-11-24, after a sweep of TME's ST-microcontroller category showed
+/// how much of this requirement a distributor actually answers: `core_clock_hz`
+/// for 101 of 102 parts, `cpu_core` for 97, `supply_mv` for 99. The requirement
+/// had been prose-only since the spec was written.
+///
+/// SRAM and flash stay datasheet-only, and not for want of trying: TME publishes
+/// them in a single multi-valued `Memory` parameter (`['1.4MB SRAM',
+/// '2MB FLASH']`), which cannot be reduced to one number without guessing which
+/// entry is which. They are also the figures `dap-arch-tests`' budget gates
+/// already enforce against the firmware's real memory map, which is a stronger
+/// check than a catalogue string.
+const MCU_CONSTRAINTS: &[Constraint<'static>] = &[
+    Constraint {
+        evidence: Evidence::Catalogue,
+        attr: "cpu_core",
+        pred: crate::select::Predicate::Contains("Cortex M7"),
+        why: "the firmware is built for Cortex-M7: it depends on the double-precision FPU and the \
+              AXI/AHB memory layout the placement doc reasons about. An M4 or M33 part is not a \
+              slower option, it is a different target",
+    },
+    Constraint {
+        evidence: Evidence::Catalogue,
+        attr: "core_clock_hz",
+        pred: crate::select::Predicate::AtLeast(250_000_000.0),
+        why: "the measured decode+resample budget needs >=250 MHz at VOS0; below that the \
+              resampled pipeline misses real time (see power::model's \
+              native_rate_reaches_vos3_while_resampling_needs_vos2)",
+    },
+    Constraint {
+        evidence: Evidence::Catalogue,
+        attr: "supply_mv_min",
+        pred: crate::select::Predicate::AtMost(3300.0),
+        why: "must operate from the board's 3.3 V rail",
+    },
+    Constraint {
+        evidence: Evidence::Catalogue,
+        attr: "supply_mv_max",
+        pred: crate::select::Predicate::AtLeast(3300.0),
+        why: "and must tolerate 3.3 V — a higher maximum rating is better, not worse",
+    },
+    Constraint {
+        evidence: Evidence::Catalogue,
+        attr: "mounting",
+        pred: crate::select::Predicate::OneOf(&["SMD"]),
+        why: "hand-assembled small batch, so surface mount",
+    },
+    Constraint {
+        evidence: Evidence::Datasheet,
+        attr: "sram_bytes",
+        pred: crate::select::Predicate::AtLeast(1_048_576.0),
+        why: ">=1 MB of CONTIGUOUS DMA-capable SRAM, which is the whole reason V2 drops the \
+              external SDRAM. Datasheet-only: TME reports SRAM and flash in one multi-valued \
+              `Memory` parameter that cannot be split without guessing, and contiguity is not a \
+              catalogue concept at all. The firmware's real memory map is enforced far more \
+              strictly by dap-arch-tests' budget gates",
+    },
+    Constraint {
+        evidence: Evidence::Datasheet,
+        attr: "flash_bytes",
+        pred: crate::select::Predicate::AtLeast(2_097_152.0),
+        why: "2 MB flash. Datasheet-only for the same reason as SRAM",
     },
 ];
 
@@ -793,7 +885,7 @@ const PARTS: &[PartReq] = &[
     PartReq {
         id: "mcu",
         what: "Cortex-M7 >=250 MHz, >=1 MB contiguous DMA-capable SRAM, SAI, SDMMC, 2 MB flash",
-        constraints: NO_CONSTRAINTS,
+        constraints: MCU_CONSTRAINTS,
         candidates: &[
             Candidate {
                 mpn: "STM32H7A3ZIT6",
@@ -821,19 +913,43 @@ const PARTS: &[PartReq] = &[
         what: "1S Li-Po, >=1000 mAh, finished cell with its own PCM, connectorised, fits a \
                35 x 59 x 7.1 mm bay, per-model UN 38.3 + IEC 62133-2 docs available",
         constraints: BATTERY_CONSTRAINTS,
-        candidates: &[Candidate {
-            mpn: "AKY-LP623255",
-            preference: Preference::Evaluating,
-            // Evaluating rather than Preferred on purpose. The licensing research
-            // records this as the documented prototype cell, but a second source
-            // has not been researched, and `requirements_have_a_preference_and_a_
-            // second_source` would then demand an Alternate — which could only be
-            // satisfied by inventing one.
-            note: "Akyga AKY-LP623255: 1100 mAh, 6.2 x 32 x 55 mm, PCM + JST, vendor issues the \
-                   per-model AKY0646 docs. The documented prototype cell (licensing research §1); \
-                   marked Evaluating because no second source is researched yet, and a 1500 mAh \
-                   class-leading cell is deferred pending a bay tweak.",
-        }],
+        candidates: &[
+            Candidate {
+                mpn: "AKY-LP623255",
+                preference: Preference::Evaluating,
+                note: "CATALOGUE-CONFIRMED 2026-11-24: 1100 mAh, 3.7 V, 'cables; JST SYP-02T-1 \
+                       socket', features 'PCB protection' — so the integrated-PCM condition the \
+                       whole certification argument rests on is confirmed from vendor data rather \
+                       than assumed. 1298 in stock at TME, MOQ 1. Ranks 3rd of 31 qualifying \
+                       cells. \
+                       \
+                       Identity note worth recording: TME holds this as SYMBOL AKY-LP623255 with \
+                       MANUFACTURER PN AKY0646 — the reverse of the assumption, and the licensing \
+                       research's reference to 'the per-model AKY0646 docs' is the manufacturer \
+                       number. An mpns[]-only lookup reported this part 'not carried' while 1298 \
+                       sat in stock, which is why the adapter now falls back to symbols[]. \
+                       \
+                       Still datasheet-only and genuinely open: the bay fit (TME publishes no \
+                       dimensions for cells) and the per-model UN 38.3 / IEC 62133-2 reports.",
+            },
+            Candidate {
+                mpn: "AKY0107",
+                preference: Preference::Evaluating,
+                note: "1350 mAh, 2818 in stock, MOQ 1 — ranks 1st of the 31 qualifying cells on \
+                       stock depth, and more capacity than the documented part. Recorded as a \
+                       model-level fallback, NOT as manufacturer independence: see the \
+                       requirement's single-maker finding. Bay fit unconfirmed, which is the \
+                       blocker on preferring it. \
+                       \
+                       SINGLE-MANUFACTURER FINDING, measured 2026-11-24: all 70 Li-Po cells TME \
+                       carries are AKYGA BATTERY, and so are all 31 that pass the constraints. \
+                       TME therefore satisfies 'a spare is buyable' (MOQ 1, thousands in stock) \
+                       but NOT 'from more than one manufacturer' — the property that survives a \
+                       vendor leaving the market, and the one that matters most for the single \
+                       component an END USER re-buys. Closing it needs a second distributor, not \
+                       a second Akyga model.",
+            },
+        ],
     },
     PartReq {
         id: "bluetooth",

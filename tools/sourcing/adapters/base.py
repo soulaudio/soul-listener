@@ -133,9 +133,22 @@ class Adapter(abc.ABC):
         lowered = {k.strip().lower(): v for k, v in self.ATTR_MAP.items()}
         for name, value in vendor_params:
             key = lowered.get(name.strip().lower())
-            if key and value and value.strip():
-                # First non-empty wins: vendors sometimes repeat a parameter with
-                # an empty value, and an empty string would read as "published
-                # but unknown" when it means "not published".
-                out.setdefault(key, value.strip())
+            if not key or not value or not value.strip():
+                # An empty value means "not published", which must stay absent
+                # rather than becoming an empty string that reads as "published
+                # but unknown".
+                continue
+            v = value.strip()
+            if key in out:
+                # JOIN rather than keep-first. A parameter can legitimately carry
+                # several values, and the extra ones are often the load-bearing
+                # part: TME reports a cell's `Leads` as
+                # ['cables', 'JST SYP-02T-1 socket'], and keeping only 'cables'
+                # discards the connector — which is the entire basis of the
+                # spare-battery requirement. Same for a features list, where
+                # 'PCB protection' may be the second entry.
+                if v.lower() not in out[key].lower():
+                    out[key] = f"{out[key]}; {v}"
+            else:
+                out[key] = v
         return out
