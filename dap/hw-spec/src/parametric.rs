@@ -446,6 +446,78 @@ fn eq(a: &str, b: &str) -> bool {
     a.eq_ignore_ascii_case(b)
 }
 
+/// Case-insensitive suffix test without allocating.
+///
+/// `str::to_ascii_lowercase` returns a `String`, and this crate is `no_std` with
+/// no `alloc`. Compared over bytes rather than by slicing so a non-ASCII
+/// attribute name cannot panic on a char boundary.
+fn ends_with_ci(s: &str, suffix: &str) -> bool {
+    let (sb, fb) = (s.as_bytes(), suffix.as_bytes());
+    sb.len() > fb.len()
+        && sb[sb.len() - fb.len()..]
+            .iter()
+            .zip(fb)
+            .all(|(a, b)| a.eq_ignore_ascii_case(b))
+}
+
+/// Derive the value of a named spec attribute from one raw catalogue string.
+///
+/// This is the single entry point a fetcher's output should go through, and it
+/// exists so that **no vendor-side code ever interprets a value**. An adapter
+/// maps a vendor's parameter NAME onto a spec attribute name and hands over the
+/// string untouched; everything about what the string means happens here, in the
+/// crate the constraints live in and under the same tests.
+///
+/// # The `_min`/`_max` convention
+///
+/// Distributors publish one field — `"Supply voltage: 1.65...5.5V DC"` — where
+/// the spec needs two bounds, because the real requirement is that the operating
+/// range *contains* the board's rail. So an attribute whose name ends `_min` or
+/// `_max` is derived from whichever bound of the published range it asks for, and
+/// a single-valued string answers both:
+///
+/// ```
+/// use dap_hw_spec::parametric::derive;
+/// assert_eq!(derive("supply_mv_min", "1.65...5.5V DC"), Some(1650.0));
+/// assert_eq!(derive("supply_mv_max", "1.65...5.5V DC"), Some(5500.0));
+/// // A single rated value answers either bound.
+/// assert_eq!(derive("supply_mv_max", "3.3V"), Some(3300.0));
+/// ```
+///
+/// Returns `None` for anything ambiguous, unparseable, or of the wrong
+/// dimension — the engine then treats the attribute as missing, which is a
+/// rejection. That is deliberate: see the module docs on why an unstated unit
+/// must never be guessed.
+#[must_use]
+pub fn derive(attr: &str, raw: &str) -> Option<f64> {
+    let dim = expected_dimension(attr)?;
+
+    if dim == Dimension::Count {
+        return parse_count(raw).and_then(|q| attribute_value(attr, q));
+    }
+
+    // A bound asked of a range.
+    let bound = if ends_with_ci(attr, "_min") {
+        Some(Bound::Min)
+    } else if ends_with_ci(attr, "_max") {
+        Some(Bound::Max)
+    } else {
+        None
+    };
+
+    let q = match bound {
+        // Try the range first; fall back to a single value, which answers either
+        // bound for a part quoting one rating rather than a span.
+        Some(b) => range_bound(raw, b).or_else(|| parse_quantity(raw)),
+        None => parse_quantity(raw),
+    }?;
+
+    if q.dimension != dim {
+        return None;
+    }
+    Some(q.value)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -760,6 +832,47 @@ mod tests {
         let q = parse_quantity("2MB").expect("parses");
         assert_eq!(attribute_value("core_clock_hz", q), None);
         assert_eq!(attribute_value("flash_bytes", q), Some(2_097_152.0));
+    }
+
+    /// `derive` is the whole vendor-facing surface, pinned against real strings.
+    #[test]
+    fn derive_turns_real_catalogue_strings_into_spec_attributes() {
+        // One published range answers both bounds — the thing that makes
+        // containment checkable from a single vendor field.
+        assert_eq!(derive("supply_mv_min", "1.65...5.5V DC"), Some(1650.0));
+        assert_eq!(derive("supply_mv_max", "1.65...5.5V DC"), Some(5500.0));
+        assert_eq!(derive("supply_mv_min", "1.62...3.6V DC"), Some(1620.0));
+        assert_eq!(derive("supply_mv_max", "1.62...3.6V DC"), Some(3600.0));
+
+        // A single rated value answers either bound.
+        assert_eq!(derive("supply_mv_max", "3.3V"), Some(3300.0));
+        assert_eq!(derive("supply_mv_min", "3.3V"), Some(3300.0));
+
+        // Counts, frequencies, byte sizes.
+        assert_eq!(derive("channels", "1"), Some(1.0));
+        assert_eq!(derive("core_clock_hz", "280MHz"), Some(280e6));
+        assert_eq!(
+            derive("sram_bytes", "1.4MB SRAM"),
+            Some(1.4 * 1024.0 * 1024.0)
+        );
+        assert_eq!(
+            derive("flash_bytes", "2MB FLASH"),
+            Some(2.0 * 1024.0 * 1024.0)
+        );
+
+        // Wrong dimension, unknown attribute, and text all refuse.
+        assert_eq!(derive("supply_mv_max", "280MHz"), None);
+        assert_eq!(derive("colour", "3.3V"), None);
+        assert_eq!(derive("channels", "SPDT"), None);
+        assert_eq!(derive("supply_mv_max", ""), None);
+
+        // And the trap: a bare number cannot become a voltage.
+        assert_eq!(
+            derive("supply_mv_max", "3.3"),
+            None,
+            "a unitless value must stay unknown rather than being guessed into the attribute's \
+             canonical unit"
+        );
     }
 
     /// Catalogue booleans, and the refusal that matters.

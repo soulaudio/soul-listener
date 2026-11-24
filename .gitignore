@@ -74,3 +74,11 @@ test_*.txt
 .env
 .env.*
 !.env.example
+
+# Sourcing catalogue — the wide discovery surface. Rebuildable from the vendor
+# APIs (a 400-part category is ~20 calls), and deliberately NOT committed: CI
+# reads hardware/bom/snapshot.json, so a part dropping to zero stock arrives as
+# a reviewable diff rather than silently changing under us.
+hardware/bom/catalogue.db
+hardware/bom/catalogue.db-journal
+hardware/bom/catalogue.db-wal

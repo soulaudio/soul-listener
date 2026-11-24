@@ -1,0 +1,52 @@
+{
+  "kind": "candidates",
+  "category": "mcu",
+  "generated_at": "2026-11-24",
+  "note": "Values are RAW vendor strings; dap_hw_spec::parametric::derive interprets them. Rebuild with tools/sourcing-run.py export.",
+  "parts": [
+    {
+      "mpn": "STM32H7A3ZIT6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 1300,
+      "lead_time_days": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "280MHz",
+        "cpu_core": "Cortex M7",
+        "gpio_count": "112",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "LQFP144",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.62...3.6V DC"
+      }
+    },
+    {
+      "mpn": "STM32H7B3ZIT6",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 1670,
+      "lead_time_days": null,
+      "vendors": [
+        "tme"
+      ],
+      "attrs_raw": {
+        "core_clock_hz": "280MHz",
+        "cpu_core": "Cortex M7",
+        "gpio_count": "112",
+        "manufacturer_name": "STMicroelectronics",
+        "mounting": "SMD",
+        "operating_temp_c": "-40...85\u00b0C",
+        "package": "LQFP144",
+        "part_type": "STM32 ARM microcontroller",
+        "supply_mv": "1.62...3.6V DC"
+      }
+    }
+  ]
+}
