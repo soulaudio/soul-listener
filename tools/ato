@@ -89,6 +89,31 @@ if [ ! -x "$ATO_BIN" ]; then
 fi
 
 export LD_LIBRARY_PATH="$(libstdcxx_path):${LD_LIBRARY_PATH:-}"
+
+# Three warnings atopile prints on EVERY invocation, all benign, all
+# unfixable by configuration. Filtered by default; set ATO_SHOW_NOISE=1 to see
+# them. Each pattern is here with its diagnosis, because a filter without one is
+# indistinguishable from hiding a real problem.
+#
+# 1+2. "Couldn't install plugin: Could not find KiCad plugin path" and
+#      "Couldn't enable plugin api: KeyErrorNotFound()".
+#
+#      atopile 0.15.9 hardcodes KICAD_VERSION = "9.0"
+#      (faebryk/libs/kicad/paths.py:15) and `_get_versioned_dirs` appends it to
+#      every base path INCLUDING user-supplied `kicad.search_paths` — so with
+#      KiCad 10 installed (~/.config/kicad/10.0) it hunts for a 9.0 directory
+#      that does not exist, and no setting can redirect it. Verified: setting
+#      ATO_KICAD_SEARCH_PATHS changes nothing.
+#
+#      Harmless here regardless: the plugin is the pcbnew GUI integration for
+#      layout-reuse "Pull Group". This project drives kicad-cli, never the GUI.
+#
+# 3.   The 0.16 migration notice. Fetched from the components service at
+#      /v0/motd and emitted via logger.warning, with no config flag and no way
+#      to lower the log level (-v only raises it). The content is accurate and
+#      recorded in docs/hardware/ATOPILE-TOOLCHAIN.md, so seeing it on every
+#      command adds nothing.
+ATO_NOISE_RE="Couldn't install plugin|Couldn't enable plugin api|is the last CLI release|atopile.cli.motd|…ile.cli.configure"
 # atopile's live display assumes a width; without this it wraps error messages
 # into unreadable 60-column columns when run non-interactively.
 export COLUMNS="${COLUMNS:-200}"
@@ -97,4 +122,11 @@ export COLUMNS="${COLUMNS:-200}"
 if [ -z "${ATO_NO_CHDIR:-}" ] && [ -f "$ROOT/hardware/ato.yaml" ]; then
   cd "$ROOT/hardware"
 fi
-exec "$ATO_BIN" "$@"
+if [ -n "${ATO_SHOW_NOISE:-}" ]; then
+  exec "$ATO_BIN" "$@"
+fi
+# stderr only: stdout stays a direct TTY so anything atopile writes there is
+# untouched, and the exit status is the real one (`exec` on the last line would
+# lose it behind the filter's).
+"$ATO_BIN" "$@" 2> >(grep --line-buffered -vE "$ATO_NOISE_RE" >&2)
+exit $?

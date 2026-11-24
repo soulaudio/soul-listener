@@ -19,6 +19,13 @@ predates 0.15.8.
 version resolves parts against `components.atopileapi.com`, which no longer
 exists in DNS. "Stay on the stable line" is not available. Python 3.14 only.
 
+**Part picking does not work, signed in or not.** Measured with a valid
+session: a 100nF 0402, a 10k 0402 and an 18pF 0402 all return "No candidates
+found". The parametric database behind the service is no longer serving. Every
+component therefore needs an explicit part under `hardware/elec/src/parts/`
+carrying `has_part_picked` — see §6. Signing in only removes the `Sign-in
+required` error; it does not get you a part.
+
 **`assert` statements are not checked by the offline build.** They are solver
 constraints, the solve runs *after* part picking, and picking needs an
 interactive sign-in. Changing `assert xtal.frequency within 24MHz to 26MHz` to

@@ -81,6 +81,38 @@ So the gate is two-tier, and neither tier should be described as the other:
 - **Authenticated** — the above plus part picking, the constraint solve, the
   `assert` design rules and DRC. Developer machine only.
 
+### Signing in does NOT restore part picking
+
+Measured 2026-11-24 with a valid session (`ato auth status` → "Signed in as …"):
+
+| query | result |
+|---|---|
+| `Capacitor` 100nF ±10% `0402` | **No candidates found** |
+| `Resistor` 10kΩ ±1% `0402` | **No candidates found** |
+| `Capacitor` 18pF ±5% `0402` | **No candidates found** |
+
+Those are the three most common passives in existence. Signing in removed the
+`Sign-in required` error and nothing else: the parametric (`is_pickable_by_type`)
+database behind `legacy.atopileapi.com` is no longer serving. The service accepts
+an authenticated request and returns an empty candidate set with no exclusion
+reason.
+
+**So vendoring is not the durable option, it is the only option.** An earlier
+version of this document called it "the only durable way"; that was too soft. A
+design built on `new Capacitor` with a capacitance cannot be built by anyone, on
+any machine, signed in or not. Every component needs an explicit part under
+`hardware/elec/src/parts/` carrying `has_part_picked`.
+
+Two consequences worth stating plainly:
+
+- The repo's 270-odd generic passives all need vendoring before the board can be
+  built, BOM'd or rendered. That is the real size of the migration, and it is
+  mechanical: one `parts/` directory per distinct value/package combination,
+  reused across instances.
+- `ato create part` cannot help, because it resolves through the same service.
+  Footprints have to come from KiCad's own libraries (which is what
+  `tools/ato-vendor-part.py` does) or be hand-authored.
+
 ### The authenticated tier cannot be automated
 
 `ato auth` has exactly three subcommands: `login`, `logout`, `status`. `login` is
@@ -272,10 +304,10 @@ board with no credentials:
 ✓ step [5.38s]            ✓ glb [4.14s]   ✓ 3d-image [17.44s]
 ```
 
-So the real rule is: **3D needs vendored parts, not an account.** What was true
-is narrower than what was written — *generic* components (`new Capacitor` with a
-capacitance) need the picker, and this design is almost entirely generic
-components, so nothing renders yet. The fix is vendoring, not authenticating.
+So the real rule is: **3D needs vendored parts, not an account.** Confirmed
+twice over — with a valid session the picker still returns no candidates for a
+100nF 0402 (see "Signing in does NOT restore part picking"), so authenticating
+changes nothing at all here. The fix is vendoring, and only vendoring.
 
 Two constraints found by testing rather than reading:
 
