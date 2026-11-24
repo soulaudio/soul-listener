@@ -13,6 +13,7 @@
 use dap_hw_spec::licensing::{
     regime_for, ComplianceRegime, Exposure, RoyaltyStatus, BATTERY_CERT_CONDITIONS, EXPOSURES,
 };
+use dap_hw_spec::select::{Evidence, Predicate};
 use dap_hw_spec::{Preference, ACTIVE};
 
 fn exposure(id: &str) -> &'static Exposure {
@@ -176,16 +177,33 @@ fn the_integrated_pcm_condition_is_a_filter_and_not_only_a_note() {
         .find(|r| r.id == "battery")
         .expect("the spec must carry a battery requirement");
 
-    assert!(
-        battery
-            .constraints
-            .iter()
-            .any(|c| c.attr.eq_ignore_ascii_case("integrated_pcm")),
-        "the battery requirement does not constrain `integrated_pcm`. That is the one condition \
-         in BATTERY_CERT_CONDITIONS that is a property of the PART rather than of our process, \
-         and dropping it means a bare cell can qualify — which would make us the battery \
-         manufacturer and transfer UN 38.3 and IEC 62133-2 testing to us. Conditions:\n  - {}",
-        BATTERY_CERT_CONDITIONS.join("\n  - ")
+    // Checked by CONDITION rather than by attribute name. The attribute moved
+    // from an invented `integrated_pcm` to the vendor's own `battery_features`
+    // once a real sweep showed TME publishes 'PCB protection' there — so pinning
+    // the name would have failed for the right change.
+    let pcm = battery
+        .constraints
+        .iter()
+        .find(|c| {
+            matches!(c.pred, Predicate::Contains(n) if n.to_lowercase().contains("protection"))
+                || c.attr.eq_ignore_ascii_case("integrated_pcm")
+        })
+        .unwrap_or_else(|| {
+            panic!(
+                "the battery requirement does not check that the cell has its own protection \
+                 circuit. That is the one condition in BATTERY_CERT_CONDITIONS which is a \
+                 property of the PART rather than of our process, and dropping it lets a bare \
+                 cell qualify — making us the battery manufacturer and transferring UN 38.3 and \
+                 IEC 62133-2 testing to us. Conditions:\n  - {}",
+                BATTERY_CERT_CONDITIONS.join("\n  - ")
+            )
+        });
+    assert_eq!(
+        pcm.evidence,
+        Evidence::Catalogue,
+        "the protection-circuit condition is marked datasheet-only, but distributors DO publish \
+         it: TME lists 'PCB protection' under its features parameter for all 70 Li-Po cells. \
+         Demoting a checkable condition to a human task loses the check."
     );
 
     // The transport-document conditions are per model, so both reports have to be

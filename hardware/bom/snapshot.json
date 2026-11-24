@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "generated_at": "2026-11-24",
-  "generator": "tools/bom-fetch-tme.py + tools/bom-snapshot-merge-tme.py (TME API v2); Mouser and Digi-Key offers are still manual-research",
+  "generator": "tools/sourcing-run.py fetch (TME API v2) + tools/bom-snapshot-merge-tme.py; Mouser and Digi-Key offers are still manual-research",
   "readme": [
     "Committed sourcing snapshot: price, stock, lifecycle and compliance per (MPN, distributor).",
     "",
@@ -102,8 +102,8 @@
           "compliance": [],
           "datasheet_url": null,
           "source": "api",
-          "retrieved_at": "2026-11-23",
-          "note": "NOT CARRIED BY TME: a GET /products lookup by mpns[] on 2026-11-23 returned no element for this MPN. Recorded rather than omitted so the negative result is not re-discovered by the next person; both snapshot gates filter on stock > 0, so this counts as information and not as a source."
+          "retrieved_at": "2026-11-24",
+          "note": "NOT CARRIED BY TME: looked up by both manufacturer part number and TME symbol on 2026-11-24 with no match. Recorded rather than omitted so the negative result is not re-discovered; both snapshot gates filter on stock > 0, so this counts as information and not as a source."
         }
       ]
     },
@@ -158,8 +158,8 @@
           "compliance": [],
           "datasheet_url": null,
           "source": "api",
-          "retrieved_at": "2026-11-23",
-          "note": "NOT CARRIED BY TME: a GET /products lookup by mpns[] on 2026-11-23 returned no element for this MPN. Recorded rather than omitted so the negative result is not re-discovered by the next person; both snapshot gates filter on stock > 0, so this counts as information and not as a source."
+          "retrieved_at": "2026-11-24",
+          "note": "NOT CARRIED BY TME: looked up by both manufacturer part number and TME symbol on 2026-11-24 with no match. Recorded rather than omitted so the negative result is not re-discovered; both snapshot gates filter on stock > 0, so this counts as information and not as a source."
         }
       ]
     },
@@ -182,14 +182,14 @@
           "compliance": [],
           "datasheet_url": null,
           "source": "api",
-          "retrieved_at": "2026-11-23",
-          "note": "NOT CARRIED BY TME: a GET /products lookup by mpns[] on 2026-11-23 returned no element for this MPN. Recorded rather than omitted so the negative result is not re-discovered by the next person; both snapshot gates filter on stock > 0, so this counts as information and not as a source."
+          "retrieved_at": "2026-11-24",
+          "note": "NOT CARRIED BY TME: looked up by both manufacturer part number and TME symbol on 2026-11-24 with no match. Recorded rather than omitted so the negative result is not re-discovered; both snapshot gates filter on stock > 0, so this counts as information and not as a source."
         }
       ],
       "sourcing_pending": {
-        "reason": "TME has been fetched and reports no stock for this part (and does not carry it); Mouser and Digi-Key have not been fetched yet, so the EU sourcing question is still open rather than answered negatively.",
-        "since": "2026-11-23",
-        "note": "No offers recorded on purpose: stock and price were NOT retrieved, and inventing them would be worse than admitting the gap. Run the fetcher with distributor credentials to replace this with real offers. A Hard lock does not accept sourcing_pending."
+        "reason": "TME has been fetched and reports no stock (and does not carry this part); Mouser and Digi-Key are unfetched, so the EU sourcing question is still open rather than answered negatively.",
+        "since": "2026-11-24",
+        "note": "Recorded from a real category sweep rather than guessed. A Hard lock does not accept sourcing_pending."
       }
     },
     "ASDMB-22.5792MHZ-LY-T": {
@@ -211,14 +211,14 @@
           "compliance": [],
           "datasheet_url": null,
           "source": "api",
-          "retrieved_at": "2026-11-23",
-          "note": "NOT CARRIED BY TME: a GET /products lookup by mpns[] on 2026-11-23 returned no element for this MPN. Recorded rather than omitted so the negative result is not re-discovered by the next person; both snapshot gates filter on stock > 0, so this counts as information and not as a source."
+          "retrieved_at": "2026-11-24",
+          "note": "NOT CARRIED BY TME: looked up by both manufacturer part number and TME symbol on 2026-11-24 with no match. Recorded rather than omitted so the negative result is not re-discovered; both snapshot gates filter on stock > 0, so this counts as information and not as a source."
         }
       ],
       "sourcing_pending": {
-        "reason": "TME has been fetched and reports no stock for this part (and does not carry it); Mouser and Digi-Key have not been fetched yet, so the EU sourcing question is still open rather than answered negatively.",
-        "since": "2026-11-23",
-        "note": "No offers recorded on purpose: stock and price were NOT retrieved, and inventing them would be worse than admitting the gap. Run the fetcher with distributor credentials to replace this with real offers. A Hard lock does not accept sourcing_pending."
+        "reason": "TME has been fetched and reports no stock (and does not carry this part); Mouser and Digi-Key are unfetched, so the EU sourcing question is still open rather than answered negatively.",
+        "since": "2026-11-24",
+        "note": "Recorded from a real category sweep rather than guessed. A Hard lock does not accept sourcing_pending."
       }
     },
     "ASDMB-24.576MHZ-LY-T": {
@@ -240,14 +240,14 @@
           "compliance": [],
           "datasheet_url": null,
           "source": "api",
-          "retrieved_at": "2026-11-23",
-          "note": "NOT CARRIED BY TME: a GET /products lookup by mpns[] on 2026-11-23 returned no element for this MPN. Recorded rather than omitted so the negative result is not re-discovered by the next person; both snapshot gates filter on stock > 0, so this counts as information and not as a source."
+          "retrieved_at": "2026-11-24",
+          "note": "NOT CARRIED BY TME: looked up by both manufacturer part number and TME symbol on 2026-11-24 with no match. Recorded rather than omitted so the negative result is not re-discovered; both snapshot gates filter on stock > 0, so this counts as information and not as a source."
         }
       ],
       "sourcing_pending": {
-        "reason": "TME has been fetched and reports no stock for this part (and does not carry it); Mouser and Digi-Key have not been fetched yet, so the EU sourcing question is still open rather than answered negatively.",
-        "since": "2026-11-23",
-        "note": "No offers recorded on purpose: stock and price were NOT retrieved, and inventing them would be worse than admitting the gap. Run the fetcher with distributor credentials to replace this with real offers. A Hard lock does not accept sourcing_pending."
+        "reason": "TME has been fetched and reports no stock (and does not carry this part); Mouser and Digi-Key are unfetched, so the EU sourcing question is still open rather than answered negatively.",
+        "since": "2026-11-24",
+        "note": "Recorded from a real category sweep rather than guessed. A Hard lock does not accept sourcing_pending."
       }
     },
     "74LVC1G3157GW": {
@@ -269,14 +269,14 @@
           "compliance": [],
           "datasheet_url": null,
           "source": "api",
-          "retrieved_at": "2026-11-23",
-          "note": "NOT CARRIED BY TME: a GET /products lookup by mpns[] on 2026-11-23 returned no element for this MPN. Recorded rather than omitted so the negative result is not re-discovered by the next person; both snapshot gates filter on stock > 0, so this counts as information and not as a source."
+          "retrieved_at": "2026-11-24",
+          "note": "NOT CARRIED BY TME: looked up by both manufacturer part number and TME symbol on 2026-11-24 with no match. Recorded rather than omitted so the negative result is not re-discovered; both snapshot gates filter on stock > 0, so this counts as information and not as a source."
         }
       ],
       "sourcing_pending": {
-        "reason": "TME has been fetched and reports no stock for this part (and does not carry it); Mouser and Digi-Key have not been fetched yet, so the EU sourcing question is still open rather than answered negatively.",
-        "since": "2026-11-23",
-        "note": "No offers recorded on purpose: stock and price were NOT retrieved, and inventing them would be worse than admitting the gap. Run the fetcher with distributor credentials to replace this with real offers. A Hard lock does not accept sourcing_pending."
+        "reason": "TME has been fetched and reports no stock (and does not carry this part); Mouser and Digi-Key are unfetched, so the EU sourcing question is still open rather than answered negatively.",
+        "since": "2026-11-24",
+        "note": "Recorded from a real category sweep rather than guessed. A Hard lock does not accept sourcing_pending."
       }
     },
     "SN74LVC1G3157DCKR": {
@@ -288,7 +288,7 @@
         {
           "distributor": "tme",
           "distributor_pn": "SN74LVC1G3157DCKR",
-          "stock": 6916,
+          "stock": 6903,
           "moq": 1,
           "order_multiple": 1,
           "lead_time_days": null,
@@ -337,10 +337,10 @@
           "currency": "EUR",
           "lifecycle": "unknown",
           "compliance": [],
-          "datasheet_url": null,
+          "datasheet_url": "https://www.ti.com/lit/ds/symlink/sn74lvc1g3157.pdf?ts=1728540283477&ref_url=https%253A%252F%252Fwww.ti.com%252Fproduct%252FSN74LVC1G3157",
           "source": "api",
-          "retrieved_at": "2026-11-23",
-          "note": "GET /products + /products/data, country=SK, currency=EUR. Prices are NET of tax 23.0% (VAT). special=False on every break, so these are LIST prices and not account-negotiated \u2014 reproducible by anyone with an API key."
+          "retrieved_at": "2026-11-24",
+          "note": "TME API v2, country=SK, currency=EUR. MOQ 1, order multiple 1: stock 6903 does not mean one unit is purchasable."
         }
       ]
     },
@@ -370,16 +370,16 @@
           "currency": "EUR",
           "lifecycle": "unknown",
           "compliance": [],
-          "datasheet_url": null,
+          "datasheet_url": "https://www.tme.eu/Document/94f850c15a2fb003c4530843ceba6dfc/stm32h7a3ag.pdf",
           "source": "api",
-          "retrieved_at": "2026-11-23",
-          "note": "GET /products + /products/data, country=SK, currency=EUR. Prices are NET of tax 23.0% (VAT). special=False on every break, so these are LIST prices and not account-negotiated \u2014 reproducible by anyone with an API key. TME product_status=['BLOCKED_FOR_ZBL_BACKORDERS']. Note BLOCKED_FOR_ZBL_BACKORDERS is an ORDERING restriction (no zero-balance backorders accepted), not a lifecycle state, which is why lifecycle stays 'unknown' rather than being inferred from it."
+          "retrieved_at": "2026-11-24",
+          "note": "TME API v2, country=SK, currency=EUR. MOQ 1, order multiple 1: stock 0 does not mean one unit is purchasable. TME product_status=['BLOCKED_FOR_ZBL_BACKORDERS']. BLOCKED_FOR_ZBL_BACKORDERS is an ORDERING restriction (no zero-balance backorders accepted), not a lifecycle state, which is why lifecycle stays 'unknown' rather than being inferred from it."
         }
       ],
       "sourcing_pending": {
-        "reason": "TME has been fetched and reports no stock for this part; Mouser and Digi-Key have not been fetched yet, so the EU sourcing question is still open rather than answered negatively.",
-        "since": "2026-11-23",
-        "note": "No offers recorded on purpose: stock and price were NOT retrieved, and inventing them would be worse than admitting the gap. Run the fetcher with distributor credentials to replace this with real offers. A Hard lock does not accept sourcing_pending."
+        "reason": "TME has been fetched and reports no stock; Mouser and Digi-Key are unfetched, so the EU sourcing question is still open rather than answered negatively.",
+        "since": "2026-11-24",
+        "note": "Recorded from a real category sweep rather than guessed. A Hard lock does not accept sourcing_pending."
       }
     },
     "STM32H7B3ZIT6": {
@@ -420,16 +420,16 @@
           "currency": "EUR",
           "lifecycle": "unknown",
           "compliance": [],
-          "datasheet_url": null,
+          "datasheet_url": "https://www.tme.eu/Document/af07a4430bb69abe691d1a5e438381e0/stm32h7b3zi.pdf",
           "source": "api",
-          "retrieved_at": "2026-11-23",
-          "note": "GET /products + /products/data, country=SK, currency=EUR. Prices are NET of tax 23.0% (VAT). special=False on every break, so these are LIST prices and not account-negotiated \u2014 reproducible by anyone with an API key. TME product_status=['BLOCKED_FOR_ZBL_BACKORDERS']. Note BLOCKED_FOR_ZBL_BACKORDERS is an ORDERING restriction (no zero-balance backorders accepted), not a lifecycle state, which is why lifecycle stays 'unknown' rather than being inferred from it."
+          "retrieved_at": "2026-11-24",
+          "note": "TME API v2, country=SK, currency=EUR. MOQ 1, order multiple 1: stock 0 does not mean one unit is purchasable. TME product_status=['BLOCKED_FOR_ZBL_BACKORDERS']. BLOCKED_FOR_ZBL_BACKORDERS is an ORDERING restriction (no zero-balance backorders accepted), not a lifecycle state, which is why lifecycle stays 'unknown' rather than being inferred from it."
         }
       ],
       "sourcing_pending": {
-        "reason": "TME has been fetched and reports no stock for this part; Mouser and Digi-Key have not been fetched yet, so the EU sourcing question is still open rather than answered negatively.",
-        "since": "2026-11-23",
-        "note": "No offers recorded on purpose: stock and price were NOT retrieved, and inventing them would be worse than admitting the gap. Run the fetcher with distributor credentials to replace this with real offers. A Hard lock does not accept sourcing_pending."
+        "reason": "TME has been fetched and reports no stock; Mouser and Digi-Key are unfetched, so the EU sourcing question is still open rather than answered negatively.",
+        "since": "2026-11-24",
+        "note": "Recorded from a real category sweep rather than guessed. A Hard lock does not accept sourcing_pending."
       }
     },
     "AKY-LP623255": {
@@ -440,26 +440,38 @@
       "offers": [
         {
           "distributor": "tme",
-          "distributor_pn": null,
-          "stock": 0,
-          "moq": null,
-          "order_multiple": null,
+          "distributor_pn": "AKY-LP623255",
+          "stock": 1298,
+          "moq": 1,
+          "order_multiple": 1,
           "lead_time_days": null,
-          "price_breaks": [],
+          "price_breaks": [
+            {
+              "qty": 1,
+              "unit_price": 4.61
+            },
+            {
+              "qty": 5,
+              "unit_price": 4.15
+            },
+            {
+              "qty": 24,
+              "unit_price": 3.68
+            },
+            {
+              "qty": 104,
+              "unit_price": 3.23
+            }
+          ],
           "currency": "EUR",
           "lifecycle": "unknown",
           "compliance": [],
-          "datasheet_url": null,
+          "datasheet_url": "https://www.tme.eu/Document/e47080e29ae26da2feed951f4827cf75/AKY0646.pdf",
           "source": "api",
-          "retrieved_at": "2026-11-23",
-          "note": "NOT CARRIED BY TME: a GET /products lookup by mpns[] on 2026-11-23 returned no element for this MPN. Recorded rather than omitted so the negative result is not re-discovered by the next person; both snapshot gates filter on stock > 0, so this counts as information and not as a source."
+          "retrieved_at": "2026-11-24",
+          "note": "TME API v2, country=SK, currency=EUR. MOQ 1, order multiple 1: stock 1298 does not mean one unit is purchasable. TME product_status=['DANGEROUS']. BLOCKED_FOR_ZBL_BACKORDERS is an ORDERING restriction (no zero-balance backorders accepted), not a lifecycle state, which is why lifecycle stays 'unknown' rather than being inferred from it."
         }
-      ],
-      "sourcing_pending": {
-        "reason": "TME has been fetched and reports no stock for this part (and does not carry it); Mouser and Digi-Key have not been fetched yet, so the EU sourcing question is still open rather than answered negatively.",
-        "since": "2026-11-23",
-        "note": "No offers recorded on purpose: stock and price were NOT retrieved, and inventing them would be worse than admitting the gap. Run the fetcher with distributor credentials to replace this with real offers. A Hard lock does not accept sourcing_pending."
-      }
+      ]
     },
     "FSC-BT1035": {
       "manufacturer": "Feasycom",
@@ -480,14 +492,14 @@
           "compliance": [],
           "datasheet_url": null,
           "source": "api",
-          "retrieved_at": "2026-11-23",
-          "note": "NOT CARRIED BY TME: a GET /products lookup by mpns[] on 2026-11-23 returned no element for this MPN. Recorded rather than omitted so the negative result is not re-discovered by the next person; both snapshot gates filter on stock > 0, so this counts as information and not as a source."
+          "retrieved_at": "2026-11-24",
+          "note": "NOT CARRIED BY TME: looked up by both manufacturer part number and TME symbol on 2026-11-24 with no match. Recorded rather than omitted so the negative result is not re-discovered; both snapshot gates filter on stock > 0, so this counts as information and not as a source."
         }
       ],
       "sourcing_pending": {
-        "reason": "TME has been fetched and reports no stock for this part (and does not carry it); Mouser and Digi-Key have not been fetched yet, so the EU sourcing question is still open rather than answered negatively.",
-        "since": "2026-11-23",
-        "note": "No offers recorded on purpose: stock and price were NOT retrieved, and inventing them would be worse than admitting the gap. Run the fetcher with distributor credentials to replace this with real offers. A Hard lock does not accept sourcing_pending."
+        "reason": "TME has been fetched and reports no stock (and does not carry this part); Mouser and Digi-Key are unfetched, so the EU sourcing question is still open rather than answered negatively.",
+        "since": "2026-11-24",
+        "note": "Recorded from a real category sweep rather than guessed. A Hard lock does not accept sourcing_pending."
       }
     },
     "ASV-22.5792MHZ-LR-T": {
@@ -498,7 +510,7 @@
       "offers": [
         {
           "distributor": "tme",
-          "distributor_pn": null,
+          "distributor_pn": "ASV22.5792MHZLRT-0",
           "stock": 17000,
           "moq": 1000,
           "order_multiple": 1000,
@@ -512,10 +524,10 @@
           "currency": "EUR",
           "lifecycle": "unknown",
           "compliance": [],
-          "datasheet_url": null,
+          "datasheet_url": "https://abracon.com/Oscillators/ASV.pdf",
           "source": "api",
           "retrieved_at": "2026-11-24",
-          "note": "TME category sweep of 'Resonators and Generators' (100269). MOQ 1000 with order multiple 1000: this part is REEL-ONLY, so stock 17000 does not mean one is purchasable. Every active oscillator TME carries at this frequency has the same shape."
+          "note": "TME API v2, country=SK, currency=EUR. MOQ 1000, order multiple 1000: stock 17000 does not mean one unit is purchasable. TME product_status=['EXTERNAL_WAREHOUSE', 'BLOCKED_FOR_ZBL_MP']. BLOCKED_FOR_ZBL_BACKORDERS is an ORDERING restriction (no zero-balance backorders accepted), not a lifecycle state, which is why lifecycle stays 'unknown' rather than being inferred from it. TME indexes this part as symbol ASV22.5792MHZLRT-0."
         }
       ]
     },
@@ -527,7 +539,7 @@
       "offers": [
         {
           "distributor": "tme",
-          "distributor_pn": null,
+          "distributor_pn": "KC2016Z22.5792C1KX",
           "stock": 0,
           "moq": 2000,
           "order_multiple": 2000,
@@ -541,14 +553,14 @@
           "currency": "EUR",
           "lifecycle": "unknown",
           "compliance": [],
-          "datasheet_url": null,
+          "datasheet_url": "https://www.tme.eu/Document/7eb6aaa55749803a470dbb69fd33d76a/clock_z_x_e.pdf",
           "source": "api",
           "retrieved_at": "2026-11-24",
-          "note": "TME category sweep of 'Resonators and Generators' (100269). MOQ 2000 with order multiple 2000: this part is REEL-ONLY, so stock 0 does not mean one is purchasable. Every active oscillator TME carries at this frequency has the same shape."
+          "note": "TME API v2, country=SK, currency=EUR. MOQ 2000, order multiple 2000: stock 0 does not mean one unit is purchasable. TME product_status=['BLOCKED_FOR_ZBL_BACKORDERS']. BLOCKED_FOR_ZBL_BACKORDERS is an ORDERING restriction (no zero-balance backorders accepted), not a lifecycle state, which is why lifecycle stays 'unknown' rather than being inferred from it. TME indexes this part as symbol KC2016Z22.5792C1KX."
         }
       ],
       "sourcing_pending": {
-        "reason": "zero stock at TME, which is true of EVERY active oscillator TME carries at this frequency; Mouser and Digi-Key are unfetched and both break reels for most of this category",
+        "reason": "TME has been fetched and reports no stock; Mouser and Digi-Key are unfetched, so the EU sourcing question is still open rather than answered negatively.",
         "since": "2026-11-24",
         "note": "Recorded from a real category sweep rather than guessed. A Hard lock does not accept sourcing_pending."
       }
@@ -561,7 +573,7 @@
       "offers": [
         {
           "distributor": "tme",
-          "distributor_pn": null,
+          "distributor_pn": "KC2016Z24.5760C1KX",
           "stock": 0,
           "moq": 2000,
           "order_multiple": 2000,
@@ -575,16 +587,93 @@
           "currency": "EUR",
           "lifecycle": "unknown",
           "compliance": [],
-          "datasheet_url": null,
+          "datasheet_url": "https://www.tme.eu/Document/7eb6aaa55749803a470dbb69fd33d76a/clock_z_x_e.pdf",
           "source": "api",
           "retrieved_at": "2026-11-24",
-          "note": "TME category sweep of 'Resonators and Generators' (100269). MOQ 2000 with order multiple 2000: this part is REEL-ONLY, so stock 0 does not mean one is purchasable. Every active oscillator TME carries at this frequency has the same shape."
+          "note": "TME API v2, country=SK, currency=EUR. MOQ 2000, order multiple 2000: stock 0 does not mean one unit is purchasable. TME product_status=['BLOCKED_FOR_ZBL_BACKORDERS']. BLOCKED_FOR_ZBL_BACKORDERS is an ORDERING restriction (no zero-balance backorders accepted), not a lifecycle state, which is why lifecycle stays 'unknown' rather than being inferred from it. TME indexes this part as symbol KC2016Z24.5760C1KX."
         }
       ],
       "sourcing_pending": {
-        "reason": "zero stock at TME, which is true of EVERY active oscillator TME carries at this frequency; Mouser and Digi-Key are unfetched and both break reels for most of this category",
+        "reason": "TME has been fetched and reports no stock; Mouser and Digi-Key are unfetched, so the EU sourcing question is still open rather than answered negatively.",
         "since": "2026-11-24",
         "note": "Recorded from a real category sweep rather than guessed. A Hard lock does not accept sourcing_pending."
+      }
+    },
+    "AKY0107": {
+      "manufacturer": "Akyga Battery",
+      "description": "Re-battery: Li-Po; 1350mAh; 3.7V; cables,JST SYP-02T-1 socket",
+      "package": "pouch cell",
+      "satisfies": "battery",
+      "offers": [
+        {
+          "distributor": "tme",
+          "distributor_pn": "AKY-LP503759",
+          "stock": 2818,
+          "moq": 1,
+          "order_multiple": 1,
+          "lead_time_days": null,
+          "price_breaks": [
+            {
+              "qty": 1,
+              "unit_price": 6.71
+            },
+            {
+              "qty": 5,
+              "unit_price": 6.04
+            },
+            {
+              "qty": 24,
+              "unit_price": 5.37
+            },
+            {
+              "qty": 96,
+              "unit_price": 4.7
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": "https://www.tme.eu/Document/d09d785c980e096e8a2305b0492fc05e/AKY0107.pdf",
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "From the TME rechargeable-battery sweep. Ranks 1st of the 31 cells that pass the battery constraints, on stock depth. Bay fit unconfirmed: TME publishes no dimensions for cells."
+        }
+      ]
+    }
+  },
+  "catalogue_coverage": {
+    "readme": "Per-requirement TME sweep sizes behind this snapshot. The catalogue DB itself (hardware/bom/catalogue.db) is rebuildable and NOT committed; this is the part of it the gates depend on. A category marked as a sample was capped by a --limit and is not the whole category.",
+    "vendor": "tme",
+    "by_requirement": {
+      "battery": {
+        "parts_swept": 70,
+        "stocked": 66,
+        "with_datasheet": 70
+      },
+      "dac": {
+        "parts_swept": 100,
+        "stocked": 82,
+        "with_datasheet": 94
+      },
+      "mclk-mux": {
+        "parts_swept": 261,
+        "stocked": 34,
+        "with_datasheet": 204
+      },
+      "mclk-osc-44k1": {
+        "parts_swept": 24,
+        "stocked": 3,
+        "with_datasheet": 24
+      },
+      "mclk-osc-48k": {
+        "parts_swept": 40,
+        "stocked": 2,
+        "with_datasheet": 1
+      },
+      "mcu": {
+        "parts_swept": 102,
+        "stocked": 57,
+        "with_datasheet": 97
       }
     }
   }

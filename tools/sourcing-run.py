@@ -60,9 +60,19 @@ def spec_mpns() -> list[str]:
     return sorted(d["parts"].keys())
 
 
-def spec_category_of(mpn: str) -> str | None:
+def spec_category_of(*identifiers: str | None) -> str | None:
+    """Which requirement a part satisfies, matched on ANY of its identifiers.
+
+    A vendor may index a part under its own symbol rather than the manufacturer
+    part number — TME holds the documented cell as symbol `AKY-LP623255` with
+    manufacturer PN `AKY0646`. Matching on one identifier only files such a part
+    under no requirement at all, so it is fetched and then invisible.
+    """
     d = json.loads(SNAPSHOT.read_text())
-    return (d["parts"].get(mpn) or {}).get("satisfies")
+    for ident in identifiers:
+        if ident and ident in d["parts"]:
+            return (d["parts"][ident] or {}).get("satisfies")
+    return None
 
 
 def cmd_fetch(args) -> int:
@@ -96,11 +106,22 @@ def cmd_fetch(args) -> int:
         parts = a.lookup_mpns(mpns)
         found = {p.mpn.upper() for p in parts}
         for p in parts:
-            db.upsert(p, run, category=spec_category_of(p.mpn))
+            db.upsert(p, run, category=spec_category_of(p.mpn, p.vendor_pn))
         db.finish_run(run, getattr(a, "calls", 0), len(parts))
         print(f"{a.display_name}: resolved {len(parts)} of {len(mpns)}")
         for m in mpns:
-            hit = next((p for p in parts if p.mpn.upper() == m.upper()), None)
+            # Match on EITHER identifier: the vendor's symbol and the
+            # manufacturer part number are different strings for one part, and
+            # reporting "not carried" because the wrong one was compared is how a
+            # stocked part gets written off.
+            hit = next(
+                (
+                    p
+                    for p in parts
+                    if m.upper() in {p.mpn.upper(), p.vendor_pn.upper()}
+                ),
+                None,
+            )
             if hit:
                 print(f"  {m:<26} stock={hit.stock:<7} attrs={len(hit.attrs_raw)}")
             else:
