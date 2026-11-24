@@ -5,6 +5,66 @@
   "note": "Values are RAW vendor strings; dap_hw_spec::parametric::derive interprets them. Rebuild with tools/sourcing-run.py export.",
   "parts": [
     {
+      "mpn": "410-191",
+      "manufacturer": "Digilent, Inc.",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 1242,
+      "moq": 1,
+      "lead_time_days": 392,
+      "datasheet_url": "https://digilent.com/reference/_media/pmod:pmod:pmodI2S_rm.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "part_type": "Data Acquisition",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "6309",
+      "manufacturer": "Adafruit Industries LLC",
+      "eu_sources": 1,
+      "eu_stock": 27,
+      "unit_price_cents": 617,
+      "moq": 1,
+      "lead_time_days": 28,
+      "datasheet_url": null,
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "part_type": "Audio",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "6PA3100IRHBRQ1",
+      "manufacturer": "Texas Instruments",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 344,
+      "moq": 3000,
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Ftlv320dac3100-q1",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "data_interface": "I2S",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "32-VFQFN Exposed Pad",
+        "part_type": "Stereo Audio",
+        "supplier_package": "32-VQFN (5x5)",
+        "supply_mv": "1.8V, 3.3V",
+        "moq": "3000",
+        "order_multiple": "3000"
+      }
+    },
+    {
       "mpn": "AD420ARZ-32",
       "manufacturer": "Analog Devices",
       "eu_sources": 1,
@@ -1431,6 +1491,305 @@
       }
     },
     {
+      "mpn": "LM4921ITL/NOPB",
+      "manufacturer": "Texas Instruments",
+      "eu_sources": 1,
+      "eu_stock": 601,
+      "unit_price_cents": 450,
+      "moq": 1,
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Flm4921",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "20-WFBGA, DSBGA",
+        "part_type": "Class AB",
+        "supplier_package": "20-DSBGA",
+        "supply_mv": "2.6V ~ 5.5V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "LM4921ITLX/NOPB",
+      "manufacturer": "Texas Instruments",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 224,
+      "moq": 3000,
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Flm4921",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "20-WFBGA, DSBGA",
+        "part_type": "Class AB",
+        "supplier_package": "20-DSBGA",
+        "supply_mv": "2.6V ~ 5.5V",
+        "moq": "3000",
+        "order_multiple": "3000"
+      }
+    },
+    {
+      "mpn": "LM4930ITL/NOPB",
+      "manufacturer": "Texas Instruments",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 436,
+      "moq": 250,
+      "lead_time_days": 49,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Flm4930",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-30\u00b0C ~ 85\u00b0C (TA)",
+        "package": "36-WFBGA",
+        "part_type": "Class AB",
+        "supplier_package": "36-uSMD (3.23x3.41)",
+        "supply_mv": "2.6V ~ 5.5V",
+        "moq": "250",
+        "order_multiple": "250"
+      }
+    },
+    {
+      "mpn": "LM4930ITLX/NOPB",
+      "manufacturer": "Texas Instruments",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 785,
+      "moq": 1000,
+      "lead_time_days": 273,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Flm4930",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-30\u00b0C ~ 85\u00b0C (TA)",
+        "package": "36-WFBGA, DSBGA",
+        "part_type": "Class AB",
+        "supplier_package": "36-DSBGA",
+        "supply_mv": "2.6V ~ 5.5V",
+        "moq": "1000",
+        "order_multiple": "1000"
+      }
+    },
+    {
+      "mpn": "LM4930LQ/NOPB",
+      "manufacturer": "Texas Instruments",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 785,
+      "moq": 250,
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Flm4930",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-30\u00b0C ~ 85\u00b0C (TA)",
+        "package": "44-WFQFN Exposed Pad",
+        "part_type": "Class AB",
+        "supplier_package": "44-WQFN (7x7)",
+        "supply_mv": "2.6V ~ 5.5V",
+        "moq": "250",
+        "order_multiple": "250"
+      }
+    },
+    {
+      "mpn": "LM4930LQX/NOPB",
+      "manufacturer": "Texas Instruments",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 402,
+      "moq": 2500,
+      "lead_time_days": 105,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Flm4930",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-30\u00b0C ~ 85\u00b0C (TA)",
+        "package": "44-WFQFN Exposed Pad",
+        "part_type": "Class AB",
+        "supplier_package": "44-WQFN (7x7)",
+        "supply_mv": "2.6V ~ 5.5V",
+        "moq": "2500",
+        "order_multiple": "2500"
+      }
+    },
+    {
+      "mpn": "LM4931ITL/NOPB",
+      "manufacturer": "Texas Instruments",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 927,
+      "moq": 250,
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Flm4931",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "42-WFBGA, DSBGA",
+        "part_type": "Class D",
+        "supplier_package": "42-DSBGA",
+        "supply_mv": "2.7V ~ 5V",
+        "moq": "250",
+        "order_multiple": "250"
+      }
+    },
+    {
+      "mpn": "LM49350RL/NOPB",
+      "manufacturer": "National Semiconductor",
+      "eu_sources": 1,
+      "eu_stock": 46,
+      "unit_price_cents": 579,
+      "moq": 1,
+      "lead_time_days": 42,
+      "datasheet_url": "https://rocelec.widen.net/view/pdf/qitwfntb62/NATLS10874-1.pdf?t.download=true&u=5oefqw",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "36-WFBGA, DSBGA",
+        "part_type": "Class D",
+        "supplier_package": "36-DSBGA (3.5x3.24)",
+        "supply_mv": "2.7V ~ 5.5V",
+        "moq": "1",
+        "order_multiple": "46"
+      }
+    },
+    {
+      "mpn": "LM49350RLX/NOPB",
+      "manufacturer": "Texas Instruments",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": null,
+      "moq": 1,
+      "lead_time_days": 42,
+      "datasheet_url": "https://rocelec.widen.net/view/pdf/qitwfntb62/NATLS10874-1.pdf?t.download=true&u=5oefqw",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "36-WFBGA, DSBGA",
+        "part_type": "Class D",
+        "supplier_package": "36-DSBGA (3.5x3.24)",
+        "supply_mv": "2.7V ~ 5.5V",
+        "moq": "1",
+        "order_multiple": "1000"
+      }
+    },
+    {
+      "mpn": "LM4935RL/NOPB",
+      "manufacturer": "Texas Instruments",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": null,
+      "moq": 1,
+      "lead_time_days": 42,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Flm4935",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "49-WFBGA, DSBGA",
+        "part_type": "Class D",
+        "supplier_package": "49-DSBGA",
+        "supply_mv": "2.7V ~ 5.5V",
+        "moq": "1",
+        "order_multiple": "250"
+      }
+    },
+    {
+      "mpn": "LM4935RLX/NOPB",
+      "manufacturer": "Texas Instruments",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": null,
+      "moq": 1,
+      "lead_time_days": 42,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Flm4935",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "49-WFBGA, DSBGA",
+        "part_type": "Class D",
+        "supplier_package": "49-DSBGA",
+        "supply_mv": "2.7V ~ 5.5V",
+        "moq": "1",
+        "order_multiple": "1000"
+      }
+    },
+    {
+      "mpn": "LM49450SQ/NOPB",
+      "manufacturer": "Texas Instruments",
+      "eu_sources": 1,
+      "eu_stock": 2803,
+      "unit_price_cents": 533,
+      "moq": 1,
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Flm49450",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "32-WFQFN Exposed Pad",
+        "part_type": "Class D",
+        "supplier_package": "32-WQFN (5x5)",
+        "supply_mv": "2.7V ~ 5.5V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "LM49450SQX/NOPB",
+      "manufacturer": "Texas Instruments",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 249,
+      "moq": 4500,
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Flm49450",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "32-WFQFN Exposed Pad",
+        "part_type": "Class D",
+        "supplier_package": "32-WQFN (5x5)",
+        "supply_mv": "2.7V ~ 5.5V",
+        "moq": "4500",
+        "order_multiple": "4500"
+      }
+    },
+    {
       "mpn": "LMP92066PWP",
       "manufacturer": "TEXAS INSTRUMENTS",
       "eu_sources": 1,
@@ -1452,6 +1811,98 @@
         "supply_mv": "4.75...5.25V DC",
         "moq": "1",
         "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "MAX9850ETI+",
+      "manufacturer": "Analog Devices Inc./Maxim Integrated",
+      "eu_sources": 1,
+      "eu_stock": 1282,
+      "unit_price_cents": 793,
+      "moq": 1,
+      "lead_time_days": 70,
+      "datasheet_url": "https://www.analog.com/media/en/technical-documentation/data-sheets/MAX9850.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "28-WFQFN Exposed Pad",
+        "part_type": "Class AB",
+        "supplier_package": "28-TQFN (5x5)",
+        "supply_mv": "1.8V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "60"
+      }
+    },
+    {
+      "mpn": "MAX9850ETI+G47",
+      "manufacturer": "Analog Devices Inc./Maxim Integrated",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 508,
+      "moq": 1,
+      "lead_time_days": 112,
+      "datasheet_url": null,
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "28-WFQFN Exposed Pad",
+        "part_type": "Class AB",
+        "supplier_package": "28-TQFN (5x5)",
+        "supply_mv": "1.8V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "60"
+      }
+    },
+    {
+      "mpn": "MAX9850ETI+T",
+      "manufacturer": "Analog Devices Inc./Maxim Integrated",
+      "eu_sources": 1,
+      "eu_stock": 10779,
+      "unit_price_cents": 793,
+      "moq": 1,
+      "lead_time_days": 70,
+      "datasheet_url": "https://www.analog.com/media/en/technical-documentation/data-sheets/MAX9850.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "28-WFQFN Exposed Pad",
+        "part_type": "Class AB",
+        "supplier_package": "28-TQFN (5x5)",
+        "supply_mv": "1.8V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "MAX9850ETI+TG47",
+      "manufacturer": "Analog Devices Inc./Maxim Integrated",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 200,
+      "moq": 2500,
+      "lead_time_days": 56,
+      "datasheet_url": null,
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "28-WFQFN Exposed Pad",
+        "part_type": "Class AB",
+        "supplier_package": "28-TQFN (5x5)",
+        "supply_mv": "1.8V ~ 3.6V",
+        "moq": "2500",
+        "order_multiple": "2500"
       }
     },
     {
@@ -2198,6 +2649,101 @@
       }
     },
     {
+      "mpn": "TAA5242IRGER",
+      "manufacturer": "Texas Instruments",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 236,
+      "moq": 3000,
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/taa5242.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "data_interface": "DSP, I2C, I2S, Serial, TDM",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C (TA)",
+        "package": "24-VFQFN Exposed Pad",
+        "part_type": "Stereo Audio",
+        "supplier_package": "24-VQFN (4x4)",
+        "moq": "3000",
+        "order_multiple": "3000"
+      }
+    },
+    {
+      "mpn": "TAA5412WQRTVRQ1",
+      "manufacturer": "Texas Instruments",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 353,
+      "moq": 3000,
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/lit/gpn/taa5412-q1",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "data_interface": "DSP, I2C, I2S, PCM, SPI, TDM",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C (TA)",
+        "package": "32-WFQFN Exposed Pad",
+        "part_type": "Stereo Audio",
+        "supplier_package": "32-WQFN (5x5)",
+        "supply_mv": "1.65V ~ 1.95V, 3V ~ 3.6V, 1.65V ~ 1.95V, 3V ~ 3.6V",
+        "moq": "3000",
+        "order_multiple": "3000"
+      }
+    },
+    {
+      "mpn": "TAD5212IRGER",
+      "manufacturer": "Texas Instruments",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 357,
+      "moq": 3000,
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/lit/gpn/tad5212",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "data_interface": "DSP, I2C, I2S, PCM, SPI, TDM",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C (TA)",
+        "package": "24-VFQFN Exposed Pad",
+        "part_type": "Stereo Audio",
+        "supplier_package": "24-VQFN (4x4)",
+        "supply_mv": "1.65V ~ 1.95V, 3V ~ 3.6V, 1.65V ~ 1.95V, 3V ~ 3.6V",
+        "moq": "3000",
+        "order_multiple": "3000"
+      }
+    },
+    {
+      "mpn": "TAD5212QRGERQ1",
+      "manufacturer": "Texas Instruments",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 407,
+      "moq": 3000,
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/tad5212-q1.pdf?ts=1750643666228&ref_url=https%253A%252F%252Fwww.ti.com%252Faudio-ic%252Fconverters%252Fdac%252Fproducts.html",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "data_interface": "DSP, I2C, I2S, PCM, SPI, TDM",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C (TA)",
+        "package": "24-VFQFN Exposed Pad",
+        "part_type": "Stereo Audio",
+        "supplier_package": "24-VQFN (4x4)",
+        "supply_mv": "1.65V ~ 1.95V, 3V ~ 3.6V",
+        "moq": "3000",
+        "order_multiple": "3000"
+      }
+    },
+    {
       "mpn": "TLC5620CD",
       "manufacturer": "TEXAS INSTRUMENTS",
       "eu_sources": 1,
@@ -2248,7 +2794,7 @@
       "mpn": "TLC7524CD",
       "manufacturer": "TEXAS INSTRUMENTS",
       "eu_sources": 1,
-      "eu_stock": 164,
+      "eu_stock": 163,
       "unit_price_cents": 396,
       "moq": 1,
       "lead_time_days": null,
@@ -2311,6 +2857,143 @@
         "supply_mv": "4.75...15.5V DC",
         "moq": "1",
         "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "TLV320DAC3202BYZJR",
+      "manufacturer": "Texas Instruments",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 210,
+      "moq": 3000,
+      "lead_time_days": 371,
+      "datasheet_url": null,
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "package": "20-UFBGA, DSBGA",
+        "part_type": "Class G",
+        "supplier_package": "20-DSBGA",
+        "supply_mv": "2.3V ~ 4.8V",
+        "moq": "3000",
+        "order_multiple": "3000"
+      }
+    },
+    {
+      "mpn": "TLV320DAC3202CYZJR",
+      "manufacturer": "Texas Instruments",
+      "eu_sources": 1,
+      "eu_stock": 12000,
+      "unit_price_cents": 217,
+      "moq": 122,
+      "lead_time_days": 196,
+      "datasheet_url": "https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/640/TLV320DAC3202.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-30\u00b0C ~ 85\u00b0C (TA)",
+        "package": "20-UFBGA, DSBGA",
+        "part_type": "Class G",
+        "supplier_package": "20-DSBGA",
+        "supply_mv": "2.3V ~ 4.8V",
+        "moq": "122",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "TLV320DAC3203IRGER",
+      "manufacturer": "Texas Instruments",
+      "eu_sources": 1,
+      "eu_stock": 1722,
+      "unit_price_cents": 162,
+      "moq": 1,
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Ftlv320dac3203",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "24-VFQFN Exposed Pad",
+        "part_type": "Class AB",
+        "supplier_package": "24-VQFN (4x4)",
+        "supply_mv": "1.5V ~ 1.95V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "TLV320DAC3203IRGET",
+      "manufacturer": "Texas Instruments",
+      "eu_sources": 1,
+      "eu_stock": 91,
+      "unit_price_cents": 197,
+      "moq": 1,
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Ftlv320dac3203",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "24-VFQFN Exposed Pad",
+        "part_type": "Class AB",
+        "supplier_package": "24-VQFN (4x4)",
+        "supply_mv": "1.5V ~ 1.95V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "TLV320DAC3203IYZKR",
+      "manufacturer": "Texas Instruments",
+      "eu_sources": 1,
+      "eu_stock": 127,
+      "unit_price_cents": 162,
+      "moq": 1,
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Ftlv320dac3203",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "25-UFBGA, DSBGA",
+        "part_type": "Class AB",
+        "supplier_package": "25-DSBGA",
+        "supply_mv": "1.5V ~ 1.95V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "TLV320DAC3203IYZKT",
+      "manufacturer": "Texas Instruments",
+      "eu_sources": 1,
+      "eu_stock": 250,
+      "unit_price_cents": 112,
+      "moq": 250,
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Ftlv320dac3203",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "25-UFBGA, DSBGA",
+        "part_type": "Class AB",
+        "supplier_package": "25-DSBGA",
+        "supply_mv": "1.5V ~ 1.95V",
+        "moq": "250",
+        "order_multiple": "250"
       }
     },
     {

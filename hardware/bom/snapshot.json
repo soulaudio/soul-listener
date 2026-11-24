@@ -1548,14 +1548,19 @@
     ],
     "by_requirement": {
       "battery": {
-        "parts_swept": 75,
-        "stocked": 71,
-        "with_datasheet": 75
+        "parts_swept": 77,
+        "stocked": 73,
+        "with_datasheet": 77
+      },
+      "bluetooth": {
+        "parts_swept": 100,
+        "stocked": 100,
+        "with_datasheet": 99
       },
       "dac": {
-        "parts_swept": 105,
-        "stocked": 87,
-        "with_datasheet": 99
+        "parts_swept": 136,
+        "stocked": 98,
+        "with_datasheet": 126
       },
       "mclk-mux": {
         "parts_swept": 362,
@@ -1568,9 +1573,9 @@
         "with_datasheet": 124
       },
       "mclk-osc-48k": {
-        "parts_swept": 161,
-        "stocked": 101,
-        "with_datasheet": 160
+        "parts_swept": 162,
+        "stocked": 102,
+        "with_datasheet": 161
       },
       "mcu": {
         "parts_swept": 104,
