@@ -653,7 +653,7 @@
       "mpn": "AKY0535",
       "manufacturer": "AKYGA BATTERY",
       "eu_sources": 1,
-      "eu_stock": 521,
+      "eu_stock": 520,
       "unit_price_cents": 698,
       "moq": 1,
       "lead_time_days": null,
@@ -1611,6 +1611,90 @@
         "manufacturer_name": "AKYGA BATTERY",
         "rated_voltage_mv": "3.7V",
         "termination": "cables; JST SYP-02T-1 socket",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "LP422339JU+PCM+2 WIRES 50MM",
+      "manufacturer": "Jauch Quartz",
+      "eu_sources": 1,
+      "eu_stock": 250,
+      "unit_price_cents": 1065,
+      "moq": 1,
+      "lead_time_days": 7,
+      "datasheet_url": "https://www.jauch.com/downloadfile/5bf52a339ee9c27a447c66d1681d397b8/330mah_-_lp422339ju_1s1p_2_wire_50mm.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Lithium-Ion Polymer",
+        "body_size": "1.57\" L x 0.91\" W x 0.19\" H (40.0mm x 23.0mm x 4.8mm)",
+        "capacity_mah": "330mAh",
+        "rated_voltage_mv": "3.7 V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "LP503562JU+PCM+2 WIRES 50MM",
+      "manufacturer": "Jauch Quartz",
+      "eu_sources": 1,
+      "eu_stock": 20,
+      "unit_price_cents": 1012,
+      "moq": 1,
+      "lead_time_days": 7,
+      "datasheet_url": "https://www.jauch.com/downloadfile/5bf529fc30bae1b90e7369ca6a7aeaeee/1250mah_-_lp503562jb_1s1p_2_wire_50mm.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Lithium-Ion Polymer",
+        "body_size": "2.50\" L x 1.42\" W x 0.23\" H (63.5mm x 36.0mm x 5.8mm)",
+        "capacity_mah": "1.25Ah",
+        "rated_voltage_mv": "3.7 V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "LP503759JU+PCM+2 WIRES 70MM",
+      "manufacturer": "Jauch Quartz",
+      "eu_sources": 1,
+      "eu_stock": 197,
+      "unit_price_cents": 1332,
+      "moq": 1,
+      "lead_time_days": 7,
+      "datasheet_url": "https://www.jauch.com/downloadfile/5bf52a0235b7eda183983c1995e3fcf49/1300mah_-_lp503759ju_1s1p_2_wire_70mm.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Lithium-Ion Polymer",
+        "body_size": "2.44\" L x 1.50\" W x 0.24\" H (62.0mm x 38.1mm x 6.0mm)",
+        "capacity_mah": "1.3Ah",
+        "rated_voltage_mv": "3.7 V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "LP633750JH+PCM+2 WIRES 70MM",
+      "manufacturer": "Jauch Quartz",
+      "eu_sources": 1,
+      "eu_stock": 90,
+      "unit_price_cents": 1032,
+      "moq": 1,
+      "lead_time_days": 7,
+      "datasheet_url": "https://www.jauch.com/downloadfile/5bf529f63b6494eba86e5aa056cd18ed7/1200mah_-_lp633750js_1s1p_2_wire_70mm.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "battery_chemistry": "Lithium-Ion Polymer",
+        "body_size": "2.07\" L x 1.50\" W x 0.28\" H (52.5mm x 38.1mm x 7.0mm)",
+        "capacity_mah": "1.2Ah",
+        "rated_voltage_mv": "3.7 V",
         "moq": "1",
         "order_multiple": "1"
       }

@@ -829,59 +829,79 @@ const PARTS: &[PartReq] = &[
         constraints: OSC_44K1_CONSTRAINTS,
         candidates: &[
             Candidate {
+                mpn: "NSC5083D-22.5792M",
+                preference: Preference::Evaluating,
+                note: "DATASHEET-CONFIRMED 2026-11-24. NDK, NZ2520SDA family — the datasheet is \
+                       titled 'Ultra Low Phase Noise Type' and states 'ultra low phase noise \
+                       make this product ideal for High quality audio', with typical phase \
+                       jitter of 43 FEMTOSECONDS. \
+                       \
+                       That is the number this requirement has been reaching for. Against the \
+                       alternatives actually in stock: the Abracon ASV is 3.2 ps (74x worse) and \
+                       the MEMS part the spec once proposed was 5-10 ps (150-230x worse), in a \
+                       design whose stated premise is that MCLK jitter is the one thing to avoid. \
+                       \
+                       And it is a MATCHED PAIR: NSC5083D-24.576M is the same family and package \
+                       at the other MCLK frequency, which is what the dual-oscillator topology \
+                       wants. 2169 in stock at Digi-Key, MOQ 1, 2.04 EUR; -40..+85 C industrial; \
+                       3.3 V; CMOS. \
+                       \
+                       Open before it can be Preferred: +/-50 ppm stability is looser than the \
+                       Kyocera pair's +/-20 ppm (fine for audio playback, worth a deliberate \
+                       decision), and the 2.5 x 2.0 x 0.9 mm package is small for hand assembly.",
+            },
+            Candidate {
+                mpn: "CCHD-957-25-22.5792",
+                preference: Preference::Evaluating,
+                note: "Crystek CCHD-957 'FEMTO Clock', the reference audiophile oscillator: \
+                       -100 dBc/Hz at 10 Hz offset, noise floor -169 dBc/Hz. Confirmed from \
+                       crystek.com/specification/clock/CCHD-957.pdf. 67 in stock, MOQ 1. \
+                       \
+                       Three things count against it for THIS design, none of them about \
+                       quality: 29.24 EUR is 14x the NDK part; 0..+70 C is commercial where the \
+                       NDK is industrial; and NO 24.576 MHz variant appeared in the sweep, so it \
+                       cannot form the matched pair the clock tree needs. Recorded because it is \
+                       the right answer if the 44.1 kHz family alone ever needs the very best \
+                       clock, and because its 14.2 x 9.14 mm package is trivially hand-placed.",
+            },
+            Candidate {
                 mpn: "ASV-22.5792MHZ-LR-T",
                 preference: Preference::Evaluating,
-                note: "DATASHEET-CONFIRMED 2026-11-24 (abracon.com/Oscillators/ASV.pdf, see \
-                       docs/sourcing/datasheet-confirmations/). An ACTIVE 3.3Vdc HCMOS clock \
-                       oscillator — not a crystal — suffixes decoding to 3.3 V +/-10% \
-                       (2.97-3.63 V), -40..+85 C, +/-25 ppm, 1000/reel, corroborated \
-                       independently by TME's own parameters. 17000 in stock, the ONLY active XO \
-                       TME stocks at this frequency. \
+                note: "DATASHEET-CONFIRMED (abracon.com/Oscillators/ASV.pdf, see \
+                       docs/sourcing/datasheet-confirmations/): an active 3.3Vdc HCMOS clock \
+                       oscillator, 2.97-3.63 V, -40..+85 C, +/-25 ppm. 18319 at TME and 1319 at \
+                       Digi-Key, so it is the only candidate here with TWO EU sources. \
                        \
-                       Not Preferred, for two measured reasons. Jitter is 3.2 ps RMS period \
-                       jitter for the band containing 22.5792 MHz, roughly an order of magnitude \
-                       worse than dedicated low-phase-noise audio oscillators — and this design's \
-                       stated premise is that MCLK jitter is the one thing to avoid. And it is \
-                       reel-only: MOQ 1000 at 0.70 EUR is a ~700 EUR minimum order for a part a \
-                       prototype needs one of.",
+                       Demoted in practice by measurement rather than by preference: 3.2 ps RMS \
+                       period jitter is 74x the NDK part's 43 fs at a comparable price. Kept as a \
+                       fallback precisely because of the second source, and because its 7.0 x \
+                       5.08 mm package is the easiest of the three to hand-solder.",
             },
             Candidate {
                 mpn: "KC2016Z22.5792C1KX00",
                 preference: Preference::Evaluating,
-                note: "CATALOGUE-CONFIRMED: active oscillator, 22.5792 MHz, +/-20 ppm, 3.3 VDC, \
-                       -40..+85 C, CMOS, 2.0x1.6x0.8 mm. \
-                       \
-                       The reason to take this series seriously is that KC2016Z offers a MATCHED \
-                       PAIR — KC2016Z24.5760C1KX00 is the same series, package, supply, \
-                       temperature range and stability at 24.576 MHz. A dual-oscillator design \
-                       wants exactly that: two clocks whose only intended difference is \
-                       frequency. No other series TME carries covers both families. \
-                       \
-                       Against it: zero stock, MOQ 2000, and a 2.0x1.6 mm package that is \
-                       markedly harder to hand-place than the ASV's 7.0x5.08 mm. Phase noise \
-                       still needs a datasheet read.",
+                note: "Kyocera AVX, +/-20 ppm — the tightest stability of the candidates — 1871 \
+                       in stock at Digi-Key, MOQ 1, 1.09 EUR, and also a matched pair \
+                       (KC2016Z24.5760C1KX00). Publishes no phase-noise figure, which is the \
+                       blocker: the requirement cannot be satisfied by a part whose jitter is \
+                       unknown, and this is a general-purpose XO rather than an audio part.",
             },
             Candidate {
                 mpn: "ASDMB-22.5792MHZ-LY-T",
                 preference: Preference::Rejected(
-                    "MEMS, and measurably the wrong trade for this design. Datasheet \
+                    "MEMS, and measurably the wrong trade. Datasheet \
                      (abracon.com/Oscillators/ASDMB.pdf): 5-10 ps RMS period jitter against the \
-                     ASV quartz part's 3.2 ps; 0..+70 C commercial temperature; and a supply range topping out at \
-                     exactly 3.3 V, so no margin on the rail it has to run from. Worse on every \
-                     axis that matters here. \
-                     \
-                     CORRECTION to the original reasoning, 2026-11-24: this was first argued \
-                     partly as 'a portable device leaves 0..70 C behind outdoors in winter', \
-                     which overstated it. The CS43131's own ambient range is -20..+70 C \
-                     (DS1155F2) and Digi-Key lists the part at -10..+70 C, so the DESIGN was \
-                     never a -40 C product. A 0 C floor is still worse than -20 and narrows the \
-                     range further, but the decisive reason is jitter: 5-10 ps against the quartz \
-                     part's 3.2 ps, in a design whose stated premise is that MCLK jitter is the \
-                     one thing to avoid",
+                     NDK part's 43 fs and the ASV's 3.2 ps; 0..+70 C; and a supply range topping \
+                     out at exactly 3.3 V, so no margin on the rail it runs from",
                 ),
-                note: "was the spec's placeholder for this requirement until it was actually \
-                       read. Kept Rejected so the MEMS-vs-quartz question is not re-opened from \
-                       scratch",
+                note: "was the spec's placeholder for this requirement until it was read. Kept \
+                       Rejected so the MEMS-vs-quartz question is not re-opened from scratch. \
+                       \
+                       CORRECTION to the original reasoning, 2026-11-24: this was argued partly \
+                       as 'a portable device leaves 0..70 C behind outdoors in winter', which \
+                       overstated it — the CS43131's own ambient range is -20..+70 C (DS1155F2), \
+                       so the DESIGN was never a -40 C product. A 0 C floor is still worse and \
+                       narrows the range further, but jitter is the decisive reason.",
             },
         ],
     },
@@ -891,33 +911,33 @@ const PARTS: &[PartReq] = &[
         constraints: OSC_48K_CONSTRAINTS,
         candidates: &[
             Candidate {
+                mpn: "NSC5083D-24.576M",
+                preference: Preference::Evaluating,
+                note: "The 48 kHz half of the NDK NZ2520SDA matched pair: same family, same \
+                       2.5 x 2.0 x 0.9 mm package, same -40..+85 C, same 43 fs typical phase \
+                       jitter. 2867 in stock at Digi-Key, MOQ 1, 2.61 EUR. \
+                       \
+                       That both frequencies come from one ultra-low-phase-noise family is the \
+                       whole argument: a dual-oscillator clock tree wants two clocks whose only \
+                       intended difference is frequency. Crystek's femto-clock has no 24.576 MHz \
+                       variant in the sweep, so it cannot do this.",
+            },
+            Candidate {
                 mpn: "KC2016Z24.5760C1KX00",
                 preference: Preference::Evaluating,
-                note: "CATALOGUE-CONFIRMED: active oscillator, 24.576 MHz, +/-20 ppm, 3.3 VDC, \
-                       -40..+85 C, CMOS, 2.0x1.6x0.8 mm — the 48 kHz half of the KC2016Z matched \
-                       pair, identical to KC2016Z22.5792C1KX00 in every respect but frequency. \
-                       \
-                       Zero stock and MOQ 2000, like every active oscillator TME carries at this \
-                       frequency. Phase noise needs a datasheet read.",
+                note: "Kyocera AVX, +/-20 ppm, 1062 in stock at Digi-Key at MOQ 1, 1.10 EUR — \
+                       and the 48 kHz half of its own matched pair. Publishes no phase-noise \
+                       figure, which is what keeps it behind the NDK part.",
             },
             Candidate {
                 mpn: "ASDMB-24.576MHZ-LY-T",
                 preference: Preference::Rejected(
                     "MEMS — see the 44.1 kHz family for the measured reasons (5-10 ps jitter, \
-                 0..+70 C, no supply margin)",
+                     0..+70 C, no supply margin)",
                 ),
-                note: "NO VALIDATED CANDIDATE REMAINS for this requirement, and that is the \
-                   finding. A sweep of 40 parts TME carries at 24.576 MHz on 2026-11-24 found \
-                   eight-plus ACTIVE oscillators and every single one at ZERO stock, MOQ \
-                   1000-2000; the only stocked parts in the category are passive crystals. \
-                   \
-                   So TME alone cannot supply this clock tree: 22.5792 MHz has exactly one \
-                   reel-only XO in stock and 24.576 MHz has none. The dual-oscillator design \
-                   needs BOTH, which makes fetching Mouser and Digi-Key a prerequisite for the \
-                   clock tree rather than a nice-to-have. Abracon's ASV series covers 24.576 MHz \
-                   per its datasheet, so an ASV part is the obvious thing to look for there — \
-                   deliberately not named here, because an unvalidated MPN is what this \
-                   requirement just finished removing.",
+                note: "979 in stock at Digi-Key, so this one IS buyable — it is rejected on \
+                       performance rather than availability, which is the distinction the \
+                       pipeline exists to keep straight.",
             },
         ],
     },
