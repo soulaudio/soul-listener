@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Regenerate `hardware/bom/snapshot.json` from the committed catalogue DB.
+"""Regenerate `hardware/bom/snapshot.json` from the catalogue DB, all vendors.
 
-    python3 tools/bom-snapshot-merge-tme.py
+    python3 tools/bom-snapshot-merge.py
 
 Reads only `hardware/bom/catalogue.db` — no network — so it is reproducible and
 the result lands as a reviewable diff. Run `tools/sourcing-run.py fetch` first to
@@ -65,52 +65,63 @@ def main() -> int:
     conn = sqlite3.connect(DB)
     snap = json.loads(SNAPSHOT.read_text(), object_pairs_hook=collections.OrderedDict)
 
-    carried, absent = [], []
+    vendors = [r[0] for r in conn.execute(
+        "SELECT DISTINCT vendor FROM parts ORDER BY vendor")]
+    summary: dict[str, list[str]] = {v: [] for v in vendors}
+    absent: dict[str, list[str]] = {v: [] for v in vendors}
+
     for mpn, part in snap["parts"].items():
-        row = conn.execute(
-            """
-            SELECT id, vendor_pn, stock, moq, order_multiple, lead_time_days,
-                   status_raw, datasheet_url
-            FROM parts
-            WHERE vendor = 'tme' AND (mpn = ? COLLATE NOCASE OR vendor_pn = ? COLLATE NOCASE)
-            LIMIT 1
-            """,
-            (mpn, mpn),
-        ).fetchone()
+        # Keep offers this script does not own (hand research for vendors with no
+        # adapter yet), replace the ones it does.
+        offers = [o for o in part.get("offers", []) if o.get("distributor") not in vendors]
 
-        offers = [o for o in part.get("offers", []) if o.get("distributor") != "tme"]
+        for vendor in vendors:
+            row = conn.execute(
+                """
+                SELECT id, vendor_pn, stock, moq, order_multiple, lead_time_days,
+                       status_raw, datasheet_url, lifecycle_raw, mpn
+                FROM parts
+                WHERE vendor = ?
+                  AND (mpn = ? COLLATE NOCASE OR vendor_pn = ? COLLATE NOCASE
+                       OR mpn LIKE ? COLLATE NOCASE)
+                ORDER BY stock DESC
+                LIMIT 1
+                """,
+                (vendor, mpn, mpn, mpn + ",%"),
+            ).fetchone()
 
-        if row is None:
-            offers.append(
-                collections.OrderedDict(
-                    [
-                        ("distributor", "tme"),
-                        ("distributor_pn", None),
-                        ("stock", 0),
-                        ("moq", None),
-                        ("order_multiple", None),
-                        ("lead_time_days", None),
-                        ("price_breaks", []),
-                        ("currency", "EUR"),
-                        ("lifecycle", "unknown"),
-                        ("compliance", []),
-                        ("datasheet_url", None),
-                        ("source", "api"),
-                        ("retrieved_at", RETRIEVED_AT),
-                        (
-                            "note",
-                            "NOT CARRIED BY TME: looked up by both manufacturer part number and "
-                            f"TME symbol on {RETRIEVED_AT} with no match. Recorded rather than "
-                            "omitted so the negative result is not re-discovered; both snapshot "
-                            "gates filter on stock > 0, so this counts as information and not as "
-                            "a source.",
-                        ),
-                    ]
+            if row is None:
+                offers.append(
+                    collections.OrderedDict(
+                        [
+                            ("distributor", vendor),
+                            ("distributor_pn", None),
+                            ("stock", 0),
+                            ("moq", None),
+                            ("order_multiple", None),
+                            ("lead_time_days", None),
+                            ("price_breaks", []),
+                            ("currency", "EUR"),
+                            ("lifecycle", "unknown"),
+                            ("compliance", []),
+                            ("datasheet_url", None),
+                            ("source", "api"),
+                            ("retrieved_at", RETRIEVED_AT),
+                            (
+                                "note",
+                                f"NOT CARRIED BY {vendor.upper()}: looked up on {RETRIEVED_AT} by "
+                                "manufacturer part number, by the vendor's own symbol, and by "
+                                "keyword, with no match. Recorded rather than omitted so the "
+                                "negative result is not re-discovered; both snapshot gates filter "
+                                "on stock > 0, so this informs without counting as a source.",
+                            ),
+                        ]
+                    )
                 )
-            )
-            absent.append(mpn)
-        else:
-            pid, vendor_pn, stock, moq, mult, lead, status_raw, ds = row
+                absent[vendor].append(mpn)
+                continue
+
+            pid, vendor_pn, stock, moq, mult, lead, status_raw, ds, lifecycle, got_mpn = row
             breaks = [
                 collections.OrderedDict([("qty", q), ("unit_price", up)])
                 for q, up in conn.execute(
@@ -118,23 +129,23 @@ def main() -> int:
                     (pid,),
                 )
             ]
-            status = json.loads(status_raw or "[]")
-            note = (
-                f"TME API v2, country=SK, currency=EUR. MOQ {moq}, order multiple {mult}: "
-                f"stock {stock} does not mean one unit is purchasable."
-            )
-            if status:
+            extra = json.loads(status_raw or "[]")
+            note = f"{vendor} API, EUR. MOQ {moq}, order multiple {mult}."
+            if moq and moq > 1:
+                note += " Reel/tray minimum: stock does not mean one unit is purchasable."
+            if got_mpn and got_mpn.upper() != mpn.upper():
+                note += f" Vendor lists this as {got_mpn}."
+            if vendor_pn and vendor_pn.upper() not in (mpn.upper(), (got_mpn or "").upper()):
+                note += f" Vendor part number {vendor_pn}."
+            if vendor == "tme" and extra:
                 note += (
-                    f" TME product_status={status}. BLOCKED_FOR_ZBL_BACKORDERS is an ORDERING "
-                    "restriction (no zero-balance backorders accepted), not a lifecycle state, "
-                    "which is why lifecycle stays 'unknown' rather than being inferred from it."
+                    f" TME product_status={extra}. BLOCKED_FOR_ZBL_BACKORDERS is an ORDERING "
+                    "restriction, not a lifecycle state."
                 )
-            if vendor_pn and vendor_pn.upper() != mpn.upper():
-                note += f" TME indexes this part as symbol {vendor_pn}."
             offers.append(
                 collections.OrderedDict(
                     [
-                        ("distributor", "tme"),
+                        ("distributor", vendor),
                         ("distributor_pn", vendor_pn),
                         ("stock", stock or 0),
                         ("moq", moq),
@@ -142,8 +153,9 @@ def main() -> int:
                         ("lead_time_days", lead),
                         ("price_breaks", breaks),
                         ("currency", "EUR"),
-                        ("lifecycle", "unknown"),
-                        ("compliance", []),
+                        # Digi-Key publishes a real lifecycle; TME does not.
+                        ("lifecycle", (lifecycle or "unknown").lower()),
+                        ("compliance", extra if vendor != "tme" else []),
                         ("datasheet_url", ds),
                         ("source", "api"),
                         ("retrieved_at", RETRIEVED_AT),
@@ -151,7 +163,7 @@ def main() -> int:
                     ]
                 )
             )
-            carried.append((mpn, stock or 0, moq))
+            summary[vendor].append(f"{mpn}({stock or 0})")
 
         part["offers"] = offers
         stocked = [o for o in offers if (o.get("stock") or 0) > 0]
@@ -159,10 +171,10 @@ def main() -> int:
             del part["sourcing_pending"]
         elif not stocked and "sourcing_pending" in part:
             part["sourcing_pending"]["reason"] = (
-                "TME has been fetched and reports no stock"
-                + ("" if row is not None else " (and does not carry this part)")
-                + "; Mouser and Digi-Key are unfetched, so the EU sourcing question is still open "
-                "rather than answered negatively."
+                "no stock at any distributor with an adapter ("
+                + ", ".join(vendors)
+                + "); Mouser is unfetched, so the EU sourcing question is still open rather than "
+                "answered negatively."
             )
             part["sourcing_pending"]["since"] = RETRIEVED_AT
             part["sourcing_pending"]["note"] = PENDING_NOTE
@@ -173,7 +185,7 @@ def main() -> int:
         """
         SELECT category, COUNT(*), SUM(CASE WHEN stock > 0 THEN 1 ELSE 0 END),
                SUM(CASE WHEN datasheet_url IS NOT NULL THEN 1 ELSE 0 END)
-        FROM parts WHERE vendor='tme' AND category IS NOT NULL
+        FROM parts WHERE category IS NOT NULL
         GROUP BY category ORDER BY category
         """
     ):
@@ -195,16 +207,16 @@ def main() -> int:
                 "of it the gates depend on. A category marked as a sample was capped by a --limit "
                 "and is not the whole category.",
             ),
-            ("vendor", "tme"),
+            ("vendors", vendors),
             ("by_requirement", coverage),
         ]
     )
     SNAPSHOT.write_text(json.dumps(snap, indent=2) + "\n")
 
-    print(f"carried by TME ({len(carried)}):")
-    for mpn, st, moq in carried:
-        print(f"  {mpn:<24} stock={st:<7} moq={moq}")
-    print(f"\nnot carried ({len(absent)}): {absent}")
+    for v in vendors:
+        print(f"{v}: {len(summary[v])} carried, {len(absent[v])} not carried")
+        if absent[v]:
+            print(f"   absent: {absent[v]}")
     print("\ncatalogue coverage:")
     for cat, c in coverage.items():
         print(f"  {cat:<16} swept={c['parts_swept']:<5} stocked={c['stocked']:<5} "

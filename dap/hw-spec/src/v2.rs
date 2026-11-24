@@ -221,7 +221,19 @@ const POWER: PowerBudget = PowerBudget {
 ///
 /// Both spellings are listed because the vendor uses both for the same thing —
 /// in one query, 9 parts labelled `oscillator` and 4 labelled `XO`.
-const ACTIVE_CLOCK_TYPES: &[&str] = &["oscillator", "XO"];
+const ACTIVE_CLOCK_TYPES: &[&str] = &[
+    // TME's vocabulary.
+    "oscillator",
+    "XO",
+    // Digi-Key's, which is a different string for the same thing. Listed
+    // explicitly rather than matched loosely because the neighbouring values are
+    // traps: Digi-Key also publishes `Base Resonator: 'Crystal'` for this very
+    // part (the element inside the XO) and `Function: 'Standby (Power Down)'`.
+    // A substring search for "crystal" or a guess at which field means "type"
+    // rejects a correct oscillator as passive quartz.
+    "XO (Standard)",
+    "XO (Standard) with Standby",
+];
 
 /// The 44.1 kHz-family MCLK oscillator, machine-checkable.
 const OSC_44K1_CONSTRAINTS: &[Constraint<'static>] = &[
@@ -786,10 +798,18 @@ const PARTS: &[PartReq] = &[
                 preference: Preference::Rejected(
                     "MEMS, and measurably the wrong trade for this design. Datasheet \
                      (abracon.com/Oscillators/ASDMB.pdf): 5-10 ps RMS period jitter against the \
-                     ASV quartz part's 3.2 ps; 0..+70 C commercial temperature, which a PORTABLE \
-                     device leaves behind outdoors in winter; and a supply range topping out at \
+                     ASV quartz part's 3.2 ps; 0..+70 C commercial temperature; and a supply range topping out at \
                      exactly 3.3 V, so no margin on the rail it has to run from. Worse on every \
-                     axis that matters here",
+                     axis that matters here. \
+                     \
+                     CORRECTION to the original reasoning, 2026-11-24: this was first argued \
+                     partly as 'a portable device leaves 0..70 C behind outdoors in winter', \
+                     which overstated it. The CS43131's own ambient range is -20..+70 C \
+                     (DS1155F2) and Digi-Key lists the part at -10..+70 C, so the DESIGN was \
+                     never a -40 C product. A 0 C floor is still worse than -20 and narrows the \
+                     range further, but the decisive reason is jitter: 5-10 ps against the quartz \
+                     part's 3.2 ps, in a design whose stated premise is that MCLK jitter is the \
+                     one thing to avoid",
                 ),
                 note: "was the spec's placeholder for this requirement until it was actually \
                        read. Kept Rejected so the MEMS-vs-quartz question is not re-opened from \
@@ -840,17 +860,26 @@ const PARTS: &[PartReq] = &[
         candidates: &[
             Candidate {
                 mpn: "74LVC1G3157GW",
-                preference: Preference::Preferred,
+                preference: Preference::Alternate,
                 note: "DATASHEET-CONFIRMED 2026-11-24 (nexperia.com product page, retrieved \
                        with a headed browser — the site 403s a plain GET): \
                        'Break-before-make switching', Ron 6.5 ohm typical at VCC = 3.3 V and 7.5 \
                        ohm at 2.7 V, so the spec's 6-7.5 ohm claim is accurate. \
                        \
-                       NOT carried by TME, which is the live problem with preferring it.",
+                       DEMOTED to Alternate 2026-11-24, on the spec's own AVL rule rather than on \
+                       a preference. With both distributors fetched it has ONE EU source \
+                       (Digi-Key, 40729) where the TI part has TWO (Digi-Key 895727 + TME 6903). \
+                       Two sources for one MPN is what cuts shortage delay ~80%, and a single \
+                       source is a single point of failure whatever the part costs. \
+                       \
+                       Nothing is wrong with the part: 6.5 ohm typical Ron at 3.3 V is \
+                       marginally better than TI's figure, and break-before-make is confirmed. It \
+                       is a sourcing decision, not an engineering one, and reversible the moment \
+                       a second distributor stocks it.",
             },
             Candidate {
                 mpn: "SN74LVC1G3157DCKR",
-                preference: Preference::Alternate,
+                preference: Preference::Preferred,
                 note: "DATASHEET-CONFIRMED 2026-11-24 (TI SCES424O): 'Specified break-before-make \
                        switching' as a front-page feature, with a characterised T_B-M parameter \
                        in four timing tables and a dedicated internal-timing figure — so the \
@@ -869,8 +898,16 @@ const PARTS: &[PartReq] = &[
                        does not actually separate them — an earlier reading of this comparison \
                        was unfair to Nexperia. \
                        \
-                       What does separate them is availability: 6916 in stock at TME, MOQ 1, \
-                       0.189 EUR, against a Preferred part TME does not carry at all.",
+                       PROMOTED to Preferred 2026-11-24. What separates the two is sourcing \
+                       depth, which is now measured rather than assumed: this part has TWO EU \
+                       sources (Digi-Key 895727 and TME 6903, both MOQ 1) against the Nexperia \
+                       part's one. It also ranked 1st of 261 parts in TME's analog-switch \
+                       category. \
+                       \
+                       I declined this swap once before on the grounds that one distributor is \
+                       not the EU market — correctly at the time, since only TME had been \
+                       fetched. With both fetched the objection is gone and the spec's own \
+                       two-source rule decides it.",
             },
             Candidate {
                 mpn: "NB3N511",

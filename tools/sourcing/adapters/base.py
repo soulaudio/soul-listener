@@ -57,6 +57,12 @@ class VendorPart:
     order_multiple: int | None = None
     lead_time_days: int | None = None
     lifecycle_raw: str | None = None
+    #: The identifier the caller asked for, when it differs from what the vendor
+    #: returned. A vendor's PN carries a packaging suffix the spec does not
+    #: (`74LVC1G3157GW,125` vs `74LVC1G3157GW`), and TME indexes parts by its own
+    #: symbol — so matching the result back to the request by string equality
+    #: reports stocked parts as "not carried".
+    queried_as: str | None = None
     status_raw: list[str] = field(default_factory=list)
     datasheet_url: str | None = None
 
