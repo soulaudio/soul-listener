@@ -269,6 +269,51 @@ fn the_outline_is_owned_by_the_design_not_the_tool() {
     );
 }
 
+/// atopile must be reachable without any shell setup.
+///
+/// Four things stop a bare `ato` working on this machine: atopile 0.15.9 needs
+/// Python 3.14 exactly, `uv`'s own CPython does not run on NixOS, the wheel
+/// needs `libstdc++` on the loader path, and `uv tool install`'s bin directory
+/// is not on PATH — with the shell config home-manager-managed in the read-only
+/// nix store, so it cannot simply be added.
+///
+/// `tools/ato` supplies all four, and `xtask hardware` falls back to it. This
+/// pins that arrangement, because the symptom when it breaks is
+/// `zsh: command not found: ato` and the cause is four layers down.
+#[test]
+fn atopile_is_reachable_without_shell_setup() {
+    let wrapper = concat!(env!("CARGO_MANIFEST_DIR"), "/../../tools/ato");
+    let path = std::path::Path::new(wrapper);
+    assert!(
+        path.exists(),
+        "tools/ato is missing; a bare `ato` is not on PATH here"
+    );
+    let src = std::fs::read_to_string(path).expect("readable");
+    for (needle, why) in [
+        (
+            "python314",
+            "the interpreter must come from nixpkgs — uv's own CPython does not run on NixOS",
+        ),
+        (
+            "libstdc",
+            "the wheel's compiled extension needs libstdc++ on the loader path",
+        ),
+        (
+            "0.15.9",
+            "the version pin is load-bearing: earlier releases call a dead endpoint",
+        ),
+    ] {
+        assert!(
+            src.contains(needle),
+            "tools/ato no longer handles {needle:?} — {why}"
+        );
+    }
+    assert!(
+        HW_XTASK.contains("fn ato_cmd"),
+        "xtask must resolve atopile through ato_cmd(), which falls back to tools/ato.          Without the fallback, `cargo xtask hardware check` fails with 'ato not found' on          a machine where the wrapper would have worked."
+    );
+}
+
 /// The pin map must be regenerated whenever the `.ato` sources change.
 ///
 /// # The property this protects

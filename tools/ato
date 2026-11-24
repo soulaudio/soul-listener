@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+# `ato` wrapper — installs atopile on first use, then execs it.
+#
+#   tools/ato --version
+#   tools/ato auth login
+#   tools/ato build -b check-clock
+#
+# WHY THIS EXISTS
+#
+# Running atopile on NixOS takes four things that are each individually annoying
+# and together are a wall:
+#
+#   1. atopile 0.15.9 requires Python 3.14 EXACTLY (">=3.14,<3.15"). A system
+#      python3 of 3.13 cannot install it.
+#   2. `uv` resolves that by downloading its own CPython — which does not run on
+#      NixOS at all ("cannot run dynamically linked executables intended for
+#      generic linux environments"). The interpreter has to come from nixpkgs.
+#   3. The atopile wheel ships a compiled extension that needs `libstdc++.so.6`
+#      on the loader path, which NixOS does not provide globally.
+#   4. `uv tool install` puts binaries in ~/.local/bin, which is not on PATH
+#      here — and the shell config is home-manager-managed in the read-only nix
+#      store, so "just add it to .zshrc" is not a two-second fix.
+#
+# So this script supplies all four and gets out of the way. It is also what
+# `cargo xtask hardware` falls back to when `ato` is not on PATH, which means the
+# repo's hardware checks work with no shell setup at all.
+#
+# WHAT IT WRITES
+#
+# One directory: ${XDG_CACHE_HOME:-~/.cache}/soul-listener/atopile — a cache, not
+# config, and safe to delete (this script reinstalls it). Nothing is added to
+# your PATH, your shell files, or your home config.
+set -euo pipefail
+
+# Pinned, and the pin is load-bearing rather than cautious: every earlier
+# atopile resolves parts against components.atopileapi.com, which no longer
+# exists in DNS. See docs/hardware/ATOPILE-TOOLCHAIN.md.
+ATO_VERSION="${ATO_VERSION:-0.15.9}"
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/soul-listener/atopile"
+TOOL_DIR="$CACHE/tools"
+BIN_DIR="$CACHE/bin"
+ATO_BIN="$BIN_DIR/ato"
+
+have() { command -v "$1" >/dev/null 2>&1; }
+
+# libstdc++ for the wheel's compiled extension. Resolved through nix so it does
+# not depend on anything being installed globally.
+libstdcxx_path() {
+  if [ -n "${SOUL_LIBSTDCXX:-}" ]; then
+    printf '%s' "$SOUL_LIBSTDCXX"
+    return
+  fi
+  if have nix; then
+    local p
+    p="$(nix eval --raw 'nixpkgs#stdenv.cc.cc.lib' 2>/dev/null || true)"
+    [ -n "$p" ] && [ -d "$p/lib" ] && { printf '%s' "$p/lib"; return; }
+  fi
+  # Fall back to whatever is already on the system (non-NixOS, or a nix-shell).
+  local found
+  found="$(dirname "$(find /nix/store -maxdepth 4 -name 'libstdc++.so.6' 2>/dev/null | head -1)" 2>/dev/null || true)"
+  printf '%s' "${found:-/usr/lib}"
+}
+
+install_atopile() {
+  if ! have nix; then
+    echo "tools/ato: needs \`nix\` to supply Python 3.14 and libstdc++." >&2
+    echo "  Without nix: install Python 3.14 yourself, then" >&2
+    echo "  uv tool install --python 3.14 atopile==$ATO_VERSION" >&2
+    exit 1
+  fi
+  echo "tools/ato: installing atopile $ATO_VERSION into $CACHE (one time)…" >&2
+  echo "tools/ato: Python 3.14 and libstdc++ come from nixpkgs; nothing touches your shell config." >&2
+  mkdir -p "$TOOL_DIR" "$BIN_DIR"
+  # `--python "$(which python3.14)"` is the whole trick: uv must be told to use
+  # the nixpkgs interpreter, or it downloads one that cannot execute here.
+  UV_TOOL_DIR="$TOOL_DIR" UV_TOOL_BIN_DIR="$BIN_DIR" \
+  UV_CACHE_DIR="$CACHE/uv-cache" \
+    nix shell nixpkgs#uv nixpkgs#python314 --command bash -c \
+      "uv tool install --python \"\$(command -v python3.14)\" 'atopile==$ATO_VERSION'" >&2
+}
+
+[ -x "$ATO_BIN" ] || install_atopile
+
+if [ ! -x "$ATO_BIN" ]; then
+  echo "tools/ato: install finished but $ATO_BIN is missing." >&2
+  exit 1
+fi
+
+export LD_LIBRARY_PATH="$(libstdcxx_path):${LD_LIBRARY_PATH:-}"
+# atopile's live display assumes a width; without this it wraps error messages
+# into unreadable 60-column columns when run non-interactively.
+export COLUMNS="${COLUMNS:-200}"
+# `ato` resolves the project from the working directory. Default to the atopile
+# project rather than the repo root, so `tools/ato build` works from anywhere.
+if [ -z "${ATO_NO_CHDIR:-}" ] && [ -f "$ROOT/hardware/ato.yaml" ]; then
+  cd "$ROOT/hardware"
+fi
+exec "$ATO_BIN" "$@"

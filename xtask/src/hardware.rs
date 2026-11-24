@@ -83,6 +83,28 @@ pub enum HwCommand {
     Bom,
 }
 
+/// How to invoke atopile: `ato` on PATH, else the repo's `tools/ato` wrapper.
+///
+/// The wrapper exists because running atopile on NixOS needs Python 3.14 from
+/// nixpkgs, `libstdc++` on the loader path, and a bin directory that is not on
+/// PATH — and this machine's shell config is home-manager-managed in the
+/// read-only nix store, so "add it to .zshrc" is not a quick fix. Falling back
+/// to it means the hardware checks work with no shell setup at all.
+fn ato_cmd() -> Option<String> {
+    if Command::new("ato")
+        .arg("--version")
+        .output()
+        .is_ok_and(|o| o.status.success())
+    {
+        return Some("ato".to_string());
+    }
+    let wrapper = std::path::Path::new("tools/ato");
+    if wrapper.exists() {
+        return Some("tools/ato".to_string());
+    }
+    None
+}
+
 pub fn run(cmd: HwCommand) -> Result<()> {
     // `render` drives kicad-cli against the committed PCB and never invokes
     // atopile, so requiring the atopile toolchain for it would block the one
@@ -91,10 +113,8 @@ pub fn run(cmd: HwCommand) -> Result<()> {
         return hw_render();
     }
 
-    // Verify ato is installed
-    let ato_check = Command::new("ato").arg("--version").output();
-
-    if ato_check.is_err() || !ato_check.unwrap().status.success() {
+    // Verify atopile is reachable, directly or through the wrapper.
+    if ato_cmd().is_none() {
         // A missing toolchain is reported, not failed, for the hook path: most
         // contributors to this repo touch firmware and have no reason to carry a
         // Python 3.14 + atopile install. CI does have it, and CI is where the
@@ -145,11 +165,16 @@ pub fn run(cmd: HwCommand) -> Result<()> {
 /// reporting that as a failure would train people to ignore this check.
 fn run_check_build(build: &str) -> Result<bool> {
     let start = Instant::now();
-    let out = Command::new("ato")
-        .args(["build", "--build", build])
-        .current_dir("hardware")
+    let ato = ato_cmd().context("atopile not available")?;
+    // The wrapper chdirs into hardware/ itself; a bare `ato` must be told.
+    let mut c = Command::new(&ato);
+    c.args(["build", "--build", build]);
+    if ato == "ato" {
+        c.current_dir("hardware");
+    }
+    let out = c
         .output()
-        .with_context(|| format!("failed to run 'ato build --build {build}'"))?;
+        .with_context(|| format!("failed to run '{ato} build --build {build}'"))?;
 
     // atopile writes the stage list to stderr via its live display.
     let text = format!(

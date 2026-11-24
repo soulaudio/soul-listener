@@ -347,9 +347,42 @@ callers in the CLI** — it is reachable only from `ato serve` and the hosted ap
 
 ## Running it
 
+**Use the wrapper.** `tools/ato` installs atopile on first use and supplies
+everything the invocation needs:
+
 ```sh
-# once — Python 3.14 is mandatory
-uv tool install --python 3.14 atopile==0.15.9
+tools/ato --version
+tools/ato auth login        # then the assert rules and DRC work
+tools/ato build -b default -t bom
+```
+
+`cargo xtask hardware` falls back to it when `ato` is not on PATH, so the repo's
+hardware checks need no shell setup.
+
+It exists because four things conspire on NixOS, and each is individually
+annoying:
+
+1. atopile 0.15.9 requires Python **3.14 exactly** (`>=3.14,<3.15`); a system
+   `python3` of 3.13 cannot install it.
+2. `uv` resolves that by downloading its own CPython, which **does not run on
+   NixOS** — "cannot run dynamically linked executables intended for generic
+   linux environments". The interpreter must come from nixpkgs.
+3. The wheel's compiled extension needs `libstdc++.so.6` on the loader path,
+   which NixOS does not provide globally.
+4. `uv tool install` puts binaries in `~/.local/bin`, which is not on PATH here,
+   and the shell config is home-manager-managed in the read-only nix store — so
+   "add it to `.zshrc`" is not a two-second fix.
+
+The wrapper writes one directory,
+`${XDG_CACHE_HOME:-~/.cache}/soul-listener/atopile` — a cache, not config, safe
+to delete, and it reinstalls. Nothing touches PATH or shell files.
+
+Doing it by hand instead:
+
+```sh
+# once — Python 3.14 is mandatory, and must come from nixpkgs on NixOS
+nix shell nixpkgs#uv nixpkgs#python314 --command \
+  uv tool install --python "$(command -v python3.14)" atopile==0.15.9
 
 cargo xtask hardware check                       # every module, the board, the floorplan
 cargo xtask hardware check-changed <files...>    # one slice (the pre-commit hook)
@@ -360,13 +393,16 @@ ato auth login                                   # then the assert rules and DRC
 ato build -b default -t bom                      # a BOM, once signed in
 ```
 
-On NixOS the wheel needs `libstdc++` on the loader path:
+and then `libstdc++` on the loader path for every invocation:
 
 ```sh
-nix shell nixpkgs#stdenv.cc.cc.lib --command bash -c '
-  export LD_LIBRARY_PATH="$(dirname "$(find /nix/store -maxdepth 4 -name libstdc++.so.6 | head -1)"):$LD_LIBRARY_PATH"
-  cargo xtask hardware check'
+export LD_LIBRARY_PATH="$(nix eval --raw nixpkgs#stdenv.cc.cc.lib)/lib:$LD_LIBRARY_PATH"
 ```
+
+**Signing in must be done from a terminal, not a browser.** `ato auth login`
+starts the flow itself and captures the token on a localhost callback; signing
+into `app.atopile.io` in a browser creates a *web* session and leaves
+`ato auth status` reporting `Signed out`.
 
 ## One source of truth for pins
 

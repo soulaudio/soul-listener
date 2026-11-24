@@ -40,12 +40,15 @@ tools/ato-placement.py                         # floorplan self-consistency
 tools/ato-vendor-part.py --check               # vendored-part state
 ```
 
-`ato` needs `libstdc++` on the loader path here:
+Invoke atopile through **`tools/ato`**, never a bare `ato`. The wrapper installs
+it on first use (Python 3.14 from nixpkgs, `libstdc++` on the loader path, a
+cache dir under `~/.cache/soul-listener`) because none of that works by default
+on NixOS. `cargo xtask hardware` falls back to it automatically.
 
 ```sh
-nix shell nixpkgs#stdenv.cc.cc.lib --command bash -c '
-  export LD_LIBRARY_PATH="$(dirname "$(find /nix/store -maxdepth 4 -name libstdc++.so.6 | head -1)"):$LD_LIBRARY_PATH"
-  cargo xtask hardware check'
+tools/ato --version
+tools/ato auth login     # from a TERMINAL — a browser sign-in does not create a CLI session
+tools/ato build -b check-clock
 ```
 
 ## 3. Writing `.ato`
