@@ -705,7 +705,7 @@
         {
           "distributor": "digikey",
           "distributor_pn": "296-14909-1-ND",
-          "stock": 895727,
+          "stock": 895177,
           "moq": 1,
           "order_multiple": null,
           "lead_time_days": 182,
@@ -1553,6 +1553,160 @@
         }
       ]
     },
+    "ASV-24.576MHZ-EJ-T": {
+      "manufacturer": "Abracon",
+      "description": "24.576 MHz XO, +/-20 ppm, 4-SMD No Lead \u2014 the 48 kHz partner of ASV-22.5792MHZ-LR-T, but -20..+70 C commercial where that part is -40..+85 C industrial",
+      "package": "SMD",
+      "satisfies": "mclk-osc-48k",
+      "offers": [
+        {
+          "distributor": "digikey",
+          "distributor_pn": "535-9318-1-ND",
+          "stock": 4113,
+          "moq": 1,
+          "order_multiple": null,
+          "lead_time_days": 84,
+          "price_breaks": [
+            {
+              "qty": 1,
+              "unit_price": 2.0
+            },
+            {
+              "qty": 10,
+              "unit_price": 1.733
+            },
+            {
+              "qty": 25,
+              "unit_price": 1.6384
+            },
+            {
+              "qty": 50,
+              "unit_price": 1.5706
+            },
+            {
+              "qty": 100,
+              "unit_price": 1.5057
+            },
+            {
+              "qty": 250,
+              "unit_price": 1.42396
+            },
+            {
+              "qty": 500,
+              "unit_price": 1.3651
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "active",
+          "compliance": [
+            {
+              "regulation": "RoHS",
+              "revision": "ROHS3",
+              "status": "ROHS3 Compliant",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            },
+            {
+              "regulation": "REACH",
+              "revision": "unstated",
+              "status": "REACH Unaffected",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            }
+          ],
+          "datasheet_url": "https://abracon.com/Oscillators/ASV.pdf",
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "digikey API, EUR. MOQ 1, order multiple None. Vendor part number 535-9318-1-ND."
+        },
+        {
+          "distributor": "mouser",
+          "distributor_pn": "815-ASV-24.576-EJ-T",
+          "stock": 4684,
+          "moq": 1,
+          "order_multiple": 1,
+          "lead_time_days": 84,
+          "price_breaks": [
+            {
+              "qty": 1,
+              "unit_price": 2.0
+            },
+            {
+              "qty": 10,
+              "unit_price": 1.74
+            },
+            {
+              "qty": 25,
+              "unit_price": 1.57
+            },
+            {
+              "qty": 100,
+              "unit_price": 1.51
+            },
+            {
+              "qty": 250,
+              "unit_price": 1.43
+            },
+            {
+              "qty": 500,
+              "unit_price": 1.37
+            },
+            {
+              "qty": 1000,
+              "unit_price": 1.31
+            },
+            {
+              "qty": 2000,
+              "unit_price": 1.22
+            },
+            {
+              "qty": 5000,
+              "unit_price": 1.19
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [
+            {
+              "regulation": "RoHS",
+              "revision": "unstated",
+              "status": "RoHS Compliant",
+              "asserted_at": "2026-11-24",
+              "source": "mouser"
+            }
+          ],
+          "datasheet_url": "https://www.mouser.com/datasheet/3/184/1/ASV.pdf",
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "mouser API, EUR. MOQ 1, order multiple 1. Vendor part number 815-ASV-24.576-EJ-T."
+        },
+        {
+          "distributor": "tme",
+          "distributor_pn": "ASV24.576MHZEJT-0",
+          "stock": 10000,
+          "moq": 1000,
+          "order_multiple": 1000,
+          "lead_time_days": null,
+          "price_breaks": [
+            {
+              "qty": 1000,
+              "unit_price": 0.76
+            },
+            {
+              "qty": 2000,
+              "unit_price": 0.68
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "tme API, EUR. MOQ 1000, order multiple 1000. Reel/tray minimum: stock does not mean one unit is purchasable. Vendor part number ASV24.576MHZEJT-0. TME product_status=['EXTERNAL_WAREHOUSE', 'BLOCKED_FOR_ZBL_MP']. BLOCKED_FOR_ZBL_BACKORDERS is an ORDERING restriction, not a lifecycle state."
+        }
+      ]
+    },
     "KC2016Z22.5792C1KX00": {
       "manufacturer": "Kyocera AVX",
       "description": "Active oscillator, 22.5792 MHz, +/-20ppm, 3.3VDC, -40..+85C, CMOS, 2.0x1.6x0.8 mm",
@@ -2257,39 +2411,39 @@
     ],
     "by_requirement": {
       "battery": {
-        "parts_swept": 77,
-        "stocked": 73,
-        "with_datasheet": 77
+        "parts_swept": 646,
+        "stocked": 536,
+        "with_datasheet": 552
       },
       "bluetooth": {
-        "parts_swept": 100,
-        "stocked": 100,
-        "with_datasheet": 99
+        "parts_swept": 892,
+        "stocked": 601,
+        "with_datasheet": 807
       },
       "dac": {
-        "parts_swept": 138,
-        "stocked": 99,
-        "with_datasheet": 126
+        "parts_swept": 1898,
+        "stocked": 502,
+        "with_datasheet": 1695
       },
       "mclk-mux": {
-        "parts_swept": 364,
-        "stocked": 132,
-        "with_datasheet": 305
+        "parts_swept": 807,
+        "stocked": 421,
+        "with_datasheet": 718
       },
       "mclk-osc-44k1": {
-        "parts_swept": 127,
-        "stocked": 95,
-        "with_datasheet": 126
+        "parts_swept": 388,
+        "stocked": 96,
+        "with_datasheet": 385
       },
       "mclk-osc-48k": {
-        "parts_swept": 164,
-        "stocked": 103,
-        "with_datasheet": 163
+        "parts_swept": 640,
+        "stocked": 503,
+        "with_datasheet": 617
       },
       "mcu": {
-        "parts_swept": 109,
-        "stocked": 60,
-        "with_datasheet": 101
+        "parts_swept": 1780,
+        "stocked": 428,
+        "with_datasheet": 1450
       }
     }
   }

@@ -31,3 +31,5 @@
 //! will not fit the H7A3 board. A future JIT-preload change (building the
 //! next track's decoder lazily instead of holding it fully-built) would let
 //! `AUDIO_PATH_BUDGET` shrink further, but isn't needed to pass today.
+
+pub mod candidates;

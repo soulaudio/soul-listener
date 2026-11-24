@@ -26,121 +26,22 @@
 //! generate, commit, and gate that the committed artefact matches a fresh
 //! regeneration — applied one level further out than the snapshot.
 
-use dap_hw_spec::parametric::{derive, expected_dimension};
+use dap_arch_tests::candidates::{load, typed};
 use dap_hw_spec::select::{
     evaluate, rank, AttrValue, CataloguePart, Evidence, Rejection, DEFAULT_RANKING,
 };
 use dap_hw_spec::{Preference, ACTIVE};
-use serde_json::Value;
+
+// `Raw`, `load`, `raw_for` and `typed` used to be defined here, and in every other
+// test file that needed them. They live in `dap_arch_tests::candidates` now: turning a
+// vendor string into the typed value a constraint reads is the step that DECIDES
+// whether a part qualifies, and three copies of it were three chances for the gates
+// to disagree with each other and with the sourcing report.
 
 const MUX_CANDIDATES: &str = include_str!("../../../hardware/bom/candidates/mclk-mux.json");
 const BATTERY_CANDIDATES: &str = include_str!("../../../hardware/bom/candidates/battery.json");
 const MCU_CANDIDATES: &str = include_str!("../../../hardware/bom/candidates/mcu.json");
 const OSC_CANDIDATES: &str = include_str!("../../../hardware/bom/candidates/mclk-osc-44k1.json");
-
-/// Raw vendor strings for one part, owned so the engine can borrow them.
-struct Raw {
-    mpn: String,
-    manufacturer: String,
-    eu_sources: u32,
-    eu_stock: u32,
-    unit_price_cents: Option<u32>,
-    moq: Option<u32>,
-    lead_time_days: Option<u32>,
-    attrs_raw: Vec<(String, String)>,
-    datasheet_url: Option<String>,
-}
-
-fn load(doc: &str, category: &str) -> Vec<Raw> {
-    let v: Value = serde_json::from_str(doc).expect("candidate file must be valid JSON");
-    assert_eq!(
-        v["kind"].as_str(),
-        Some("candidates"),
-        "this reads a candidate export, not a fixture or a snapshot"
-    );
-    assert_eq!(
-        v["category"].as_str(),
-        Some(category),
-        "candidate file is for a different requirement than asked for"
-    );
-    v["parts"]
-        .as_array()
-        .expect("parts must be an array")
-        .iter()
-        .map(|p| Raw {
-            mpn: p["mpn"].as_str().unwrap_or_default().to_string(),
-            manufacturer: p["manufacturer"].as_str().unwrap_or_default().to_string(),
-            eu_sources: p["eu_sources"].as_u64().unwrap_or(0) as u32,
-            eu_stock: p["eu_stock"].as_u64().unwrap_or(0) as u32,
-            unit_price_cents: p["unit_price_cents"].as_u64().map(|x| x as u32),
-            moq: p["moq"].as_u64().map(|x| x as u32),
-            lead_time_days: p["lead_time_days"].as_u64().map(|x| x as u32),
-            datasheet_url: p["datasheet_url"].as_str().map(str::to_string),
-            attrs_raw: p["attrs_raw"]
-                .as_object()
-                .map(|o| {
-                    o.iter()
-                        .map(|(k, v)| (k.clone(), v.as_str().unwrap_or_default().to_string()))
-                        .collect()
-                })
-                .unwrap_or_default(),
-        })
-        .collect()
-}
-
-/// Find the raw string that answers a constraint's attribute.
-///
-/// The indirection that makes range containment work from one published field:
-/// a constraint on `supply_mv_min` is answered by the vendor's `supply_mv`
-/// (`"1.65...5.5V DC"`), because distributors publish one operating range where
-/// the spec needs two bounds. An exact name match wins if the vendor happens to
-/// publish the bound separately.
-fn raw_for<'a>(attrs: &'a [(String, String)], attr: &str) -> Option<&'a str> {
-    if let Some((_, v)) = attrs.iter().find(|(k, _)| k.eq_ignore_ascii_case(attr)) {
-        return Some(v);
-    }
-    let base = attr
-        .strip_suffix("_min")
-        .or_else(|| attr.strip_suffix("_max"))?;
-    attrs
-        .iter()
-        .find(|(k, _)| k.eq_ignore_ascii_case(base))
-        .map(|(_, v)| v.as_str())
-}
-
-/// Turn raw vendor strings into the typed attributes the constraints read.
-///
-/// Only the attributes this requirement actually constrains are derived. That is
-/// not an optimisation — deriving everything would invent values for attributes
-/// no constraint asked about, and a wrong value nobody checks is worse than a
-/// missing one, which the engine at least reports.
-fn typed<'a>(
-    raw: &'a Raw,
-    constraints: &'a [dap_hw_spec::select::Constraint<'static>],
-) -> Vec<(&'static str, AttrValue<'a>)> {
-    let mut out: Vec<(&'static str, AttrValue<'a>)> = Vec::new();
-    for c in constraints {
-        if c.evidence == Evidence::Datasheet {
-            // Not a catalogue question; the engine skips it anyway.
-            continue;
-        }
-        let Some(s) = raw_for(&raw.attrs_raw, c.attr) else {
-            continue;
-        };
-        match expected_dimension(c.attr) {
-            Some(_) => {
-                if let Some(n) = derive(c.attr, s) {
-                    out.push((c.attr, AttrValue::Num(n)));
-                }
-                // A value that will not derive is left ABSENT rather than
-                // defaulted, so the engine reports a missing attribute instead
-                // of silently judging a guess.
-            }
-            None => out.push((c.attr, AttrValue::Text(s))),
-        }
-    }
-    out
-}
 
 /// **The assertion this whole slice exists for.**
 ///

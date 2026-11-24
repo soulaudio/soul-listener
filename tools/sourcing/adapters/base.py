@@ -134,6 +134,16 @@ class Adapter(abc.ABC):
 
     # --- Shared helpers -------------------------------------------------
 
+    #: Total matches the vendor reported for the LAST `search_category` call,
+    #: or None if it published no total.
+    #:
+    #: Exposed so a sweep can be PLANNED rather than guessed: a limit is only
+    #: meaningful against the size of the thing being limited, and every adapter
+    #: already receives this number in order to print its "this is a SAMPLE"
+    #: warning. Keeping it only in a print statement meant the one fact needed to
+    #: size a sweep was visible to a human and unavailable to the code.
+    last_total: int | None = None
+
     #: Vendor parameter name -> spec attribute name. Subclasses override.
     #: Keys are compared case-insensitively and with surrounding whitespace
     #: stripped, because catalogues are not consistent about either.

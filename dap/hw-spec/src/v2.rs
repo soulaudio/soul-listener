@@ -612,7 +612,15 @@ const BLUETOOTH_CONSTRAINTS: &[Constraint<'static>] = &[
         pred: crate::select::Predicate::Contains("Module"),
         why: "a module, never a bare chip. The module vendor has already run the radio through \
               qualification and certification; starting from a chip means running both ourselves. \
-              Catalogue-checkable because distributors classify the package as 'Module'",
+              Catalogue-checkable because distributors classify the package as 'Module'. \
+              \
+              Known coverage gap, investigated 2026-11-24: unpublished for 338 of 806 \
+              candidates (42%), and that is a REAL vendor gap rather than a mapping one. TME \
+              publishes no package field for its IoT module category at all — it carries \
+              'Dimensions' (18x25.5x3.1mm) and 'Type of communications module' (IoT) instead — \
+              so only 62 of its 444 parts can answer this, against 410 of Digi-Key's 448. The \
+              rejections are correct: a part whose form factor nobody states is not a part \
+              known to be a module",
     },
     Constraint {
         evidence: Evidence::Catalogue,
@@ -784,6 +792,12 @@ const DAC_CONSTRAINTS: &[Constraint<'static>] = &[
         pred: crate::select::Predicate::OneOf(&["SMD"]),
         why: "hand-assembled small batch, so surface mount",
     },
+    Constraint {
+        evidence: Evidence::Catalogue,
+        attr: "package",
+        pred: crate::select::Predicate::ExcludesAll(&["WLCSP", "BGA"]),
+        why: "hand-solderable, which 'SMD' does not imply. Found by scaling the sweep to 1860               converters: CS43131-CWZR is the SAME DIE as the preferred part in a '42-UFBGA,               WLCSP' with 3873 in stock and Active status, and it passed every catalogue               constraint this requirement had — because a wafer-level chip-scale package is               indeed surface mount. A 0.4 mm-pitch WLCSP needs a stencil, paste and reflow with               no way to inspect or rework the joints, which is exactly what 'hand-assembled               small batch' rules out. Stated as an exclusion rather than an allowlist of               packages because vendors spell package names dozens of ways, and the one time               this spec enumerated allowed package codes it rejected every real oscillator",
+    },
     // --- Datasheet-only ---------------------------------------------------
     //
     // None of the following is a parametric field at any distributor fetched so
@@ -896,6 +910,20 @@ const PARTS: &[PartReq] = &[
                 preference: Preference::Alternate,
                 note: "same family, no integrated amp — would need a separate amp stage, so \
                        this is a fallback with a board change, not a drop-in",
+            },
+            Candidate {
+                mpn: "CS43131-CWZR",
+                preference: Preference::Rejected(
+                    "same die as the preferred part, but in a 42-UFBGA/WLCSP: a 0.4 mm-pitch \
+                     wafer-level package cannot be hand-soldered or inspected, and this board \
+                     is hand-assembled in small batches",
+                ),
+                note: "kept because it is the single best-STOCKED CS43131 anywhere — 3873 at \
+                       Digi-Key against 347 for -CNZ — so it will keep surfacing as the \
+                       obvious answer to the DAC's single-sourcing problem. It is not: the \
+                       package is the blocker, not the supply. Recorded 2026-11-24, when it \
+                       passed every catalogue constraint the requirement had and exposed that \
+                       'mounting = SMD' never expressed hand-solderability",
             },
             Candidate {
                 mpn: "ES9038Q2M",
@@ -1012,6 +1040,37 @@ const PARTS: &[PartReq] = &[
                 note: "Kyocera AVX, +/-20 ppm, 1062 in stock at Digi-Key at MOQ 1, 1.10 EUR — \
                        and the 48 kHz half of its own matched pair. Publishes no phase-noise \
                        figure, which is what keeps it behind the NDK part.",
+            },
+            Candidate {
+                mpn: "ASV-24.576MHZ-EJ-T",
+                preference: Preference::Evaluating,
+                note: "The 48 kHz partner the ASV option never had. Abracon ASV, same family as \
+                       the 44.1 kHz ASV-22.5792MHZ-LR-T this spec already carries, +/-20 ppm, \
+                       4-SMD No Lead, MOQ 1, 2.00 EUR — and stocked at ALL THREE distributors \
+                       (Digi-Key 4113, TME 10000, Mouser 4684), which makes it the \
+                       best-sourced clock part in this spec by a wide margin. Its 22.5792 MHz \
+                       sibling is also three-sourced, so this is the only PAIR where both \
+                       frequencies clear the two-source AVL rule with a spare. \
+                       \
+                       Found by widening the 24.576 MHz sweep from 162 parts to 639: the ASV \
+                       family was previously recorded at 22.5792 MHz only, so it could not form \
+                       a pair and the two-source ASV route was closed. It is open now, and it \
+                       is the only candidate pair where BOTH frequencies have two stocking EU \
+                       distributors. \
+                       \
+                       The caveat is temperature and it is not a detail: this part is \
+                       -20..+70 C commercial where its own 22.5792 MHz sibling is -40..+85 C \
+                       industrial, so the pair is NOT grade-matched. Adequate for this design \
+                       (the CS43131's own ambient range is -20..+70 C, so the DAC bounds it \
+                       first either way) but strictly worse than the NDK pair, which is \
+                       industrial at both frequencies and 43 fs. The trade is sourcing depth \
+                       against jitter and temperature grade. \
+                       \
+                       TME publishes this part's type as 'crystal'. That is wrong — ASV is \
+                       Abracon's XO family and Digi-Key says 'oscillator' — and it matters: the \
+                       part passes `part_type` only because the export's tie-break picks the \
+                       alphabetically-first vendor and 'digikey' precedes 'tme'. See \
+                       `no_spec_candidate_depends_on_a_conflicted_attribute`.",
             },
             Candidate {
                 mpn: "ASDMB-24.576MHZ-LY-T",

@@ -5,16 +5,24 @@ edition = "2021"
 description = "Architecture tests pinning the DAP audio-decode path to the STM32H7A3 AXI-SRAM budget (test-only; see src/lib.rs)."
 publish = false
 
+# Regular dependencies, not dev-, because `src/lib.rs` carries the candidate
+# loader that BOTH the arch tests and `examples/sourcing-report.rs` use. A
+# dev-dependency is invisible to the lib target, and the alternative was a third
+# copy of the loader inside the example — where it would be free to disagree with
+# the gates about whether a part qualifies. A report that contradicts the gate is
+# worse than no report.
+[dependencies]
+# sourcing_snapshot.rs / the candidate loader: parses the committed BOM files.
+serde_json = "1"
+# The spec itself: constraints, the selection engine, `parametric::derive`.
+dap-hw-spec = { path = "../hw-spec" }
+
 [dev-dependencies]
 soul-audio-core = { workspace = true }
 soul-audio-engine = { workspace = true }
 soul-audio-index = { workspace = true }
 # This workspace member (dap-core), for the `AudioPlayer`/`App` size guards.
 dap-core = { path = "../core" }
-# hw_spec_bridge.rs: the firmware constants must agree with THE spec.
-dap-hw-spec = { path = "../hw-spec" }
-# sourcing_snapshot.rs: parses the committed BOM sourcing snapshot.
-serde_json = "1"
 # For the `App` size guard's `StubDisplay` test double (`dap_core::display`'s
 # `Display` port is `DrawTarget<Color = Gray4> + EinkRefresh`). Same version
 # dap-sim already pins (dap/sim/Cargo.toml).
