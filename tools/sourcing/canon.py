@@ -62,6 +62,12 @@ SYNONYMS: dict[str, dict[str, str]] = {
         "xo (standard)": "oscillator",
         "xo (standard) with standby": "oscillator",
         "crystal": "crystal",
+        # Digi-Key's spellings, surfaced by the export's conflict report rather
+        # than guessed: it called the same part 'MHz Crystal' where TME said
+        # 'crystal'.
+        "mhz crystal": "crystal",
+        "khz crystal": "crystal",
+        "crystal (passive)": "crystal",
         "ceramic": "ceramic",
         "resonator": "resonator",
     },

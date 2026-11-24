@@ -56,7 +56,13 @@ def _weeks_to_days(weeks) -> int | None:
 _TODAY = "2026-11-24"
 TOKEN_PATH = "/v1/oauth2/token"
 TOKEN_REFRESH_MARGIN_S = 60
+# Digi-Key rejects Limit=100 with HTTP 400, so 50 is the documented ceiling and
+# the clamp is real rather than defensive.
 SEARCH_PAGE = 50
+# The keyword endpoint returns transient 500s ("An error occurred while
+# processing your request") for requests that succeed on retry — the same
+# flakiness `productdetails` shows. A 5xx is never an answer.
+SEARCH_RETRIES = 4
 
 
 class DigikeyAdapter(Adapter):
@@ -242,11 +248,21 @@ class DigikeyAdapter(Adapter):
                     "CategoryFilter": [{"Id": str(category)}]
                 }
             d = self._post("/products/v4/search/keyword", body)
+            # Retry 5xx with backoff. Without this a single transient failure
+            # aborted the whole sweep: all five Digi-Key sweeps failed at
+            # offset 0 on a request shape that had worked minutes earlier.
+            for attempt in range(SEARCH_RETRIES):
+                code = d.get("_http_error")
+                if code is None or code < 500:
+                    break
+                time.sleep(2.0 * (attempt + 1))
+                d = self._post("/products/v4/search/keyword", body)
             if "_http_error" in d:
                 raise RuntimeError(
                     f"Digi-Key keyword search failed at offset {offset}: HTTP "
-                    f"{d['_http_error']} {d.get('_detail','')[:200]}. {len(collected)} part(s) "
-                    f"collected; reporting that as the category would be wrong."
+                    f"{d['_http_error']} after {SEARCH_RETRIES} retries: "
+                    f"{d.get('_detail','')[:160]}. {len(collected)} part(s) collected; reporting "
+                    f"that as the category would be wrong."
                 )
             if expected is None:
                 expected = d.get("ProductsCount")

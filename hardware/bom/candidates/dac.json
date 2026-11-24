@@ -140,6 +140,24 @@
       }
     },
     {
+      "mpn": "CDB43131K",
+      "manufacturer": "Cirrus Logic Inc.",
+      "eu_sources": 1,
+      "eu_stock": 2,
+      "unit_price_cents": 110852,
+      "moq": 1,
+      "lead_time_days": 196,
+      "datasheet_url": "https://statics.cirrus.com/pubs/rdDatasheet/CDB43131K_DS1155V2DB2.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "part_type": "Audio",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
       "mpn": "CS43131-CNZ",
       "manufacturer": "Cirrus Logic Inc.",
       "eu_sources": 1,
@@ -164,6 +182,60 @@
         "supply_mv": "1.66V ~ 1.94V",
         "moq": "1",
         "order_multiple": "490"
+      }
+    },
+    {
+      "mpn": "CS43131-CNZR",
+      "manufacturer": "Cirrus Logic Inc.",
+      "eu_sources": 1,
+      "eu_stock": 221,
+      "unit_price_cents": 1644,
+      "moq": 1,
+      "lead_time_days": 140,
+      "datasheet_url": "https://statics.cirrus.com/pubs/proDatasheet/CS43131_DS1155F2.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "channels": "2",
+        "converter_architecture": "Sigma-Delta",
+        "data_interface": "I2S",
+        "mounting": "SMD",
+        "operating_temp_c": "-10\u00b0C ~ 70\u00b0C",
+        "package": "40-WFQFN Exposed Pad",
+        "resolution_bits": "32",
+        "supplier_package": "40-QFN (5x5)",
+        "supply_digital_mv": "1.66V ~ 1.94V",
+        "supply_mv": "1.66V ~ 1.94V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "CS43131-CWZR",
+      "manufacturer": "Cirrus Logic Inc.",
+      "eu_sources": 1,
+      "eu_stock": 3873,
+      "unit_price_cents": 1629,
+      "moq": 1,
+      "lead_time_days": 112,
+      "datasheet_url": "https://statics.cirrus.com/pubs/proDatasheet/CS43131_DS1155F2.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "channels": "2",
+        "converter_architecture": "Sigma-Delta",
+        "data_interface": "I2S",
+        "mounting": "SMD",
+        "operating_temp_c": "-10\u00b0C ~ 70\u00b0C",
+        "package": "42-UFBGA, WLCSP",
+        "resolution_bits": "32",
+        "supplier_package": "42-WLCSP (2.71x3.18)",
+        "supply_digital_mv": "1.66V ~ 1.94V",
+        "supply_mv": "1.66V ~ 1.94V",
+        "moq": "1",
+        "order_multiple": "1"
       }
     },
     {

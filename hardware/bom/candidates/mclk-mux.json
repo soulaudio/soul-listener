@@ -30,6 +30,28 @@
       }
     },
     {
+      "mpn": "74HC4053BQ,115",
+      "manufacturer": "Nexperia USA Inc.",
+      "eu_sources": 1,
+      "eu_stock": 31754,
+      "unit_price_cents": 38,
+      "moq": 1,
+      "lead_time_days": 112,
+      "datasheet_url": "https://assets.nexperia.com/documents/data-sheet/74HC_HCT4053.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C (TA)",
+        "package": "16-VFQFN Exposed Pad",
+        "ron_max_ohm": "120Ohm",
+        "supplier_package": "16-DHVQFN (2.5x3.5)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
       "mpn": "74LVC1G3157DW-7",
       "manufacturer": "DIODES INCORPORATED",
       "eu_sources": 1,
@@ -49,6 +71,28 @@
         "part_type": "analog switch",
         "supply_mv": "1.65...5.5V DC",
         "switch_configuration": "SPDT",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "74LVC1G3157FZ4-7",
+      "manufacturer": "Diodes Incorporated",
+      "eu_sources": 1,
+      "eu_stock": 180330,
+      "unit_price_cents": 17,
+      "moq": 1,
+      "lead_time_days": 252,
+      "datasheet_url": "https://www.diodes.com/assets/Datasheets/74LVC1G3157.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C (TA)",
+        "package": "6-XFDFN",
+        "ron_max_ohm": "10Ohm",
+        "supplier_package": "X2-DFN1410-6",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -432,23 +476,27 @@
     {
       "mpn": "ADG619BRMZ",
       "manufacturer": "Analog Devices",
-      "eu_sources": 0,
-      "eu_stock": 0,
+      "eu_sources": 1,
+      "eu_stock": 4674,
       "unit_price_cents": 250,
       "moq": 1,
-      "lead_time_days": null,
-      "datasheet_url": null,
+      "lead_time_days": 161,
+      "datasheet_url": "https://www.analog.com/media/en/technical-documentation/data-sheets/ADG619_620.pdf",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
         "channels": "1",
         "manufacturer_name": "Analog Devices",
         "mounting": "SMD",
-        "package": "MSOP8",
+        "package": "8-TSSOP, 8-MSOP (0.118\", 3.00mm Width)",
         "part_type": "analog switch",
         "supply_mv": "4.5...5.5V DC",
         "switch_configuration": "SPDT",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "ron_max_ohm": "6.5Ohm",
+        "supplier_package": "8-MSOP",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -456,23 +504,27 @@
     {
       "mpn": "ADG619BRTZ-500RL7",
       "manufacturer": "Analog Devices",
-      "eu_sources": 0,
-      "eu_stock": 0,
+      "eu_sources": 1,
+      "eu_stock": 4,
       "unit_price_cents": 244,
       "moq": 1,
-      "lead_time_days": null,
-      "datasheet_url": null,
+      "lead_time_days": 133,
+      "datasheet_url": "https://www.analog.com/media/en/technical-documentation/data-sheets/ADG619_620.pdf",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
         "channels": "1",
         "manufacturer_name": "Analog Devices",
         "mounting": "SMD",
-        "package": "SOT23",
+        "package": "SOT-23-8",
         "part_type": "analog switch",
         "supply_mv": "2.7...5.5V DC",
         "switch_configuration": "SPDT",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "ron_max_ohm": "6.5Ohm",
+        "supplier_package": "SOT-23-8",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -480,23 +532,49 @@
     {
       "mpn": "ADG633YRUZ",
       "manufacturer": "Analog Devices",
-      "eu_sources": 0,
-      "eu_stock": 0,
+      "eu_sources": 1,
+      "eu_stock": 215,
       "unit_price_cents": 217,
       "moq": 1,
-      "lead_time_days": null,
-      "datasheet_url": "https://www.tme.eu/Document/eb4c027de000ae626ce9b5c61ab7424a/ADG633.pdf",
+      "lead_time_days": 84,
+      "datasheet_url": "https://www.analog.com/media/en/technical-documentation/data-sheets/ADG633.pdf",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
         "channels": "3",
         "manufacturer_name": "Analog Devices",
         "mounting": "SMD",
-        "package": "TSSOP16",
+        "package": "16-TSSOP (0.173\", 4.40mm Width)",
         "part_type": "analog switch",
         "supply_mv": "2.7...5.5V DC; 10...11V DC",
         "switch_configuration": "SPDT",
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C (TA)",
+        "ron_max_ohm": "75Ohm",
+        "supplier_package": "16-TSSOP",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ADG633YRUZ-REEL7",
+      "manufacturer": "Analog Devices Inc.",
+      "eu_sources": 1,
+      "eu_stock": 3967,
+      "unit_price_cents": 340,
+      "moq": 1,
+      "lead_time_days": 84,
+      "datasheet_url": "https://www.analog.com/media/en/technical-documentation/data-sheets/ADG633.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C (TA)",
+        "package": "16-TSSOP (0.173\", 4.40mm Width)",
+        "ron_max_ohm": "75Ohm",
+        "supplier_package": "16-TSSOP",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -526,27 +604,75 @@
       }
     },
     {
+      "mpn": "ADG719BRMZ-REEL",
+      "manufacturer": "Analog Devices Inc.",
+      "eu_sources": 1,
+      "eu_stock": 13070,
+      "unit_price_cents": 317,
+      "moq": 1,
+      "lead_time_days": 238,
+      "datasheet_url": "https://www.analog.com/media/en/technical-documentation/data-sheets/ADG719.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C (TA)",
+        "package": "8-TSSOP, 8-MSOP (0.118\", 3.00mm Width)",
+        "ron_max_ohm": "4Ohm",
+        "supplier_package": "8-MSOP",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
       "mpn": "ADG719BRTZ-500RL7",
       "manufacturer": "Analog Devices",
       "eu_sources": 0,
       "eu_stock": 0,
-      "unit_price_cents": 149,
-      "moq": 500,
-      "lead_time_days": null,
-      "datasheet_url": "https://www.tme.eu/Document/a4f7782482c690fad420955f7eadebe4/ADG719.pdf",
+      "unit_price_cents": 383,
+      "moq": 1,
+      "lead_time_days": 112,
+      "datasheet_url": "https://www.analog.com/media/en/technical-documentation/data-sheets/ADG719.pdf",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
         "channels": "1",
         "manufacturer_name": "Analog Devices",
         "mounting": "SMD",
-        "package": "SOT23-6",
+        "package": "SOT-23-6",
         "part_type": "analog switch",
         "supply_mv": "1.8...5.5V DC",
         "switch_configuration": "SPDT",
-        "moq": "500",
-        "order_multiple": "500"
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C (TA)",
+        "ron_max_ohm": "4Ohm",
+        "supplier_package": "SOT-23-6",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ADG719BRTZ-REEL",
+      "manufacturer": "Analog Devices Inc.",
+      "eu_sources": 1,
+      "eu_stock": 939,
+      "unit_price_cents": 383,
+      "moq": 1,
+      "lead_time_days": 112,
+      "datasheet_url": "https://www.analog.com/media/en/technical-documentation/data-sheets/ADG719.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C (TA)",
+        "package": "SOT-23-6",
+        "ron_max_ohm": "4Ohm",
+        "supplier_package": "SOT-23-6",
+        "moq": "1",
+        "order_multiple": "1"
       }
     },
     {
@@ -646,6 +772,94 @@
       }
     },
     {
+      "mpn": "ADG749BKSZ-REEL7",
+      "manufacturer": "Analog Devices Inc.",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 271,
+      "moq": 1,
+      "lead_time_days": 112,
+      "datasheet_url": "https://www.analog.com/media/en/technical-documentation/data-sheets/ADG749.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C (TA)",
+        "package": "6-TSSOP, SC-88, SOT-363",
+        "ron_max_ohm": "5Ohm",
+        "supplier_package": "SC-70-6",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ADG772BCPZ-REEL7",
+      "manufacturer": "Analog Devices Inc.",
+      "eu_sources": 1,
+      "eu_stock": 17446,
+      "unit_price_cents": 291,
+      "moq": 1,
+      "lead_time_days": 77,
+      "datasheet_url": "https://www.analog.com/media/en/technical-documentation/data-sheets/ADG772.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "10-UFQFN, CSP",
+        "ron_max_ohm": "6.7Ohm (Typ)",
+        "supplier_package": "10-LFCSP-UQ (1.6x1.3)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ADG779BKSZ-R2",
+      "manufacturer": "Analog Devices Inc.",
+      "eu_sources": 1,
+      "eu_stock": 3270,
+      "unit_price_cents": 298,
+      "moq": 1,
+      "lead_time_days": 112,
+      "datasheet_url": "https://www.analog.com/media/en/technical-documentation/data-sheets/ADG779.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "6-TSSOP, SC-88, SOT-363",
+        "ron_max_ohm": "5Ohm",
+        "supplier_package": "SC-70-6",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ADG779BKSZ-REEL",
+      "manufacturer": "Analog Devices Inc.",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 242,
+      "moq": 1,
+      "lead_time_days": 112,
+      "datasheet_url": "https://www.analog.com/media/en/technical-documentation/data-sheets/ADG779.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "6-TSSOP, SC-88, SOT-363",
+        "ron_max_ohm": "5Ohm",
+        "supplier_package": "SC-70-6",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
       "mpn": "ADG779BKSZ-REEL7",
       "manufacturer": "Analog Devices",
       "eu_sources": 0,
@@ -695,25 +909,117 @@
       }
     },
     {
+      "mpn": "ADG787BRMZ-500RL7",
+      "manufacturer": "Analog Devices Inc.",
+      "eu_sources": 1,
+      "eu_stock": 449,
+      "unit_price_cents": 331,
+      "moq": 1,
+      "lead_time_days": 133,
+      "datasheet_url": "https://www.analog.com/media/en/technical-documentation/data-sheets/ADG787.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "10-TFSOP, 10-MSOP (0.118\", 3.00mm Width)",
+        "ron_max_ohm": "3Ohm",
+        "supplier_package": "10-MSOP",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
       "mpn": "ADG819BRMZ",
       "manufacturer": "Analog Devices",
-      "eu_sources": 0,
-      "eu_stock": 0,
+      "eu_sources": 1,
+      "eu_stock": 2063,
       "unit_price_cents": 228,
       "moq": 1,
-      "lead_time_days": null,
-      "datasheet_url": "https://www.tme.eu/Document/381165120258560230e310101fe8e34c/ADG819.pdf",
+      "lead_time_days": 70,
+      "datasheet_url": "https://www.analog.com/media/en/technical-documentation/data-sheets/ADG819.pdf",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
         "channels": "1",
         "manufacturer_name": "Analog Devices",
         "mounting": "SMD",
-        "package": "MSOP8",
+        "package": "8-TSSOP, 8-MSOP (0.118\", 3.00mm Width)",
         "part_type": "analog switch",
         "supply_mv": "2.7...5.5V DC",
         "switch_configuration": "SPDT",
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C (TA)",
+        "ron_max_ohm": "600mOhm",
+        "supplier_package": "8-MSOP",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ADG819BRMZ-REEL7",
+      "manufacturer": "Analog Devices Inc.",
+      "eu_sources": 1,
+      "eu_stock": 1432,
+      "unit_price_cents": 364,
+      "moq": 1,
+      "lead_time_days": 70,
+      "datasheet_url": "https://www.analog.com/media/en/technical-documentation/data-sheets/ADG819.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C (TA)",
+        "package": "8-TSSOP, 8-MSOP (0.118\", 3.00mm Width)",
+        "ron_max_ohm": "600mOhm",
+        "supplier_package": "8-MSOP",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ADG819BRTZ-500RL7",
+      "manufacturer": "Analog Devices Inc.",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 370,
+      "moq": 1,
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.analog.com/media/en/technical-documentation/data-sheets/ADG819.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C (TA)",
+        "package": "SOT-23-6",
+        "ron_max_ohm": "600mOhm",
+        "supplier_package": "SOT-23-6",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ADG824BCPZ-REEL7",
+      "manufacturer": "Analog Devices Inc.",
+      "eu_sources": 1,
+      "eu_stock": 71652,
+      "unit_price_cents": 285,
+      "moq": 1,
+      "lead_time_days": 84,
+      "datasheet_url": "https://www.analog.com/media/en/technical-documentation/data-sheets/ADG824.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "10-UFQFN, CSP",
+        "ron_max_ohm": "800mOhm",
+        "supplier_package": "10-LFCSP-UQ (1.6x1.3)",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -767,25 +1073,183 @@
       }
     },
     {
+      "mpn": "ADG839YKSZ-REEL7",
+      "manufacturer": "Analog Devices Inc.",
+      "eu_sources": 1,
+      "eu_stock": 8990,
+      "unit_price_cents": 312,
+      "moq": 1,
+      "lead_time_days": 70,
+      "datasheet_url": "https://www.analog.com/media/en/technical-documentation/data-sheets/ADG839.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C (TA)",
+        "package": "6-TSSOP, SC-88, SOT-363",
+        "ron_max_ohm": "500mOhm",
+        "supplier_package": "SC-70-6",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
       "mpn": "ADG849YKSZ-500RL7",
       "manufacturer": "Analog Devices",
-      "eu_sources": 0,
-      "eu_stock": 0,
+      "eu_sources": 1,
+      "eu_stock": 39111,
       "unit_price_cents": 173,
       "moq": 1,
-      "lead_time_days": null,
-      "datasheet_url": null,
+      "lead_time_days": 133,
+      "datasheet_url": "https://www.analog.com/media/en/technical-documentation/data-sheets/ADG849.pdf",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
         "channels": "1",
         "manufacturer_name": "Analog Devices",
         "mounting": "SMD",
-        "package": "SC70",
+        "package": "6-TSSOP, SC-88, SOT-363",
         "part_type": "analog switch",
         "supply_mv": "1.8...5.5V DC",
         "switch_configuration": "SPDT",
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C (TA)",
+        "ron_max_ohm": "600mOhm",
+        "supplier_package": "SC-70-6",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ADG849YKSZ-REEL",
+      "manufacturer": "Analog Devices Inc.",
+      "eu_sources": 1,
+      "eu_stock": 24185,
+      "unit_price_cents": 262,
+      "moq": 1,
+      "lead_time_days": 133,
+      "datasheet_url": "https://www.analog.com/media/en/technical-documentation/data-sheets/ADG849.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C (TA)",
+        "package": "6-TSSOP, SC-88, SOT-363",
+        "ron_max_ohm": "600mOhm",
+        "supplier_package": "SC-70-6",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ADG849YKSZ-REEL7",
+      "manufacturer": "Analog Devices Inc.",
+      "eu_sources": 1,
+      "eu_stock": 43994,
+      "unit_price_cents": 262,
+      "moq": 1,
+      "lead_time_days": 133,
+      "datasheet_url": "https://www.analog.com/media/en/technical-documentation/data-sheets/ADG849.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C (TA)",
+        "package": "6-TSSOP, SC-88, SOT-363",
+        "ron_max_ohm": "600mOhm",
+        "supplier_package": "SC-70-6",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ADG854BCPZ-REEL7",
+      "manufacturer": "Analog Devices Inc.",
+      "eu_sources": 1,
+      "eu_stock": 9060,
+      "unit_price_cents": 323,
+      "moq": 1,
+      "lead_time_days": 77,
+      "datasheet_url": "https://www.analog.com/media/en/technical-documentation/data-sheets/ADG854.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "10-UFQFN, CSP",
+        "ron_max_ohm": "850mOhm",
+        "supplier_package": "10-LFCSP-UQ (1.6x1.3)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ADG884BCPZ-REEL",
+      "manufacturer": "Analog Devices Inc.",
+      "eu_sources": 1,
+      "eu_stock": 966,
+      "unit_price_cents": 352,
+      "moq": 1,
+      "lead_time_days": 70,
+      "datasheet_url": "https://www.analog.com/media/en/technical-documentation/data-sheets/ADG884.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "10-VFDFN Exposed Pad, CSP",
+        "ron_max_ohm": "370mOhm",
+        "supplier_package": "10-LFCSP-WD (3x3)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ADG884BRMZ",
+      "manufacturer": "Analog Devices Inc.",
+      "eu_sources": 1,
+      "eu_stock": 1831,
+      "unit_price_cents": 393,
+      "moq": 1,
+      "lead_time_days": 70,
+      "datasheet_url": "https://www.analog.com/media/en/technical-documentation/data-sheets/ADG884.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "10-TFSOP, 10-MSOP (0.118\", 3.00mm Width)",
+        "ron_max_ohm": "370mOhm",
+        "supplier_package": "10-MSOP",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ADG884BRMZ-REEL7",
+      "manufacturer": "Analog Devices Inc.",
+      "eu_sources": 1,
+      "eu_stock": 989,
+      "unit_price_cents": 393,
+      "moq": 1,
+      "lead_time_days": 70,
+      "datasheet_url": "https://www.analog.com/media/en/technical-documentation/data-sheets/ADG884.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "10-TFSOP, 10-MSOP (0.118\", 3.00mm Width)",
+        "ron_max_ohm": "370mOhm",
+        "supplier_package": "10-MSOP",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -956,6 +1420,28 @@
       }
     },
     {
+      "mpn": "CD4053BM96",
+      "manufacturer": "Texas Instruments",
+      "eu_sources": 1,
+      "eu_stock": 33969,
+      "unit_price_cents": 63,
+      "moq": 1,
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Fcd4051b",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-55\u00b0C ~ 125\u00b0C (TA)",
+        "package": "16-SOIC (0.154\", 3.90mm Width)",
+        "ron_max_ohm": "240Ohm",
+        "supplier_package": "16-SOIC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
       "mpn": "CD4053BNSR",
       "manufacturer": "TEXAS INSTRUMENTS",
       "eu_sources": 0,
@@ -982,23 +1468,26 @@
     {
       "mpn": "CD4053BPWR",
       "manufacturer": "TEXAS INSTRUMENTS",
-      "eu_sources": 1,
-      "eu_stock": 192,
+      "eu_sources": 2,
+      "eu_stock": 13494,
       "unit_price_cents": 55,
       "moq": 1,
-      "lead_time_days": null,
-      "datasheet_url": "https://www.ti.com/lit/ds/symlink/cd4053b.pdf?ts=1728485386116&ref_url=https%253A%252F%252Fwww.ti.com%252Fsitesearch%252Fen-us%252Fdocs%252Funiversalsearch.tsp%253FlangPref%253Den-US%2526nr%253D8%2526searchTerm%253DCD4053BE",
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Fcd4051b",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
         "channels": "3",
         "manufacturer_name": "TEXAS INSTRUMENTS",
         "mounting": "SMD",
-        "operating_temp_c": "-55...125\u00b0C",
-        "package": "TSSOP16",
+        "operating_temp_c": "-55\u00b0C ~ 125\u00b0C (TA)",
+        "package": "16-TSSOP (0.173\", 4.40mm Width)",
         "part_type": "analog switch",
         "switch_configuration": "SPDT",
+        "ron_max_ohm": "240Ohm",
+        "supplier_package": "16-TSSOP",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -1054,26 +1543,51 @@
       }
     },
     {
+      "mpn": "CD74HC4053M96",
+      "manufacturer": "Texas Instruments",
+      "eu_sources": 1,
+      "eu_stock": 32213,
+      "unit_price_cents": 59,
+      "moq": 1,
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Fcd74hc4051",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-55\u00b0C ~ 125\u00b0C (TA)",
+        "package": "16-SOIC (0.154\", 3.90mm Width)",
+        "ron_max_ohm": "130Ohm",
+        "supplier_package": "16-SOIC",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
       "mpn": "CD74HC4053PWR",
       "manufacturer": "TEXAS INSTRUMENTS",
-      "eu_sources": 0,
-      "eu_stock": 0,
+      "eu_sources": 1,
+      "eu_stock": 45603,
       "unit_price_cents": 44,
       "moq": 1,
-      "lead_time_days": null,
-      "datasheet_url": "https://www.ti.com/lit/ds/symlink/cd74hc4053.pdf?ts=1728412044270&ref_url=https%253A%252F%252Fwww.google.com%252F",
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Fcd74hc4051",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
         "channels": "3",
         "manufacturer_name": "TEXAS INSTRUMENTS",
         "mounting": "SMD",
-        "operating_temp_c": "-55...125\u00b0C",
-        "package": "TSSOP16",
+        "operating_temp_c": "-55\u00b0C ~ 125\u00b0C (TA)",
+        "package": "16-TSSOP (0.173\", 4.40mm Width)",
         "part_type": "analog switch",
         "supply_mv": "2...6V DC",
         "switch_configuration": "SPDT",
+        "ron_max_ohm": "130Ohm",
+        "supplier_package": "16-TSSOP",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -1104,25 +1618,95 @@
       }
     },
     {
-      "mpn": "DG2535EDQ-T1-GE3",
-      "manufacturer": "VISHAY",
+      "mpn": "DG2002EDL-T1-GE3",
+      "manufacturer": "Vishay Siliconix",
       "eu_sources": 1,
-      "eu_stock": 1,
-      "unit_price_cents": 138,
+      "eu_stock": 31951,
+      "unit_price_cents": 47,
       "moq": 1,
-      "lead_time_days": null,
+      "lead_time_days": 112,
+      "datasheet_url": "https://www.vishay.com/docs/76624/dg2002e.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "6-TSSOP, SC-88, SOT-363",
+        "ron_max_ohm": "8Ohm",
+        "supplier_package": "SC-70-6",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DG2012EDL-T1-GE3",
+      "manufacturer": "Vishay Siliconix",
+      "eu_sources": 1,
+      "eu_stock": 69762,
+      "unit_price_cents": 78,
+      "moq": 1,
+      "lead_time_days": 112,
+      "datasheet_url": "https://www.vishay.com/docs/75834/dg2012e.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "6-TSSOP, SC-88, SOT-363",
+        "ron_max_ohm": "1.6Ohm",
+        "supplier_package": "SC-70-6",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DG2535EDN-T1-GE4",
+      "manufacturer": "Vishay Siliconix",
+      "eu_sources": 1,
+      "eu_stock": 2995,
+      "unit_price_cents": 143,
+      "moq": 1,
+      "lead_time_days": 112,
       "datasheet_url": "https://www.vishay.com/docs/75646/dg2535e_dg2733e.pdf",
       "vendors": [
-        "tme"
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "10-VFDFN Exposed Pad",
+        "ron_max_ohm": "500mOhm",
+        "supplier_package": "10-DFN (3x3)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DG2535EDQ-T1-GE3",
+      "manufacturer": "VISHAY",
+      "eu_sources": 2,
+      "eu_stock": 24423,
+      "unit_price_cents": 138,
+      "moq": 1,
+      "lead_time_days": 112,
+      "datasheet_url": "https://www.vishay.com/docs/75646/dg2535e_dg2733e.pdf",
+      "vendors": [
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
         "channels": "2",
         "manufacturer_name": "VISHAY",
         "mounting": "SMD",
-        "package": "MSOP10",
+        "package": "10-TFSOP, 10-MSOP (0.118\", 3.00mm Width)",
         "part_type": "analog switch",
         "supply_mv": "1.65...5.5V",
         "switch_configuration": "SPDT",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "ron_max_ohm": "500mOhm",
+        "supplier_package": "10-MSOP",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -1147,6 +1731,28 @@
         "part_type": "analog switch",
         "supply_mv": "2.6...5.5V",
         "switch_configuration": "SPDT",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DG2735ADN-T1-GE4",
+      "manufacturer": "Vishay Siliconix",
+      "eu_sources": 1,
+      "eu_stock": 31305,
+      "unit_price_cents": 99,
+      "moq": 1,
+      "lead_time_days": 112,
+      "datasheet_url": "https://www.vishay.com/docs/67590/dg2735a.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "10-UFQFN",
+        "ron_max_ohm": "500mOhm",
+        "supplier_package": "10-miniQFN (1.4x1.8)",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -1345,6 +1951,116 @@
       }
     },
     {
+      "mpn": "DG4053EEN-T1-GE4",
+      "manufacturer": "Vishay Siliconix",
+      "eu_sources": 1,
+      "eu_stock": 32006,
+      "unit_price_cents": 152,
+      "moq": 1,
+      "lead_time_days": 112,
+      "datasheet_url": "https://www.vishay.com/docs/69685/dg4051e.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C (TA)",
+        "package": "16-WFQFN",
+        "ron_max_ohm": "78Ohm",
+        "supplier_package": "16-miniQFN (1.8x2.6)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DG4053EEQ-T1-GE3",
+      "manufacturer": "Vishay Siliconix",
+      "eu_sources": 1,
+      "eu_stock": 4758,
+      "unit_price_cents": 152,
+      "moq": 1,
+      "lead_time_days": 112,
+      "datasheet_url": "https://www.vishay.com/docs/69685/dg4051e.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C (TA)",
+        "package": "16-TSSOP (0.173\", 4.40mm Width)",
+        "ron_max_ohm": "78Ohm",
+        "supplier_package": "16-TSSOP",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DG4157EDL-T1-GE3",
+      "manufacturer": "Vishay Siliconix",
+      "eu_sources": 1,
+      "eu_stock": 161121,
+      "unit_price_cents": 61,
+      "moq": 1,
+      "lead_time_days": 112,
+      "datasheet_url": "https://www.vishay.com/docs/75778/dg4157e.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "6-TSSOP, SC-88, SOT-363",
+        "ron_max_ohm": "1.2Ohm",
+        "supplier_package": "SC-70-6",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DG4157EDN-T1-GE4",
+      "manufacturer": "Vishay Siliconix",
+      "eu_sources": 1,
+      "eu_stock": 122215,
+      "unit_price_cents": 72,
+      "moq": 1,
+      "lead_time_days": 112,
+      "datasheet_url": "https://www.vishay.com/docs/75778/dg4157e.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "6-XFDFN",
+        "ron_max_ohm": "1.2Ohm",
+        "supplier_package": "6-\u00b5DFN (1x1)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DG419BDQ-T1-E3",
+      "manufacturer": "Vishay Siliconix",
+      "eu_sources": 1,
+      "eu_stock": 4357,
+      "unit_price_cents": 309,
+      "moq": 1,
+      "lead_time_days": 203,
+      "datasheet_url": "https://www.vishay.com/docs/72107/dg417b.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "8-TSSOP, 8-MSOP (0.118\", 3.00mm Width)",
+        "ron_max_ohm": "25Ohm",
+        "supplier_package": "8-MSOP",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
       "mpn": "DG419DJ+",
       "manufacturer": "Analog Devices (MAXIM INTEGRATED)",
       "eu_sources": 0,
@@ -1395,23 +2111,27 @@
     {
       "mpn": "DG419DY-T1-E3",
       "manufacturer": "VISHAY",
-      "eu_sources": 1,
-      "eu_stock": 852,
+      "eu_sources": 2,
+      "eu_stock": 3447,
       "unit_price_cents": 138,
       "moq": 1,
-      "lead_time_days": null,
+      "lead_time_days": 203,
       "datasheet_url": "https://www.tme.eu/Document/d23f5aa902b706cd994ecec06ccb1cfe/dg417_18_19.pdf",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
         "channels": "2",
         "manufacturer_name": "VISHAY",
         "mounting": "SMD",
-        "package": "SO8",
+        "package": "8-SOIC (0.154\", 3.90mm Width)",
         "part_type": "analog switch",
         "supply_mv": "-15...15V",
         "switch_configuration": "SPDT",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "ron_max_ohm": "35Ohm",
+        "supplier_package": "8-SOIC",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -1441,6 +2161,28 @@
       }
     },
     {
+      "mpn": "DG419LEDY-T1-GE4",
+      "manufacturer": "Vishay Siliconix",
+      "eu_sources": 1,
+      "eu_stock": 26137,
+      "unit_price_cents": 118,
+      "moq": 1,
+      "lead_time_days": 112,
+      "datasheet_url": "https://www.vishay.com/docs/76432/dg417le.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "8-SOIC (0.154\", 3.90mm Width)",
+        "ron_max_ohm": "18Ohm",
+        "supplier_package": "8-SO",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
       "mpn": "DG449DS-T1-E3",
       "manufacturer": "VISHAY",
       "eu_sources": 1,
@@ -1465,49 +2207,101 @@
       }
     },
     {
+      "mpn": "DG4599EDL-T1-GE3",
+      "manufacturer": "Vishay Siliconix",
+      "eu_sources": 1,
+      "eu_stock": 5410,
+      "unit_price_cents": 67,
+      "moq": 1,
+      "lead_time_days": 112,
+      "datasheet_url": "https://www.vishay.com/docs/76618/dg4599e.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "6-TSSOP, SC-88, SOT-363",
+        "ron_max_ohm": "60Ohm",
+        "supplier_package": "SC-70-6",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
       "mpn": "DG469EQ-T1-E3",
       "manufacturer": "VISHAY",
-      "eu_sources": 0,
-      "eu_stock": 0,
-      "unit_price_cents": 64,
-      "moq": 2500,
-      "lead_time_days": null,
+      "eu_sources": 1,
+      "eu_stock": 39040,
+      "unit_price_cents": 129,
+      "moq": 1,
+      "lead_time_days": 273,
       "datasheet_url": "https://www.tme.eu/Document/ad576326b80166fb7837fec87ce0d344/dg469.pdf",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
         "channels": "1",
         "manufacturer_name": "VISHAY",
         "mounting": "SMD",
-        "package": "MSOP8",
+        "package": "8-TSSOP, 8-MSOP (0.118\", 3.00mm Width)",
         "part_type": "analog switch",
         "supply_mv": "4.5...15V",
         "switch_configuration": "SPDT",
-        "moq": "2500",
-        "order_multiple": "2500"
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C (TA)",
+        "ron_max_ohm": "6Ohm",
+        "supplier_package": "8-MSOP",
+        "moq": "1",
+        "order_multiple": "1"
       }
     },
     {
       "mpn": "DG470EQ-T1-E3",
       "manufacturer": "VISHAY",
-      "eu_sources": 1,
-      "eu_stock": 1990,
+      "eu_sources": 2,
+      "eu_stock": 38086,
       "unit_price_cents": 114,
       "moq": 1,
-      "lead_time_days": null,
+      "lead_time_days": 203,
       "datasheet_url": "https://www.tme.eu/Document/ad576326b80166fb7837fec87ce0d344/dg469.pdf",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
         "channels": "1",
         "manufacturer_name": "VISHAY",
         "mounting": "SMD",
-        "package": "MSOP8",
+        "package": "8-TSSOP, 8-MSOP (0.118\", 3.00mm Width)",
         "part_type": "analog switch",
         "supply_mv": "4.5...15V",
         "switch_configuration": "SPDT",
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C (TA)",
+        "ron_max_ohm": "6Ohm",
+        "supplier_package": "8-MSOP",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DG470EY-T1-E3",
+      "manufacturer": "Vishay Siliconix",
+      "eu_sources": 1,
+      "eu_stock": 19943,
+      "unit_price_cents": 129,
+      "moq": 1,
+      "lead_time_days": 203,
+      "datasheet_url": "https://www.vishay.com/docs/71470/dg469.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C (TA)",
+        "package": "8-SOIC (0.154\", 3.90mm Width)",
+        "ron_max_ohm": "6Ohm",
+        "supplier_package": "8-SOIC",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -1515,24 +2309,50 @@
     {
       "mpn": "DG636EEN-T1-GE4",
       "manufacturer": "VISHAY",
-      "eu_sources": 0,
-      "eu_stock": 0,
-      "unit_price_cents": 76,
-      "moq": 3000,
-      "lead_time_days": null,
-      "datasheet_url": null,
+      "eu_sources": 1,
+      "eu_stock": 24197,
+      "unit_price_cents": 152,
+      "moq": 1,
+      "lead_time_days": 112,
+      "datasheet_url": "https://www.vishay.com/docs/75621/dg636e.pdf",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
         "channels": "2",
         "manufacturer_name": "VISHAY",
         "mounting": "SMD",
-        "package": "QFN16",
+        "package": "16-UFQFN",
         "part_type": "analog switch",
         "switch_configuration": "SPDT",
-        "moq": "3000",
-        "order_multiple": "3000"
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C (TA)",
+        "ron_max_ohm": "96Ohm",
+        "supplier_package": "16-miniQFN (1.8x2.6)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DG636EEQ-T1-GE4",
+      "manufacturer": "Vishay Siliconix",
+      "eu_sources": 1,
+      "eu_stock": 64821,
+      "unit_price_cents": 161,
+      "moq": 1,
+      "lead_time_days": 112,
+      "datasheet_url": "https://www.vishay.com/docs/75621/dg636e.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C (TA)",
+        "package": "14-TSSOP (0.173\", 4.40mm Width)",
+        "ron_max_ohm": "96Ohm",
+        "supplier_package": "14-TSSOP",
+        "moq": "1",
+        "order_multiple": "1"
       }
     },
     {
@@ -1850,6 +2670,28 @@
       }
     },
     {
+      "mpn": "FSA5157L6X",
+      "manufacturer": "onsemi",
+      "eu_sources": 1,
+      "eu_stock": 18475,
+      "unit_price_cents": 43,
+      "moq": 1,
+      "lead_time_days": 161,
+      "datasheet_url": "https://www.onsemi.com/pdf/datasheet/fsa5157-d.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "6-UFDFN",
+        "ron_max_ohm": "360mOhm (Typ)",
+        "supplier_package": "6-MicroPak",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
       "mpn": "FSA5157P6X",
       "manufacturer": "ONSEMI",
       "eu_sources": 0,
@@ -1945,6 +2787,51 @@
         "switch_configuration": "SPDT",
         "moq": "5000",
         "order_multiple": "5000"
+      }
+    },
+    {
+      "mpn": "HEF4053BT,653",
+      "manufacturer": "Nexperia USA Inc.",
+      "eu_sources": 1,
+      "eu_stock": 34809,
+      "unit_price_cents": 38,
+      "moq": 1,
+      "lead_time_days": 140,
+      "datasheet_url": "https://assets.nexperia.com/documents/data-sheet/HEF4053B.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C (TA)",
+        "package": "16-SOIC (0.154\", 3.90mm Width)",
+        "ron_max_ohm": "155Ohm",
+        "supplier_package": "16-SO",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "HMC544AETR",
+      "manufacturer": "Analog Devices Inc.",
+      "eu_sources": 1,
+      "eu_stock": 5361,
+      "unit_price_cents": 332,
+      "moq": 1,
+      "lead_time_days": 112,
+      "datasheet_url": "https://www.analog.com/media/en/technical-documentation/data-sheets/hmc544ae.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "SOT-23-6",
+        "supplier_package": "SOT-23-6",
+        "supply_mv": "5V",
+        "switch_configuration": "SPDT",
+        "moq": "1",
+        "order_multiple": "1"
       }
     },
     {
@@ -2362,6 +3249,28 @@
       }
     },
     {
+      "mpn": "MAX4544EUT+T",
+      "manufacturer": "Analog Devices Inc./Maxim Integrated",
+      "eu_sources": 1,
+      "eu_stock": 17006,
+      "unit_price_cents": 304,
+      "moq": 1,
+      "lead_time_days": 91,
+      "datasheet_url": "https://www.analog.com/media/en/technical-documentation/data-sheets/max4541-max4544.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "SOT-23-6",
+        "ron_max_ohm": "60Ohm",
+        "supplier_package": "SOT-23-6",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
       "mpn": "MAX4556ESE+",
       "manufacturer": "Analog Devices",
       "eu_sources": 1,
@@ -2386,6 +3295,28 @@
       }
     },
     {
+      "mpn": "MAX4564EKA+T",
+      "manufacturer": "Analog Devices Inc./Maxim Integrated",
+      "eu_sources": 1,
+      "eu_stock": 8710,
+      "unit_price_cents": 344,
+      "moq": 1,
+      "lead_time_days": 77,
+      "datasheet_url": "https://www.analog.com/media/en/technical-documentation/data-sheets/MAX4564.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "SOT-23-8",
+        "ron_max_ohm": "60Ohm",
+        "supplier_package": "SOT-23-8",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
       "mpn": "MAX4564EUA+",
       "manufacturer": "Analog Devices (MAXIM INTEGRATED)",
       "eu_sources": 0,
@@ -2405,6 +3336,28 @@
         "part_type": "analog switch",
         "supply_mv": "2...16V DC; 2.7...8V DC",
         "switch_configuration": "SPDT",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "MAX4564EUA+T",
+      "manufacturer": "Analog Devices Inc./Maxim Integrated",
+      "eu_sources": 1,
+      "eu_stock": 2493,
+      "unit_price_cents": 344,
+      "moq": 1,
+      "lead_time_days": 70,
+      "datasheet_url": "https://www.analog.com/media/en/technical-documentation/data-sheets/MAX4564.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "8-TSSOP, 8-MSOP (0.118\", 3.00mm Width)",
+        "ron_max_ohm": "60Ohm",
+        "supplier_package": "8-uMAX/uSOP",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -2535,23 +3488,26 @@
     {
       "mpn": "NC7SB3157P6X",
       "manufacturer": "ONSEMI",
-      "eu_sources": 1,
-      "eu_stock": 6189,
+      "eu_sources": 2,
+      "eu_stock": 154544,
       "unit_price_cents": 20,
       "moq": 1,
-      "lead_time_days": null,
-      "datasheet_url": "https://www.tme.eu/Document/f50673c6b63f9c6845ae49d54c2265a5/NC7SB3157P6X.pdf",
+      "lead_time_days": 133,
+      "datasheet_url": "https://www.onsemi.com/pub/Collateral/NC7SB3157-D.PDF",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
         "channels": "1",
         "manufacturer_name": "ONSEMI",
         "mounting": "SMD",
-        "operating_temp_c": "-40...85\u00b0C",
-        "package": "SC70-6",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "6-TSSOP, SC-88, SOT-363",
         "part_type": "analog switch",
         "supply_mv": "1.65...5.5V DC",
+        "ron_max_ohm": "15Ohm",
+        "supplier_package": "SC-88 (SC-70-6)",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -2701,6 +3657,50 @@
       }
     },
     {
+      "mpn": "NX3L1T3157GMZ",
+      "manufacturer": "NXP USA Inc.",
+      "eu_sources": 1,
+      "eu_stock": 30376,
+      "unit_price_cents": 46,
+      "moq": 1,
+      "lead_time_days": 112,
+      "datasheet_url": "https://www.nxp.com/docs/en/data-sheet/NX3L1T3157.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C (TA)",
+        "package": "6-XFDFN",
+        "ron_max_ohm": "900mOhm",
+        "supplier_package": "6-XSON, SOT886 (1.45x1)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "NX3L2267GM,115",
+      "manufacturer": "NXP USA Inc.",
+      "eu_sources": 1,
+      "eu_stock": 36728,
+      "unit_price_cents": 97,
+      "moq": 1,
+      "lead_time_days": 112,
+      "datasheet_url": "https://www.nxp.com/docs/en/data-sheet/NX3L2267.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C (TA)",
+        "package": "10-XFQFN",
+        "ron_max_ohm": "750mOhm",
+        "supplier_package": "10-XQFN (1.55x2)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
       "mpn": "NX3L4684TK,115",
       "manufacturer": "NXP",
       "eu_sources": 1,
@@ -2721,6 +3721,217 @@
         "switch_configuration": "SPDT",
         "moq": "1400",
         "order_multiple": "1400"
+      }
+    },
+    {
+      "mpn": "PI3DBS12212AZBEX",
+      "manufacturer": "Diodes Incorporated",
+      "eu_sources": 1,
+      "eu_stock": 16256,
+      "unit_price_cents": 204,
+      "moq": 1,
+      "lead_time_days": 364,
+      "datasheet_url": "https://www.diodes.com/assets/Databriefs/PI3DBS12212A-Product-Brief.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "20-VFQFN Exposed Pad",
+        "supplier_package": "20-QFN (2.5x4.5)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "PI3DBS16212XUAEX",
+      "manufacturer": "Diodes Incorporated",
+      "eu_sources": 1,
+      "eu_stock": 5724,
+      "unit_price_cents": 199,
+      "moq": 1,
+      "lead_time_days": 364,
+      "datasheet_url": "https://www.diodes.com/assets/Databriefs/PI3DBS16212-Product-Brief.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "18-XFQFN Exposed Pad",
+        "supplier_package": "18-X2QFN (2x2)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "PI3DBS16212ZBBEX",
+      "manufacturer": "Diodes Incorporated",
+      "eu_sources": 1,
+      "eu_stock": 37073,
+      "unit_price_cents": 204,
+      "moq": 1,
+      "lead_time_days": 364,
+      "datasheet_url": "https://www.diodes.com/assets/Databriefs/PI3DBS16212-Product-Brief.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "20-VFQFN Exposed Pad",
+        "supplier_package": "20-TQFN (2.5x4.5)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "PI3DBS16412ZLCEX",
+      "manufacturer": "Diodes Incorporated",
+      "eu_sources": 1,
+      "eu_stock": 15298,
+      "unit_price_cents": 293,
+      "moq": 1,
+      "lead_time_days": 364,
+      "datasheet_url": "https://www.diodes.com/assets/Databriefs/PI3DBS16412-Product-Brief.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "40-WFQFN Exposed Pad",
+        "supplier_package": "40-TQFN (3x6)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "PI3L2500ZHEX",
+      "manufacturer": "Diodes Incorporated",
+      "eu_sources": 1,
+      "eu_stock": 11706,
+      "unit_price_cents": 284,
+      "moq": 1,
+      "lead_time_days": 364,
+      "datasheet_url": "https://www.diodes.com/assets/Databriefs/PI3L2500-Product-Brief.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "package": "42-VFQFN Exposed Pad",
+        "supplier_package": "42-TQFN (9x3.5)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "PI3USB221EZWEX",
+      "manufacturer": "Diodes Incorporated",
+      "eu_sources": 1,
+      "eu_stock": 1778,
+      "unit_price_cents": 74,
+      "moq": 1,
+      "lead_time_days": 224,
+      "datasheet_url": "https://www.diodes.com/assets/Datasheets/PI3USB221E.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "10-UFDFN Exposed Pad",
+        "ron_max_ohm": "6Ohm",
+        "supplier_package": "10-UDFN (3x3)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "PI3USB32212ZLEX",
+      "manufacturer": "Diodes Incorporated",
+      "eu_sources": 1,
+      "eu_stock": 21708,
+      "unit_price_cents": 255,
+      "moq": 1,
+      "lead_time_days": 364,
+      "datasheet_url": "https://www.diodes.com/assets/Datasheets/PI3USB32212.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "package": "32-WFQFN Exposed Pad",
+        "ron_max_ohm": "13Ohm",
+        "supplier_package": "32-TQFN (3x6)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "PI3USB4000DQ1ZUAEX",
+      "manufacturer": "Diodes Incorporated",
+      "eu_sources": 1,
+      "eu_stock": 2042,
+      "unit_price_cents": 171,
+      "moq": 1,
+      "lead_time_days": 168,
+      "datasheet_url": "https://www.diodes.com/assets/Datasheets/PI3USB4000DQ.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C (TA)",
+        "package": "10-UFQFN",
+        "ron_max_ohm": "10Ohm",
+        "supplier_package": "10-UQFN (1.5x2)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "PI3WVR626XEBEX",
+      "manufacturer": "Diodes Incorporated",
+      "eu_sources": 1,
+      "eu_stock": 50099,
+      "unit_price_cents": 88,
+      "moq": 1,
+      "lead_time_days": 364,
+      "datasheet_url": "https://www.diodes.com/assets/Datasheets/PI3WVR626.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "24-XFQFN Exposed Pad",
+        "ron_max_ohm": "5Ohm",
+        "supplier_package": "24-X1QFN (2.5x2.5)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "PI3WVR648GEAEX",
+      "manufacturer": "Diodes Incorporated",
+      "eu_sources": 1,
+      "eu_stock": 389,
+      "unit_price_cents": 140,
+      "moq": 1,
+      "lead_time_days": 364,
+      "datasheet_url": "https://www.diodes.com/assets/Databriefs/PI3WVR648-Product-Brief.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "package": "36-UFBGA, WLCSP",
+        "supplier_package": "36-WLCSP (2.44x2.44)",
+        "moq": "1",
+        "order_multiple": "1"
       }
     },
     {
@@ -2751,24 +3962,27 @@
     {
       "mpn": "SN3257QPWRQ1",
       "manufacturer": "TEXAS INSTRUMENTS",
-      "eu_sources": 0,
-      "eu_stock": 0,
+      "eu_sources": 1,
+      "eu_stock": 939,
       "unit_price_cents": 85,
       "moq": 1,
-      "lead_time_days": null,
-      "datasheet_url": "https://www.ti.com/lit/ds/symlink/sn3257-q1.pdf?ts=1728482840135&ref_url=https%253A%252F%252Fwww.ti.com%252Fproduct%252FSN3257-Q1",
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2FSN3257-Q1",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
         "channels": "4",
         "manufacturer_name": "TEXAS INSTRUMENTS",
         "mounting": "SMD",
-        "operating_temp_c": "-40...125\u00b0C",
-        "package": "TSSOP16",
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C (TA)",
+        "package": "16-TSSOP (0.173\", 4.40mm Width)",
         "part_type": "analog switch",
         "supply_mv": "1.5...5.5V DC",
         "switch_configuration": "SPDT",
+        "ron_max_ohm": "5Ohm",
+        "supplier_package": "16-TSSOP",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -2876,24 +4090,27 @@
     {
       "mpn": "SN74LVC1G3157DBVR",
       "manufacturer": "TEXAS INSTRUMENTS",
-      "eu_sources": 0,
-      "eu_stock": 0,
+      "eu_sources": 1,
+      "eu_stock": 55074,
       "unit_price_cents": 20,
       "moq": 1,
-      "lead_time_days": null,
-      "datasheet_url": "https://www.ti.com/lit/ds/symlink/sn74lvc1g3157.pdf?ts=1728540283477&ref_url=https%253A%252F%252Fwww.ti.com%252Fproduct%252FSN74LVC1G3157",
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/sn74lvc1g3157.pdf",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
         "channels": "1",
         "manufacturer_name": "TEXAS INSTRUMENTS",
         "mounting": "SMD",
-        "operating_temp_c": "-40...125\u00b0C",
-        "package": "SOT23-6",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "SOT-23-6",
         "part_type": "analog switch",
         "supply_mv": "1.65...5.5V DC",
         "switch_configuration": "SPDT",
+        "ron_max_ohm": "15Ohm",
+        "supplier_package": "SOT-23-6",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -2922,6 +4139,28 @@
         "operating_temp_c": "-40\u00b0C ~ 125\u00b0C (TA)",
         "ron_max_ohm": "15Ohm",
         "supplier_package": "SC-70-6",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "SN74LVC1G3157DRYR",
+      "manufacturer": "Texas Instruments",
+      "eu_sources": 1,
+      "eu_stock": 4500,
+      "unit_price_cents": 28,
+      "moq": 1,
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Fsn74lvc1g3157",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "6-UFDFN",
+        "ron_max_ohm": "15Ohm",
+        "supplier_package": "6-SON (1.45x1)",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -3052,26 +4291,95 @@
       }
     },
     {
+      "mpn": "STG719STR",
+      "manufacturer": "STMicroelectronics",
+      "eu_sources": 1,
+      "eu_stock": 5961,
+      "unit_price_cents": 61,
+      "moq": 1,
+      "lead_time_days": 210,
+      "datasheet_url": "https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/1/STG719.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-55\u00b0C ~ 125\u00b0C (TA)",
+        "package": "SOT-23-6",
+        "ron_max_ohm": "4Ohm",
+        "supplier_package": "SOT-23-6",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "TC7USB40MU,LF(S2E",
+      "manufacturer": "Toshiba Semiconductor and Storage",
+      "eu_sources": 1,
+      "eu_stock": 49686,
+      "unit_price_cents": 43,
+      "moq": 1,
+      "lead_time_days": 168,
+      "datasheet_url": "https://toshiba.semicon-storage.com/info/docget.jsp?did=13632&prodName=TC7USB40MU",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "10-UFQFN",
+        "ron_max_ohm": "14Ohm",
+        "supplier_package": "10-UQFN (1.8x1.4)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "TDS4A212MX,ELF",
+      "manufacturer": "Toshiba Semiconductor and Storage",
+      "eu_sources": 1,
+      "eu_stock": 3696,
+      "unit_price_cents": 126,
+      "moq": 1,
+      "lead_time_days": 140,
+      "datasheet_url": "https://toshiba.semicon-storage.com/info/docget.jsp?did=158061&prodName=TDS4A212MX",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "16-XFQFN",
+        "ron_max_ohm": "15Ohm",
+        "supplier_package": "16-XQFN (2.4x1.6)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
       "mpn": "TMUX1072DGSR",
       "manufacturer": "TEXAS INSTRUMENTS",
-      "eu_sources": 1,
-      "eu_stock": 525,
+      "eu_sources": 2,
+      "eu_stock": 4619,
       "unit_price_cents": 88,
       "moq": 1,
-      "lead_time_days": null,
-      "datasheet_url": "https://www.ti.com/lit/ds/symlink/tmux1072.pdf?ts=1728559543159&ref_url=https%253A%252F%252Fwww.ti.com%252Fsitesearch%252Fen-us%252Fdocs%252Funiversalsearch.tsp%253FlangPref%253Den-US%2526nr%253D5%2526searchTerm%253DTMUX1072DGSR",
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Ftmux1072",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
         "channels": "2",
         "manufacturer_name": "TEXAS INSTRUMENTS",
         "mounting": "SMD",
-        "operating_temp_c": "-40...125\u00b0C",
-        "package": "VSSOP10",
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C",
+        "package": "10-TFSOP, 10-MSOP (0.118\", 3.00mm Width)",
         "part_type": "analog switch",
         "supply_mv": "2.3...5.5V DC",
         "switch_configuration": "SPDT",
+        "ron_max_ohm": "18Ohm",
+        "supplier_package": "10-VSSOP",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -3079,24 +4387,27 @@
     {
       "mpn": "TMUX1072RUTR",
       "manufacturer": "TEXAS INSTRUMENTS",
-      "eu_sources": 0,
-      "eu_stock": 0,
+      "eu_sources": 1,
+      "eu_stock": 845,
       "unit_price_cents": 123,
       "moq": 1,
-      "lead_time_days": null,
-      "datasheet_url": "https://www.ti.com/lit/ds/symlink/tmux1072.pdf?ts=1728559543159&ref_url=https%253A%252F%252Fwww.ti.com%252Fsitesearch%252Fen-us%252Fdocs%252Funiversalsearch.tsp%253FlangPref%253Den-US%2526nr%253D5%2526searchTerm%253DTMUX1072DGSR",
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Ftmux1072",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
         "channels": "2",
         "manufacturer_name": "TEXAS INSTRUMENTS",
         "mounting": "SMD",
-        "operating_temp_c": "-40...125\u00b0C",
-        "package": "UQFN12",
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C",
+        "package": "12-UFQFN",
         "part_type": "analog switch",
         "supply_mv": "2.3...5.5V DC",
         "switch_configuration": "SPDT",
+        "ron_max_ohm": "18Ohm",
+        "supplier_package": "12-UQFN (1.7x2)",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -3129,24 +4440,27 @@
     {
       "mpn": "TMUX1119DCKR",
       "manufacturer": "TEXAS INSTRUMENTS",
-      "eu_sources": 0,
-      "eu_stock": 0,
+      "eu_sources": 1,
+      "eu_stock": 28829,
       "unit_price_cents": 152,
       "moq": 1,
-      "lead_time_days": null,
-      "datasheet_url": "https://www.ti.com/lit/ds/symlink/tmux1119.pdf?ts=1728559624671&ref_url=https%253A%252F%252Fwww.ti.com%252Fsitesearch%252Fen-us%252Fdocs%252Funiversalsearch.tsp%253FlangPref%253Den-US%2526nr%253D2%2526searchTerm%253DTMUX1119DBVR",
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Ftmux1119",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
         "channels": "1",
         "manufacturer_name": "TEXAS INSTRUMENTS",
         "mounting": "SMD",
-        "operating_temp_c": "-40...125\u00b0C",
-        "package": "SC70-6",
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C (TA)",
+        "package": "6-TSSOP, SC-88, SOT-363",
         "part_type": "analog switch",
         "supply_mv": "1.08...5.5V DC",
         "switch_configuration": "SPDT",
+        "ron_max_ohm": "4Ohm",
+        "supplier_package": "SC-70-6",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -3204,24 +4518,27 @@
     {
       "mpn": "TMUX1136DGSR",
       "manufacturer": "TEXAS INSTRUMENTS",
-      "eu_sources": 0,
-      "eu_stock": 0,
+      "eu_sources": 1,
+      "eu_stock": 3201,
       "unit_price_cents": 242,
       "moq": 1,
-      "lead_time_days": null,
-      "datasheet_url": "https://www.ti.com/lit/ds/symlink/tmux1136.pdf?ts=1728539841663&ref_url=https%253A%252F%252Fwww.ti.com%252Fproduct%252FTMUX1136",
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2ftmux1136",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
         "channels": "2",
         "manufacturer_name": "TEXAS INSTRUMENTS",
         "mounting": "SMD",
-        "operating_temp_c": "-40...125\u00b0C",
-        "package": "VSSOP10",
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C (TA)",
+        "package": "10-TFSOP, 10-MSOP (0.118\", 3.00mm Width)",
         "part_type": "analog switch",
         "supply_mv": "1.08...5.5V DC",
         "switch_configuration": "SPDT",
+        "ron_max_ohm": "4Ohm",
+        "supplier_package": "10-VSSOP",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -3229,24 +4546,27 @@
     {
       "mpn": "TMUX1136DQAR",
       "manufacturer": "TEXAS INSTRUMENTS",
-      "eu_sources": 0,
-      "eu_stock": 0,
+      "eu_sources": 1,
+      "eu_stock": 9162,
       "unit_price_cents": 242,
       "moq": 1,
-      "lead_time_days": null,
-      "datasheet_url": "https://www.ti.com/lit/ds/symlink/tmux1136.pdf?ts=1728539841663&ref_url=https%253A%252F%252Fwww.ti.com%252Fproduct%252FTMUX1136",
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Ftmux1136",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
         "channels": "2",
         "manufacturer_name": "TEXAS INSTRUMENTS",
         "mounting": "SMD",
-        "operating_temp_c": "-40...125\u00b0C",
-        "package": "USON10",
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C (TA)",
+        "package": "10-UFDFN",
         "part_type": "analog switch",
         "supply_mv": "1.08...5.5V DC",
         "switch_configuration": "SPDT",
+        "ron_max_ohm": "4Ohm",
+        "supplier_package": "10-USON (2.5x1)",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -3529,24 +4849,27 @@
     {
       "mpn": "TMUX1574PWR",
       "manufacturer": "TEXAS INSTRUMENTS",
-      "eu_sources": 1,
-      "eu_stock": 1131,
+      "eu_sources": 2,
+      "eu_stock": 49653,
       "unit_price_cents": 53,
       "moq": 1,
-      "lead_time_days": null,
-      "datasheet_url": "https://www.ti.com/lit/ds/symlink/tmux1574.pdf?ts=1728559174410&ref_url=https%253A%252F%252Fwww.mouser.fi%252F",
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Ftmux1574",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
         "channels": "4",
         "manufacturer_name": "TEXAS INSTRUMENTS",
         "mounting": "SMD",
-        "operating_temp_c": "-40...125\u00b0C",
-        "package": "TSSOP16",
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C (TA)",
+        "package": "16-TSSOP (0.173\", 4.40mm Width)",
         "part_type": "analog switch",
         "supply_mv": "1.5...5.5V DC",
         "switch_configuration": "SPDT",
+        "ron_max_ohm": "4.5Ohm",
+        "supplier_package": "16-TSSOP",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -3554,24 +4877,27 @@
     {
       "mpn": "TMUX1574RSVR",
       "manufacturer": "TEXAS INSTRUMENTS",
-      "eu_sources": 0,
-      "eu_stock": 0,
+      "eu_sources": 1,
+      "eu_stock": 105200,
       "unit_price_cents": 69,
       "moq": 1,
-      "lead_time_days": null,
-      "datasheet_url": "https://www.ti.com/lit/ds/symlink/tmux1574.pdf?ts=1728559174410&ref_url=https%253A%252F%252Fwww.mouser.fi%252F",
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Ftmux1574",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
         "channels": "4",
         "manufacturer_name": "TEXAS INSTRUMENTS",
         "mounting": "SMD",
-        "operating_temp_c": "-40...125\u00b0C",
-        "package": "UQFN16",
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C (TA)",
+        "package": "16-UFQFN",
         "part_type": "analog switch",
         "supply_mv": "1.5...5.5V DC",
         "switch_configuration": "SPDT",
+        "ron_max_ohm": "4.5Ohm",
+        "supplier_package": "16-UQFN (2.6x1.8)",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -3854,24 +5180,27 @@
     {
       "mpn": "TMUX4157NDCKR",
       "manufacturer": "TEXAS INSTRUMENTS",
-      "eu_sources": 0,
-      "eu_stock": 0,
+      "eu_sources": 1,
+      "eu_stock": 1388,
       "unit_price_cents": 91,
       "moq": 1,
-      "lead_time_days": null,
-      "datasheet_url": "https://www.ti.com/lit/ds/symlink/tmux4157n.pdf?ts=1728505124598&ref_url=https%253A%252F%252Fwww.ti.com%252Fproduct%252FTMUX4157N%253Futm_source%253Dgoogle%2526utm_medium%253Dcpc%2526utm_campaign%253Dasc-int-null-44700045336317254_prodfolderdynamic-cpc-pf-google-wwe_int%2526utm_content%253Dprodfolddynamic%2526ds_k%253DDYNAMIC+SEARCH+ADS%2526DCM%253Dyes%2526gad_source%253D1%2526gclid%253DCj0KCQjw05i4BhDiARIsAB_2wfB-9qac1TyQ_6ozw-zDTpKmMQgj4vIqeumD3hBUK_HG0ps4VrcdxuIaAgArEALw_wcB%2526gclsrc%253Daw.ds",
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/tmux4157n.pdf",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
         "channels": "1",
         "manufacturer_name": "TEXAS INSTRUMENTS",
         "mounting": "SMD",
-        "operating_temp_c": "-55...125\u00b0C",
-        "package": "SC70-6",
+        "operating_temp_c": "-55\u00b0C ~ 125\u00b0C (TA)",
+        "package": "6-TSSOP, SC-88, SOT-363",
         "part_type": "analog switch",
         "supply_mv": "-12...-4V DC",
         "switch_configuration": "SPDT",
+        "ron_max_ohm": "8Ohm",
+        "supplier_package": "SC-70-6",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -4479,24 +5808,27 @@
     {
       "mpn": "TMUXHS4212RKSR",
       "manufacturer": "TEXAS INSTRUMENTS",
-      "eu_sources": 0,
-      "eu_stock": 0,
+      "eu_sources": 1,
+      "eu_stock": 5859,
       "unit_price_cents": 140,
       "moq": 1,
-      "lead_time_days": null,
-      "datasheet_url": "https://www.ti.com/lit/ds/symlink/tmuxhs4212.pdf?ts=1728554631795&ref_url=https%253A%252F%252Fwww.bing.com%252F",
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/lit/ds/symlink/tmuxhs4212.pdf",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
         "channels": "2",
         "manufacturer_name": "TEXAS INSTRUMENTS",
         "mounting": "SMD",
-        "operating_temp_c": "0...70\u00b0C",
-        "package": "VQFN20",
+        "operating_temp_c": "0\u00b0C ~ 70\u00b0C (TA)",
+        "package": "20-VFQFN Exposed Pad",
         "part_type": "analog switch",
         "supply_mv": "1.8V DC; 3.3V DC",
         "switch_configuration": "SPDT/DPST",
+        "ron_max_ohm": "8.4Ohm",
+        "supplier_package": "20-VQFN (4.5x2.5)",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -4629,23 +5961,26 @@
     {
       "mpn": "TS12A12511DCNR",
       "manufacturer": "TEXAS INSTRUMENTS",
-      "eu_sources": 0,
-      "eu_stock": 0,
+      "eu_sources": 1,
+      "eu_stock": 9786,
       "unit_price_cents": 184,
       "moq": 1,
-      "lead_time_days": null,
-      "datasheet_url": "https://www.ti.com/lit/ds/symlink/ts12a12511.pdf?ts=1728567179078&ref_url=https%253A%252F%252Fwww.ti.com%252Fsitesearch%252Fen-us%252Fdocs%252Funiversalsearch.tsp%253FlangPref%253Den-US%2526nr%253D9%2526searchTerm%253DTS12A12511DCNR",
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=http%253A%252F%252Fwww.ti.com%252Flit%252Fgpn%252Fts12a12511",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
         "channels": "1",
         "manufacturer_name": "TEXAS INSTRUMENTS",
         "mounting": "SMD",
-        "operating_temp_c": "-40...85\u00b0C",
-        "package": "SOT23-8",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "SOT-23-8",
         "part_type": "analog switch",
         "switch_configuration": "SPDT",
+        "ron_max_ohm": "5Ohm (Typ)",
+        "supplier_package": "SOT-23-8",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -4778,24 +6113,27 @@
     {
       "mpn": "TS3A24159DGSR",
       "manufacturer": "TEXAS INSTRUMENTS",
-      "eu_sources": 0,
-      "eu_stock": 0,
+      "eu_sources": 1,
+      "eu_stock": 14100,
       "unit_price_cents": 91,
       "moq": 1,
-      "lead_time_days": null,
-      "datasheet_url": "https://www.ti.com/lit/ds/symlink/ts3a24159.pdf?ts=1728486397446&ref_url=https%253A%252F%252Fwww.ti.com%252Fproduct%252FTS3A24159%253Futm_source%253Dgoogle%2526utm_medium%253Dcpc%2526utm_campaign%253Dasc-int-null-44700045336317710_prodfolderdynamic-cpc-pf-google-eu_int%2526utm_content%253Dprodfolddynamic%2526ds_k%253DDYNAMIC+SEARCH+ADS%2526DCM%253Dyes%2526gad_source%253D1%2526gclid%253DCj0KCQjw05i4BhDiARIsAB_2wfDBJB19Si9P22lyDXsy3TOswlDdsCLeqlw9TX4VfCTS2_h2jjt2uSwaAq1jEALw_wcB%2526gclsrc%253Daw.ds",
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=http%253A%252F%252Fwww.ti.com%252Flit%252Fgpn%252Fts3a24159",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
         "channels": "2",
         "manufacturer_name": "TEXAS INSTRUMENTS",
         "mounting": "SMD",
-        "operating_temp_c": "-40...85\u00b0C",
-        "package": "VSSOP10",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "10-TFSOP, 10-MSOP (0.118\", 3.00mm Width)",
         "part_type": "analog switch",
         "supply_mv": "1.65...3.6V DC",
         "switch_configuration": "SPDT",
+        "ron_max_ohm": "300mOhm",
+        "supplier_package": "10-VSSOP",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -4903,24 +6241,27 @@
     {
       "mpn": "TS3A27518EPWR",
       "manufacturer": "TEXAS INSTRUMENTS",
-      "eu_sources": 1,
-      "eu_stock": 116,
+      "eu_sources": 2,
+      "eu_stock": 12445,
       "unit_price_cents": 127,
       "moq": 1,
-      "lead_time_days": null,
-      "datasheet_url": "https://www.ti.com/lit/ds/symlink/ts3a27518e.pdf?ts=1728490927164",
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Fts3a27518e",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
         "channels": "6",
         "manufacturer_name": "TEXAS INSTRUMENTS",
         "mounting": "SMD",
-        "operating_temp_c": "-40...85\u00b0C",
-        "package": "TSSOP24",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "24-TSSOP (0.173\", 4.40mm Width)",
         "part_type": "analog switch",
         "supply_mv": "1.65...3.6V DC",
         "switch_configuration": "SPDT",
+        "ron_max_ohm": "6.2Ohm",
+        "supplier_package": "24-TSSOP",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -4928,24 +6269,27 @@
     {
       "mpn": "TS3A27518ERTWR",
       "manufacturer": "TEXAS INSTRUMENTS",
-      "eu_sources": 0,
-      "eu_stock": 0,
+      "eu_sources": 1,
+      "eu_stock": 151,
       "unit_price_cents": 160,
       "moq": 1,
-      "lead_time_days": null,
-      "datasheet_url": "https://www.ti.com/lit/ds/symlink/ts3a27518e.pdf?ts=1728490927164",
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Fts3a27518e",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
         "channels": "6",
         "manufacturer_name": "TEXAS INSTRUMENTS",
         "mounting": "SMD",
-        "operating_temp_c": "-40...85\u00b0C",
-        "package": "WQFN24",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "24-WFQFN Exposed Pad",
         "part_type": "analog switch",
         "supply_mv": "1.65...3.6V DC",
         "switch_configuration": "SPDT",
+        "ron_max_ohm": "6.2Ohm",
+        "supplier_package": "24-WQFN (4x4)",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -4976,26 +6320,51 @@
       }
     },
     {
+      "mpn": "TS3A44159PWR",
+      "manufacturer": "Texas Instruments",
+      "eu_sources": 1,
+      "eu_stock": 9932,
+      "unit_price_cents": 97,
+      "moq": 1,
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Fts3a44159",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "16-TSSOP (0.173\", 4.40mm Width)",
+        "ron_max_ohm": "450mOhm",
+        "supplier_package": "16-TSSOP",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
       "mpn": "TS3A44159RGTR",
       "manufacturer": "TEXAS INSTRUMENTS",
-      "eu_sources": 0,
-      "eu_stock": 0,
+      "eu_sources": 1,
+      "eu_stock": 918,
       "unit_price_cents": 90,
       "moq": 1,
-      "lead_time_days": null,
-      "datasheet_url": "https://www.ti.com/lit/ds/symlink/ts3a44159.pdf?ts=1728557639083&ref_url=https%253A%252F%252Fwww.mouser.es%252F",
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Fts3a44159",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
         "channels": "4",
         "manufacturer_name": "TEXAS INSTRUMENTS",
         "mounting": "SMD",
-        "operating_temp_c": "-40...85\u00b0C",
-        "package": "VQFN16",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "16-VFQFN Exposed Pad",
         "part_type": "analog switch",
         "supply_mv": "1.65...4.3V DC",
         "switch_configuration": "SPDT",
+        "ron_max_ohm": "450mOhm",
+        "supplier_package": "16-VQFN (3x3)",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -5277,24 +6646,49 @@
     {
       "mpn": "TS3USB221ARSER",
       "manufacturer": "TEXAS INSTRUMENTS",
-      "eu_sources": 1,
-      "eu_stock": 926,
+      "eu_sources": 2,
+      "eu_stock": 15884,
       "unit_price_cents": 63,
       "moq": 1,
-      "lead_time_days": null,
-      "datasheet_url": "https://www.ti.com/lit/ds/symlink/ts3usb221a.pdf?ts=1728549102947&ref_url=https%253A%252F%252Fwww.ti.com%252Fproduct%252FTS3USB221A%253FkeyMatch%253DTS3USB221%2526tisearch%253Duniversal_search%2526usecase%253Dpartmatches",
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Fts3usb221a",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
         "channels": "2",
         "manufacturer_name": "TEXAS INSTRUMENTS",
         "mounting": "SMD",
-        "operating_temp_c": "-40...85\u00b0C",
-        "package": "UQFN10",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "10-UFQFN",
         "part_type": "analog switch",
         "supply_mv": "2.5...3.3V DC",
         "switch_configuration": "SPDT",
+        "ron_max_ohm": "6Ohm",
+        "supplier_package": "10-UQFN (2.0x1.5)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "TS3USB221ERSER",
+      "manufacturer": "Texas Instruments",
+      "eu_sources": 1,
+      "eu_stock": 17906,
+      "unit_price_cents": 103,
+      "moq": 1,
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=http%253A%252F%252Fwww.ti.com%252Flit%252Fgpn%252Fts3usb221e",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "10-UFQFN",
+        "ron_max_ohm": "6Ohm",
+        "supplier_package": "10-UQFN (2.0x1.5)",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -5627,24 +7021,27 @@
     {
       "mpn": "TS5A23157QDGSRQ1",
       "manufacturer": "TEXAS INSTRUMENTS",
-      "eu_sources": 0,
-      "eu_stock": 0,
+      "eu_sources": 1,
+      "eu_stock": 9332,
       "unit_price_cents": 65,
       "moq": 1,
-      "lead_time_days": null,
-      "datasheet_url": "https://www.ti.com/lit/ds/symlink/ts5a23157-q1.pdf?ts=1728519460637",
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Fts5a23157-q1",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
         "channels": "2",
         "manufacturer_name": "TEXAS INSTRUMENTS",
         "mounting": "SMD",
-        "operating_temp_c": "-40...125\u00b0C",
-        "package": "VSSOP10",
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C (TA)",
+        "package": "10-TFSOP, 10-MSOP (0.118\", 3.00mm Width)",
         "part_type": "analog switch",
         "supply_mv": "1.65...5.5V DC",
         "switch_configuration": "SPDT",
+        "ron_max_ohm": "15Ohm",
+        "supplier_package": "10-VSSOP",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -5702,24 +7099,27 @@
     {
       "mpn": "TS5A23159DGSR",
       "manufacturer": "TEXAS INSTRUMENTS",
-      "eu_sources": 0,
-      "eu_stock": 0,
+      "eu_sources": 1,
+      "eu_stock": 23423,
       "unit_price_cents": 59,
       "moq": 1,
-      "lead_time_days": null,
-      "datasheet_url": "https://www.ti.com/lit/ds/symlink/ts5a23159.pdf?ts=1728502479596&ref_url=https%253A%252F%252Fwww.mouser.ee%252F",
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Fts5a23159",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
         "channels": "2",
         "manufacturer_name": "TEXAS INSTRUMENTS",
         "mounting": "SMD",
-        "operating_temp_c": "-40...85\u00b0C",
-        "package": "VSSOP10",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "10-TFSOP, 10-MSOP (0.118\", 3.00mm Width)",
         "part_type": "analog switch",
         "supply_mv": "1.65...5.5V DC",
         "switch_configuration": "SPDT",
+        "ron_max_ohm": "900mOhm",
+        "supplier_package": "10-VSSOP",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -5852,24 +7252,27 @@
     {
       "mpn": "TS5A3157DBVR",
       "manufacturer": "TEXAS INSTRUMENTS",
-      "eu_sources": 1,
-      "eu_stock": 1437,
+      "eu_sources": 2,
+      "eu_stock": 53370,
       "unit_price_cents": 26,
       "moq": 1,
-      "lead_time_days": null,
-      "datasheet_url": "https://www.ti.com/lit/ds/symlink/ts5a3157.pdf?ts=1728499323772&ref_url=https%253A%252F%252Fwww.ti.com%252Fproduct%252FTS5A3157",
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Fts5a3157",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
         "channels": "1",
         "manufacturer_name": "TEXAS INSTRUMENTS",
         "mounting": "SMD",
-        "operating_temp_c": "-40...85\u00b0C",
-        "package": "SOT23-6",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "SOT-23-6",
         "part_type": "analog switch",
         "supply_mv": "1.65...5.5V DC",
         "switch_configuration": "SPDT",
+        "ron_max_ohm": "10Ohm",
+        "supplier_package": "SOT-23-6",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -5902,24 +7305,27 @@
     {
       "mpn": "TS5A3159ADBVR",
       "manufacturer": "TEXAS INSTRUMENTS",
-      "eu_sources": 1,
-      "eu_stock": 29,
+      "eu_sources": 2,
+      "eu_stock": 11679,
       "unit_price_cents": 65,
       "moq": 1,
-      "lead_time_days": null,
-      "datasheet_url": "https://www.ti.com/lit/ds/symlink/ts5a3159a.pdf?ts=1728567620169&ref_url=https%253A%252F%252Fwww.ti.com%252Fsitesearch%252Fen-us%252Fdocs%252Funiversalsearch.tsp%253FlangPref%253Den-US%2526nr%253D6%2526searchTerm%253DTS5A3159ADBVR",
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Fts5a3159a",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
         "channels": "1",
         "manufacturer_name": "TEXAS INSTRUMENTS",
         "mounting": "SMD",
-        "operating_temp_c": "-40...85\u00b0C",
-        "package": "SOT23-6",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "SOT-23-6",
         "part_type": "analog switch",
         "supply_mv": "1.65...5.5V DC",
         "switch_configuration": "SPDT",
+        "ron_max_ohm": "900mOhm",
+        "supplier_package": "SOT-23-6",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -5927,24 +7333,27 @@
     {
       "mpn": "TS5A3159ADCKR",
       "manufacturer": "TEXAS INSTRUMENTS",
-      "eu_sources": 0,
-      "eu_stock": 0,
+      "eu_sources": 1,
+      "eu_stock": 9271,
       "unit_price_cents": 67,
       "moq": 1,
-      "lead_time_days": null,
-      "datasheet_url": "https://www.ti.com/lit/ds/symlink/ts5a3159a.pdf?ts=1728567620169&ref_url=https%253A%252F%252Fwww.ti.com%252Fsitesearch%252Fen-us%252Fdocs%252Funiversalsearch.tsp%253FlangPref%253Den-US%2526nr%253D6%2526searchTerm%253DTS5A3159ADBVR",
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Fts5a3159a",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
         "channels": "1",
         "manufacturer_name": "TEXAS INSTRUMENTS",
         "mounting": "SMD",
-        "operating_temp_c": "-40...85\u00b0C",
-        "package": "SC70-6",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "6-TSSOP, SC-88, SOT-363",
         "part_type": "analog switch",
         "supply_mv": "1.65...5.5V DC",
         "switch_configuration": "SPDT",
+        "ron_max_ohm": "900mOhm",
+        "supplier_package": "SC-70-6",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -5952,24 +7361,27 @@
     {
       "mpn": "TS5A3159AYZPR",
       "manufacturer": "TEXAS INSTRUMENTS",
-      "eu_sources": 0,
-      "eu_stock": 0,
+      "eu_sources": 1,
+      "eu_stock": 13497,
       "unit_price_cents": 51,
       "moq": 1,
-      "lead_time_days": null,
-      "datasheet_url": "https://www.ti.com/lit/ds/symlink/ts5a3159a.pdf?ts=1728567620169&ref_url=https%253A%252F%252Fwww.ti.com%252Fsitesearch%252Fen-us%252Fdocs%252Funiversalsearch.tsp%253FlangPref%253Den-US%2526nr%253D6%2526searchTerm%253DTS5A3159ADBVR",
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Fts5a3159a",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
         "channels": "1",
         "manufacturer_name": "TEXAS INSTRUMENTS",
         "mounting": "SMD",
-        "operating_temp_c": "-40...85\u00b0C",
-        "package": "DSBGA6",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "6-XFBGA, DSBGA",
         "part_type": "analog switch",
         "supply_mv": "1.65...5.5V DC",
         "switch_configuration": "SPDT",
+        "ron_max_ohm": "900mOhm",
+        "supplier_package": "6-DSBGA (1.39x.89)",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -6052,24 +7464,27 @@
     {
       "mpn": "TS5A3159MDBVREP",
       "manufacturer": "TEXAS INSTRUMENTS",
-      "eu_sources": 0,
-      "eu_stock": 0,
+      "eu_sources": 1,
+      "eu_stock": 13647,
       "unit_price_cents": 316,
       "moq": 1,
-      "lead_time_days": null,
-      "datasheet_url": "https://www.ti.com/lit/ds/symlink/ts5a3159-ep.pdf?ts=1728547007415",
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=http%253A%252F%252Fwww.ti.com%252Flit%252Fgpn%252Fts5a3159-ep",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
         "channels": "1",
         "manufacturer_name": "TEXAS INSTRUMENTS",
         "mounting": "SMD",
-        "operating_temp_c": "-55...125\u00b0C",
-        "package": "SOT23-6",
+        "operating_temp_c": "-55\u00b0C ~ 125\u00b0C (TA)",
+        "package": "SOT-23-6",
         "part_type": "analog switch",
         "supply_mv": "1.65...5.5V DC",
         "switch_configuration": "SPDT",
+        "ron_max_ohm": "1.1Ohm",
+        "supplier_package": "SOT-23-6",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -6127,24 +7542,27 @@
     {
       "mpn": "TS5A3160DCKR",
       "manufacturer": "TEXAS INSTRUMENTS",
-      "eu_sources": 0,
-      "eu_stock": 0,
+      "eu_sources": 1,
+      "eu_stock": 94826,
       "unit_price_cents": 48,
       "moq": 1,
-      "lead_time_days": null,
-      "datasheet_url": "https://www.ti.com/lit/ds/symlink/ts5a3160.pdf?ts=1728558724529&ref_url=https%253A%252F%252Fnl.mouser.com%252F",
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Fts5a3160",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
         "channels": "1",
         "manufacturer_name": "TEXAS INSTRUMENTS",
         "mounting": "SMD",
-        "operating_temp_c": "-40...85\u00b0C",
-        "package": "SC70-6",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "6-TSSOP, SC-88, SOT-363",
         "part_type": "analog switch",
         "supply_mv": "1.65...5.5V DC",
         "switch_configuration": "SPDT",
+        "ron_max_ohm": "900mOhm",
+        "supplier_package": "SC-70-6",
         "moq": "1",
         "order_multiple": "1"
       }
@@ -6202,24 +7620,27 @@
     {
       "mpn": "TS5A4624DCKR",
       "manufacturer": "TEXAS INSTRUMENTS",
-      "eu_sources": 0,
-      "eu_stock": 0,
+      "eu_sources": 1,
+      "eu_stock": 22938,
       "unit_price_cents": 62,
       "moq": 1,
-      "lead_time_days": null,
-      "datasheet_url": "https://www.ti.com/lit/ds/symlink/ts5a4624.pdf?ts=1728567754176&ref_url=https%253A%252F%252Fwww.ti.com%252Fsitesearch%252Fen-us%252Fdocs%252Funiversalsearch.tsp%253FlangPref%253Den-US%2526nr%253D10%2526searchTerm%253DTS5A4624DCKR",
+      "lead_time_days": 182,
+      "datasheet_url": "https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Fts5a4624",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
         "channels": "1",
         "manufacturer_name": "TEXAS INSTRUMENTS",
         "mounting": "SMD",
-        "operating_temp_c": "-40...85\u00b0C",
-        "package": "SC70-6",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C (TA)",
+        "package": "6-TSSOP, SC-88, SOT-363",
         "part_type": "analog switch",
         "supply_mv": "1.65...5.5V DC",
         "switch_configuration": "SPDT",
+        "ron_max_ohm": "900mOhm",
+        "supplier_package": "SC-70-6",
         "moq": "1",
         "order_multiple": "1"
       }

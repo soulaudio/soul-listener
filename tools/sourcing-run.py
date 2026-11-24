@@ -193,6 +193,15 @@ SWEEPS = [
     ("tme", "100076", "Li-Po", "battery", 120),
     ("tme", "112878", None, "dac", 150),
     ("tme", "112866", None, "mcu", 150),
+    # Digi-Key sweeps are keyword-scoped rather than category-scoped: the
+    # frequency IS the requirement for an oscillator, and a keyword narrows
+    # across every oscillator category at once (608 parts match 22.5792MHz)
+    # without needing Digi-Key's internal category ids.
+    ("digikey", "", "22.5792MHz oscillator", "mclk-osc-44k1", 100),
+    ("digikey", "", "24.576MHz oscillator", "mclk-osc-48k", 100),
+    ("digikey", "", "SPDT analog switch", "mclk-mux", 100),
+    ("digikey", "", "CS43131", "dac", 50),
+    ("digikey", "", "Li-Po battery 3.7V", "battery", 100),
 ]
 
 CATEGORIES = ["dac", "mclk-osc-44k1", "mclk-osc-48k", "mclk-mux", "mcu", "battery", "bluetooth"]

@@ -28,6 +28,90 @@
       }
     },
     {
+      "mpn": "514CCC000148AAG",
+      "manufacturer": "Skyworks Solutions Inc.",
+      "eu_sources": 1,
+      "eu_stock": 729,
+      "unit_price_cents": 1365,
+      "moq": 1,
+      "lead_time_days": 56,
+      "datasheet_url": "https://www.skyworksinc.com/-/media/SkyWorks/SL/documents/public/data-sheets/Si514.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b120ppm",
+        "height_mm": "0.071\" (1.80mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "output_signal": "CMOS",
+        "package": "6-SMD, No Lead",
+        "part_type": "oscillator",
+        "supplier_package": "6-SMD (7x5)",
+        "supply_mv": "3.3V",
+        "moq": "1",
+        "order_multiple": "200"
+      }
+    },
+    {
+      "mpn": "636L3C024M57600",
+      "manufacturer": "CTS-Frequency Controls",
+      "eu_sources": 1,
+      "eu_stock": 1000,
+      "unit_price_cents": 151,
+      "moq": 1,
+      "lead_time_days": 98,
+      "datasheet_url": "https://www.ctscorp.com/Files/DataSheets/Passives/FCP/Clock-Oscillators/clock-ocillators-636-datasheet.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "height_mm": "0.051\" (1.30mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
+        "output_signal": "HCMOS",
+        "package": "4-SMD, No Lead",
+        "part_type": "oscillator",
+        "supplier_package": "4-SMD (5x3.2)",
+        "supply_mv": "3.3V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "636L3I024M57600",
+      "manufacturer": "CTS-Frequency Controls",
+      "eu_sources": 1,
+      "eu_stock": 1740,
+      "unit_price_cents": 149,
+      "moq": 1,
+      "lead_time_days": 98,
+      "datasheet_url": "https://www.ctscorp.com/Files/DataSheets/Passives/FCP/Clock-Oscillators/clock-ocillators-636-datasheet.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "height_mm": "0.051\" (1.30mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "output_signal": "HCMOS",
+        "package": "4-SMD, No Lead",
+        "part_type": "oscillator",
+        "supplier_package": "4-SMD (5x3.2)",
+        "supply_mv": "3.3V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
       "mpn": "7C-24.576MBA-T",
       "manufacturer": "TXC",
       "eu_sources": 0,
@@ -54,24 +138,29 @@
     {
       "mpn": "7M-24.576MAAJ-T",
       "manufacturer": "TXC",
-      "eu_sources": 0,
-      "eu_stock": 0,
-      "unit_price_cents": 43,
-      "moq": 1000,
-      "lead_time_days": null,
-      "datasheet_url": "https://www.tme.eu/Document/a4d736310cb04f5ccd0f03f407faf329/7m.pdf",
+      "eu_sources": 1,
+      "eu_stock": 1377,
+      "unit_price_cents": 79,
+      "moq": 1,
+      "lead_time_days": 119,
+      "datasheet_url": "http://www.txccrystal.com/images/pdf/7m.pdf",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
-        "frequency_hz": "24.576MHz",
+        "frequency_hz": "24.576 MHz",
         "frequency_stability_ppm": "\u00b130ppm",
         "manufacturer_name": "TXC",
         "mounting": "SMD",
-        "operating_temp_c": "-20...70\u00b0C",
-        "part_type": "crystal",
-        "moq": "1000",
-        "order_multiple": "1000"
+        "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
+        "part_type": "MHz Crystal",
+        "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
+        "height_mm": "0.031\" (0.80mm)",
+        "package": "4-SMD, No Lead",
+        "supplier_package": "4-SMD (3.2x2.5)",
+        "moq": "1",
+        "order_multiple": "1"
       }
     },
     {
@@ -123,24 +212,29 @@
     {
       "mpn": "7V-24.576MDDE-T",
       "manufacturer": "TXC",
-      "eu_sources": 0,
-      "eu_stock": 0,
-      "unit_price_cents": 27,
-      "moq": 1000,
-      "lead_time_days": null,
-      "datasheet_url": "https://www.tme.eu/Document/fc14ffcc8ecf3369c6ead6a937869cec/7v.pdf",
+      "eu_sources": 1,
+      "eu_stock": 6557,
+      "unit_price_cents": 48,
+      "moq": 1,
+      "lead_time_days": 119,
+      "datasheet_url": "http://www.txccrystal.com/images/pdf/7v.pdf",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
-        "frequency_hz": "24.576MHz",
+        "frequency_hz": "24.576 MHz",
         "frequency_stability_ppm": "\u00b120ppm",
         "manufacturer_name": "TXC",
         "mounting": "SMD",
-        "operating_temp_c": "-20...70\u00b0C",
-        "part_type": "crystal",
-        "moq": "1000",
-        "order_multiple": "1000"
+        "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
+        "part_type": "MHz Crystal",
+        "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
+        "height_mm": "0.035\" (0.90mm)",
+        "package": "4-SMD, No Lead",
+        "supplier_package": "4-SMD (3.2x2.5)",
+        "moq": "1",
+        "order_multiple": "1"
       }
     },
     {
@@ -189,6 +283,85 @@
         "supply_mv": "3.3V DC",
         "moq": "1000",
         "order_multiple": "1000"
+      }
+    },
+    {
+      "mpn": "830035267",
+      "manufacturer": "W\u00fcrth Elektronik",
+      "eu_sources": 1,
+      "eu_stock": 2951,
+      "unit_price_cents": 52,
+      "moq": 1,
+      "lead_time_days": 91,
+      "datasheet_url": "https://www.we-online.com/components/products/datasheet/830035267.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "height_mm": "0.031\" (0.80mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-10\u00b0C ~ 60\u00b0C",
+        "package": "4-SMD, No Lead",
+        "part_type": "MHz Crystal",
+        "supplier_package": "4-SMD (3.2x2.5)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "830069387",
+      "manufacturer": "W\u00fcrth Elektronik",
+      "eu_sources": 1,
+      "eu_stock": 2252,
+      "unit_price_cents": 56,
+      "moq": 1,
+      "lead_time_days": 84,
+      "datasheet_url": "https://www.we-online.com/components/products/datasheet/830069387.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b120ppm",
+        "height_mm": "0.026\" (0.65mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "4-SMD, No Lead",
+        "part_type": "MHz Crystal",
+        "supplier_package": "4-SMD (2.5x2)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "830207659209",
+      "manufacturer": "W\u00fcrth Elektronik",
+      "eu_sources": 1,
+      "eu_stock": 559,
+      "unit_price_cents": 144,
+      "moq": 1,
+      "lead_time_days": 175,
+      "datasheet_url": "https://www.we-online.com/components/products/datasheet/830207659209.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b125ppm",
+        "height_mm": "0.047\" (1.20mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "output_signal": "CMOS",
+        "package": "4-SMD, No Lead",
+        "part_type": "oscillator",
+        "supply_mv": "3.3V",
+        "moq": "1",
+        "order_multiple": "1"
       }
     },
     {
@@ -290,6 +463,640 @@
       }
     },
     {
+      "mpn": "ABM10W-24.5760MHZ-4-D1X-T3",
+      "manufacturer": "Abracon LLC",
+      "eu_sources": 1,
+      "eu_stock": 1834,
+      "unit_price_cents": 57,
+      "moq": 1,
+      "lead_time_days": 98,
+      "datasheet_url": "https://abracon.com/datasheets/ABM10W.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b120ppm",
+        "height_mm": "0.026\" (0.65mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "4-SMD, No Lead",
+        "part_type": "MHz Crystal",
+        "supplier_package": "4-SMD (2.5x2)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ABM10W-24.5760MHZ-6-D1X-T3",
+      "manufacturer": "Abracon LLC",
+      "eu_sources": 1,
+      "eu_stock": 2990,
+      "unit_price_cents": 59,
+      "moq": 1,
+      "lead_time_days": 98,
+      "datasheet_url": "https://abracon.com/datasheets/ABM10W.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b120ppm",
+        "height_mm": "0.026\" (0.65mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "4-SMD, No Lead",
+        "part_type": "MHz Crystal",
+        "supplier_package": "4-SMD (2.5x2)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ABM10W-24.5760MHZ-7-B1U-T3",
+      "manufacturer": "Abracon LLC",
+      "eu_sources": 1,
+      "eu_stock": 2930,
+      "unit_price_cents": 48,
+      "moq": 1,
+      "lead_time_days": 98,
+      "datasheet_url": "https://abracon.com/datasheets/ABM10W.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b110ppm",
+        "height_mm": "0.026\" (0.65mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
+        "package": "4-SMD, No Lead",
+        "part_type": "MHz Crystal",
+        "supplier_package": "4-SMD (2.5x2)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ABM10W-24.5760MHZ-7-D1X-T3",
+      "manufacturer": "Abracon LLC",
+      "eu_sources": 1,
+      "eu_stock": 1400,
+      "unit_price_cents": 57,
+      "moq": 1,
+      "lead_time_days": 98,
+      "datasheet_url": "https://abracon.com/datasheets/ABM10W.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b120ppm",
+        "height_mm": "0.026\" (0.65mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "4-SMD, No Lead",
+        "part_type": "MHz Crystal",
+        "supplier_package": "4-SMD (2.5x2)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ABM10W-24.5760MHZ-8-B1U-T3",
+      "manufacturer": "Abracon LLC",
+      "eu_sources": 1,
+      "eu_stock": 1505,
+      "unit_price_cents": 57,
+      "moq": 1,
+      "lead_time_days": 98,
+      "datasheet_url": "https://abracon.com/datasheets/ABM10W.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b110ppm",
+        "height_mm": "0.026\" (0.65mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
+        "package": "4-SMD, No Lead",
+        "part_type": "MHz Crystal",
+        "supplier_package": "4-SMD (2.5x2)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ABM11AIG-24.576MHZ-4Z-T3",
+      "manufacturer": "Abracon LLC",
+      "eu_sources": 1,
+      "eu_stock": 2982,
+      "unit_price_cents": 118,
+      "moq": 1,
+      "lead_time_days": 98,
+      "datasheet_url": "https://abracon.com/AIGcrystals/ABM11AIG.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "height_mm": "0.022\" (0.55mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C",
+        "package": "4-SMD, No Lead",
+        "part_type": "MHz Crystal",
+        "supplier_package": "4-SMD (2x1.6)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ABM11W-24.5760MHZ-6-B1U-T3",
+      "manufacturer": "Abracon LLC",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 39,
+      "moq": 1,
+      "lead_time_days": 98,
+      "datasheet_url": "https://www.waldom.com/upload/parts/datasheets/mf-abr/abr-abm11w-245760mhz-6-b1u-t3.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b110ppm",
+        "height_mm": "0.020\" (0.50mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
+        "package": "4-SMD, No Lead",
+        "part_type": "MHz Crystal",
+        "supplier_package": "4-SMD (2x1.6)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ABM11W-24.5760MHZ-7-B1U-T3",
+      "manufacturer": "Abracon LLC",
+      "eu_sources": 1,
+      "eu_stock": 2500,
+      "unit_price_cents": 42,
+      "moq": 1,
+      "lead_time_days": 98,
+      "datasheet_url": "https://abracon.com/Resonators/ABM11W.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b110ppm",
+        "height_mm": "0.020\" (0.50mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
+        "package": "4-SMD, No Lead",
+        "part_type": "MHz Crystal",
+        "supplier_package": "4-SMD (2x1.6)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ABM11W-24.5760MHZ-8-B1U-T3",
+      "manufacturer": "Abracon LLC",
+      "eu_sources": 1,
+      "eu_stock": 3009,
+      "unit_price_cents": 43,
+      "moq": 1,
+      "lead_time_days": 98,
+      "datasheet_url": "https://abracon.com/Resonators/ABM11W.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b110ppm",
+        "height_mm": "0.020\" (0.50mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
+        "package": "4-SMD, No Lead",
+        "part_type": "MHz Crystal",
+        "supplier_package": "4-SMD (2x1.6)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ABM12W-24.5760MHZ-8-D1X-T3",
+      "manufacturer": "Abracon LLC",
+      "eu_sources": 1,
+      "eu_stock": 1670,
+      "unit_price_cents": 93,
+      "moq": 1,
+      "lead_time_days": 98,
+      "datasheet_url": "https://abracon.com/Resonators/ABM12W.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.063\" L x 0.047\" W (1.60mm x 1.20mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b120ppm",
+        "height_mm": "0.016\" (0.40mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "4-SMD, No Lead",
+        "part_type": "MHz Crystal",
+        "supplier_package": "4-SMD (1.6x1.2)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ABM3B-24.576MHZ-B2-T",
+      "manufacturer": "Abracon LLC",
+      "eu_sources": 1,
+      "eu_stock": 2608,
+      "unit_price_cents": 70,
+      "moq": 1,
+      "lead_time_days": 126,
+      "datasheet_url": "https://www.waldom.com/upload/parts/datasheets/mf-abr/abr-abm3b-24576mhz-b2-t.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "height_mm": "0.043\" (1.10mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
+        "package": "4-SMD, No Lead",
+        "part_type": "MHz Crystal",
+        "supplier_package": "4-SMD (5x3.2)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ABM7-24.576MHZ-D2Y-T",
+      "manufacturer": "Abracon LLC",
+      "eu_sources": 1,
+      "eu_stock": 3974,
+      "unit_price_cents": 62,
+      "moq": 1,
+      "lead_time_days": 196,
+      "datasheet_url": "https://www.waldom.com/upload/parts/datasheets/mf-abr/abr-abm7-24576mhz-d2y-t.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.236\" L x 0.138\" W (6.00mm x 3.50mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b130ppm",
+        "height_mm": "0.055\" (1.40mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "2-SMD, No Lead",
+        "part_type": "MHz Crystal",
+        "supplier_package": "2-SMD (6x3.5)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ABM8-24.576MHZ-B2-T",
+      "manufacturer": "Abracon LLC",
+      "eu_sources": 1,
+      "eu_stock": 6399,
+      "unit_price_cents": 43,
+      "moq": 1,
+      "lead_time_days": 98,
+      "datasheet_url": "https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/6536/ABM8_Datasheet.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "height_mm": "0.031\" (0.80mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
+        "package": "4-SMD, No Lead",
+        "part_type": "MHz Crystal",
+        "supplier_package": "4-SMD (3.2x2.5)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ABM8AIG-24.576MHZ-12-2Z-T3",
+      "manufacturer": "Abracon LLC",
+      "eu_sources": 1,
+      "eu_stock": 2024,
+      "unit_price_cents": 66,
+      "moq": 1,
+      "lead_time_days": 98,
+      "datasheet_url": "https://abracon.com/AIGcrystals/ABM8AIG.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "height_mm": "0.031\" (0.80mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C",
+        "package": "4-SMD, No Lead",
+        "part_type": "MHz Crystal",
+        "supplier_package": "4-SMD (3.2x2.5)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ABM8G-24.576MHZ-18-D2Y-T",
+      "manufacturer": "Abracon LLC",
+      "eu_sources": 1,
+      "eu_stock": 163005,
+      "unit_price_cents": 59,
+      "moq": 1,
+      "lead_time_days": 112,
+      "datasheet_url": "https://abracon.com/Resonators/ABM8G.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b130ppm",
+        "height_mm": "0.039\" (1.00mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "4-SMD, No Lead",
+        "part_type": "MHz Crystal",
+        "supplier_package": "4-SMD (3.2x2.5)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ABM8G-24.576MHZ-4Y-T3",
+      "manufacturer": "Abracon LLC",
+      "eu_sources": 1,
+      "eu_stock": 8302,
+      "unit_price_cents": 55,
+      "moq": 1,
+      "lead_time_days": 112,
+      "datasheet_url": "https://abracon.com/Resonators/ABM8G.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b130ppm",
+        "height_mm": "0.039\" (1.00mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-10\u00b0C ~ 60\u00b0C",
+        "package": "4-SMD, No Lead",
+        "part_type": "MHz Crystal",
+        "supplier_package": "4-SMD (3.2x2.5)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ABMM-24.576MHZ-B2-T",
+      "manufacturer": "Abracon LLC",
+      "eu_sources": 0,
+      "eu_stock": 0,
+      "unit_price_cents": 107,
+      "moq": 1,
+      "lead_time_days": 98,
+      "datasheet_url": "https://abracon.com/Resonators/ABMM.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "height_mm": "0.051\" (1.30mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
+        "package": "4-SMD, No Lead",
+        "part_type": "MHz Crystal",
+        "supplier_package": "4-SMD (7x5)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ACH-24.576MHZ-EK",
+      "manufacturer": "Abracon LLC",
+      "eu_sources": 1,
+      "eu_stock": 597,
+      "unit_price_cents": 455,
+      "moq": 1,
+      "lead_time_days": 140,
+      "datasheet_url": "https://abracon.com/Oscillators/ACH.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.500\" L x 0.500\" W (12.70mm x 12.70mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b130ppm",
+        "height_mm": "0.252\" (6.39mm)",
+        "mounting": "THT",
+        "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
+        "output_signal": "HCMOS, TTL",
+        "package": "8-DIP, 4 Leads (Half Size, Metal Can)",
+        "part_type": "oscillator",
+        "supply_mv": "5V",
+        "moq": "1",
+        "order_multiple": "40"
+      }
+    },
+    {
+      "mpn": "ACO-24.576MHZ-EK",
+      "manufacturer": "Abracon LLC",
+      "eu_sources": 1,
+      "eu_stock": 807,
+      "unit_price_cents": 455,
+      "moq": 1,
+      "lead_time_days": 140,
+      "datasheet_url": "https://abracon.com/Oscillators/ACO.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.795\" L x 0.496\" W (20.20mm x 12.60mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b130ppm",
+        "height_mm": "0.200\" (5.08mm)",
+        "mounting": "THT",
+        "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
+        "output_signal": "HCMOS, TTL",
+        "package": "14-DIP, 4 Leads (Full Size, Metal Can)",
+        "part_type": "oscillator",
+        "supplier_package": "14-DIP",
+        "supply_mv": "5V",
+        "moq": "1",
+        "order_multiple": "25"
+      }
+    },
+    {
+      "mpn": "AS-24.576-20-F-3030-SMD-TR",
+      "manufacturer": "Raltron Electronics",
+      "eu_sources": 1,
+      "eu_stock": 5348,
+      "unit_price_cents": 19,
+      "moq": 1,
+      "lead_time_days": 84,
+      "datasheet_url": "https://www.raltron.com/webproducts/specs/CRYSTAL/AS-24.576-20-F-3030-SMD-TR.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.472\" L x 0.189\" W (12.00mm x 4.80mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b130ppm",
+        "height_mm": "0.157\" (4.00mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
+        "package": "HC-49/US",
+        "part_type": "MHz Crystal",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ASCO-24.576MHZ-EK-T3",
+      "manufacturer": "Abracon LLC",
+      "eu_sources": 1,
+      "eu_stock": 2553,
+      "unit_price_cents": 209,
+      "moq": 1,
+      "lead_time_days": 126,
+      "datasheet_url": "https://abracon.com/Oscillators/ASCO.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.063\" L x 0.047\" W (1.60mm x 1.20mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b130ppm",
+        "height_mm": "0.028\" (0.70mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
+        "output_signal": "CMOS",
+        "package": "4-SMD, No Lead",
+        "part_type": "oscillator",
+        "supplier_package": "4-SMD (1.6x1.2)",
+        "supply_mv": "3.3V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ASD3-24.576MHZ-EC-T",
+      "manufacturer": "Abracon LLC",
+      "eu_sources": 1,
+      "eu_stock": 6313,
+      "unit_price_cents": 97,
+      "moq": 1,
+      "lead_time_days": 112,
+      "datasheet_url": "https://abracon.com/Oscillators/ASDseries.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "height_mm": "0.039\" (1.00mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
+        "output_signal": "HCMOS",
+        "package": "4-SMD, No Lead",
+        "part_type": "oscillator",
+        "supplier_package": "4-SMD (2.5x2)",
+        "supply_mv": "1.8V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ASDLJ-E-24.576MHZ-L-R-T",
+      "manufacturer": "Abracon LLC",
+      "eu_sources": 1,
+      "eu_stock": 713,
+      "unit_price_cents": 178,
+      "moq": 1,
+      "lead_time_days": 35,
+      "datasheet_url": "https://abracon.com/datasheets/ASDLJ.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b125ppm",
+        "height_mm": "0.039\" (1.00mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "output_signal": "CMOS",
+        "package": "4-SMD, No Lead",
+        "part_type": "oscillator",
+        "supplier_package": "4-SMD (2.5x2)",
+        "supply_mv": "3.3V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ASDMB-24.576MHZ-LC-T",
+      "manufacturer": "Abracon LLC",
+      "eu_sources": 1,
+      "eu_stock": 1945,
+      "unit_price_cents": 275,
+      "moq": 1,
+      "lead_time_days": 182,
+      "datasheet_url": "https://abracon.com/Oscillators/ASDMB.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "height_mm": "0.035\" (0.90mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "output_signal": "LVCMOS",
+        "package": "4-SMD, No Lead",
+        "part_type": "oscillator",
+        "supplier_package": "4-SMD (2.5x2)",
+        "supply_mv": "1.8V ~ 3.3V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
       "mpn": "ASDMB-24.576MHZ-LY-T",
       "manufacturer": "Abracon LLC",
       "eu_sources": 1,
@@ -318,6 +1125,416 @@
       }
     },
     {
+      "mpn": "ASE-24.576MHZ-L-C-T",
+      "manufacturer": "Abracon LLC",
+      "eu_sources": 1,
+      "eu_stock": 22642,
+      "unit_price_cents": 130,
+      "moq": 1,
+      "lead_time_days": 112,
+      "datasheet_url": "https://www.waldom.com/upload/parts/datasheets/mf-abr/abr-ase-24576mhz-lc-t.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "height_mm": "0.047\" (1.20mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "output_signal": "CMOS",
+        "package": "4-SMD, No Lead",
+        "part_type": "oscillator",
+        "supplier_package": "4-SMD (3.2x2.5)",
+        "supply_mv": "3.3V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ASELJ-E-24.576MHZ-L-R-T",
+      "manufacturer": "Abracon LLC",
+      "eu_sources": 1,
+      "eu_stock": 968,
+      "unit_price_cents": 158,
+      "moq": 1,
+      "lead_time_days": 98,
+      "datasheet_url": "https://abracon.com/datasheets/ASELJ.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b125ppm",
+        "height_mm": "0.043\" (1.10mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "output_signal": "CMOS",
+        "package": "4-SMD, No Lead",
+        "part_type": "oscillator",
+        "supplier_package": "4-SMD (3.2x2.5)",
+        "supply_mv": "3.3V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ASEMB-24.576MHZ-LY-T",
+      "manufacturer": "Abracon LLC",
+      "eu_sources": 1,
+      "eu_stock": 3273,
+      "unit_price_cents": 391,
+      "moq": 1,
+      "lead_time_days": 182,
+      "datasheet_url": "https://abracon.com/Oscillators/ASEMB.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b110ppm",
+        "height_mm": "0.035\" (0.90mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "output_signal": "CMOS",
+        "package": "4-SMD, No Lead",
+        "part_type": "oscillator",
+        "supplier_package": "4-SMD (3.2x2.5)",
+        "supply_mv": "1.8V ~ 3.3V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ASFL1-24.576MHZ-EC-T",
+      "manufacturer": "Abracon LLC",
+      "eu_sources": 1,
+      "eu_stock": 4310,
+      "unit_price_cents": 194,
+      "moq": 1,
+      "lead_time_days": 70,
+      "datasheet_url": "https://abracon.com/Oscillators/ASFL1.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "height_mm": "0.051\" (1.30mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
+        "output_signal": "HCMOS, TTL",
+        "package": "4-SMD, No Lead",
+        "part_type": "oscillator",
+        "supplier_package": "4-SMD (5x3.2)",
+        "supply_mv": "3.3V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ASFL1-24.576MHZ-EK-T",
+      "manufacturer": "Abracon LLC",
+      "eu_sources": 1,
+      "eu_stock": 806,
+      "unit_price_cents": 134,
+      "moq": 1,
+      "lead_time_days": 98,
+      "datasheet_url": "https://abracon.com/Oscillators/ASFL1.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b130ppm",
+        "height_mm": "0.051\" (1.30mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
+        "output_signal": "HCMOS, TTL",
+        "package": "4-SMD, No Lead",
+        "part_type": "oscillator",
+        "supplier_package": "4-SMD (5x3.2)",
+        "supply_mv": "3.3V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "AST3TQ-T-24.576MHZ-50-C",
+      "manufacturer": "Abracon LLC",
+      "eu_sources": 1,
+      "eu_stock": 172,
+      "unit_price_cents": 6548,
+      "moq": 1,
+      "lead_time_days": 70,
+      "datasheet_url": "https://abracon.com/Oscillators/AST3TQ-50.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b150ppb",
+        "height_mm": "0.079\" (2.00mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "output_signal": "LVCMOS",
+        "package": "4-SMD, No Lead",
+        "part_type": "TCXO",
+        "supply_mv": "3.3V",
+        "moq": "1",
+        "order_multiple": "25"
+      }
+    },
+    {
+      "mpn": "ASV-24.576MHZ-EJ-T",
+      "manufacturer": "Abracon LLC",
+      "eu_sources": 1,
+      "eu_stock": 4113,
+      "unit_price_cents": 200,
+      "moq": 1,
+      "lead_time_days": 84,
+      "datasheet_url": "https://abracon.com/Oscillators/ASV.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.276\" L x 0.200\" W (7.00mm x 5.08mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b120ppm",
+        "height_mm": "0.071\" (1.80mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
+        "output_signal": "HCMOS",
+        "package": "4-SMD, No Lead",
+        "part_type": "oscillator",
+        "supplier_package": "4-SMD (7x5.08)",
+        "supply_mv": "3.3V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "CB3-3I-24M576000",
+      "manufacturer": "CTS-Frequency Controls",
+      "eu_sources": 1,
+      "eu_stock": 2077,
+      "unit_price_cents": 143,
+      "moq": 1,
+      "lead_time_days": 126,
+      "datasheet_url": "https://www.ctscorp.com/Files/DataSheets/Passives/FCP/Clock-Oscillators/clock-ocillators-CB3_CB3LV-datasheet.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "height_mm": "0.071\" (1.80mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "output_signal": "HCMOS, TTL",
+        "package": "4-SMD, No Lead",
+        "part_type": "oscillator",
+        "supplier_package": "4-SMD (7x5)",
+        "supply_mv": "5V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "CB3LV-3C-24M576000",
+      "manufacturer": "CTS-Frequency Controls",
+      "eu_sources": 1,
+      "eu_stock": 1304,
+      "unit_price_cents": 151,
+      "moq": 1,
+      "lead_time_days": 126,
+      "datasheet_url": "https://www.ctscorp.com/Files/DataSheets/Passives/FCP/Clock-Oscillators/clock-ocillators-CB3_CB3LV-datasheet.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "height_mm": "0.071\" (1.80mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
+        "output_signal": "HCMOS, TTL",
+        "package": "4-SMD, No Lead",
+        "part_type": "oscillator",
+        "supplier_package": "4-SMD (7x5)",
+        "supply_mv": "3.3V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "CS14523-24.576M",
+      "manufacturer": "NDK (NIHON DEMPA KOGYO CO., LTD)",
+      "eu_sources": 1,
+      "eu_stock": 2175,
+      "unit_price_cents": 61,
+      "moq": 1,
+      "lead_time_days": 210,
+      "datasheet_url": "https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/5736/STD-CSR-1.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b115ppm",
+        "height_mm": "0.024\" (0.60mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-10\u00b0C ~ 75\u00b0C",
+        "package": "4-SMD, No Lead",
+        "part_type": "MHz Crystal",
+        "supplier_package": "4-SMD (3.2x2.5)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "CSX-750FBC24576000T",
+      "manufacturer": "Citizen Finedevice Co Ltd",
+      "eu_sources": 1,
+      "eu_stock": 1229,
+      "unit_price_cents": 197,
+      "moq": 1,
+      "lead_time_days": 287,
+      "datasheet_url": "https://cfd.citizen.co.jp/cms/cfd/pdf/english/CSX-750F_E.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b1100ppm",
+        "height_mm": "0.063\" (1.60mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
+        "output_signal": "CMOS",
+        "package": "4-SMD, No Lead",
+        "part_type": "oscillator",
+        "supply_mv": "3.3V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "CSX-750FCC24576000T",
+      "manufacturer": "Citizen Finedevice Co Ltd",
+      "eu_sources": 1,
+      "eu_stock": 750,
+      "unit_price_cents": 186,
+      "moq": 1,
+      "lead_time_days": 287,
+      "datasheet_url": "https://cfd.citizen.co.jp/cms/cfd/pdf/english/CSX-750F_E.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b1100ppm",
+        "height_mm": "0.063\" (1.60mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
+        "output_signal": "CMOS, TTL",
+        "package": "4-SMD, No Lead",
+        "part_type": "oscillator",
+        "supply_mv": "5V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "CWX813-024.576M",
+      "manufacturer": "Connor Winfield",
+      "eu_sources": 1,
+      "eu_stock": 2202,
+      "unit_price_cents": 412,
+      "moq": 1,
+      "lead_time_days": 119,
+      "datasheet_url": "http://www.conwin.com/datasheets/sm/sm126.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b125ppm",
+        "height_mm": "0.051\" (1.30mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
+        "output_signal": "LVCMOS",
+        "package": "4-SMD, No Lead",
+        "part_type": "oscillator",
+        "supply_mv": "3.3V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "CX2016DB24576D0GPSC1",
+      "manufacturer": "KYOCERA AVX",
+      "eu_sources": 1,
+      "eu_stock": 4196,
+      "unit_price_cents": 59,
+      "moq": 1,
+      "lead_time_days": 126,
+      "datasheet_url": "https://ele.kyocera.com/assets/products/crystal-device/cx2016db_e.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "height_mm": "0.018\" (0.45mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "4-SMD, No Lead",
+        "part_type": "MHz Crystal",
+        "supplier_package": "4-SMD (2x1.6)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "CX2016SA24576B0QLSG1",
+      "manufacturer": "KYOCERA AVX",
+      "eu_sources": 1,
+      "eu_stock": 2970,
+      "unit_price_cents": 31,
+      "moq": 1,
+      "lead_time_days": 126,
+      "datasheet_url": "https://ele.kyocera.com/assets/products/crystal-device/cx2016sa_e.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "height_mm": "0.020\" (0.50mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-30\u00b0C ~ 85\u00b0C",
+        "package": "4-SMD, No Lead",
+        "part_type": "MHz Crystal",
+        "supplier_package": "4-SMD (2x1.6)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
       "mpn": "CX2016SA24576D0FLJG1",
       "manufacturer": "KYOCERA AVX",
       "eu_sources": 0,
@@ -339,27 +1556,823 @@
       }
     },
     {
-      "mpn": "KC2016Z24.5760C15XXK",
+      "mpn": "CX2016SA24576D0FPLG1",
       "manufacturer": "KYOCERA AVX",
-      "eu_sources": 0,
-      "eu_stock": 0,
-      "unit_price_cents": 138,
-      "moq": 2000,
-      "lead_time_days": null,
-      "datasheet_url": "https://www.tme.eu/Document/7eb6aaa55749803a470dbb69fd33d76a/clock_z_x_e.pdf",
+      "eu_sources": 1,
+      "eu_stock": 2899,
+      "unit_price_cents": 48,
+      "moq": 1,
+      "lead_time_days": 126,
+      "datasheet_url": "https://ele.kyocera.com/assets/products/crystal-device/cx2016sa_e.pdf",
       "vendors": [
-        "tme"
+        "digikey"
       ],
       "attrs_raw": {
-        "frequency_hz": "24.576MHz",
+        "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b120ppm",
+        "height_mm": "0.020\" (0.50mm)",
+        "mounting": "SMD",
+        "package": "4-SMD, No Lead",
+        "part_type": "MHz Crystal",
+        "supplier_package": "4-SMD (2x1.6)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "CX2016SA24576H0FLJG1",
+      "manufacturer": "KYOCERA AVX",
+      "eu_sources": 1,
+      "eu_stock": 1305,
+      "unit_price_cents": 51,
+      "moq": 1,
+      "lead_time_days": 126,
+      "datasheet_url": "https://ele.kyocera.com/assets/products/crystal-device/cx2016sa_e.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b115ppm",
+        "height_mm": "0.020\" (0.50mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-30\u00b0C ~ 85\u00b0C",
+        "package": "4-SMD, No Lead",
+        "part_type": "MHz Crystal",
+        "supplier_package": "4-SMD (2x1.6)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "CX3225SB24576D0FLJCC",
+      "manufacturer": "KYOCERA AVX",
+      "eu_sources": 1,
+      "eu_stock": 13496,
+      "unit_price_cents": 65,
+      "moq": 1,
+      "lead_time_days": 126,
+      "datasheet_url": "https://ele.kyocera.com/assets/products/crystal-device/cx3225sb_e.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b115ppm",
+        "height_mm": "0.024\" (0.60mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-30\u00b0C ~ 85\u00b0C",
+        "package": "4-SMD, No Lead",
+        "part_type": "MHz Crystal",
+        "supplier_package": "4-SMD (3.2x2.5)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "DS1089LU-22F+",
+      "manufacturer": "Analog Devices Inc./Maxim Integrated",
+      "eu_sources": 1,
+      "eu_stock": 198,
+      "unit_price_cents": 464,
+      "moq": 1,
+      "lead_time_days": 70,
+      "datasheet_url": "https://www.analog.com/media/en/technical-documentation/data-sheets/ds1089l.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "output_signal": "Clock",
+        "package": "8-TSSOP, 8-MSOP (0.118\", 3.00mm Width)",
+        "part_type": "Clock Generator",
+        "supplier_package": "8-uMAX/uSOP",
+        "supply_mv": "2.7V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "50"
+      }
+    },
+    {
+      "mpn": "EB13E2H2H-24.576M TR",
+      "manufacturer": "Ecliptek",
+      "eu_sources": 1,
+      "eu_stock": 766,
+      "unit_price_cents": 134,
+      "moq": 1,
+      "lead_time_days": 98,
+      "datasheet_url": "https://abracon.com/datasheets/Ecliptek/EB13E2.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "height_mm": "0.043\" (1.10mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "output_signal": "CMOS",
+        "package": "4-SMD, No Lead",
+        "part_type": "oscillator",
+        "supply_mv": "3.3V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ECS-2033-245.7-BN-TR",
+      "manufacturer": "ECS Inc.",
+      "eu_sources": 1,
+      "eu_stock": 14674,
+      "unit_price_cents": 120,
+      "moq": 1,
+      "lead_time_days": 133,
+      "datasheet_url": "https://ecsxtal.com/store/pdf/ecs-2025-2033.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "height_mm": "0.039\" (1.00mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "output_signal": "CMOS",
+        "package": "4-SMD, No Lead",
+        "part_type": "oscillator",
+        "supplier_package": "4-SMD (2.5x2)",
+        "supply_mv": "3.3V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ECS-245-20-30B-TR",
+      "manufacturer": "ECS Inc.",
+      "eu_sources": 1,
+      "eu_stock": 1612,
+      "unit_price_cents": 133,
+      "moq": 1,
+      "lead_time_days": 133,
+      "datasheet_url": "https://ecsxtal.com/store/pdf/ecx_53b.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "height_mm": "0.033\" (0.85mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
+        "package": "4-SMD, No Lead",
+        "part_type": "MHz Crystal",
+        "supplier_package": "4-SMD (5x3.2)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ECS-245.7-10-36-JTM-TR",
+      "manufacturer": "ECS Inc.",
+      "eu_sources": 1,
+      "eu_stock": 10178,
+      "unit_price_cents": 38,
+      "moq": 1,
+      "lead_time_days": 133,
+      "datasheet_url": "https://ecsxtal.com/store/pdf/ECX-2236.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b120ppm",
+        "height_mm": "0.024\" (0.60mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
+        "package": "4-SMD, No Lead",
+        "part_type": "MHz Crystal",
+        "supplier_package": "4-SMD (2.5x2)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ECS-245.7-10-36B2-CTM-TR",
+      "manufacturer": "ECS Inc.",
+      "eu_sources": 1,
+      "eu_stock": 18443,
+      "unit_price_cents": 30,
+      "moq": 1,
+      "lead_time_days": 133,
+      "datasheet_url": "https://ecsxtal.com/store/pdf/ECX-2236B2.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b120ppm",
+        "height_mm": "0.024\" (0.60mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
+        "package": "4-SMD, No Lead",
+        "part_type": "MHz Crystal",
+        "supplier_package": "4-SMD (2.5x2)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ECS-245.7-10-36Q-ES-TR",
+      "manufacturer": "ECS Inc.",
+      "eu_sources": 1,
+      "eu_stock": 2499,
+      "unit_price_cents": 54,
+      "moq": 1,
+      "lead_time_days": 133,
+      "datasheet_url": "https://ecsxtal.com/store/pdf/ECX-2236Q.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "height_mm": "0.024\" (0.60mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C",
+        "package": "4-SMD, No Lead",
+        "part_type": "MHz Crystal",
+        "supplier_package": "4-SMD (2.5x2)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ECS-245.7-18-33-JGN-TR",
+      "manufacturer": "ECS Inc.",
+      "eu_sources": 1,
+      "eu_stock": 7000,
+      "unit_price_cents": 43,
+      "moq": 1,
+      "lead_time_days": 133,
+      "datasheet_url": "https://ecsxtal.com/store/pdf/ecx-32.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b130ppm",
+        "height_mm": "0.031\" (0.80mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "4-SMD, No Lead",
+        "part_type": "MHz Crystal",
+        "supplier_package": "4-SMD (3.2x2.5)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ECS-245.7-18-7SX-TR",
+      "manufacturer": "ECS Inc.",
+      "eu_sources": 1,
+      "eu_stock": 2939,
+      "unit_price_cents": 330,
+      "moq": 1,
+      "lead_time_days": 441,
+      "datasheet_url": "https://ecsxtal.com/store/pdf/ecx-3sx.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.492\" L x 0.181\" W (12.50mm x 4.60mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "height_mm": "0.146\" (3.70mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-10\u00b0C ~ 70\u00b0C",
+        "package": "4-SOJ, 9.40mm pitch",
+        "part_type": "MHz Crystal",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ECS-245.7-20-3X-EN-TR",
+      "manufacturer": "ECS Inc.",
+      "eu_sources": 1,
+      "eu_stock": 4929,
+      "unit_price_cents": 29,
+      "moq": 1,
+      "lead_time_days": 119,
+      "datasheet_url": "https://ecsxtal.com/store/pdf/CSM-3X.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.276\" L x 0.161\" W (7.00mm x 4.10mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "height_mm": "0.091\" (2.30mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "HC-49/US",
+        "part_type": "MHz Crystal",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ECS-245.7-20-4X",
+      "manufacturer": "ECS Inc.",
+      "eu_sources": 1,
+      "eu_stock": 1014,
+      "unit_price_cents": 54,
+      "moq": 1,
+      "lead_time_days": 119,
+      "datasheet_url": "https://ecsxtal.com/store/pdf/hc-49usx.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.447\" L x 0.183\" W (11.35mm x 4.65mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "height_mm": "0.138\" (3.50mm)",
+        "mounting": "THT",
+        "operating_temp_c": "-10\u00b0C ~ 70\u00b0C",
+        "package": "HC-49/US",
+        "part_type": "MHz Crystal",
+        "moq": "1",
+        "order_multiple": "200"
+      }
+    },
+    {
+      "mpn": "ECS-245.7-20-5PX-TR",
+      "manufacturer": "ECS Inc.",
+      "eu_sources": 1,
+      "eu_stock": 46571,
+      "unit_price_cents": 28,
+      "moq": 1,
+      "lead_time_days": 119,
+      "datasheet_url": "https://ecsxtal.com/store/pdf/csm-7x.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.449\" L x 0.189\" W (11.40mm x 4.80mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "height_mm": "0.169\" (4.30mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-10\u00b0C ~ 70\u00b0C",
+        "package": "HC-49/US",
+        "part_type": "MHz Crystal",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ECS-2520MVLC-245.7-BN-TR",
+      "manufacturer": "ECS Inc.",
+      "eu_sources": 1,
+      "eu_stock": 1320,
+      "unit_price_cents": 124,
+      "moq": 1,
+      "lead_time_days": 133,
+      "datasheet_url": "https://ecsxtal.com/store/pdf/ECS-2520MVLC.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "height_mm": "0.035\" (0.90mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "output_signal": "CMOS",
+        "package": "4-SMD, No Lead",
+        "part_type": "oscillator",
+        "supplier_package": "4-SMD (2.5x2)",
+        "supply_mv": "1.6V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ECS-2520MVLC-245.7-CN-TR",
+      "manufacturer": "ECS Inc.",
+      "eu_sources": 1,
+      "eu_stock": 1399,
+      "unit_price_cents": 113,
+      "moq": 1,
+      "lead_time_days": 133,
+      "datasheet_url": "https://ecsxtal.com/store/pdf/ECS-2520MVLC.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b125ppm",
+        "height_mm": "0.035\" (0.90mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "output_signal": "CMOS",
+        "package": "4-SMD, No Lead",
+        "part_type": "oscillator",
+        "supplier_package": "4-SMD (2.5x2)",
+        "supply_mv": "1.6V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ECS-2520SMVQ-245.7-DS-TR",
+      "manufacturer": "ECS Inc.",
+      "eu_sources": 1,
+      "eu_stock": 1894,
+      "unit_price_cents": 162,
+      "moq": 1,
+      "lead_time_days": 175,
+      "datasheet_url": "https://ecsxtal.com/store/pdf/ECS-2520SMVQ.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b120ppm",
+        "height_mm": "0.035\" (0.90mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C",
+        "output_signal": "HCMOS",
+        "package": "4-SMD, No Lead",
+        "part_type": "oscillator",
+        "supplier_package": "4-SMD (2.5x2)",
+        "supply_mv": "1.8V ~ 3.3V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ECS-3225MV-245.7-BN-TR3",
+      "manufacturer": "ECS Inc.",
+      "eu_sources": 1,
+      "eu_stock": 7143,
+      "unit_price_cents": 103,
+      "moq": 1,
+      "lead_time_days": 133,
+      "datasheet_url": "https://ecsxtal.com/store/pdf/ECS-3225MV.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "height_mm": "0.047\" (1.20mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "output_signal": "HCMOS",
+        "package": "4-SMD, No Lead",
+        "part_type": "oscillator",
+        "supplier_package": "4-SMD (3.2x2.5)",
+        "supply_mv": "1.8V ~ 3.3V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ECS-3225MVLC-245.7-CN-TR",
+      "manufacturer": "ECS Inc.",
+      "eu_sources": 1,
+      "eu_stock": 2900,
+      "unit_price_cents": 103,
+      "moq": 1,
+      "lead_time_days": 133,
+      "datasheet_url": "https://ecsxtal.com/store/pdf/ECS-3225MVLC.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b125ppm",
+        "height_mm": "0.047\" (1.20mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "output_signal": "CMOS",
+        "package": "4-SMD, No Lead",
+        "part_type": "oscillator",
+        "supplier_package": "4-SMD (3.2x2.5)",
+        "supply_mv": "1.8V ~ 3.3V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ECS-5032MV-245.7-BN-TR",
+      "manufacturer": "ECS Inc.",
+      "eu_sources": 1,
+      "eu_stock": 1544,
+      "unit_price_cents": 120,
+      "moq": 1,
+      "lead_time_days": 147,
+      "datasheet_url": "https://ecsxtal.com/store/pdf/ECS-5032MV.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "height_mm": "0.051\" (1.30mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "output_signal": "HCMOS",
+        "package": "4-SMD, No Lead",
+        "part_type": "oscillator",
+        "supplier_package": "4-SMD (5x3.2)",
+        "supply_mv": "1.6V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ECS-7050MV-245.7-BN-TR",
+      "manufacturer": "ECS Inc.",
+      "eu_sources": 1,
+      "eu_stock": 2120,
+      "unit_price_cents": 113,
+      "moq": 1,
+      "lead_time_days": 147,
+      "datasheet_url": "https://ecsxtal.com/store/pdf/ECS-7050MV.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "height_mm": "0.067\" (1.70mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "output_signal": "HCMOS",
+        "package": "4-SMD, No Lead",
+        "part_type": "oscillator",
+        "supplier_package": "4-SMD (7x5)",
+        "supply_mv": "1.6V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "ECS-TXO-3225MV-245.7-TR",
+      "manufacturer": "ECS Inc.",
+      "eu_sources": 1,
+      "eu_stock": 2667,
+      "unit_price_cents": 211,
+      "moq": 1,
+      "lead_time_days": 175,
+      "datasheet_url": "https://ecsxtal.com/store/pdf/ECS-TXO-3225MV.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b12.5ppm",
+        "height_mm": "0.047\" (1.20mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-30\u00b0C ~ 85\u00b0C",
+        "output_signal": "HCMOS",
+        "package": "4-SMD, No Lead",
+        "part_type": "TCXO",
+        "supplier_package": "4-SMD (3.2x2.5)",
+        "supply_mv": "1.8V ~ 3.3V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "EV32C6A3A1-24.576M TR",
+      "manufacturer": "Ecliptek",
+      "eu_sources": 1,
+      "eu_stock": 3655,
+      "unit_price_cents": 272,
+      "moq": 1,
+      "lead_time_days": 98,
+      "datasheet_url": "https://abracon.com/datasheets/Ecliptek/EV32C6.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "height_mm": "0.073\" (1.85mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "0\u00b0C ~ 70\u00b0C",
+        "output_signal": "CMOS",
+        "package": "6-SMD, No Lead",
+        "part_type": "oscillator",
+        "supply_mv": "3.3V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "FA-238 24.5760MB-C3",
+      "manufacturer": "EPSON",
+      "eu_sources": 1,
+      "eu_stock": 428,
+      "unit_price_cents": 99,
+      "moq": 1,
+      "lead_time_days": 140,
+      "datasheet_url": "https://download.epsondevice.com/td/pdf/brief/FA-238_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b130ppm",
+        "height_mm": "0.028\" (0.70mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
+        "package": "4-SMD, No Lead",
+        "part_type": "MHz Crystal",
+        "supplier_package": "4-SMD (3.2x2.5)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "FA-238 24.5760MB-K3",
+      "manufacturer": "EPSON",
+      "eu_sources": 1,
+      "eu_stock": 1650,
+      "unit_price_cents": 93,
+      "moq": 1,
+      "lead_time_days": 140,
+      "datasheet_url": "https://download.epsondevice.com/td/pdf/brief/FA-238_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b130ppm",
+        "height_mm": "0.028\" (0.70mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-20\u00b0C ~ 70\u00b0C",
+        "package": "4-SMD, No Lead",
+        "part_type": "MHz Crystal",
+        "supplier_package": "4-SMD (3.2x2.5)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "FC5BQCCMC24.576-T1",
+      "manufacturer": "Fox Electronics",
+      "eu_sources": 1,
+      "eu_stock": 673,
+      "unit_price_cents": 116,
+      "moq": 1,
+      "lead_time_days": 98,
+      "datasheet_url": "https://abracon.com/datasheets/Fox/FC5BQ.pdf?utm_source=foxonline.com&utm_medium=301",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b130ppm",
+        "height_mm": "0.047\" (1.20mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "0\u00b0C ~ 70\u00b0C",
+        "package": "4-SMD, No Lead",
+        "part_type": "MHz Crystal",
+        "supplier_package": "4-SMD (5x3.2)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "HC-49/U-S24576000ABJB",
+      "manufacturer": "Citizen Finedevice Co Ltd",
+      "eu_sources": 1,
+      "eu_stock": 17296,
+      "unit_price_cents": 46,
+      "moq": 1,
+      "lead_time_days": 77,
+      "datasheet_url": "http://cfd.citizen.co.jp/cms/cfd/pdf/english/HC-49_U-S_E.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.453\" L x 0.183\" W (11.50mm x 4.65mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "height_mm": "0.138\" (3.50mm)",
+        "mounting": "THT",
+        "operating_temp_c": "-10\u00b0C ~ 60\u00b0C",
+        "package": "HC-49/US",
+        "part_type": "MHz Crystal",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "HCM4924576000ABJT",
+      "manufacturer": "Citizen Finedevice Co Ltd",
+      "eu_sources": 1,
+      "eu_stock": 2189,
+      "unit_price_cents": 48,
+      "moq": 1,
+      "lead_time_days": 77,
+      "datasheet_url": "http://cfd.citizen.co.jp/cms/cfd/pdf/english/HCM49_E.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.449\" L x 0.185\" W (11.40mm x 4.70mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "height_mm": "0.169\" (4.30mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-10\u00b0C ~ 60\u00b0C",
+        "package": "HC-49/US",
+        "part_type": "MHz Crystal",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "IXA10-HF5F10-24.576 MHZ",
+      "manufacturer": "ILSI",
+      "eu_sources": 1,
+      "eu_stock": 3051,
+      "unit_price_cents": 70,
+      "moq": 1,
+      "lead_time_days": 98,
+      "datasheet_url": "https://abracon.com/datasheets/ILSI/IXA10.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.063\" L x 0.047\" W (1.60mm x 1.20mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b130ppm",
+        "height_mm": "0.016\" (0.40mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "4-SMD, No Lead",
+        "part_type": "MHz Crystal",
+        "supplier_package": "4-SMD (1.6x1.2)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "KC2016Z24.5760C15XXK",
+      "manufacturer": "KYOCERA AVX",
+      "eu_sources": 1,
+      "eu_stock": 681,
+      "unit_price_cents": 121,
+      "moq": 1,
+      "lead_time_days": 126,
+      "datasheet_url": "https://media.digikey.com/pdf/Data%20Sheets/Kyocera%20International/Z_Series_X_Type.pdf",
+      "vendors": [
+        "tme",
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576 MHz",
         "manufacturer_name": "KYOCERA AVX",
         "mounting": "SMD",
-        "operating_temp_c": "-40...105\u00b0C",
+        "operating_temp_c": "-40\u00b0C ~ 105\u00b0C",
         "output_signal": "CMOS",
         "part_type": "oscillator",
-        "supply_mv": "3.3V DC",
-        "moq": "2000",
-        "order_multiple": "2000"
+        "supply_mv": "1.71V ~ 3.63V",
+        "body_size": "0.079\" L x 0.063\" W (2.00mm x 1.60mm)",
+        "frequency_stability_ppm": "\u00b130ppm",
+        "height_mm": "0.031\" (0.80mm)",
+        "package": "4-SMD, No Lead",
+        "moq": "1",
+        "order_multiple": "1"
       }
     },
     {
@@ -392,99 +2405,200 @@
       }
     },
     {
-      "mpn": "KC2520Z24.5760C15XXK",
+      "mpn": "KC2520K24.5760C1GE00",
       "manufacturer": "KYOCERA AVX",
-      "eu_sources": 0,
-      "eu_stock": 0,
-      "unit_price_cents": 119,
-      "moq": 2000,
-      "lead_time_days": null,
-      "datasheet_url": "https://www.tme.eu/Document/7eb6aaa55749803a470dbb69fd33d76a/clock_z_x_e.pdf",
+      "eu_sources": 1,
+      "eu_stock": 5474,
+      "unit_price_cents": 131,
+      "moq": 1,
+      "lead_time_days": 224,
+      "datasheet_url": "https://ele.kyocera.com/assets/products/crystal-device/clock_k_e.pdf",
       "vendors": [
-        "tme"
+        "digikey"
       ],
       "attrs_raw": {
-        "frequency_hz": "24.576MHz",
+        "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "height_mm": "0.031\" (0.80mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "output_signal": "CMOS",
+        "package": "4-SMD, No Lead",
+        "part_type": "oscillator",
+        "supply_mv": "1.6V ~ 3.63V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "KC2520Z24.5760C15XXK",
+      "manufacturer": "KYOCERA AVX",
+      "eu_sources": 1,
+      "eu_stock": 430,
+      "unit_price_cents": 114,
+      "moq": 1,
+      "lead_time_days": 126,
+      "datasheet_url": "https://ele.kyocera.com/assets/products/crystal-device/clock_z_e.pdf",
+      "vendors": [
+        "tme",
+        "digikey"
+      ],
+      "attrs_raw": {
+        "frequency_hz": "24.576 MHz",
         "manufacturer_name": "KYOCERA AVX",
         "mounting": "SMD",
-        "operating_temp_c": "-40...105\u00b0C",
+        "operating_temp_c": "-40\u00b0C ~ 105\u00b0C",
         "output_signal": "CMOS",
         "part_type": "oscillator",
-        "supply_mv": "3.3V DC",
-        "moq": "2000",
-        "order_multiple": "2000"
+        "supply_mv": "1.71V ~ 3.63V",
+        "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
+        "frequency_stability_ppm": "\u00b130ppm",
+        "height_mm": "0.031\" (0.80mm)",
+        "package": "4-SMD, No Lead",
+        "moq": "1",
+        "order_multiple": "1"
       }
     },
     {
       "mpn": "KC2520Z24.5760C1KX00",
       "manufacturer": "KYOCERA AVX",
-      "eu_sources": 0,
-      "eu_stock": 0,
-      "unit_price_cents": 119,
-      "moq": 2000,
-      "lead_time_days": null,
-      "datasheet_url": "https://www.tme.eu/Document/7eb6aaa55749803a470dbb69fd33d76a/clock_z_x_e.pdf",
+      "eu_sources": 1,
+      "eu_stock": 1414,
+      "unit_price_cents": 104,
+      "moq": 1,
+      "lead_time_days": 126,
+      "datasheet_url": "https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/204/KC2520Z_Series_Spec_Prelim.pdf",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
-        "frequency_hz": "24.576MHz",
+        "frequency_hz": "24.576 MHz",
         "manufacturer_name": "KYOCERA AVX",
         "mounting": "SMD",
-        "operating_temp_c": "-40...85\u00b0C",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
         "output_signal": "CMOS",
         "part_type": "oscillator",
-        "supply_mv": "3.3V DC",
-        "moq": "2000",
-        "order_multiple": "2000"
+        "supply_mv": "1.71V ~ 3.63V",
+        "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
+        "frequency_stability_ppm": "\u00b120ppm",
+        "height_mm": "0.031\" (0.80mm)",
+        "package": "4-SMD, No Lead",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "KC3225K24.5760C1GE00",
+      "manufacturer": "KYOCERA AVX",
+      "eu_sources": 1,
+      "eu_stock": 4995,
+      "unit_price_cents": 114,
+      "moq": 1,
+      "lead_time_days": 224,
+      "datasheet_url": "https://ele.kyocera.com/assets/products/crystal-device/clock_k_e.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "height_mm": "0.031\" (0.80mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "output_signal": "CMOS",
+        "package": "4-SMD, No Lead",
+        "part_type": "oscillator",
+        "supply_mv": "1.6V ~ 3.63V",
+        "moq": "1",
+        "order_multiple": "1"
       }
     },
     {
       "mpn": "KC3225Z24.5760C15XXK",
       "manufacturer": "KYOCERA AVX",
-      "eu_sources": 0,
-      "eu_stock": 0,
-      "unit_price_cents": 119,
-      "moq": 2000,
-      "lead_time_days": null,
-      "datasheet_url": "https://www.tme.eu/Document/7eb6aaa55749803a470dbb69fd33d76a/clock_z_x_e.pdf",
+      "eu_sources": 1,
+      "eu_stock": 231,
+      "unit_price_cents": 114,
+      "moq": 1,
+      "lead_time_days": 126,
+      "datasheet_url": "https://ele.kyocera.com/assets/products/crystal-device/clock_z_e.pdf",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
-        "frequency_hz": "24.576MHz",
+        "frequency_hz": "24.576 MHz",
         "manufacturer_name": "KYOCERA AVX",
         "mounting": "SMD",
-        "operating_temp_c": "-40...105\u00b0C",
+        "operating_temp_c": "-40\u00b0C ~ 105\u00b0C",
         "output_signal": "CMOS",
         "part_type": "oscillator",
-        "supply_mv": "3.3V DC",
-        "moq": "2000",
-        "order_multiple": "2000"
+        "supply_mv": "1.71V ~ 3.63V",
+        "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
+        "frequency_stability_ppm": "\u00b130ppm",
+        "height_mm": "0.031\" (0.80mm)",
+        "package": "4-SMD, No Lead",
+        "moq": "1",
+        "order_multiple": "1"
       }
     },
     {
       "mpn": "KC3225Z24.5760C1KX00",
       "manufacturer": "KYOCERA AVX",
-      "eu_sources": 0,
-      "eu_stock": 0,
-      "unit_price_cents": 119,
-      "moq": 2000,
-      "lead_time_days": null,
-      "datasheet_url": "https://www.tme.eu/Document/7eb6aaa55749803a470dbb69fd33d76a/clock_z_x_e.pdf",
+      "eu_sources": 1,
+      "eu_stock": 4394,
+      "unit_price_cents": 103,
+      "moq": 1,
+      "lead_time_days": 126,
+      "datasheet_url": "https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/204/KC3225Z_Series_Spec_Prelim.pdf",
       "vendors": [
-        "tme"
+        "tme",
+        "digikey"
       ],
       "attrs_raw": {
-        "frequency_hz": "24.576MHz",
+        "frequency_hz": "24.576 MHz",
         "manufacturer_name": "KYOCERA AVX",
         "mounting": "SMD",
-        "operating_temp_c": "-40...85\u00b0C",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
         "output_signal": "CMOS",
         "part_type": "oscillator",
-        "supply_mv": "3.3V DC",
-        "moq": "2000",
-        "order_multiple": "2000"
+        "supply_mv": "1.71V ~ 3.63V",
+        "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
+        "frequency_stability_ppm": "\u00b120ppm",
+        "height_mm": "0.031\" (0.80mm)",
+        "package": "4-SMD, No Lead",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "KC7050K24.5760C1GE00",
+      "manufacturer": "KYOCERA AVX",
+      "eu_sources": 1,
+      "eu_stock": 1289,
+      "unit_price_cents": 114,
+      "moq": 1,
+      "lead_time_days": 224,
+      "datasheet_url": "https://ele.kyocera.com/assets/products/crystal-device/cry_e.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "height_mm": "0.047\" (1.20mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "output_signal": "CMOS",
+        "package": "4-SMD, No Lead",
+        "part_type": "oscillator",
+        "supply_mv": "1.6V ~ 3.63V",
+        "moq": "1",
+        "order_multiple": "1"
       }
     },
     {
@@ -602,6 +2716,33 @@
       }
     },
     {
+      "mpn": "M200F-024.576M",
+      "manufacturer": "Connor Winfield",
+      "eu_sources": 1,
+      "eu_stock": 347,
+      "unit_price_cents": 2721,
+      "moq": 1,
+      "lead_time_days": 119,
+      "datasheet_url": "http://www.conwin.com/datasheets/tx/tx382.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b1200ppb",
+        "height_mm": "0.083\" (2.10mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "output_signal": "LVCMOS",
+        "package": "8-SMD, No Lead",
+        "part_type": "TCXO",
+        "supply_mv": "3.3V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
       "mpn": "MC2016Z24.5760C19XSH",
       "manufacturer": "KYOCERA AVX",
       "eu_sources": 0,
@@ -647,6 +2788,88 @@
         "supply_mv": "3.3V DC",
         "moq": "2000",
         "order_multiple": "2000"
+      }
+    },
+    {
+      "mpn": "MC3225Z24.5760C19XSH",
+      "manufacturer": "KYOCERA AVX",
+      "eu_sources": 1,
+      "eu_stock": 1504,
+      "unit_price_cents": 132,
+      "moq": 1,
+      "lead_time_days": 126,
+      "datasheet_url": "https://ele.kyocera.com/assets/products/crystal-device/clock_mcz_x_e.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b130ppm",
+        "height_mm": "0.031\" (0.80mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 125\u00b0C",
+        "output_signal": "CMOS",
+        "package": "4-SMD, No Lead",
+        "part_type": "oscillator",
+        "supply_mv": "1.71V ~ 3.63V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "NSC5083D-24.576M",
+      "manufacturer": "NDK (NIHON DEMPA KOGYO CO., LTD)",
+      "eu_sources": 1,
+      "eu_stock": 2867,
+      "unit_price_cents": 261,
+      "moq": 1,
+      "lead_time_days": 364,
+      "datasheet_url": "https://www.ndk.com/images/products/catalog/c_NZ2520SDA_e.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "height_mm": "0.035\" (0.90mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "output_signal": "CMOS",
+        "package": "4-SMD, No Lead",
+        "part_type": "oscillator",
+        "supplier_package": "4-SMD (2.5x2)",
+        "supply_mv": "3.3V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "OH200-61003CF-024.576M",
+      "manufacturer": "Connor Winfield",
+      "eu_sources": 1,
+      "eu_stock": 45,
+      "unit_price_cents": 8573,
+      "moq": 1,
+      "lead_time_days": 133,
+      "datasheet_url": "http://www.conwin.com/datasheets/cx/cx193.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "1.417\" L x 1.063\" W (36.00mm x 27.00mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b15ppb",
+        "height_mm": "0.500\" (12.70mm)",
+        "mounting": "THT",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "output_signal": "CMOS",
+        "package": "6-DIP Module, 5 Leads",
+        "part_type": "OCXO",
+        "supply_mv": "3.3V",
+        "moq": "1",
+        "order_multiple": "10"
       }
     },
     {
@@ -1118,6 +3341,252 @@
       }
     },
     {
+      "mpn": "RH100-24.576-18-F-2030-EXT-TR",
+      "manufacturer": "Raltron Electronics",
+      "eu_sources": 1,
+      "eu_stock": 2545,
+      "unit_price_cents": 16,
+      "moq": 1,
+      "lead_time_days": 126,
+      "datasheet_url": "https://www.raltron.com/webproducts/specs/CRYSTAL/RH100.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b130ppm",
+        "height_mm": "0.031\" (0.80mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "package": "4-SMD, No Lead",
+        "part_type": "MHz Crystal",
+        "supplier_package": "4-SMD (3.2x2.5)",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "SG-210STF 24.5760ML0",
+      "manufacturer": "EPSON",
+      "eu_sources": 1,
+      "eu_stock": 7038,
+      "unit_price_cents": 70,
+      "moq": 1,
+      "lead_time_days": 168,
+      "datasheet_url": "https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/8913/SG-210STF_X1G0041710031_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.098\" L x 0.079\" W (2.50mm x 2.00mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "height_mm": "0.035\" (0.90mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "output_signal": "CMOS",
+        "package": "4-SMD, No Lead",
+        "part_type": "oscillator",
+        "supplier_package": "4-SMD (2.5x2)",
+        "supply_mv": "1.6V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "SG3225CAN 24.5760M-TJGA3",
+      "manufacturer": "EPSON",
+      "eu_sources": 1,
+      "eu_stock": 1084,
+      "unit_price_cents": 233,
+      "moq": 1,
+      "lead_time_days": 112,
+      "datasheet_url": "https://download.epsondevice.com/td/pdf/brief/SG3225CAN_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "height_mm": "0.047\" (1.20mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "output_signal": "CMOS",
+        "package": "4-SMD, No Lead",
+        "part_type": "oscillator",
+        "supplier_package": "4-SMD (3.2x2.5)",
+        "supply_mv": "1.6V ~ 3.63V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "SG5032CAN 24.576000M-TJGA3",
+      "manufacturer": "EPSON",
+      "eu_sources": 1,
+      "eu_stock": 479,
+      "unit_price_cents": 116,
+      "moq": 1,
+      "lead_time_days": 168,
+      "datasheet_url": "https://download.epsondevice.com/td/pdf/brief/SG5032CAN_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.197\" L x 0.126\" W (5.00mm x 3.20mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "height_mm": "0.051\" (1.30mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "output_signal": "CMOS",
+        "package": "4-SMD, No Lead",
+        "part_type": "oscillator",
+        "supplier_package": "4-SMD (5x3.2)",
+        "supply_mv": "1.6V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "SG7050CAN 24.576000M-TJGA3",
+      "manufacturer": "EPSON",
+      "eu_sources": 1,
+      "eu_stock": 751,
+      "unit_price_cents": 260,
+      "moq": 1,
+      "lead_time_days": 168,
+      "datasheet_url": "https://download.epsondevice.com/td/pdf/brief/SG7050CAN_en.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b150ppm",
+        "height_mm": "0.059\" (1.50mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "output_signal": "CMOS",
+        "package": "4-SMD, No Lead",
+        "part_type": "oscillator",
+        "supplier_package": "4-SMD (7x5)",
+        "supply_mv": "1.6V ~ 3.6V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "SIT3907AI-22-33NH-24.576000X",
+      "manufacturer": "SiTime",
+      "eu_sources": 1,
+      "eu_stock": 1500,
+      "unit_price_cents": 851,
+      "moq": 1,
+      "lead_time_days": 49,
+      "datasheet_url": "https://www.sitime.com/datasheet/SiT3907",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.126\" L x 0.098\" W (3.20mm x 2.50mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b125ppm",
+        "height_mm": "0.031\" (0.80mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "output_signal": "LVCMOS, LVTTL",
+        "package": "4-SMD, No Lead",
+        "part_type": "DCXO",
+        "supplier_package": "4-SMD (3.2x2.5)",
+        "supply_mv": "3.3V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "T602-024.576M",
+      "manufacturer": "Connor Winfield",
+      "eu_sources": 1,
+      "eu_stock": 347,
+      "unit_price_cents": 2232,
+      "moq": 1,
+      "lead_time_days": 119,
+      "datasheet_url": "http://www.conwin.com/datasheets/tx/tx176.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b1280ppb",
+        "height_mm": "0.079\" (2.00mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "output_signal": "LVCMOS",
+        "package": "10-SMD, No Lead",
+        "part_type": "TCXO",
+        "supply_mv": "3.3V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "TL602-024.576M",
+      "manufacturer": "Connor Winfield",
+      "eu_sources": 1,
+      "eu_stock": 352,
+      "unit_price_cents": 3041,
+      "moq": 1,
+      "lead_time_days": 119,
+      "datasheet_url": "http://www.conwin.com/datasheets/tx/tx414.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.276\" L x 0.197\" W (7.00mm x 5.00mm)",
+        "frequency_hz": "24.576 MHz",
+        "frequency_stability_ppm": "\u00b1140ppb",
+        "height_mm": "0.094\" (2.40mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "output_signal": "LVCMOS",
+        "package": "10-SMD, No Lead",
+        "part_type": "TCXO",
+        "supply_mv": "3.3V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
+      "mpn": "VKB51B2-024.576M",
+      "manufacturer": "Connor Winfield",
+      "eu_sources": 1,
+      "eu_stock": 2095,
+      "unit_price_cents": 719,
+      "moq": 1,
+      "lead_time_days": 133,
+      "datasheet_url": "http://www.conwin.com/datasheets/vx/vx604.pdf",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.295\" L x 0.197\" W (7.50mm x 5.00mm)",
+        "frequency_hz": "24.576 MHz",
+        "height_mm": "0.079\" (2.00mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "0\u00b0C ~ 70\u00b0C",
+        "output_signal": "LVCMOS",
+        "package": "6-SMD, No Lead",
+        "part_type": "VCXO",
+        "supply_mv": "3.3V",
+        "moq": "1",
+        "order_multiple": "1"
+      }
+    },
+    {
       "mpn": "W1M24576000B12BC1N",
       "manufacturer": "WTL",
       "eu_sources": 0,
@@ -1362,6 +3831,32 @@
         "operating_temp_c": "-20...70\u00b0C",
         "part_type": "crystal",
         "moq": "1000",
+        "order_multiple": "1000"
+      }
+    },
+    {
+      "mpn": "XLH73V024.576000I",
+      "manufacturer": "Renesas Electronics Corporation",
+      "eu_sources": 1,
+      "eu_stock": 995,
+      "unit_price_cents": 248,
+      "moq": 1,
+      "lead_time_days": 231,
+      "datasheet_url": "https://www.renesas.com/files/prod/docs/cached/X000/X0008335/455526-en.pdf?response-content-disposition=inline%3B%20filename%3D%22REN_XL-Crystal-Oscillators-Datasheet_DST_20220302.pdf%22&response-content-type=application%2Fpdf&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3WXFIBJWSDVTHJX3%2F20260423%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20260423T171738Z&X-Amz-SignedHeaders=host&X-Amz-Expires=86700&X-Amz-Signature=1b82564fbf6c556fbe13f23873a796c6978aa6bf556f3b6594bb09dd10e9fe2e",
+      "vendors": [
+        "digikey"
+      ],
+      "attrs_raw": {
+        "body_size": "0.295\" L x 0.205\" W (7.50mm x 5.20mm)",
+        "frequency_hz": "24.576 MHz",
+        "height_mm": "0.055\" (1.40mm)",
+        "mounting": "SMD",
+        "operating_temp_c": "-40\u00b0C ~ 85\u00b0C",
+        "output_signal": "HCMOS",
+        "package": "6-SMD, No Lead",
+        "part_type": "VCXO",
+        "supply_mv": "3.3V",
+        "moq": "1",
         "order_multiple": "1000"
       }
     },

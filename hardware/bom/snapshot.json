@@ -1282,6 +1282,262 @@
           "note": "tme API, EUR. MOQ 1, order multiple 1. Vendor part number AKY-LP503759. TME product_status=['DANGEROUS']. BLOCKED_FOR_ZBL_BACKORDERS is an ORDERING restriction, not a lifecycle state."
         }
       ]
+    },
+    "NSC5083D-22.5792M": {
+      "manufacturer": "NDK",
+      "description": "NZ2520SDA ultra-low-phase-noise XO, 22.5792 MHz, 43 fs typ phase jitter, -40..+85C",
+      "package": "SMD",
+      "satisfies": "mclk-osc-44k1",
+      "offers": [
+        {
+          "distributor": "digikey",
+          "distributor_pn": "644-NSC5083D-22.5792MCT-ND",
+          "stock": 2169,
+          "moq": 1,
+          "order_multiple": 1,
+          "lead_time_days": 364,
+          "price_breaks": [
+            {
+              "qty": 1,
+              "unit_price": 2.04
+            },
+            {
+              "qty": 10,
+              "unit_price": 1.775
+            },
+            {
+              "qty": 25,
+              "unit_price": 1.6788
+            },
+            {
+              "qty": 50,
+              "unit_price": 1.6092
+            },
+            {
+              "qty": 100,
+              "unit_price": 1.5427
+            },
+            {
+              "qty": 250,
+              "unit_price": 1.45896
+            },
+            {
+              "qty": 500,
+              "unit_price": 1.39868
+            },
+            {
+              "qty": 1000,
+              "unit_price": 1.34092
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "active",
+          "compliance": [
+            {
+              "regulation": "RoHS",
+              "revision": "ROHS",
+              "status": "RoHS Compliant",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            },
+            {
+              "regulation": "REACH",
+              "revision": "unstated",
+              "status": "REACH Unknown",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            }
+          ],
+          "datasheet_url": "https://www.ndk.com/images/products/catalog/c_NZ2520SDA_e.pdf",
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "digikey API, EUR. MOQ 1, order multiple 1. Vendor part number 644-NSC5083D-22.5792MCT-ND."
+        },
+        {
+          "distributor": "tme",
+          "distributor_pn": null,
+          "stock": 0,
+          "moq": null,
+          "order_multiple": null,
+          "lead_time_days": null,
+          "price_breaks": [],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "NOT CARRIED BY TME: looked up on 2026-11-24 by manufacturer part number, by the vendor's own symbol, and by keyword, with no match. Recorded rather than omitted so the negative result is not re-discovered; both snapshot gates filter on stock > 0, so this informs without counting as a source."
+        }
+      ]
+    },
+    "NSC5083D-24.576M": {
+      "manufacturer": "NDK",
+      "description": "NZ2520SDA ultra-low-phase-noise XO, 24.576 MHz, 43 fs typ phase jitter, -40..+85C",
+      "package": "SMD",
+      "satisfies": "mclk-osc-48k",
+      "offers": [
+        {
+          "distributor": "digikey",
+          "distributor_pn": "644-NSC5083D-24.576MCT-ND",
+          "stock": 2867,
+          "moq": 1,
+          "order_multiple": null,
+          "lead_time_days": 364,
+          "price_breaks": [
+            {
+              "qty": 1,
+              "unit_price": 2.61
+            },
+            {
+              "qty": 10,
+              "unit_price": 2.271
+            },
+            {
+              "qty": 25,
+              "unit_price": 2.1472
+            },
+            {
+              "qty": 50,
+              "unit_price": 2.0584
+            },
+            {
+              "qty": 100,
+              "unit_price": 1.9733
+            },
+            {
+              "qty": 250,
+              "unit_price": 1.8662
+            },
+            {
+              "qty": 500,
+              "unit_price": 1.78914
+            },
+            {
+              "qty": 1000,
+              "unit_price": 1.74934
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "active",
+          "compliance": [
+            {
+              "regulation": "RoHS",
+              "revision": "ROHS",
+              "status": "RoHS Compliant",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            },
+            {
+              "regulation": "REACH",
+              "revision": "unstated",
+              "status": "REACH Unknown",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            }
+          ],
+          "datasheet_url": "https://www.ndk.com/images/products/catalog/c_NZ2520SDA_e.pdf",
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "digikey API, EUR. MOQ 1, order multiple None. Vendor part number 644-NSC5083D-24.576MCT-ND."
+        },
+        {
+          "distributor": "tme",
+          "distributor_pn": null,
+          "stock": 0,
+          "moq": null,
+          "order_multiple": null,
+          "lead_time_days": null,
+          "price_breaks": [],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "NOT CARRIED BY TME: looked up on 2026-11-24 by manufacturer part number, by the vendor's own symbol, and by keyword, with no match. Recorded rather than omitted so the negative result is not re-discovered; both snapshot gates filter on stock > 0, so this informs without counting as a source."
+        }
+      ]
+    },
+    "CCHD-957-25-22.5792": {
+      "manufacturer": "Crystek",
+      "description": "CCHD-957 FEMTO Clock, -169 dBc/Hz noise floor, 22.5792 MHz, 0..+70C",
+      "package": "SMD",
+      "satisfies": "mclk-osc-44k1",
+      "offers": [
+        {
+          "distributor": "digikey",
+          "distributor_pn": "744-1456-ND",
+          "stock": 67,
+          "moq": 1,
+          "order_multiple": 25,
+          "lead_time_days": 63,
+          "price_breaks": [
+            {
+              "qty": 1,
+              "unit_price": 29.24
+            },
+            {
+              "qty": 10,
+              "unit_price": 25.421
+            },
+            {
+              "qty": 25,
+              "unit_price": 24.0452
+            },
+            {
+              "qty": 50,
+              "unit_price": 23.0556
+            },
+            {
+              "qty": 100,
+              "unit_price": 22.1082
+            },
+            {
+              "qty": 250,
+              "unit_price": 21.501
+            }
+          ],
+          "currency": "EUR",
+          "lifecycle": "active",
+          "compliance": [
+            {
+              "regulation": "RoHS",
+              "revision": "ROHS3",
+              "status": "ROHS3 Compliant",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            },
+            {
+              "regulation": "REACH",
+              "revision": "unstated",
+              "status": "REACH Unaffected",
+              "asserted_at": "2026-11-24",
+              "source": "digikey"
+            }
+          ],
+          "datasheet_url": "https://www.crystek.com/specification/clock/CCHD-957.pdf",
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "digikey API, EUR. MOQ 1, order multiple 25. Vendor part number 744-1456-ND."
+        },
+        {
+          "distributor": "tme",
+          "distributor_pn": null,
+          "stock": 0,
+          "moq": null,
+          "order_multiple": null,
+          "lead_time_days": null,
+          "price_breaks": [],
+          "currency": "EUR",
+          "lifecycle": "unknown",
+          "compliance": [],
+          "datasheet_url": null,
+          "source": "api",
+          "retrieved_at": "2026-11-24",
+          "note": "NOT CARRIED BY TME: looked up on 2026-11-24 by manufacturer part number, by the vendor's own symbol, and by keyword, with no match. Recorded rather than omitted so the negative result is not re-discovered; both snapshot gates filter on stock > 0, so this informs without counting as a source."
+        }
+      ]
     }
   },
   "catalogue_coverage": {
@@ -1292,29 +1548,29 @@
     ],
     "by_requirement": {
       "battery": {
-        "parts_swept": 71,
-        "stocked": 67,
-        "with_datasheet": 71
+        "parts_swept": 75,
+        "stocked": 71,
+        "with_datasheet": 75
       },
       "dac": {
-        "parts_swept": 102,
-        "stocked": 84,
-        "with_datasheet": 96
+        "parts_swept": 105,
+        "stocked": 87,
+        "with_datasheet": 99
       },
       "mclk-mux": {
-        "parts_swept": 263,
-        "stocked": 36,
-        "with_datasheet": 206
+        "parts_swept": 362,
+        "stocked": 131,
+        "with_datasheet": 305
       },
       "mclk-osc-44k1": {
-        "parts_swept": 26,
-        "stocked": 5,
-        "with_datasheet": 26
+        "parts_swept": 124,
+        "stocked": 94,
+        "with_datasheet": 124
       },
       "mclk-osc-48k": {
-        "parts_swept": 62,
-        "stocked": 4,
-        "with_datasheet": 61
+        "parts_swept": 161,
+        "stocked": 101,
+        "with_datasheet": 160
       },
       "mcu": {
         "parts_swept": 104,
