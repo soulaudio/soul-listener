@@ -41,7 +41,14 @@
     "",
     "Note what is NO LONGER here: a part failing on break_before_make or max_freq_hz. Those are",
     "datasheet facts that no distributor publishes, so the catalogue filter cannot test them and a",
-    "fixture part 'failing' on them tested nothing but the fixture's own invention."
+    "fixture part 'failing' on them tested nothing but the fixture's own invention.",
+    "",
+    "Oscillators rewritten 2026-11-24 after surveying all 121 parts TME returns for 22.5792 and",
+    "24.576 MHz. Two findings shaped it. First, the vendor category MIXES passive parts (crystal,",
+    "ceramic, resonator) with active ones (oscillator, XO) under 'Type of quartz', so the",
+    "discriminator is a real catalogue-checkable constraint and the fixture carries both kinds.",
+    "Second, NO part in that survey publishes phase noise or jitter in any form \u2014 so phase noise",
+    "is a datasheet obligation, not a filter, and a fixture part 'failing' on it tested nothing."
   ],
   "categories": {
     "mclk-osc-44k1": [
@@ -53,9 +60,8 @@
         "unit_price_cents": 182,
         "lead_time_days": 0,
         "attrs": {
+          "part_type": "oscillator",
           "frequency_hz": 22579200,
-          "package": "SMD-3225-4",
-          "phase_noise_dbc_1khz": -142,
           "supply_mv_min": 1800,
           "supply_mv_max": 3600,
           "mounting": "SMD"
@@ -63,17 +69,42 @@
       },
       {
         "mpn": "FIXTURE-OSC-22M5792-B",
-        "manufacturer": "Fixture Devices",
+        "manufacturer": "Fixture Cells Ltd",
         "eu_sources": 1,
         "eu_stock": 90000,
         "unit_price_cents": 41,
         "lead_time_days": 0,
         "attrs": {
+          "part_type": "oscillator",
           "frequency_hz": 22579200,
-          "package": "SMD-2520-4",
-          "phase_noise_dbc_1khz": -138,
           "supply_mv_min": 1800,
           "supply_mv_max": 3600,
+          "mounting": "SMD"
+        }
+      },
+      {
+        "mpn": "FIXTURE-XTAL-22M5792",
+        "manufacturer": "Fixture Devices",
+        "eu_sources": 3,
+        "eu_stock": 250000,
+        "unit_price_cents": 12,
+        "lead_time_days": 0,
+        "attrs": {
+          "part_type": "crystal",
+          "frequency_hz": 22579200,
+          "mounting": "SMD"
+        }
+      },
+      {
+        "mpn": "FIXTURE-CERAMIC-22M5792",
+        "manufacturer": "Fixture Devices",
+        "eu_sources": 3,
+        "eu_stock": 180000,
+        "unit_price_cents": 8,
+        "lead_time_days": 0,
+        "attrs": {
+          "part_type": "ceramic",
+          "frequency_hz": 22579200,
           "mounting": "SMD"
         }
       },
@@ -85,9 +116,8 @@
         "unit_price_cents": 28,
         "lead_time_days": 0,
         "attrs": {
+          "part_type": "oscillator",
           "frequency_hz": 24576000,
-          "package": "SMD-3225-4",
-          "phase_noise_dbc_1khz": -145,
           "supply_mv_min": 1800,
           "supply_mv_max": 3600,
           "mounting": "SMD"
@@ -101,58 +131,38 @@
         "unit_price_cents": 95,
         "lead_time_days": 0,
         "attrs": {
+          "part_type": "oscillator",
           "frequency_hz": 22579200,
-          "package": "SMD-5032-4",
-          "phase_noise_dbc_1khz": -140,
           "supply_mv_min": 4500,
           "supply_mv_max": 5500,
           "mounting": "SMD"
         }
       },
       {
-        "mpn": "FIXTURE-OSC-22M5792-BGA",
+        "mpn": "FIXTURE-OSC-22M5792-THT",
         "manufacturer": "Fixture Devices",
         "eu_sources": 2,
         "eu_stock": 800,
         "unit_price_cents": 60,
         "lead_time_days": 0,
         "attrs": {
+          "part_type": "oscillator",
           "frequency_hz": 22579200,
-          "package": "WLCSP-6",
-          "phase_noise_dbc_1khz": -150,
           "supply_mv_min": 1800,
           "supply_mv_max": 3600,
-          "mounting": "SMD"
+          "mounting": "THT"
         }
       },
       {
-        "mpn": "FIXTURE-OSC-22M5792-NOSPEC",
+        "mpn": "FIXTURE-OSC-22M5792-NOSUPPLY",
         "manufacturer": "Fixture Devices",
         "eu_sources": 3,
         "eu_stock": 70000,
         "unit_price_cents": 19,
         "lead_time_days": 0,
         "attrs": {
+          "part_type": "oscillator",
           "frequency_hz": 22579200,
-          "package": "SMD-3225-4",
-          "supply_mv_min": 1800,
-          "supply_mv_max": 3600,
-          "mounting": "SMD"
-        }
-      },
-      {
-        "mpn": "FIXTURE-OSC-22M5792-NOISY",
-        "manufacturer": "Fixture Devices",
-        "eu_sources": 3,
-        "eu_stock": 60000,
-        "unit_price_cents": 12,
-        "lead_time_days": 0,
-        "attrs": {
-          "frequency_hz": 22579200,
-          "package": "SMD-3225-4",
-          "phase_noise_dbc_1khz": -118,
-          "supply_mv_min": 1800,
-          "supply_mv_max": 3600,
           "mounting": "SMD"
         }
       }

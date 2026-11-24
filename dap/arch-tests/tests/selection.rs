@@ -165,42 +165,93 @@ fn report(req_id: &str) -> Vec<String> {
 
 /// Every way a part can fail must be *reported*, not merely counted.
 ///
-/// The filter is only trustworthy if it can say what happened to the parts it
-/// discarded. Six of the seven fixture oscillators fail, each for a different
-/// reason, and all six reasons must come out.
+/// Rewritten against the real vendor vocabulary. TME's "Resonators and
+/// Generators" category mixes passive quartz with active oscillators, publishes
+/// supply as an operating range under "Operating voltage", and describes
+/// mounting rather than package codes — so these are the failures a catalogue
+/// can actually judge.
 #[test]
 fn the_oscillator_filter_explains_every_rejection() {
     let qualified = report("mclk-osc-44k1");
 
-    // The two legitimate candidates differ only in sourcing depth and price,
-    // which is what makes them a useful ranking test.
     assert!(
         qualified.contains(&"FIXTURE-OSC-22M5792-A".to_string()),
-        "the double-sourced, low-noise, hand-placeable 45.1584 MHz part must qualify"
+        "the double-sourced active oscillator must qualify"
     );
     assert!(
         qualified.contains(&"FIXTURE-OSC-22M5792-B".to_string()),
-        "the single-sourced but otherwise compliant part must also qualify — depth is a RANKING \
-         criterion, not a filter, so it loses rather than disappearing"
+        "the single-sourced but compliant part must also qualify — depth is a RANKING criterion, \
+         not a filter, so it loses rather than disappearing"
     );
     assert_eq!(
         qualified.len(),
         2,
-        "exactly two of the seven fixture oscillators should qualify, got {qualified:?}"
+        "exactly the two compliant active oscillators should qualify, got {qualified:?}"
     );
 }
 
-/// The one that matters most for an audiophile clock path: silence is not a pass.
+/// A passive crystal must lose to an active oscillator, cheaply though it comes.
+///
+/// This is the rejection the real catalogue forced into existence. TME returns
+/// crystals, ceramics and resonators alongside oscillators and XOs in one
+/// category, and the passive ones are consistently cheaper and deeper-stocked —
+/// the fixture crystal is 12 cents with 250k in stock against 182 cents for the
+/// part that qualifies.
+///
+/// A crystal is not a worse oscillator; it is a different component. It has no
+/// output driver, so it cannot present a clock to the DAC's XTI pin and the
+/// SAI's clock input at the same time, which is the entire topology.
 #[test]
-fn an_oscillator_with_no_published_phase_noise_is_rejected() {
+fn a_passive_crystal_is_rejected_however_cheap_and_well_stocked() {
     let qualified = report("mclk-osc-44k1");
-    assert!(
-        !qualified.contains(&"FIXTURE-OSC-22M5792-NOSPEC".to_string()),
-        "the part with no phase-noise figure is cheap (19 cents), triple-sourced and deeply \
-         stocked — exactly the part a price-first filter would pick. An unknown jitter figure \
-         must reject it, because jitter is the single thing the dual-oscillator design exists to \
-         avoid and an absent spec is not a good one"
-    );
+    for passive in ["FIXTURE-XTAL-22M5792", "FIXTURE-CERAMIC-22M5792"] {
+        assert!(
+            !qualified.contains(&passive.to_string()),
+            "{passive} is passive quartz with no output driver. It is the cheapest, \
+             deepest-stocked, most-sourced part in the category and it must still lose: one \
+             output has to drive both the DAC and the SAI"
+        );
+    }
+}
+
+/// Phase noise is a datasheet obligation, not a catalogue filter.
+///
+/// This replaces a test asserting the opposite, and the correction came from
+/// data: a survey of **all 121 parts** TME returns for 22.5792 and 24.576 MHz
+/// found no phase-noise or jitter parameter of any kind — not empty values, no
+/// such field.
+///
+/// The principle that unknown jitter is disqualifying still holds. What changed
+/// is where it is enforced: as a catalogue constraint it rejected every real
+/// oscillator for a field no distributor publishes, which reads as "nothing is
+/// sourceable" rather than "ask the datasheet".
+#[test]
+fn phase_noise_is_a_datasheet_obligation_rather_than_a_filter() {
+    use dap_hw_spec::select::Evidence;
+    for id in ["mclk-osc-44k1", "mclk-osc-48k"] {
+        let req = ACTIVE
+            .parts
+            .iter()
+            .find(|r| r.id == id)
+            .unwrap_or_else(|| panic!("spec must have {id}"));
+        let pn = req
+            .constraints
+            .iter()
+            .find(|c| c.attr == "phase_noise_dbc_1khz")
+            .unwrap_or_else(|| panic!("{id} must still constrain phase noise SOMEHOW"));
+        assert_eq!(
+            pn.evidence,
+            Evidence::Datasheet,
+            "'{id}' treats phase noise as a catalogue field. No distributor publishes it for this \
+             category, so every candidate would be rejected for a missing attribute — the \
+             requirement becomes unsatisfiable by construction."
+        );
+        assert!(
+            pn.why.to_lowercase().contains("datasheet"),
+            "the reason text must say it is datasheet-only, because that text is what a reader \
+             sees when deciding whether the requirement has been checked"
+        );
+    }
 }
 
 /// The 24.576 MHz part is the most attractive one in the catalogue on every

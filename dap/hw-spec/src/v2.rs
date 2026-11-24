@@ -210,16 +210,31 @@ const POWER: PowerBudget = PowerBudget {
     provenance: Provenance::Datasheet("Cirrus CS43131 DS1155F2 + ST DS13677 + GDEM0397T81P"),
 };
 
-/// Packages a hand-assembled EU small-batch build can place and inspect.
+/// What TME calls an *active* clock source, in both spellings it uses.
 ///
-/// Not an aesthetic preference: a BGA or a 1.6x1.2 mm package cannot be hand-
-/// soldered or inspected without equipment this build does not have, so it is a
-/// hard constraint rather than a nice-to-have.
-const HAND_PLACEABLE_OSC_PACKAGES: &[&str] =
-    &["SMD-3225-4", "SMD-2520-4", "SMD-5032-4", "SMD-7050-4"];
+/// The "Resonators and Generators" category mixes passive parts (`crystal`,
+/// `ceramic`, `resonator` — a quartz element with no output driver) with active
+/// ones (`oscillator`, `XO`). Only an active part can drive the CS43131's
+/// XTI/MCLK pin *and* the SAI's clock input from one output, which is the whole
+/// topology; a crystal would need an oscillator circuit built around it and could
+/// not present a clock to two consumers.
+///
+/// Both spellings are listed because the vendor uses both for the same thing —
+/// in one query, 9 parts labelled `oscillator` and 4 labelled `XO`.
+const ACTIVE_CLOCK_TYPES: &[&str] = &["oscillator", "XO"];
 
 /// The 44.1 kHz-family MCLK oscillator, machine-checkable.
 const OSC_44K1_CONSTRAINTS: &[Constraint<'static>] = &[
+    // Without this the filter happily returns passive crystals, which cannot
+    // drive two consumers from one output.
+    Constraint {
+        evidence: Evidence::Catalogue,
+        attr: "part_type",
+        pred: crate::select::Predicate::OneOf(ACTIVE_CLOCK_TYPES),
+        why: "an ACTIVE clock source. The vendor category mixes crystals, ceramics and \
+              resonators (passive quartz, no output driver) with oscillators and XOs; only an \
+              active part can feed the DAC's XTI pin and the SAI's clock input from one output",
+    },
     Constraint {
         evidence: Evidence::Catalogue,
         attr: "frequency_hz",
@@ -247,25 +262,48 @@ const OSC_44K1_CONSTRAINTS: &[Constraint<'static>] = &[
         pred: crate::select::Predicate::AtLeast(3300.0),
         why: "and must tolerate 3.3 V — a higher maximum rating is better, not worse",
     },
+    // `mounting`, not a package-name list. TME publishes "Body dimensions"
+    // ("3.2x2.5x0.8mm") and sometimes "Case", never the SMD-3225-4 style codes
+    // the spec used to enumerate — so filtering on package NAMES rejected every
+    // real part. Hand-assembly cares about through-hole vs surface mount and
+    // about size; the first is published, so it is the one filtered on.
     Constraint {
         evidence: Evidence::Catalogue,
-        attr: "package",
-        pred: crate::select::Predicate::OneOf(HAND_PLACEABLE_OSC_PACKAGES),
-        why: "hand-assembled small batch: the package must be placeable and inspectable without \
-              equipment this build does not have",
+        attr: "mounting",
+        pred: crate::select::Predicate::OneOf(&["SMD"]),
+        why: "hand-assembled small batch, so surface mount rather than through-hole. The \
+              previous constraint enumerated package codes (SMD-3225-4 and friends) that no \
+              distributor publishes for this category, which rejected every real oscillator",
     },
     Constraint {
-        evidence: Evidence::Catalogue,
+        // Marked Datasheet on EVIDENCE rather than assumption: a survey of all
+        // 121 parts TME returns for these two frequencies found no phase-noise
+        // or jitter parameter of any kind. Jitter lives in the datasheet. Left
+        // as a catalogue constraint it rejects every real oscillator for a field
+        // no distributor publishes — the trap break_before_make fell into.
+        evidence: Evidence::Datasheet,
         attr: "phase_noise_dbc_1khz",
         pred: crate::select::Predicate::AtMost(-130.0),
         why: "jitter in the MCLK path is the single thing the dual-oscillator design exists to \
-              avoid; an oscillator with no published phase-noise figure is rejected rather than \
-              assumed adequate",
+              avoid, so an oscillator whose phase noise is unknown is NOT adequate. Datasheet-\
+              only, and on evidence: a survey of all 121 parts TME returns for the two MCLK \
+              frequencies found no phase-noise or jitter parameter in any form. Confirm it per \
+              candidate against the DS1155F2 Fig. 4-14 mask and record it in the candidate note",
     },
 ];
 
 /// The 48 kHz-family MCLK oscillator. Same constraints, different frequency.
 const OSC_48K_CONSTRAINTS: &[Constraint<'static>] = &[
+    // Without this the filter happily returns passive crystals, which cannot
+    // drive two consumers from one output.
+    Constraint {
+        evidence: Evidence::Catalogue,
+        attr: "part_type",
+        pred: crate::select::Predicate::OneOf(ACTIVE_CLOCK_TYPES),
+        why: "an ACTIVE clock source. The vendor category mixes crystals, ceramics and \
+              resonators (passive quartz, no output driver) with oscillators and XOs; only an \
+              active part can feed the DAC's XTI pin and the SAI's clock input from one output",
+    },
     Constraint {
         evidence: Evidence::Catalogue,
         attr: "frequency_hz",
@@ -289,17 +327,30 @@ const OSC_48K_CONSTRAINTS: &[Constraint<'static>] = &[
         pred: crate::select::Predicate::AtLeast(3300.0),
         why: "and must tolerate 3.3 V — a higher maximum rating is better, not worse",
     },
+    // `mounting`, not a package-name list. TME publishes "Body dimensions"
+    // ("3.2x2.5x0.8mm") and sometimes "Case", never the SMD-3225-4 style codes
+    // the spec used to enumerate — so filtering on package NAMES rejected every
+    // real part. Hand-assembly cares about through-hole vs surface mount and
+    // about size; the first is published, so it is the one filtered on.
     Constraint {
         evidence: Evidence::Catalogue,
-        attr: "package",
-        pred: crate::select::Predicate::OneOf(HAND_PLACEABLE_OSC_PACKAGES),
-        why: "hand-assembled small batch",
+        attr: "mounting",
+        pred: crate::select::Predicate::OneOf(&["SMD"]),
+        why: "hand-assembled small batch, so surface mount rather than through-hole. The \
+              previous constraint enumerated package codes (SMD-3225-4 and friends) that no \
+              distributor publishes for this category, which rejected every real oscillator",
     },
     Constraint {
-        evidence: Evidence::Catalogue,
+        // Marked Datasheet on EVIDENCE rather than assumption: a survey of all
+        // 121 parts TME returns for these two frequencies found no phase-noise
+        // or jitter parameter of any kind. Jitter lives in the datasheet. Left
+        // as a catalogue constraint it rejects every real oscillator for a field
+        // no distributor publishes — the trap break_before_make fell into.
+        evidence: Evidence::Datasheet,
         attr: "phase_noise_dbc_1khz",
         pred: crate::select::Predicate::AtMost(-130.0),
-        why: "jitter in the MCLK path",
+        why: "jitter in the MCLK path, as for the 44.1 kHz family. Datasheet-only: no \
+              distributor publishes phase noise for this category",
     },
 ];
 

@@ -50,6 +50,7 @@ class TmeAdapter(Adapter):
     # constraint asks for. Doing that split here would put unit interpretation in
     # Python, which is exactly what the adapter boundary exists to prevent.
     ATTR_MAP = {
+        # --- Semiconductors -------------------------------------------------
         "Supply voltage": "supply_mv",
         "Number of channels": "channels",
         "Output configuration": "switch_configuration",
@@ -61,6 +62,24 @@ class TmeAdapter(Adapter):
         "Kind of architecture": "cpu_core",
         "Number of inputs/outputs": "gpio_count",
         "Operating temperature": "operating_temp_c",
+        # --- Resonators and Generators (category 100269) ---------------------
+        #
+        # A different vocabulary for the same physics, which is why the map is
+        # per-vendor rather than global. Two notes earned by reading real data:
+        #
+        #  * Active parts publish "Operating voltage", NOT "Supply voltage" —
+        #    two vendor names for one spec attribute, which `map_attrs` allows.
+        #  * "Type of quartz" is the discriminator the design depends on. The
+        #    category mixes `crystal`, `ceramic` and `resonator` (passive, no
+        #    output driver) with `oscillator` and `XO` (active). Only the latter
+        #    two can drive the DAC's XTI and the SAI simultaneously — and TME
+        #    uses BOTH words for them, which is why the constraint is a OneOf.
+        "Frequency": "frequency_hz",
+        "Operating voltage": "supply_mv",
+        "Type of quartz": "part_type",
+        "Output signal": "output_signal",
+        "Frequency stability": "frequency_stability_ppm",
+        "Manufacturer series": "series",
     }
 
     def __init__(self, token: str, secret: str, country: str = "SK", currency: str = "EUR"):
@@ -85,12 +104,15 @@ class TmeAdapter(Adapter):
         elements = products.get("data", {}).get("elements", [])
         return self._hydrate(elements)
 
-    def search_category(self, category: str, limit: int) -> list[VendorPart]:
-        """Page through a category id.
+    def search_category(
+        self, category: str, limit: int, phrase: str | None = None
+    ) -> list[VendorPart]:
+        """Page through a category id, optionally narrowed by a phrase.
 
         `category` is TME's numeric `category_id` as a string. The prose says to
         provide "either `phrase` or `category_id`, or both" even though the
-        specification marks both required, so only the category is sent.
+        specification marks both required — so sending the category alone is
+        valid, and adding a phrase narrows it.
         """
         collected: list[dict] = []
         page = 1
@@ -99,16 +121,30 @@ class TmeAdapter(Adapter):
                 "/products/search",
                 [
                     ("country", self.country),
-                    ("scope[]", "basic"),
+                    # `basic` is NOT a valid scope. The enum is
+                    # products|parameters|counters, and the first attempt at this
+                    # method used "basic" — it would have failed on every call.
+                    ("scope[]", "products"),
                     ("category_id", str(category)),
                     ("limit", str(min(SEARCH_PAGE, limit - len(collected)))),
                     ("page", str(page)),
-                ],
+                ]
+                + ([("phrase", phrase)] if phrase else []),
             )
             if "_http_error" in batch:
                 break
-            found = batch.get("data", {}).get("elements", []) or batch.get("data", {}).get(
-                "product_list", []
+            # `/products/search` nests under data.products.elements, NOT
+            # data.elements like `/products` does. The first version of this
+            # method guessed the latter and returned zero parts for every query —
+            # which read exactly like "TME does not stock this", the single most
+            # misleading way for a fetcher to fail. The fallbacks are kept because
+            # two sibling endpoints in the same API already disagree on this.
+            data = batch.get("data", {})
+            found = (
+                (data.get("products") or {}).get("elements")
+                or data.get("elements")
+                or data.get("product_list")
+                or []
             )
             if not found:
                 break
