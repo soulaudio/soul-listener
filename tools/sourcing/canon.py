@@ -87,7 +87,15 @@ SYNONYMS: dict[str, dict[str, str]] = {
     "switch_configuration": {
         "spdt": "SPDT",
         "1 x spdt": "SPDT",
+        # Digi-Key qualifies the throw states on some packaging rows:
+        # 'SPDT - NO/NC' is an SPDT whose two throws are described as
+        # normally-open and normally-closed. Same switch topology, and the
+        # constraint is about topology.
+        "spdt - no/nc": "SPDT",
+        "spdt - nc/no": "SPDT",
         "spst": "SPST",
+        "spst - no": "SPST",
+        "spst - nc": "SPST",
         "sp4t": "SP4T",
         "dpdt": "DPDT",
     },

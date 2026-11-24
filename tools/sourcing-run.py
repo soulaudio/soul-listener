@@ -25,7 +25,8 @@ import time
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 
 from sourcing.adapters import DigikeyAdapter, MouserAdapter, TmeAdapter  # noqa: E402
-from sourcing.db import Catalogue  # noqa: E402
+from sourcing.db import Catalogue
+from sourcing.throttle import limit_for  # noqa: E402
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 DB_PATH = ROOT / "hardware/bom/catalogue.db"
@@ -209,28 +210,107 @@ def cmd_export(args) -> int:
 # here makes a refresh reproducible: the alternative is a shell history nobody
 # else has, and "which categories is this conclusion based on?" becomes
 # unanswerable.
+# Declared category sweeps: (vendor, category_id, phrase, requirement_id, limit).
+#
+# # These numbers are calibrated, not chosen
+#
+# `tools/sourcing-run.py plan` probes each row's first page and reports the
+# vendor's OWN total, so a limit can be set against the size of the thing it
+# limits. Before that existed every limit was a guess, and two of them were badly
+# wrong in opposite directions: Digi-Key's `"lithium polymer battery pack"`
+# matches exactly 2 products in the entire catalogue, while
+# `"24.576MHz oscillator"` matches 6110.
+#
+# # Digi-Key ranks by relevance, so a capped sweep is not a random sample
+#
+# This is the fact that makes a limited budget workable. The top hits of even the
+# broad queries are already the right parts — `SN74LVC1G3157DCKR` is the FIRST
+# result for "SPDT analog switch SC70", and `ASE-24.576MHZ` / `SG-210STF` /
+# `KC2520Z24.5760C1KX00` lead "24.576MHz XO". So taking 400 of 6110 keeps the
+# most relevant 400, not an arbitrary 400.
+#
+# What a relevance engine does badly is BREADTH of phrasing, because one ranking
+# reflects one query. So several angles per requirement are declared and their
+# results unioned — deduplication is free, since `parts` is UNIQUE on
+# (vendor, vendor_pn). Three narrow angles beat one broad one at the same cost.
+#
+# Also measured: Digi-Key keyword search is relevance-based rather than
+# conjunctive, and ADDING words can collapse the result set to a near-exact
+# phrase match ("24.576MHz standard clock oscillator" returns 5). So a longer
+# query is not a safely narrower one, and each phrase here has its total recorded
+# beside it.
+#
+# # TME is category-scoped, which is strictly better where it applies
+#
+# TME takes a real category id, so its sweeps have no keyword imprecision at all
+# and `counters.count` gives an exact total that the adapter asserts against —
+# an incomplete TME sweep raises rather than being reported as a category.
+#
+# Where a limit is at or above the total the sweep must COMPLETE, and TME
+# enforces that. Where it is below, the run prints "this is a SAMPLE, not the
+# category".
 SWEEPS = [
-    ("tme", "100269", "22.5792MHz", "mclk-osc-44k1", 60),
-    ("tme", "100269", "24.576MHz", "mclk-osc-48k", 60),
-    ("tme", "100222", "SPDT", "mclk-mux", 300),
-    ("tme", "100076", "Li-Po", "battery", 120),
-    ("tme", "112878", None, "dac", 150),
-    ("tme", "112866", None, "mcu", 150),
-    # Digi-Key sweeps are keyword-scoped rather than category-scoped: the
-    # frequency IS the requirement for an oscillator, and a keyword narrows
-    # across every oscillator category at once (608 parts match 22.5792MHz)
-    # without needing Digi-Key's internal category ids.
-    ("digikey", "", "22.5792MHz oscillator", "mclk-osc-44k1", 100),
-    ("digikey", "", "24.576MHz oscillator", "mclk-osc-48k", 100),
-    ("digikey", "", "SPDT analog switch", "mclk-mux", 100),
-    # Broadened 2026-11-24. The first versions of these two were too narrow —
-    # "CS43131" and "Li-Po battery 3.7V" returned 5 and 5 parts, so the
-    # requirements had an exercised Digi-Key path but no Digi-Key COVERAGE.
-    # Digi-Key is the deepest audio-DAC source, and the battery is the one open
-    # blocker a second distributor could actually close.
-    ("digikey", "", "stereo audio DAC I2S", "dac", 150),
-    ("digikey", "", "lithium polymer battery pack", "battery", 150),
-    ("digikey", "", "bluetooth module", "bluetooth", 100),
+    # --- TME: exact category sweeps -----------------------------------
+    # The frequency IS the requirement, and both phrases are exhaustive.
+    ("tme", "100269", "22.5792MHz", "mclk-osc-44k1", 100),      # total 24
+    ("tme", "100269", "24.576MHz", "mclk-osc-48k", 150),        # total 96
+    ("tme", "100222", "SPDT", "mclk-mux", 300),                 # total 261
+    # The WHOLE battery category, not the "Li-Po" phrase. 446 against 70, and
+    # chemistry is a constraint the filter already checks — narrowing by phrase
+    # was doing the filter's job less well, and hiding any cell whose chemistry
+    # TME spells differently.
+    ("tme", "100076", None, "battery", 500),                    # total 446
+    ("tme", "112878", None, "dac", 1400),                       # total 1383
+    # 4045 is every microcontroller TME stocks; this is a documented sample,
+    # taken because the filter rejects ~99% of them on core and memory anyway.
+    ("tme", "112866", None, "mcu", 1500),                       # total 4045
+    # NEW. `bluetooth` had TME coverage of zero because no TME category was ever
+    # declared for it — found via a phrase-only search, whose `counters` payload
+    # returns a category breakdown with ids. That is how a category id should be
+    # obtained; the earlier ones were read off website URLs.
+    ("tme", "113196", None, "bluetooth", 500),                  # total 444
+    # --- Digi-Key: unioned relevance angles ---------------------------
+    #
+    # **Every limit here is <= 300 because Digi-Key will not paginate past it.**
+    # `Offset + Limit > 300` is an HTTP 400, measured — so 300 is the most any
+    # single keyword query can ever return, whatever `ProductsCount` says. Five
+    # sweeps declared at 400-650 failed outright before this was known, and they
+    # failed LOUDLY rather than reporting their first 300 as the whole category.
+    #
+    # That ceiling is why there are several angles per requirement rather than
+    # one broad query: unioning angles is the only way past 300. Measured on
+    # "22.5792MHz" vs "22.5792MHz XO" — 241 of 300 overlap, union 359, so a
+    # second angle buys +20%, and the parts it adds are real oscillators
+    # (CB3LV-3C-22M579200, DSC1001AE5-022.5792, CMX-309FAB) rather than noise.
+    # Diminishing, but worth the two calls.
+    ("digikey", "", "22.5792MHz", "mclk-osc-44k1", 300),         # total 608
+    ("digikey", "", "22.5792MHz XO", "mclk-osc-44k1", 300),      # total 492
+    ("digikey", "", "22.5792MHz CMOS oscillator", "mclk-osc-44k1", 300),
+    ("digikey", "", "24.576MHz XO", "mclk-osc-48k", 300),        # total 2518
+    ("digikey", "", "24.576MHz", "mclk-osc-48k", 300),           # total 6139
+    ("digikey", "", "24.576MHz CMOS oscillator", "mclk-osc-48k", 300),  # total 2777
+    ("digikey", "", "SPDT analog switch SC70", "mclk-mux", 200),  # total 141, exhaustive
+    ("digikey", "", "SPDT analog switch", "mclk-mux", 300),       # total 3130
+    ("digikey", "", "analog mux SPDT", "mclk-mux", 200),          # total 165, exhaustive
+    ("digikey", "", "audio DAC", "dac", 300),                     # total 1011
+    ("digikey", "", "audio DAC stereo", "dac", 120),              # total 83, exhaustive
+    ("digikey", "", "I2S audio DAC", "dac", 300),                 # total 438
+    ("digikey", "", "DAC headphone amplifier", "dac", 50),        # total 26, exhaustive
+    ("digikey", "", "audio codec DAC", "dac", 50),                # total 26, exhaustive
+    ("digikey", "", "STM32H7 microcontroller", "mcu", 300),       # total 277, exhaustive
+    ("digikey", "", "STM32H7A3", "mcu", 50),                      # total 29, exhaustive
+    ("digikey", "", "microcontroller Cortex-M7 280MHz", "mcu", 100),  # total 55, exhaustive
+    ("digikey", "", "bluetooth module", "bluetooth", 300),        # total 3000
+    ("digikey", "", "bluetooth 5 module", "bluetooth", 300),      # total 1228
+    ("digikey", "", "bluetooth audio module", "bluetooth", 50),   # total 10, exhaustive
+    ("digikey", "", "bluetooth transceiver module", "bluetooth", 300),  # total 2706
+    # Digi-Key is a poor source for bare pouch CELLS and this is the measured
+    # shape of it: every battery phrasing surfaces battery-management ICs at the
+    # top (`BQ29700DSER`, `BQ25720RSNR`), and "lithium polymer battery pack"
+    # matches 2 products in the whole catalogue. "Li-Po battery" is the one
+    # phrasing with usable precision, so it is swept exhaustively and the gap is
+    # recorded rather than papered over with 72 calls of charger ICs.
+    ("digikey", "", "Li-Po battery", "battery", 250),            # total 197, exhaustive
     # Mouser is DELIBERATELY absent from this list, and the reason is not quota
     # alone. Mouser publishes no named parametric fields at all — only
     # `Packaging` and `Standard Pack Qty` — so a part discovered only there
@@ -244,6 +324,132 @@ SWEEPS = [
 ]
 
 CATEGORIES = ["dac", "mclk-osc-44k1", "mclk-osc-48k", "mclk-mux", "mcu", "battery", "bluetooth"]
+
+
+def cmd_plan(args) -> int:
+    """Report, per declared sweep, how big the category really is.
+
+    # Why this is a command and not a guess
+
+    Every `SWEEPS` limit is a number someone chose, and a limit only means
+    something against the size of the thing it limits. The adapters have always
+    received the vendor's own total — they print "this is a SAMPLE, not the
+    category" with it — but that number lived in a print statement, so the one
+    fact needed to size a sweep was visible to a human and unavailable to the
+    code. `plan` reads it back and prices the sweep.
+
+    Costs one call per sweep (the first page only), which is the cheapest
+    possible way to ask "what would exhausting this cost?".
+    """
+    env = load_env()
+    adapters = {a.name: a for a in build_adapters(env)}
+    rows = []
+    for vendor, cat, phrase, label, limit in SWEEPS:
+        a = adapters.get(vendor)
+        if a is None or not a.available():
+            rows.append((vendor, label, phrase or cat, limit, None, "no credentials"))
+            continue
+        before = getattr(a, "calls", 0)
+        try:
+            # limit=1 so this probes the total without pulling the category.
+            a.search_category(str(cat), 1, phrase=phrase)
+            total = a.last_total
+            note = "" if total is not None else "vendor publishes no total"
+        except Exception as e:  # noqa: BLE001 - a planning probe must not abort the plan
+            total, note = None, f"probe failed: {str(e)[:60]}"
+        rows.append((vendor, label, phrase or cat, limit, total,
+                     note or f"+{getattr(a, 'calls', 0) - before} call(s)"))
+
+    print(f"{'vendor':<9} {'requirement':<16} {'limit':>6} {'total':>7} {'covered':>8}  query")
+    short = []
+    for vendor, label, query, limit, total, note in rows:
+        if total is None:
+            print(f"{vendor:<9} {label:<16} {limit:>6} {'?':>7} {'?':>8}  {query}  ({note})")
+            continue
+        pct = 100.0 * min(limit, total) / total if total else 100.0
+        flag = "" if limit >= total else "  <-- SAMPLE"
+        print(f"{vendor:<9} {label:<16} {limit:>6} {total:>7} {pct:>7.0f}%  {query}{flag}")
+        if limit < total:
+            short.append((vendor, label, limit, total))
+
+    if short:
+        # Per-vendor page sizes, so the cost estimate is the real one.
+        pages = {"tme": 100, "digikey": 50, "mouser": 50}
+        print("\nCost to exhaust the capped sweeps:")
+        per_vendor: dict[str, int] = {}
+        for vendor, label, limit, total in short:
+            page = pages.get(vendor, 50)
+            extra = -(-(total - limit) // page)
+            per_vendor[vendor] = per_vendor.get(vendor, 0) + extra
+            print(f"  {vendor:<9} {label:<16} +{total - limit:>6} part(s) = "
+                  f"~{extra} more call(s)")
+        db = Catalogue(DB_PATH)
+        spent = db.calls_today(time.strftime("%Y-%m-%d"))
+        for vendor, extra in sorted(per_vendor.items()):
+            lim = limit_for(vendor)
+            budget = lim.budget()
+            left = "unmetered" if budget is None else str(
+                max(0, budget - spent.get(vendor, 0)))
+            verdict = "affordable"
+            if budget is not None and extra > max(0, budget - spent.get(vendor, 0)):
+                verdict = "EXCEEDS today's remaining budget"
+            print(f"  => {vendor}: ~{extra} call(s), {left} left today — {verdict}")
+    else:
+        print("\nEvery declared sweep covers its whole category.")
+    return 0
+
+
+def cmd_sweep(args) -> int:
+    """Run the declared sweeps for ONE vendor, without touching anything else.
+
+    `refresh` does named lookups for three vendors, then every sweep, then seven
+    exports and the snapshot — minutes of work, most of it unrelated when what
+    changed is one vendor's keyword list. Re-running the whole thing to retry a
+    handful of sweeps also re-spends quota on lookups that already succeeded,
+    which matters most for the vendor with the tightest budget.
+    """
+    env = load_env()
+    adapters = {a.name: a for a in build_adapters(env)}
+    a = adapters.get(args.vendor)
+    if a is None:
+        sys.exit(f"unknown vendor {args.vendor!r}; known: {sorted(adapters)}")
+    if not a.available():
+        print(f"{a.display_name}: no credentials — nothing to do.")
+        return 0
+
+    rows = [r for r in SWEEPS if r[0] == args.vendor]
+    if not rows:
+        print(f"{args.vendor}: no declared sweeps. This is deliberate for Mouser, which "
+              f"publishes no parametric fields — see adapters/mouser.py.")
+        return 0
+
+    db = Catalogue(DB_PATH)
+    failed = []
+    for vendor, cat, phrase, label, limit in rows:
+        before = getattr(a, "calls", 0)
+        run = db.start_run(vendor, "category", f"{cat} {phrase or ''}".strip(),
+                           time.strftime("%Y-%m-%d"))
+        try:
+            parts = a.search_category(str(cat), limit, phrase=phrase)
+        except RuntimeError as e:
+            print(f"  {vendor} {label} [{phrase or cat}]: SWEEP FAILED — {e}")
+            failed.append((label, phrase or cat))
+            continue
+        for pt in parts:
+            db.upsert(pt, run, category=label)
+        db.finish_run(run, getattr(a, "calls", 0) - before, len(parts))
+        print(f"  {vendor} {label} [{phrase or cat}]: {len(parts)} parts")
+    print(f"\n{a.display_name}: {getattr(a, 'calls', 0)} API calls, "
+          f"{len(rows) - len(failed)} of {len(rows)} sweeps OK")
+    if failed:
+        # Listed again at the end: a failure thirty lines up scrolls away, and a
+        # sweep that returned nothing leaves a requirement's coverage silently
+        # unchanged rather than visibly empty.
+        print(f"FAILED sweeps ({len(failed)}) — the requirement's coverage is UNCHANGED, "
+              f"not empty, so this does not show up as a missing category:")
+        for label, q in failed:
+            print(f"   {label}: {q}")
+    return 1 if failed else 0
 
 
 def cmd_refresh(args) -> int:
@@ -460,6 +666,41 @@ def cmd_selftest(args) -> int:
     check("_norm strips packaging punctuation",
           _norm("74LVC1G3157GW,125") == "74LVC1G3157GW125")
 
+    # --- The declared sweeps must be runnable ---------------------------
+    #
+    # Five sweeps were declared with limits of 400-650 and every one of them
+    # failed with HTTP 400, because Digi-Key will not paginate past 300 results
+    # for any query. They failed loudly, which is right — but the requirement's
+    # coverage then stayed silently UNCHANGED rather than visibly empty, and two
+    # oscillator requirements sat at their old part count through a refresh that
+    # looked successful.
+    from sourcing.adapters.digikey import SEARCH_MAX_WINDOW
+
+    over = [(lbl, ph or cat, lim) for v, cat, ph, lbl, lim in SWEEPS
+            if v == "digikey" and lim > SEARCH_MAX_WINDOW]
+    check("no digikey sweep exceeds the 300-result window", not over,
+          f"unreachable: {over}" if over else
+          f"Offset+Limit>{SEARCH_MAX_WINDOW} is an HTTP 400, so a bigger limit fetches "
+          f"LESS, not more — add another keyword angle instead")
+
+    bad_label = [(v, lbl) for v, _c, _p, lbl, _l in SWEEPS if lbl not in CATEGORIES]
+    check("every sweep files parts under a real requirement", not bad_label,
+          f"unknown: {bad_label}" if bad_label else
+          "a part filed under no requirement is fetched and then invisible")
+
+    check("mouser declares no sweeps",
+          not [r for r in SWEEPS if r[0] == "mouser"],
+          "it publishes no parametric fields, so a part found only there can never pass a "
+          "filter — sweeping would spend the tightest daily budget on unjudgeable rows")
+
+    # Several angles per requirement is the whole strategy for getting past a
+    # 300-result window, so it should be visible if it ever collapses to one.
+    import collections as _c
+    angles = _c.Counter(lbl for v, _cat, _ph, lbl, _l in SWEEPS if v == "digikey")
+    check("capped digikey requirements use more than one angle",
+          all(angles[r] > 1 for r in ("mclk-osc-48k", "mclk-mux", "dac", "bluetooth")),
+          f"angles per requirement: {dict(angles)}")
+
     from sourcing.throttle import BudgetExhausted, Throttle, limit_for
 
     mlim = limit_for("mouser")
@@ -523,6 +764,14 @@ def main() -> int:
 
     t = sub.add_parser("selftest", help="check the pure helpers; no network")
     t.set_defaults(func=cmd_selftest)
+
+    sw = sub.add_parser("sweep", help="run the declared category sweeps for one vendor")
+    sw.add_argument("--vendor", required=True)
+    sw.set_defaults(func=cmd_sweep)
+
+    pl = sub.add_parser(
+        "plan", help="how big each declared sweep's category really is, and what it costs")
+    pl.set_defaults(func=cmd_plan)
 
     rf = sub.add_parser("refresh", help="fetch all vendors, re-export, regenerate the snapshot")
     rf.set_defaults(func=cmd_refresh)

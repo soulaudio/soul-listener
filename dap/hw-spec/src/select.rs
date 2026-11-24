@@ -79,6 +79,28 @@ pub enum Predicate<'a> {
     /// dependencies, and a requirement that needs a regex to express is probably
     /// not a requirement anyone can review.
     Contains(&'a str),
+    /// Text containing NONE of these substrings, case-insensitively.
+    ///
+    /// For a requirement that is a genuine exclusion rather than an enumeration.
+    /// The motivating case: the DAC's `mounting == "SMD"` constraint exists
+    /// because the board is hand-assembled in small batches — and
+    /// `CS43131-CWZR`, the same die in a `42-UFBGA, WLCSP`, satisfies it. 3873
+    /// in stock, Active, and it passed every catalogue constraint the DAC
+    /// requirement had, because a wafer-level chip-scale package IS surface
+    /// mount. Nothing in the filter expressed the part of the decision that
+    /// actually rules it out.
+    ///
+    /// Enumerating allowed packages instead was tried once and failed badly: the
+    /// oscillator requirement used to list package codes (`SMD-3225-4` and
+    /// friends) that no distributor publishes, and it rejected every real
+    /// oscillator. Vendors spell package names dozens of ways
+    /// (`40-WFQFN Exposed Pad`, `4-SMD, No Lead`, `2-SMD, No Lead`), so a
+    /// blocklist of the few that are disqualifying is both shorter and far more
+    /// robust than an allowlist of the many that are fine.
+    ///
+    /// An absent attribute is still a rejection, as with every other predicate:
+    /// a package nobody published is not a package known to be solderable.
+    ExcludesAll(&'a [&'a str]),
     IsTrue,
     /// The attribute must be present AND false.
     ///
@@ -245,6 +267,10 @@ fn check<'a>(part: &CataloguePart<'a>, c: &Constraint<'a>) -> Result<(), Rejecti
         },
         Predicate::Contains(needle) => match v {
             AttrValue::Text(t) => contains_ci(t, needle),
+            _ => return Err(Rejection::WrongType { attr: c.attr }),
+        },
+        Predicate::ExcludesAll(banned) => match v {
+            AttrValue::Text(t) => !banned.iter().any(|b| contains_ci(t, b)),
             _ => return Err(Rejection::WrongType { attr: c.attr }),
         },
         Predicate::IsTrue => match v {
@@ -629,6 +655,64 @@ mod tests {
                 check(&part("other", &other, 1, 1, None), &c).is_err(),
                 "{name} must still be rejected — widening the tolerance for formatting must not \
                  make it accept a different frequency"
+            );
+        }
+    }
+
+    /// The case that forced `ExcludesAll`: a package that is surface mount and
+    /// still unusable.
+    ///
+    /// `CS43131-CWZR` is the same die as the preferred DAC in a `42-UFBGA,
+    /// WLCSP`, 3873 in stock and Active, and it passed every catalogue
+    /// constraint the DAC requirement had — because WLCSP *is* surface mount.
+    /// The constraint that was supposed to express "hand-assembled" did not.
+    #[test]
+    fn a_surface_mount_package_can_still_be_excluded_by_name() {
+        let hand = Constraint {
+            evidence: Evidence::Catalogue,
+            attr: "package",
+            pred: Predicate::ExcludesAll(&["WLCSP", "BGA"]),
+            why: "hand-solderable",
+        };
+
+        let qfn = [("package", AttrValue::Text("40-WFQFN Exposed Pad"))];
+        assert!(check(&part("CS43131-CNZ", &qfn, 1, 100, Some(1000)), &hand).is_ok());
+
+        // Matched case-insensitively and as a SUBSTRING, because vendors publish
+        // compound package strings rather than a bare token.
+        let wlcsp = [("package", AttrValue::Text("42-UFBGA, WLCSP"))];
+        assert!(
+            check(&part("CS43131-CWZR", &wlcsp, 1, 100, Some(1000)), &hand).is_err(),
+            "a WLCSP part must be rejected even though it is surface mount — this is the \
+             whole reason the predicate exists"
+        );
+        let lower = [("package", AttrValue::Text("49-ufbga"))];
+        assert!(
+            check(&part("x", &lower, 1, 100, Some(1000)), &hand).is_err(),
+            "BGA match is case-insensitive"
+        );
+
+        // An absent package is a rejection, like every other predicate: a
+        // package nobody published is not a package known to be solderable.
+        let none: [(&str, AttrValue); 0] = [];
+        assert!(matches!(
+            check(&part("y", &none, 1, 100, Some(1000)), &hand),
+            Err(Rejection::MissingAttribute { .. })
+        ));
+
+        // And an oscillator's package must still pass — the exclusion list has
+        // to be narrow enough not to catch ordinary SMD parts, which is why it
+        // is a blocklist of the disqualifying few rather than an allowlist.
+        for ok_pkg in [
+            "4-SMD, No Lead",
+            "2-SMD, No Lead",
+            "SOT-363",
+            "40-QFN (5x5)",
+        ] {
+            let a = [("package", AttrValue::Text(ok_pkg))];
+            assert!(
+                check(&part("z", &a, 1, 100, Some(1000)), &hand).is_ok(),
+                "{ok_pkg} must not be excluded"
             );
         }
     }

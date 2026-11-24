@@ -63,6 +63,18 @@ SEARCH_PAGE = 50
 # processing your request") for requests that succeed on retry — the same
 # flakiness `productdetails` shows. A 5xx is never an answer.
 SEARCH_RETRIES = 4
+# **Digi-Key will not paginate past 300 results for any query.** Measured:
+# `Offset=300, Limit=50` returns HTTP 400 "Offset + Limit must be less than or
+# equal to 300".
+#
+# This is a hard ceiling on the whole discovery path, not a tuning knob, and it
+# is the reason `SWEEPS` declares several keyword angles per requirement instead
+# of one broad query: with a 300-result window, unioning angles is the ONLY way
+# to see more than 300 parts. Measured gain for a second angle on
+# "22.5792MHz" vs "22.5792MHz XO": 241 of 300 overlap, union 359, so +20% — real
+# but with clear diminishing returns, and the parts it adds are genuine
+# oscillators (CB3LV, DSC1001, CMX-309FAB) rather than noise.
+SEARCH_MAX_WINDOW = 300
 
 
 class DigikeyAdapter(Adapter):
@@ -80,8 +92,14 @@ class DigikeyAdapter(Adapter):
     ATTR_MAP = {
         # --- DAC / analogue ---------------------------------------------------
         "Number of D/A Converters": "channels",
+        # Digi-Key's other spelling, used by parts filed outside the dedicated
+        # DAC category. Verified not to co-occur with `Number of D/A Converters`
+        # on any part — `map_attrs` JOINS duplicate keys with '; ', which is
+        # correct for a multi-valued list and corrupting for a scalar.
+        "Number of Channels": "channels",
         "Data Interface": "data_interface",
         "Number of Bits": "resolution_bits",
+        "Resolution (Bits)": "resolution_bits",
         "Architecture": "converter_architecture",
         "Voltage - Supply, Analog": "supply_mv",
         "Voltage - Supply, Digital": "supply_digital_mv",
@@ -106,12 +124,32 @@ class DigikeyAdapter(Adapter):
         "Height - Seated (Max)": "height_mm",
         "Voltage - Supply": "supply_mv",
         # --- Switches / muxes -------------------------------------------------
-        "Circuit": "switch_configuration",
-        "Independent Circuits": "channels",
+        #
+        # `Switch Circuit` and `Number of Circuits` are the REAL names, verified
+        # against 50 parts where both appear on 50 and 49 of them. This slot used
+        # to hold `Circuit` and `Independent Circuits`, which were transcribed
+        # from Digi-Key's web UI rather than read off a response and therefore
+        # never matched anything.
+        #
+        # The cost was invisible and large: `switch_configuration` and `channels`
+        # were reaching the filter from TME ALONE, so 386 of 668 muxes were
+        # rejected as "switch_configuration not published" and the Nexperia
+        # alternate `74LVC1G3157GW` — which TME does not carry — failed its own
+        # requirement entirely. A mapping gap reads exactly like a vendor data
+        # gap, and only the rejection histogram told them apart.
+        "Switch Circuit": "switch_configuration",
+        "Number of Circuits": "channels",
+        # Digi-Key's supply field for analog switches, 50/50 coverage. Separate
+        # from `Voltage - Supply, Dual (V±)`, which this design has no use for
+        # and which comes back '-' for every single-supply part anyway.
+        "Voltage - Supply, Single (V+)": "supply_mv",
         "On-State Resistance (Max)": "ron_max_ohm",
         # --- MCU --------------------------------------------------------------
         "Core Processor": "cpu_core",
         "Speed": "core_clock_hz",
+        # 48/50 coverage, and the reason 101 MCUs were rejected for an
+        # unpublished supply voltage.
+        "Voltage - Supply (Vcc/Vdd)": "supply_mv",
         "RAM Size": "sram_bytes",
         "Program Memory Size": "flash_bytes",
         # --- Battery ----------------------------------------------------------
@@ -237,10 +275,19 @@ class DigikeyAdapter(Adapter):
         collected: list[dict] = []
         offset = 0
         expected: int | None = None
-        while len(collected) < limit:
+        # Clamp to the vendor's hard pagination window. Asking for more produced
+        # an HTTP 400 that aborted the sweep, so five declared sweeps returned
+        # nothing at all — correctly, since reporting the 300 already collected
+        # as the category would have been a lie, but the fix belongs here rather
+        # than in every caller's limit.
+        reachable = min(limit, SEARCH_MAX_WINDOW)
+        while len(collected) < reachable:
             body = {
                 "Keywords": phrase or "",
-                "Limit": min(SEARCH_PAGE, limit - len(collected)),
+                # Both terms clamped: the page size AND the remaining window, so
+                # `Offset + Limit` can never exceed 300.
+                "Limit": min(SEARCH_PAGE, reachable - len(collected),
+                             SEARCH_MAX_WINDOW - offset),
                 "Offset": offset,
             }
             if category:
@@ -258,9 +305,15 @@ class DigikeyAdapter(Adapter):
                 time.sleep(2.0 * (attempt + 1))
                 d = self._post("/products/v4/search/keyword", body)
             if "_http_error" in d:
+                code = d["_http_error"]
+                # Say what actually happened. A 4xx is not retried (repeating a
+                # malformed request only spends quota), so claiming "after 4
+                # retries" for a 400 sent me looking for a flaky endpoint when
+                # the request shape was simply wrong.
+                tried = f"after {SEARCH_RETRIES} retries" if code >= 500 else "not retried (4xx)"
                 raise RuntimeError(
                     f"Digi-Key keyword search failed at offset {offset}: HTTP "
-                    f"{d['_http_error']} after {SEARCH_RETRIES} retries: "
+                    f"{code} {tried}: "
                     f"{d.get('_detail','')[:160]}. {len(collected)} part(s) collected; reporting "
                     f"that as the category would be wrong."
                 )
@@ -273,9 +326,16 @@ class DigikeyAdapter(Adapter):
             offset += len(products)
             if expected is not None and offset >= expected:
                 break
-        if expected is not None and limit < expected:
-            print(f"  NOTE: limit={limit} caps a category of {expected} part(s) — "
-                  f"this is a SAMPLE, not the category.")
+        self.last_total = expected
+        if expected is not None and len(collected) < expected:
+            why = (
+                f"Digi-Key will not paginate past {SEARCH_MAX_WINDOW}"
+                if limit > SEARCH_MAX_WINDOW
+                else f"limit={limit}"
+            )
+            print(f"  NOTE: {why}, so this is {len(collected)} of {expected} part(s) — "
+                  f"a SAMPLE, not the category. Digi-Key ranks by relevance, so these are the "
+                  f"most relevant {len(collected)}; add another keyword angle to see more.")
         return [self._to_part(p) for p in collected]
 
     # --- Internals ------------------------------------------------------

@@ -250,6 +250,7 @@ class TmeAdapter(Adapter):
                 break
             page += 1
 
+        self.last_total = expected
         # Completeness check. The vendor states how many parts match; if fewer
         # were collected and the caller did not cap it, the sweep is incomplete
         # and must say so rather than be reported as the category.
