@@ -75,7 +75,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
 
-      - uses: dtolnay/rust-toolchain@1.87
+      - uses: dtolnay/rust-toolchain@1.120
         with:
           components: rustfmt
 
@@ -142,7 +142,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
 
-      - uses: dtolnay/rust-toolchain@1.87
+      - uses: dtolnay/rust-toolchain@1.120
 
       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0  # v2.9.3
 
@@ -450,7 +450,7 @@ jobs:
       # rust-toolchain.toml with the same version, which is what actually governs
       # the probe builds; this keeps the action from downloading a second
       # toolchain. Bump both together, and re-measure the budgets when you do.
-      - uses: dtolnay/rust-toolchain@1.100.0
+      - uses: dtolnay/rust-toolchain@1.120
         with:
           targets: thumbv7em-none-eabihf
 
