@@ -1,12 +1,11 @@
 <!-- Theme-aware Soul Audio mark: white-bodied on GitHub's dark theme, dark-bodied
-     on light. The shared org mark lives in soul-player-ng; both color-scheme
-     sources are explicit (a lone one falls through to the <img>) and use absolute
-     raw URLs (a relative <source srcset> doesn't resolve reliably on GitHub). -->
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/soulaudio/soul-player-ng/main/app/icons/icon.png">
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/soulaudio/soul-player-ng/main/app/icons/icon-light.png">
-  <img alt="Soul Listener" src="https://raw.githubusercontent.com/soulaudio/soul-player-ng/main/app/icons/icon-light.png" width="84" height="84">
-</picture>
+     on light. Uses GitHub's #gh-*-mode-only fragments, hidden/shown by CSS keyed on
+     GitHub's OWN theme (data-color-mode), rather than <picture>/prefers-color-scheme:
+     fingerprint-resistant browsers (LibreWolf, Tor) force prefers-color-scheme to
+     light, leaving the dark mark on a dark page. The shared mark lives in
+     soul-player-ng. -->
+<img alt="Soul Listener" src="https://raw.githubusercontent.com/soulaudio/soul-player-ng/main/app/icons/icon.png#gh-dark-mode-only" width="84" height="84">
+<img alt="Soul Listener" src="https://raw.githubusercontent.com/soulaudio/soul-player-ng/main/app/icons/icon-light.png#gh-light-mode-only" width="84" height="84">
 
 # Soul Listener
 
