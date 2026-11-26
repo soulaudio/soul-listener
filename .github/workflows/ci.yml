@@ -806,3 +806,83 @@ jobs:
             echo "- status: **behind main** — compare https://github.com/soulaudio/soul-audio-core/compare/$PIN...$MAIN" >> "$GITHUB_STEP_SUMMARY"
             echo "::warning title=soul-audio-core pin is behind main::Pinned $PIN; main is $MAIN. Bump deliberately via tools/soul-audio-core-pin.sh --latest after re-verifying the dap build. Informational only — does not fail CI."
           fi
+
+  # ---------------------------------------------------------------------------
+  # One required check
+  #
+  # Branch protection names THIS job and nothing else. Twenty contexts listed
+  # individually go stale the moment a job is renamed or added: protection
+  # keeps requiring a context nobody reports (which blocks every merge) or
+  # silently stops requiring a job that now exists (which blocks nothing).
+  # With one aggregate gate, adding a job means adding it to `needs` here, in
+  # the same commit, reviewed with the job itself.
+  #
+  # `if: always()` so the gate still runs when a dependency fails, and reports
+  # WHICH one: `failure`, `cancelled` and `skipped` call for different
+  # responses, and "a required check failed" cannot tell them apart. A
+  # cancelled job is usually a hosted-runner shortage rather than a bug, and
+  # the remedy is a re-run, not a diagnosis.
+  # ---------------------------------------------------------------------------
+  ci-success:
+    name: CI success
+    runs-on: ubuntu-latest
+    needs: [
+      fmt, deny, arch-boundaries,
+      build-board-h7a3, fmt-dap, clippy-dap,
+      test-dap, forbid-unsafe-coverage, mcu-stack-budget,
+      mcu-stack-budget-dynamic, unused-deps, lint-coverage,
+      supply-chain, no-todo-in-production, cargo-lock-committed,
+      fmt-eink-ui, clippy-eink-ui, build-eink-ui,
+      test-eink-ui, eink-ui-boundary,
+    ]
+    if: always()
+    steps:
+      - name: Require all checks to pass
+        # For a matrix job, needs.<job>.result is success only when every leg
+        # succeeded, so one entry here covers all of them.
+        run: |
+          bad=0
+          for pair in "fmt=${{ needs.fmt.result }}" \
+                      "deny=${{ needs.deny.result }}" \
+                      "arch-boundaries=${{ needs.arch-boundaries.result }}" \
+                      "build-board-h7a3=${{ needs.build-board-h7a3.result }}" \
+                      "fmt-dap=${{ needs.fmt-dap.result }}" \
+                      "clippy-dap=${{ needs.clippy-dap.result }}" \
+                      "test-dap=${{ needs.test-dap.result }}" \
+                      "forbid-unsafe-coverage=${{ needs.forbid-unsafe-coverage.result }}" \
+                      "mcu-stack-budget=${{ needs.mcu-stack-budget.result }}" \
+                      "mcu-stack-budget-dynamic=${{ needs.mcu-stack-budget-dynamic.result }}" \
+                      "unused-deps=${{ needs.unused-deps.result }}" \
+                      "lint-coverage=${{ needs.lint-coverage.result }}" \
+                      "supply-chain=${{ needs.supply-chain.result }}" \
+                      "no-todo-in-production=${{ needs.no-todo-in-production.result }}" \
+                      "cargo-lock-committed=${{ needs.cargo-lock-committed.result }}" \
+                      "fmt-eink-ui=${{ needs.fmt-eink-ui.result }}" \
+                      "clippy-eink-ui=${{ needs.clippy-eink-ui.result }}" \
+                      "build-eink-ui=${{ needs.build-eink-ui.result }}" \
+                      "test-eink-ui=${{ needs.test-eink-ui.result }}" \
+                      "eink-ui-boundary=${{ needs.eink-ui-boundary.result }}"; do
+            job=${pair%%=*}
+            result=${pair#*=}
+            case "$result" in
+              success)
+                printf '  ok         %s\n' "$job"
+                ;;
+              cancelled)
+                echo "::error::$job was CANCELLED, not failed, it never ran to completion."
+                echo "           Usually a hosted-runner shortage (check whether the job has"
+                echo "           zero steps). Re-run it: gh run rerun $GITHUB_RUN_ID --failed"
+                bad=1
+                ;;
+              skipped)
+                echo "::error::$job was SKIPPED, a required job must actually run."
+                bad=1
+                ;;
+              *)
+                echo "::error::$job: $result, a real failure; read its log."
+                bad=1
+                ;;
+            esac
+          done
+          [ "$bad" = 0 ] || exit 1
+          echo "all green"
