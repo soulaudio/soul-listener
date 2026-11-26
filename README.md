@@ -67,6 +67,16 @@ cd eink-ui && cargo test --features std
 cargo xtask verify
 ```
 
+## Contributing
+
+You do not need the board. The host simulation and the on-target fitness tests
+are how this firmware is developed, so a laptop and a sibling checkout of
+[soul-audio-core](https://github.com/soulaudio/soul-audio-core) are enough.
+
+[CONTRIBUTING.md](CONTRIBUTING.md) covers the setup and the rules CI enforces
+(no `unsafe` on the embedded path, a hard Cortex-M7 stack budget, no allocator on
+the audio path). Security issues go to [SECURITY.md](SECURITY.md), privately.
+
 ## License
 
 [GNU Affero General Public License v3.0](LICENSE)
