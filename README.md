@@ -1,3 +1,13 @@
+<!-- Theme-aware Soul Audio mark: white-bodied on GitHub's dark theme, dark-bodied
+     on light. The shared org mark lives in soul-player-ng; both color-scheme
+     sources are explicit (a lone one falls through to the <img>) and use absolute
+     raw URLs (a relative <source srcset> doesn't resolve reliably on GitHub). -->
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/soulaudio/soul-player-ng/main/app/icons/icon.png">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/soulaudio/soul-player-ng/main/app/icons/icon-light.png">
+  <img alt="Soul Listener" src="https://raw.githubusercontent.com/soulaudio/soul-player-ng/main/app/icons/icon-light.png" width="84" height="84">
+</picture>
+
 # Soul Listener
 
 [![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-blue.svg)](LICENSE)
